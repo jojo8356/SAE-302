@@ -18,8 +18,24 @@
 #   docs (openjdk, plantuml.jar + render.sh) → job docs (setup-java 17 + plantuml)
 #
 # Usage local (act) : `act -j php-lint` ou `gh workflow run ci.yml`
+#
+# Règle de re-run (CDC §14.2, annexe 17.9 §7) : si le run de la PR est VERT avant le merge,
+# aucun re-run n'est nécessaire après le merge. GitHub Actions exécute déjà le workflow
+# `pull_request` sur le commit de fusion (`refs/pull/<n>/merge`) : le run déclenché sur main
+# après le merge rejoue les mêmes 6 jobs sur le même arbre de fichiers — c'est un relais de
+# traçabilité (badge main), pas une vérification. On ne relance donc jamais « Re-run jobs » /
+# `gh run rerun` dans ce cas ; seules exceptions : main a avancé, run annulé
+# (concurrency/cancel-in-progress), correction déjà poussée (le push relance seul), panne
+# d'infrastructure (alors `gh run rerun <id> --failed`, une fois).
 
 name: CI — MiniShop (dev/GitHub)
+
+# Nom lisible du run : met en évidence qu'un run post-merge est un simple relais
+# (déjà validé en PR) — aucune action attendue de la part de l'équipe.
+run-name: >-
+  ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') &&
+      format('post-merge — relais de traçabilité, déjà validé en PR : aucun re-run nécessaire — {0}', github.sha) ||
+      format('{0} — {1}', github.event_name, github.ref_name) }}
 
 on:
   push:
