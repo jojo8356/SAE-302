@@ -1,0 +1,36 @@
+# MiniShop — public/.htaccess (Apache 2.4 + mod_rewrite)
+# DocumentRoot = public/ — seul dossier exposé.
+# - Toute URL non-fichier est routée vers index.php (front controller unique, §9.2)
+# - Les outils dev (gen_volumes.php) restent des fichiers réels → servis directement
+#   (RewriteCond !-f) et se bloquent eux-mêmes en prod (404) s'ils sont appelés.
+# - Redondance volontaire : même si DocumentRoot pointe déjà sur public/,
+#   on interdit l'accès à app/, var/, sql/, docs/ si public/ est mal configuré.
+
+RewriteEngine On
+RewriteBase /
+
+# Ne pas réécrire les fichiers et dossiers existants (assets, gen_volumes.php, etc.)
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Sinon : front controller
+RewriteRule ^ index.php [QSA,L]
+
+# Sécurité : interdire l'accès direct aux dossiers sensibles si jamais ils sont
+# copiés sous public/ par erreur (défense en profondeur, SEC-11)
+<IfModule mod_authz_core.c>
+  <FilesMatch "^\.env">
+    Require all denied
+  </FilesMatch>
+</IfModule>
+<FilesMatch "\.(log|sql|md)$">
+  <IfModule mod_authz_core.c>Require all denied</IfModule>
+</FilesMatch>
+
+# En-têtes (si mod_headers présent)
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
