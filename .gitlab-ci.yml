@@ -3,6 +3,11 @@
 # rejouable, (b) les 28 tests (règles, vues, frais de port) passent, (c) aucune règle de sécurité n'a été
 # court-circuitée dans le code PHP. Un job qui échoue bloque le merge : la pénalité devient
 # visible pendant le développement, pas au moment du rendu.
+#
+# Prod : GitLab CI (ce fichier) — cible de notation, barème §16.1.
+# Dev  : GitHub Actions (.github/workflows/ci.yml) — même 6 jobs adaptés pour GitHub
+#        (setup-php, services mysql:8.0, fallback sans load_db.sh). Les deux pipelines
+#        sont maintenus synchrones ; en dev on pousse sur GitHub, en prod on miroir vers GitLab.
 
 stages: [validate, db, test, docs]
 

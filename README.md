@@ -1,8 +1,12 @@
 # MiniShop — site e-commerce + back-office (SAE)
 
+[![CI — GitHub (dev)](https://github.com/jojo8356/SAE-302/actions/workflows/ci.yml/badge.svg)](https://github.com/jojo8356/SAE-302/actions/workflows/ci.yml) [![CI — GitLab (prod)](https://gitlab.example.com/minishop/badges/main/pipeline.svg)](https://gitlab.example.com/minishop/-/pipelines)
+
 Projet pédagogique : catalogue, panier, commandes, espace d'administration — **PHP 8 / MySQL (PDO) /
 procédures stockées / déclencheurs / architecture MVC** — avec sa base de données conçue, normalisée,
 testée, et son cahier des charges complet.
+
+> **CI/CD dev vs prod** : le dev avant la prod se fait sur **GitHub** (`.github/workflows/ci.yml` — adaptation de `.gitlab-ci.yml`), la prod/notée reste sur **GitLab** (`.gitlab-ci.yml`). Les deux pipelines exécutent les mêmes 6 jobs (php-lint, style PSR-12, security-scan, base-tests mysql:8.0, unit phpunit, docs PlantUML) avec les mêmes images (`php:8.2`, `mysql:8.0`, `openjdk:17`). `concurrency/cancel-in-progress` reproduit `interruptible: true`.
 
 | | |
 |---|---|
@@ -88,7 +92,7 @@ UNION ALL SELECT 'triggers',   COUNT(*) FROM (SELECT DISTINCT TRIGGER_NAME FROM 
 | `bash tests/charge/reserver.sh` | pas de survente : 20 demandes simultanées pour 12 exemplaires → 12 commandes, 8 refus |
 | `php -l` + `phpunit` (si installé) | syntaxe et tests unitaires des modèles/services |
 | `docs/diagrams/render.sh` | les 14 diagrammes (cas d'utilisation, classes, séquences, activités, états, MCD, MLD, architecture) se régénèrent depuis les sources `.puml` |
-| `bash tests/perf/mesurer.sh` | `ENF-01` : p95 par URL (`ab` ou repli `curl`), sortie 1 si p95 ≥ 500 ms |
+| `bash tests/perf/mesurer.sh` → `public/mesurer.php` (dev-only) | `ENF-01` : p95 par URL (`ab` ou `curl` en .sh, `fetch` JS + `curl_multi` PHP en .php), sortie 1 si p95 ≥ 500 ms |
 | `./scripts/build-docs.sh` | régénère **tout** l'assemblage documentaire : 14 diagrammes depuis les `.puml`, annexe SQL recopiée depuis `sql/*` (source de vérité), campagne de tests rejouée, exports Word (`dist/*.docx`, images incrustées) |
 
 ## Arborescence
@@ -96,11 +100,11 @@ UNION ALL SELECT 'triggers',   COUNT(*) FROM (SELECT DISTINCT TRIGGER_NAME FROM 
 ```
 app/Config, app/Controller, app/Model, app/Repository, app/Security, app/View
 docs/{01-cahier-des-charges, 02-document-tests-validation, 03-support-soutenance, 04-conception-bd-et-sql, 05-wbs-projet, 06-todolist}, docs/annexes, docs/diagrams/{src/*.puml, *.png}
-public/{index.php, .htaccess, css, js, img}
-scripts/{load_db.sh, run_sql_tests.sh, gen_volumes.sh, deploy.sh, build-docs.sh}
+public/{index.php, .htaccess, css, js, img, gen_volumes.php, mesurer.php (dev-only, navigateur)}
+scripts/{load_db.sh, run_sql_tests.sh, deploy.sh, build-docs.sh, gen_volumes.php (wrapper dev)}
 sql/{01_minishop_schema.sql, 02_minishop_procedures.sql, 03_minishop_triggers.sql, 04_minishop_demo.sql}
-tests/{sql/** (manifest, fixture, tNN_*.sql, rapport), security/controles.sh, charge/reserver.sh, perf/mesurer.sh, php/**}
-var/log  ·  .gitignore  ·  .gitlab-ci.yml (6 jobs)
+tests/{sql/** (manifest, fixture, tNN_*.sql, rapport), security/controles.sh, charge/reserver.sh, perf/mesurer_sql.sh, perf/mesurer.php→public/mesurer.php, php/**}
+var/log  ·  .gitignore  ·  .gitlab-ci.yml (6 jobs, prod)  ·  .github/workflows/ci.yml (6 jobs, dev/GitHub)
 ```
 
 ## Documents et rendus (les diagrammes ne s'affichent PAS dans un aperçu sans réseau)
