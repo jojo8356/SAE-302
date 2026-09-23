@@ -36,8 +36,9 @@ header('Content-Type: text/html; charset=utf-8');
   <h3 style="margin:.2rem 0">Outils dev</h3>
   <ul>
     <li><a href="/gen_volumes.php">/gen_volumes.php</a> — générateur de volumétrie (ENF-01/ENF-02, navigateur uniquement, dev-only)</li>
+    <li><a href="/mesurer.php">/mesurer.php</a> — mesure ENF-01 p95 &lt; 500 ms (remplace <code>tests/perf/mesurer.sh</code>, navigateur uniquement, dev-only)</li>
     <li><code>php -S 0.0.0.0:8000 -t public</code> — serveur embarqué (prévisualisation Arena : <code>https://{port}-{sandboxId}.e2b.app</code>)</li>
   </ul>
-  <p style="font-size:.85rem;color:#64748b">En prod ce fichier et <code>gen_volumes.php</code> répondent 404 si <code>APP_ENV</code> ≠ <code>dev</code>.</p>
+  <p style="font-size:.85rem;color:#64748b">En prod ces outils répondent 404 si <code>APP_ENV</code> ≠ <code>dev</code>.</p>
 </div>
 <p style="font-size:.85rem;color:#64748b">CDC : <a href="../docs/01-cahier-des-charges-MiniShop.md">docs/01-cahier-des-charges-MiniShop.md</a> · SQL : <code>sql/01 → 02 → 03 → 04</code> → <code>scripts/load_db.sh</code></p>
