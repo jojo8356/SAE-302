@@ -78,7 +78,7 @@ MiniShop — 360 h · 3 développeurs · 12 semaines (S1→S12)
 │
 ├── D1 Pilotage, dépôt GitLab & intégration — 24 h · resp. A · [barème v — contribution GitLab + README (10 pts, individuel)]
 │   ├── L1 Cadrage, relecture du sujet, grille de conformité, squelette du dépôt, README (16 h · A · S1)
-│   └── L15 Mise en ligne de démo, deploy.sh, README final, arborescence propre (8 h · A · S11)
+│   └── L15 Mise en ligne de démo, deploy.php, README final, arborescence propre (8 h · A · S11)
 ├── D2 Document de spécification du système — 54 h · resp. A + C · [barème i — 20 points]
 │   ├── L2 CDC : présentation, objectifs, acteurs, fonctionnalités (26 h · A + C · S1/S2)
 │   └── L3 Diagrammes UML (cas, classes, séquences) + règles métier formalisées (28 h · B + C · S2/S3)
@@ -123,7 +123,7 @@ le niveau 4 — le travail lui-même — est détaillé section 5.*
 | **L12** | Durcissement sécurité (CSRF, échappement, autorisation, en-têtes, journaux) | D4 | C | S9/S10 | 20 h |
 | **L13** | JavaScript client (panier, filtres, validation live, accessibilité) | D4 | C | S10 | 14 h |
 | **L14** | Tests & validation : harnais, 29 tests SQL, cas fonctionnels, plan de recette, doc | D5 | B + A | S10/S11 | 24 h |
-| **L15** | Mise en ligne de démo, deploy.sh, README final, arborescence propre | D1 | A | S11 | 8 h |
+| **L15** | Mise en ligne de démo, deploy.php, README final, arborescence propre | D1 | A | S11 | 8 h |
 | **L16** | Soutenance : support, trame, répétitions chronométrées, questions anticipées | D6 | A + B + C | S12 | 14 h |
 | | **Total** | | | S1→S12 | **360 h** |
 
@@ -150,11 +150,11 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme **remon
 | `D1-L1-07` | Réunion de cadrage : relecture du sujet ligne à ligne, périmètre, règle de repli groupe de 2 | A | 2 | compte-rendu dans le wiki du dépôt | — |
 | | **Sous-total L1** | | **16** | répartition : A 16 h | |
 
-#### Lot L15 — Mise en ligne de démo, deploy.sh, README final, arborescence propre (8 h · A · S11)
+#### Lot L15 — Mise en ligne de démo, deploy.php, README final, arborescence propre (8 h · A · S11)
 
 | ID | Tâche individuelle | Resp. | h | Définition de fini | Dépend de |
 |---|---|---|---:|---|---|
-| `D1-L15-01` | scripts/deploy.sh : hashes aléatoires, emails de démo régénérés | A | 3 | démo reinstallable en 1 commande, SEC-10 respecté | L14 |
+| `D1-L15-01` | scripts/deploy.php : hashes aléatoires, emails de démo régénérés | A | 3 | démo reinstallable en 1 commande, SEC-10 respecté | L14 |
 | `D1-L15-02` | README final : installation 5 commandes, comptes, tests, sauvegarde | A | 3 | un tiers installe et lance en ≤ 15 min (ENF-13) | 01 |
 | `D1-L15-03` | Nettoyage de l'arborescence + tag v1.0-rendu | A | 2 | shortlog équilibré, tag posé, MR mergées | 02 |
 | | **Sous-total L15** | | **8** | répartition : A 8 h | |
