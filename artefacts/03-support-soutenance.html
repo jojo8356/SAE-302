@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Support et déroulé de la soutenance — MiniShop (15 minutes) — MiniShop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter','ui-sans-serif','system-ui','-apple-system','Segoe UI','Roboto','Helvetica','Arial'],
+        mono: ['JetBrains Mono','ui-monospace','SFMono-Regular','Menlo','monospace'],
+        display: ['Plus Jakarta Sans','Inter','sans-serif'],
+      }
+    }
+  }
+}
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  ::selection { background: #6366f11a; }
+  .prose :where(a):not(:where([class~="not-prose"] *)) { color:#4f46e5; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.2px; }
+  .prose :where(a):hover { color:#4338ca; }
+  .prose code:not(pre code) { font-family: 'JetBrains Mono', monospace; font-size: 0.84em; background: #f1f5f9; border: 1px solid #e2e8f0; padding: 0.16rem 0.4rem; border-radius: 0.4rem; color:#0f172a; white-space: nowrap; word-break: keep-all; overflow-wrap: normal; }
+  /* dans les cellules, on garde le code sur une ligne et on laisse le tableau scroller */
+  .prose td code, .prose th code { white-space: nowrap !important; word-break: keep-all !important; display: inline-block; max-width: none; }
+  .prose td { overflow-wrap: normal; word-break: normal; }
+  /* première colonne ID : ne jamais couper RB-06 */
+  .prose td:first-child code, .prose th:first-child code { white-space: nowrap !important; font-weight: 800; letter-spacing: -0.01em; }
+  .prose td:first-child { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .prose pre { background:#0f172a; color:#e2e8f0; border-radius: 0.95rem; padding: 1.25rem 1.35rem; overflow-x:auto; border:1px solid #1e293b; box-shadow: 0 10px 30px -12px rgba(15,23,42,.45); margin: 1.8rem 0; }
+  .prose pre code { background: transparent; border:0; padding:0; color:inherit; font-size: 0.84rem; line-height: 1.65; }
+  /* —— Sommaire : arbre hiérarchique aéré —— */
+  .toc-nav ul { list-style:none; padding-left:0; margin:0; }
+  .toc-nav > ul { display:flex; flex-direction:column; gap:0.8rem; }
+  .toc-nav > ul > li { margin:0; padding:0 0 0.8rem 0; border-bottom:1px solid #f1f5f9; }
+  .toc-nav > ul > li:last-child { border-bottom:none; padding-bottom:0; }
+  .toc-nav a { display:block; padding: 0.55rem 0.75rem; border-radius: 0.7rem; color:#0f172a; text-decoration:none !important; font-size: 0.88rem; line-height:1.45; border: 1px solid transparent; font-weight:650; letter-spacing:-0.01em; }
+  .toc-nav a:hover { background:#f8fafc; border-color:#e2e8f0; color:#0f172a; transform: translateX(1px); }
+  .toc-nav ul ul { margin-top:0.6rem; margin-left:0.35rem; padding-left:0.95rem; border-left:2px solid #e2e8f0; display:flex; flex-direction:column; gap:0.28rem; }
+  .toc-nav ul ul a { font-weight:550; font-size:0.84rem; color:#334155; padding:0.4rem 0.65rem; background:#f8fafc; border-color:#eef2ff; }
+  .toc-nav ul ul a:hover { background:white; border-color:#e2e8f0; color:#1e293b; }
+  .toc-nav ul ul ul { border-left-color:#cbd5e1; border-left-style:dashed; margin-left:0.4rem; padding-left:1rem; gap:0.2rem; }
+  .toc-nav ul ul ul a { font-weight:450; font-size:0.80rem; color:#475569; background:transparent; border-color:transparent; padding:0.3rem 0.6rem 0.3rem 1.15rem; position:relative; }
+  .toc-nav ul ul ul a::before { content:""; position:absolute; left:0; top:50%; width:0.65rem; height:1px; background:#cbd5e1; }
+  .toc-nav ul ul ul a:hover { color:#334155; background:#f8fafc; }
+  .toc-nav ul ul ul a:hover::before { background:#6366f1; }
+  .toc-nav ul ul ul ul a { font-size:0.78rem; opacity:0.95; }
+  .prose table { border-collapse: separate; border-spacing:0; width:100%; font-size: 0.85rem; margin: 1.9rem 0; display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .prose table th:nth-child(1), .prose table td:nth-child(1) { min-width: 96px; }
+  .prose table th:nth-child(2), .prose table td:nth-child(2) { min-width: 185px; }
+  .prose table th:nth-child(3), .prose table td:nth-child(3) { min-width: 135px; }
+  .prose table th:nth-child(4), .prose table td:nth-child(4) { min-width: 66px; white-space: nowrap; }
+  .prose table th:nth-child(5), .prose table td:nth-child(5) { min-width: 215px; }
+  .prose table th:nth-child(6), .prose table td:nth-child(6) { min-width: 98px; white-space: nowrap; }
+  .prose table th:nth-child(7), .prose table td:nth-child(7) { min-width: 72px; white-space: nowrap; }
+  .prose table td:nth-child(5) code { font-size: 0.78em; white-space: nowrap !important; }
+  /* table à 7 colonnes (exigences) : force un minimum pour éviter l'écrasement */
+  .prose table:has(th:nth-child(7)) { min-width: 860px; }
+  .prose table td:nth-child(6) code, .prose table td:nth-child(7) code { font-size: 0.80em; }
+  .prose table::-webkit-scrollbar { height: 7px; }
+  .prose table::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
+  .prose table::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 999px; }
+  .prose thead, .prose tbody { display: table; width: 100%; table-layout: auto; }
+  .prose thead th { background:#0f172a; color:white; font-weight:700; text-align:left; padding: 0.8rem 0.85rem; white-space: nowrap; font-size: 0.82rem; letter-spacing: 0.02em; text-transform: uppercase; }
+  .prose thead th:first-child { border-top-left-radius: 0.75rem; }
+  .prose thead th:last-child { border-top-right-radius: 0.75rem; }
+  .prose tbody td { padding: 0.75rem 0.85rem; border-bottom:1px solid #e2e8f0; vertical-align: top; line-height: 1.55; }
+  .prose tbody tr:nth-child(even) td { background:#f8fafc; }
+  .prose tbody tr:hover td { background:#f1f5f9; }
+  .prose tbody tr:last-child td:first-child { border-bottom-left-radius: 0.75rem; }
+  .prose tbody tr:last-child td:last-child { border-bottom-right-radius: 0.75rem; }
+  .prose figure { margin: 2.6rem 0; }
+  .prose figcaption { text-align:center; font-size:0.82rem; color:#64748b; margin-top:0.6rem; }
+  .prose blockquote { border-left: 4px solid #6366f1; background:#f8fafc; padding: 0.9rem 1rem; border-radius: 0 0.75rem 0.75rem 0; color:#334155; font-style: normal; }
+  .prose hr { border:0; height:1px; background: linear-gradient(to right, transparent, #e2e8f0, transparent); margin: 3.6rem 0; }
+  @media print {
+    .no-print { display:none !important; }
+    body { background:white !important; }
+    .shadow, .shadow-xl, .shadow-lg { box-shadow:none !important; }
+  }
+</style>
+</head>
+<body class="bg-[#f8fafc] text-slate-900 antialiased selection:bg-violet-200">
+  <header class="sticky top-0 z-40 backdrop-blur-xl bg-white/75 border-b border-slate-200/70">
+    <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 h-[56px] flex items-center justify-between gap-4">
+      <a href="#" class="flex items-center gap-3 min-w-0">
+        <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-white font-black tracking-tighter">MS</span>
+        <span class="hidden sm:block font-display font-extrabold tracking-tight text-slate-900">MiniShop</span>
+        <span class="hidden md:inline-flex items-center rounded-full bg-violet-50 border border-violet-200 px-2.5 py-1 text-xs font-semibold text-violet-700">SAE — IUT Côte d'Azur</span>
+      </a>
+      <div class="flex items-center gap-2 text-xs">
+        <span class="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 font-semibold text-emerald-700">
+          <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span> 29/29 SQL
+        </span>
+        <span class="inline-flex items-center rounded-full bg-white border border-slate-200 px-3 py-1 font-medium text-slate-600">HTML autonome</span>
+        <button onclick="window.print()" class="no-print hidden sm:inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-3 py-1.5 font-semibold text-white hover:bg-black transition">⎙ Imprimer</button>
+      </div>
+    </div>
+  </header>
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+    <div class="relative overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white shadow-[0_20px_60px_-24px_rgba(15,23,42,.25)]">
+      <div class="absolute inset-0 bg-gradient-to-br from-amber-600 to-orange-600 opacity-[0.08]"></div>
+      <div class="absolute -right-24 -top-24 h-[380px] w-[520px] rounded-full bg-gradient-to-br from-amber-600 to-orange-600 opacity-[0.12] blur-3xl"></div>
+      <div class="relative p-7 sm:p-8 lg:p-10">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="inline-flex items-center rounded-full bg-slate-900 px-3 py-1 text-xs font-bold tracking-widest text-white uppercase">Soutenance — 15 min</span>
+          <span class="inline-flex items-center rounded-full bg-white border border-slate-200 px-3 py-1 text-xs font-medium text-slate-600">généré autonome · Tailwind CDN</span>
+          <span class="inline-flex items-center rounded-full bg-violet-600 px-3 py-1 text-xs font-bold text-white">v1.0</span>
+        </div>
+        <h1 class="mt-4 font-display text-[1.9rem] sm:text-[2.35rem] lg:text-[2.7rem] font-[800] tracking-tight leading-[0.95] text-slate-900">
+          Support et déroulé de la soutenance — MiniShop (15 minutes)
+        </h1>
+        <p class="mt-3 max-w-3xl text-[0.98rem] leading-6 text-slate-600">Déroulé minute par minute, démo et réponses aux questions</p>
+        <div class="mt-5 flex flex-wrap gap-2 text-xs">
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-3 py-1.5 font-semibold text-white">◆ Cahier des charges</span>
+          <span class="inline-flex items-center rounded-full bg-white border border-slate-200 px-3 py-1.5 font-medium text-slate-700">8 étapes · 9 rubriques · 11 contraintes</span>
+          <span class="inline-flex items-center rounded-full bg-white border border-slate-200 px-3 py-1.5 font-medium text-slate-700">14 cas · 3 détaillés</span>
+          <span class="inline-flex items-center rounded-full bg-white border border-slate-200 px-3 py-1.5 font-medium text-slate-700">MCD 3FN · 8 tables · 17 proc · 16 trig</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 mt-6 pb-10">
+    <div class="grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)] gap-6 items-start">
+      <aside class="lg:sticky lg:top-[72px] space-y-4 no-print">
+        <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+          <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+            <h2 class="text-sm font-bold tracking-wide text-slate-900 uppercase">Sommaire</h2>
+            <span class="text-xs font-medium text-slate-500">clique → ancre</span>
+          </div>
+          <div class="p-3 max-h-[66vh] overflow-auto overscroll-contain">
+            <nav id="TOC" class="toc-nav" role="doc-toc">
+<ul>
+<li><a href="#support-et-déroulé-de-la-soutenance-minishop-15-minutes"
+id="toc-support-et-déroulé-de-la-soutenance-minishop-15-minutes">Support
+et déroulé de la soutenance — MiniShop (15 minutes)</a>
+<ul>
+<li><a href="#matériel-à-préparer" id="toc-matériel-à-préparer">1.
+Matériel à préparer</a></li>
+<li><a href="#déroulé-minute-par-minute"
+id="toc-déroulé-minute-par-minute">2. Déroulé minute par minute</a></li>
+<li><a
+href="#questions-anticipées-et-réponses-courtes-à-connaître-par-cœur"
+id="toc-questions-anticipées-et-réponses-courtes-à-connaître-par-cœur">3.
+Questions anticipées et réponses courtes (à connaître par cœur)</a>
+<ul>
+<li><a
+href="#les-trois-décisions-hors-sujet-à-défendre-en-30-secondes-chacune"
+id="toc-les-trois-décisions-hors-sujet-à-défendre-en-30-secondes-chacune">3.1
+Les trois décisions « hors sujet » à défendre en 30 secondes
+chacune</a></li>
+</ul></li>
+<li><a
+href="#check-list-de-la-dernière-demi-heure-avant-lentrée-en-salle"
+id="toc-check-list-de-la-dernière-demi-heure-avant-lentrée-en-salle">4.
+Check-list de la dernière demi-heure avant l’entrée en salle</a></li>
+</ul></li>
+</ul>
+</nav>
+          </div>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-900 to-slate-800 text-white p-4 shadow-lg">
+          <div class="text-sm font-bold">MiniShop • repères</div>
+          <ul class="mt-2 space-y-1.5 text-sm leading-5 text-slate-200">
+            <li>• <b class="text-white">29/29</b> tests SQL</li>
+            <li>• <b class="text-white">200 produits / 1 000 cmd/an</b></li>
+            <li>• <b class="text-white">14</b> diagrammes PlantUML</li>
+            <li>• <code class="bg-white/10 px-1.5 py-0.5 rounded text-xs">bash scripts/load_db.sh</code></li>
+          </ul>
+          <a href="#top" class="mt-3 inline-flex w-full justify-center rounded-xl bg-white px-3 py-2 text-sm font-bold text-slate-900 hover:bg-slate-100 transition">↑ Retour en haut</a>
+        </div>
+        <div class="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm leading-5 text-amber-900">
+          <div class="font-bold">Note UTF-8</div>
+          <p class="mt-1">HTML en <b>UTF-8</b> intégral : é è à ç ô — « » ◆ ● → ≤ ≥ — sans ??? ni Ã©. Images en data URI.</p>
+        </div>
+      </aside>
+      <main id="top" class="min-w-0">
+        <article class="prose prose-slate max-w-none bg-white rounded-2xl border border-slate-200 shadow-[0_16px_50px_-20px_rgba(15,23,42,.18)] p-5 sm:p-7 lg:p-9">
+          <style>
+            .prose { font-family: Inter, system-ui, -apple-system, sans-serif; font-size: 0.96rem; line-height: 1.80; color:#0f172a; }
+            .prose h1 { font-family: 'Plus Jakarta Sans', Inter, sans-serif; font-weight:800; letter-spacing:-0.02em; font-size: clamp(1.6rem, 2.3vw, 2rem); margin-top: 3.8rem; margin-bottom:1rem; padding-bottom:0.7rem; border-bottom:1px solid #f1f5f9; line-height:1.15; }
+            .prose h1:first-child { margin-top: 0.8rem; }
+            .prose h2 { font-family: 'Plus Jakarta Sans', Inter, sans-serif; font-weight:800; letter-spacing:-0.015em; font-size: clamp(1.28rem, 1.8vw, 1.5rem); margin-top: 4.2rem; margin-bottom:1.3rem; padding:0.9rem 1rem 0.9rem 1.05rem; background:#f8fafc; border-left:4px solid #6366f1; border-radius:0 0.75rem 0.75rem 0; box-shadow:0 1px 2px -1px rgba(15,23,42,.06); line-height:1.3; }
+            .prose h2:first-of-type { margin-top: 1.4rem; }
+            .prose h3 { font-weight:700; font-size:1.08rem; margin-top:3.2rem; margin-bottom:0.95rem; padding-left:0.75rem; border-left:2.5px solid #cbd5e1; color:#0f172a; line-height:1.35; }
+            .prose h4 { font-weight:700; font-size:1rem; margin-top:2.8rem; margin-bottom:0.6rem; color:#334155; }
+            .prose p { margin: 1.3rem 0; line-height:1.80; }
+            .prose ul, .prose ol { margin: 1.25rem 0; }
+            .prose li + li { margin-top:0.45rem; }
+            .prose li { line-height:1.65; }
+            .prose hr { margin: 3.6rem 0 !important; }
+            .prose img { border-radius: 0.95rem; border: 1px solid #e2e8f0; box-shadow: 0 10px 28px -16px rgba(15,23,42,.35); background:white; display:block; margin-left:auto; margin-right:auto; }
+            .prose figure img { margin-bottom:0; }
+            .prose kbd { font-family: 'JetBrains Mono', monospace; background:#0f172a; color:white; padding:0.15rem 0.4rem; border-radius:0.4rem; font-size:0.78rem; border:1px solid #1e293b; }
+          </style>
+          
+<header id="title-block-header">
+<h1 class="title">Support et déroulé de la soutenance — MiniShop (15
+minutes)</h1>
+</header>
+
+<h1 id="support-et-déroulé-de-la-soutenance-minishop-15-minutes">Support
+et déroulé de la soutenance — MiniShop (15 minutes)</h1>
+<p>Document n° 4 du rendu (barème iv : soutenance + questions, 10
+points). Le plan ci-dessous est <strong>chronométré</strong> et répartit
+la parole entre les 3 personnes ; chaque minute est reliée à une section
+du cahier des charges, de sorte qu’aucune affirmation ne soit hors
+document.</p>
+<h2 id="matériel-à-préparer">1. Matériel à préparer</h2>
+<ul>
+<li>support <code>docs/03-support-soutenance.md</code> exporté en PDF
+(12 diapositives, une par minute) ;</li>
+<li>poste prêt : <code>php -S 127.0.0.1:8000 -t public</code> lancé,
+base <strong>rejouée à froid</strong>
+(<code>./scripts/load_db.sh</code>), deux navigateurs ouverts
+(front-office en navigation privée côté client, back-office à côté)
+;</li>
+<li>terminal ouvert sur <code>mysql minishop</code> avec les 4 requêtes
+de preuve §12.3.5 déjà collées ;</li>
+<li>capture figée de la sortie de
+<code>./scripts/run_sql_tests.sh</code> (28/28) en secours si le
+réseau/la machine flanche ;</li>
+<li>liens GitLab prêts (dépôt, MR, <code>git shortlog -sne</code>,
+README) ;</li>
+<li><strong>filet de sécurité</strong> : 3 minutes de démo enregistrées
+(vidéo locale) au cas où rien ne se lance.</li>
+</ul>
+<h2 id="déroulé-minute-par-minute">2. Déroulé minute par minute</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 18%" />
+<col style="width: 18%" />
+<col style="width: 18%" />
+<col style="width: 18%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">min</th>
+<th>Qui</th>
+<th>Contenu</th>
+<th>Preuve affichée</th>
+<th>Réf. CDC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0-1</td>
+<td>A</td>
+<td>Contexte de l’entreprise, problème du tableur partagé, ce que
+MiniShop doit changer ; acteurs</td>
+<td>1 slide (état actuel + 3 acteurs)</td>
+<td>§1.1, §3</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1-2</td>
+<td>A</td>
+<td>Périmètre strict (in/out), objectifs mesurables, règle
+anti-dérive</td>
+<td>table §13.1 / §2.3</td>
+<td>§2, §11.2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2-4</td>
+<td>B</td>
+<td><strong>Modélisation</strong> : MCD (7 entités), 3 cardinalités
+défendues, MLD, normalisation (3FN, 2 dénormalisations protégées)</td>
+<td><code>mcd_minishop.png</code>, tableau §12.1.3</td>
+<td>§12.1-§12.3</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4-6</td>
+<td>B</td>
+<td><strong>SQL</strong> : script rejoué en direct
+(<code>load_db.sh</code> : 8 tables, 3 vues, 1 fonction + 17 procédures,
+16 triggers) + les 4 requêtes de preuve qui renvoient 0 ligne</td>
+<td>terminal</td>
+<td>§12.4, §12.3.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">6-8</td>
+<td>B</td>
+<td><strong>Procédures stockées</strong> :
+<code>sp_add_order_line</code> ligne à ligne (verrou, snapshot,
+décrément, montant) ; réponse à la question pédagogique (centralisation,
+sécurité, transactions, réutilisabilité, contrôle d’accès)</td>
+<td>code + §12.5.1</td>
+<td>§12.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8-9</td>
+<td>B</td>
+<td><strong>Triggers</strong> : les 2 imposés (stock, historique) + les
+4 de protection ; montrer qu’un <code>UPDATE</code> manuel est
+refusé</td>
+<td>terminal : <code>UPDATE produit SET stock = -5</code> →
+<code>RB03_STOCK_NE_PEUT_PAS_ETRE_NEGATIF</code></td>
+<td>§12.6, T-03</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9-10</td>
+<td>C</td>
+<td><strong>Tests</strong> : <code>run_sql_tests.sh</code> rejoué →
+28/28, en insistant sur les 15 tests qui contournent l’application + le
+registre d’anomalies (A-01 à A-08, dont A-08 trouvée <strong>en
+mesurant</strong> la volumétrie réelle)</td>
+<td>terminal + §7 du doc de tests</td>
+<td>§15, doc tests</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10-12</td>
+<td>C</td>
+<td><strong>Démo front</strong> : recherche (filtres dans l’URL), fiche
+produit, panier avec plafond de stock, commande validée → numéro, stock
+qui baisse</td>
+<td>navigateur</td>
+<td>§4.2-§4.4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">12-13</td>
+<td>C</td>
+<td><strong>Sécurité en direct</strong> : (1) payload SQLi sans effet,
+(2) nom de produit <code>&lt;script&gt;</code> affiché en texte, (3)
+<code>?id=</code> d’un autre client → 404, (4) prix falsifié ignoré
+(snapshot)</td>
+<td>navigateur + requêtes</td>
+<td>§8</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">13-14</td>
+<td>A</td>
+<td><strong>Back-office</strong> : création d’un produit (TTC calculé en
+base), ajustement de stock refusé en négatif, changement de statut +
+historique, et <strong>une transition interdite refusée</strong></td>
+<td>navigateur</td>
+<td>§4.5, F-22/F-26/F-29</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">14-15</td>
+<td>A</td>
+<td>Organisation : MVC en 3 couches (1 slide), GitLab (3 auteurs, MR par
+lot, CI qui casse sur une concaténation SQL), livrables et difficultés,
+ce qui est volontairement hors périmètre</td>
+<td><code>git shortlog</code>, <code>.gitlab-ci.yml</code></td>
+<td>§9, §14, §11.2</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Contraintes de tenue du temps</strong> : pas de lecture de
+slide, chaque personne/terms tenus en ≤ 2 min sans dépassement, et la
+démonstration SQL se fait dans un terminal pré-rempli (pas de saisie
+longue). Deux répétitions chronométrées sont planifiées (S11, S12) — les
+dérives typiques sont la modélisation qui mange la démo, et la démo qui
+mange les questions.</p>
+<h2
+id="questions-anticipées-et-réponses-courtes-à-connaître-par-cœur">3.
+Questions anticipées et réponses courtes (à connaître par cœur)</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Question probable</th>
+<th>Réponse (10 à 30 s)</th>
+<th>Réf.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Pourquoi une procédure stockée plutôt que du PHP pour la commande
+?</td>
+<td>Atomicité et verrous côté serveur, logique unique pour 4 appelants,
+privilèges réduits sur les tables, 1 aller-retour au lieu de 2N+2 ; le
+coût est la portabilité et le debuggage — nous l’assumons pour les
+écritures seulement</td>
+<td>§12.5.1</td>
+</tr>
+<tr class="even">
+<td>Pourquoi garder <code>prix_ttc</code> et <code>montant_total</code>
+si c’est calculable ?</td>
+<td>Deux dénormalisations <strong>tracées et verrouillées</strong> par
+trigger : elles portent la valeur contractuelle du moment de l’achat
+(facturation) et évitent une agrégation à chaque affichage ; sans le
+trigger, la redondance serait une anomalie</td>
+<td>§12.3.2, §12.3.4</td>
+</tr>
+<tr class="odd">
+<td>Pourquoi <code>total_ligne</code> et pas
+<code>prix × quantité</code> à la demande ?</td>
+<td>Pour la même raison : le prix payé ne doit plus jamais bouger ; le
+trigger le recalcule à l’insertion et l’immutabilité l’interdit
+après</td>
+<td>RB-06, RB-09, T-11</td>
+</tr>
+<tr class="even">
+<td>Pourquoi deux tables CLIENT et ADMINISTRATEUR et pas une table
+UTILISATEUR avec un rôle ?</td>
+<td>Données et cycle de vie disjoints, aucune écriture possible sur la
+table admin depuis le front (SEC-10), contrôle d’accès plus simple à
+prouver ; le surcoût est nul à notre échelle</td>
+<td>V4 du §12.8</td>
+</tr>
+<tr class="odd">
+<td>Pourquoi le <code>BROUILLON</code> existe-t-il, on ne peut pas créer
+la commande directement en <code>EN_PREPARATION</code> ?</td>
+<td>Sinon <code>RB-04</code> (au moins une ligne) est violée à la
+création ; le brouillon est l’état « panier convertible », jamais exposé
+à l’admin (<code>COMMANDE_NON_TRAITABLE</code>)</td>
+<td>V3 du §12.8, T-16</td>
+</tr>
+<tr class="even">
+<td>Comment est garantie l’absence de survente ?</td>
+<td>Verrou <code>SELECT … FOR UPDATE</code> sur la ligne de stock +
+contrôle dans la procédure <strong>et</strong> dans le trigger
+<code>BEFORE INSERT</code> ; le test de charge : 20 demandes sur 12
+exemplaires → 12 commandes, 8 refus, stock 0</td>
+<td>§2.3, C-01</td>
+</tr>
+<tr class="odd">
+<td>Que se passe-t-il si un développeur oublie le contrôle
+d’appartenance dans un contrôleur ?</td>
+<td>La procédure refuse (<code>ACCES_NON_AUTORISE</code>) : le test
+<code>T-18</code> appelle <code>sp_confirm_order</code> avec le mauvais
+client et vérifie le rejet — c’est notre preuve de défense en
+profondeur</td>
+<td>SEC-08, T-18</td>
+</tr>
+<tr class="even">
+<td>Pourquoi un trigger et pas la procédure pour écrire l’historique
+?</td>
+<td>Sinon un <code>UPDATE</code> manuel (import, reprise, correction) ne
+serait pas tracé ; et le test <code>T-22</code> vérifie aussi
+l’<strong>absence de doublon</strong>, ce qui prouve que la procédure
+n’écrit pas</td>
+<td>A-02, T-22</td>
+</tr>
+<tr class="odd">
+<td>Comment prouvez-vous que vous n’avez pas d’injection SQL ?</td>
+<td>3 verrous : requêtes préparées réelles
+(<code>EMULATE_PREPARES=false</code>), tout SQL dynamique déplacé dans
+la procédure, contrôle <code>grep</code> bloquant en CI ; plus le test
+d’attaque S-01 avec 12 payloads</td>
+<td>§8.1, §15.3</td>
+</tr>
+<tr class="even">
+<td>Et si on passe par phpMyAdmin pour modifier le stock à -5 ?</td>
+<td>Refusé par le CHECK et par le trigger (<code>RB03_…</code>) : c’est
+le test <code>T-02</code>/<code>T-03</code>, exactement le scénario
+demandé</td>
+<td>§6.2</td>
+</tr>
+<tr class="odd">
+<td>Pourquoi le mot de passe est-il vérifié en PHP et pas en base ?</td>
+<td>Seul <code>password_verify()</code> sait comparer bcrypt en temps
+constant ; la base ne renvoie donc que le hash via
+<code>sp_get_credentials</code>, la comparaison reste dans
+l’application</td>
+<td>§8.4, séquence 1</td>
+</tr>
+<tr class="even">
+<td>Quelle règle vous a posé le plus de difficulté, et pourquoi ?</td>
+<td><code>RB-06</code> + immuabilité : nous avons d’abord laissé le
+trigger de snapshot « réparer » silencieusement les UPDATE au lieu de
+les refuser ; l’ordre de création des triggers est déterministe dans
+MySQL, nous l’avons corrigé et figé par le test <code>T-11</code></td>
+<td>A-01</td>
+</tr>
+<tr class="odd">
+<td>Que feriez-vous en poursuite (hors périmètre) ?</td>
+<td>Panier persistant (variante V1 prête), paiement réel avec journal de
+transactions, politique de prix par remise (une table
+<code>REMISE</code> + snapshot), export comptable, et tests Playwright
+bout en bout</td>
+<td>§12.8, §11.2</td>
+</tr>
+<tr class="even">
+<td>Où est la contribution de chacun dans GitLab ?</td>
+<td>3 auteurs, une MR par lot du §13.3, commits par zone
+(front/back/base pour chacun) ; la CI échoue sur une concaténation SQL
+ou un test de base non conforme</td>
+<td>§14</td>
+</tr>
+</tbody>
+</table>
+<h3
+id="les-trois-décisions-hors-sujet-à-défendre-en-30-secondes-chacune">3.1
+Les trois décisions « hors sujet » à défendre en 30 secondes
+chacune</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Décision</th>
+<th>Phrase à dire</th>
+<th>Si le jury insiste</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Les frais de port sont dans le périmètre</strong></td>
+<td>« Ce n’est pas une fonctionnalité de confort : l’article
+<strong>L221-5 4° du code de la consommation</strong> et l’article
+<strong>5 §1 e) de la directive 2011/83/UE</strong> imposent d’afficher
+le prix total <strong>y compris les frais de livraison avant la
+validation</strong> du panier. Sans cela le professionnel ne peut tout
+simplement pas les réclamer. »</td>
+<td>Montrer <code>RB-20</code>, <code>sp_compute_shipping</code>,
+<code>T-28</code> (port calculé avant validation, <strong>figé</strong>
+à la validation, <strong>non saisissable</strong>) et la table
+<code>parametre</code> : la règle 4,90 EUR / franchise 80 EUR se change
+sans toucher au code. Préciser ce qui reste <strong>exclu</strong> :
+transporteur, tarif par pays, suivi de colis.</td>
+</tr>
+<tr class="even">
+<td><strong>Ventes interdites à stock nul</strong></td>
+<td>« <code>RB-04</code>/<code>RB-18</code> : on ne vend pas ce qu’on
+n’a pas. Le stock est réservé ligne par ligne sous verrou
+<code>FOR UPDATE</code>, et un <code>CHECK (stock &gt;= 0)</code> + un
+trigger bloquent même une écriture SQL directe. »</td>
+<td>Exécution en direct : <code>UPDATE produit SET stock = -1</code> →
+<code>RB03_STOCK_NE_PEUT_PAS_ETRE_NEGATIF</code>
+(<code>T-02</code>).</td>
+</tr>
+<tr class="odd">
+<td><strong>Deux rôles d’administrateur, pas de MFA</strong></td>
+<td>« L’énoncé dit simplement &lt;&lt; rôle administrateur &gt;&gt;. On
+a appliqué le moindre privilège — <strong>OWASP ASVS V4.1.3</strong> et
+le guide <strong>ANSSI</strong> R27/R29 — en séparant <code>SUPER</code>
+(comptes d’équipe) de <code>GESTIONNAIRE</code> (catalogue et
+commandes). La MFA, exigée par ASVS V4.3.1, est <strong>explicitement
+hors périmètre et écrite comme un écart</strong> au §8.10 du cahier des
+charges, avec ce qu’il faudrait pour la livrer. »</td>
+<td>Montrer <code>EF-ADM-10</code> (garde <code>SUPER</code>),
+<code>F-32</code> (un <code>GESTIONNAIRE</code> reçoit 403 sur la
+gestion d’équipe) et le §8.10 (tableau des écarts).</td>
+</tr>
+<tr class="even">
+<td><strong>Volumétrie chiffrée, pas supposée</strong></td>
+<td>« Le client visé fait <strong>200 produits et 1 000 commandes par
+an</strong> : on a donc généré ce volume avec
+<code>scripts/gen_volumes.sh</code> — <strong>par appels aux
+procédures</strong>, pas par des <code>INSERT</code> bruts — pour que
+<code>ENF-01</code> (&lt; 500 ms p95) soit mesuré sur des données
+réalistes et cohérentes avec les règles. »</td>
+<td>Montrer le bilan du générateur : <code>ttc_incoherents = 0</code>,
+<code>montants_incoherents = 0</code> sur le jeu généré : les règles
+tiennent aussi à 1 000 commandes.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="check-list-de-la-dernière-demi-heure-avant-lentrée-en-salle">4.
+Check-list de la dernière demi-heure avant l’entrée en salle</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" /><code>./scripts/load_db.sh</code>
+rejoué à froid, compteurs corrects (8 tables, 3 vues, 1 fonction, 17
+procédures, 16 triggers, 12 produits, 4 commandes de démo)</label></li>
+<li><label><input
+type="checkbox" /><code>./scripts/run_sql_tests.sh</code> → <strong>27 /
+27</strong></label></li>
+<li><label><input type="checkbox" />1 page de chaque zone ouverte et
+fonctionnelle (catalogue, fiche, panier, commande, admin produits, admin
+commandes)</label></li>
+<li><label><input type="checkbox" />les 4 requêtes de preuve §12.3.5
+collées dans le terminal, prêtes à être exécutées</label></li>
+<li><label><input type="checkbox" />les 3 requêtes « attaques » prêtes :
+<code>UPDATE produit SET stock = -5 …</code>,
+<code>CALL sp_confirm_order(...)</code>,
+<code>SELECT COUNT(*) FROM client</code></label></li>
+<li><label><input type="checkbox" /><code>git shortlog -sne main</code>
+exécuté et visible (3 auteurs)</label></li>
+<li><label><input type="checkbox" />diaporama exporté en PDF, projeté
+sans connexion</label></li>
+<li><label><input type="checkbox" />chrono réglé sur 15 min, une
+personne désignée « gardien du temps »</label></li>
+</ul>
+
+        </article>
+        <footer class="mt-6 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
+          <span>MiniShop — SAE IUT Côte d'Azur · <code class="bg-white border border-slate-200 px-1.5 py-0.5 rounded">bash scripts/export_html.sh</code></span>
+          <span class="inline-flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-emerald-500"></span> imprimable</span>
+        </footer>
+      </main>
+    </div>
+  </div>
+<script>
+document.querySelectorAll('pre').forEach(pre => {
+  const btn=document.createElement('button'); btn.textContent='⧉ Copier'; btn.className='no-print absolute right-3 top-3 rounded-full bg-white/10 border border-white/15 backdrop-blur px-2.5 py-1 text-xs font-semibold text-white hover:bg-white hover:text-slate-900 transition'; pre.style.position='relative'; pre.appendChild(btn);
+  btn.addEventListener('click', async () => { try{ await navigator.clipboard.writeText(pre.innerText.replace('⧉ Copier','').trim()); btn.textContent='✓ Copié'; setTimeout(()=>btn.textContent='⧉ Copier',1400); } catch(e){ btn.textContent='Échec'; } });
+});
+// wrap tables pour scroll horizontal avec indicateur
+document.querySelectorAll('.prose table').forEach(tbl => {
+  if (tbl.parentElement.classList.contains('table-wrap')) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'table-wrap not-prose my-6 overflow-x-auto rounded-xl border border-slate-200 shadow-sm bg-white';
+  wrap.style.webkitOverflowScrolling = 'touch';
+  tbl.parentNode.insertBefore(wrap, tbl);
+  wrap.appendChild(tbl);
+  // reset table margin when wrapped
+  tbl.style.margin = '0';
+  tbl.style.border = 'none';
+  // ombre de scroll
+  const hint = document.createElement('div');
+  hint.className = 'text-[11px] text-slate-400 text-right px-3 py-1.5 bg-slate-50 border-t border-slate-100 hidden sm:block';
+  hint.textContent = '↔ faites défiler horizontalement pour voir tout le tableau';
+  wrap.appendChild(hint);
+  const upd = () => { hint.style.display = (wrap.scrollWidth > wrap.clientWidth) ? 'block' : 'none'; };
+  upd(); wrap.addEventListener('scroll', upd); window.addEventListener('resize', upd);
+});
+document.querySelectorAll('.prose img').forEach(img => {
+  img.style.cursor='zoom-in';
+  img.addEventListener('click', () => {
+    const ov=document.createElement('div'); ov.className='fixed inset-0 z-[100] bg-slate-950/85 backdrop-blur-sm p-4 sm:p-8 flex items-center justify-center';
+    ov.innerHTML='<img src="'+img.src+'" class="max-h-[92vh] max-w-[96vw] rounded-2xl shadow-2xl border border-white/20 bg-white" style="object-fit:contain"><button class="absolute top-4 right-4 rounded-full bg-white px-3 py-1.5 text-sm font-bold shadow">✕ Fermer</button>';
+    ov.addEventListener('click', (e) => { if(e.target===ov || e.target.tagName==='BUTTON') ov.remove(); });
+    document.body.appendChild(ov);
+  });
+});
+</script>
+</body>
+</html>

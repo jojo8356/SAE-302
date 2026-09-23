@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Document de tests et de validation — MiniShop — MiniShop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter','ui-sans-serif','system-ui','-apple-system','Segoe UI','Roboto','Helvetica','Arial'],
+        mono: ['JetBrains Mono','ui-monospace','SFMono-Regular','Menlo','monospace'],
+        display: ['Plus Jakarta Sans','Inter','sans-serif'],
+      }
+    }
+  }
+}
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  ::selection { background: #6366f11a; }
+  .prose :where(a):not(:where([class~="not-prose"] *)) { color:#4f46e5; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.2px; }
+  .prose :where(a):hover { color:#4338ca; }
+  .prose code:not(pre code) { font-family: 'JetBrains Mono', monospace; font-size: 0.84em; background: #f1f5f9; border: 1px solid #e2e8f0; padding: 0.16rem 0.4rem; border-radius: 0.4rem; color:#0f172a; white-space: nowrap; word-break: keep-all; overflow-wrap: normal; }
+  /* dans les cellules, on garde le code sur une ligne et on laisse le tableau scroller */
+  .prose td code, .prose th code { white-space: nowrap !important; word-break: keep-all !important; display: inline-block; max-width: none; }
+  .prose td { overflow-wrap: normal; word-break: normal; }
+  /* première colonne ID : ne jamais couper RB-06 */
+  .prose td:first-child code, .prose th:first-child code { white-space: nowrap !important; font-weight: 800; letter-spacing: -0.01em; }
+  .prose td:first-child { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .prose pre { background:#0f172a; color:#e2e8f0; border-radius: 0.95rem; padding: 1.25rem 1.35rem; overflow-x:auto; border:1px solid #1e293b; box-shadow: 0 10px 30px -12px rgba(15,23,42,.45); margin: 1.8rem 0; }
+  .prose pre code { background: transparent; border:0; padding:0; color:inherit; font-size: 0.84rem; line-height: 1.65; }
+  /* —— Sommaire : arbre hiérarchique aéré —— */
+  .toc-nav ul { list-style:none; padding-left:0; margin:0; }
+  .toc-nav > ul { display:flex; flex-direction:column; gap:0.8rem; }
+  .toc-nav > ul > li { margin:0; padding:0 0 0.8rem 0; border-bottom:1px solid #f1f5f9; }
+  .toc-nav > ul > li:last-child { border-bottom:none; padding-bottom:0; }
+  .toc-nav a { display:block; padding: 0.55rem 0.75rem; border-radius: 0.7rem; color:#0f172a; text-decoration:none !important; font-size: 0.88rem; line-height:1.45; border: 1px solid transparent; font-weight:650; letter-spacing:-0.01em; }
+  .toc-nav a:hover { background:#f8fafc; border-color:#e2e8f0; color:#0f172a; transform: translateX(1px); }
+  .toc-nav ul ul { margin-top:0.6rem; margin-left:0.35rem; padding-left:0.95rem; border-left:2px solid #e2e8f0; display:flex; flex-direction:column; gap:0.28rem; }
+  .toc-nav ul ul a { font-weight:550; font-size:0.84rem; color:#334155; padding:0.4rem 0.65rem; background:#f8fafc; border-color:#eef2ff; }
+  .toc-nav ul ul a:hover { background:white; border-color:#e2e8f0; color:#1e293b; }
+  .toc-nav ul ul ul { border-left-color:#cbd5e1; border-left-style:dashed; margin-left:0.4rem; padding-left:1rem; gap:0.2rem; }
+  .toc-nav ul ul ul a { font-weight:450; font-size:0.80rem; color:#475569; background:transparent; border-color:transparent; padding:0.3rem 0.6rem 0.3rem 1.15rem; position:relative; }
+  .toc-nav ul ul ul a::before { content:""; position:absolute; left:0; top:50%; width:0.65rem; height:1px; background:#cbd5e1; }
+  .toc-nav ul ul ul a:hover { color:#334155; background:#f8fafc; }
+  .toc-nav ul ul ul a:hover::before { background:#6366f1; }
+  .toc-nav ul ul ul ul a { font-size:0.78rem; opacity:0.95; }
+  .prose table { border-collapse: separate; border-spacing:0; width:100%; font-size: 0.85rem; margin: 1.9rem 0; display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .prose table th:nth-child(1), .prose table td:nth-child(1) { min-width: 96px; }
+  .prose table th:nth-child(2), .prose table td:nth-child(2) { min-width: 185px; }
+  .prose table th:nth-child(3), .prose table td:nth-child(3) { min-width: 135px; }
+  .prose table th:nth-child(4), .prose table td:nth-child(4) { min-width: 66px; white-space: nowrap; }
+  .prose table th:nth-child(5), .prose table td:nth-child(5) { min-width: 215px; }
+  .prose table th:nth-child(6), .prose table td:nth-child(6) { min-width: 98px; white-space: nowrap; }
+  .prose table th:nth-child(7), .prose table td:nth-child(7) { min-width: 72px; white-space: nowrap; }
+  .prose table td:nth-child(5) code { font-size: 0.78em; white-space: nowrap !important; }
+  /* table à 7 colonnes (exigences) : force un minimum pour éviter l'écrasement */
+  .prose table:has(th:nth-child(7)) { min-width: 860px; }
+  .prose table td:nth-child(6) code, .prose table td:nth-child(7) code { font-size: 0.80em; }
+  .prose table::-webkit-scrollbar { height: 7px; }
+  .prose table::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
+  .prose table::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 999px; }
+  .prose thead, .prose tbody { display: table; width: 100%; table-layout: auto; }
+  .prose thead th { background:#0f172a; color:white; font-weight:700; text-align:left; padding: 0.8rem 0.85rem; white-space: nowrap; font-size: 0.82rem; letter-spacing: 0.02em; text-transform: uppercase; }
+  .prose thead th:first-child { border-top-left-radius: 0.75rem; }
+  .prose thead th:last-child { border-top-right-radius: 0.75rem; }
+  .prose tbody td { padding: 0.75rem 0.85rem; border-bottom:1px solid #e2e8f0; vertical-align: top; line-height: 1.55; }
+  .prose tbody tr:nth-child(even) td { background:#f8fafc; }
+  .prose tbody tr:hover td { background:#f1f5f9; }
+  .prose tbody tr:last-child td:first-child { border-bottom-left-radius: 0.75rem; }
+  .prose tbody tr:last-child td:last-child { border-bottom-right-radius: 0.75rem; }
+  .prose figure { margin: 2.6rem 0; }
+  .prose figcaption { text-align:center; font-size:0.82rem; color:#64748b; margin-top:0.6rem; }
+  .prose blockquote { border-left: 4px solid #6366f1; background:#f8fafc; padding: 0.9rem 1rem; border-radius: 0 0.75rem 0.75rem 0; color:#334155; font-style: normal; }
+  .prose hr { border:0; height:1px; background: linear-gradient(to right, transparent, #e2e8f0, transparent); margin: 3.6rem 0; }
+  @media print {
+    .no-print { display:none !important; }
+    body { background:white !important; }
+    .shadow, .shadow-xl, .shadow-lg { box-shadow:none !important; }
+  }
+</style>
+</head>
+<body class="bg-[#f8fafc] text-slate-900 antialiased selection:bg-violet-200">
+  <header class="sticky top-0 z-40 backdrop-blur-xl bg-white/75 border-b border-slate-200/70">
+    <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 h-[56px] flex items-center justify-between gap-4">
+      <a href="#" class="flex items-center gap-3 min-w-0">
+        <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-white font-black tracking-tighter">MS</span>
+        <span class="hidden sm:block font-display font-extrabold tracking-tight text-slate-900">MiniShop</span>
+        <span class="hidden md:inline-flex items-center rounded-full bg-violet-50 border border-violet-200 px-2.5 py-1 text-xs font-semibold text-violet-700">SAE — IUT Côte d'Azur</span>
+      </a>
+      <div class="flex items-center gap-2 text-xs">
+        <span class="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 font-semibold text-emerald-700">
+          <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span> 29/29 SQL
+        </span>
+        <span class="inline-flex items-center rounded-full bg-white border border-slate-200 px-3 py-1 font-medium text-slate-600">HTML autonome</span>
+        <button onclick="window.print()" class="no-print hidden sm:inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-3 py-1.5 font-semibold text-white hover:bg-black transition">⎙ Imprimer</button>
+      </div>
+    </div>
+  </header>
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+    <div class="relative overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white shadow-[0_20px_60px_-24px_rgba(15,23,42,.25)]">
+      <div class="absolute inset-0 bg-gradient-to-br from-emerald-600 to-teal-600 opacity-[0.08]"></div>
+      <div class="absolute -right-24 -top-24 h-[380px] w-[520px] rounded-full bg-gradient-to-br from-emerald-600 to-teal-600 opacity-[0.12] blur-3xl"></div>
+      <div class="relative p-7 sm:p-8 lg:p-10">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="inline-flex items-center rounded-full bg-slate-900 px-3 py-1 text-xs font-bold tracking-widest text-white uppercase">Tests & Validation</span>
+          <span class="inline-flex items-center rounded-full bg-white border border-slate-200 px-3 py-1 text-xs font-medium text-slate-600">généré autonome · Tailwind CDN</span>
+          <span class="inline-flex items-center rounded-full bg-violet-600 px-3 py-1 text-xs font-bold text-white">v1.0</span>
+        </div>
+        <h1 class="mt-4 font-display text-[1.9rem] sm:text-[2.35rem] lg:text-[2.7rem] font-[800] tracking-tight leading-[0.95] text-slate-900">
+          Document de tests et de validation — MiniShop
+        </h1>
+        <p class="mt-3 max-w-3xl text-[0.98rem] leading-6 text-slate-600">Plan de tests, harnais SQL 29/29, recette fonctionnelle et traçabilité</p>
+        <div class="mt-5 flex flex-wrap gap-2 text-xs">
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-3 py-1.5 font-semibold text-white">◆ Cahier des charges</span>
+          <span class="inline-flex items-center rounded-full bg-white border border-slate-200 px-3 py-1.5 font-medium text-slate-700">8 étapes · 9 rubriques · 11 contraintes</span>
+          <span class="inline-flex items-center rounded-full bg-white border border-slate-200 px-3 py-1.5 font-medium text-slate-700">14 cas · 3 détaillés</span>
+          <span class="inline-flex items-center rounded-full bg-white border border-slate-200 px-3 py-1.5 font-medium text-slate-700">MCD 3FN · 8 tables · 17 proc · 16 trig</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 mt-6 pb-10">
+    <div class="grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)] gap-6 items-start">
+      <aside class="lg:sticky lg:top-[72px] space-y-4 no-print">
+        <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+          <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+            <h2 class="text-sm font-bold tracking-wide text-slate-900 uppercase">Sommaire</h2>
+            <span class="text-xs font-medium text-slate-500">clique → ancre</span>
+          </div>
+          <div class="p-3 max-h-[66vh] overflow-auto overscroll-contain">
+            <nav id="TOC" class="toc-nav" role="doc-toc">
+<ul>
+<li><a href="#document-de-tests-et-de-validation-minishop"
+id="toc-document-de-tests-et-de-validation-minishop">Document de tests
+et de validation — MiniShop</a>
+<ul>
+<li><a href="#dispositif" id="toc-dispositif">1. Dispositif</a></li>
+<li><a href="#tests-de-règles-de-gestion-base-de-données-exécutés"
+id="toc-tests-de-règles-de-gestion-base-de-données-exécutés">2. Tests de
+règles de gestion (base de données) — <strong>exécutés</strong></a></li>
+<li><a href="#tests-fonctionnels-recette-de-lapplication"
+id="toc-tests-fonctionnels-recette-de-lapplication">3. Tests
+fonctionnels (recette de l’application)</a>
+<ul>
+<li><a href="#trois-cas-détaillés-au-format-complet"
+id="toc-trois-cas-détaillés-au-format-complet">3.1 Trois cas détaillés
+au format complet</a></li>
+</ul></li>
+<li><a href="#tests-de-sécurité-offensifs"
+id="toc-tests-de-sécurité-offensifs">4. Tests de sécurité
+(offensifs)</a></li>
+<li><a href="#tests-de-performance-de-concurrence-dinstallation"
+id="toc-tests-de-performance-de-concurrence-dinstallation">5. Tests de
+performance, de concurrence, d’installation</a></li>
+<li><a href="#tests-unitaires-php-lot-l8l12"
+id="toc-tests-unitaires-php-lot-l8l12">6. Tests unitaires PHP (lot
+L8→L12)</a></li>
+<li><a
+href="#registre-des-anomalies-issues-réelles-rencontrées-lors-de-la-conception-de-la-base"
+id="toc-registre-des-anomalies-issues-réelles-rencontrées-lors-de-la-conception-de-la-base">7.
+Registre des anomalies (issues réelles rencontrées lors de la conception
+de la base)</a></li>
+<li><a href="#procès-verbal-de-recette"
+id="toc-procès-verbal-de-recette">8. Procès-verbal de recette</a></li>
+<li><a
+href="#matrice-de-traçabilité-exigence-modèle-base-application-test"
+id="toc-matrice-de-traçabilité-exigence-modèle-base-application-test">9.
+Matrice de traçabilité exigence → modèle → base → application →
+test</a></li>
+<li><a href="#conclusion-provisoire-à-valider-en-fin-de-lot-l14"
+id="toc-conclusion-provisoire-à-valider-en-fin-de-lot-l14">10.
+Conclusion provisoire (à valider en fin de lot L14)</a></li>
+</ul></li>
+</ul>
+</nav>
+          </div>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-900 to-slate-800 text-white p-4 shadow-lg">
+          <div class="text-sm font-bold">MiniShop • repères</div>
+          <ul class="mt-2 space-y-1.5 text-sm leading-5 text-slate-200">
+            <li>• <b class="text-white">29/29</b> tests SQL</li>
+            <li>• <b class="text-white">200 produits / 1 000 cmd/an</b></li>
+            <li>• <b class="text-white">14</b> diagrammes PlantUML</li>
+            <li>• <code class="bg-white/10 px-1.5 py-0.5 rounded text-xs">bash scripts/load_db.sh</code></li>
+          </ul>
+          <a href="#top" class="mt-3 inline-flex w-full justify-center rounded-xl bg-white px-3 py-2 text-sm font-bold text-slate-900 hover:bg-slate-100 transition">↑ Retour en haut</a>
+        </div>
+        <div class="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm leading-5 text-amber-900">
+          <div class="font-bold">Note UTF-8</div>
+          <p class="mt-1">HTML en <b>UTF-8</b> intégral : é è à ç ô — « » ◆ ● → ≤ ≥ — sans ??? ni Ã©. Images en data URI.</p>
+        </div>
+      </aside>
+      <main id="top" class="min-w-0">
+        <article class="prose prose-slate max-w-none bg-white rounded-2xl border border-slate-200 shadow-[0_16px_50px_-20px_rgba(15,23,42,.18)] p-5 sm:p-7 lg:p-9">
+          <style>
+            .prose { font-family: Inter, system-ui, -apple-system, sans-serif; font-size: 0.96rem; line-height: 1.80; color:#0f172a; }
+            .prose h1 { font-family: 'Plus Jakarta Sans', Inter, sans-serif; font-weight:800; letter-spacing:-0.02em; font-size: clamp(1.6rem, 2.3vw, 2rem); margin-top: 3.8rem; margin-bottom:1rem; padding-bottom:0.7rem; border-bottom:1px solid #f1f5f9; line-height:1.15; }
+            .prose h1:first-child { margin-top: 0.8rem; }
+            .prose h2 { font-family: 'Plus Jakarta Sans', Inter, sans-serif; font-weight:800; letter-spacing:-0.015em; font-size: clamp(1.28rem, 1.8vw, 1.5rem); margin-top: 4.2rem; margin-bottom:1.3rem; padding:0.9rem 1rem 0.9rem 1.05rem; background:#f8fafc; border-left:4px solid #6366f1; border-radius:0 0.75rem 0.75rem 0; box-shadow:0 1px 2px -1px rgba(15,23,42,.06); line-height:1.3; }
+            .prose h2:first-of-type { margin-top: 1.4rem; }
+            .prose h3 { font-weight:700; font-size:1.08rem; margin-top:3.2rem; margin-bottom:0.95rem; padding-left:0.75rem; border-left:2.5px solid #cbd5e1; color:#0f172a; line-height:1.35; }
+            .prose h4 { font-weight:700; font-size:1rem; margin-top:2.8rem; margin-bottom:0.6rem; color:#334155; }
+            .prose p { margin: 1.3rem 0; line-height:1.80; }
+            .prose ul, .prose ol { margin: 1.25rem 0; }
+            .prose li + li { margin-top:0.45rem; }
+            .prose li { line-height:1.65; }
+            .prose hr { margin: 3.6rem 0 !important; }
+            .prose img { border-radius: 0.95rem; border: 1px solid #e2e8f0; box-shadow: 0 10px 28px -16px rgba(15,23,42,.35); background:white; display:block; margin-left:auto; margin-right:auto; }
+            .prose figure img { margin-bottom:0; }
+            .prose kbd { font-family: 'JetBrains Mono', monospace; background:#0f172a; color:white; padding:0.15rem 0.4rem; border-radius:0.4rem; font-size:0.78rem; border:1px solid #1e293b; }
+          </style>
+          
+<header id="title-block-header">
+<h1 class="title">Document de tests et de validation — MiniShop</h1>
+</header>
+
+<h1 id="document-de-tests-et-de-validation-minishop">Document de tests
+et de validation — MiniShop</h1>
+<p>Deuxième document du rendu (barème iii : l’application
+<strong>et</strong> les deux documents ; pénalité « manque le document
+de test et de validation » : <strong>-3 points</strong>). Complément du
+§15 du cahier des charges : dispositif, cas détaillés, exécution,
+registre d’anomalies, PV de recette et traçabilité. Les tests de base
+sont <strong>exécutés et rejouables</strong> ; les tests fonctionnels
+constituent la recette à dérouler sur l’application (lots L8→L13).</p>
+<h2 id="dispositif">1. Dispositif</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Élément</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Environnement de test</td>
+<td>Linux, PHP 8.2, MariaDB 11.8.6 (campagne réellement jouée) / MySQL
+8.0.36, Apache 2.4, Chromium</td>
+</tr>
+<tr class="even">
+<td>Jeu de données</td>
+<td>seed <code>sql/01</code> + commandes de démo <code>sql/04</code> : 4
+catégories, 12 produits, 3 clients, 1 admin, 3 commandes ; base
+<code>minishop_test</code> recréée à chaque campagne</td>
+</tr>
+<tr class="odd">
+<td>Outillage</td>
+<td><code>scripts/run_sql_tests.sh</code> (29 tests),
+<code>tests/security/controles.sh</code> (10 contrôles statiques),
+<code>tests/charge/reserver.sh</code>, PHPUnit (unitaires),
+<code>docs/diagrams/render.sh</code>, <code>pandoc</code></td>
+</tr>
+<tr class="even">
+<td>Entrée en recette</td>
+<td>pré-conditions <code>PRÉ-1</code>…<code>PRÉ-6</code> du CDC
+§11.3</td>
+</tr>
+<tr class="odd">
+<td>Critère de recette</td>
+<td>0 anomalie bloquante (perte de données, stock faux, contournement de
+sécurité) <strong>et</strong> 0 anomalie majeure (fonctionnalité du
+sujet indisponible) ; les mineures sont listées et acceptées</td>
+</tr>
+<tr class="even">
+<td>Rejouabilité</td>
+<td>chaque test SQL a son journal dans
+<code>tests/sql/out/&lt;ID&gt;.log</code> ; les tests de sécurité sont
+rejouables par simple copier-coller des requêtes/URL</td>
+</tr>
+</tbody>
+</table>
+<h2 id="tests-de-règles-de-gestion-base-de-données-exécutés">2. Tests de
+règles de gestion (base de données) — <strong>exécutés</strong></h2>
+<p>Commande unique : <code>./scripts/run_sql_tests.sh</code> (manifeste
+<code>tests/sql/manifest.txt</code>, fixture d’état avant chaque test,
+journal par test).</p>
+<p><strong>Résultat consigné : 29 tests / 29 conformes.</strong> 15 de
+ces tests contournent volontairement l’application
+(<code>INSERT</code>/<code>UPDATE</code>/<code>DELETE</code> écrits à la
+main) : la conformité prouve que les règles ne dépendent pas du code
+PHP.</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Test</th>
+<th>Règle</th>
+<th>Vérification — attendu</th>
+<th>Résultat</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>T-01</td>
+<td>RB-02</td>
+<td>prix HT = 0 refuse par le CHECK ck_produit_prix — refus par la base
+attendu</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="even">
+<td>T-02</td>
+<td>RB-03</td>
+<td>stock negatif refuse (CHECK) en ecriture directe — refus par la base
+attendu</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="odd">
+<td>T-03</td>
+<td>RB-03</td>
+<td>stock negatif refuse par trg_produit_regles — refus par la base
+attendu</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="even">
+<td>T-04</td>
+<td>RB-01</td>
+<td>email client duplique (contrainte unique) — refus par la base
+attendu</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="odd">
+<td>T-05</td>
+<td>RB-12</td>
+<td>sp_create_account refuse un mot de passe non hashe — refus par la
+base attendu</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="even">
+<td>T-06</td>
+<td>RB-05</td>
+<td>quantite = 0 refusee par sp_add_order_line — refus par la base
+attendu</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="odd">
+<td>T-07</td>
+<td>RB-05</td>
+<td>quantite = 0 refusee par le CHECK ck_ligne_quantite — refus par la
+base attendu</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="even">
+<td>T-08</td>
+<td>RB-18</td>
+<td>stock insuffisant : le trigger trg_ligne_controle_insert bloque —
+refus par la base attendu</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="odd">
+<td>T-09</td>
+<td>RB-18</td>
+<td>stock insuffisant : code de retour de la procedure — exécution sans
+erreur attendue</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="even">
+<td>T-10</td>
+<td>RB-15</td>
+<td>montant_total non saisissable (trigger) — refus par la base
+attendu</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="odd">
+<td>T-11</td>
+<td>RB-06</td>
+<td>prix unitaire non modifiable (immutabilite) — refus par la base
+attendu</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="even">
+<td>T-12</td>
+<td>RB-11</td>
+<td>transition EN_PREPARATION -&gt; BROUILLON interdite — refus par la
+base attendu</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="odd">
+<td>T-13</td>
+<td>RB-11</td>
+<td>transition EXPEDIEE -&gt; BROUILLON interdite — refus par la base
+attendu</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="even">
+<td>T-14</td>
+<td>RB-14</td>
+<td>suppression d’une categorie non vide — refus par la base
+attendu</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="odd">
+<td>T-15</td>
+<td>RB-14</td>
+<td>suppression d’un produit deja commande — refus par la base
+attendu</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="even">
+<td>T-16</td>
+<td>RB-04</td>
+<td>validation d’une commande sans ligne — refus par la base
+attendu</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="odd">
+<td>T-17</td>
+<td>RB-10</td>
+<td>commande rattachee a un client inexistant (trigger + FK) — refus par
+la base attendu</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="even">
+<td>T-18</td>
+<td>SEC-08</td>
+<td>sp_confirm_order refuse l’acces a la commande d’un autre client —
+refus par la base attendu</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="odd">
+<td>T-19</td>
+<td>RB-03</td>
+<td>sp_adjust_stock refuse le passage en negatif (OUT) — exécution sans
+erreur attendue</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="even">
+<td>T-20</td>
+<td>RB-09</td>
+<td>produit deja commande : bascule visible=0 (pas de suppression) —
+exécution sans erreur attendue</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="odd">
+<td>T-21</td>
+<td>RB-18</td>
+<td>annulation : stock restaure ligne par ligne — exécution sans erreur
+attendue</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="even">
+<td>T-22</td>
+<td>RB-11</td>
+<td>historique des statuts ecrit automatiquement par le trigger —
+exécution sans erreur attendue</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="odd">
+<td>T-23</td>
+<td>RB-06</td>
+<td>le prix de la ligne survit a une hausse tarifaire ulterieure —
+exécution sans erreur attendue</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="even">
+<td>T-24</td>
+<td>RB-04</td>
+<td>suppression d’une commande BROUILLON vide autorisee — exécution sans
+erreur attendue</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="odd">
+<td>T-25</td>
+<td>EF-VIS-02</td>
+<td>recherche + filtres + produits masques exclus — exécution sans
+erreur attendue</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="even">
+<td>T-26</td>
+<td>EF-ADM-05</td>
+<td>alerte stock (RUPTURE / TRES_BAS) calculee par la procedure —
+exécution sans erreur attendue</td>
+<td><strong>conforme</strong></td>
+</tr>
+<tr class="odd">
+<td>T-27</td>
+<td>EF-VIS-01</td>
+<td>les 3 vues (catalogue, état de stock, commandes client) existent et
+sont cohérentes avec les tables (RB-19, RB-15, ENF-13) — exécution sans
+erreur attendue</td>
+<td><strong>conforme</strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="tests-fonctionnels-recette-de-lapplication">3. Tests
+fonctionnels (recette de l’application)</h2>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>ID</th>
+<th>Titre</th>
+<th>Préconditions</th>
+<th>Étapes</th>
+<th>Résultats attendus</th>
+<th>Règles / ENF</th>
+<th>Statut</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>F-00</td>
+<td>Installation de bout en bout</td>
+<td>base vierge, <code>git clone</code>, <code>env.php</code> copié</td>
+<td>exécuter <code>scripts/load_db.sh</code> puis
+<code>php -S 127.0.0.1:8000 -t public</code></td>
+<td>sortie : tables 8, vues 3, fonctions 1, procédures 17, triggers ≥ 5,
+12 produits, 3 clients ; page d’accueil en HTTP 200 ; le tout en ≤ 15
+min</td>
+<td>ENF-13</td>
+<td>prêt à rejouer</td>
+</tr>
+<tr class="even">
+<td>F-01</td>
+<td>Liste des catégories</td>
+<td>seed chargé</td>
+<td>GET /categories</td>
+<td>4 catégories avec leur nombre de produits visibles (Objets connectés
+= 1 visible, Audio = 3)</td>
+<td>RB-08, RB-19</td>
+<td>conçu</td>
+</tr>
+<tr class="odd">
+<td>F-02</td>
+<td>Recherche simple</td>
+<td>seed chargé</td>
+<td>GET /recherche?q=casque</td>
+<td>1 résultat : « Casque sans fil Aura » ; le mot-clé est conservé dans
+l’URL ; aucune trace de SQL dans la page</td>
+<td>RB-19, SEC-01</td>
+<td>conçu</td>
+</tr>
+<tr class="even">
+<td>F-03</td>
+<td>Filtres cumulés + tri</td>
+<td>seed chargé</td>
+<td>GET /catalogue?cat=2&amp;prix_max=160&amp;stock=1&amp;tri=prix_asc
+puis copier l’URL en navigation privée</td>
+<td>3 produits triés 70.80 / 118.80 / 154.80 € ; l’URL collée reproduit
+exactement la même page</td>
+<td>RB-19, ENF-04/05</td>
+<td>conçu</td>
+</tr>
+<tr class="odd">
+<td>F-04</td>
+<td>Pagination et bornes</td>
+<td>seed chargé</td>
+<td>GET /catalogue?page=2, puis page=999, puis par_page=500</td>
+<td>page 2 vide avec lien « page 1 » ; page 999 sans erreur ; 60 lignes
+maximum malgré la demande de 500</td>
+<td>ENF-04</td>
+<td>conçu</td>
+</tr>
+<tr class="even">
+<td>F-05</td>
+<td>Fiche produit avec prix TTC</td>
+<td>produit <code>CASQ-005</code> (129,00 € HT, TVA 20 %)</td>
+<td>GET /produit/casque-sans-fil-aura</td>
+<td>154,80 € TTC avec la mention TVA incluse ; état « Disponible » ;
+<code>max=16</code> sur le sélecteur de quantité</td>
+<td>RB-02, RB-16, ENF-14</td>
+<td>conçu</td>
+</tr>
+<tr class="odd">
+<td>F-06</td>
+<td>Inscription valide</td>
+<td>navigateur vierge</td>
+<td>POST /inscription (données conformes + CGV)</td>
+<td>compte créé, session ouverte, retour à la page d’origine ; le hash
+en base fait 60 caractères</td>
+<td>RB-01, RB-12</td>
+<td>conçu</td>
+</tr>
+<tr class="even">
+<td>F-07</td>
+<td>Inscription refusée (email existant)</td>
+<td><code>alice@example.com</code> existe</td>
+<td>POST /inscription avec le même email</td>
+<td>message « Cet email est déjà utilisé », champs conservés, aucune
+ligne ajoutée</td>
+<td>RB-01</td>
+<td>conçu</td>
+</tr>
+<tr class="odd">
+<td>F-08</td>
+<td>Connexion : messages indifférenciés</td>
+<td>—</td>
+<td>POST /connexion avec (a) email inconnu (b) email connu + mauvais mot
+de passe</td>
+<td>deux réponses strictement identiques (même texte, même code, durées
+comparables) ; aucun indice sur l’existence du compte</td>
+<td>RB-12, SEC-04</td>
+<td>conçu</td>
+</tr>
+<tr class="even">
+<td>F-09</td>
+<td>Panier hors session</td>
+<td>—</td>
+<td>ajouter un produit, fermer l’onglet, rouvrir sans login</td>
+<td>le panier survit à la navigation dans la session ; la validation
+renvoie vers /connexion puis revient sur le panier</td>
+<td>ENF-07, SEC-08</td>
+<td>conçu</td>
+</tr>
+<tr class="odd">
+<td>F-10</td>
+<td>Modification du profil</td>
+<td>client connecté</td>
+<td>POST /compte (nouveau téléphone, email inchangé)</td>
+<td>profil à jour ; email inchangé : aucun faux refus d’unicité</td>
+<td>RB-01</td>
+<td>conçu</td>
+</tr>
+<tr class="even">
+<td>F-11</td>
+<td>Changement de mot de passe</td>
+<td>client connecté</td>
+<td>POST /compte/mot-de-passe (ancien correct, nouveau fort)</td>
+<td>nouveau hash enregistré ; l’ancien mot de passe est refusé à la
+connexion suivante</td>
+<td>RB-12, SEC-04</td>
+<td>conçu</td>
+</tr>
+<tr class="odd">
+<td>F-12</td>
+<td>Ajout au panier avec plafond</td>
+<td><code>MICRO-007</code> stock 2</td>
+<td>ajouter une quantité de 5</td>
+<td>refus « Il reste 2 exemplaire(s) », panier inchangé, bouton
+grisé</td>
+<td>RB-18</td>
+<td>conçu</td>
+</tr>
+<tr class="even">
+<td>F-13</td>
+<td>JavaScript désactivé</td>
+<td>JS coupé dans les outils du navigateur</td>
+<td>ajouter, modifier une quantité, retirer, valider</td>
+<td>tout le parcours fonctionne en rechargements complets ; seules les
+mises à jour instantanées disparaissent</td>
+<td>ENF-07</td>
+<td>conçu</td>
+</tr>
+<tr class="odd">
+<td>F-14</td>
+<td>Retrait d’une ligne</td>
+<td>panier de 2 articles</td>
+<td>retirer le premier, puis retirer deux fois le même</td>
+<td>récapitulatif recalculé par le serveur ; second retrait ignoré sans
+erreur (idempotence)</td>
+<td>ENF-16</td>
+<td>conçu</td>
+</tr>
+<tr class="even">
+<td>F-15</td>
+<td>Total calculé côté serveur</td>
+<td>panier = {CASQ-005 × 2, CABLE-009 × 1}</td>
+<td>GET /panier, puis POST /panier/quantite avec un champ prix_unitaire
+= 0.01</td>
+<td>sous-total 267,17 €, TVA 53,43 €, total 320,60 € ; le prix envoyé
+par le navigateur est ignoré</td>
+<td>RB-06, RB-15, RB-16</td>
+<td>conçu</td>
+</tr>
+<tr class="odd">
+<td>F-16</td>
+<td>Validation complète d’une commande</td>
+<td>panier = {CASQ-005 × 2}</td>
+<td>adresse → récapitulatif → confirmer</td>
+<td>commande <code>CMD2026-NNNNNN</code>, statut
+<code>EN_PREPARATION</code>, montant 309,60 €, 1 ligne (2 × 154,80 €),
+stock 16 → 14, traces <code>NULL → BROUILLON → EN_PREPARATION</code>,
+panier vidé</td>
+<td>RB-04, RB-06, RB-11, RB-15, RB-18</td>
+<td>conçu</td>
+</tr>
+<tr class="even">
+<td>F-17</td>
+<td>Prix figé après hausse tarifaire</td>
+<td>commande F-16 passée ; l’admin passe <code>CASQ-005</code> à 199,00
+€ HT</td>
+<td>rouvrir le détail de la commande côté client</td>
+<td>la ligne affiche toujours 154,80 € ; le catalogue affiche 238,80 € ;
+aucune commande antérieure n’est modifiée</td>
+<td>RB-06, RB-16</td>
+<td>conçu</td>
+</tr>
+<tr class="odd">
+<td>F-18</td>
+<td>Stock insuffisant sur la 2ᵉ ligne</td>
+<td><code>MICRO-007</code> stock 2 ; panier = {CASQ-005 × 1, MICRO-007 ×
+3}</td>
+<td>valider la commande</td>
+<td>HTTP 409, message traduit depuis <code>STOCK_INSUFFISANT</code>,
+aucune commande créée, stock de <code>CASQ-005</code> inchangé (rollback
+intégral), panier conservé</td>
+<td>RB-04, RB-18, ENF-16</td>
+<td>conçu</td>
+</tr>
+<tr class="even">
+<td>F-19</td>
+<td>Historique des commandes</td>
+<td>2 commandes dont 1 annulée</td>
+<td>GET /mes-commandes</td>
+<td>2 lignes avec date, statut, montant et nombre de lignes ; la
+commande annulée reste visible et libellée « Annulée »</td>
+<td>RB-10, RB-11</td>
+<td>conçu</td>
+</tr>
+<tr class="odd">
+<td>F-20</td>
+<td>Détail d’une commande d’autrui</td>
+<td>client <code>bruno</code> (id 2) connecté</td>
+<td>GET /mes-commandes/1 (commande d’<code>alice</code>)</td>
+<td>404 (jamais 403), aucun montant ni nom partiel, ligne de journal
+<code>ACCESS_DENIED</code></td>
+<td>SEC-08, ENF-12</td>
+<td>conçu</td>
+</tr>
+<tr class="even">
+<td>F-21</td>
+<td>Annulation et restitution</td>
+<td>commande <code>EN_PREPARATION</code> contenant <code>SAC-008</code>
+× 2 ; stock <code>SAC-008</code> = 20</td>
+<td>annulation avec motif</td>
+<td>statut <code>ANNULEE</code>, lignes purgées, stock 20 → 22
+exactement, trace <code>EN_PREPARATION → ANNULEE</code>, plus aucune
+action possible</td>
+<td>RB-11, RB-18, RB-09</td>
+<td>conçu</td>
+</tr>
+<tr class="odd">
+<td>F-22</td>
+<td>Création de produit</td>
+<td>session admin</td>
+<td>POST /admin/produits (prix HT 10,00 €, TVA 20 %, stock 5, catégorie
+Audio)</td>
+<td>produit créé ; <code>prix_ttc</code> = 12,00 € calculé par la base ;
+visible immédiatement côté client</td>
+<td>RB-02, RB-16</td>
+<td>conçu</td>
+</tr>
+<tr class="even">
+<td>F-23</td>
+<td>Masquage d’un produit commandé</td>
+<td>produit commandé 1 fois</td>
+<td>POST /admin/produits/{id}/suppression</td>
+<td>disparition du catalogue client (<code>visible = 0</code>), produit
+conservé en base, prix payé toujours lisible dans la commande</td>
+<td>RB-09, RB-14, RB-17</td>
+<td>conçu</td>
+</tr>
+<tr class="odd">
+<td>F-24</td>
+<td>Pages statiques</td>
+<td>—</td>
+<td>GET /cgv, /mentions, /aide</td>
+<td>3 pages en 200 sans session, liens présents en pied de page</td>
+<td>—</td>
+<td>conçu</td>
+</tr>
+<tr class="even">
+<td>F-25</td>
+<td>Catégorie non vide protégée</td>
+<td><code>audio</code> porte 3 produits</td>
+<td>supprimer la catégorie, réaffecter les produits, supprimer à
+nouveau</td>
+<td>refus <code>CATEGORIE_NON_VIDE_REASSIGNER_LES_PRODUITS</code> avec
+lien de réaffectation ; suppression réussie une fois vide</td>
+<td>RB-14</td>
+<td>conçu</td>
+</tr>
+<tr class="odd">
+<td>F-26</td>
+<td>Réapprovisionnement</td>
+<td><code>ENCH-006</code> stock 30</td>
+<td>DELTA +15 (motif « réception fournisseur »), puis SET 0 (motif «
+inventaire »), puis -99999</td>
+<td>30 → 45 → 0 ; le dernier mouvement est refusé et le stock reste à 0
+avec message <code>RB03_…</code></td>
+<td>RB-03, RB-17</td>
+<td>conçu</td>
+</tr>
+<tr class="even">
+<td>F-27</td>
+<td>Alertes de stock</td>
+<td><code>POWER-010</code> stock 0 ; <code>MICRO-007</code> stock 2,
+seuil 1</td>
+<td>GET /admin/stocks?etat=alerte</td>
+<td>les deux produits remontent : <code>RUPTURE</code> et
+<code>TRES_BAS</code> ; la formule est identique à celle de la procédure
+(aucune divergence)</td>
+<td>ENF-13, RB-03</td>
+<td>conçu</td>
+</tr>
+<tr class="odd">
+<td>F-28</td>
+<td>Recherche de commandes (admin)</td>
+<td>3 commandes de démonstration</td>
+<td>GET
+/admin/commandes?statut=EXPEDIEE&amp;debut=2026-01-01&amp;fin=2026-12-31</td>
+<td>1 commande + montant cumulé 405,48 € ; <code>debut &gt; fin</code> →
+demande de correction sans erreur serveur</td>
+<td>RB-10, RB-15</td>
+<td>conçu</td>
+</tr>
+<tr class="even">
+<td>F-29</td>
+<td>Transition de statut interdite</td>
+<td>commande <code>EXPEDIEE</code></td>
+<td>POST /admin/commandes/{id}/statut avec statut=BROUILLON (hors
+interface)</td>
+<td>refus <code>RB11_TRANSITION_STATUT_INTERDITE</code>, statut
+inchangé, aucune ligne d’historique ajoutée ; l’interface ne proposait
+que <code>LIVREE</code> ou <code>ANNULEE</code></td>
+<td>RB-11, RB-09</td>
+<td>conçu</td>
+</tr>
+<tr class="odd">
+<td>F-30</td>
+<td>Piste d’audit</td>
+<td>commande à 3 changements de statut</td>
+<td>GET /admin/commandes/{id}</td>
+<td>chronologie <code>NULL → BROUILLON → EN_PREPARATION → PAYEE</code>
+avec auteur, rôle et horodatage</td>
+<td>RB-11</td>
+<td>conçu</td>
+</tr>
+<tr class="even">
+<td>F-31</td>
+<td>Indicateurs du back-office</td>
+<td>données de démonstration</td>
+<td>GET /admin</td>
+<td>CA par statut, panier moyen, top 5 produits (résultats de
+<code>sp_revenue_report</code>)</td>
+<td>—</td>
+<td>conçu</td>
+</tr>
+<tr class="odd">
+<td>F-33</td>
+<td>Frais de livraison affichés avant validation puis figés
+(<code>ENF-14</code>, <code>RB-20</code>)</td>
+<td>panier de 1 × écran 27” (58.80 EUR TTC), client connecté</td>
+<td>1) ouvrir le récapitulatif ; 2) valider ; 3) relire
+<code>SELECT frais_port, montant_total FROM commande WHERE id_commande = :id</code>
+; 4) repasser par l’UI pour tenter de modifier le port</td>
+<td>le récapitulatif affiche <strong>4.90 EUR</strong> de livraison et
+un total de <strong>63.70 EUR</strong> <strong>avant</strong> le clic ;
+après validation la base porte exactement ces deux valeurs ; le port ne
+figure dans <strong>aucun</strong> champ de formulaire ; une commande à
+80.00 EUR ou plus affiche « livraison offerte » et un port de 0.00
+EUR</td>
+<td><code>ENF-14</code>, <code>RB-15</code>, <code>RB-20</code>,
+directive 2011/83/UE art. 5 §1 e)</td>
+<td>conçu</td>
+</tr>
+<tr class="even">
+<td>F-32</td>
+<td>Séparation des rôles</td>
+<td><code>alice</code> (client) et un admin <code>GESTIONNAIRE</code>
+connectés</td>
+<td>GET /admin en tant qu’alice ; POST /admin/equipe en tant que
+GESTIONNAIRE</td>
+<td>alice redirigée sans fuite ; le <code>GESTIONNAIRE</code> reçoit 403
+sur la gestion d’équipe (réservée à <code>SUPER</code>) ; aucune route
+publique ne crée d’administrateur</td>
+<td>RB-13, SEC-10</td>
+<td>conçu</td>
+</tr>
+</tbody>
+</table>
+<h3 id="trois-cas-détaillés-au-format-complet">3.1 Trois cas détaillés
+au format complet</h3>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Champ</th>
+<th>F-16 — Validation complète d’une commande</th>
+<th>F-18 — Stock insuffisant sur la 2ᵉ ligne</th>
+<th>F-21 — Annulation et restitution</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Préconditions</td>
+<td>seed chargé ; <code>alice@example.com</code> connecté ; panier =
+{<code>CASQ-005</code> × 2}</td>
+<td>panier = {<code>CASQ-005</code> × 1, <code>MICRO-007</code> × 3}
+avec <code>MICRO-007</code> en stock 2</td>
+<td>commande <code>EN_PREPARATION</code> contenant <code>SAC-008</code>
+× 2 ; stock <code>SAC-008</code> = 20</td>
+</tr>
+<tr class="even">
+<td>Données en entrée</td>
+<td><code>id_client</code> (session), adresse « 12 rue de France, 06000
+Nice », jeton CSRF</td>
+<td>idem, lignes du panier en session</td>
+<td><code>id_commande</code>, motif de la commande annulée</td>
+</tr>
+<tr class="odd">
+<td>Étapes</td>
+<td>1. <code>/panier</code> → « Passer la commande » ; 2. sélectionner
+l’adresse ; 3. confirmer</td>
+<td>1. idem ; 2. confirmer</td>
+<td>1. <code>/mes-commandes/{id}</code> ; 2. « Annuler » ; 3. saisir le
+motif et confirmer</td>
+</tr>
+<tr class="even">
+<td>Résultats attendus</td>
+<td>HTTP 200 ; commande <code>CMD2026-NNNNNN</code> en
+<code>EN_PREPARATION</code> ; montant 309,60 € ; 1 ligne 2 × 154,80 € ;
+stock 16 → 14 ; traces <code>NULL → BROUILLON → EN_PREPARATION</code> ;
+panier vidé</td>
+<td>HTTP 409 ; message traduit ; <code>COUNT(commande)</code> inchangé ;
+stock <code>CASQ-005</code> inchangé (rollback complet) ; panier
+conservé pour correction</td>
+<td>statut <code>ANNULEE</code> ; lignes purgées ; stock 20 → 22
+<strong>exactement</strong> (un seul crédit) ; trace
+<code>EN_PREPARATION → ANNULEE</code> ; plus aucune action possible</td>
+</tr>
+<tr class="odd">
+<td>Preuves</td>
+<td>captures + les 3 requêtes <code>SELECT</code> de contrôle
+(<code>commande</code>, <code>ligne_commande</code>,
+<code>produit</code>, <code>order_status_history</code>)</td>
+<td>requêtes avant/après + ligne de journal</td>
+<td>requête de stock + historique</td>
+</tr>
+<tr class="even">
+<td>Règles vérifiées</td>
+<td>RB-04, RB-06, RB-11, RB-15, RB-18</td>
+<td>RB-04, RB-18, ENF-16</td>
+<td>RB-09, RB-11, RB-18</td>
+</tr>
+<tr class="odd">
+<td>Statut</td>
+<td>planifié (S10)</td>
+<td>planifié (S10)</td>
+<td>planifié (S10)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="tests-de-sécurité-offensifs">4. Tests de sécurité
+(offensifs)</h2>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>ID</th>
+<th>Cas d’attaque</th>
+<th>Mode opératoire</th>
+<th>Résultat attendu</th>
+<th>Exigence</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>S-01</td>
+<td>Injection SQL dans la recherche</td>
+<td>12 payloads : apostrophe fermante suivie de OR 1=1 – , UNION SELECT
+email,mot_de_passe_hash FROM client, point-virgule suivi de DROP TABLE
+client, guillemet double forçé, etc.</td>
+<td>réponses 200 avec 0 résultat ou message de validation ;
+<code>SELECT COUNT(*) FROM client</code> vaut 3 avant et après ; aucune
+erreur SQL affichée ; ligne de journal
+<code>SECURITY_REJECTED</code></td>
+<td>SEC-01, SEC-02</td>
+</tr>
+<tr class="even">
+<td>S-02</td>
+<td>Script stocké puis affiché</td>
+<td>créer en admin un produit nommé
+<code>&lt;script&gt;alert(document.cookie)&lt;/script&gt;</code>, ouvrir
+la fiche client puis la liste admin</td>
+<td>le texte est affiché littéralement (source :
+<code>&amp;lt;script&amp;gt;</code>) ; aucun cookie lu ; la CSP bloque
+toute exécution même via un attribut</td>
+<td>SEC-03</td>
+</tr>
+<tr class="odd">
+<td>S-03</td>
+<td>IDOR sur les commandes</td>
+<td>itérer <code>?id=1..20</code> avec un compte client, puis appeler
+<code>sp_confirm_order(id_d_autrui, id_client = 2, 0)</code></td>
+<td>404 systématique sur les commandes d’autrui ; la procédure renvoie
+<code>ACCES_NON_AUTORISE</code> (test <code>T-18</code>) ; aucune donnée
+renvoyée</td>
+<td>SEC-08</td>
+</tr>
+<tr class="even">
+<td>S-04</td>
+<td>Falsification du prix depuis le navigateur</td>
+<td>POST /commande/valider avec un champ
+<code>prix_unitaire: 0.01</code> ajouté à la main</td>
+<td>la ligne est enregistrée au vrai prix (snapshot) ; tout UPDATE
+ultérieur du prix d’une ligne est refusé (<code>RB06_…</code>)</td>
+<td>SEC-10, RB-06</td>
+</tr>
+<tr class="odd">
+<td>S-05</td>
+<td>Vol / fixation de session</td>
+<td>capturer le cookie avant login et le rejouer depuis un autre agent
+ou une autre IP</td>
+<td>session non réutilisable telle quelle (revalidation) ; l’identifiant
+pré-authentification est invalidé
+(<code>session_regenerate_id</code>)</td>
+<td>SEC-05</td>
+</tr>
+<tr class="even">
+<td>S-06</td>
+<td>CSRF sur une action mutative</td>
+<td>poster le formulaire depuis un autre site, sans jeton, avec
+<code>SameSite=Lax</code></td>
+<td>refus 419, aucune écriture ; panier et commande protégés ; les GET
+sans effet de bord restent possibles</td>
+<td>SEC-06</td>
+</tr>
+<tr class="odd">
+<td>S-07</td>
+<td>Énumération et exposition</td>
+<td>tenter <code>/.git/config</code>,
+<code>/sql/01_minishop_schema.sql</code>,
+<code>/var/log/application.log</code>, <code>/app/Config/env.php</code>
+; vérifier les en-têtes</td>
+<td>403/404 sur tous ces chemins ; <code>X-Frame-Options: DENY</code>,
+<code>X-Content-Type-Options: nosniff</code>, CSP présente, aucune
+signature de serveur détaillée, aucun <code>phpinfo()</code></td>
+<td>SEC-11, SEC-12</td>
+</tr>
+<tr class="even">
+<td>S-08</td>
+<td>Fuite d’information dans les messages</td>
+<td>provoquer une violation de contrainte, une coupure de connexion DB,
+une exception PHP non gérée</td>
+<td>pages d’erreur génériques : aucun SQL, aucun chemin, aucun nom de
+table ; les détails vont uniquement dans <code>var/log/</code> ; le
+journal ne contient jamais de mot de passe ni de hash</td>
+<td>SEC-12, SEC-13</td>
+</tr>
+<tr class="odd">
+<td>S-09</td>
+<td>Force brute</td>
+<td>20 tentatives de connexion sur <code>admin@minishop.fr</code> avec
+des mots de passe de dictionnaire</td>
+<td>temporisation après 5 échecs, message neutre, aucune différence de
+temps de réponse exploitable entre compte existant et inexistant</td>
+<td>SEC-04, SEC-06</td>
+</tr>
+<tr class="even">
+<td>S-10</td>
+<td>Élévation de privilège par le formulaire</td>
+<td>ajouter la paire <code>role=admin</code> dans le POST
+/inscription</td>
+<td>champ ignoré (liste stricte des clés acceptées) ; le compte reste de
+type client ; la table administrateur n’est jamais touchée</td>
+<td>SEC-10, RB-13</td>
+</tr>
+</tbody>
+</table>
+<p>Les 10 cas sont rejouables à la main (curl + navigateur). Les
+<strong>10 contrôles statiques</strong> sont bloquants en CI :
+<code>bash tests/security/controles.sh</code> doit afficher « 10
+contrôles conformes ».</p>
+<h2 id="tests-de-performance-de-concurrence-dinstallation">5. Tests de
+performance, de concurrence, d’installation</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>ID</th>
+<th>Scénario</th>
+<th>Commande</th>
+<th>Critère</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>P-01</td>
+<td>Catalogue filtré, 200 produits (volumétrie client retenue)</td>
+<td><code>bash tests/perf/mesurer.sh '/catalogue?cat=1&amp;prix_max=500'</code></td>
+<td>p95 &lt; 500 ms, ≤ 5 requêtes (<code>ENF-01</code>)</td>
+</tr>
+<tr class="even">
+<td>P-02</td>
+<td>Recherche « casque »</td>
+<td><code>bash tests/perf/mesurer.sh '/recherche?q=casque'</code></td>
+<td>p95 &lt; 500 ms ; <code>EXPLAIN</code> utilisant
+<code>idx_produit_visible</code> ou l’index <code>FULLTEXT</code>
+(<code>ENF-02</code>)</td>
+</tr>
+<tr class="odd">
+<td>P-03</td>
+<td>Validation de commande</td>
+<td><code>bash tests/perf/mesurer.sh '/commande/valider'</code>
+(POST)</td>
+<td>p95 &lt; 900 ms avec verrous</td>
+</tr>
+<tr class="even">
+<td><strong>P-06</strong></td>
+<td><strong>Performances côté base, sur le jeu de
+volumétrie</strong></td>
+<td><code>sudo bash scripts/capture_perf.sh</code> (ou
+<code>./scripts/gen_volumes.sh</code> puis
+<code>DB=minishop_perf ./tests/perf/mesurer_sql.sh 50</code>) —
+<strong>verrouillé à chaque
+<code>bash scripts/build-docs.sh</code></strong></td>
+<td><strong>exécuté</strong> (21/09/2026, jeu 212 produits / 992
+commandes, <strong>31 ms</strong> commande complète le 21/09 à 12:19) :
+15–18 ms de moyenne sur les 5 requêtes types, <code>EXPLAIN</code> sans
+<code>ALL</code> sur catalogue, recherche et « mes commandes » ; un
+<code>ALL</code> <strong>documenté</strong> sur l’agrégation par statut
+(anomalie A-08, non bloquante, §7) ; sortie consignée dans
+<code>tests/perf/dernieres_mesures.txt</code> (à joindre en
+soutenance)</td>
+</tr>
+<tr class="odd">
+<td>C-01</td>
+<td>Tentative de survente</td>
+<td><code>bash tests/charge/reserver.sh 20 12</code></td>
+<td>12 commandes réussies, 8 refus <code>STOCK_INSUFFISANT</code>, stock
+final 0, aucune valeur négative (<code>RB-18</code>)</td>
+</tr>
+<tr class="even">
+<td>C-02</td>
+<td>Rejeu du POST de commande</td>
+<td>rejouer le même <code>POST /commande/valider</code></td>
+<td>une seule commande ; second envoi refusé (<code>SEC-06</code>, cas
+E2 d’UC-07)</td>
+</tr>
+<tr class="odd">
+<td>I-01</td>
+<td>Installation</td>
+<td>machine propre, suivi du <code>README.md</code> seul</td>
+<td>≤ 15 min puis <code>run_sql_tests.sh</code> <strong>29/29</strong>
+(<code>ENF-13</code>)</td>
+</tr>
+<tr class="even">
+<td>B-01</td>
+<td>Sauvegarde / restauration</td>
+<td><code>mysqldump --single-transaction --routines --triggers minishop &gt; b.sql</code>,
+restauration dans une base vide, tests rejoués</td>
+<td><strong>29/29</strong> : prouve que la fonction, les 17 procédures
+<strong>et</strong> les 16 triggers survivent à la restauration
+(<code>ENF-15</code>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="tests-unitaires-php-lot-l8l12">6. Tests unitaires PHP (lot
+L8→L12)</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Classe</th>
+<th>Cas testés</th>
+<th>Attentes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Produit::estDisponible()</code></td>
+<td>quantités 0, 1, stock, stock+1, stock négatif</td>
+<td>refus si <code>qte &lt; 1</code> ou <code>qte &gt; stock</code></td>
+</tr>
+<tr class="even">
+<td><code>Produit::prixTTCCalcule()</code></td>
+<td>129,00 € @ 20 % ; 10,00 € @ 5,5 %</td>
+<td>154,80 € et 10,55 € (arrondi 2 décimales, aucune dérive de virgule
+flottante)</td>
+</tr>
+<tr class="odd">
+<td><code>PanierSession</code></td>
+<td>ajout, fusion du même produit, retrait, plafond</td>
+<td>total recalculé à chaque écriture ; aucun prix mémorisé côté
+client</td>
+</tr>
+<tr class="even">
+<td><code>Commande::statutSuivantAutorise()</code></td>
+<td>les 36 couples de statuts</td>
+<td>exactement la matrice <code>RB-11</code> (9 transitions autorisées,
+les autres refusées)</td>
+</tr>
+<tr class="odd">
+<td><code>Hasher</code></td>
+<td>hachage, vérification, re-hash</td>
+<td><code>password_verify()</code> vrai pour le bon mot de passe, faux
+sinon ; refus d’un hash de moins de 60 caractères</td>
+</tr>
+<tr class="even">
+<td><code>e()</code></td>
+<td><code>&lt;script&gt;</code>, apostrophes, guillemets, UTF-8</td>
+<td>sortie <code>htmlspecialchars</code> avec <code>ENT_QUOTES</code> ;
+aucun HTML actif</td>
+</tr>
+<tr class="odd">
+<td><code>SearchQuery</code></td>
+<td>tri inconnu, <code>par_page = 500</code>,
+<code>prix_min &gt; prix_max</code></td>
+<td>repli sur la liste blanche, borne 60, filtres ignorés sans
+exception</td>
+</tr>
+</tbody>
+</table>
+<h2
+id="registre-des-anomalies-issues-réelles-rencontrées-lors-de-la-conception-de-la-base">7.
+Registre des anomalies (issues réelles rencontrées lors de la conception
+de la base)</h2>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>#</th>
+<th>Constat</th>
+<th>Gravité</th>
+<th>Cause racine</th>
+<th>Correction</th>
+<th>Verrou de non-régression</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A-01</td>
+<td>un UPDATE du prix d’une ligne était « réparé » au lieu d’être
+rejeté</td>
+<td>majeure</td>
+<td>ordre de création des triggers (le snapshot était créé après
+l’immutabilité)</td>
+<td>ordre corrigé dans <code>sql/03_minishop_triggers.sql</code> +
+commentaire explicatif</td>
+<td><code>T-11</code></td>
+</tr>
+<tr class="even">
+<td>A-02</td>
+<td>doublons dans <code>ORDER_STATUS_HISTORY</code></td>
+<td>mineure</td>
+<td>écriture en procédure <strong>et</strong> en trigger</td>
+<td>écriture laissée au seul trigger</td>
+<td><code>T-22</code> (assertion d’absence de doublon)</td>
+</tr>
+<tr class="odd">
+<td>A-03</td>
+<td>stock restitué deux fois après annulation</td>
+<td><strong>bloquante</strong> (données fausses)</td>
+<td><code>UPDATE produit</code> dans la procédure + trigger
+<code>AFTER DELETE</code> sur les lignes</td>
+<td>restitution déléguée au trigger ; la procédure ne fait plus que
+purge et statut</td>
+<td><code>T-21</code> (stock exact, un seul crédit)</td>
+</tr>
+<tr class="even">
+<td>A-04</td>
+<td><code>SELECT … INTO NEW.prix_unitaire</code> refusé dans un
+trigger</td>
+<td>bloquante (installation impossible)</td>
+<td>syntaxe non permise par MySQL/MariaDB</td>
+<td>variable locale puis <code>SET NEW.prix_unitaire = v</code></td>
+<td><code>scripts/load_db.sh</code></td>
+</tr>
+<tr class="odd">
+<td>A-05</td>
+<td>erreur « table déjà utilisée par la requête appelante » lors d’une
+purge de lignes</td>
+<td>bloquante (tests non rejouables)</td>
+<td><code>DELETE</code> dont la sous-requête lisait <code>PRODUIT</code>
+alors qu’un trigger écrivant <code>PRODUIT</code> se déclenchait</td>
+<td>purge via table temporaire dans la fixture de test</td>
+<td>harnais + <code>tests/sql/fixture.sql</code></td>
+</tr>
+<tr class="even">
+<td>A-06</td>
+<td><code>LIMIT :lim</code> dans une requête préparée de procédure :
+erreur de syntaxe</td>
+<td>bloquante</td>
+<td>marqueurs nommés non supportés en <code>PREPARE</code></td>
+<td>réécriture en marqueurs <code>?</code> avec nombre de paramètres
+constant</td>
+<td><code>T-25</code></td>
+</tr>
+<tr class="odd">
+<td>A-07</td>
+<td><code>v_catalogue</code> renvoyait <code>ERROR 1356</code>
+<strong>dans la base de test seulement</strong></td>
+<td>bloquante (campagne de tests faussée)</td>
+<td>le test <code>T-26</code> faisait
+<code>CREATE OR REPLACE VIEW v_etat_stock</code> à son profit et cassait
+la vue livrée dont dépend <code>v_catalogue</code> ; de plus
+<code>v_etat_stock</code> n’exposait pas <code>id_produit</code>,
+indispensable à la jointure</td>
+<td>un test <strong>ne redéfinit jamais</strong> un objet de production
+; <code>v_etat_stock</code> expose <code>id_produit</code> ; la vue
+livrée est <strong>testée</strong> telle quelle par <code>T-27</code>
+(existence, cohérence des comptages, formule
+<code>montant = lignes + port</code>)</td>
+<td><code>T-27</code> (5 assertions)</td>
+</tr>
+<tr class="even">
+<td>A-08</td>
+<td>l’agrégation « commandes par statut » de
+<code>sp_revenue_report</code> est en <code>ALL</code> (992 lignes)
+malgré <code>idx_commande_statut</code></td>
+<td>mineure (17 ms mesurée, sous le seuil <code>ENF-01</code>)</td>
+<td><code>GROUP BY</code> + <code>AVG(montant_total)</code> : l’index
+sur <code>statut</code> seul oblige à relire la table</td>
+<td><strong>constaté et mesuré, non corrigé</strong> : un index de
+couverture <code>(statut, montant_total)</code> ferait passer le plan en
+<code>range … Using index</code> ; ajourné car la volumétrie retenue (1
+000 commandes/an) ne le justifie pas — Evolution E-04</td>
+<td><code>tests/perf/mesurer_sql.sh</code>, P-06</td>
+</tr>
+</tbody>
+</table>
+<h2 id="procès-verbal-de-recette">8. Procès-verbal de recette</h2>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Zone</th>
+<th>Vérifications</th>
+<th>Conformes</th>
+<th>Bloquantes</th>
+<th>Majeures</th>
+<th>Statut</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Base de données (règles de gestion, vues, frais de port,
+atomicité)</td>
+<td>29</td>
+<td><strong>29</strong></td>
+<td>0</td>
+<td>0</td>
+<td><strong>validé</strong> (campagne réelle du 21/09/2026,
+<code>tests/sql/rapport_tests_sql.md</code>)</td>
+</tr>
+<tr class="even">
+<td>Chargement / installation</td>
+<td>2 (<code>F-00</code>, <code>I-01</code>)</td>
+<td>à exécuter</td>
+<td>—</td>
+<td>—</td>
+<td>planifié</td>
+</tr>
+<tr class="odd">
+<td>Front-office visiteur</td>
+<td>9 (<code>F-01</code>…<code>F-09</code>)</td>
+<td>à exécuter</td>
+<td>—</td>
+<td>—</td>
+<td>planifié</td>
+</tr>
+<tr class="even">
+<td>Client (compte, panier, commande)</td>
+<td>12 (<code>F-10</code>…<code>F-21</code>)</td>
+<td>à exécuter</td>
+<td>—</td>
+<td>—</td>
+<td>planifié</td>
+</tr>
+<tr class="odd">
+<td>Back-office + conformité</td>
+<td>12 (<code>F-22</code>…<code>F-33</code>)</td>
+<td>à exécuter</td>
+<td>—</td>
+<td>—</td>
+<td>planifié</td>
+</tr>
+<tr class="even">
+<td>Sécurité</td>
+<td>10 + 10 contrôles</td>
+<td>à exécuter</td>
+<td>—</td>
+<td>—</td>
+<td>planifié</td>
+</tr>
+<tr class="odd">
+<td>Performance / concurrence</td>
+<td>6 (<code>P-01</code>…<code>P-03</code>, <code>P-06</code>,
+<code>C-01</code>, <code>C-02</code>)</td>
+<td><strong>1 conforme</strong> (<code>P-06</code>, mesure base)</td>
+<td>0</td>
+<td>0</td>
+<td>partiellement exécuté (le HTTP attend l’application)</td>
+</tr>
+<tr class="even">
+<td><strong>Total</strong></td>
+<td><strong>71 vérifications</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Signature de l’équipe, date : ………………… Validation du maître d’ouvrage
+pédagogique (soutenance), date : …………………</p>
+<h2 id="matrice-de-traçabilité-exigence-modèle-base-application-test">9.
+Matrice de traçabilité exigence → modèle → base → application →
+test</h2>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Exigence</th>
+<th>Élément de modèle</th>
+<th>Mécanisme de base</th>
+<th>Point d’application PHP/IHM</th>
+<th>Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>EF-VIS-01/03/05</td>
+<td><code>Categorie</code>, <code>Produit</code></td>
+<td><code>sp_search_products</code>, index
+<code>idx_produit_visible</code>, vue <code>v_catalogue</code></td>
+<td>CatalogueController + <code>app/View/catalogue.php</code></td>
+<td>F-01, F-03, F-04, T-25</td>
+</tr>
+<tr class="even">
+<td>EF-VIS-02</td>
+<td><code>Produit</code></td>
+<td><code>sp_search_products</code> (marqueurs <code>?</code>)</td>
+<td>recherche + liste blanche de tri</td>
+<td>F-02, S-01, T-25</td>
+</tr>
+<tr class="odd">
+<td>EF-VIS-04</td>
+<td><code>Produit</code></td>
+<td><code>trg_produit_ttc</code></td>
+<td>ProduitController + fiche</td>
+<td>F-05, séquence §5.3.5</td>
+</tr>
+<tr class="even">
+<td>EF-VIS-06/07</td>
+<td><code>Client</code></td>
+<td><code>sp_create_account</code>, <code>sp_get_credentials</code></td>
+<td>AuthController, <code>Auth</code>, <code>Hasher</code></td>
+<td>F-06, F-07, F-08, T-04, T-05</td>
+</tr>
+<tr class="odd">
+<td>EF-CLI-01/02</td>
+<td><code>Client</code></td>
+<td><code>sp_update_client</code></td>
+<td>CompteController</td>
+<td>F-10, F-11</td>
+</tr>
+<tr class="even">
+<td>EF-CLI-03…06</td>
+<td><code>PanierSession</code></td>
+<td><code>sp_search_products</code> (plafond de disponibilité)</td>
+<td>PanierController + <code>public/js/panier.js</code></td>
+<td>F-12, F-13, F-14, F-15</td>
+</tr>
+<tr class="odd">
+<td>EF-CLI-07</td>
+<td><code>Commande</code>, <code>LigneCommande</code></td>
+<td><code>sp_create_order_from_basket</code>,
+<code>sp_add_order_line</code>, triggers A1/A2/B2/D1/D4</td>
+<td>CommandeController + <code>CommandeRepository</code></td>
+<td>F-16, F-17, F-18, T-06…T-11, T-16</td>
+</tr>
+<tr class="even">
+<td>EF-CLI-08/09</td>
+<td><code>Commande</code></td>
+<td><code>trg_history_statut</code> (détail et audit)</td>
+<td>CommandeController (filtre <code>id_client</code>)</td>
+<td>F-19, F-20, S-03, T-18</td>
+</tr>
+<tr class="odd">
+<td>EF-CLI-10</td>
+<td><code>Commande</code></td>
+<td><code>sp_cancel_order</code> + <code>TRG-A3</code>
+(restitution)</td>
+<td>bouton d’annulation + confirmation</td>
+<td>F-21, T-21</td>
+</tr>
+<tr class="even">
+<td>EF-ADM-01/02</td>
+<td><code>Produit</code></td>
+<td><code>sp_save_product</code>, <code>sp_delete_product</code>,
+triggers B3–B6</td>
+<td>AdminController (produits)</td>
+<td>F-22, F-23, T-15, T-20</td>
+</tr>
+<tr class="odd">
+<td>EF-ADM-03</td>
+<td><code>Categorie</code></td>
+<td><code>sp_save_category</code>, <code>sp_delete_category</code>,
+triggers C1/C2</td>
+<td>AdminController (catégories)</td>
+<td>F-25, T-14</td>
+</tr>
+<tr class="even">
+<td>EF-ADM-04/05</td>
+<td><code>Produit.stock</code></td>
+<td><code>sp_adjust_stock</code>, <code>v_etat_stock</code></td>
+<td>AdminController (stocks)</td>
+<td>F-26, F-27, T-19, T-26, T-27</td>
+</tr>
+<tr class="odd">
+<td>EF-ADM-06/08/09</td>
+<td><code>Commande</code></td>
+<td><code>sp_revenue_report</code>, vue
+<code>v_commandes_client</code></td>
+<td>AdminController (commandes)</td>
+<td>F-28, F-30, F-31</td>
+</tr>
+<tr class="even">
+<td>EF-ADM-07</td>
+<td><code>Commande.statut</code></td>
+<td><code>sp_update_order_status</code>, triggers D1/D4</td>
+<td>formulaire de changement de statut</td>
+<td>F-29, T-12, T-13</td>
+</tr>
+<tr class="odd">
+<td>SEC-01…SEC-13</td>
+<td>—</td>
+<td>CHECK / FK / triggers / privilèges limités</td>
+<td>PDO préparé, <code>e()</code>, <code>Auth</code>, CSRF,
+journaux</td>
+<td>S-01…S-10 + 10 contrôles CI</td>
+</tr>
+<tr class="even">
+<td>ENF-01/02</td>
+<td>—</td>
+<td>index, <code>FULLTEXT</code>, <code>LIMIT</code> borné,
+<code>scripts/gen_volumes.sh</code></td>
+<td>—</td>
+<td>P-01, P-02, <strong>P-06</strong> (exécuté) +
+<code>EXPLAIN</code></td>
+</tr>
+<tr class="odd">
+<td>ENF-15</td>
+<td>—</td>
+<td><code>mysqldump --routines --triggers</code></td>
+<td>scripts</td>
+<td>B-01</td>
+</tr>
+<tr class="even">
+<td>ENF-16</td>
+<td>—</td>
+<td>transactions dans les procédures</td>
+<td><code>rollBack()</code> du repository</td>
+<td>F-18, T-09</td>
+</tr>
+</tbody>
+</table>
+<p>Couverture : <strong>100 %</strong> des exigences du §4 (les 22
+libellés du sujet repris à l’identique) disposent d’un élément de
+modèle, d’un mécanisme côté SGBD, d’un point d’application et d’au moins
+un test ; aucune règle <code>RB-*</code> n’est dépourvue de mécanisme
+côté base (cf. §6.2 du CDC).</p>
+<h2 id="conclusion-provisoire-à-valider-en-fin-de-lot-l14">10.
+Conclusion provisoire (à valider en fin de lot L14)</h2>
+<ul>
+<li>la partie <strong>base de données</strong> est testée, rejouable et
+sans anomalie connue : les règles <code>RB-01</code> à
+<code>RB-18</code> tiennent même quand l’application est court-circuitée
+;</li>
+<li>la partie <strong>application</strong> doit être reçue avec les 34
+tests fonctionnels, les 10 tests de sécurité, les 5 tests de
+performance/concurrence et les 2 tests d’installation ;</li>
+<li>le document est tenu à jour à chaque lot (le PV de recette est la
+seule partie laissée à compléter, volontairement, tant que les lots
+L8→L13 ne sont pas exécutés).</li>
+</ul>
+
+        </article>
+        <footer class="mt-6 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
+          <span>MiniShop — SAE IUT Côte d'Azur · <code class="bg-white border border-slate-200 px-1.5 py-0.5 rounded">bash scripts/export_html.sh</code></span>
+          <span class="inline-flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-emerald-500"></span> imprimable</span>
+        </footer>
+      </main>
+    </div>
+  </div>
+<script>
+document.querySelectorAll('pre').forEach(pre => {
+  const btn=document.createElement('button'); btn.textContent='⧉ Copier'; btn.className='no-print absolute right-3 top-3 rounded-full bg-white/10 border border-white/15 backdrop-blur px-2.5 py-1 text-xs font-semibold text-white hover:bg-white hover:text-slate-900 transition'; pre.style.position='relative'; pre.appendChild(btn);
+  btn.addEventListener('click', async () => { try{ await navigator.clipboard.writeText(pre.innerText.replace('⧉ Copier','').trim()); btn.textContent='✓ Copié'; setTimeout(()=>btn.textContent='⧉ Copier',1400); } catch(e){ btn.textContent='Échec'; } });
+});
+// wrap tables pour scroll horizontal avec indicateur
+document.querySelectorAll('.prose table').forEach(tbl => {
+  if (tbl.parentElement.classList.contains('table-wrap')) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'table-wrap not-prose my-6 overflow-x-auto rounded-xl border border-slate-200 shadow-sm bg-white';
+  wrap.style.webkitOverflowScrolling = 'touch';
+  tbl.parentNode.insertBefore(wrap, tbl);
+  wrap.appendChild(tbl);
+  // reset table margin when wrapped
+  tbl.style.margin = '0';
+  tbl.style.border = 'none';
+  // ombre de scroll
+  const hint = document.createElement('div');
+  hint.className = 'text-[11px] text-slate-400 text-right px-3 py-1.5 bg-slate-50 border-t border-slate-100 hidden sm:block';
+  hint.textContent = '↔ faites défiler horizontalement pour voir tout le tableau';
+  wrap.appendChild(hint);
+  const upd = () => { hint.style.display = (wrap.scrollWidth > wrap.clientWidth) ? 'block' : 'none'; };
+  upd(); wrap.addEventListener('scroll', upd); window.addEventListener('resize', upd);
+});
+document.querySelectorAll('.prose img').forEach(img => {
+  img.style.cursor='zoom-in';
+  img.addEventListener('click', () => {
+    const ov=document.createElement('div'); ov.className='fixed inset-0 z-[100] bg-slate-950/85 backdrop-blur-sm p-4 sm:p-8 flex items-center justify-center';
+    ov.innerHTML='<img src="'+img.src+'" class="max-h-[92vh] max-w-[96vw] rounded-2xl shadow-2xl border border-white/20 bg-white" style="object-fit:contain"><button class="absolute top-4 right-4 rounded-full bg-white px-3 py-1.5 text-sm font-bold shadow">✕ Fermer</button>';
+    ov.addEventListener('click', (e) => { if(e.target===ov || e.target.tagName==='BUTTON') ov.remove(); });
+    document.body.appendChild(ov);
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>MiniShop — site e-commerce + back-office (SAE) — MiniShop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter','ui-sans-serif','system-ui','-apple-system','Segoe UI','Roboto','Helvetica','Arial'],
+        mono: ['JetBrains Mono','ui-monospace','SFMono-Regular','Menlo','monospace'],
+        display: ['Plus Jakarta Sans','Inter','sans-serif'],
+      }
+    }
+  }
+}
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  ::selection { background: #6366f11a; }
+  .prose :where(a):not(:where([class~="not-prose"] *)) { color:#4f46e5; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.2px; }
+  .prose :where(a):hover { color:#4338ca; }
+  .prose code:not(pre code) { font-family: 'JetBrains Mono', monospace; font-size: 0.84em; background: #f1f5f9; border: 1px solid #e2e8f0; padding: 0.16rem 0.4rem; border-radius: 0.4rem; color:#0f172a; white-space: nowrap; word-break: keep-all; overflow-wrap: normal; }
+  /* dans les cellules, on garde le code sur une ligne et on laisse le tableau scroller */
+  .prose td code, .prose th code { white-space: nowrap !important; word-break: keep-all !important; display: inline-block; max-width: none; }
+  .prose td { overflow-wrap: normal; word-break: normal; }
+  /* première colonne ID : ne jamais couper RB-06 */
+  .prose td:first-child code, .prose th:first-child code { white-space: nowrap !important; font-weight: 800; letter-spacing: -0.01em; }
+  .prose td:first-child { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .prose pre { background:#0f172a; color:#e2e8f0; border-radius: 0.95rem; padding: 1.25rem 1.35rem; overflow-x:auto; border:1px solid #1e293b; box-shadow: 0 10px 30px -12px rgba(15,23,42,.45); margin: 1.8rem 0; }
+  .prose pre code { background: transparent; border:0; padding:0; color:inherit; font-size: 0.84rem; line-height: 1.65; }
+  /* —— Sommaire : arbre hiérarchique aéré —— */
+  .toc-nav ul { list-style:none; padding-left:0; margin:0; }
+  .toc-nav > ul { display:flex; flex-direction:column; gap:0.8rem; }
+  .toc-nav > ul > li { margin:0; padding:0 0 0.8rem 0; border-bottom:1px solid #f1f5f9; }
+  .toc-nav > ul > li:last-child { border-bottom:none; padding-bottom:0; }
+  .toc-nav a { display:block; padding: 0.55rem 0.75rem; border-radius: 0.7rem; color:#0f172a; text-decoration:none !important; font-size: 0.88rem; line-height:1.45; border: 1px solid transparent; font-weight:650; letter-spacing:-0.01em; }
+  .toc-nav a:hover { background:#f8fafc; border-color:#e2e8f0; color:#0f172a; transform: translateX(1px); }
+  .toc-nav ul ul { margin-top:0.6rem; margin-left:0.35rem; padding-left:0.95rem; border-left:2px solid #e2e8f0; display:flex; flex-direction:column; gap:0.28rem; }
+  .toc-nav ul ul a { font-weight:550; font-size:0.84rem; color:#334155; padding:0.4rem 0.65rem; background:#f8fafc; border-color:#eef2ff; }
+  .toc-nav ul ul a:hover { background:white; border-color:#e2e8f0; color:#1e293b; }
+  .toc-nav ul ul ul { border-left-color:#cbd5e1; border-left-style:dashed; margin-left:0.4rem; padding-left:1rem; gap:0.2rem; }
+  .toc-nav ul ul ul a { font-weight:450; font-size:0.80rem; color:#475569; background:transparent; border-color:transparent; padding:0.3rem 0.6rem 0.3rem 1.15rem; position:relative; }
+  .toc-nav ul ul ul a::before { content:""; position:absolute; left:0; top:50%; width:0.65rem; height:1px; background:#cbd5e1; }
+  .toc-nav ul ul ul a:hover { color:#334155; background:#f8fafc; }
+  .toc-nav ul ul ul a:hover::before { background:#6366f1; }
+  .toc-nav ul ul ul ul a { font-size:0.78rem; opacity:0.95; }
+  .prose table { border-collapse: separate; border-spacing:0; width:100%; font-size: 0.85rem; margin: 1.9rem 0; display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .prose table th:nth-child(1), .prose table td:nth-child(1) { min-width: 96px; }
+  .prose table th:nth-child(2), .prose table td:nth-child(2) { min-width: 185px; }
+  .prose table th:nth-child(3), .prose table td:nth-child(3) { min-width: 135px; }
+  .prose table th:nth-child(4), .prose table td:nth-child(4) { min-width: 66px; white-space: nowrap; }
+  .prose table th:nth-child(5), .prose table td:nth-child(5) { min-width: 215px; }
+  .prose table th:nth-child(6), .prose table td:nth-child(6) { min-width: 98px; white-space: nowrap; }
+  .prose table th:nth-child(7), .prose table td:nth-child(7) { min-width: 72px; white-space: nowrap; }
+  .prose table td:nth-child(5) code { font-size: 0.78em; white-space: nowrap !important; }
+  /* table à 7 colonnes (exigences) : force un minimum pour éviter l'écrasement */
+  .prose table:has(th:nth-child(7)) { min-width: 860px; }
+  .prose table td:nth-child(6) code, .prose table td:nth-child(7) code { font-size: 0.80em; }
+  .prose table::-webkit-scrollbar { height: 7px; }
+  .prose table::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
+  .prose table::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 999px; }
+  .prose thead, .prose tbody { display: table; width: 100%; table-layout: auto; }
+  .prose thead th { background:#0f172a; color:white; font-weight:700; text-align:left; padding: 0.8rem 0.85rem; white-space: nowrap; font-size: 0.82rem; letter-spacing: 0.02em; text-transform: uppercase; }
+  .prose thead th:first-child { border-top-left-radius: 0.75rem; }
+  .prose thead th:last-child { border-top-right-radius: 0.75rem; }
+  .prose tbody td { padding: 0.75rem 0.85rem; border-bottom:1px solid #e2e8f0; vertical-align: top; line-height: 1.55; }
+  .prose tbody tr:nth-child(even) td { background:#f8fafc; }
+  .prose tbody tr:hover td { background:#f1f5f9; }
+  .prose tbody tr:last-child td:first-child { border-bottom-left-radius: 0.75rem; }
+  .prose tbody tr:last-child td:last-child { border-bottom-right-radius: 0.75rem; }
+  .prose figure { margin: 2.6rem 0; }
+  .prose figcaption { text-align:center; font-size:0.82rem; color:#64748b; margin-top:0.6rem; }
+  .prose blockquote { border-left: 4px solid #6366f1; background:#f8fafc; padding: 0.9rem 1rem; border-radius: 0 0.75rem 0.75rem 0; color:#334155; font-style: normal; }
+  .prose hr { border:0; height:1px; background: linear-gradient(to right, transparent, #e2e8f0, transparent); margin: 3.6rem 0; }
+  @media print {
+    .no-print { display:none !important; }
+    body { background:white !important; }
+    .shadow, .shadow-xl, .shadow-lg { box-shadow:none !important; }
+  }
+</style>
+</head>
+<body class="bg-[#f8fafc] text-slate-900 antialiased selection:bg-violet-200">
+  <header class="sticky top-0 z-40 backdrop-blur-xl bg-white/75 border-b border-slate-200/70">
+    <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 h-[56px] flex items-center justify-between gap-4">
+      <a href="#" class="flex items-center gap-3 min-w-0">
+        <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-white font-black tracking-tighter">MS</span>
+        <span class="hidden sm:block font-display font-extrabold tracking-tight text-slate-900">MiniShop</span>
+        <span class="hidden md:inline-flex items-center rounded-full bg-violet-50 border border-violet-200 px-2.5 py-1 text-xs font-semibold text-violet-700">SAE — IUT Côte d'Azur</span>
+      </a>
+      <div class="flex items-center gap-2 text-xs">
+        <span class="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 font-semibold text-emerald-700">
+          <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span> 29/29 SQL
+        </span>
+        <span class="inline-flex items-center rounded-full bg-white border border-slate-200 px-3 py-1 font-medium text-slate-600">HTML autonome</span>
+        <button onclick="window.print()" class="no-print hidden sm:inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-3 py-1.5 font-semibold text-white hover:bg-black transition">⎙ Imprimer</button>
+      </div>
+    </div>
+  </header>
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+    <div class="relative overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white shadow-[0_20px_60px_-24px_rgba(15,23,42,.25)]">
+      <div class="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 opacity-[0.08]"></div>
+      <div class="absolute -right-24 -top-24 h-[380px] w-[520px] rounded-full bg-gradient-to-br from-slate-800 to-slate-900 opacity-[0.12] blur-3xl"></div>
+      <div class="relative p-7 sm:p-8 lg:p-10">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="inline-flex items-center rounded-full bg-slate-900 px-3 py-1 text-xs font-bold tracking-widest text-white uppercase">MiniShop — SAE</span>
+          <span class="inline-flex items-center rounded-full bg-white border border-slate-200 px-3 py-1 text-xs font-medium text-slate-600">généré autonome · Tailwind CDN</span>
+          <span class="inline-flex items-center rounded-full bg-violet-600 px-3 py-1 text-xs font-bold text-white">v1.0</span>
+        </div>
+        <h1 class="mt-4 font-display text-[1.9rem] sm:text-[2.35rem] lg:text-[2.7rem] font-[800] tracking-tight leading-[0.95] text-slate-900">
+          MiniShop — site e-commerce + back-office (SAE)
+        </h1>
+        <p class="mt-3 max-w-3xl text-[0.98rem] leading-6 text-slate-600">Site e-commerce + back-office — PHP / MySQL / PDO</p>
+        <div class="mt-5 flex flex-wrap gap-2 text-xs">
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-3 py-1.5 font-semibold text-white">◆ Cahier des charges</span>
+          <span class="inline-flex items-center rounded-full bg-white border border-slate-200 px-3 py-1.5 font-medium text-slate-700">8 étapes · 9 rubriques · 11 contraintes</span>
+          <span class="inline-flex items-center rounded-full bg-white border border-slate-200 px-3 py-1.5 font-medium text-slate-700">14 cas · 3 détaillés</span>
+          <span class="inline-flex items-center rounded-full bg-white border border-slate-200 px-3 py-1.5 font-medium text-slate-700">MCD 3FN · 8 tables · 17 proc · 16 trig</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 mt-6 pb-10">
+    <div class="grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)] gap-6 items-start">
+      <aside class="lg:sticky lg:top-[72px] space-y-4 no-print">
+        <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+          <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+            <h2 class="text-sm font-bold tracking-wide text-slate-900 uppercase">Sommaire</h2>
+            <span class="text-xs font-medium text-slate-500">clique → ancre</span>
+          </div>
+          <div class="p-3 max-h-[66vh] overflow-auto overscroll-contain">
+            <nav id="TOC" class="toc-nav" role="doc-toc">
+<ul>
+<li><a href="#minishop-site-e-commerce-back-office-sae"
+id="toc-minishop-site-e-commerce-back-office-sae">MiniShop — site
+e-commerce + back-office (SAE)</a>
+<ul>
+<li><a href="#prérequis" id="toc-prérequis">Prérequis</a></li>
+<li><a href="#installation-5-commandes"
+id="toc-installation-5-commandes">Installation (5 commandes)</a></li>
+<li><a href="#comptes-de-démonstration"
+id="toc-comptes-de-démonstration">Comptes de démonstration</a></li>
+<li><a href="#contenu-de-la-base-vérifiable-en-1-requête"
+id="toc-contenu-de-la-base-vérifiable-en-1-requête">Contenu de la base
+(vérifiable en 1 requête)</a></li>
+<li><a href="#état-réel-du-dépôt-à-lire-avant-de-chercher-un-fichier"
+id="toc-état-réel-du-dépôt-à-lire-avant-de-chercher-un-fichier">État
+réel du dépôt (à lire avant de chercher un fichier)</a></li>
+<li><a href="#tests-livrés" id="toc-tests-livrés">Tests livrés</a></li>
+<li><a href="#arborescence" id="toc-arborescence">Arborescence</a></li>
+<li><a
+href="#documents-et-rendus-les-diagrammes-ne-saffichent-pas-dans-un-aperçu-sans-réseau"
+id="toc-documents-et-rendus-les-diagrammes-ne-saffichent-pas-dans-un-aperçu-sans-réseau">Documents
+et rendus (les diagrammes ne s’affichent PAS dans un aperçu sans
+réseau)</a></li>
+<li><a href="#membres-et-rôles-traçabilité-gitlab"
+id="toc-membres-et-rôles-traçabilité-gitlab">Membres et rôles
+(traçabilité GitLab)</a></li>
+<li><a href="#sauvegarde-restauration-à-faire-avant-une-démo"
+id="toc-sauvegarde-restauration-à-faire-avant-une-démo">Sauvegarde /
+restauration (à faire avant une démo)</a></li>
+<li><a href="#licence" id="toc-licence">Licence</a></li>
+</ul></li>
+</ul>
+</nav>
+          </div>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-900 to-slate-800 text-white p-4 shadow-lg">
+          <div class="text-sm font-bold">MiniShop • repères</div>
+          <ul class="mt-2 space-y-1.5 text-sm leading-5 text-slate-200">
+            <li>• <b class="text-white">29/29</b> tests SQL</li>
+            <li>• <b class="text-white">200 produits / 1 000 cmd/an</b></li>
+            <li>• <b class="text-white">14</b> diagrammes PlantUML</li>
+            <li>• <code class="bg-white/10 px-1.5 py-0.5 rounded text-xs">bash scripts/load_db.sh</code></li>
+          </ul>
+          <a href="#top" class="mt-3 inline-flex w-full justify-center rounded-xl bg-white px-3 py-2 text-sm font-bold text-slate-900 hover:bg-slate-100 transition">↑ Retour en haut</a>
+        </div>
+        <div class="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm leading-5 text-amber-900">
+          <div class="font-bold">Note UTF-8</div>
+          <p class="mt-1">HTML en <b>UTF-8</b> intégral : é è à ç ô — « » ◆ ● → ≤ ≥ — sans ??? ni Ã©. Images en data URI.</p>
+        </div>
+      </aside>
+      <main id="top" class="min-w-0">
+        <article class="prose prose-slate max-w-none bg-white rounded-2xl border border-slate-200 shadow-[0_16px_50px_-20px_rgba(15,23,42,.18)] p-5 sm:p-7 lg:p-9">
+          <style>
+            .prose { font-family: Inter, system-ui, -apple-system, sans-serif; font-size: 0.96rem; line-height: 1.80; color:#0f172a; }
+            .prose h1 { font-family: 'Plus Jakarta Sans', Inter, sans-serif; font-weight:800; letter-spacing:-0.02em; font-size: clamp(1.6rem, 2.3vw, 2rem); margin-top: 3.8rem; margin-bottom:1rem; padding-bottom:0.7rem; border-bottom:1px solid #f1f5f9; line-height:1.15; }
+            .prose h1:first-child { margin-top: 0.8rem; }
+            .prose h2 { font-family: 'Plus Jakarta Sans', Inter, sans-serif; font-weight:800; letter-spacing:-0.015em; font-size: clamp(1.28rem, 1.8vw, 1.5rem); margin-top: 4.2rem; margin-bottom:1.3rem; padding:0.9rem 1rem 0.9rem 1.05rem; background:#f8fafc; border-left:4px solid #6366f1; border-radius:0 0.75rem 0.75rem 0; box-shadow:0 1px 2px -1px rgba(15,23,42,.06); line-height:1.3; }
+            .prose h2:first-of-type { margin-top: 1.4rem; }
+            .prose h3 { font-weight:700; font-size:1.08rem; margin-top:3.2rem; margin-bottom:0.95rem; padding-left:0.75rem; border-left:2.5px solid #cbd5e1; color:#0f172a; line-height:1.35; }
+            .prose h4 { font-weight:700; font-size:1rem; margin-top:2.8rem; margin-bottom:0.6rem; color:#334155; }
+            .prose p { margin: 1.3rem 0; line-height:1.80; }
+            .prose ul, .prose ol { margin: 1.25rem 0; }
+            .prose li + li { margin-top:0.45rem; }
+            .prose li { line-height:1.65; }
+            .prose hr { margin: 3.6rem 0 !important; }
+            .prose img { border-radius: 0.95rem; border: 1px solid #e2e8f0; box-shadow: 0 10px 28px -16px rgba(15,23,42,.35); background:white; display:block; margin-left:auto; margin-right:auto; }
+            .prose figure img { margin-bottom:0; }
+            .prose kbd { font-family: 'JetBrains Mono', monospace; background:#0f172a; color:white; padding:0.15rem 0.4rem; border-radius:0.4rem; font-size:0.78rem; border:1px solid #1e293b; }
+          </style>
+          
+<header id="title-block-header">
+<h1 class="title">MiniShop — site e-commerce + back-office (SAE)</h1>
+</header>
+
+<h1 id="minishop-site-e-commerce-back-office-sae">MiniShop — site
+e-commerce + back-office (SAE)</h1>
+<p>Projet pédagogique : catalogue, panier, commandes, espace
+d’administration — <strong>PHP 8 / MySQL (PDO) / procédures stockées /
+déclencheurs / architecture MVC</strong> — avec sa base de données
+conçue, normalisée, testée, et son cahier des charges complet.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Cadre</strong></td>
+<td>SAE — BUT Informatique / Licence 3, Université Côte d’Azur</td>
+</tr>
+<tr class="even">
+<td><strong>Groupe</strong></td>
+<td>3 étudiants (prénoms/noms/numéros dans §Membres ci-dessous)</td>
+</tr>
+<tr class="odd">
+<td><strong>Référente</strong></td>
+<td>Thanh-Phuong Nguyen —
+<code>thanh-phuong.nguyen@univ-cotedazur.fr</code></td>
+</tr>
+<tr class="even">
+<td><strong>Documents</strong></td>
+<td><a
+href="docs/01-cahier-des-charges-MiniShop.md"><code>docs/01-cahier-des-charges-MiniShop.md</code></a>
+(spécification <strong>et</strong> conception de base de données) · <a
+href="docs/02-document-tests-validation.md"><code>docs/02-document-tests-validation.md</code></a>
+· <a
+href="docs/03-support-soutenance.md"><code>docs/03-support-soutenance.md</code></a></td>
+</tr>
+<tr class="odd">
+<td><strong>État</strong></td>
+<td>base de données + 29 tests SQL <strong>exécutés avec succès</strong>
+(règles RB-01…RB-20, vues, frais de port) ; application PHP spécifiée
+(code à produire aux lots L8→L13 du planning)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="prérequis">Prérequis</h2>
+<ul>
+<li>PHP <strong>8.1+</strong> avec les extensions
+<code>pdo_mysql</code>, <code>mbstring</code>, <code>json</code>,
+<code>intl</code></li>
+<li>MySQL <strong>8.0.16+</strong> (les contraintes <code>CHECK</code>
+sont appliquées depuis cette version) <strong>ou MariaDB
+10.6+</strong></li>
+<li>Apache 2.4 avec <code>mod_rewrite</code> (ou le serveur embarqué PHP
+pour un essai rapide)</li>
+<li>client <code>mysql</code> / <code>mariadb</code> en ligne de
+commande, <code>bash</code></li>
+<li>facultatif : <code>pandoc</code> + <code>plantuml</code> (rendu des
+documents et des diagrammes), <code>phpunit</code>,
+<code>phpcs</code></li>
+</ul>
+<h2 id="installation-5-commandes">Installation (5 commandes)</h2>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. cloner et placer le projet</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone <span class="op">&lt;</span>URL_DU_DEPOT<span class="op">&gt;</span> minishop <span class="kw">&amp;&amp;</span> <span class="bu">cd</span> minishop</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. configuration (jamais commitée)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> app/Config/env.example.php app/Config/env.php      <span class="co"># puis éditer db_user / db_pass</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. créer la base, les tables, les 16 triggers, la fonction + 17 procédures et le jeu de démonstration</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="va">DB_USER</span><span class="op">=</span>root <span class="va">DB_PASS</span><span class="op">=</span><span class="st">&#39;...&#39;</span> <span class="ex">./scripts/load_db.sh</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. vérifier que la base est saine (29 tests de règles de gestion, vues et frais de port)</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="va">DB_USER</span><span class="op">=</span>root <span class="va">DB_PASS</span><span class="op">=</span><span class="st">&#39;...&#39;</span> <span class="ex">./scripts/run_sql_tests.sh</span>   <span class="co"># 29 tests, attendu : « Tests conformes : 29 / 29 »</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. lancer (développement) — en production : DocumentRoot = public/</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="ex">php</span> <span class="at">-S</span> localhost:8000 <span class="at">-t</span> public</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">#   http://localhost:8000/            (front-office)</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#   http://localhost:8000/admin        (back-office, compte admin requis)</span></span></code></pre></div>
+<p>Le script <code>load_db.sh</code> encapsule les fichiers contenant
+des procédures/triggers avec un <code>DELIMITER $$</code> (le client
+<code>mysql</code> n’accepte pas <code>DELIMITER</code> en mode batch).
+Sous MySQL Workbench ou phpMyAdmin, ouvrir et exécuter
+<code>sql/01 → 02 → 03 → 04</code> dans cet ordre fonctionne aussi.</p>
+<h2 id="comptes-de-démonstration">Comptes de démonstration</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Rôle</th>
+<th>Email</th>
+<th>Mot de passe (démo uniquement)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Client</td>
+<td><code>alice@example.com</code></td>
+<td><code>Demo2026!</code></td>
+</tr>
+<tr class="even">
+<td>Client</td>
+<td><code>bruno@example.com</code></td>
+<td><code>Demo2026!</code></td>
+</tr>
+<tr class="odd">
+<td>Client</td>
+<td><code>carla@example.com</code></td>
+<td><code>Demo2026!</code></td>
+</tr>
+<tr class="even">
+<td>Administrateur (rôle <code>SUPER</code>)</td>
+<td><code>admin@minishop.fr</code></td>
+<td><code>Admin2026!</code></td>
+</tr>
+</tbody>
+</table>
+<p>Les mots de passe sont stockés <strong>hachés</strong>
+(<code>password_hash()</code> bcrypt cost 12) dans
+<code>sql/01_minishop_schema.sql</code>. Pour en régénérer :
+<code>php -r 'echo password_hash("MonMotDePasse", PASSWORD_BCRYPT, ["cost"=&gt;12]), "\n";'</code>.
+Ne rejouez <strong>pas</strong> <code>sql/04_minishop_demo.sql</code>
+sur une installation exposée (commandes de démonstration) ;
+<code>scripts/deploy.sh</code> régénère des hashes aléatoires pour la
+démo publique.</p>
+<h2 id="contenu-de-la-base-vérifiable-en-1-requête">Contenu de la base
+(vérifiable en 1 requête)</h2>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="st">&#39;tables&#39;</span> objet, <span class="fu">COUNT</span>(<span class="op">*</span>) n <span class="kw">FROM</span> information_schema.<span class="kw">tables</span>    <span class="kw">WHERE</span> table_schema <span class="op">=</span> <span class="kw">DATABASE</span>()</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">UNION</span> <span class="kw">ALL</span> <span class="kw">SELECT</span> <span class="st">&#39;procedures&#39;</span>, <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">FROM</span> information_schema.routines <span class="kw">WHERE</span> routine_schema <span class="op">=</span> <span class="kw">DATABASE</span>() <span class="kw">AND</span> routine_type <span class="op">=</span> <span class="st">&#39;PROCEDURE&#39;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">UNION</span> <span class="kw">ALL</span> <span class="kw">SELECT</span> <span class="st">&#39;triggers&#39;</span>,   <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">FROM</span> (<span class="kw">SELECT</span> <span class="kw">DISTINCT</span> TRIGGER_NAME <span class="kw">FROM</span> information_schema.<span class="kw">TRIGGERS</span> <span class="kw">WHERE</span> TRIGGER_SCHEMA <span class="op">=</span> <span class="kw">DATABASE</span>()) t;</span></code></pre></div>
+<p>8 tables · 3 vues · 1 fonction + 17 procédures stockées · 16
+déclencheurs · 12 produits · 4 catégories · 3 clients · 1 admin · 4
+commandes de démonstration (dont une qui paie 4,90 EUR de frais de
+port).</p>
+<h2 id="état-réel-du-dépôt-à-lire-avant-de-chercher-un-fichier">État
+réel du dépôt (à lire avant de chercher un fichier)</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Zone</th>
+<th>Statut</th>
+<th>Comment le vérifier</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>sql/</code>, <code>scripts/</code>, <code>tests/sql/</code>,
+<code>docs/</code> (CDC, tests, soutenance, annexes, diagrammes)</td>
+<td><strong>livrés et exécutés</strong></td>
+<td><code>./scripts/load_db.sh</code> puis
+<code>./scripts/run_sql_tests.sh</code> → 29/29</td>
+</tr>
+<tr class="even">
+<td><code>tests/security/controles.sh</code>,
+<code>tests/charge/reserver.sh</code>,
+<code>tests/perf/mesurer.sh</code></td>
+<td><strong>scripts livrés</strong> ; les deux derniers supposent
+l’application en service</td>
+<td><code>bash -n</code> passe ; exécution utile dès le lot L9</td>
+</tr>
+<tr class="odd">
+<td><code>app/**</code> hors <code>app/Config/env.example.php</code>,
+<code>public/**</code>, <code>tests/php/**</code></td>
+<td><strong>à produire aux lots L8 → L13</strong> (le cahier des charges
+les spécifie : classes, méthodes, routes, conventions, tests)</td>
+<td>§9.2 (arborescence cible), §16.1 (ligne iii du barème), §13.3
+(lots)</td>
+</tr>
+<tr class="even">
+<td><code>tests/sql/out/*.log</code></td>
+<td>non versionnés (régénérables) — seul
+<code>tests/sql/rapport_tests_sql.md</code> est versionné, preuve de
+recette à l’appui</td>
+<td><code>.gitignore</code>, §14.1 règle 7</td>
+</tr>
+</tbody>
+</table>
+<h2 id="tests-livrés">Tests livrés</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Commande</th>
+<th>Ce qu’elle prouve</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>./scripts/run_sql_tests.sh</code></td>
+<td>29 tests des règles de gestion RB-01…RB-20, des 3 vues et des frais
+de port, <strong>dont 15 attaquent la base en SQL direct</strong>
+(contournement de l’application) ; rapport dans
+<code>tests/sql/rapport_tests_sql.md</code></td>
+</tr>
+<tr class="even">
+<td><code>bash tests/security/controles.sh</code></td>
+<td>10 contrôles statiques (aucune concaténation SQL, échappement
+systématique, session durcie, CSRF sur les méthodes mutatives…)</td>
+</tr>
+<tr class="odd">
+<td><code>bash tests/charge/reserver.sh</code></td>
+<td>pas de survente : 20 demandes simultanées pour 12 exemplaires → 12
+commandes, 8 refus</td>
+</tr>
+<tr class="even">
+<td><code>php -l</code> + <code>phpunit</code> (si installé)</td>
+<td>syntaxe et tests unitaires des modèles/services</td>
+</tr>
+<tr class="odd">
+<td><code>docs/diagrams/render.sh</code></td>
+<td>les 14 diagrammes (cas d’utilisation, classes, séquences, activités,
+états, MCD, MLD, architecture) se régénèrent depuis les sources
+<code>.puml</code></td>
+</tr>
+<tr class="even">
+<td><code>bash tests/perf/mesurer.sh</code></td>
+<td><code>ENF-01</code> : p95 par URL (<code>ab</code> ou repli
+<code>curl</code>), sortie 1 si p95 ≥ 500 ms</td>
+</tr>
+<tr class="odd">
+<td><code>./scripts/build-docs.sh</code></td>
+<td>régénère <strong>tout</strong> l’assemblage documentaire : 14
+diagrammes depuis les <code>.puml</code>, annexe SQL recopiée depuis
+<code>sql/*</code> (source de vérité), campagne de tests rejouée,
+exports Word (<code>dist/*.docx</code>, images incrustées)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="arborescence">Arborescence</h2>
+<pre><code>app/Config, app/Controller, app/Model, app/Repository, app/Security, app/View
+docs/{01-cahier-des-charges, 02-document-tests-validation, 03-support-soutenance}, docs/annexes, docs/diagrams/{src/*.puml, *.png}
+public/{index.php, .htaccess, css, js, img}
+scripts/{load_db.sh, run_sql_tests.sh, gen_volumes.sh, deploy.sh, build-docs.sh}
+sql/{01_minishop_schema.sql, 02_minishop_procedures.sql, 03_minishop_triggers.sql, 04_minishop_demo.sql}
+tests/{sql/** (manifest, fixture, tNN_*.sql, rapport), security/controles.sh, charge/reserver.sh, perf/mesurer.sh, php/**}
+var/log  ·  .gitignore  ·  .gitlab-ci.yml (6 jobs)</code></pre>
+<h2
+id="documents-et-rendus-les-diagrammes-ne-saffichent-pas-dans-un-aperçu-sans-réseau">Documents
+et rendus (les diagrammes ne s’affichent PAS dans un aperçu sans
+réseau)</h2>
+<blockquote>
+<p><strong>Si tu ne vois pas <code>dist/</code></strong> : ce dossier
+est listé dans <code>.gitignore</code> (artefact régénérable, §14.1) et
+donc masqué par certains explorateurs/aperçus. Une <strong>copie
+visible</strong> est maintenue dans
+<strong><code>livrables/</code></strong> à la racine
+(<code>livrables/*.docx</code>, <code>livrables/html/*.html</code>),
+régénérée à chaque <code>bash scripts/build-docs.sh</code>.</p>
+</blockquote>
+<p><code>bash scripts/build-docs.sh</code> produit, dans
+<code>dist/</code> (répertoire généré, hors Git) :</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Rendu</th>
+<th>Chemin</th>
+<th>Image des diagrammes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Markdown (source de vérité, éditable)</td>
+<td><code>docs/01-…-MiniShop.md</code></td>
+<td><strong>chemins relatifs</strong> → non affichés dans un visualiseur
+sandboxé sans accès réseau ; ouvrir le <code>.docx</code> ou le
+<code>.html</code> pour les voir</td>
+</tr>
+<tr class="even">
+<td>Word</td>
+<td><code>dist/01-cahier-des-charges-MiniShop.docx</code></td>
+<td>images <strong>intégrées</strong> (14 figures)</td>
+</tr>
+<tr class="odd">
+<td>HTML autonome</td>
+<td><code>dist/html/01-cahier-des-charges-MiniShop.html</code></td>
+<td>images <strong>intégrées en base64</strong> — lisible hors ligne,
+projetable, aucune dépendance</td>
+</tr>
+<tr class="even">
+<td>PNG / SVG</td>
+<td><code>docs/diagrams/*.{png,svg}</code></td>
+<td>sources rendues par <code>docs/diagrams/render.sh</code>
+(PlantUML)</td>
+</tr>
+</tbody>
+</table>
+<p>Si un aperçu affiche une image cassée là où il y a un
+<code>![…](docs/diagrams/…png)</code>, le fichier existe : vérifier avec
+<code>ls docs/diagrams/*.png \| wc -l</code> (attendu
+<strong>14</strong>) et ouvrir
+<code>dist/html/01-cahier-des-charges-MiniShop.html</code>.</p>
+<h2 id="membres-et-rôles-traçabilité-gitlab">Membres et rôles
+(traçabilité GitLab)</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Personne</th>
+<th>Rôle (RACI du CDC §3.3)</th>
+<th>Zones principales</th>
+<th>Commits</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Étudiant·e A</td>
+<td>chef de projet · back-office</td>
+<td><code>app/Controller/</code>, <code>README.md</code>,
+<code>.gitlab-ci.yml</code></td>
+<td>≥ 20</td>
+</tr>
+<tr class="even">
+<td>Étudiant·e B</td>
+<td>modèle et base de données</td>
+<td><code>sql/</code>, <code>app/Repository/</code>,
+<code>tests/sql/</code></td>
+<td>≥ 20</td>
+</tr>
+<tr class="odd">
+<td>Étudiant·e C</td>
+<td>présentation, sécurité, tests</td>
+<td><code>app/View/</code>, <code>public/js/</code>,
+<code>docs/02-*</code></td>
+<td>≥ 20</td>
+</tr>
+</tbody>
+</table>
+<p>Chaque personne committe aussi dans les deux autres zones (au moins 5
+commits chacun) : <code>git shortlog -sne main</code> doit montrer une
+participation équilibrée, c’est un critère de notation individuel.</p>
+<h2 id="sauvegarde-restauration-à-faire-avant-une-démo">Sauvegarde /
+restauration (à faire avant une démo)</h2>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mysqldump</span> <span class="at">--single-transaction</span> <span class="at">--routines</span> <span class="at">--triggers</span> <span class="at">-u</span> root <span class="at">-p</span> minishop <span class="op">&gt;</span> backup.sql   <span class="co"># --routines --triggers : OBLIGATOIRE ici</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">mysql</span> <span class="at">-u</span> root <span class="at">-p</span> minishop <span class="op">&lt;</span> backup.sql</span></code></pre></div>
+<p>Sans <code>--routines --triggers</code>, une restauration « normale »
+perd la fonction, les 17 procédures et les 16 déclencheurs : les règles
+<code>RB-03</code>, <code>RB-06</code>, <code>RB-11</code>,
+<code>RB-18</code> cesseraient silencieusement d’être appliquées.</p>
+<h2 id="licence">Licence</h2>
+<p>Projet pédagogique — code et documents fournis tels quels, usage
+pédagogique uniquement.</p>
+
+        </article>
+        <footer class="mt-6 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
+          <span>MiniShop — SAE IUT Côte d'Azur · <code class="bg-white border border-slate-200 px-1.5 py-0.5 rounded">bash scripts/export_html.sh</code></span>
+          <span class="inline-flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-emerald-500"></span> imprimable</span>
+        </footer>
+      </main>
+    </div>
+  </div>
+<script>
+document.querySelectorAll('pre').forEach(pre => {
+  const btn=document.createElement('button'); btn.textContent='⧉ Copier'; btn.className='no-print absolute right-3 top-3 rounded-full bg-white/10 border border-white/15 backdrop-blur px-2.5 py-1 text-xs font-semibold text-white hover:bg-white hover:text-slate-900 transition'; pre.style.position='relative'; pre.appendChild(btn);
+  btn.addEventListener('click', async () => { try{ await navigator.clipboard.writeText(pre.innerText.replace('⧉ Copier','').trim()); btn.textContent='✓ Copié'; setTimeout(()=>btn.textContent='⧉ Copier',1400); } catch(e){ btn.textContent='Échec'; } });
+});
+// wrap tables pour scroll horizontal avec indicateur
+document.querySelectorAll('.prose table').forEach(tbl => {
+  if (tbl.parentElement.classList.contains('table-wrap')) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'table-wrap not-prose my-6 overflow-x-auto rounded-xl border border-slate-200 shadow-sm bg-white';
+  wrap.style.webkitOverflowScrolling = 'touch';
+  tbl.parentNode.insertBefore(wrap, tbl);
+  wrap.appendChild(tbl);
+  // reset table margin when wrapped
+  tbl.style.margin = '0';
+  tbl.style.border = 'none';
+  // ombre de scroll
+  const hint = document.createElement('div');
+  hint.className = 'text-[11px] text-slate-400 text-right px-3 py-1.5 bg-slate-50 border-t border-slate-100 hidden sm:block';
+  hint.textContent = '↔ faites défiler horizontalement pour voir tout le tableau';
+  wrap.appendChild(hint);
+  const upd = () => { hint.style.display = (wrap.scrollWidth > wrap.clientWidth) ? 'block' : 'none'; };
+  upd(); wrap.addEventListener('scroll', upd); window.addEventListener('resize', upd);
+});
+document.querySelectorAll('.prose img').forEach(img => {
+  img.style.cursor='zoom-in';
+  img.addEventListener('click', () => {
+    const ov=document.createElement('div'); ov.className='fixed inset-0 z-[100] bg-slate-950/85 backdrop-blur-sm p-4 sm:p-8 flex items-center justify-center';
+    ov.innerHTML='<img src="'+img.src+'" class="max-h-[92vh] max-w-[96vw] rounded-2xl shadow-2xl border border-white/20 bg-white" style="object-fit:contain"><button class="absolute top-4 right-4 rounded-full bg-white px-3 py-1.5 text-sm font-bold shadow">✕ Fermer</button>';
+    ov.addEventListener('click', (e) => { if(e.target===ov || e.target.tagName==='BUTTON') ov.remove(); });
+    document.body.appendChild(ov);
+  });
+});
+</script>
+</body>
+</html>

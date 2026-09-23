@@ -1,0 +1,35 @@
+# MiniShop — fichiers volontairement hors dépôt.
+# Règle n° 7 du §14.1 du cahier des charges : aucun secret dans GitLab, aucune sortie
+# régénérable encombrant l'historique. La ligne « tests/sql/out » est un arbitrage
+# documenté : seul le rapport consigné dans le rendu est versionné (c'est la preuve
+# demandée), les journaux bruts par test restent locaux.
+
+# --- secrets et configuration locale (le modèle app/Config/env.example.php est, lui, versionné)
+app/Config/env.php
+config/env.php
+.env
+.env.local
+*.pem
+*.key
+
+# --- données locales, journaux applicatifs
+var/
+!var/.gitkeep
+*.log
+
+# --- artefacts générés (reproductibles par les scripts du dépôt)
+vendor/
+node_modules/
+dist/
+docs/diagrams/*.svg.tmp
+
+# --- sorties de tests : régénérées par ./scripts/run_sql_tests.sh
+tests/sql/out/*
+!tests/sql/rapport_tests_sql.md
+
+# --- éditeurs / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db

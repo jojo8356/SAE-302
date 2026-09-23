@@ -1,0 +1,38 @@
+# =====================================================================
+# MiniShop — manifeste de la suite de tests SQL
+# Colonnes separees par "|":
+#   id|regle|description du test|resultat attendu (ERREUR:<motif> ou OK)|fichier SQL
+# Le harnais tests/sql/run_tests.sh cree une base de test, applique le
+# fichier, puis compare le resultat reel a l'attendu.
+#  "ERREUR:<motif>" : le fichier DOIT echouer et mysql doit afficher <motif>
+#  "OK"             : le fichier DOIT reussir (et afficher les PASS attendus)
+# =====================================================================
+T-01|RB-02|prix HT = 0 refuse par le CHECK ck_produit_prix|ERREUR:ck_produit_prix|t01_prix_zero.sql
+T-02|RB-03|stock negatif refuse (CHECK) en ecriture directe|ERREUR:ck_produit_stock|t02_stock_negatif.sql
+T-03|RB-03|stock negatif refuse par trg_produit_regles|ERREUR:RB03_STOCK_NE_PEUT_PAS_ETRE_NEGATIF|t03_trigger_stock.sql
+T-04|RB-01|email client duplique (contrainte unique)|ERREUR:uk_client_email|t04_email_duplicate.sql
+T-05|RB-12|sp_create_account refuse un mot de passe non hashe|ERREUR:HASH_MOT_DE_PASSE_INVALIDE|t05_hash_obligatoire.sql
+T-06|RB-05|quantite = 0 refusee par sp_add_order_line|ERREUR:RB05_QUANTITE_DOIT_ETRE_SUPERIEURE_A_ZERO|t06_quantite_zero.sql
+T-07|RB-05|quantite = 0 refusee par le CHECK ck_ligne_quantite|ERREUR:ck_ligne_quantite|t07_check_quantite.sql
+T-08|RB-18|stock insuffisant : le trigger trg_ligne_controle_insert bloque|ERREUR:STOCK_INSUFFISANT|t08_stock_insuffisant.sql
+T-09|RB-18|stock insuffisant : code de retour de la procedure|OK|t09_stock_insuffisant_sp.sql
+T-10|RB-15|montant_total non saisissable (trigger)|ERREUR:RB15_MONTANT_CALCULE_INTERDIT|t10_montant_saisi.sql
+T-11|RB-06|prix unitaire non modifiable (immutabilite)|ERREUR:RB06_PRIX_ET_QUANTITE_NON_MODIFIABLE|t11_prix_modifie.sql
+T-12|RB-11|transition EN_PREPARATION -> BROUILLON interdite|ERREUR:RB11_TRANSITION_STATUT_INTERDITE|t12_transition.sql
+T-13|RB-11|transition EXPEDIEE -> BROUILLON interdite|ERREUR:RB11_TRANSITION_STATUT_INTERDITE|t13_transition2.sql
+T-14|RB-14|suppression d'une categorie non vide|ERREUR:CATEGORIE_NON_VIDE|t14_categorie_occupee.sql
+T-15|RB-14|suppression d'un produit deja commande|ERREUR:PRODUIT_REFERENCE_INTERDIT_DE_SUPPRIMER|t15_produit_commande.sql
+T-16|RB-04|validation d'une commande sans ligne|ERREUR:RB04_COMMANDE_DOIT_CONTENIR_AU_MOINS_UNE_LIGNE|t16_commande_vide.sql
+T-17|RB-10|commande rattachee a un client inexistant (trigger + FK)|ERREUR:RB10_COMMANDE_SANS_CLIENT|t17_client_inexistant.sql
+T-18|SEC-08|sp_confirm_order refuse l'acces a la commande d'un autre client|ERREUR:ACCES_NON_AUTORISE|t18_a_dere.sql
+T-19|RB-03|sp_adjust_stock refuse le passage en negatif (OUT)|OK|t19_adjust_negatif.sql
+T-20|RB-09|produit deja commande : bascule visible=0 (pas de suppression)|OK|t20_suppression_logique.sql
+T-21|RB-18|annulation : stock restaure ligne par ligne|OK|t21_annulation.sql
+T-22|RB-11|historique des statuts ecrit automatiquement par le trigger|OK|t22_historique.sql
+T-23|RB-06|le prix de la ligne survit a une hausse tarifaire ulterieure|OK|t23_snapshot.sql
+T-24|RB-04|suppression d'une commande BROUILLON vide autorisee|OK|t24_purge.sql
+T-25|EF-VIS-02|recherche + filtres + produits masques exclus|OK|t25_recherche.sql
+T-26|EF-ADM-05|alerte stock (RUPTURE / TRES_BAS) calculee par la procedure|OK|t26_alerte_stock.sql
+T-27|EF-VIS-01|les 3 vues (catalogue, etat de stock, commandes client) existent et sont coherentes avec les tables|OK|t27_vues.sql
+T-28|ENF-14|frais de port calcules avant validation, figurés a la validation, non saisissables|ERREUR:RB15_MONTANT_CALCULE_INTERDIT|t28_port.sql
+T-29|ENF-16|erreur en cours de commande : rollback integral, aucune donnee partielle|OK|t29_rollback_commande.sql

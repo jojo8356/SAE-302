@@ -1,0 +1,1576 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MiniShop — Todolist : dépendantes & asynchrones</title><style>
+:root { --ink:#1a2332; --accent:#7c2d12; --accent2:#b91c1c; --soft:#fefce8; --line:#e2d9c8; --code:#fdf6e3; }
+* { box-sizing:border-box; }
+body { font-family:Georgia,'Times New Roman',serif; color:var(--ink); background:#faf8f3;
+       max-width:980px; margin:0 auto; padding:48px 56px; line-height:1.62; font-size:16px; }
+h1,h2,h3,h4 { font-family:'Segoe UI',system-ui,sans-serif; color:var(--accent); line-height:1.25; }
+h1 { font-size:2.0em; border-bottom:3px solid var(--accent); padding-bottom:.35em; margin-top:1.2em; }
+h2 { font-size:1.5em; border-bottom:1px solid var(--line); padding-bottom:.25em; margin-top:2em; }
+h3 { font-size:1.2em; margin-top:1.6em; color:#9a3412; }
+h4 { font-size:1.05em; color:#a16207; }
+table { border-collapse:collapse; width:100%; margin:1em 0; font-family:'Segoe UI',system-ui,sans-serif; font-size:.86em; }
+th { background:#7c2d12; color:#fff; text-align:left; padding:7px 9px; }
+td { border:1px solid var(--line); padding:6px 9px; vertical-align:top; background:#fff; }
+tr:nth-child(even) td { background:#fdfaf3; }
+code { font-family:'JetBrains Mono',Consolas,monospace; font-size:.88em; background:var(--soft);
+       border:1px solid #f0e6c8; border-radius:3px; padding:1px 4px; }
+pre { background:var(--code); border:1px solid var(--line); border-left:4px solid var(--accent2);
+      border-radius:4px; padding:14px 16px; overflow-x:auto; line-height:1.45; }
+pre code { background:none; border:none; padding:0; font-size:.84em; }
+blockquote { border-left:4px solid #ca8a04; background:var(--soft); margin:1em 0; padding:.6em 1.1em; color:#713f12; }
+img { max-width:100%; border:1px solid var(--line); border-radius:6px; margin:8px 0; }
+hr { border:none; border-top:1px solid var(--line); margin:2.2em 0; }
+a { color:var(--accent2); }
+@media print { body { background:#fff; padding:0; } pre,table { page-break-inside:auto; } }
+
+.st-f { color:#15803d; font-weight:bold; } .st-p { color:#b45309; font-weight:bold; } .st-t { color:#64748b; font-weight:bold; }
+.bar { font-family:monospace; letter-spacing:0; }
+</style></head>
+<body>
+<h1>MiniShop — Todolist projet : tâches dépendantes et tâches asynchrones</h1>
+<p><strong>État réel arrêté au 23 septembre 2026</strong> (vérifié dans le dépôt et sur la base MariaDB 11.8.6), croisé avec la WBS
+(<code>docs/05-wbs-projet.md</code>) : les 86 tâches y sont reprises avec leur statut, puis classées en
+<strong>tâches dépendantes</strong> (l'ordre est imposé) et <strong>tâches asynchrones</strong> (aucune attente, démarrage immédiat possible, en parallèle).</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Avancement global</strong></td>
+<td><strong>162 h faites / 360 h (45 %)</strong> — 84 tâches terminées ou soldées, 14 partielles, 36 à faire</td>
+</tr>
+<tr>
+<td><strong>Reste à faire</strong></td>
+<td><strong>198 h</strong> : application Web 146 h (le gros du reste), tests 18 h, pilotage 12 h, soutenance 9 h, BD 9 h, UML 4 h</td>
+</tr>
+<tr>
+<td><strong>Prêtes MAINTENANT (asynchrones)</strong></td>
+<td><strong>~40 h de travail immédiatement disponible</strong>, répartissables en parallèle entre A, B et C sans aucun blocage</td>
+</tr>
+<tr>
+<td><strong>Chaîne dépendante</strong></td>
+<td>L8 → L9 → L10 → L11 → L12 → L14 → L15 → L16 (l'application), jalons J3→J6</td>
+</tr>
+<tr>
+<td><strong>Documents liés</strong></td>
+<td><code>docs/05-wbs-projet.md</code> (détail des tâches et charges) · <code>docs/01</code> §13.4 (jalons) · <code>README.md</code> (état du dépôt)</td>
+</tr>
+<tr>
+<td><strong>Version</strong></td>
+<td>1.0 — 23 septembre 2026</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>1. État d'avancement (mesuré, pas déclaré)</h2>
+<h3>1.1 Par division</h3>
+<table>
+<thead>
+<tr>
+<th>Division</th>
+<th style="text-align: right;">Charge</th>
+<th style="text-align: right;">Fait</th>
+<th style="text-align: right;">Reste</th>
+<th>Avancement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>D1 — Pilotage, dépôt GitLab &amp; intégration</strong></td>
+<td style="text-align: right;">24 h</td>
+<td style="text-align: right;">12 h</td>
+<td style="text-align: right;">12 h</td>
+<td>██████████░░░░░░░░░░ 50%</td>
+</tr>
+<tr>
+<td><strong>D2 — Document de spécification du système</strong></td>
+<td style="text-align: right;">54 h</td>
+<td style="text-align: right;">50 h</td>
+<td style="text-align: right;">4 h</td>
+<td>███████████████████░ 93%</td>
+</tr>
+<tr>
+<td><strong>D3 — Conception de la base de données &amp; SQL</strong></td>
+<td style="text-align: right;">98 h</td>
+<td style="text-align: right;">89 h</td>
+<td style="text-align: right;">9 h</td>
+<td>██████████████████░░ 91%</td>
+</tr>
+<tr>
+<td><strong>D4 — Application Web PHP / MySQL / PDO</strong></td>
+<td style="text-align: right;">146 h</td>
+<td style="text-align: right;">0 h</td>
+<td style="text-align: right;">146 h</td>
+<td>░░░░░░░░░░░░░░░░░░░░ 0%</td>
+</tr>
+<tr>
+<td><strong>D5 — Tests &amp; validation</strong></td>
+<td style="text-align: right;">24 h</td>
+<td style="text-align: right;">6 h</td>
+<td style="text-align: right;">18 h</td>
+<td>█████░░░░░░░░░░░░░░░ 25%</td>
+</tr>
+<tr>
+<td><strong>D6 — Soutenance</strong></td>
+<td style="text-align: right;">14 h</td>
+<td style="text-align: right;">5 h</td>
+<td style="text-align: right;">9 h</td>
+<td>███████░░░░░░░░░░░░░ 36%</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td style="text-align: right;"><strong>360 h</strong></td>
+<td style="text-align: right;"><strong>162 h</strong></td>
+<td style="text-align: right;"><strong>198 h</strong></td>
+<td><strong>45 %</strong></td>
+</tr>
+</tbody>
+</table>
+<h3>1.2 Par personne (chargé vs restant)</h3>
+<table>
+<thead>
+<tr>
+<th>Pers.</th>
+<th style="text-align: right;">Charge WBS</th>
+<th style="text-align: right;">Reste</th>
+<th style="text-align: right;">Fait</th>
+<th>Remarque</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A</strong></td>
+<td style="text-align: right;">122 h</td>
+<td style="text-align: right;">84 h</td>
+<td style="text-align: right;">38 h</td>
+<td>porte la chaîne critique (socle + panier/commande + back-office) ; les pilotes async (GitLab, slides) sont légers, à faire en début de semaine</td>
+</tr>
+<tr>
+<td><strong>B</strong></td>
+<td style="text-align: right;">117 h</td>
+<td style="text-align: right;"><strong>17 h seulement</strong></td>
+<td style="text-align: right;">100 h</td>
+<td>la base est <strong>terminée et validée</strong> ; B est la ressource libre de la période → absorbe du C (revues des MR d'A) et les tests</td>
+</tr>
+<tr>
+<td><strong>C</strong></td>
+<td style="text-align: right;">121 h</td>
+<td style="text-align: right;">97 h</td>
+<td style="text-align: right;">24 h</td>
+<td>le front-office + sécurité + JS pèsent sur C : <strong>prioriser les MR croisées avec A sur L8</strong> pour démarrer</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Lecture clé</strong> : le reste du projet est concentré sur <strong>une seule chaîne</strong> (D4, 146 h). Tout le jeu
+consiste à démarrer L8 <strong>immédiatement</strong> (il n'attend plus rien) pendant que B solde les 17 h qui lui restent
+et que chacun prend sa part du <strong>backlog asynchrone</strong> (§2) — c'est le seul levier pour tenir S6→S12.</p>
+</blockquote>
+<p><strong>Légende des statuts utilisés partout ci-dessous :</strong> ✅ fait (0 h restante) · 🟡 partiel (reste chiffré) · ⬜ à faire ·
+<strong><code>ASYNC</code></strong> = aucune dépendance non satisfaite → démarrage immédiat possible · <strong><code>ASYNC*</code></strong> = la <em>préparation</em> est
+immédiate (écrire le script), l'<em>exécution utile</em> attend un lot de la chaîne.</p>
+<hr>
+<h2>2. ⚡ TÂCHES NON DÉPENDANTES — le backlog asynchrone (à prendre sans attendre)</h2>
+<p>Ces tâches <strong>ne dépendent d'aucune tâche restante</strong> : elles peuvent être exécutées <strong>en parallèle</strong>, dans n'importe
+quel ordre, par des personnes différentes, pendant que la chaîne de l'application (§3) avance. C'est le travail à
+enfiler dès aujourd'hui — idéalement <strong>cette semaine (S6)</strong>, en tête de chaque journée avant les lots de chaîne.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>ID</th>
+<th>Tâche</th>
+<th>Pers.</th>
+<th style="text-align: right;">h</th>
+<th>Priorité</th>
+<th>Pourquoi c'est prêt maintenant</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>D4-L8-01</code></td>
+<td>Front controller + routeur (listes blanches de routes et de tri)</td>
+<td>A</td>
+<td style="text-align: right;">5</td>
+<td>P1</td>
+<td>ses seules dépendances (spec UML, règles, SQL) sont <strong>toutes FAITES</strong></td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>D5-L14-06</code></td>
+<td>Performance p95 &lt; 500 ms : partie base seule MESURABLE MAINTENANT (mesurer_sql.sh), partie HTTP après L9</td>
+<td>A</td>
+<td style="text-align: right;">5</td>
+<td>P2</td>
+<td>mesurer_sql.sh est livré et la base est chargée → mesure base seule immédiate</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>D6-L16-01</code></td>
+<td>Slides de la soutenance (le déroulé docs/03 existe ; les diapositives restent à produire)</td>
+<td>A</td>
+<td style="text-align: right;">4</td>
+<td>P2</td>
+<td>le déroulé minute par minute (docs/03) est écrit : les slides n'attendent que lui</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>D1-L1-01</code></td>
+<td>Créer le dépôt GitLab privé, inviter l'équipe + enseignante, protéger main, envoyer le courriel « Composition SAE »</td>
+<td>A</td>
+<td style="text-align: right;">2</td>
+<td>P1</td>
+<td>aucun prérequis technique (10 min d'admin GitLab) mais <strong>tout le reste en dépend</strong> → le traiter en premier</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>D1-L1-07</code></td>
+<td>Réunion de cadrage : relecture du sujet ligne à ligne, périmètre, règle de repli groupe de 2</td>
+<td>A</td>
+<td style="text-align: right;">2</td>
+<td>P3</td>
+<td>pure décision d'équipe, aucun artefact requis</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>D3-L6-06</code></td>
+<td>Écrire les fichiers tNN_*.sql pour T-01…T-12 (le manifeste existe)</td>
+<td>A</td>
+<td style="text-align: right;">2</td>
+<td>P1</td>
+<td>le manifeste (attendu par test) et la fixture sont déjà livrés</td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>D3-L6-07</code></td>
+<td>Écrire tests/sql/run_tests.sh + tNN T-25…T-29 (fixture déjà livrée)</td>
+<td>A</td>
+<td style="text-align: right;">2</td>
+<td>P1</td>
+<td>idem + run_tests.sh s'écrit contre le manifeste</td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>D3-L7-05</code></td>
+<td>Formaliser en tNN rejouables les tests SQL directs T-02…T-24 (campagne du 23/09 déjà exécutée et rapportée)</td>
+<td>A</td>
+<td style="text-align: right;">2</td>
+<td>P1</td>
+<td>la campagne a déjà été <strong>exécutée pour de vrai</strong> (rapport versionné) — il reste à la rendre rejouable</td>
+</tr>
+<tr>
+<td>9</td>
+<td><code>D1-L1-02</code></td>
+<td>Compléter le squelette : arborescence app/ + public/ vides (.gitkeep) — le reste (docs/sql/tests/scripts) est en place</td>
+<td>A</td>
+<td style="text-align: right;">1</td>
+<td>P2</td>
+<td>les dossiers docs/ sql/ tests/ scripts/ existent déjà</td>
+</tr>
+<tr>
+<td>10</td>
+<td><code>D1-L1-04</code></td>
+<td>Épingler la grille de conformité du barème en issue GitLab (contenu déjà rédigé : CDC §16)</td>
+<td>A</td>
+<td style="text-align: right;">1</td>
+<td>P2</td>
+<td>la grille est déjà rédigée (CDC §16.2), il ne reste qu'à l'épingler</td>
+</tr>
+<tr>
+<td>11</td>
+<td><code>D2-L3-06</code></td>
+<td>Versionner les sources .puml + docs/diagrams/render.sh (le README les annonce : à livrer)</td>
+<td>B</td>
+<td style="text-align: right;">4</td>
+<td>P1</td>
+<td>les 14 PNG existent ; il ne manque que les sources et le script de rendu</td>
+</tr>
+<tr>
+<td>12</td>
+<td><code>D3-L5-05</code></td>
+<td>Écrire scripts/load_db.sh (encapsule DELIMITER, chargement 01→04, comptages de contrôle)</td>
+<td>B</td>
+<td style="text-align: right;">3</td>
+<td>P1</td>
+<td>les 4 fichiers sql/ sont <strong>corrigés et validés</strong> (campagne du 23/09) — le script n'est qu'un enrubannage</td>
+</tr>
+<tr>
+<td>13</td>
+<td><code>D5-L14-04</code></td>
+<td>Concurrence : écrire reserver.sh (script dès maintenant), exécuter 20/12 après L10</td>
+<td>B</td>
+<td style="text-align: right;">3</td>
+<td>P1</td>
+<td>le scénario de charge (20/12) est défini : le script s'écrit sans l'app</td>
+</tr>
+<tr>
+<td>14</td>
+<td><code>D4-L12-05</code></td>
+<td>Écrire tests/security/controles.sh (10 contrôles) : le script SE PRÉPARE MAINTENANT, son « vert » attend l'application</td>
+<td>C</td>
+<td style="text-align: right;">4</td>
+<td>P1</td>
+<td>les 10 contrôles sont spécifiés (CDC §15.3) : le grep-script s'écrit sans l'app</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total backlog asynchrone : ~40 h</strong> (A 36 h — dont le lot L8 de 22 h qui est la <em>porte d'entrée de la chaîne</em> —,
+B 7 h, C 4 h + les préparations <code>ASYNC*</code>).</p>
+<p><strong>Trois façons de croiser les bras entre personnes</strong> (règle des ≥ 5 commits par zone, WBS §10) :</p>
+<ol>
+<li><strong>B aide A sur L8</strong> : B connaît <code>fn_param</code>, les codes retour (<code>STOCK_INSUFFISANT</code>…) et les signatures des
+   17 procédures mieux que quiconque → c'est B qui rédige les stubs d'appel du <code>CommandeRepository</code>.</li>
+<li><strong>C relit chaque MR de L8</strong> (revue croisée obligatoire de toute façon) → C prépare L9/L12 en lisant le socle.</li>
+<li><strong>A prend les 4 h de slides</strong> (L16-01) en fin de semaine creuse : tâche isolée, aucun conflit de merge.</li>
+</ol>
+<hr>
+<h2>3. ⛓️ TÂCHES DÉPENDANTES — la chaîne de l'application (l'ordre est imposé)</h2>
+<p>Une tâche de cette section <strong>ne peut pas commencer</strong> avant que ses dépendances soient ✅. La chaîne critique est :</p>
+<blockquote>
+<p><strong>L8 (socle) → L9 (front-office) → L10 (panier/commande) → L11 (back-office) → L12 (sécurité) → L14 (tests) → L15 (rendu) → L16 (répétition)</strong></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Ordre</th>
+<th>Lot</th>
+<th style="text-align: right;">h</th>
+<th>Ne peut démarrer qu'après</th>
+<th>Débloque</th>
+<th>Jalon à l'arrivée</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>L8</strong> socle applicatif (routeur, PDO, vues, auth/CSRF, CI active)</td>
+<td style="text-align: right;">22</td>
+<td>— (déps déjà ✅) → <strong>**<code>ASYNC</code></strong></td>
+<td>L9, L10, L11, L12</td>
+<td>page d'accueil servie (S6)</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>L9</strong> front-office (catalogue, recherche, fiche, compte, connexion)</td>
+<td style="text-align: right;">32</td>
+<td>L8 ; 04/05 après L8-04</td>
+<td>L10 (partiellement), L12</td>
+<td><strong>J3</strong> parcours visiteur (S7)</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>L10</strong> panier + commande (session, UC-06/07/08/09)</td>
+<td style="text-align: right;">28</td>
+<td>L8 ; écrans après L10-02/04</td>
+<td>L13, L14-03/04</td>
+<td>commande de démo dans l'app (S8)</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>L11</strong> back-office (produits, catégories, stocks, commandes, statuts)</td>
+<td style="text-align: right;">30</td>
+<td>L8-04 (auth admin) ; vues après L11-02..04</td>
+<td>L12, L14-03, L15-01</td>
+<td><strong>J4</strong> parcours admin (S9)</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>L12</strong> durcissement sécurité (CSRF, IDOR, échappement, en-têtes)</td>
+<td style="text-align: right;">20</td>
+<td>L9 + L10 + L11 (à l'exception du script, §2)</td>
+<td>L14-03</td>
+<td>S-01…S-08 au vert (S9-S10)</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>L14</strong> tests &amp; validation (sauf parties déjà async)</td>
+<td style="text-align: right;">15</td>
+<td>L12 ; 02 dès que le harnais est prêt</td>
+<td>L15</td>
+<td><strong>J5</strong> recette exécutée (S10)</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>L15</strong> mise en ligne de démo + README final + tag</td>
+<td style="text-align: right;">6</td>
+<td>L11 + L14</td>
+<td>L16-03</td>
+<td>run de bout en bout (S11)</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>L16-03</strong> répétitions chronométrées</td>
+<td style="text-align: right;">5</td>
+<td>L16-01 (slides) + L11 (démo réelle)</td>
+<td>—</td>
+<td><strong>J6</strong> soutenance (S12)</td>
+</tr>
+</tbody>
+</table>
+<h3>Sous-dépendances internes à respecter (les pièges classiques)</h3>
+<ul>
+<li><strong>L10 exige L6 + L7 ✅</strong> (procédures + triggers) : <code>sp_create_order_from_basket</code> ne doit <strong>jamais</strong> être
+  réimplémenté en PHP — l'appel de procédure est la frontière (pénalité MVC/SP).</li>
+<li><strong>L9-04/05 exigent L8-04</strong> (middleware d'authentification) : ne pas « temporairement » lire <code>$_SESSION</code> en direct.</li>
+<li><strong>L11-01 exige L8-04</strong> : le back-office doit monter sur le <strong>même</strong> middleware, pas un second.</li>
+<li><strong>L12 s'écrit au fil de l'eau mais se <em>valide</em> en bloc</strong> : chaque vue poussée dans L9-L11 doit déjà être
+  échappée (D4-L8-03 fournit le helper) sinon L12-03 deviendra une re-chasse aux 30 vues.</li>
+<li><strong>L14-02 (29/29)</strong> ne peut tourner qu'une fois les <code>tNN</code> écrits (§2 : tâches async de B/A) — d'où l'intérêt
+  de les solder <strong>avant</strong> la fin de L8 : le harnais sera prêt quand l'app arrivera.</li>
+</ul>
+<hr>
+<h2>4. Graphe de dépendances (vue synthétique)</h2>
+<pre><code class="language-text"> ASYNC (immédiat, en parallèle)          CHAÎNE DÉPENDANTE (séquentielle)
+ ─────────────────────────────          ─────────────────────────────────
+ D1-L1-01 GitLab (2h) ──┐               L8 socle (22h, A) ──┬─&gt; L9 front (32h, C) ──┬─&gt; L10 panier/cmd (28h, A+C)
+ D1-L1-02/04/07 (5h)    │                                   │                       │        │
+ D2-L3-06 puml (4h, B)  ├─ tout cela tourne                │                       │        └─&gt; L13 JS (14h, C)
+ D3-L5-05 load_db (3h,B)│   EN PARALLÈLE                   ├─&gt; L11 back (30h, A+C) ┘
+ D3-L6-06/07 tNN (4h,A) │   de la chaîne ────────────────&gt; │
+ D3-L7-05 tNN (2h, A)   │                                   └─&gt; L12 sécu (20h, C) ──&gt; L14 tests (15h) ──&gt; L15 rendu (6h)
+ D6-L16-01 slides (4h,A)                                                                   └─&gt; L16-03 répét (5h)
+ D4-L12-05* / L14-04* / L14-06* (préparations)
+</code></pre>
+<hr>
+<h2>5. Détail complet — les 86 tâches avec leur statut réel</h2>
+<h3>D1 — Pilotage, dépôt GitLab &amp; intégration (12/24 h faites, reste 12 h)</h3>
+<h4>🟡 Lot L1 — Pilotage &amp; dépôt (10/16 h · reste 6 h)</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Tâche</th>
+<th>Pers.</th>
+<th style="text-align: right;">h rest.</th>
+<th>Statut</th>
+<th>Dépend de</th>
+<th>Prio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>D1-L1-01</code></td>
+<td>Créer le dépôt GitLab privé, inviter l'équipe + enseignante, protéger main, envoyer le courriel « Composition SAE »</td>
+<td>A</td>
+<td style="text-align: right;">2</td>
+<td>⬜ <code>ASYNC</code></td>
+<td>—</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D1-L1-02</code></td>
+<td>Compléter le squelette : arborescence app/ + public/ vides (.gitkeep) — le reste (docs/sql/tests/scripts) est en place</td>
+<td>A</td>
+<td style="text-align: right;">1</td>
+<td>🟡 <code>ASYNC</code></td>
+<td>D1-L1-01</td>
+<td>P2</td>
+</tr>
+<tr>
+<td><code>D1-L1-03</code></td>
+<td>README v0 (prérequis, installation cible, membres et rôles)</td>
+<td>A</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D1-L1-04</code></td>
+<td>Épingler la grille de conformité du barème en issue GitLab (contenu déjà rédigé : CDC §16)</td>
+<td>A</td>
+<td style="text-align: right;">1</td>
+<td>🟡 <code>ASYNC</code></td>
+<td>D1-L1-01</td>
+<td>P2</td>
+</tr>
+<tr>
+<td><code>D1-L1-05</code></td>
+<td>Charte GitLab : branches, MR croisées, commits conventionnels, 1 issue par UC/EF</td>
+<td>A</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D1-L1-06</code></td>
+<td>Chaîne CI (.gitlab-ci.yml, 6 jobs) — fichier livré ; s'exécutera au premier push</td>
+<td>A</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D1-L1-07</code></td>
+<td>Réunion de cadrage : relecture du sujet ligne à ligne, périmètre, règle de repli groupe de 2</td>
+<td>A</td>
+<td style="text-align: right;">2</td>
+<td>⬜ <code>ASYNC</code></td>
+<td>—</td>
+<td>P3</td>
+</tr>
+</tbody>
+</table>
+<h4>🟡 Lot L15 — Démo en ligne &amp; rendu (2/8 h · reste 6 h)</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Tâche</th>
+<th>Pers.</th>
+<th style="text-align: right;">h rest.</th>
+<th>Statut</th>
+<th>Dépend de</th>
+<th>Prio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>D1-L15-01</code></td>
+<td>scripts/deploy.sh : hashes aléatoires, emails de démo régénérés</td>
+<td>A</td>
+<td style="text-align: right;">3</td>
+<td>⬜</td>
+<td>L11</td>
+<td>P2</td>
+</tr>
+<tr>
+<td><code>D1-L15-02</code></td>
+<td>README final : statut réel de l'application, wrapper build-docs.sh (ou pointer .tools), comptes</td>
+<td>A</td>
+<td style="text-align: right;">1</td>
+<td>🟡</td>
+<td>D1-L15-01</td>
+<td>P2</td>
+</tr>
+<tr>
+<td><code>D1-L15-03</code></td>
+<td>Nettoyage de l'arborescence + tag v1.0-rendu</td>
+<td>A</td>
+<td style="text-align: right;">2</td>
+<td>⬜</td>
+<td>D1-L15-02</td>
+<td>P1</td>
+</tr>
+</tbody>
+</table>
+<h3>D2 — Document de spécification du système (50/54 h faites, reste 4 h)</h3>
+<h4>✅ Lot L2 — CDC : spécification (26/26 h · reste 0 h)</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Tâche</th>
+<th>Pers.</th>
+<th style="text-align: right;">h rest.</th>
+<th>Statut</th>
+<th>Dépend de</th>
+<th>Prio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>D2-L2-01</code></td>
+<td>Rédiger §1 Présentation + §2 Objectifs</td>
+<td>A</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D2-L2-02</code></td>
+<td>Rédiger §3 Acteurs + RACI</td>
+<td>A</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D2-L2-03</code></td>
+<td>Rédiger §4 Fonctionnalités (table exigence ↔ UC ↔ écran ↔ test)</td>
+<td>C</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D2-L2-04</code></td>
+<td>Rédiger §7 Contraintes techniques</td>
+<td>A</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D2-L2-05</code></td>
+<td>Rédiger §8 Sécurité (SEC-01…14 + matrice menaces)</td>
+<td>C</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D2-L2-06</code></td>
+<td>Relecture croisée §1→§8 + pointage des pénalités</td>
+<td>A</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h4>🟡 Lot L3 — Diagrammes UML &amp; règles (24/28 h · reste 4 h)</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Tâche</th>
+<th>Pers.</th>
+<th style="text-align: right;">h rest.</th>
+<th>Statut</th>
+<th>Dépend de</th>
+<th>Prio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>D2-L3-01</code></td>
+<td>Diagrammes de cas d'utilisation (vue globale + 2 zooms)</td>
+<td>B</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D2-L3-02</code></td>
+<td>Descriptions textuelles des 3 UC imposés + fiches des 11 autres</td>
+<td>B</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D2-L3-03</code></td>
+<td>Diagramme de classes + justifications</td>
+<td>B</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D2-L3-04</code></td>
+<td>Formaliser RB-01…RB-20</td>
+<td>C</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D2-L3-05</code></td>
+<td>5 diagrammes de séquence (SP/triggers visibles)</td>
+<td>C</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D2-L3-06</code></td>
+<td>Versionner les sources .puml + docs/diagrams/render.sh (le README les annonce : à livrer)</td>
+<td>B</td>
+<td style="text-align: right;">4</td>
+<td>🟡 <code>ASYNC</code></td>
+<td>—</td>
+<td>P1</td>
+</tr>
+</tbody>
+</table>
+<h3>D3 — Conception de la base de données &amp; SQL (89/98 h faites, reste 9 h)</h3>
+<h4>✅ Lot L4 — MCD/MLD/normalisation (28/28 h · reste 0 h)</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Tâche</th>
+<th>Pers.</th>
+<th style="text-align: right;">h rest.</th>
+<th>Statut</th>
+<th>Dépend de</th>
+<th>Prio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>D3-L4-01</code></td>
+<td>MCD (entités + associations)</td>
+<td>B</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D3-L4-02</code></td>
+<td>Cardinalités justifiées ligne à ligne</td>
+<td>B</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D3-L4-03</code></td>
+<td>MLD : 8 relations + 3 vues</td>
+<td>B</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D3-L4-04</code></td>
+<td>DF + démonstration 1FN/2FN/3FN</td>
+<td>B</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D3-L4-05</code></td>
+<td>Clés justifiées + redondances + requêtes de preuve</td>
+<td>B</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D3-L4-06</code></td>
+<td>Relecture croisée du document de conception (docs/04)</td>
+<td>A</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h4>⬜ Lot L5 — Script SQL &amp; seed (17/20 h · reste 3 h)</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Tâche</th>
+<th>Pers.</th>
+<th style="text-align: right;">h rest.</th>
+<th>Statut</th>
+<th>Dépend de</th>
+<th>Prio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>D3-L5-01</code></td>
+<td>DDL : 8 tables, CHECK, InnoDB utf8mb4</td>
+<td>B</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D3-L5-02</code></td>
+<td>FK (CASCADE/RESTRICT) + index (FULLTEXT, filtres)</td>
+<td>B</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D3-L5-03</code></td>
+<td>3 vues (v_etat_stock, v_catalogue, v_commandes_client)</td>
+<td>B</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D3-L5-04</code></td>
+<td>Seed : catégories, 12 produits, 3 clients, 1 admin (hashes vérifiés bcrypt)</td>
+<td>B</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D3-L5-05</code></td>
+<td>Écrire scripts/load_db.sh (encapsule DELIMITER, chargement 01→04, comptages de contrôle)</td>
+<td>B</td>
+<td style="text-align: right;">3</td>
+<td>⬜ <code>ASYNC</code></td>
+<td>—</td>
+<td>P1</td>
+</tr>
+</tbody>
+</table>
+<h4>🟡 Lot L6 — 17 procédures + tests (26/30 h · reste 4 h)</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Tâche</th>
+<th>Pers.</th>
+<th style="text-align: right;">h rest.</th>
+<th>Statut</th>
+<th>Dépend de</th>
+<th>Prio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>D3-L6-01</code></td>
+<td>fn_param + comptes (create_account, get_credentials, update_client)</td>
+<td>B</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D3-L6-02</code></td>
+<td>sp_search_products (filtres, tri liste blanche, pagination)</td>
+<td>B</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D3-L6-03</code></td>
+<td>sp_save/delete_product, sp_save/delete_category, sp_adjust_stock</td>
+<td>B</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D3-L6-04</code></td>
+<td>sp_create_order, sp_add_order_line, sp_create_order_from_basket, sp_confirm_order</td>
+<td>B</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D3-L6-05</code></td>
+<td>sp_update_order_status, sp_cancel_order, sp_revenue_report, sp_compute_shipping</td>
+<td>B</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D3-L6-06</code></td>
+<td>Écrire les fichiers tNN_*.sql pour T-01…T-12 (le manifeste existe)</td>
+<td>A</td>
+<td style="text-align: right;">2</td>
+<td>🟡 <code>ASYNC</code></td>
+<td>—</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D3-L6-07</code></td>
+<td>Écrire tests/sql/run_tests.sh + tNN T-25…T-29 (fixture déjà livrée)</td>
+<td>A</td>
+<td style="text-align: right;">2</td>
+<td>🟡 <code>ASYNC</code></td>
+<td>D3-L6-06</td>
+<td>P1</td>
+</tr>
+</tbody>
+</table>
+<h4>🟡 Lot L7 — 16 déclencheurs + tests (18/20 h · reste 2 h)</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Tâche</th>
+<th>Pers.</th>
+<th style="text-align: right;">h rest.</th>
+<th>Statut</th>
+<th>Dépend de</th>
+<th>Prio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>D3-L7-01</code></td>
+<td>Triggers ligne_commande (TRG-A1/A2/A3, B1/B2)</td>
+<td>B</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D3-L7-02</code></td>
+<td>Triggers produit/catégorie (TRG-B3…B6, C1, C2)</td>
+<td>B</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D3-L7-03</code></td>
+<td>Triggers commande (TRG-D1…D5, historique automatique)</td>
+<td>B</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D3-L7-04</code></td>
+<td>Documentation des 16 déclencheurs (doc 04, partie C)</td>
+<td>B</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D3-L7-05</code></td>
+<td>Formaliser en tNN rejouables les tests SQL directs T-02…T-24 (campagne du 23/09 déjà exécutée et rapportée)</td>
+<td>A</td>
+<td style="text-align: right;">2</td>
+<td>🟡 <code>ASYNC</code></td>
+<td>—</td>
+<td>P1</td>
+</tr>
+</tbody>
+</table>
+<h3>D4 — Application Web PHP / MySQL / PDO (0/146 h faites, reste 146 h)</h3>
+<h4>⬜ Lot L8 — Socle applicatif MVC (0/22 h · reste 22 h)</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Tâche</th>
+<th>Pers.</th>
+<th style="text-align: right;">h rest.</th>
+<th>Statut</th>
+<th>Dépend de</th>
+<th>Prio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>D4-L8-01</code></td>
+<td>Front controller + routeur (listes blanches de routes et de tri)</td>
+<td>A</td>
+<td style="text-align: right;">5</td>
+<td>⬜ <code>ASYNC</code></td>
+<td>—</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D4-L8-02</code></td>
+<td>app/Config/Database.php : PDO, EXCEPTION, EMULATE_PREPARES = false</td>
+<td>A</td>
+<td style="text-align: right;">3</td>
+<td>⬜</td>
+<td>D4-L8-01</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D4-L8-03</code></td>
+<td>Gabarit de vues + layout + helper d'échappement systématique</td>
+<td>A</td>
+<td style="text-align: right;">4</td>
+<td>⬜</td>
+<td>D4-L8-01</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D4-L8-04</code></td>
+<td>app/Security : AuthMiddleware, sessions durcies, jetons CSRF</td>
+<td>A</td>
+<td style="text-align: right;">6</td>
+<td>⬜</td>
+<td>D4-L8-02</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D4-L8-05</code></td>
+<td>CI complète activée + app/Config/env.example.php + public/install.php (annoncés par sql/01 et le README)</td>
+<td>A</td>
+<td style="text-align: right;">4</td>
+<td>⬜</td>
+<td>D4-L8-04</td>
+<td>P1</td>
+</tr>
+</tbody>
+</table>
+<h4>⬜ Lot L9 — Front-office (0/32 h · reste 32 h)</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Tâche</th>
+<th>Pers.</th>
+<th style="text-align: right;">h rest.</th>
+<th>Statut</th>
+<th>Dépend de</th>
+<th>Prio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>D4-L9-01</code></td>
+<td>UC-01 Catalogue : v_catalogue + pagination (12 par défaut, borne 60)</td>
+<td>C</td>
+<td style="text-align: right;">6</td>
+<td>⬜</td>
+<td>L8</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D4-L9-02</code></td>
+<td>UC-02 Recherche/filtres : SearchRequest (validation serveur, tri liste blanche)</td>
+<td>C</td>
+<td style="text-align: right;">6</td>
+<td>⬜</td>
+<td>D4-L9-01</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D4-L9-03</code></td>
+<td>UC-03 Fiche produit : état du stock, MAX = stock, 404 si masquée</td>
+<td>C</td>
+<td style="text-align: right;">5</td>
+<td>⬜</td>
+<td>D4-L9-01</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D4-L9-04</code></td>
+<td>UC-04 Création de compte : validation, sp_create_account, hash</td>
+<td>C</td>
+<td style="text-align: right;">6</td>
+<td>⬜</td>
+<td>D4-L8-04</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D4-L9-05</code></td>
+<td>UC-05 Connexion/déconnexion : sp_get_credentials + password_verify + session régénérée</td>
+<td>C</td>
+<td style="text-align: right;">6</td>
+<td>⬜</td>
+<td>D4-L8-04</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D4-L9-06</code></td>
+<td>Parcours visiteur complet démontré (JS désactivé inclus) — jalon J3</td>
+<td>C</td>
+<td style="text-align: right;">3</td>
+<td>⬜</td>
+<td>D4-L9-01..05</td>
+<td>P2</td>
+</tr>
+</tbody>
+</table>
+<h4>⬜ Lot L10 — Panier &amp; commande (0/28 h · reste 28 h)</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Tâche</th>
+<th>Pers.</th>
+<th style="text-align: right;">h rest.</th>
+<th>Statut</th>
+<th>Dépend de</th>
+<th>Prio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>D4-L10-01</code></td>
+<td>PanierSession : ajout, quantités, retrait, plafond au stock, total serveur</td>
+<td>A</td>
+<td style="text-align: right;">6</td>
+<td>⬜</td>
+<td>L8</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D4-L10-02</code></td>
+<td>UC-06 PanierController : contrôle serveur disponible() avant tout ajout</td>
+<td>A</td>
+<td style="text-align: right;">5</td>
+<td>⬜</td>
+<td>D4-L10-01</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D4-L10-03</code></td>
+<td>Vues panier + récapitulatif serveur + badge d'articles</td>
+<td>C</td>
+<td style="text-align: right;">4</td>
+<td>⬜</td>
+<td>D4-L10-02</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D4-L10-04</code></td>
+<td>UC-07 CommandeController : adresse, confirmation, sp_create_order_from_basket</td>
+<td>A</td>
+<td style="text-align: right;">3</td>
+<td>⬜</td>
+<td>D4-L10-02</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D4-L10-05</code></td>
+<td>Écrans commande : adresse, numéro CMD2026-0000NN, confirmation</td>
+<td>C</td>
+<td style="text-align: right;">6</td>
+<td>⬜</td>
+<td>D4-L10-04</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D4-L10-06</code></td>
+<td>UC-08 historique + détail + UC-09 annulation (vues client)</td>
+<td>C</td>
+<td style="text-align: right;">4</td>
+<td>⬜</td>
+<td>D4-L10-05</td>
+<td>P1</td>
+</tr>
+</tbody>
+</table>
+<h4>⬜ Lot L11 — Back-office (0/30 h · reste 30 h)</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Tâche</th>
+<th>Pers.</th>
+<th style="text-align: right;">h rest.</th>
+<th>Statut</th>
+<th>Dépend de</th>
+<th>Prio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>D4-L11-01</code></td>
+<td>AdminController + authentification admin (rôles SUPER/GESTIONNAIRE)</td>
+<td>A</td>
+<td style="text-align: right;">4</td>
+<td>⬜</td>
+<td>D4-L8-04</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D4-L11-02</code></td>
+<td>UC-10 Produits : sp_save_product / sp_delete_product</td>
+<td>A</td>
+<td style="text-align: right;">5</td>
+<td>⬜</td>
+<td>D4-L11-01</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D4-L11-03</code></td>
+<td>UC-11 Catégories + UC-12 Stocks (SET/DELTA, motif)</td>
+<td>A</td>
+<td style="text-align: right;">5</td>
+<td>⬜</td>
+<td>D4-L11-01</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D4-L11-04</code></td>
+<td>UC-13 Commandes + UC-14 statut (matrice RB-11) + indicateurs</td>
+<td>A</td>
+<td style="text-align: right;">4</td>
+<td>⬜</td>
+<td>D4-L11-01</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D4-L11-05</code></td>
+<td>Vues back-office : listes filtrables, formulaires, alertes (v_etat_stock)</td>
+<td>C</td>
+<td style="text-align: right;">8</td>
+<td>⬜</td>
+<td>D4-L11-02..04</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D4-L11-06</code></td>
+<td>Parcours admin complet démontré — jalon J4</td>
+<td>C</td>
+<td style="text-align: right;">4</td>
+<td>⬜</td>
+<td>D4-L11-05</td>
+<td>P2</td>
+</tr>
+</tbody>
+</table>
+<h4>⬜ Lot L12 — Durcissement sécurité (0/20 h · reste 20 h)</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Tâche</th>
+<th>Pers.</th>
+<th style="text-align: right;">h rest.</th>
+<th>Statut</th>
+<th>Dépend de</th>
+<th>Prio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>D4-L12-01</code></td>
+<td>CSRF vérifié sur chaque méthode mutative</td>
+<td>C</td>
+<td style="text-align: right;">4</td>
+<td>⬜</td>
+<td>L9;L10;L11</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D4-L12-02</code></td>
+<td>Autorisation : contrôle d'appartenance, 404 sur id étranger (IDOR)</td>
+<td>C</td>
+<td style="text-align: right;">5</td>
+<td>⬜</td>
+<td>L9;L10</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D4-L12-03</code></td>
+<td>Échappement systématique : revue des vues</td>
+<td>C</td>
+<td style="text-align: right;">4</td>
+<td>⬜</td>
+<td>L9;L10;L11</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D4-L12-04</code></td>
+<td>En-têtes durcis, cookie HttpOnly/SameSite, erreurs génériques</td>
+<td>C</td>
+<td style="text-align: right;">3</td>
+<td>⬜</td>
+<td>L9</td>
+<td>P2</td>
+</tr>
+<tr>
+<td><code>D4-L12-05</code></td>
+<td>Écrire tests/security/controles.sh (10 contrôles) : le script SE PRÉPARE MAINTENANT, son « vert » attend l'application</td>
+<td>C</td>
+<td style="text-align: right;">4</td>
+<td>⬜ <code>ASYNC</code></td>
+<td>—</td>
+<td>P1</td>
+</tr>
+</tbody>
+</table>
+<h4>⬜ Lot L13 — JavaScript client (0/14 h · reste 14 h)</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Tâche</th>
+<th>Pers.</th>
+<th style="text-align: right;">h rest.</th>
+<th>Statut</th>
+<th>Dépend de</th>
+<th>Prio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>D4-L13-01</code></td>
+<td>JS panier : badge, MAJ AJAX, repli sans JS</td>
+<td>C</td>
+<td style="text-align: right;">5</td>
+<td>⬜</td>
+<td>D4-L10-03</td>
+<td>P2</td>
+</tr>
+<tr>
+<td><code>D4-L13-02</code></td>
+<td>Validation live des formulaires + écoute clavier des quantités</td>
+<td>C</td>
+<td style="text-align: right;">4</td>
+<td>⬜</td>
+<td>D4-L13-01</td>
+<td>P2</td>
+</tr>
+<tr>
+<td><code>D4-L13-03</code></td>
+<td>Accessibilité : labels, focus visible, aria-live</td>
+<td>C</td>
+<td style="text-align: right;">3</td>
+<td>⬜</td>
+<td>D4-L13-01</td>
+<td>P2</td>
+</tr>
+<tr>
+<td><code>D4-L13-04</code></td>
+<td>Check-list « JS = confort seulement » (test F-13)</td>
+<td>C</td>
+<td style="text-align: right;">2</td>
+<td>⬜</td>
+<td>D4-L13-03</td>
+<td>P3</td>
+</tr>
+</tbody>
+</table>
+<h3>D5 — Tests &amp; validation (6/24 h faites, reste 18 h)</h3>
+<h4>🟡 Lot L14 — Tests &amp; validation (6/24 h · reste 18 h)</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Tâche</th>
+<th>Pers.</th>
+<th style="text-align: right;">h rest.</th>
+<th>Statut</th>
+<th>Dépend de</th>
+<th>Prio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>D5-L14-01</code></td>
+<td>Doc de tests : dispositif, stratégie, niveaux (doc 02 §1–§2)</td>
+<td>B</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D5-L14-02</code></td>
+<td>Rejouer les 29 tests SQL via le harnais + rapport final</td>
+<td>B</td>
+<td style="text-align: right;">4</td>
+<td>⬜</td>
+<td>D3-L6-06;D3-L6-07;D3-L7-05</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D5-L14-03</code></td>
+<td>Cas fonctionnels F-01…F-31 : exécution + preuves</td>
+<td>B</td>
+<td style="text-align: right;">3</td>
+<td>⬜</td>
+<td>L9;L10;L11</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D5-L14-04</code></td>
+<td>Concurrence : écrire reserver.sh (script dès maintenant), exécuter 20/12 après L10</td>
+<td>B</td>
+<td style="text-align: right;">3</td>
+<td>⬜ <code>ASYNC</code></td>
+<td>D4-L10-04</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D5-L14-05</code></td>
+<td>Matrice de traçabilité exigence → test + PV de recette à jour</td>
+<td>A</td>
+<td style="text-align: right;">3</td>
+<td>🟡</td>
+<td>D5-L14-02;D5-L14-03</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>D5-L14-06</code></td>
+<td>Performance p95 &lt; 500 ms : partie base seule MESURABLE MAINTENANT (mesurer_sql.sh), partie HTTP après L9</td>
+<td>A</td>
+<td style="text-align: right;">5</td>
+<td>⬜ <code>ASYNC</code></td>
+<td>L9;L10;L11</td>
+<td>P2</td>
+</tr>
+</tbody>
+</table>
+<h3>D6 — Soutenance (5/14 h faites, reste 9 h)</h3>
+<h4>🟡 Lot L16 — Soutenance (5/14 h · reste 9 h)</h4>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Tâche</th>
+<th>Pers.</th>
+<th style="text-align: right;">h rest.</th>
+<th>Statut</th>
+<th>Dépend de</th>
+<th>Prio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>D6-L16-01</code></td>
+<td>Slides de la soutenance (le déroulé docs/03 existe ; les diapositives restent à produire)</td>
+<td>A</td>
+<td style="text-align: right;">4</td>
+<td>🟡 <code>ASYNC</code></td>
+<td>—</td>
+<td>P2</td>
+</tr>
+<tr>
+<td><code>D6-L16-02</code></td>
+<td>Questions anticipées + réponses courtes (docs/03 §3)</td>
+<td>B</td>
+<td style="text-align: right;">0</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>D6-L16-03</code></td>
+<td>Deux répétitions chronométrées avec la démo réelle + check-list</td>
+<td>C</td>
+<td style="text-align: right;">5</td>
+<td>⬜</td>
+<td>D6-L16-01;L11</td>
+<td>P2</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>6. Déclencheurs : « quand X se termine → Y démarre »</h2>
+<table>
+<thead>
+<tr>
+<th>Événement déclencheur</th>
+<th>Tâches débloquées</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>D1-L1-01</strong> dépôt GitLab créé (aujourd'hui)</td>
+<td>tout le workflow MR/issues ; D1-L1-02, D1-L1-04</td>
+</tr>
+<tr>
+<td><strong>L8-01</strong> routeur OK</td>
+<td>L8-02/03 (PDO, vues)</td>
+</tr>
+<tr>
+<td><strong>L8-04</strong> middleware auth/CSRF OK</td>
+<td>L9-04/05 (compte, connexion) · L11-01 (admin)</td>
+</tr>
+<tr>
+<td><strong>L8 complet</strong> (jalon S6)</td>
+<td>L9-01..03, L10-01/02, L11-02..04 → <strong>la chaîne se met à couler</strong></td>
+</tr>
+<tr>
+<td><strong>L9-01..03</strong> catalogue/fiche OK</td>
+<td>L10-01 (le panier référence la fiche)</td>
+</tr>
+<tr>
+<td><strong>L10-04</strong> CommandeController OK</td>
+<td>L10-05/06 (écrans), L13 (JS panier), L14-04 (exécution reserver.sh)</td>
+</tr>
+<tr>
+<td><strong>L11 complet</strong> (J4)</td>
+<td>L12 en mode validation, L14-03 (F-tests), L15-01 (deploy.sh)</td>
+</tr>
+<tr>
+<td><strong>L12 complet</strong> (S-01…S-08 vert)</td>
+<td>L14-03/05 (recette finale), L15 (rendu)</td>
+</tr>
+<tr>
+<td><strong>L15-03</strong> tag <code>v1.0-rendu</code></td>
+<td>L16-03 (répétitions sur la démo figée)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>7. Cette semaine (S6) — le plan d'action immédiat</h2>
+<table>
+<thead>
+<tr>
+<th>Jour</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>J1</strong></td>
+<td><code>D1-L1-01</code> GitLab + push de ce qui existe (2 h)</td>
+<td><code>D3-L5-05</code> load_db.sh (3 h)</td>
+<td>revue du doc 04 + prépa L9 (catalogue)</td>
+</tr>
+<tr>
+<td><strong>J2</strong></td>
+<td><code>D4-L8-01</code> routeur (5 h)</td>
+<td><code>D2-L3-06</code> puml + render.sh (4 h)</td>
+<td>revue MR routeur + stubs vues</td>
+</tr>
+<tr>
+<td><strong>J3</strong></td>
+<td><code>D4-L8-02</code> Database PDO (3 h)</td>
+<td><code>D3-L6-06/07</code> + <code>D3-L7-05</code> tNN (6 h)</td>
+<td><code>D4-L12-05</code> controles.sh (4 h)</td>
+</tr>
+<tr>
+<td><strong>J4</strong></td>
+<td><code>D4-L8-03</code> vues + échappement (4 h)</td>
+<td><code>D5-L14-06</code> mesure perf base seule + rapport</td>
+<td>revue MR + prépa L9-01</td>
+</tr>
+<tr>
+<td><strong>J5</strong></td>
+<td><code>D4-L8-04</code> auth/CSRF (6 h, déborde S7 si besoin)</td>
+<td>aide A : stubs CommandeRepository (B est libre !)</td>
+<td><code>D1-L1-04</code> grille issue + <code>D1-L1-07</code> cadrage</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Objectif de fin de semaine : L8 terminé, harnais de tests prêt, dépôt vivant (≥ 1 commit/pers./jour)</strong> —
+la chaîne critique peut alors couler sans attendre pendant 6 semaines jusqu'à J6.</p>
+<hr>
+<p><em>Todolist MiniShop v1.0 — statuts mesurés dans le dépôt et sur la base (campagne SQL du 23/09,
+rapport <code>tests/sql/rapport_tests_sql.md</code>) ; charges issues de la WBS <code>docs/05</code> (360 h, répartition A 122 / B 117 / C 121).</em></p>
+</body></html>
