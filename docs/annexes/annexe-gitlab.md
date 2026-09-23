@@ -84,3 +84,21 @@ base-tests:
   script: [ "DB_USER=root bash scripts/run_sql_tests.sh" ]
   artifacts: { paths: [ "tests/sql/rapport_tests_sql.md", "tests/sql/out" ] }
 ```
+
+**Règle « pas de re-run » (à appliquer telle quelle).** Si le pipeline est **vert avant le merge** (statut de la
+MR : « Pipeline passed »), **aucun re-run n'est nécessaire après le merge** : le pipeline post-merge rejoue les
+6 mêmes jobs, sur le même arbre de fichiers (GitLab CI teste la MR sur son *merge result*, GitHub Actions sur
+`refs/pull/<n>/merge`). Le run post-merge sert de **preuve et de badge**, pas de contrôle — on ne clique donc ni
+« Retry » côté GitLab, ni « Re-run jobs » côté GitHub. Exceptions, à connaître pour la soutenance : `main` a
+avancé entre le run de la MR et le merge (la chaîne re-démarre seule), run **annulé** (`interruptible: true`),
+échec de code corrigé puis poussé (c'est le `push` qui relance, jamais un re-run manuel), `style` en échec
+`allow_failure` (non bloquant), **panne d'infrastructure** (un seul *Retry* justifié, anomalie consignée).
+Tableau complet : **CDC §14.2**.
+
+## 8. Ce que le jury regarde en premier (auto-contrôle avant le rendu)
+
+| Point | Où le prouver |
+|---|---|
+| Pipeline **vert avant le merge** (et non un re-run après coup) | onglet *Pipelines* de la MR « Pipeline passed » (GitHub : `gh pr checks <n>`) ; **règle** « pas de re-run » du §7 |
+| Les 6 jobs tournent sans `allow_failure` déguisé | seul `style` est en `allow_failure: true` (§7) |
+| Pipeline qui **casse** sur une concaténation SQL | contrôle `security-scan` n° 1 (`tests/security/controles.sh`) |

@@ -212,7 +212,8 @@ fichiers = [
   "générateur de volumétrie (200 produits / 1 000 commandes via les procédures)",
   "doc 02 §5", nlines(pathlib.Path("/home/user/scripts/gen_volumes.sh"))),
  ("[`.gitlab-ci.yml`](../.gitlab-ci.yml)",
-  "chaîne CI : 6 jobs alignés sur le barème (lint, sécurité, tests SQL, unitaires, diagrammes)",
+  "chaîne CI : 6 jobs alignés sur le barème (lint, sécurité, tests SQL, unitaires, diagrammes) ; "
+  "**pas de re-run après un merge dont la MR était verte**",
   "CDC §14.2", nlines(pathlib.Path("/home/user/.gitlab-ci.yml"))),
  ("[`.gitignore`](../.gitignore)",
   "secrets hors dépôt (`app/Config/env.php`), artefacts régénérables",
