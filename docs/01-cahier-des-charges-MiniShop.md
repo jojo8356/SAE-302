@@ -900,7 +900,7 @@ Le message renvoyé est un **404** (et non un 403) : une réponse « interdit »
 - l'application utilise un compte **dédié** (`minishop_app`) limité à la base applicative : `SELECT, INSERT, UPDATE, DELETE, EXECUTE` + `TRIGGER` (nécessaire pour créer ses propres triggers à l'installation) ; **jamais** `DROP`, `GRANT OPTION`, ni accès à `mysql.*` ;
 - un second compte d'installation (`minishop_admin`) est utilisé **uniquement** par `scripts/load_db.sh` puis peut être révoqué ;
 - pas de requêtes administratives depuis PHP : la liste des comptes, les grants et les journaux d'erreurs ne sont consultés que par le développeur/la DBA ;
-- les comptes de démonstration (hachés, §12.7) sont détruits en production pédagogique par un `scripts/deploy.sh` qui ne copie pas le fichier de démonstration `sql/04_minishop_demo.sql`.
+- les comptes de démonstration (hachés, §12.7) sont détruits en production pédagogique par un `scripts/deploy.php` qui ne copie pas le fichier de démonstration `sql/04_minishop_demo.sql`.
 
 ### 8.7 `SEC-10` `SEC-11` `SEC-12` `SEC-13` — En-têtes, durcissement, fuites d'information, journalisation
 
@@ -1014,7 +1014,7 @@ minishop/
 │   └── Router.php
 ├── public/                        # seul dossier exposé par Apache
 │   ├── index.php  .htaccess  css/  js/  img/
-├── scripts/{load_db.sh, run_sql_tests.sh, gen_volumes.sh, deploy.sh, build-docs.sh}
+├── scripts/{load_db.sh, run_sql_tests.sh, gen_volumes.sh, deploy.php, build-docs.sh}
 ├── tests/
 │   ├── sql/{manifest.txt, fixture.sql, t01…t26_*.sql, out/, rapport_tests_sql.md}
 │   ├── php/                      # PHPUnit : modèles, repositories (base de test), sécurité
@@ -1055,7 +1055,7 @@ minishop/
 |---|---|---|---|
 | `dev` (poste de chaque étudiant) | `minishop` | seed complet + hashes de démo | `display_errors = On` **uniquement** en local |
 | `test` (CI GitLab + harnais) | `minishop_test` | seed + fixture de tests | recréée intégralement à chaque campagne ; `DB_TEST=minishop_test` |
-| `demo`/`prod` (machine de soutenance) | `minishop` | seed **sans** les mots de passe faibles, `sql/04` non joué | HTTPS auto-signé, `scripts/deploy.sh` (copie + `load_db.sh` + droits `var/`) |
+| `demo`/`prod` (machine de soutenance) | `minishop` | seed **sans** les mots de passe faibles, `sql/04` non joué | HTTPS auto-signé, `scripts/deploy.php` (copie + `load_db.sh` + droits `var/`) |
 
 Sauvegarde/restauration spécifiées (2 min d'exécution en démo) : `mysqldump --single-transaction --routines --triggers minishop > backup.sql` et restauration `mysql minishop < backup.sql` ; la présence de `--routines --triggers` est **nécessaire** ici : sans elle, une base restaurée perdrait la fonction, les 17 procédures et les 16 triggers, donc les règles `RB-03/06/11/18` cesseraient d'être appliquées silencieusement — c'est l'un des arguments à plaider en soutenance (§17.11).
 
@@ -1450,7 +1450,7 @@ L'exigence « Trigger 1 — Stock » est couverte par `TRG-A1`+`TRG-A2` (et `TRG
 php -r 'echo password_hash("Demo2026!", PASSWORD_BCRYPT, ["cost" => 12]), "\n";'
 ```
 
-et non par un `INSERT … '123456'` : le seed respecte donc lui-même `RB-12`. Les hashes sont documentés dans le `README.md` pour permettre la démo, et le script de déploiement (`scripts/deploy.sh`) régénère des hashes aléatoires et change les emails quand la démo est mise en ligne (`SEC-10`).
+et non par un `INSERT … '123456'` : le seed respecte donc lui-même `RB-12`. Les hashes sont documentés dans le `README.md` pour permettre la démo, et le script de déploiement (`scripts/deploy.php`) régénère des hashes aléatoires et change les emails quand la démo est mise en ligne (`SEC-10`).
 
 ### 12.8 Variantes de conception documentées (arbitrages)
 
@@ -1523,7 +1523,7 @@ Total : **360 h** pour 3 personnes (270 h si le groupe est de 2 → le périmèt
 | L12 | durcissement sécurité (CSRF, échappement, autorisation, en-têtes, journaux) | 20 | C | S9-S10 |
 | L13 | JavaScript client (panier, filtres, validation live, accessibilité) | 14 | C | S10 |
 | L14 | tests & validation : harnais, 29 tests SQL, cas fonctionnels, plan de recette, doc | 24 | B + A | S10-S11 |
-| L15 | mise en ligne de démo, `deploy.sh`, README final, arborescence propre | 8 | A | S11 |
+| L15 | mise en ligne de démo, `deploy.php`, README final, arborescence propre | 8 | A | S11 |
 | L16 | soutenance : support, trame, répétitions chronométrées, questions anticipées | 14 | A + B + C | S12 |
 | | **Total** | **360** | | |
 
@@ -1545,7 +1545,7 @@ Total : **360 h** pour 3 personnes (270 h si le groupe est de 2 → le périmèt
 | S8 | 10 → 16/11 | Panier/commande | UC-06, UC-07 (transaction + triggers), UC-08 | commande de démonstration créée dans l'app |
 | S9 | 17 → 23/11 | Back-office + sécurité | **J4 : produits, catégories, stocks, commandes, statuts** + durcissement | parcours admin complet, `S-01…S-08` au vert |
 | S10 | 24 → 30/11 | Tests & validation | harnais rejoué, doc de tests, JS, accessibilité, correctifs | **J5 : plan de recette exécuté** |
-| S11 | 01 → 07/12 | Stabilisation | démo prête (`deploy.sh`), README final, merges des dernières MR | run complet de bout en bout |
+| S11 | 01 → 07/12 | Stabilisation | démo prête (`deploy.php`), README final, merges des dernières MR | run complet de bout en bout |
 | S12 | 08 → 14/12 | Restitution | **J6 : soutenance** + dépôt final taggé `v1.0-rendu` | support, réponses aux questions |
 
 Trois dates sont figées par le calendrier pédagogique : S2 (validation du CDC), S10 (fin des tests), S12 (soutenance).

@@ -295,7 +295,7 @@ Contrôles de cohérence livrés avec le script (dans `load_db.sh`) : comptage d
 php -r 'echo password_hash("Demo2026!", PASSWORD_BCRYPT, ["cost" => 12]), "\n";'
 ```
 
-et non par un `INSERT … '123456'` : le seed respecte donc lui-même `RB-12`. Les hashes sont documentés dans le `README.md` pour permettre la démo, et le script de déploiement (`scripts/deploy.sh`) régénère des hashes aléatoires et change les emails quand la démo est mise en ligne (`SEC-10`).
+et non par un `INSERT … '123456'` : le seed respecte donc lui-même `RB-12`. Les hashes sont documentés dans le `README.md` pour permettre la démo, et le script de déploiement (`scripts/deploy.php`) régénère des hashes aléatoires et change les emails quand la démo est mise en ligne (`SEC-10`).
 
 
 ---
