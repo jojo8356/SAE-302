@@ -1927,7 +1927,7 @@ echo "Mesures : DB=$DB ./tests/perf/mesurer.sh   |   Retour au jeu de demo : bas
 
 ## I. Chaîne d'intégration continue — `.gitlab-ci.yml`
 
-_(102 lignes, copié verbatim depuis le dépôt.)_
+_(114 lignes, copié verbatim depuis le dépôt.)_
 
 ```yaml
 # MiniShop — chaîne d'intégration continue (contrainte CT-09 et §14.2 du cahier des charges).
@@ -1935,6 +1935,18 @@ _(102 lignes, copié verbatim depuis le dépôt.)_
 # rejouable, (b) les 28 tests (règles, vues, frais de port) passent, (c) aucune règle de sécurité n'a été
 # court-circuitée dans le code PHP. Un job qui échoue bloque le merge : la pénalité devient
 # visible pendant le développement, pas au moment du rendu.
+#
+# Prod : GitLab CI (ce fichier) — cible de notation, barème §16.1.
+# Dev  : GitHub Actions (.github/workflows/ci.yml) — même 6 jobs adaptés pour GitHub
+#        (setup-php, services mysql:8.0, fallback sans load_db.sh). Les deux pipelines
+#        sont maintenus synchrones ; en dev on pousse sur GitHub, en prod on miroir vers GitLab.
+#
+# Règle de re-run (CDC §14.2, annexe 17.9 §7) : si le pipeline est VERT avant le merge
+# (statut de la MR « Pipeline passed »), aucun re-run n'est nécessaire après le merge.
+# Le pipeline post-merge rejoue les mêmes jobs sur le même arbre de fichiers (GitLab teste
+# la MR sur son merge result) : il sert de preuve/badge, pas de contrôle. On ne relance que
+# si main a avancé, si le run a été annulé, si le code a été corrigé puis poussé (le push
+# relance seul), ou après une panne d'infrastructure (un Retry, anomalie consignée A-0x).
 
 stages: [validate, db, test, docs]
 
@@ -2033,6 +2045,11 @@ docs:
     paths:
       - docs/diagrams/
 ```
+
+**Règle de re-run** : si le pipeline est **vert avant le merge**, aucun re-run n'est nécessaire après le
+merge — la MR est testée sur son *merge result* (GitHub Actions : `refs/pull/<n>/merge`), donc le run
+post-merge rejoue les mêmes jobs sur le même arbre de fichiers. Exceptions et tableau des six cas : **CDC
+§14.2** ; application à la charte d'équipe : **annexe 17.9 §7**.
 
 ## J. Fichiers hors dépôt — `.gitignore`
 

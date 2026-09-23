@@ -53,6 +53,8 @@ la démo, et la démo qui mange les questions.
 | Quelle règle vous a posé le plus de difficulté, et pourquoi ? | `RB-06` + immuabilité : nous avons d'abord laissé le trigger de snapshot « réparer » silencieusement les UPDATE au lieu de les refuser ; l'ordre de création des triggers est déterministe dans MySQL, nous l'avons corrigé et figé par le test `T-11` | A-01 |
 | Que feriez-vous en poursuite (hors périmètre) ? | Panier persistant (variante V1 prête), paiement réel avec journal de transactions, politique de prix par remise (une table `REMISE` + snapshot), export comptable, et tests Playwright bout en bout | §12.8, §11.2 |
 | Où est la contribution de chacun dans GitLab ? | 3 auteurs, une MR par lot du §13.3, commits par zone (front/back/base pour chacun) ; la CI échoue sur une concaténation SQL ou un test de base non conforme | §14 |
+| Faut-il relancer la CI après un merge ? | Non : la MR est déjà testée **sur son commit de fusion** (`refs/pull/<n>/merge`, *merge result* GitLab), donc si la PR est verte, le run post-merge rejoue les mêmes 6 jobs sur le même arbre et ne peut rien révéler de plus. On ne relance que si `main` a avancé, si le run a été annulé, ou après une panne d'infrastructure | §14.2 |
+| Une MR peut-elle être mergée avec un pipeline rouge ? | Non : `php-lint`, `security-scan`, `base-tests`, `unit` et `docs` sont bloquants (`style` est le seul en `allow_failure`) ; c'est ce qui rend la pénalité visible pendant le développement et non au rendu | §14.2 |
 
 ### 3.1 Les trois décisions « hors sujet » à défendre en 30 secondes chacune
 

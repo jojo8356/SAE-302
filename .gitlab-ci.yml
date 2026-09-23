@@ -8,6 +8,13 @@
 # Dev  : GitHub Actions (.github/workflows/ci.yml) — même 6 jobs adaptés pour GitHub
 #        (setup-php, services mysql:8.0, fallback sans load_db.sh). Les deux pipelines
 #        sont maintenus synchrones ; en dev on pousse sur GitHub, en prod on miroir vers GitLab.
+#
+# Règle de re-run (CDC §14.2, annexe 17.9 §7) : si le pipeline est VERT avant le merge
+# (statut de la MR « Pipeline passed »), aucun re-run n'est nécessaire après le merge.
+# Le pipeline post-merge rejoue les mêmes jobs sur le même arbre de fichiers (GitLab teste
+# la MR sur son merge result) : il sert de preuve/badge, pas de contrôle. On ne relance que
+# si main a avancé, si le run a été annulé, si le code a été corrigé puis poussé (le push
+# relance seul), ou après une panne d'infrastructure (un Retry, anomalie consignée A-0x).
 
 stages: [validate, db, test, docs]
 

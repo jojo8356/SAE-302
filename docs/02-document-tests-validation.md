@@ -11,6 +11,7 @@ Les tests de base sont **exécutés et rejouables** ; les tests fonctionnels con
 | Environnement de test | Linux, PHP 8.2, MariaDB 11.8.6 (campagne réellement jouée) / MySQL 8.0.36, Apache 2.4, Chromium |
 | Jeu de données | seed `sql/01` + commandes de démo `sql/04` : 4 catégories, 12 produits, 3 clients, 1 admin, 3 commandes ; base `minishop_test` recréée à chaque campagne |
 | Outillage | `scripts/run_sql_tests.sh` (29 tests), `tests/security/controles.sh` (10 contrôles statiques), `tests/charge/reserver.sh`, PHPUnit (unitaires), `docs/diagrams/render.sh`, `pandoc` |
+| Chaîne CI (recette automatisée) | `.gitlab-ci.yml` (prod) + `.github/workflows/ci.yml` (dev) : les 6 jobs sont joués **sur la MR elle-même** (GitHub : `refs/pull/<n>/merge` ; GitLab : *merge result*) — un pipeline **vert avant le merge dispense de tout re-run** après le merge (règle et exceptions : CDC §14.2) |
 | Entrée en recette | pré-conditions `PRÉ-1`…`PRÉ-6` du CDC §11.3 |
 | Critère de recette | 0 anomalie bloquante (perte de données, stock faux, contournement de sécurité) **et** 0 anomalie majeure (fonctionnalité du sujet indisponible) ; les mineures sont listées et acceptées |
 | Rejouabilité | chaque test SQL a son journal dans `tests/sql/out/<ID>.log` ; les tests de sécurité sont rejouables par simple copier-coller des requêtes/URL |

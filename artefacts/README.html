@@ -217,6 +217,32 @@ e-commerce + back-office (SAE)</h1>
 d’administration — <strong>PHP 8 / MySQL (PDO) / procédures stockées /
 déclencheurs / architecture MVC</strong> — avec sa base de données
 conçue, normalisée, testée, et son cahier des charges complet.</p>
+<blockquote>
+<p><strong>CI/CD dev vs prod</strong> : le dev avant la prod se fait sur
+<strong>GitHub</strong> (<code>.github/workflows/ci.yml</code> — adaptation de
+<code>.gitlab-ci.yml</code>), la prod/notée reste sur <strong>GitLab</strong>
+(<code>.gitlab-ci.yml</code>). Les deux pipelines exécutent les mêmes 6 jobs
+(php-lint, style PSR-12, security-scan, base-tests mysql:8.0, unit phpunit, docs
+PlantUML) avec les mêmes images (<code>php:8.2</code>, <code>mysql:8.0</code>,
+<code>openjdk:17</code>). <code>concurrency/cancel-in-progress</code> reproduit
+<code>interruptible: true</code>.</p>
+<p><strong>Règle « pas de re-run »</strong> : si la CI/CD est <strong>verte
+avant le merge</strong> (PR/MR au statut ✅), elle n’a <strong>pas besoin d’être
+relancée après le merge</strong>. Le run déclenché sur <code>main</code> par un
+merge est un <strong>relais de traçabilité</strong>, pas une vérification :
+mêmes 6 jobs, mêmes images, <strong>même arbre de fichiers</strong> (GitHub
+Actions exécute déjà le workflow <code>pull_request</code> sur le commit de
+fusion <code>refs/pull/&lt;n&gt;/merge</code>, GitLab CI sur le <em>merge
+result</em>). Un re-run manuel — <code>gh run rerun &lt;id&gt;</code>, bouton
+« Re-run jobs », « Retry » GitLab — ne peut donc rien révéler de neuf et coûte 5
+à 8 min de machine (service <code>mysql:8.0</code> compris) par MR. On relance
+<strong>uniquement</strong> si <code>main</code> a avancé depuis le run de la
+PR, si le run a été <strong>annulé</strong>
+(<code>cancel-in-progress</code>), si le code a été corrigé puis poussé (c’est
+alors le <code>push</code> qui relance), ou en cas de <strong>panne
+d’infrastructure</strong> (miroir PlantUML, <code>apt</code>, registre Docker) —
+règle complète et tableau des 6 exceptions : <strong>CDC §14.2</strong>.</p>
+</blockquote>
 <table>
 <colgroup>
 <col style="width: 50%" />

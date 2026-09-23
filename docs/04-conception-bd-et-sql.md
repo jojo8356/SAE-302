@@ -453,7 +453,7 @@ Le tableau relie chaque fichier aux parties du présent document qui l'analysent
 | [`tests/perf/mesurer.sh`](../tests/perf/mesurer.sh) | protocole de mesure p95 HTTP (`ENF-01`) | doc 02 §5 | 19 |
 | [`tests/perf/mesurer_sql.sh`](../tests/perf/mesurer_sql.sh) | mesure côté base : plans d'exécution, p95, coût d'une écriture métier | A.3 · doc 02 §5 | 101 |
 | [`scripts/gen_volumes.sh`](../scripts/gen_volumes.sh) | générateur de volumétrie (200 produits / 1 000 commandes via les procédures) | doc 02 §5 | 104 |
-| [`.gitlab-ci.yml`](../.gitlab-ci.yml) | chaîne CI : 6 jobs alignés sur le barème (lint, sécurité, tests SQL, unitaires, diagrammes) | CDC §14.2 | 102 |
+| [`.gitlab-ci.yml`](../.gitlab-ci.yml) | chaîne CI : 6 jobs alignés sur le barème (lint, sécurité, tests SQL, unitaires, diagrammes) ; **pas de re-run après un merge dont la MR était verte** | CDC §14.2 | 114 |
 | [`.gitignore`](../.gitignore) | secrets hors dépôt (`app/Config/env.php`), artefacts régénérables | CDC §14.1 règle 7 | 35 |
 
 **Rejeu complet** (le 01 crée la base et fait `USE` ; 02 et 03 contiennent la directive `DELIMITER` ;

@@ -1598,6 +1598,27 @@ le merge** : la pénalité devient visible pendant le développement, pas au ren
 Artefacts conservés par la CI : `tests/sql/rapport_tests_sql.md` et `tests/sql/out/` (4 semaines),
 `phpunit.xml` (rapport JUnit), `docs/diagrams/` (1 semaine).
 
+**Règle « pas de re-run » (économie de CI, tracée ici et rappelée dans `README.md` et l'annexe 17.9).**
+*Si la CI/CD est verte avant le merge, aucun re-run n'est nécessaire après le merge.* Le pipeline déclenché
+sur `main` par un merge est un **relais de traçabilité**, pas un contrôle : il rejoue les mêmes jobs, avec les
+mêmes images, sur le **même arbre de fichiers** — GitHub Actions et GitLab CI exécutent déjà la PR/MR sur le
+commit de fusion (`refs/pull/<n>/merge` côté GitHub, *merge result* côté GitLab), donc l'état validé avant le
+merge **est** l'état de `main` après le merge. Un re-run manuel ne peut rien révéler de plus, et coûte 5 à 8 min
+de machine par MR (dont un service `mysql:8.0`), à multiplier par le nombre de lots du §13.3 : c'est du temps
+pris sur la démo et sur le quota d'Actions. Il est donc remplacé par les six vérifications ci-dessous.
+
+| Situation | Relancer ? | Pourquoi / comment vérifier |
+|---|---|---|
+| MR verte → merge immédiat (cas nominal) | **non** | l'arbre fusionné est exactement celui qui vient d'être testé ; on ne clique ni « Re-run jobs », ni « Retry », ni `gh run rerun` |
+| `main` a avancé entre le run de la MR et le merge (deux MR enchaînées) | **oui, automatiquement** | le commit de fusion n'est plus celui testé : le `push` sur `main` re-déclenche la chaîne ; contrôler `gh pr checks <n>` avant de merger |
+| run **annulé / interrompu** (`interruptible: true`, `concurrency.cancel-in-progress`) | oui | un job annulé n'est pas une preuve : relancer la MR **avant** de merger, sinon la preuve manque à l'annexe 17.8 |
+| `style` (PSR-12) seul en échec | **non** | `allow_failure: true` : non bloquant par construction (ligne 2 du tableau ci-dessus) |
+| échec de code **déjà corrigé et poussé** | **non** | c'est le `push` qui relance la chaîne ; un re-run manuel rejouerait l'**ancien** commit et fausserait la preuve |
+| panne d'infrastructure (miroir PlantUML, paquets `apt`, registre Docker) | oui, **une fois** | échec d'outillage, pas de code : `gh run rerun <id> --failed` (GitLab : *Retry* sur le job) ; l'anomalie est consignée au registre `A-0x` du document de tests |
+
+Contrôle avant de merger, en une commande : `gh pr checks <n>` (GitHub) ou l'onglet *Pipelines* de la MR
+(GitLab — « Pipeline passed » débloque le bouton *Merge*). **Aucun re-run n'est déclenché après le merge.**
+
 ### 14.3 Répartition des commits attendue (auto-contrôle avant le rendu)
 
 ```bash
