@@ -12,7 +12,8 @@
 #   stages [validate, db, test, docs] → jobs avec `needs:`
 #   php-lint (validate, image php:8.2-cli) → job php-lint (setup-php 8.2)
 #   style (validate, allow_failure) → job style (continue-on-error: true)
-#   security-scan (alpine, tests/security/controles.sh) → job security-scan (fallback grep si script absent)
+#   security-scan (alpine, tests/security/controles.sh) → job security-scan (même script + --selftest ;
+#                                                          fallback grep dégradé seulement si le script manque)
 #   base-tests (db, mysql:8.0 service, load_db.sh + run_sql_tests.sh) → job db-tests (services mysql:8.0, fallback SQL direct si scripts absents)
 #   unit (test, php:8.2 + mysql service, composer + phpunit) → job unit (setup-php + composer + phpunit, skip si pas de composer.json)
 #   docs (openjdk, plantuml.jar + render.sh) → job docs (setup-java 17 + plantuml)
@@ -113,34 +114,80 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Auto-test des motifs (les contrôles doivent savoir mordre)
+        if: hashFiles('tests/security/controles.sh') != ''
+        shell: bash
+        run: bash tests/security/controles.sh --selftest
+
       - name: Contrôles sécurité
         shell: bash
         run: |
           set -uo pipefail
           if [ -f tests/security/controles.sh ]; then
-            echo "→ tests/security/controles.sh présent"
+            echo "→ tests/security/controles.sh présent — 10 contrôles du CDC §15.3"
             bash tests/security/controles.sh
-          else
-            echo "→ tests/security/controles.sh absent — fallback grep (10 contrôles GitLab)"
-            # Fallback minimal reproduisant l'esprit des 10 contrôles sans bloquer la CI dev
-            # Les vrais contrôles sont documentés en §8.9 / annexe 17.7 ; ici on vérifie les invariants critiques
-            echo "[1/5] Pas de concaténation SQL dans app/ public/ (query/exec avec \"\$) ?"
-            if grep -R --include='*.php' -nE '(query|exec)\s*\(\s*"[^"]*\$' app/ public/ 2>/dev/null; then
-              echo "⚠ concaténation SQL détectée"; exit 1; else echo "✓ OK"; fi
-            echo "[2/5] Mot de passe en dur ? (affectation PHP — un champ HTML type password n'en est pas un)"
-            if grep -R --include='*.php' -inE '\$(password|passwd|pwd|mot_de_passe|motdepasse)\w*\s*=\s*[""][^""]+[""]' app/ 2>/dev/null | grep -iv 'password_hash\|password_verify\|hash'; then
-              echo "⚠ mot de passe en dur suspect"; exit 1; else echo "✓ OK"; fi
-            echo "[3/5] Échappement HTML (htmlspecialchars) présent dans les vues ?"
-            if [ -d app/View ]; then
-              cnt=$(grep -R --include='*.php' -l 'htmlspecialchars' app/View 2>/dev/null | wc -l)
-              echo "  vues avec htmlspecialchars: $cnt"
-            else echo "  app/View absent (lot L8-L13), skip"; fi
-            echo "[4/5] Session durcie (session_regenerate_id, httponly, samesite) ?"
-            if grep -R --include='*.php' -n 'session_regenerate_id\|httponly\|samesite' app/ public/ 2>/dev/null | head -n 5; then echo "✓ indices trouvés"; else echo "ℹ non trouvé (attendu après L8)"; fi
-            echo "[5/5] CSRF sur méthodes mutatives ?"
-            if grep -R --include='*.php' -n 'csrf' app/ public/ 2>/dev/null | head -n 5; then echo "✓ CSRF trouvé"; else echo "ℹ pas encore de CSRF (attendu après L8)"; fi
-            echo "✓ security-scan fallback OK (non bloquant en dev si contrôles complets absents)"
+            exit $?
           fi
+
+          # ------------------------------------------------------------------
+          # FALLBACK (script absent). Il ne doit JAMAIS crier au loup : un
+          # contrôle qui échoue sur du code sain apprend à l'équipe à ignorer
+          # la CI. On cherche donc des MOTIFS dangereux, pas des MOTS.
+          # ------------------------------------------------------------------
+          echo "→ tests/security/controles.sh absent — fallback grep dégradé"
+          echo "  (le script complet est la référence : ce fallback ne couvre que 5 invariants)"
+
+          echo "[1/5] Interpolation d'une variable dans une chaîne SQL ?"
+          if grep -R --include='*.php' -nE '(query|exec|prepare)[[:space:]]*\([[:space:]]*"[^"]*\$' app/ public/ 2>/dev/null; then
+            echo "⚠ concaténation/interpolation SQL détectée"; exit 1
+          fi
+          echo "✓ OK"
+
+          # Le contrôle historiquement faux. `grep -riE "mot.?de.?passe" app/` remonte
+          # 63 lignes sur ce dépôt, dont :
+          #   <input type="password" id="mot_de_passe" name="mot_de_passe" required>
+          # Un nom de champ de formulaire n'est pas un identifiant en dur. On exige
+          # ici l'AFFECTATION D'UN LITTÉRAL non vide, et on écarte le balisage HTML.
+          echo "[2/5] Secret littéral affecté à une variable/constante/clé ?"
+          hits=$(
+            {
+              grep -R --include='*.php' -nE '\$(mot_de_passe|motdepasse|mdp|password|passwd|pass|pwd|secret|token|api_key)[A-Za-z0-9_]*[[:space:]]*=[[:space:]]*["'"'"'][^"'"'"'$]{3,}["'"'"']' app/ public/ 2>/dev/null
+              grep -R --include='*.php' -nE '(define|putenv|setenv)[[:space:]]*\([[:space:]]*["'"'"'][A-Za-z_]*(PASS|PASSWD|PWD|MOT_DE_PASSE|SECRET|TOKEN|API_KEY)[A-Za-z_]*["'"'"'][[:space:]]*,[[:space:]]*["'"'"'][^"'"'"'$]{3,}["'"'"']' app/ public/ 2>/dev/null
+              grep -R --include='*.php' -nE '["'"'"'](db_pass|db_password|mot_de_passe|password|passwd|pwd|secret|api_key)["'"'"'][[:space:]]*=>[[:space:]]*["'"'"'][^"'"'"'$]{3,}["'"'"']' app/ public/ 2>/dev/null
+              grep -R --include='*.php' -nE -e '->set[Pp]ass(word)?[[:space:]]*\([[:space:]]*["'"'"'][^"'"'"'$]{3,}["'"'"']' app/ public/ 2>/dev/null
+            } | grep -vEi 'name=|id=|for=|placeholder=|autocomplete=|<input|<label|type="password"' \
+              | grep -vE 'password_hash|password_verify|PASSWORD_BCRYPT|PASSWORD_DEFAULT|PASSWORD_ARGON' \
+              | grep -vE '^[^:]+:[0-9]+:[[:space:]]*(\*|//|#)'
+          )
+          if [ -n "$hits" ]; then
+            echo "$hits"; echo "⚠ secret en dur"; exit 1
+          fi
+          echo "✓ OK (les champs <input type=\"password\"> sont ignorés : ce ne sont pas des secrets)"
+
+          echo "[3/5] Échappement HTML dans les vues ?"
+          if [ -d app/View ]; then
+            brut=$(grep -R --include='*.php' -nE '(echo|<\?=)[[:space:]]*\$[A-Za-z_]' app/View 2>/dev/null \
+              | grep -vE '\be\(|euros\(|date_fr\(|statut_libelle\(|etat_libelle\(|csrf_field\(|\$v\(|\$qs\(|HTML-SAFE' \
+              | grep -vE '^app/View/layout\.php:[0-9]+:[[:space:]]*<\?=[[:space:]]*\$contenu[[:space:]]*\?>')
+            if [ -n "$brut" ]; then echo "$brut"; echo "⚠ sortie non échappée"; exit 1; fi
+            echo "✓ OK"
+          else
+            echo "ℹ app/View absent, skip"
+          fi
+
+          echo "[4/5] Session durcie (httponly, samesite, regenerate) ?"
+          manque=""
+          grep -Rq "'httponly'[[:space:]]*=>[[:space:]]*true" app/ 2>/dev/null || manque="$manque HttpOnly"
+          grep -Rq "session_regenerate_id\|regenererId" app/ 2>/dev/null || manque="$manque regenerate"
+          if [ -n "$manque" ]; then echo "⚠ durcissement incomplet :$manque"; exit 1; fi
+          echo "✓ OK"
+
+          echo "[5/5] CSRF comparé en temps constant ?"
+          if ! grep -Rq 'hash_equals' app/ 2>/dev/null; then
+            echo "⚠ jeton CSRF non comparé avec hash_equals()"; exit 1
+          fi
+          echo "✓ OK"
+          echo "✓ security-scan (fallback) : 5 invariants vérifiés"
 
   # -----------------------------------------------------------------
   # 4. Base de données : chargement du schéma puis 29 tests (règles, vues, port)

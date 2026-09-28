@@ -37,14 +37,23 @@ style:
     - "command -v phpcs >/dev/null 2>&1 || pear install -f PHP_CodeSniffer || true"
     - "phpcs --standard=PSR12 --report=summary app public || true"
 
-# 3. Contrôles statiques de sécurité : 10 grep bloquants (interpolation SQL, échappement
+# 3. Contrôles statiques de sécurité : 10 contrôles bloquants (interpolation SQL, échappement
 #    manquant, mot de passe en dur, session durcie, CSRF, contrôle d'appartenance).
+#    Chaque contrôle exige un MOTIF dangereux (affectation d'un littéral, interpolation dans
+#    une chaîne SQL…), jamais la simple présence d'un mot : `name="mot_de_passe"` est un nom
+#    de champ de formulaire, pas un secret. Voir l'en-tête de tests/security/controles.sh.
+#    git est requis par le contrôle 10 (aucun secret dans l'index) : sans lui le contrôle
+#    échoue volontairement plutôt que de passer au vert sans avoir rien vérifié.
 security-scan:
   stage: validate
   image: alpine:3.20
   before_script:
-    - apk add --no-cache bash grep findutils
+    - apk add --no-cache bash grep findutils git
   script:
+    # --selftest confronte d'abord les motifs à des fixtures jouets : un vrai secret en dur
+    # DOIT être vu, le balisage <input type="password" name="mot_de_passe"> NE DOIT PAS l'être.
+    # Un contrôle devenu incapable de détecter quoi que ce soit passerait sinon au vert.
+    - bash tests/security/controles.sh --selftest
     - bash tests/security/controles.sh
 
 # 4. Base de données : chargement du schéma puis 28 tests (règles, vues, port).
