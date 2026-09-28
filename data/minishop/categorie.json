@@ -1,0 +1,30 @@
+{
+    "table": "categorie",
+    "auto_increment": 6,
+    "rows": [
+        {
+            "id_categorie": 1,
+            "nom": "Informatique",
+            "slug": "informatique",
+            "description": "Ordinateurs portables, périphériques et composants"
+        },
+        {
+            "id_categorie": 2,
+            "nom": "Audio",
+            "slug": "audio",
+            "description": "Casques, enceintes et microphones"
+        },
+        {
+            "id_categorie": 3,
+            "nom": "Accessoires",
+            "slug": "accessoires",
+            "description": "Sacs, câbles, supports et batteries"
+        },
+        {
+            "id_categorie": 4,
+            "nom": "Objets connectés",
+            "slug": "objets-connectes",
+            "description": "Montres et bracelets connectés"
+        }
+    ]
+}

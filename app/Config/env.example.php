@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -6,26 +7,30 @@ declare(strict_types=1);
  * Copier vers app/Config/env.php puis renseigner les valeurs locales.
  *
  * Hors dépôt : app/Config/env.php est ignoré par .gitignore (règle §14.1).
- * En dev, laisser 'env' => 'dev' pour autoriser public/gen_volumes.php.
- * En prod, passer à 'env' => 'prod' : le générateur de volumétrie se bloque (404).
+ * Sans ce fichier, l'application fonctionne avec les valeurs par défaut
+ * ci-dessous (pilote JSON, données dans data/minishop).
  */
+
 return [
     // Environnement : 'dev' | 'test' | 'prod'
-    'env'       => 'dev',
-    'APP_ENV'   => 'dev',
+    'env'     => 'dev',
+    'APP_ENV' => 'dev',
+    'debug'   => true,
 
-    // Base — par défaut minishop (jeu de démo) et minishop_perf (volumétrie)
-    'db_host'   => getenv('DB_HOST') ?: '127.0.0.1',
-    'db_port'   => (int) (getenv('DB_PORT') ?: 3306),
-    'db_name'   => getenv('DB') ?: getenv('DB_NAME') ?: 'minishop',
-    'db_user'   => getenv('DB_USER') ?: 'root',
-    'db_pass'   => getenv('DB_PASS') ?: '',
-    // Alias compatibles scripts shell
-    'DB'        => getenv('DB') ?: 'minishop',
+    // ---- Pilote de gestion des données (énumération App\Model\Data\StorageDriver)
+    // 'json' : moteur JSON natif (data/minishop/*.json) — pilote actif.
+    // 'sql'  : MySQL/PDO — réservé à la migration finale (lots L14+), les
+    //          scripts sql/01→04 sont déjà prêts dans le dépôt.
+    'storage_driver' => 'json',
 
-    // Optionnel : jeton pour protéger le générateur même en dev
-    // 'volumetry_token' => 'change-me',
+    // Dossier des fichiers de données (défaut : <projet>/data/minishop).
+    // Utile pour les tests (bac à sable) ou la volumétrie (jeu 200 produits).
+    'data_path' => null,
 
-    // Divers
-    'debug'     => true,
+    // ---- Réservé à la migration SQL finale (aucun usage en pilote JSON) ----
+    'db_host' => '127.0.0.1',
+    'db_port' => 3306,
+    'db_name' => 'minishop',
+    'db_user' => 'root',
+    'db_pass' => '',
 ];

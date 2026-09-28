@@ -135,12 +135,18 @@ function csrf_check_mesurer(string $t): bool { return hash_equals($_SESSION['csr
 // ---------------------------------------------------------------------
 // 3) Paramètres (GET/POST/ENV) — même noms que le .sh
 // ---------------------------------------------------------------------
-$urlBaseEnv = getenv('URL_BASE') ?: '';
-$defaultBase = $urlBaseEnv ?: (
-    isset($_SERVER['HTTP_HOST'])
-        ? (( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'])
-        : 'http://127.0.0.1:8000'
-);
+if (getenv('URL_BASE')) { $urlBaseEnv = getenv('URL_BASE'); } else { $urlBaseEnv = ''; }
+$defaultBase = $urlBaseEnv;
+if (!$defaultBase) {
+    $defaultBase = 'http://127.0.0.1:8000';
+    if (isset($_SERVER['HTTP_HOST'])) {
+        $schema = 'http';
+        if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+            $schema = 'https';
+        }
+        $defaultBase = $schema . '://' . $_SERVER['HTTP_HOST'];
+    }
+}
 $defaultUrl  = '/';
 $defaultN    = 200;
 $defaultC    = 4;
@@ -280,12 +286,12 @@ function mesurer_serveur(string $fullUrl, int $n, int $c): array
 
     sort($times, SORT_NUMERIC);
     $cnt = count($times);
-    $p95 = $cnt ? $times[max(0, (int)($cnt * 0.95) - 1)] : 0; // awk int(NR*0.95) ; awk est 1-indexed → -1
+    if ($cnt) { $p95 = $times[max(0, (int)($cnt * 0.95) - 1)]; } else { $p95 = 0; } // awk int(NR*0.95) ; awk est 1-indexed → -1
     // le .sh fait : p95=v[int(NR*0.95)>0?int(NR*0.95):NR] avec v[1..NR] → en php 0-indexed c'est -1
     // pour rester identique on garde la même formule 95e percentile
     // p50 : v[int(NR/2)>0?int(NR/2):1]
-    $p50 = $cnt ? $times[max(0, (int)($cnt / 2) - 1)] : 0;
-    $max = $cnt ? $times[$cnt - 1] : 0;
+    if ($cnt) { $p50 = $times[max(0, (int)($cnt / 2) - 1)]; } else { $p50 = 0; }
+    if ($cnt) { $max = $times[$cnt - 1]; } else { $max = 0; }
     $verdict = ($p95 < 0.5);
     return [
         'n' => $n, 'c' => $c, 'ok' => $ok, 'fail' => $fail,
@@ -391,7 +397,7 @@ header('Cache-Control: no-store, no-cache, must-revalidate');
     </div>
     <div style="display:flex;gap:.5rem;flex-wrap:wrap">
       <span class="badge dev">● DEV uniquement</span>
-      <span class="badge">PHP <?=htmlspecialchars(PHP_VERSION)?> <?=function_exists('curl_init') ? '· curl' : '· no-curl'?></span>
+      <span class="badge">PHP <?=htmlspecialchars(PHP_VERSION)?> <?php if (function_exists('curl_init')) { echo '· curl'; } else { echo '· no-curl'; } ?></span>
       <span class="badge ok">ENF-01 · URL_BASE/N/C</span>
     </div>
   </div>
@@ -486,18 +492,24 @@ ENF-01 —</pre>
 
       <?php if ($serverResult): ?>
         <div class="sep"></div>
-        <div class="alert <?= $serverResult['verdict'] ? 'alert-ok' : 'alert-err' ?>">
+        <div class="alert <?php if ($serverResult['verdict']) { echo 'alert-ok'; } else { echo 'alert-err'; } ?>">
           <strong>Mesure serveur (POST) — <?=htmlspecialchars($serverResult['fullUrl'])?></strong><br>
           requetes=<?= (int)$serverResult['n'] ?> (200: <?= (int)$serverResult['ok'] ?>, autres: <?= (int)$serverResult['fail'] ?>)<br>
           mediane=<?= number_format((float)$serverResult['p50'], 3) ?>s p95=<?= number_format((float)$serverResult['p95'], 3) ?>s max=<?= number_format((float)$serverResult['max'], 3) ?>s<br>
-          <?= $serverResult['verdict'] ? 'ENF-01 conforme (p95 &lt; 500 ms)' : 'ENF-01 NON conforme : mesurer la requête (general_log) et vérifier les index' ?>
+          <?php if ($serverResult['verdict']) { echo 'ENF-01 conforme (p95 &lt; 500 ms)'; } else { echo 'ENF-01 NON conforme : mesurer la requête (general_log) et vérifier les index'; } ?>
           — <?= number_format((float)$serverResult['elapsed'], 2) ?>s côté serveur
         </div>
+        <?php
+        $verdictEnf01 = 'ENF-01 NON conforme : mesurer la requête (general_log) et vérifier les index';
+        if ($serverResult['verdict']) {
+            $verdictEnf01 = 'ENF-01 conforme (p95 < 500 ms)';
+        }
+        ?>
         <pre style="margin-top:.6rem"><?=htmlspecialchars(
             sprintf("requetes=%d (200: %d, autres: %d)\nmediane=%.3fs p95=%.3fs max=%.3fs\n%s",
                 $serverResult['n'], $serverResult['ok'], $serverResult['fail'],
                 $serverResult['p50'], $serverResult['p95'], $serverResult['max'],
-                $serverResult['verdict'] ? 'ENF-01 conforme (p95 < 500 ms)' : 'ENF-01 NON conforme : mesurer la requête (general_log) et vérifier les index'
+                $verdictEnf01
             ))?></pre>
       <?php endif; ?>
 

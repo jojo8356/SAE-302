@@ -212,17 +212,37 @@ function load_minishop_config(?string $overrideDb = null): array
         }
     }
     // Valeurs par défaut + surcharges env
-    $db = $overrideDb ?? $cfg['db_name'] ?? $cfg['DB'] ?? getenv('DB') ?: 'minishop_perf';
+    if ($overrideDb ?? $cfg['db_name'] ?? $cfg['DB'] ?? getenv('DB')) { $db = $overrideDb ?? $cfg['db_name'] ?? $cfg['DB'] ?? getenv('DB'); } else { $db = 'minishop_perf'; }
     // Si DB contient un nom vide, forcer minishop_perf (cible volumétrie)
     if (!is_string($db) || trim($db) === '') {
         $db = 'minishop_perf';
     }
+    $dbHost = $cfg['db_host'] ?? getenv('DB_HOST');
+    if (!$dbHost) {
+        $dbHost = '127.0.0.1';
+    }
+    $dbPort = $cfg['db_port'] ?? getenv('DB_PORT');
+    if (!$dbPort) {
+        $dbPort = 3306;
+    }
+    $dbUser = $cfg['db_user'] ?? getenv('DB_USER');
+    if (!$dbUser) {
+        $dbUser = 'root';
+    }
+    $dbPass = $cfg['db_pass'] ?? getenv('DB_PASS');
+    if (!$dbPass) {
+        $dbPass = getenv('MYSQL_PWD');
+        if (!$dbPass) {
+            $dbPass = '';
+        }
+    }
+
     return [
-        'db_host' => $cfg['db_host'] ?? getenv('DB_HOST') ?: '127.0.0.1',
-        'db_port' => (int)($cfg['db_port'] ?? getenv('DB_PORT') ?: 3306),
+        'db_host' => $dbHost,
+        'db_port' => (int) $dbPort,
         'db_name' => $db,
-        'db_user' => $cfg['db_user'] ?? getenv('DB_USER') ?: 'root',
-        'db_pass' => $cfg['db_pass'] ?? getenv('DB_PASS') ?: (getenv('MYSQL_PWD') ?: ''),
+        'db_user' => $dbUser,
+        'db_pass' => $dbPass,
         'env'     => $cfg['env'] ?? $cfg['APP_ENV'] ?? 'dev',
     ];
 }
@@ -255,7 +275,8 @@ function current_counts(PDO $pdo): array
         (SELECT COUNT(*) FROM commande c WHERE c.statut <> 'BROUILLON' AND c.montant_total <>
             (SELECT COALESCE(SUM(l.total_ligne),0) FROM ligne_commande l WHERE l.id_commande=c.id_commande) + c.frais_port) AS montants_incoherents";
     $row = $pdo->query($sql)->fetch();
-    return $row ?: [];
+    if ($row) { return $row; }
+    return [];
 }
 
 function purge_volumetrie(PDO $pdo): array
@@ -383,7 +404,7 @@ function generate_commandes(PDO $pdo, int $nCommandes, int $batch, array &$log):
         $pid1 = $prodIds[$j % $nProd];
         $pid2 = $prodIds[($j * 7 + 3) % $nProd];
         $q1 = 1 + ($j % 3);
-        $payee = ($j % 4 === 0) ? 1 : 0;
+        if (($j % 4 === 0)) { $payee = 1; } else { $payee = 0; }
         $adresse = "Adresse de mesure $j, 06000 Nice";
 
         try {
@@ -475,7 +496,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $action = $_POST['action'] ?? '';
         $dbName = trim((string)($_POST['db'] ?? $defaultDb));
-        $dbName = preg_match('/^[a-zA-Z0-9_]+$/', $dbName) ? $dbName : $defaultDb;
+        if (preg_match('/^[a-zA-Z0-9_]+$/', $dbName)) { $dbName = $dbName; } else { $dbName = $defaultDb; }
         $nProd = (int)($_POST['n_produits'] ?? $defaultNProd);
         $nCmd  = (int)($_POST['n_commandes'] ?? $defaultNCmd);
         $nCli  = (int)($_POST['n_clients'] ?? $defaultNCli);
@@ -792,8 +813,8 @@ header('Cache-Control: no-store, no-cache, must-revalidate');
           <div><b><?= (int)($c['lignes'] ?? 0) ?></b><span>lignes</span></div>
           <div><b><?= (int)($c['traces'] ?? 0) ?></b><span>traces statut</span></div>
           <div><b><?= (int)($c['commandes_avec_port'] ?? 0) ?></b><span>avec port &gt;0</span></div>
-          <div><b class="<?= ((int)($c['ttc_incoherents'] ?? 0)===0)?'ok':'bad' ?>"><?= (int)($c['ttc_incoherents'] ?? 0) ?></b><span>TTC incohérents</span></div>
-          <div><b class="<?= ((int)($c['montants_incoherents'] ?? 0)===0)?'ok':'bad' ?>"><?= (int)($c['montants_incoherents'] ?? 0) ?></b><span>montants incohérents</span></div>
+          <div><b class="<?php if (((int)($c['ttc_incoherents'] ?? 0)===0)) { echo 'ok'; } else { echo 'bad'; } ?>"><?= (int)($c['ttc_incoherents'] ?? 0) ?></b><span>TTC incohérents</span></div>
+          <div><b class="<?php if (((int)($c['montants_incoherents'] ?? 0)===0)) { echo 'ok'; } else { echo 'bad'; } ?>"><?= (int)($c['montants_incoherents'] ?? 0) ?></b><span>montants incohérents</span></div>
         </div>
         <div class="sep"></div>
         <table>
@@ -803,8 +824,8 @@ header('Cache-Control: no-store, no-cache, must-revalidate');
             <tr><td>Commandes</td><td><b><?= (int)($c['commandes'] ?? 0) ?></b></td><td class="muted">4 démo + 1000 ≈ 1004</td></tr>
             <tr><td>Lignes</td><td><?= (int)($c['lignes'] ?? 0) ?></td><td class="muted">≈ 2 × commandes</td></tr>
             <tr><td>Traces</td><td><?= (int)($c['traces'] ?? 0) ?></td><td class="muted">≥ commandes (trg_history)</td></tr>
-            <tr><td>TTC incohérents</td><td class="<?= ((int)($c['ttc_incoherents'] ?? 0)===0)?'ok':'bad' ?>"><?= (int)($c['ttc_incoherents'] ?? 0) ?></td><td class="muted">0 (trg_produit_ttc)</td></tr>
-            <tr><td>Montants incohérents</td><td class="<?= ((int)($c['montants_incoherents'] ?? 0)===0)?'ok':'bad' ?>"><?= (int)($c['montants_incoherents'] ?? 0) ?></td><td class="muted">0 (RB-15)</td></tr>
+            <tr><td>TTC incohérents</td><td class="<?php if (((int)($c['ttc_incoherents'] ?? 0)===0)) { echo 'ok'; } else { echo 'bad'; } ?>"><?= (int)($c['ttc_incoherents'] ?? 0) ?></td><td class="muted">0 (trg_produit_ttc)</td></tr>
+            <tr><td>Montants incohérents</td><td class="<?php if (((int)($c['montants_incoherents'] ?? 0)===0)) { echo 'ok'; } else { echo 'bad'; } ?>"><?= (int)($c['montants_incoherents'] ?? 0) ?></td><td class="muted">0 (RB-15)</td></tr>
           </tbody>
         </table>
         <p class="small muted" style="margin:.6rem 0 0">
@@ -828,7 +849,7 @@ header('Cache-Control: no-store, no-cache, must-revalidate');
 
   <?php if (!empty($logs)): ?>
     <div class="card" style="margin-top:1rem">
-      <h3>Journal — <?= $result === 'purge' ? 'purge' : 'génération' ?></h3>
+      <h3>Journal — <?php if ($result === 'purge') { echo 'purge'; } else { echo 'génération'; } ?></h3>
       <pre><?= htmlspecialchars(implode("\n", $logs)) ?></pre>
       <?php if ($bilan): ?>
         <div class="sep"></div>

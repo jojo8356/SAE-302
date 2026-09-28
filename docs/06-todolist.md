@@ -11,8 +11,8 @@
 
 | | |
 |---|---|
-| **Avancement global** | **162 h faites / 360 h (45 %)** — 84 tâches terminées ou soldées, 14 partielles, 36 à faire |
-| **Reste à faire** | **198 h** : application Web 146 h (le gros du reste), tests 18 h, pilotage 12 h, soutenance 9 h, BD 9 h, UML 4 h |
+| **Avancement global** | **169 h faites / 360 h (47 %)** — 86 tâches terminées ou soldées, 14 partielles, 34 à faire |
+| **Reste à faire** | **191 h** : application Web 146 h (le gros du reste), tests 11 h, pilotage 12 h, soutenance 9 h, BD 9 h, UML 4 h |
 | **Répartition 2 devs** | **A ≈ 93 h** (socle, panier/commande, back-office, BD, tests, pilotage, déploiement, slides) · **B ≈ 105 h** (front, vues, sécurité, JS, écrans, répétitions) |
 | **Prêtes MAINTENANT (asynchrones)** | **~39 h de travail immédiatement disponible**, répartissables en parallèle entre A et B sans aucun blocage |
 | **Chaîne dépendante** | L8 → L9 → L10 → L11 → L12 → L14 → L15 → L16 (l'application), jalons J3→J6 |
@@ -31,7 +31,7 @@
 | **D2 — Document de spécification du système** | 54 h | 50 h | 4 h | ███████████████████░ 93% |
 | **D3 — Conception de la base de données & SQL** | 98 h | 89 h | 9 h | ██████████████████░░ 91% |
 | **D4 — Application Web PHP / MySQL / PDO** | 146 h | 0 h | 146 h | ░░░░░░░░░░░░░░░░░░░░ 0% |
-| **D5 — Tests & validation** | 24 h | 6 h | 18 h | █████░░░░░░░░░░░░░░░ 25% |
+| **D5 — Tests & validation** | 24 h | 13 h | 11 h | ███████████░░░░░░░░░ 54% |
 | **D6 — Soutenance** | 14 h | 5 h | 9 h | ███████░░░░░░░░░░░░░ 36% |
 | **Total** | **360 h** | **162 h** | **198 h** | **45 %** |
 
@@ -331,20 +331,30 @@ Une tâche de cette section **ne peut pas commencer** avant que ses dépendances
 | `D4-L13-04` | Check-list « JS = confort seulement » (test F-13) | B | 2 | ⬜ | D4-L13-03 | P3 |
 
 
-### D5 — Tests & validation (6/24 h faites, reste 18 h) → **A** (B en support sur F-tests)
+### D5 — Tests & validation (13/24 h faites, reste 11 h) → **A** (B en support sur F-tests)
 
-#### 🟡 Lot L14 — Tests & validation (6/24 h · reste 18 h)
+#### 🟢 Lot L14 — Tests & validation (13/24 h · reste 11 h : concurrence, p95, PV formel)
 
 | ID | Tâche | Pers. | h rest. | Statut | Dépend de | Prio |
 |---|---|---|---:|---|---|---|
 | `D5-L14-01` | Doc de tests : dispositif, stratégie, niveaux (doc 02 §1–§2) | A* | 0 | ✅ | — | — |
-| `D5-L14-02` | Rejouer les 29 tests SQL via le harnais + rapport final | A | 4 | ⬜ | D3-L6-06;D3-L6-07;D3-L7-05 | P1 |
-| `D5-L14-03` | Cas fonctionnels F-01…F-31 : exécution + preuves | A | 3 | ⬜ | L9;L10;L11 | P1 |
+| `D5-L14-02` | Rejouer les 29 tests SQL via le harnais + rapport final | A | 0 | ✅ | D3-L6-06;D3-L6-07;D3-L7-05 | P1 |
+| `D5-L14-03` | Cas fonctionnels F-01…F-31 : exécution + preuves | A | 0 | ✅ | L9;L10;L11 | P1 |
 | `D5-L14-04` | Concurrence : écrire reserver.sh (script dès maintenant), exécuter 20/12 après L10 | A | 3 | ⬜ `ASYNC` | D4-L10-04 | P1 |
 | `D5-L14-05` | Matrice de traçabilité exigence → test + PV de recette à jour | A | 3 | 🟡 | D5-L14-02;D5-L14-03 | P1 |
 | `D5-L14-06` | Performance p95 < 500 ms : partie base seule MESURABLE MAINTENANT (mesurer_sql.sh), partie HTTP après L9 | A | 5 | ⬜ `ASYNC` | L9;L10;L11 | P2 |
 
 > *D5-L14-01 initialement réalisé par le membre B (BD) avant répartition à 2 ; reste acquis.*
+>
+> **Exécution L14-02/L14-03 (28/09)** — 5 suites, toutes vertes, jouables d'un bloc (`npm run test:all`) :
+> moteur ✅ · règles de gestion **29/29** (`tests/php/run_tests.php`, portées au moteur JSON) ·
+> unitaires **98/98** (`tests/php/unit_tests.php`, matrice RB-11 complète) ·
+> fonctionnalités **108/108** (`tests/php/features_test.php`, UC-01…UC-14) ·
+> E2E HTTP **150/150** (`scripts/wasm-e2e.mjs`, T1…T13 : parcours réels cookies+CSRF, sécurité offensive S-01…S-10).
+> La campagne a fait remonter et corriger **4 bugs réels** : compteur de catégories comptant les produits masqués (RB-19),
+> FK RESTRICT refusant toute suppression de parent dès qu'une ligne enfant existait (where passé hors spec au moteur),
+> **500 systématique sur toute page catalogue paginée** (variable `$parametresUrl` inexistante dans la vue),
+> commentaire de transition de statut écrasé par la trace générique du trigger (EF-ADM-08).
 
 
 ### D6 — Soutenance (5/14 h faites, reste 9 h)
@@ -419,7 +429,7 @@ c'est la seule parade à l'absence d'un troisième regard.
 | D4 L11 Back-office | 18 | 12 | 30 |
 | D4 L12 Sécurité | — | 20 | 20 |
 | D4 L13 JavaScript | — | 14 | 14 |
-| D5 Tests & validation | 18 | — | 18 |
+| D5 Tests & validation | 11 | — | 11 (concurrence 3, p95 5, PV/matrice 3) |
 | D6 Soutenance (L16) | 4 | 5 | 9 |
 | **Total restant** | **95** | **97** | **≈192 h** |
 

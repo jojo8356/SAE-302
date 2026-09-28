@@ -15,7 +15,7 @@ testée, et son cahier des charges complet.
 | **Cadre** | SAE — BUT Informatique / Licence 3, Université Côte d'Azur |
 | **Groupe** | 3 étudiants (prénoms/noms/numéros dans §Membres ci-dessous) |
 | **Référente** | Thanh-Phuong Nguyen — `thanh-phuong.nguyen@univ-cotedazur.fr` |
-| **Documents** | [`docs/01-cahier-des-charges-MiniShop.md`](docs/01-cahier-des-charges-MiniShop.md) (spécification **et** conception de base de données) · [`docs/02-document-tests-validation.md`](docs/02-document-tests-validation.md) · [`docs/03-support-soutenance.md`](docs/03-support-soutenance.md) · [`docs/04-conception-bd-et-sql.md`](docs/04-conception-bd-et-sql.md) (livrable n°3 autonome : MCD, MLD, normalisation, analyse + **liens vers les scripts SQL livrés en fichiers**) · [`docs/05-wbs-projet.md`](docs/05-wbs-projet.md) (WBS : 6 divisions, 16 lots, 86 tâches individuelles, charges bottom-up, plan de charge, Gantt, chemin critique) |
+| **Documents** | [`docs/01-cahier-des-charges-MiniShop.md`](docs/01-cahier-des-charges-MiniShop.md) (spécification **et** conception de base de données) · [`docs/02-document-tests-validation.md`](docs/02-document-tests-validation.md) · [`docs/03-support-soutenance.md`](docs/03-support-soutenance.md) · [`docs/04-conception-bd-et-sql.md`](docs/04-conception-bd-et-sql.md) (livrable n°3 autonome : MCD, MLD, normalisation, analyse + **liens vers les scripts SQL livrés en fichiers**) · [`docs/05-wbs-projet.md`](docs/05-wbs-projet.md) (WBS : 6 divisions, 16 lots, 86 tâches individuelles, charges bottom-up, plan de charge, Gantt, chemin critique) · [`docs/08-fiche-suivi-commits.md`](docs/08-fiche-suivi-commits.md) (fiche de suivi des 32 commits + script de rejeu vers un nouveau GitLab) |
 | **Scripts SQL** | [`sql/01_minishop_schema.sql`](sql/01_minishop_schema.sql) (DDL + données) · [`sql/02_minishop_procedures.sql`](sql/02_minishop_procedures.sql) (1 fonction + 17 procédures) · [`sql/03_minishop_triggers.sql`](sql/03_minishop_triggers.sql) (16 déclencheurs) · [`sql/04_minishop_demo.sql`](sql/04_minishop_demo.sql) (démo via `CALL`) — chaîne validée de zéro sur MariaDB 11.8.6 |
 | **État** | base de données + 29 tests SQL **exécutés avec succès** (règles RB-01…RB-20, vues, frais de port) ; application PHP spécifiée (code à produire aux lots L8→L13 du planning) |
 
@@ -82,22 +82,41 @@ UNION ALL SELECT 'triggers',   COUNT(*) FROM (SELECT DISTINCT TRIGGER_NAME FROM 
 
 | Zone | Statut | Comment le vérifier |
 |---|---|---|
-| `sql/`, `scripts/`, `tests/sql/`, `docs/` (CDC, tests, soutenance, annexes, diagrammes) | **livrés et exécutés** | `./scripts/load_db.sh` puis `./scripts/run_sql_tests.sh` → 29/29 |
-| `tests/security/controles.sh`, `tests/charge/reserver.sh`, `tests/perf/mesurer.sh` | **scripts livrés** ; les deux derniers supposent l'application en service | `bash -n` passe ; exécution utile dès le lot L9 |
-| `app/**` hors `app/Config/env.example.php`, `public/**`, `tests/php/**` | **à produire aux lots L8 → L13** (le cahier des charges les spécifie : classes, méthodes, routes, conventions, tests) | §9.2 (arborescence cible), §16.1 (ligne iii du barème), §13.3 (lots) |
+| `app/**`, `public/**`, `data/`, `scripts/seed.php` | **application livrée et testée** (PHP pur, moteur JSON, zéro CSS, zéro SQL) | `npm run test:all` → 5 suites vertes (29 + 98 + 108 + 150 vérifications) |
+| `app/Model/Data/` | moteur « JSON-comme-SGBD » : schéma, contraintes (NOT NULL/ENUM/CHECK/UNIQUE/FK), triggers, transactions, vues, journal JSONL — piloté par l'énumération `StorageDriver` (JSON actif, SQL en stub pour la fusion finale) | `node scripts/wasm_run.mjs tests/php/engine_smoke.php` |
+| `tests/php/**`, `scripts/wasm-e2e.mjs`, `scripts/run-all-tests.mjs` | **livrés et exécutés** (voir « Tests livrés » ci-dessus) | `npm run test:all` |
+| `sql/`, `tests/sql/`, `docs/` (CDC, tests, soutenance, annexes, diagrammes) | **livrés** ; `sql/` = référence comportementale du moteur JSON | `./scripts/run_sql_tests.sh` → 29/29 |
+| `tests/security/controles.sh`, `tests/charge/reserver.sh`, `tests/perf/mesurer.sh` | **scripts livrés** ; les deux derniers supposent l'application en service | `bash -n` passe |
 | `tests/sql/out/*.log` | non versionnés (régénérables) — seul `tests/sql/rapport_tests_sql.md` est versionné, preuve de recette à l'appui | `.gitignore`, §14.1 règle 7 |
 
 ## Tests livrés
 
-| Commande | Ce qu'elle prouve |
-|---|---|
-| `./scripts/run_sql_tests.sh` | 29 tests des règles de gestion RB-01…RB-20, des 3 vues et des frais de port, **dont 15 attaquent la base en SQL direct** (contournement de l'application) ; rapport dans `tests/sql/rapport_tests_sql.md` |
-| `bash tests/security/controles.sh` | 10 contrôles statiques (aucune concaténation SQL, échappement systématique, session durcie, CSRF sur les méthodes mutatives…) |
-| `bash tests/charge/reserver.sh` | pas de survente : 20 demandes simultanées pour 12 exemplaires → 12 commandes, 8 refus |
-| `php -l` + `phpunit` (si installé) | syntaxe et tests unitaires des modèles/services |
-| `docs/diagrams/render.sh` | les 14 diagrammes (cas d'utilisation, classes, séquences, activités, états, MCD, MLD, architecture) se régénèrent depuis les sources `.puml` |
-| `bash tests/perf/mesurer.sh` → `public/mesurer.php` (dev-only) | `ENF-01` : p95 par URL (`ab` ou `curl` en .sh, `fetch` JS + `curl_multi` PHP en .php), sortie 1 si p95 ≥ 500 ms |
-| `./scripts/build-docs.sh` | régénère **tout** l'assemblage documentaire : 14 diagrammes depuis les `.puml`, annexe SQL recopiée depuis `sql/*` (source de vérité), campagne de tests rejouée, exports Word (`dist/*.docx`, images incrustées) |
+L'application est livrée avec **cinq suites, toutes vertes**, exécutables d'un bloc :
+
+```bash
+npm run test:all        # ou : node scripts/run-all-tests.mjs
+```
+
+> 🛡️ **Sécurité** : la note complète « failles testées → corrections → code » (S-01…S-10, SEC-01…SEC-13, limites assumées) est dans **`docs/07-note-cybersecurite.md`** ; les attaques correspondantes sont rejouées en continu par les batteries T6/T12/T13 de la suite E2E.
+
+| Suite | Fichier | Couverture | Verdict |
+|---|---|---|---|
+| Linter strict types | `scripts/strict_types_lint.php` | règle `declare_strict_types` de php-cs-fixer + types natifs « PHPStan level 9 » (params, retours, propriétés) + **règle maison : opérateur ternaire interdit** (`? :` et `?:`, remplacés par `if/else` ; `??` et types nullables `?int` autorisés) sur **tout le livrable PHP** | ✅ 0 violation / 79 fichiers |
+| Moteur JSON | `tests/php/engine_smoke.php` | contraintes, triggers, transactions, journal du moteur | ✅ vert |
+| Règles de gestion | `tests/php/run_tests.php` | T-01…T-29 du document de tests (RB-01…RB-20, vues, frais de port) | ✅ 29/29 |
+| Unitaires | `tests/php/unit_tests.php` | `Text` (fold/slug/collation), échappement, CSRF, **matrice RB-11 complète** (36 couples), `Filter`, `PanierSession`, prix TTC, journal | ✅ 98/98 |
+| Fonctionnalités | `tests/php/features_test.php` | **UC-01…UC-14** via les repositories (catalogue, compte, panier, commande, annulation, back-office, indicateurs) | ✅ 108/108 |
+| E2E HTTP | `scripts/wasm-e2e.mjs` | T1…T13 : parcours réels (cookies + CSRF) — pages publiques, auth, commande 488,40 €, annulation, back-office, cloisonnement, catalogue avancé, compte, panier (plafond/re-tri/prix falsifié), CRUD admin, filtres + audit + journal, **sécurité offensive** (injection, XSS stocké, IDOR, fixation de session, traversées, escalation), rôles RB-13 | ✅ 150/150 |
+
+Commandes individuelles : `npm test` (règles), `npm run test:units`, `npm run test:features`, `npm run test:e2e` (re-seed puis parcours HTTP ; l'E2E **pollue** `data/minishop` par construction — re-seeder ensuite : `node scripts/wasm_run.mjs scripts/seed.php`).
+
+Les suites PHP sont **autonomes** (aucun SQL, magasins JSON temporaires par section) : elles s'exécutent telles quelles avec `php tests/php/<suite>.php` sur une machine normale, ou via `node scripts/wasm_run.mjs` en sandbox.
+
+**Qualité de code type « Packagist »** : sur machine normale (avec Composer), `composer cs:check` (php-cs-fixer, config `.php-cs-fixer.php`) et `composer lint:types` (PHPStan level 9 + strict-rules, config `phpstan.neon`) — tous deux en `require-dev`, **aucune dépendance runtime**. Dans la sandbox (Packagist injoignable), `npm run lint:types` rejoue les mêmes vérifications via le tokenizer PHP. Passages du 28/09 : 4 fermetures non typées corrigées, puis **éradication des 156 opérateurs ternaires du livrable** (vues, contrôleurs, dépôts, moteur, tests) remplacés par des `if/else` — règle maison ajoutée au linter.
+
+Compléments livrés par ailleurs : `bash tests/security/controles.sh` (contrôles statiques), `bash tests/charge/reserver.sh` (survente), `bash tests/perf/mesurer.sh` (p95, ENF-01), `docs/diagrams/render.sh` (14 diagrammes), `./scripts/build-docs.sh` (assemblage documentaire complet).
+
+*Historique : la campagne SQL d'origine (`./scripts/run_sql_tests.sh`, 29/29, rapport `tests/sql/rapport_tests_sql.md`) reste jouable — `sql/` sert de référence comportementale au moteur JSON.*
 
 ## Arborescence
 

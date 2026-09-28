@@ -127,8 +127,8 @@ jobs:
             echo "[1/5] Pas de concaténation SQL dans app/ public/ (query/exec avec \"\$) ?"
             if grep -R --include='*.php' -nE '(query|exec)\s*\(\s*"[^"]*\$' app/ public/ 2>/dev/null; then
               echo "⚠ concaténation SQL détectée"; exit 1; else echo "✓ OK"; fi
-            echo "[2/5] Mot de passe en dur ?"
-            if grep -R --include='*.php' -in 'password.*=.*".*"' app/ 2>/dev/null | grep -iv 'password_hash\|password_verify\|hash'; then
+            echo "[2/5] Mot de passe en dur ? (affectation PHP — un champ HTML type password n'en est pas un)"
+            if grep -R --include='*.php' -inE '\$(password|passwd|pwd|mot_de_passe|motdepasse)\w*\s*=\s*[""][^""]+[""]' app/ 2>/dev/null | grep -iv 'password_hash\|password_verify\|hash'; then
               echo "⚠ mot de passe en dur suspect"; exit 1; else echo "✓ OK"; fi
             echo "[3/5] Échappement HTML (htmlspecialchars) présent dans les vues ?"
             if [ -d app/View ]; then

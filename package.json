@@ -1,0 +1,18 @@
+{
+  "name": "minishop-dev-tools",
+  "private": true,
+  "description": "Outils de développement sandbox (PHP-WASM) — l'application elle-même est 100 % PHP, voir README.",
+  "type": "module",
+  "scripts": {
+    "serve": "node scripts/wasm-serve.mjs",
+    "test": "node scripts/wasm_run.mjs tests/php/run_tests.php",
+    "test:units": "node scripts/wasm_run.mjs tests/php/unit_tests.php",
+    "test:features": "node scripts/wasm_run.mjs tests/php/features_test.php",
+    "test:e2e": "node scripts/wasm_run.mjs scripts/seed.php && node scripts/wasm-e2e.mjs",
+    "test:all": "node scripts/run-all-tests.mjs",
+    "lint:types": "node scripts/wasm_run.mjs scripts/strict_types_lint.php"
+  },
+  "dependencies": {
+    "@php-wasm/node": "0.1.28"
+  }
+}

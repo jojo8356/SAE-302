@@ -1,0 +1,25 @@
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "jojo8356/minishop",
+    "description": "MiniShop — application 100 % PHP sans dépendance runtime. Ce composer.json ne contient que des OUTILS DE DÉVELOPPEMENT (l'équivalent Packagist de PyPI) : rien de tout ceci n'est embarqué dans l'application.",
+    "license": "proprietary",
+    "require": {
+        "php": ">=8.2",
+        "ext-json": "*",
+        "ext-tokenizer": "*"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.64",
+        "phpstan/phpstan": "^1.12",
+        "phpstan/phpstan-strict-rules": "^1.6"
+    },
+    "scripts": {
+        "cs:check": "php-cs-fixer check --diff",
+        "cs:fix": "php-cs-fixer fix",
+        "lint:types": "phpstan analyse --memory-limit=1G",
+        "lint:sandbox": "php scripts/strict_types_lint.php"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
