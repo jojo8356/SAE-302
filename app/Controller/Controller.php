@@ -75,7 +75,11 @@ abstract class Controller
     {
         $valeur = trim((string) ($_POST[$cle] ?? ($_GET[$cle] ?? '')));
 
-        return $max > 0 ? mb_substr($valeur, 0, $max) : $valeur;
+        if ($max > 0) {
+            return mb_substr($valeur, 0, $max);
+        }
+
+        return $valeur;
     }
 
     protected function int(string $cle, ?int $defaut = null): ?int
@@ -85,7 +89,11 @@ abstract class Controller
             return $defaut;
         }
 
-        return is_numeric($brut) ? (int) $brut : $defaut;
+        if (is_numeric($brut)) {
+            return (int) $brut;
+        }
+
+        return $defaut;
     }
 
     protected function float(string $cle, ?float $defaut = null): ?float
@@ -95,7 +103,11 @@ abstract class Controller
             return $defaut;
         }
 
-        return is_numeric(str_replace(',', '.', (string) $brut)) ? (float) str_replace(',', '.', (string) $brut) : $defaut;
+        if (is_numeric(str_replace(',', '.', (string) $brut))) {
+            return (float) str_replace(',', '.', (string) $brut);
+        }
+
+        return $defaut;
     }
 
     protected function bool(string $cle): bool

@@ -63,7 +63,7 @@ declare(strict_types=1);
         <tr>
             <td><?= e(date_fr($entree['changed_at'], true)) ?></td>
             <td><?= e(statut_libelle($entree['new_status'])) ?></td>
-            <td><?= e($entree['changed_by_role']) ?><?= !empty($entree['changed_by']) ? ' #' . (int) $entree['changed_by'] : '' ?></td>
+            <td><?= e($entree['changed_by_role']) ?><?php if (!empty($entree['changed_by'])) { echo ' #' . (int) $entree['changed_by']; } else { echo ''; } ?></td>
             <td><?= e($entree['commentaire']) ?></td>
         </tr>
     <?php endforeach; ?>

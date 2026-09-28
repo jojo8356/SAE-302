@@ -76,7 +76,10 @@ final class JsonTable
             throw new \RuntimeException("Table {$this->name} corrompue (JSON invalide) : {$this->filePath}");
         }
         $this->rows = array_values($decoded['rows']);
-        $this->autoIncrement = isset($decoded['auto_increment']) ? (int) $decoded['auto_increment'] : 1;
+        $this->autoIncrement = 1;
+        if (isset($decoded['auto_increment'])) {
+            $this->autoIncrement = (int) $decoded['auto_increment'];
+        }
     }
 
     /** @return list<array<string,mixed>> */

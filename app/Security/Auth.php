@@ -158,7 +158,11 @@ final class Auth
         }
         $client = \App\Config\Database::store()->find('client', (int) $id);
 
-        return $client === null || !$client['actif'] ? null : [
+        if ($client === null || !$client['actif']) {
+            return null;
+        }
+
+        return [
             'id' => (int) $client['id_client'],
             'nom' => (string) $client['nom'],
             'prenom' => (string) $client['prenom'],
@@ -202,7 +206,11 @@ final class Auth
         }
         $admin = \App\Config\Database::store()->find('administrateur', (int) $id);
 
-        return $admin === null || !$admin['actif'] ? null : [
+        if ($admin === null || !$admin['actif']) {
+            return null;
+        }
+
+        return [
             'id' => (int) $admin['id_admin'],
             'nom' => (string) $admin['nom'],
             'prenom' => (string) $admin['prenom'],

@@ -36,7 +36,10 @@ final class EquipeAdminController extends Controller
         $prenom = $this->str('prenom', 100);
         $email = strtolower($this->str('email', 190));
         $motDePasse = (string) ($_POST['mot_de_passe'] ?? '');
-        $role = $this->str('role', 20) === 'SUPER' ? 'SUPER' : 'GESTIONNAIRE';
+        $role = 'GESTIONNAIRE';
+        if ($this->str('role', 20) === 'SUPER') {
+            $role = 'SUPER';
+        }
 
         $erreurs = [];
         if ($nom === '' || $prenom === '') {
@@ -93,7 +96,11 @@ final class EquipeAdminController extends Controller
 
         $store->setActor(['id' => $session['id'], 'role' => 'ADMIN', 'nom' => $session['prenom'] . ' ' . $session['nom']]);
         $store->update('administrateur', [Filter::eq('id_admin', (int) $id)], ['actif' => !$admin['actif']]);
-        $this->flashSucces('Compte ' . ($admin['actif'] ? 'bloqué' : 'réactivé') . '.');
+        $action = 'réactivé';
+        if ($admin['actif']) {
+            $action = 'bloqué';
+        }
+        $this->flashSucces('Compte ' . $action . '.');
         $this->rediriger('/admin/equipe');
     }
 }

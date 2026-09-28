@@ -1,5 +1,56 @@
 {
     "table": "order_status_history",
-    "auto_increment": 1,
-    "rows": []
+    "auto_increment": 6,
+    "rows": [
+        {
+            "id": 1,
+            "order_id": 1,
+            "old_status": null,
+            "new_status": "BROUILLON",
+            "changed_by": 1,
+            "changed_by_role": "CLIENT",
+            "commentaire": "Création tracée par trg_history_creation",
+            "changed_at": "2026-09-28 13:26:24"
+        },
+        {
+            "id": 2,
+            "order_id": 1,
+            "old_status": "BROUILLON",
+            "new_status": "PAYEE",
+            "changed_by": 1,
+            "changed_by_role": "CLIENT",
+            "commentaire": "Tracé par trg_history_statut le 2026-09-28 13:26:24",
+            "changed_at": "2026-09-28 13:26:24"
+        },
+        {
+            "id": 3,
+            "order_id": 1,
+            "old_status": "PAYEE",
+            "new_status": "ANNULEE",
+            "changed_by": 1,
+            "changed_by_role": "CLIENT",
+            "commentaire": "Annulation demandée par le client",
+            "changed_at": "2026-09-28 13:26:24"
+        },
+        {
+            "id": 4,
+            "order_id": 2,
+            "old_status": null,
+            "new_status": "BROUILLON",
+            "changed_by": 3,
+            "changed_by_role": "CLIENT",
+            "commentaire": "Création tracée par trg_history_creation",
+            "changed_at": "2026-09-28 13:26:26"
+        },
+        {
+            "id": 5,
+            "order_id": 2,
+            "old_status": "BROUILLON",
+            "new_status": "PAYEE",
+            "changed_by": 3,
+            "changed_by_role": "CLIENT",
+            "commentaire": "Tracé par trg_history_statut le 2026-09-28 13:26:26",
+            "changed_at": "2026-09-28 13:26:26"
+        }
+    ]
 }

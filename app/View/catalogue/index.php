@@ -17,9 +17,9 @@ $qs = static function (int $page) use ($parametres_url): string {
     return e('/catalogue?' . http_build_query($parametres));
 };
 ?>
-<h1><?= $est_recherche ? 'Recherche' : 'Catalogue' ?></h1>
+<h1><?php if ($est_recherche) { echo 'Recherche'; } else { echo 'Catalogue'; } ?></h1>
 
-<form method="get" action="<?= $est_recherche ? '/recherche' : '/catalogue' ?>">
+<form method="get" action="<?php if ($est_recherche) { echo '/recherche'; } else { echo '/catalogue'; } ?>">
     <fieldset>
         <legend>Filtres (cumulables, conservés dans l'URL — EF-VIS-03)</legend>
         <p>
@@ -32,7 +32,7 @@ $qs = static function (int $page) use ($parametres_url): string {
                 <option value="">Toutes</option>
                 <?php foreach ($categories as $categorie): ?>
                     <option value="<?= (int) $categorie['id_categorie'] ?>"
-                        <?= (int) $criteres['id_categorie'] === (int) $categorie['id_categorie'] ? 'selected' : '' ?>>
+                        <?php if ((int) $criteres['id_categorie'] === (int) $categorie['id_categorie']) { echo 'selected'; } else { echo ''; } ?>>
                         <?= e($categorie['nom']) ?>
                     </option>
                 <?php endforeach; ?>
@@ -45,13 +45,13 @@ $qs = static function (int $page) use ($parametres_url): string {
             <input type="number" id="prix_max" name="prix_max" min="0" step="0.01" value="<?= e($criteres['prix_max']) ?>">
         </p>
         <p>
-            <label><input type="checkbox" name="stock" value="1" <?= $criteres['en_stock'] ? 'checked' : '' ?>> Uniquement en stock</label>
+            <label><input type="checkbox" name="stock" value="1" <?php if ($criteres['en_stock']) { echo 'checked'; } else { echo ''; } ?>> Uniquement en stock</label>
         </p>
         <p>
             <label for="tri">Trier par :</label>
             <select id="tri" name="tri">
                 <?php foreach ($tris as $cle => $libelle): ?>
-                    <option value="<?= e($cle) ?>" <?= $criteres['tri'] === $cle ? 'selected' : '' ?>><?= e($libelle) ?></option>
+                    <option value="<?= e($cle) ?>" <?php if ($criteres['tri'] === $cle) { echo 'selected'; } else { echo ''; } ?>><?= e($libelle) ?></option>
                 <?php endforeach; ?>
             </select>
             <button type="submit">Appliquer</button>
@@ -59,7 +59,7 @@ $qs = static function (int $page) use ($parametres_url): string {
     </fieldset>
 </form>
 
-<p><?= (int) $resultat['total'] ?> produit<?= $resultat['total'] > 1 ? 's' : '' ?> trouvé<?= $resultat['total'] > 1 ? 's' : '' ?>
+<p><?= (int) $resultat['total'] ?> produit<?php if ($resultat['total'] > 1) { echo 's'; } else { echo ''; } ?> trouvé<?php if ($resultat['total'] > 1) { echo 's'; } else { echo ''; } ?>
     — page <?= (int) $resultat['page'] ?> / <?= (int) $resultat['pages'] ?></p>
 
 <ul>
@@ -70,7 +70,7 @@ $qs = static function (int $page) use ($parametres_url): string {
             (<?= e($produit['categorie']) ?>)
             <br>
             <small>Réf. <?= e($produit['reference']) ?> —
-                <?= (int) $produit['stock'] > 0 ? (int) $produit['stock'] . ' en stock' : 'rupture de stock' ?>
+                <?php if ((int) $produit['stock'] > 0) { echo (int) $produit['stock'] . ' en stock'; } else { echo 'rupture de stock'; } ?>
                 [<?= e(etat_libelle($produit['etat_stock'])) ?>]</small>
             <br><?= e(mb_substr((string) $produit['description'], 0, 120)) ?>
         </li>

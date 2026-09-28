@@ -1,5 +1,30 @@
 {
     "table": "commande",
-    "auto_increment": 1,
-    "rows": []
+    "auto_increment": 3,
+    "rows": [
+        {
+            "id_commande": 1,
+            "numero": "CMD2026-000001",
+            "id_client": 1,
+            "adresse_livraison": "12 rue des Lilas, Nice",
+            "statut": "ANNULEE",
+            "montant_total": 0,
+            "frais_port": 0,
+            "commentaire": "Annulation demandée par le client",
+            "date_commande": "2026-09-28 13:26:24",
+            "date_modification": "2026-09-28 13:26:24"
+        },
+        {
+            "id_commande": 2,
+            "numero": "CMD2026-000002",
+            "id_client": 3,
+            "adresse_livraison": "8 rue Papin, Nice",
+            "statut": "PAYEE",
+            "montant_total": 118.8,
+            "frais_port": 0,
+            "commentaire": null,
+            "date_commande": "2026-09-28 13:26:26",
+            "date_modification": "2026-09-28 13:26:26"
+        }
+    ]
 }

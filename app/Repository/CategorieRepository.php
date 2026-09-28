@@ -62,7 +62,11 @@ final class CategorieRepository
         if ($nom === '') {
             throw new BusinessError('NOM_REQUIS');
         }
-        $slug = $slug !== null && trim($slug) !== '' ? Text::slug($slug) : Text::slug($nom);
+        if ($slug !== null && trim($slug) !== '') {
+            $slug = Text::slug($slug);
+        } else {
+            $slug = Text::slug($nom);
+        }
 
         if ($idCategorie === null) {
             $existant = $this->store->findOne('categorie', [Filter::eq('nom', $nom)]);
@@ -83,11 +87,16 @@ final class CategorieRepository
             throw new BusinessError('CATEGORIE_INTROUVABLE');
         }
 
-        return (int) $this->store->update('categorie', [Filter::eq('id_categorie', $idCategorie)], [
+        $modifiees = (int) $this->store->update('categorie', [Filter::eq('id_categorie', $idCategorie)], [
             'nom' => $nom,
             'slug' => $slug,
             'description' => $description,
-        ]) > 0 ? $idCategorie : throw new BusinessError('AUCUNE_MODIFICATION');
+        ]);
+        if ($modifiees > 0) {
+            return $idCategorie;
+        }
+
+        throw new BusinessError('AUCUNE_MODIFICATION');
     }
 
     /**

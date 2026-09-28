@@ -64,10 +64,15 @@ final class ClientRepository
             return ['id_client' => null, 'hash' => null, 'statut' => 'INCONNU'];
         }
 
+        $statut = 'COMPTE_BLOQUE';
+        if ($row['actif']) {
+            $statut = 'OK';
+        }
+
         return [
             'id_client' => (int) $row['id_client'],
             'hash' => (string) $row['mot_de_passe_hash'],
-            'statut' => $row['actif'] ? 'OK' : 'COMPTE_BLOQUE',
+            'statut' => $statut,
         ];
     }
 

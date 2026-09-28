@@ -272,6 +272,12 @@ final class Triggers
                 $nouveauCommentaire = ($new['commentaire'] ?? null) !== null
                     && ($new['commentaire'] ?? '') !== ($old['commentaire'] ?? '')
                     && trim((string) $new['commentaire']) !== '';
+                $commentaireTrace = 'Tracé par trg_history_statut le ';
+                if ($nouveauCommentaire) {
+                    $commentaireTrace = trim((string) $new['commentaire']);
+                } else {
+                    $commentaireTrace .= date('Y-m-d H:i:s');
+                }
                 $actor = $store->actor();
                 $store->insert('order_status_history', [
                     'order_id' => (int) $new['id_commande'],
@@ -279,9 +285,7 @@ final class Triggers
                     'new_status' => (string) $new['statut'],
                     'changed_by' => $actor['id'],
                     'changed_by_role' => $actor['role'],
-                    'commentaire' => $nouveauCommentaire
-                        ? trim((string) $new['commentaire'])
-                        : 'Tracé par trg_history_statut le ' . date('Y-m-d H:i:s'),
+                    'commentaire' => $commentaireTrace,
                     'changed_at' => date('Y-m-d H:i:s'),
                 ]);
             },

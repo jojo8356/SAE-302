@@ -66,9 +66,11 @@ final class JsonStore implements StoreInterface
         // sable (tests, volumétrie) journalise À CÔTÉ de ses données pour
         // rester hermétique. Le dossier est créé au besoin.
         $racine = dirname(__DIR__, 3);
-        $chemin = rtrim($this->dataPath, '/') === $racine . '/data/minishop'
-            ? $racine . '/var/journal/db.jsonl'
-            : rtrim($this->dataPath, '/') . '/journal.jsonl';
+        if (rtrim($this->dataPath, '/') === $racine . '/data/minishop') {
+            $chemin = $racine . '/var/journal/db.jsonl';
+        } else {
+            $chemin = rtrim($this->dataPath, '/') . '/journal.jsonl';
+        }
         @mkdir(dirname($chemin), 0775, true);
         $this->journal = Journal::create($chemin);
         $this->journalPath = $chemin;
@@ -142,10 +144,17 @@ final class JsonStore implements StoreInterface
     public function find(string $table, int|string $pk): ?array
     {
         $def = Schema::table($table);
-        $key = is_int($pk) ? $pk : (ctype_digit((string) $pk) ? (int) $pk : $pk);
+        $key = $pk;
+        if (!is_int($pk) && ctype_digit((string) $pk)) {
+            $key = (int) $pk;
+        }
         $index = $this->pkIndexOf($table);
 
-        return isset($index[$key]) ? ($this->rowsOf($table)[$index[$key]] ?? null) : null;
+        if (isset($index[$key])) {
+            return $this->rowsOf($table)[$index[$key]] ?? null;
+        }
+
+        return null;
     }
 
     public function count(string $table, array $where = []): int
@@ -378,9 +387,13 @@ final class JsonStore implements StoreInterface
 
     public function setActor(array $actor): void
     {
+        $role = 'SYSTEME';
+        if (in_array($actor['role'] ?? '', ['CLIENT', 'ADMIN', 'SYSTEME'], true)) {
+            $role = $actor['role'];
+        }
         $this->actor = [
             'id' => $actor['id'] ?? null,
-            'role' => in_array($actor['role'] ?? '', ['CLIENT', 'ADMIN', 'SYSTEME'], true) ? $actor['role'] : 'SYSTEME',
+            'role' => $role,
             'nom' => $actor['nom'] ?? null,
         ];
     }
@@ -499,7 +512,11 @@ final class JsonStore implements StoreInterface
         switch ($meta['type']) {
             case 'int':
                 if (is_bool($value)) {
-                    return $value ? 1 : 0;
+                    if ($value) {
+                        return 1;
+                    }
+
+                    return 0;
                 }
                 if (!is_numeric($value)) {
                     throw new ConstraintError("{$table}.{$col} : entier attendu, reçu « " . get_debug_type($value) . ' »');
@@ -521,7 +538,11 @@ final class JsonStore implements StoreInterface
             case 'datetime':
                 $value = (string) $value;
 
-                return $value === '' ? null : $value;
+                if ($value === '') {
+                    return null;
+                }
+
+                return $value;
             case 'string':
             case 'text':
             default:
@@ -632,7 +653,7 @@ final class JsonStore implements StoreInterface
             }
             $head = $condition[0];
             if (($head === 'or' || $head === 'and') && isset($condition[1]) && is_array($condition[1])) {
-                $ok = $head === 'or' ? false : true;
+                $ok = $head !== 'or';
                 foreach ($condition[1] as $sub) {
                     $subOk = $this->matches($row, [$sub]);
                     if ($head === 'or' && $subOk) {
@@ -767,12 +788,16 @@ final class JsonStore implements StoreInterface
                     return 1;
                 }
                 if (is_numeric($va) && is_numeric($vb)) {
-                    $cmp = ((float) $va <=> (float) $vb) <=> 0 ?: ((float) $va <=> (float) $vb);
+                    $cmp = (float) $va <=> (float) $vb; // (c <=> 0) ?: c ≡ c pour c ∈ {-1, 0, 1}
                 } else {
                     $cmp = Text::compare((string) $va, (string) $vb);
                 }
                 if ($cmp !== 0) {
-                    return strtolower($direction) === 'desc' ? -$cmp : $cmp;
+                    if (strtolower($direction) === 'desc') {
+                        return -$cmp;
+                    }
+
+                    return $cmp;
                 }
             }
 

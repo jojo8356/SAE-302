@@ -37,7 +37,14 @@ final class Router
      */
     public function resoudre(string $methode, string $uri): array
     {
-        $chemin = rtrim(parse_url($uri, PHP_URL_PATH) ?: '/', '/') ?: '/';
+        $chemin = parse_url($uri, PHP_URL_PATH);
+        if (!$chemin) {
+            $chemin = '/';
+        }
+        $chemin = rtrim($chemin, '/');
+        if ($chemin === '') {
+            $chemin = '/';
+        }
         $routes = $this->routes[$methode] ?? [];
 
         // 1) correspondance exacte
@@ -73,7 +80,10 @@ final class Router
 
         // les routes déclarent soit un nom court ('HomeController'), soit un
         // FQCN (HomeController::class) — normalisation ici
-        $classe = str_contains($controleur, '\\') ? $controleur : 'App\\Controller\\' . $controleur;
+        $classe = 'App\\Controller\\' . $controleur;
+        if (str_contains($controleur, '\\')) {
+            $classe = $controleur;
+        }
         $instance = new $classe();
         $instance->{$action}(...array_values($route['params']));
     }

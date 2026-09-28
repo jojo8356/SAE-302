@@ -34,11 +34,19 @@ final class CategorieAdminController extends Controller
         Auth::exigeAdmin();
         $repo = new CategorieRepository(Database::store());
         try {
+            $slug = $this->str('slug', 120);
+            if (!$slug) {
+                $slug = null;
+            }
+            $description = $this->str('description', 500);
+            if (!$description) {
+                $description = null;
+            }
             $repo->saveCategory(
                 null,
                 $this->str('nom', 100),
-                $this->str('slug', 120) ?: null,
-                $this->str('description', 500) ?: null,
+                $slug,
+                $description,
             );
             $this->flashSucces('Catégorie enregistrée.');
         } catch (BusinessError $e) {
@@ -53,11 +61,19 @@ final class CategorieAdminController extends Controller
         Auth::exigeAdmin();
         $repo = new CategorieRepository(Database::store());
         try {
+            $slug = $this->str('slug', 120);
+            if (!$slug) {
+                $slug = null;
+            }
+            $description = $this->str('description', 500);
+            if (!$description) {
+                $description = null;
+            }
             $repo->saveCategory(
                 (int) $id,
                 $this->str('nom', 100),
-                $this->str('slug', 120) ?: null,
-                $this->str('description', 500) ?: null,
+                $slug,
+                $description,
             );
             $this->flashSucces('Catégorie mise à jour.');
         } catch (BusinessError $e) {

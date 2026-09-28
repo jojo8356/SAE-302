@@ -39,7 +39,11 @@ final class VolumetryGenerator
             (SELECT COUNT(*) FROM commande c WHERE c.statut <> 'BROUILLON' AND c.montant_total <>
                 (SELECT COALESCE(SUM(l.total_ligne),0) FROM ligne_commande l WHERE l.id_commande=c.id_commande) + c.frais_port) AS montants_incoherents";
         $row = $this->pdo->query($sql)->fetch();
-        return $row ?: [];
+        if ($row) {
+            return $row;
+        }
+
+        return [];
     }
 
     /** @return array<string,int> */
@@ -126,7 +130,10 @@ final class VolumetryGenerator
             $pid1 = $prodIds[$j % $nProd];
             $pid2 = $prodIds[($j*7+3) % $nProd];
             $q1 = 1 + ($j % 3);
-            $payee = ($j % 4 === 0) ? 1 : 0;
+            $payee = 0;
+            if ($j % 4 === 0) {
+                $payee = 1;
+            }
             $adr = "Adresse de mesure $j, 06000 Nice";
             try {
                 $stCreate->execute([$cid, $adr]); $stCreate->closeCursor();

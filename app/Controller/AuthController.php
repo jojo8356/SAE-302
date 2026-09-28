@@ -101,9 +101,10 @@ final class AuthController extends Controller
         }
 
         // message identique quel que soit le motif (SEC-05)
-        $erreur = $identifiants['statut'] === 'COMPTE_BLOQUE'
-            ? 'Ce compte est bloqué. Contactez le support.'
-            : 'Email ou mot de passe erroné.';
+        $erreur = 'Email ou mot de passe erroné.';
+        if ($identifiants['statut'] === 'COMPTE_BLOQUE') {
+            $erreur = 'Ce compte est bloqué. Contactez le support.';
+        }
         $this->render('auth/connexion', ['erreurs' => [$erreur], 'email' => $email], 'Connexion');
     }
 

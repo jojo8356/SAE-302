@@ -45,8 +45,12 @@ final class PanierSession
     public function articlesBruts(): array
     {
         $panier = $_SESSION[self::CLE] ?? [];
+        $lignes = [];
+        if (is_array($panier)) {
+            $lignes = $panier;
+        }
         $nettoye = [];
-        foreach (is_array($panier) ? $panier : [] as $id => $qte) {
+        foreach ($lignes as $id => $qte) {
             if (is_numeric($id) && (int) $qte > 0) {
                 $nettoye[(int) $id] = (int) $qte;
             }
@@ -93,7 +97,10 @@ final class PanierSession
             return;
         }
         $produit = $this->store->find('produit', $idProduit);
-        $stock = $produit === null ? 0 : (int) $produit['stock'];
+        $stock = 0;
+        if ($produit !== null) {
+            $stock = (int) $produit['stock'];
+        }
         $panier[$idProduit] = min($quantite, max(0, $stock));
         $_SESSION[self::CLE] = $panier;
     }

@@ -1,48 +1,76 @@
 {
     "table": "client",
-    "auto_increment": 4,
+    "auto_increment": 6,
     "rows": [
         {
             "id_client": 1,
             "nom": "Dupont",
             "prenom": "Alice",
             "email": "alice@example.com",
-            "mot_de_passe_hash": "$2y$10$cBMmEpGrHsYEROmqscJvi.U/o199RC1of7dRDNkZLKvB/3kHNUxYm",
-            "telephone": "0612345678",
-            "adresse_livraison": "12 rue de France",
+            "mot_de_passe_hash": "$2y$10$PwC8d5hphDnRhN6z6vybc.t78/kPtxd03VbWOIIQ4M9iIEn45kEFC",
+            "telephone": "0698765433",
+            "adresse_livraison": "24 avenue Jean Médecin",
             "code_postal": "06000",
             "ville": "Nice",
             "actif": true,
-            "date_creation": "2026-09-28 12:47:39",
-            "derniere_connexion": "2026-09-28 12:47:39"
+            "date_creation": "2026-09-28 13:26:23",
+            "derniere_connexion": "2026-09-28 13:26:27"
         },
         {
             "id_client": 2,
             "nom": "Martin",
             "prenom": "Bruno",
             "email": "bruno@example.com",
-            "mot_de_passe_hash": "$2y$10$cBMmEpGrHsYEROmqscJvi.U/o199RC1of7dRDNkZLKvB/3kHNUxYm",
+            "mot_de_passe_hash": "$2y$10$SBLZQGtvBeZnMizaYRJ/rugYwr0l1Ymvzr561D.j.OK/Iy3f94.QO",
             "telephone": "0698765432",
             "adresse_livraison": "5 avenue Jean Médecin",
             "code_postal": "06000",
             "ville": "Nice",
             "actif": true,
-            "date_creation": "2026-09-28 12:47:39",
-            "derniere_connexion": "2026-09-28 12:47:39"
+            "date_creation": "2026-09-28 13:26:23",
+            "derniere_connexion": "2026-09-28 13:26:26"
         },
         {
             "id_client": 3,
             "nom": "Moretti",
             "prenom": "Carla",
             "email": "carla@example.com",
-            "mot_de_passe_hash": "$2y$10$cBMmEpGrHsYEROmqscJvi.U/o199RC1of7dRDNkZLKvB/3kHNUxYm",
+            "mot_de_passe_hash": "$2y$10$SBLZQGtvBeZnMizaYRJ/rugYwr0l1Ymvzr561D.j.OK/Iy3f94.QO",
             "telephone": null,
             "adresse_livraison": "8 rue Papin",
             "code_postal": "06300",
             "ville": "Nice",
             "actif": true,
-            "date_creation": "2026-09-28 12:47:39",
-            "derniere_connexion": "2026-09-28 12:47:39"
+            "date_creation": "2026-09-28 13:26:23",
+            "derniere_connexion": "2026-09-28 13:26:26"
+        },
+        {
+            "id_client": 4,
+            "nom": "Durand",
+            "prenom": "Zoé",
+            "email": "zoe@example.com",
+            "mot_de_passe_hash": "$2y$10$RFtT0jAaDhl9oNgiM2a3je2NMbjuzk1rmBq/UsqDW00u48nElZESa",
+            "telephone": null,
+            "adresse_livraison": null,
+            "code_postal": null,
+            "ville": null,
+            "actif": true,
+            "date_creation": "2026-09-28 13:26:24",
+            "derniere_connexion": "2026-09-28 13:26:24"
+        },
+        {
+            "id_client": 5,
+            "nom": "Escalade",
+            "prenom": "Ida",
+            "email": "ida@example.com",
+            "mot_de_passe_hash": "$2y$10$knYUXtTzTwj/N4esuSlI4uRNXVLLwjQKK9Cula0DGBtjfo0bn3/J.",
+            "telephone": null,
+            "adresse_livraison": null,
+            "code_postal": null,
+            "ville": null,
+            "actif": true,
+            "date_creation": "2026-09-28 13:26:27",
+            "derniere_connexion": "2026-09-28 13:26:27"
         }
     ]
 }

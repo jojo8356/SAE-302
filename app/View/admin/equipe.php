@@ -42,12 +42,12 @@ jamais de compte client (RB-13).</p>
             <td><?= e($admin['prenom'] . ' ' . $admin['nom']) ?></td>
             <td><?= e($admin['email']) ?></td>
             <td><?= e($admin['role']) ?></td>
-            <td><?= !empty($admin['actif']) ? '✔' : '✘ bloqué' ?></td>
+            <td><?php if (!empty($admin['actif'])) { echo '✔'; } else { echo '✘ bloqué'; } ?></td>
             <td><?= e(date_fr($admin['derniere_connexion'] ?? null, true)) ?></td>
             <td>
                 <form method="post" action="/admin/equipe/<?= (int) $admin['id_admin'] ?>/basculer">
                     <?= csrf_field() ?>
-                    <button type="submit"><?= !empty($admin['actif']) ? 'Bloquer' : 'Réactiver' ?></button>
+                    <button type="submit"><?php if (!empty($admin['actif'])) { echo 'Bloquer'; } else { echo 'Réactiver'; } ?></button>
                 </form>
             </td>
         </tr>

@@ -37,7 +37,7 @@ foreach ($recap['articles'] as $ligne) {
         </thead>
         <tbody>
         <?php foreach ($recap['articles'] as $ligne): ?>
-            <tr<?= !empty($ligne['plafonne']) ? ' title="Quantité plafonnée au stock disponible (RB-18)"' : '' ?>>
+            <tr<?php if (!empty($ligne['plafonne'])) { echo ' title="Quantité plafonnée au stock disponible (RB-18)"'; } else { echo ''; } ?>>
                 <td><a href="/produit/<?= e($ligne['slug']) ?>"><?= e($ligne['nom']) ?></a><br>
                     <small>Réf. <?= e($ligne['reference']) ?> — stock : <?= (int) $ligne['stock_disponible'] ?></small></td>
                 <td><?= euros($ligne['prix_unitaire']) ?></td>

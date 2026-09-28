@@ -121,7 +121,9 @@ final class Text
         if ($collator !== false) {
             $verdict = $collator->compare($a, $b);
             if ($verdict !== false) {
-                return $verdict < 0 ? -1 : ($verdict > 0 ? 1 : 0);
+                if ($verdict < 0) { return -1; }
+                if ($verdict > 0) { return 1; }
+                return 0;
             }
         }
 
@@ -132,9 +134,13 @@ final class Text
     private static function transliterator(): mixed
     {
         if (self::$transliterator === null) {
-            self::$transliterator = class_exists('Transliterator')
-                ? (Transliterator::create('Any-Latin; Latin-ASCII') ?: false)
-                : false;
+            self::$transliterator = false;
+            if (class_exists('Transliterator')) {
+                $instance = Transliterator::create('Any-Latin; Latin-ASCII');
+                if ($instance !== null) {
+                    self::$transliterator = $instance;
+                }
+            }
         }
 
         return self::$transliterator;

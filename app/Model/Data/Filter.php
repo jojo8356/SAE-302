@@ -118,6 +118,11 @@ final class Filter
     /** @return list{string,string} */
     public static function sort(string $col, string $direction = 'asc'): array
     {
-        return [$col, strtolower($direction) === 'desc' ? 'desc' : 'asc'];
+        $sens = 'asc';
+        if (strtolower($direction) === 'desc') {
+            $sens = 'desc';
+        }
+
+        return [$col, $sens];
     }
 }

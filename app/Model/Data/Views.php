@@ -113,6 +113,10 @@ final class Views
         $rows = [];
         foreach ($this->store->select('commande', ['where' => $spec['where'] ?? [], 'order' => $spec['order'] ?? [Filter::sort('date_commande', 'desc')], 'limit' => $spec['limit'] ?? null, 'offset' => $spec['offset'] ?? 0]) as $o) {
             $client = $clients[(int) $o['id_client']] ?? null;
+            $libelleClient = '—';
+            if ($client !== null) {
+                $libelleClient = $client['prenom'] . ' ' . $client['nom'];
+            }
             $rows[] = [
                 'id_commande' => (int) $o['id_commande'],
                 'numero' => $o['numero'],
@@ -122,7 +126,7 @@ final class Views
                 'adresse_livraison' => $o['adresse_livraison'],
                 'date_commande' => $o['date_commande'],
                 'id_client' => (int) $o['id_client'],
-                'client' => $client !== null ? $client['prenom'] . ' ' . $client['nom'] : '—',
+                'client' => $libelleClient,
                 'client_email' => $client['email'] ?? null,
                 'nb_lignes' => $this->store->count('ligne_commande', [['id_commande', '=', (int) $o['id_commande']]]),
             ];

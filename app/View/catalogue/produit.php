@@ -24,7 +24,7 @@ declare(strict_types=1);
     <h2>Disponibilité</h2>
     <p>
         <?php if ((int) $produit['stock'] > 0): ?>
-            En stock : <strong><?= (int) $produit['stock'] ?> unité<?= (int) $produit['stock'] > 1 ? 's' : '' ?></strong>
+            En stock : <strong><?= (int) $produit['stock'] ?> unité<?php if ((int) $produit['stock'] > 1) { echo 's'; } else { echo ''; } ?></strong>
             [<?= e(etat_libelle($etat_stock)) ?>]
         <?php else: ?>
             <strong>Rupture de stock</strong> — revenez bientôt.
@@ -45,7 +45,7 @@ declare(strict_types=1);
                 <button type="submit">Ajouter au panier</button>
             </p>
             <p><small>La quantité est plafonnée côté serveur au stock disponible (RB-18) :
-                <?= (int) $produit['stock'] ?> unité<?= (int) $produit['stock'] > 1 ? 's' : '' ?> maximum.</small></p>
+                <?= (int) $produit['stock'] ?> unité<?php if ((int) $produit['stock'] > 1) { echo 's'; } else { echo ''; } ?> maximum.</small></p>
         </form>
     <?php endif; ?>
 

@@ -1,17 +1,28 @@
 {
     "table": "administrateur",
-    "auto_increment": 2,
+    "auto_increment": 3,
     "rows": [
         {
             "id_admin": 1,
             "nom": "Nguyen",
             "prenom": "Alice",
             "email": "admin@minishop.fr",
-            "mot_de_passe_hash": "$2y$10$QATkx.tQJpXbJJD1ncPY/Ov03b24t2YRNPoanXR3yJ6CJnzV2BY5m",
+            "mot_de_passe_hash": "$2y$10$rdXaxK6u9ZMhX5j5LsmwTeekJTh4kKpq.wab6LDO95GADFGyBKMNS",
             "role": "SUPER",
             "actif": true,
-            "date_creation": "2026-09-28 12:47:38",
-            "derniere_connexion": "2026-09-28 12:47:38"
+            "date_creation": "2026-09-28 13:26:23",
+            "derniere_connexion": "2026-09-28 13:26:23"
+        },
+        {
+            "id_admin": 2,
+            "nom": "Tionnaire",
+            "prenom": "Gus",
+            "email": "gestionnaire@minishop.fr",
+            "mot_de_passe_hash": "$2y$10$pj90OlQCgsFHpwE7G0zvcezmj/DC6VjWPY6y8M.2h1zCTL4urtO6a",
+            "role": "GESTIONNAIRE",
+            "actif": false,
+            "date_creation": "2026-09-28 13:26:26",
+            "derniere_connexion": "2026-09-28 13:26:26"
         }
     ]
 }

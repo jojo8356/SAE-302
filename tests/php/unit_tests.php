@@ -46,7 +46,15 @@ $echecs = 0;
 $tests = 0;
 $check = static function (string $label, bool $ok, string $detail = '') use (&$echecs, &$tests): void {
     ++$tests;
-    echo ($ok ? '  ✅ ' : '  ❌ ') . $label . ($ok || $detail === '' ? '' : " — {$detail}") . "\n";
+    $icone = '  ❌ ';
+    if ($ok) {
+        $icone = '  ✅ ';
+    }
+    $suffixe = '';
+    if (!$ok && $detail !== '') {
+        $suffixe = " — {$detail}";
+    }
+    echo $icone . $label . $suffixe . "\n";
     if (!$ok) {
         ++$echecs;
     }
@@ -61,7 +69,13 @@ $attenduCode = static function (string $code, callable $travail) use (&$echecs, 
         return false;
     } catch (BusinessError $e) {
         $ok = $e->businessCode === $code;
-        echo ($ok ? '  ✅ ' : '  ❌ ') . "refus {$code}" . ($ok ? '' : ' (obtenu ' . $e->businessCode . ')') . "\n";
+        $icone = '  ❌ ';
+        $obtenu = ' (obtenu ' . $e->businessCode . ')';
+        if ($ok) {
+            $icone = '  ✅ ';
+            $obtenu = '';
+        }
+        echo $icone . "refus {$code}" . $obtenu . "\n";
         if (!$ok) {
             ++$echecs;
         }
@@ -76,7 +90,10 @@ function magasin(): StoreInterface
     static $n = 0;
     $dossier = sys_get_temp_dir() . '/minishop_u' . getmypid() . '_' . (++$n);
     if (is_dir($dossier)) {
-        array_map('unlink', glob($dossier . '/*.json') ?: []);
+        $anciens = glob($dossier . '/*.json');
+        if (is_array($anciens)) {
+            array_map('unlink', $anciens);
+        }
         @rmdir($dossier);
     }
     $store = JsonStore::open($dossier);
@@ -160,7 +177,11 @@ echo "\n6. Matrice RB-11 — les 36 couples (§6 du document de tests)\n";
     $check('STATUTS = les 6 états du CDC', Triggers::STATUTS === array_keys($attendue));
     $autorisees = 0;
     foreach ($attendue as $depuis => $vers) {
-        $check("TRANSITIONS[{$depuis}] = " . implode(',', $vers ?: ['∅']), (Triggers::TRANSITIONS[$depuis] ?? null) === $vers);
+        $versAffiches = $vers;
+        if (!$vers) {
+            $versAffiches = ['∅'];
+        }
+        $check("TRANSITIONS[{$depuis}] = " . implode(',', $versAffiches), (Triggers::TRANSITIONS[$depuis] ?? null) === $vers);
         $autorisees += count($vers);
     }
     $check('10 transitions autorisées au total', $autorisees === 10);
@@ -314,10 +335,10 @@ echo "\n11. Prix TTC dérivés — arrondis (RB-16)\n";
 echo "\n12. Journal d'audit (EF-GEN-04)\n";
 {
     $store = magasin();
-    $lignesAvant = is_file($store->journalPath()) ? count(file($store->journalPath(), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)) : 0;
+    if (is_file($store->journalPath())) { $lignesAvant = count(file($store->journalPath(), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)); } else { $lignesAvant = 0; }
     $store->setActor(['id' => 7, 'role' => 'ADMIN', 'nom' => 'Testeur']);
     $store->update('produit', [Filter::eq('reference', 'CASQ-005')], ['stock' => 17]);
-    $lignes = file($store->journalPath(), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
+    if (file($store->journalPath(), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)) { $lignes = file($store->journalPath(), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES); } else { $lignes = []; }
     $check('chaque écriture est journalisée (+1 ligne)', count($lignes) === $lignesAvant + 1);
     $derniere = json_decode($lignes[count($lignes) - 1] ?? 'null', true);
     $check('le journal porte l\'auteur (traçabilité)', ($derniere['actor']['id'] ?? null) === 7 && ($derniere['actor']['role'] ?? '') === 'ADMIN');

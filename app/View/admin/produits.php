@@ -15,7 +15,7 @@ declare(strict_types=1);
         <select id="cat" name="cat">
             <option value="">Toutes</option>
             <?php foreach ($categories as $categorie): ?>
-                <option value="<?= (int) $categorie['id_categorie'] ?>" <?= (int) $cat === (int) $categorie['id_categorie'] ? 'selected' : '' ?>>
+                <option value="<?= (int) $categorie['id_categorie'] ?>" <?php if ((int) $cat === (int) $categorie['id_categorie']) { echo 'selected'; } else { echo ''; } ?>>
                     <?= e($categorie['nom']) ?>
                 </option>
             <?php endforeach; ?>
@@ -45,7 +45,7 @@ declare(strict_types=1);
             <td><?= e(number_format((float) $produit['tva'], 2, ',', '')) ?> %</td>
             <td><?= euros($produit['prix_ttc']) ?></td>
             <td><?= (int) $produit['stock'] ?> <small>[<?= e(etat_libelle($produit['etat_stock'])) ?>]</small></td>
-            <td><?= (int) $produit['visible'] === 1 ? '✔ oui' : '✘ masqué' ?></td>
+            <td><?php if ((int) $produit['visible'] === 1) { echo '✔ oui'; } else { echo '✘ masqué'; } ?></td>
             <td>
                 <a href="/admin/produit/<?= (int) $produit['id_produit'] ?>/modification">Modifier</a> ·
                 <form method="post" action="/admin/produits/<?= (int) $produit['id_produit'] ?>/suppression" style="display:inline">

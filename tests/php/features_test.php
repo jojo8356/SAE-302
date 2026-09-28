@@ -41,7 +41,15 @@ $echecs = 0;
 $tests = 0;
 $check = static function (string $label, bool $ok, string $detail = '') use (&$echecs, &$tests): void {
     ++$tests;
-    echo ($ok ? '  ✅ ' : '  ❌ ') . $label . ($ok || $detail === '' ? '' : " — {$detail}") . "\n";
+    $icone = '  ❌ ';
+    if ($ok) {
+        $icone = '  ✅ ';
+    }
+    $suffixe = '';
+    if (!$ok && $detail !== '') {
+        $suffixe = " — {$detail}";
+    }
+    echo $icone . $label . $suffixe . "\n";
     if (!$ok) {
         ++$echecs;
     }
@@ -57,7 +65,13 @@ $attendu = static function (string $code, callable $travail) use (&$echecs, &$te
         return false;
     } catch (BusinessError $e) {
         $ok = $e->businessCode === $code;
-        echo ($ok ? '  ✅ ' : '  ❌ ') . "refus {$code}" . ($ok ? '' : ' (obtenu ' . $e->businessCode . ')') . "\n";
+        $icone = '  ❌ ';
+        $obtenu = ' (obtenu ' . $e->businessCode . ')';
+        if ($ok) {
+            $icone = '  ✅ ';
+            $obtenu = '';
+        }
+        echo $icone . "refus {$code}" . $obtenu . "\n";
         if (!$ok) {
             ++$echecs;
         }
@@ -71,7 +85,10 @@ function magasin(): StoreInterface
     static $n = 0;
     $dossier = sys_get_temp_dir() . '/minishop_f' . getmypid() . '_' . (++$n);
     if (is_dir($dossier)) {
-        array_map('unlink', glob($dossier . '/*.json') ?: []);
+        $anciens = glob($dossier . '/*.json');
+        if (is_array($anciens)) {
+            array_map('unlink', $anciens);
+        }
         @rmdir($dossier);
     }
     $store = JsonStore::open($dossier);

@@ -42,9 +42,14 @@ final class CatalogueController extends Controller
         $produits = new ProduitRepository($store);
         $categories = (new CategorieRepository($store))->listerAvecCompteur();
 
+        $categorie = $this->int('cat');
+        if (!$categorie) {
+            $categorie = null;
+        }
+
         $criteres = [
             'mot_cle' => $this->str('q', 120),
-            'id_categorie' => $this->int('cat') ?: null,
+            'id_categorie' => $categorie,
             'prix_min' => $this->float('prix_min'),
             'prix_max' => $this->float('prix_max'),
             'en_stock' => $this->bool('stock'),
@@ -56,13 +61,26 @@ final class CatalogueController extends Controller
         $resultat = $produits->searchProducts($criteres);
 
         // les filtres se conservent dans l'URL (EF-VIS-03)
+        $q = null;
+        if ($criteres['mot_cle'] !== '') {
+            $q = $criteres['mot_cle'];
+        }
+        $stock = null;
+        if ($criteres['en_stock']) {
+            $stock = '1';
+        }
+        $tri = $criteres['tri'];
+        if ($tri === '' || $tri === 'nom') {
+            $tri = null;
+        }
+
         $parametresUrl = array_filter([
-            'q' => $criteres['mot_cle'] !== '' ? $criteres['mot_cle'] : null,
+            'q' => $q,
             'cat' => $criteres['id_categorie'],
             'prix_min' => $criteres['prix_min'],
             'prix_max' => $criteres['prix_max'],
-            'stock' => $criteres['en_stock'] ? '1' : null,
-            'tri' => $criteres['tri'] !== '' && $criteres['tri'] !== 'nom' ? $criteres['tri'] : null,
+            'stock' => $stock,
+            'tri' => $tri,
         ], static fn (mixed $v) => $v !== null && $v !== '');
 
         $this->render($vue, [

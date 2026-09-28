@@ -44,7 +44,10 @@ final class StockAdminController extends Controller
         $store = Database::store();
         $admin = Auth::admin();
 
-        $mode = strtoupper($this->str('mode', 5)) === 'DELTA' ? 'DELTA' : 'SET';
+        $mode = 'SET';
+        if (strtoupper($this->str('mode', 5)) === 'DELTA') {
+            $mode = 'DELTA';
+        }
         $quantite = $this->int('quantite') ?? 0;
         $motif = $this->str('motif', 200);
 

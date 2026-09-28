@@ -25,13 +25,24 @@ use App\Model\Data\Views;
 
 $dataDir = sys_get_temp_dir() . '/minishop_smoke_' . getmypid();
 if (is_dir($dataDir)) {
-    array_map('unlink', glob($dataDir . '/*.json') ?: []);
+    $anciens = glob($dataDir . '/*.json');
+    if (is_array($anciens)) {
+        array_map('unlink', $anciens);
+    }
     @rmdir($dataDir);
 }
 
 $failures = 0;
 $check = static function (string $label, bool $ok, string $detail = '') use (&$failures): void {
-    echo ($ok ? '  ✅ ' : '  ❌ ') . $label . ($detail !== '' ? " — {$detail}" : '') . "\n";
+    $icone = '  ❌ ';
+    if ($ok) {
+        $icone = '  ✅ ';
+    }
+    $suffixe = '';
+    if ($detail !== '') {
+        $suffixe = " — {$detail}";
+    }
+    echo $icone . $label . $suffixe . "\n";
     if (!$ok) {
         ++$failures;
     }
@@ -42,7 +53,13 @@ $expectBusiness = static function (string $code, callable $work) use (&$failures
         echo "  ❌ attendu {$code} — aucune erreur levée\n";
         ++$failures;
     } catch (BusinessError $e) {
-        echo ($e->businessCode === $code ? '  ✅ ' : '  ❌ ') . 'refus ' . $e->businessCode . ($e->businessCode === $code ? '' : " (attendu {$code})") . "\n";
+        $iconeRefus = '  ❌ ';
+        $suffixeRefus = " (attendu {$code})";
+        if ($e->businessCode === $code) {
+            $iconeRefus = '  ✅ ';
+            $suffixeRefus = '';
+        }
+        echo $iconeRefus . 'refus ' . $e->businessCode . $suffixeRefus . "\n";
         if ($e->businessCode !== $code) {
             ++$failures;
         }
@@ -163,17 +180,27 @@ $store->transactional(static function (JsonStore $s): void {
 $check('transactional : commit persisté', $store->exists('client', [['email', '=', 'commit@example.com']]));
 
 echo "\n== 9. fichiers & journal ==\n";
-$files = glob($store->dataPath() . '/*.json') ?: [];
+if (glob($store->dataPath() . '/*.json')) { $files = glob($store->dataPath() . '/*.json'); } else { $files = []; }
 $check('8 tables sur disque', count($files) === 8, count($files) . ' fichiers');
 $journal = $store->journalPath(); // hermétique : journal du bac à sable
 $check('journal d’audit alimenté (EF-GEN-04)', is_file($journal) && count(file($journal, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)) > 0);
 
 // nettoyage du bac à sable
-foreach (glob($store->dataPath() . '/*.json') ?: [] as $f) {
-    @unlink($f);
+$residus = glob($store->dataPath() . '/*.json');
+if (is_array($residus)) {
+    foreach ($residus as $f) {
+        @unlink($f);
+    }
 }
 @unlink($journal);
 @rmdir($store->dataPath());
 
-echo $failures === 0 ? "\nMOTEUR JSON : TOUT EST VERT ✅\n" : "\n{$failures} ÉCHEC(S) ❌\n";
-exit($failures === 0 ? 0 : 1);
+$bilan = "\n{$failures} ÉCHEC(S) ❌\n";
+if ($failures === 0) {
+    $bilan = "\nMOTEUR JSON : TOUT EST VERT ✅\n";
+}
+echo $bilan;
+if ($failures === 0) {
+    exit(0);
+}
+exit(1);

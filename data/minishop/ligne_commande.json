@@ -1,5 +1,14 @@
 {
     "table": "ligne_commande",
-    "auto_increment": 1,
-    "rows": []
+    "auto_increment": 4,
+    "rows": [
+        {
+            "id_ligne": 3,
+            "id_commande": 2,
+            "id_produit": 7,
+            "quantite": 1,
+            "prix_unitaire": 118.8,
+            "total_ligne": 118.8
+        }
+    ]
 }

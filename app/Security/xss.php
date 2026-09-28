@@ -30,7 +30,15 @@ function date_fr(?string $datetime, bool $avecHeure = false): string
     }
     $ts = strtotime($datetime);
 
-    return $ts === false ? '—' : date($avecHeure ? 'd/m/Y H\hi' : 'd/m/Y', $ts);
+    if ($ts === false) {
+        return '—';
+    }
+    $format = 'd/m/Y';
+    if ($avecHeure) {
+        $format = 'd/m/Y H\hi';
+    }
+
+    return date($format, $ts);
 }
 
 /** Libellé humain d'un statut de commande (RB-11). */

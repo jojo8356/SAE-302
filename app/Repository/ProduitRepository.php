@@ -56,7 +56,11 @@ final class ProduitRepository
     {
         $produit = $this->store->find('produit', $idProduit);
 
-        return $produit === null ? 0 : max(0, (int) $produit['stock']);
+        if ($produit === null) {
+            return 0;
+        }
+
+        return max(0, (int) $produit['stock']);
     }
 
     /**
@@ -163,7 +167,11 @@ final class ProduitRepository
             throw new BusinessError('CATEGORIE_INTROUVABLE');
         }
 
-        $slug = ($slug !== null && trim($slug) !== '') ? Text::slug($slug) : Text::slug($nom);
+        if ($slug !== null && trim($slug) !== '') {
+            $slug = Text::slug($slug);
+        } else {
+            $slug = Text::slug($nom);
+        }
         $reference = trim($reference);
 
         $exclusion = $idProduit ?? 0;
@@ -234,7 +242,10 @@ final class ProduitRepository
             throw new BusinessError('PRODUIT_INTROUVABLE');
         }
 
-        $nouveau = $mode === 'DELTA' ? (int) $produit['stock'] + $quantite : $quantite;
+        $nouveau = $quantite;
+        if ($mode === 'DELTA') {
+            $nouveau = (int) $produit['stock'] + $quantite;
+        }
         if ($nouveau < 0) {
             throw new BusinessError('RB03_STOCK_NE_PEUT_PAS_ETRE_NEGATIF');
         }

@@ -19,6 +19,11 @@ declare(strict_types=1);
  *         (exceptions : __construct/__destruct, où PHP l'interdit) ;
  *      c. toute propriété de classe/trait est typée (les propriétés
  *         promues de constructeur sont couvertes par 2a).
+ *   3. RÈGLE MAISON : l'opérateur ternaire (`cond ? a : b` et le court
+ *      `cond ?: b`) est INTERDIT — c'est moche, illisible en réunion et
+ *      obscurci les conditions imbriquées : if/else, match ou variable
+ *      intermédiaire. La coalescence `??` (opérateur binaire distinct)
+ *      reste autorisée, de même que les types nullables `?int`.
  *
  * Usage :
  *   php scripts/strict_types_lint.php [chemin1 chemin2…]
@@ -35,7 +40,12 @@ const MODIFIEURS = [T_PUBLIC, T_PRIVATE, T_PROTECTED, T_STATIC, T_VAR, T_READONL
 function collecter(string $chemin): array
 {
     if (is_file($chemin)) {
-        return [realpath($chemin) ?: $chemin];
+        $reel = realpath($chemin);
+        if ($reel !== false) {
+            return [$reel];
+        }
+
+        return [$chemin];
     }
     $fichiers = [];
     $ite = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($chemin, FilesystemIterator::SKIP_DOTS));
@@ -52,7 +62,11 @@ function collecter(string $chemin): array
 /** Token normalisé : [id (0 = ponctuation), texte, ligne]. */
 function t(array|string $t): array
 {
-    return is_array($t) ? [(int) $t[0], (string) $t[1], (int) $t[2]] : [0, $t, -1];
+    if (is_array($t)) {
+        return [(int) $t[0], (string) $t[1], (int) $t[2]];
+    }
+
+    return [0, $t, -1];
 }
 
 /** Indice du prochain token significatif (espaces/commentaires ignorés). */
@@ -83,6 +97,74 @@ function texte(array $tokens, int $debut, int $fin): string
 }
 
 /**
+ * Règle maison : détecte les opérateurs ternaires (`? … :` et `?:`).
+ *
+ * Heuristique token-par-token : un `?` est un ternaire si l'on rencontre un
+ * `:` au MÊME niveau de profondeur avant toute fin d'instruction (`;`) ou
+ * descente sous le niveau du `?` (fermeture de parenthèse/crochet/accolade).
+ * Les types nullables (`?int $x` … puis `)` qui referme la signature) ne
+ * matchent donc jamais, ni `??` (token T_COALESCE), ni `?->`
+ * (T_NULLSAFE_OBJECT_OPERATOR), ni le `:` des types de retour ou des
+ * arguments nommés (toujours après une fermeture de niveau).
+ *
+ * @param list<array> $tokens
+ * @return list<string>
+ */
+function detecterTernaires(string $fichier, array $tokens): array
+{
+    $violations = [];
+    $nb = count($tokens);
+    $ouvrants = ['(', '[', '{'];
+    $fermants = [')' => -1, ']' => -1, '}' => -1];
+    for ($i = 0; $i < $nb; ++$i) {
+        if ($tokens[$i][0] !== 0 || $tokens[$i][1] !== '?') {
+            continue;
+        }
+        // type nullable ? « ?Type $var » ou « ): ?Type { » — jamais un ternaire :
+        // un nom de type suivi d'une variable, d'une ouverture de corps, d'un
+        // point-virgule (abstrait/interface), d'une union « | » ou de « use »
+        $u = sig($tokens, $i + 1);
+        $v = sig($tokens, $u + 1);
+        if (in_array($tokens[$u][0], [T_STRING, T_ARRAY, T_CALLABLE, T_NAME_QUALIFIED, T_NAME_FULLY_QUALIFIED], true)) {
+            $apres = '';
+            if ($tokens[$v][0] === 0) {
+                $apres = $tokens[$v][1];
+            }
+            if ($tokens[$v][0] === T_VARIABLE || $tokens[$v][0] === T_USE || $apres === '{' || $apres === ';' || $apres === '|') {
+                continue;
+            }
+        }
+        $profondeur = 0;
+        for ($j = $i + 1; $j < $nb; ++$j) {
+            $id = $tokens[$j][0];
+            $txt = $tokens[$j][1];
+            if ($id === 0 && in_array($txt, $ouvrants, true)) {
+                ++$profondeur;
+                continue;
+            }
+            if ($id === 0 && isset($fermants[$txt])) {
+                if ($profondeur === 0) {
+                    break; // on descend sous le niveau du « ? » : pas un ternaire
+                }
+                --$profondeur;
+                continue;
+            }
+            if ($profondeur === 0) {
+                if ($id === 0 && ($txt === ';' || $txt === '}')) {
+                    break; // fin d'instruction sans « : » : pas un ternaire
+                }
+                if ($id === 0 && $txt === ':') {
+                    $violations[] = sprintf('%s:%d — opérateur ternaire interdit (règle maison : c\'est moche → if/else, match ou variable intermédiaire)', $fichier, (int) $tokens[$i][2]);
+                    break;
+                }
+            }
+        }
+    }
+
+    return $violations;
+}
+
+/**
  * Analyse un fichier et retourne les violations.
  *
  * @param list<array> $tokens
@@ -90,7 +172,7 @@ function texte(array $tokens, int $debut, int $fin): string
  */
 function analyser(string $fichier, array $tokens): array
 {
-    $violations = [];
+    $violations = detecterTernaires($fichier, $tokens);
     $nb = count($tokens);
 
     // ---- 1. declare(strict_types=1) = première instruction -----------------
@@ -149,10 +231,12 @@ function analyser(string $fichier, array $tokens): array
 
         // corps de classe : T_CLASS / T_TRAIT / T_ENUM (hors `new class` anonyme après `::class`)
         if ($id === T_CLASS || $id === T_TRAIT || $id === T_ENUM) {
-            $prec = $tokens[sig($tokens, $i - 1)][$i - 1 >= 0 ? sig($tokens, $i - 1) : 0] ?? null;
-            $precId = $prec !== null ? (int) $prec[0] : -1;
-            $precTexte = $prec !== null ? (string) $prec[1] : '';
-            $apresNew = ($tokens[sig($tokens, $i - 1)][1] ?? '') === 'new' || $precTexte === '::';
+            $precTexte = '';
+            $iPrec = sig($tokens, $i - 1);
+            if ($iPrec >= 0 && isset($tokens[$iPrec]) && is_array($tokens[$iPrec])) {
+                $precTexte = (string) $tokens[$iPrec][1];
+            }
+            $apresNew = $precTexte === 'new' || $precTexte === '::';
             if (!$apresNew) {
                 // la prochaine '{' ouvre le corps de cette classe
                 $j = $i;
@@ -280,7 +364,11 @@ function verifierSignature(string $fichier, array $tokens, array $sig): array
         if (preg_match('/^(?:\\\\?[A-Za-z_][A-Za-z0-9_\\\\]*\|?)*(?:\??[A-Za-z_][A-Za-z0-9_\\\\]*)?\s*(\.\.\.)?\s*&?\s*\$([A-Za-z_][A-Za-z0-9_]*)\s*(?:=|$)/u', $p, $m) === 1) {
             $avant = trim(preg_replace('/\.\.\.|&|\$[A-Za-z_][A-Za-z0-9_]*.*$/u', '', $p));
             if ($avant === '') {
-                $violations[] = sprintf('%s:%d — paramètre $%s sans type natif (phpstan level 9) [%s]', $fichier, $sig['ligne'], $m[2] ?? '?', $nom !== '' ? $nom : 'closure');
+                $portee = 'closure';
+                if ($nom !== '') {
+                    $portee = $nom;
+                }
+                $violations[] = sprintf('%s:%d — paramètre $%s sans type natif (phpstan level 9) [%s]', $fichier, $sig['ligne'], $m[2] ?? '?', $portee);
             }
         }
     }
@@ -306,17 +394,30 @@ function verifierSignature(string $fichier, array $tokens, array $sig): array
         }
     }
     $estMagique = in_array($nom, $magiques, true);
-    if (!$estMagique) {
-        $aRetour = $sig['flechee'] ? 'auto' : null;
-        if ($tokens[$u][1] === ':') {
-            $aRetour = 'ok';
+    if (!$estMagique && $tokens[$u][1] !== ':' && !$sig['flechee']) {
+        $nomAffiche = $nom;
+        if ($nomAffiche === '') {
+            $nomAffiche = 'closure';
         }
-        if ($aRetour === null) {
-            $violations[] = sprintf('%s:%d — type de retour manquant (phpstan level 9) [%s]', $fichier, $sig['ligne'], $nom !== '' ? $nom : 'closure');
-        }
+        $violations[] = sprintf('%s:%d — type de retour manquant (phpstan level 9) [%s]', $fichier, $sig['ligne'], $nomAffiche);
     }
 
     return $violations;
+}
+
+/** Propage une ligne aux tokens « char » (sans ligne) depuis le dernier token horodaté. */
+function completerLignes(array $tokens): array
+{
+    $ligne = 1;
+    foreach ($tokens as $i => $t) {
+        if ($t[2] > 0) {
+            $ligne = $t[2];
+        } elseif ($t[2] < 0) {
+            $tokens[$i][2] = $ligne;
+        }
+    }
+
+    return $tokens;
 }
 
 // ------------------------------------------------------------------ exécution
@@ -326,7 +427,15 @@ if ($racines === []) {
     $racines = ['app', 'public', 'scripts/seed.php', 'tests/php'];
 }
 $racineDepot = dirname(__DIR__); // fiable sur les deux runtimes (wasm : /repo)
-$racines = array_map(static fn (string $r): string => str_starts_with($r, '/') ? $r : $racineDepot . '/' . $r, $racines);
+$resolues = [];
+foreach ($racines as $r) {
+    if (str_starts_with($r, '/')) {
+        $resolues[] = $r;
+    } else {
+        $resolues[] = $racineDepot . '/' . $r;
+    }
+}
+$racines = $resolues;
 
 $fichiers = [];
 foreach ($racines as $r) {
@@ -340,13 +449,17 @@ foreach ($racines as $r) {
 $violations = [];
 foreach ($fichiers as $f) {
     $tokensBruts = token_get_all((string) file_get_contents($f));
-    $tokens = array_map(t(...), $tokensBruts);
+    $tokens = completerLignes(array_map(t(...), $tokensBruts));
     $violations = [...$violations, ...analyser($f, $tokens)];
 }
 
-printf("Linter strict types — %d fichiers analysés (règle declare_strict_types de php-cs-fixer + types natifs de phpstan level 9)\n", count($fichiers));
+$violations = array_values(array_unique($violations)); // un signalement par ligne
+printf("Linter strict types — %d fichiers analysés (declare_strict_types de php-cs-fixer, types natifs de phpstan level 9, règle maison : pas de ternaire)\n", count($fichiers));
 foreach ($violations as $v) {
     echo '  ❌ ', $v, "\n";
 }
 printf("%d violation(s)\n", count($violations));
-exit($violations === [] ? 0 : 1);
+if ($violations === []) {
+    exit(0);
+}
+exit(1);

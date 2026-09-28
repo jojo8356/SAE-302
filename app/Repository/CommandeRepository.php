@@ -218,7 +218,10 @@ final class CommandeRepository
             }
             // statut initial de la commande validée : PAYEE (paiement simulé)
             // ou EN_PREPARATION — la matrice RB-11 autorise BROUILLON → les deux
-            $nouveauStatut = $payee ? 'PAYEE' : 'EN_PREPARATION';
+            $nouveauStatut = 'EN_PREPARATION';
+            if ($payee) {
+                $nouveauStatut = 'PAYEE';
+            }
             $this->store->update('commande', [Filter::eq('id_commande', $creation['id_commande'])], ['statut' => $nouveauStatut]);
             $commande = $this->store->find('commande', $creation['id_commande']);
 
@@ -267,10 +270,14 @@ final class CommandeRepository
         $somme = $this->store->sum('ligne_commande', 'total_ligne', [Filter::eq('id_commande', $idCommande)]);
         $port = $this->parametres->computeShipping($somme)['port']; // snapshot RB-20
 
+        $statut = 'EN_PREPARATION';
+        if ($payee) {
+            $statut = 'PAYEE';
+        }
         $this->store->update('commande', [Filter::eq('id_commande', $idCommande)], [
             'frais_port' => $port,
             'montant_total' => round($somme + $port, 2),
-            'statut' => $payee ? 'PAYEE' : 'EN_PREPARATION',
+            'statut' => $statut,
         ]);
 
         return round($somme + $port, 2);
@@ -379,16 +386,21 @@ final class CommandeRepository
             $parStatut[$statut]['montant_total'] = round($parStatut[$statut]['montant_total'] + (float) $commande['montant_total'], 2);
         }
         foreach ($parStatut as &$ligne) {
-            $ligne['montant_moyen'] = $ligne['nb_commandes'] > 0
-                ? round($ligne['montant_total'] / $ligne['nb_commandes'], 2)
-                : 0.0;
+            $ligne['montant_moyen'] = 0.0;
+            if ($ligne['nb_commandes'] > 0) {
+                $ligne['montant_moyen'] = round($ligne['montant_total'] / $ligne['nb_commandes'], 2);
+            }
         }
         unset($ligne);
         usort($parStatut, static fn (array $a, array $b): int => $b['montant_total'] <=> $a['montant_total']);
 
         // 2) top 5 produits : lignes des commandes NON annulées de la période
+        $filtres = [Filter::neq('statut', 'ANNULEE')];
+        if ($where !== []) {
+            $filtres = array_merge($where, [Filter::neq('statut', 'ANNULEE')]);
+        }
         $commandesValides = [];
-        foreach ($this->store->select('commande', ['where' => $where !== [] ? array_merge($where, [Filter::neq('statut', 'ANNULEE')]) : [Filter::neq('statut', 'ANNULEE')]]) as $commande) {
+        foreach ($this->store->select('commande', ['where' => $filtres]) as $commande) {
             $commandesValides[(int) $commande['id_commande']] = true;
         }
         $produits = $this->store->all('produit');

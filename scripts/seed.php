@@ -26,8 +26,11 @@ $dossier = MINISHOP_ROOT . '/data/minishop';
 // réinitialisation explicite (le seed d'une base déjà peuplée est un reset,
 // jamais un doublon : cohérent avec TRUNCATE des scripts SQL)
 if (is_dir($dossier)) {
-    foreach (glob($dossier . '/*.json') ?: [] as $fichier) {
-        @unlink($fichier);
+    $anciens = glob($dossier . '/*.json');
+    if (is_array($anciens)) {
+        foreach ($anciens as $fichier) {
+            @unlink($fichier);
+        }
     }
 }
 

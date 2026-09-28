@@ -14,7 +14,7 @@ declare(strict_types=1);
             <select id="statut" name="statut">
                 <option value="">Tous</option>
                 <?php foreach ($statuts as $statut): ?>
-                    <option value="<?= e($statut) ?>" <?= $filtres['statut'] === $statut ? 'selected' : '' ?>>
+                    <option value="<?= e($statut) ?>" <?php if ($filtres['statut'] === $statut) { echo 'selected'; } else { echo ''; } ?>>
                         <?= e(statut_libelle($statut)) ?>
                     </option>
                 <?php endforeach; ?>

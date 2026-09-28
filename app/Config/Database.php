@@ -35,9 +35,11 @@ final class Database
         if (self::$store === null) {
             $config = self::loadConfig();
             $driver = StorageDriver::fromConfig($config['storage_driver'] ?? null);
-            self::$store = $driver === StorageDriver::JSON
-                ? \App\Model\Data\JsonStore::open(self::dataPath($config))
-                : $driver->createStore();
+            if ($driver === StorageDriver::JSON) {
+                self::$store = \App\Model\Data\JsonStore::open(self::dataPath($config));
+            } else {
+                self::$store = $driver->createStore();
+            }
         }
 
         return self::$store;
@@ -48,9 +50,11 @@ final class Database
     {
         $configured = $config['data_path'] ?? null;
 
-        return $configured !== null && $configured !== ''
-            ? rtrim((string) $configured, '/')
-            : StorageDriver::defaultDataPath();
+        if ($configured !== null && $configured !== '') {
+            return rtrim((string) $configured, '/');
+        }
+
+        return StorageDriver::defaultDataPath();
     }
 
     /** Configuration brute (dev/debug). @return array<string,mixed> */
@@ -84,10 +88,23 @@ final class Database
         }
 
         // Fallback : variables d'environnement seules
+        $driver = getenv('STORAGE_DRIVER');
+        if (!$driver) {
+            $driver = 'json';
+        }
+        $dataPath = getenv('DATA_PATH');
+        if (!$dataPath) {
+            $dataPath = null;
+        }
+        $env = getenv('APP_ENV');
+        if (!$env) {
+            $env = 'dev';
+        }
+
         return [
-            'storage_driver' => getenv('STORAGE_DRIVER') ?: 'json',
-            'data_path' => getenv('DATA_PATH') ?: null,
-            'env' => getenv('APP_ENV') ?: 'dev',
+            'storage_driver' => $driver,
+            'data_path' => $dataPath,
+            'env' => $env,
             'debug' => true,
         ];
     }

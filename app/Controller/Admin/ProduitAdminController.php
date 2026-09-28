@@ -23,9 +23,14 @@ final class ProduitAdminController extends Controller
         $store = Database::store();
         $repo = new ProduitRepository($store);
 
+        $categorie = $this->int('cat');
+        if (!$categorie) {
+            $categorie = null;
+        }
+
         $resultat = $repo->searchProducts([
             'mot_cle' => $this->str('q', 120),
-            'id_categorie' => $this->int('cat') ?: null,
+            'id_categorie' => $categorie,
             'tri' => $this->str('tri', 20),
             'page' => max(1, $this->int('page') ?? 1),
             'par_page' => 20,
@@ -77,7 +82,19 @@ final class ProduitAdminController extends Controller
         $slug = $this->str('slug', 180);
         $reference = $this->str('reference', 30);
 
-        $produitInitial = $idProduit !== null ? (new ProduitRepository($store))->find($idProduit) : null;
+        $produitInitial = null;
+        if ($idProduit !== null) {
+            $produitInitial = (new ProduitRepository($store))->find($idProduit);
+        }
+
+        $description = $this->str('description');
+        if (!$description) {
+            $description = null;
+        }
+        $imageUrl = $this->str('image_url', 255);
+        if (!$imageUrl) {
+            $imageUrl = null;
+        }
 
         try {
             (new ProduitRepository($store))->saveProduct(
@@ -85,16 +102,20 @@ final class ProduitAdminController extends Controller
                 $reference,
                 $nom,
                 $slug,
-                $this->str('description') ?: null,
+                $description,
                 $this->float('prix_ht') ?? 0.0,
                 $this->float('tva') ?? 20.0,
                 $this->int('stock') ?? 0,
                 $this->int('seuil_alerte') ?? 3,
                 $this->int('id_categorie') ?? 0,
                 $this->bool('visible'),
-                $this->str('image_url', 255) ?: null,
+                $imageUrl,
             );
-            $this->flashSucces($idProduit === null ? 'Produit créé.' : 'Produit mis à jour.');
+            $message = 'Produit mis à jour.';
+            if ($idProduit === null) {
+                $message = 'Produit créé.';
+            }
+            $this->flashSucces($message);
             $this->rediriger('/admin/produits');
         } catch (BusinessError $e) {
             $erreurs = [$e->messageHumain()];
@@ -132,12 +153,17 @@ final class ProduitAdminController extends Controller
     {
         $store = Database::store();
 
+        $titre = 'Nouveau produit';
+        if ($produit !== null) {
+            $titre = 'Modifier « ' . ($produit['nom'] ?? '') . ' »';
+        }
+
         $this->render('admin/produit_form', [
             'produit' => $produit,
             'categories' => (new CategorieRepository($store))->listerAvecCompteur(),
             'erreurs' => $erreurs,
             'valeurs' => $valeurs,
             'tva_defaut' => (new \App\Repository\ParametreRepository($store))->tvaDefaut(),
-        ], $produit === null ? 'Nouveau produit' : 'Modifier « ' . ($produit['nom'] ?? '') . ' »');
+        ], $titre);
     }
 }

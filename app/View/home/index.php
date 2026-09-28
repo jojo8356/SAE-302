@@ -15,7 +15,7 @@ Les prix affichés sont <strong>TTC</strong>, la disponibilité est celle du sto
             <a href="/catalogue?cat=<?= (int) $categorie['id_categorie'] ?>">
                 <?= e($categorie['nom']) ?>
             </a>
-            (<?= (int) $categorie['nb_produits'] ?> produit<?= $categorie['nb_produits'] > 1 ? 's' : '' ?>)
+            (<?= (int) $categorie['nb_produits'] ?> produit<?php if ($categorie['nb_produits'] > 1) { echo 's'; } else { echo ''; } ?>)
             — <?= e($categorie['description']) ?>
         </li>
     <?php endforeach; ?>
@@ -28,7 +28,7 @@ Les prix affichés sont <strong>TTC</strong>, la disponibilité est celle du sto
             <a href="/produit/<?= e($produit['slug']) ?>"><?= e($produit['nom']) ?></a>
             — <?= euros($produit['prix_ttc']) ?> TTC
             (<?= e($produit['categorie']) ?>,
-            <?= (int) $produit['stock'] > 0 ? (int) $produit['stock'] . ' en stock' : 'rupture' ?>)
+            <?php if ((int) $produit['stock'] > 0) { echo (int) $produit['stock'] . ' en stock'; } else { echo 'rupture'; } ?>)
         </li>
     <?php endforeach; ?>
 </ul>

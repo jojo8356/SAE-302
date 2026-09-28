@@ -27,7 +27,11 @@ final class ParametreRepository
     {
         $row = $this->store->find('parametre', $cle);
 
-        return ($row['valeur'] ?? '') !== '' ? (string) $row['valeur'] : $defaut;
+        if (($row['valeur'] ?? '') !== '') {
+            return (string) $row['valeur'];
+        }
+
+        return $defaut;
     }
 
     /**

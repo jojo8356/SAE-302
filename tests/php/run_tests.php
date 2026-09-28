@@ -49,7 +49,10 @@ function magasinNeuf(): StoreInterface
     static $n = 0;
     $dossier = sys_get_temp_dir() . '/minishop_t' . getmypid() . '_' . (++$n);
     if (is_dir($dossier)) {
-        array_map('unlink', glob($dossier . '/*.json') ?: []);
+        $anciens = glob($dossier . '/*.json');
+        if (is_array($anciens)) {
+            array_map('unlink', $anciens);
+        }
         @rmdir($dossier);
     }
     $store = JsonStore::open($dossier);
@@ -130,8 +133,18 @@ function jouer(string $id, array $test): void
     if (!$ok) {
         ++$echecs;
     }
-    $journal[] = sprintf('| %s | %s | %s | %s |', $id, $test['regle'], $ok ? '**conforme**' : '**NON CONFORME** — ' . $probleme, $test['attendu']);
-    echo ($ok ? '  ✅ ' : '  ❌ ') . $id . ' (' . $test['regle'] . ') ' . ($ok ? '' : '— ' . $probleme) . "\n";
+    $conformite = '**NON CONFORME** — ' . $probleme;
+    if ($ok) {
+        $conformite = '**conforme**';
+    }
+    $journal[] = sprintf('| %s | %s | %s | %s |', $id, $test['regle'], $conformite, $test['attendu']);
+    $icone = '  ❌ ';
+    $detail = '— ' . $probleme;
+    if ($ok) {
+        $icone = '  ✅ ';
+        $detail = '';
+    }
+    echo $icone . $id . ' (' . $test['regle'] . ') ' . $detail . "\n";
 }
 
 /** Assertion interne d'un test « OK » (équivalent des PASS du harnais SQL). */
@@ -392,7 +405,13 @@ jouer('T-26', ['regle' => 'EF-ADM-05', 'attendu' => 'OK', 'travail' => static fu
     $etats = (new Views($store))->etatStocks();
     passe('la vue couvre les 13 produits', count($etats) === 13);
     foreach ($etats as $etat) {
-        $attendu = $etat['stock'] === 0 ? 'RUPTURE' : ($etat['stock'] <= $etat['seuil_alerte'] ? 'TRES_BAS' : 'DISPONIBLE');
+        if ($etat['stock'] === 0) {
+            $attendu = 'RUPTURE';
+        } elseif ($etat['stock'] <= $etat['seuil_alerte']) {
+            $attendu = 'TRES_BAS';
+        } else {
+            $attendu = 'DISPONIBLE';
+        }
         passe('formule identique pour ' . $etat['reference'], $etat['etat'] === $attendu);
     }
 }]);

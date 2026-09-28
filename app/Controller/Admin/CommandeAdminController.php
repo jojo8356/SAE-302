@@ -36,9 +36,17 @@ final class CommandeAdminController extends Controller
             $commandeParNumero = $store->findOne('commande', [Filter::eq('numero', $client)]);
             $clientRow = $store->findOne('client', [Filter::like('email', '%' . $client . '%')]);
             if ($commandeParNumero !== null || $clientRow !== null) {
+                $filtreNumero = Filter::eq('id_commande', -1);
+                if ($commandeParNumero !== null) {
+                    $filtreNumero = Filter::eq('id_commande', (int) $commandeParNumero['id_commande']);
+                }
+                $filtreClient = Filter::eq('id_client', -1);
+                if ($clientRow !== null) {
+                    $filtreClient = Filter::eq('id_client', (int) $clientRow['id_client']);
+                }
                 $where[] = Filter::or([
-                    $commandeParNumero !== null ? Filter::eq('id_commande', (int) $commandeParNumero['id_commande']) : Filter::eq('id_commande', -1),
-                    $clientRow !== null ? Filter::eq('id_client', (int) $clientRow['id_client']) : Filter::eq('id_client', -1),
+                    $filtreNumero,
+                    $filtreClient,
                 ]);
             } else {
                 $where[] = Filter::eq('id_commande', -1); // aucun résultat : filtre explicitement vide
@@ -101,7 +109,10 @@ final class CommandeAdminController extends Controller
         $repo = CommandeRepository::for(Database::store());
 
         $nouveauStatut = $this->str('statut', 20);
-        $commentaire = $this->str('commentaire', 500) ?: null;
+        $commentaire = $this->str('commentaire', 500);
+        if (!$commentaire) {
+            $commentaire = null;
+        }
 
         // un commentaire est exigé pour une annulation (EF-ADM-07)
         if ($nouveauStatut === 'ANNULEE' && ($commentaire === null || trim($commentaire) === '')) {
@@ -111,7 +122,11 @@ final class CommandeAdminController extends Controller
 
         try {
             $resultat = $repo->updateOrderStatus((int) $id, $nouveauStatut, $commentaire, (int) $admin['id'], 'ADMIN');
-            $this->flashSucces($resultat === 'OK' ? 'Statut mis à jour : ' . $nouveauStatut . '.' : 'Le statut était déjà à jour.');
+            $message = 'Le statut était déjà à jour.';
+            if ($resultat === 'OK') {
+                $message = 'Statut mis à jour : ' . $nouveauStatut . '.';
+            }
+            $this->flashSucces($message);
         } catch (BusinessError $e) {
             $this->flashErreur($e->messageHumain());
         }
