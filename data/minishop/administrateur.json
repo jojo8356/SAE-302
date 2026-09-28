@@ -7,11 +7,11 @@
             "nom": "Nguyen",
             "prenom": "Alice",
             "email": "admin@minishop.fr",
-            "mot_de_passe_hash": "$2y$10$gV35PrZRa6LHciFQodZFFexSDqEmXfu.kcK2GOWeKdVLfKLe5g9Zi",
+            "mot_de_passe_hash": "$2y$10$wTgv1gxehqqsu3WODkXvcemChnG0zeNC54KhsHQJ0of97SRHHvZle",
             "role": "SUPER",
             "actif": true,
-            "date_creation": "2026-09-28 12:26:53",
-            "derniere_connexion": "2026-09-28 12:26:53"
+            "date_creation": "2026-09-28 12:34:52",
+            "derniere_connexion": "2026-09-28 12:34:52"
         }
     ]
 }

@@ -589,8 +589,9 @@ process.stdout.write(B('T12 · sécurité offensive (S-01…S-10)'));
   const volPanier = await pirate.get('/panier');
   check('le panier volé est vide (nouvelle session)', (volPanier.text ?? '').includes('panier est vide'), 'panier non vide');
 
-  // S-06/S-07 : traversées de chemin → 404 ; en-têtes de sécurité présents
-  for (const chemin of ['/../etc/passwd', '/produit/../../etc/passwd', '/%2e%2e/%2e%2e/etc/passwd']) {
+  // S-06/S-07 : traversées de chemin et fichiers sensibles → 404 ; en-têtes présents
+  for (const chemin of ['/../etc/passwd', '/produit/../../etc/passwd', '/%2e%2e/%2e%2e/etc/passwd',
+    '/.git/config', '/sql/01-minishop-schema.sql', '/app/Config/env.php', '/var/log/application.log', '/phpinfo.php']) {
     const r = await anon.get(chemin);
     check(`GET ${chemin} → 404`, r.httpStatusCode === 404, `status ${r.httpStatusCode}`);
   }

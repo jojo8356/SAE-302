@@ -97,6 +97,8 @@ L'application est livrée avec **cinq suites, toutes vertes**, exécutables d'un
 npm run test:all        # ou : node scripts/run-all-tests.mjs
 ```
 
+> 🛡️ **Sécurité** : la note complète « failles testées → corrections → code » (S-01…S-10, SEC-01…SEC-13, limites assumées) est dans **`docs/07-note-cybersecurite.md`** ; les attaques correspondantes sont rejouées en continu par les batteries T6/T12/T13 de la suite E2E.
+
 | Suite | Fichier | Couverture | Verdict |
 |---|---|---|---|
 | Moteur JSON | `tests/php/engine_smoke.php` | contraintes, triggers, transactions, journal du moteur | ✅ vert |
