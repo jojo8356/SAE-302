@@ -1,44 +1,125 @@
 <?php
+
 declare(strict_types=1);
 
 /**
- * MiniShop — front controller minimal (public/index.php)
- * Route unique du site (DocumentRoot = public/). En dev, expose aussi
- * /gen_volumes.php comme fichier réel (RewriteCond !-f) — pas besoin de route.
+ * MiniShop — contrôleur frontal (§9.3) : TOUTE requête HTTP passe ici.
  *
- * Ce fichier est volontairement léger : l'arborescence cible complète est
- * décrite au §9.2 du CDC (app/Controller, app/Repository, etc.). Il affiche
- * une page d'accueil provisoire et un lien vers le générateur dev.
+ * Sécurité (SEC-01…) :
+ *   - en-têtes durcis (X-Frame-Options, CSP sans style inline, session cookie
+ *     HttpOnly/SameSite) ;
+ *   - routeur à liste blanche : aucune URL dynamique, aucune inclusion de
+ *     fichier pilotée par la requête (anti-LFI/RFI) ;
+ *   - jeton CSRF obligatoire sur chaque POST (SEC-05) ;
+ *   - les erreurs métier (BusinessError) ne divulguent rien : message humain
+ *     en flash, redirection ; les erreurs techniques affichent une page 500
+ *     générique (SEC-03), le détail n'est visible qu'en mode DEBUG.
+ *
+ * Moteur de données : JSON par défaut (StorageDriver), prêt pour la
+ * migration SQL finale sans toucher aux contrôleurs.
  */
-$uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
 
-// Laisse les fichiers réels (gen_volumes.php, css, js, img) être servis par Apache / php -S
-$real = __DIR__ . $uri;
-if ($uri !== '/' && is_file($real)) {
-    return false; // php -S : sert le fichier tel quel
+require_once dirname(__DIR__) . '/app/bootstrap.php';
+
+use App\Controller\Admin\CategorieAdminController;
+use App\Controller\Admin\CommandeAdminController;
+use App\Controller\Admin\DashboardController;
+use App\Controller\Admin\EquipeAdminController;
+use App\Controller\Admin\ProduitAdminController;
+use App\Controller\Admin\StockAdminController;
+use App\Controller\AuthController;
+use App\Controller\CatalogueController;
+use App\Controller\CommandeController;
+use App\Controller\CompteController;
+use App\Controller\HomeController;
+use App\Controller\PanierController;
+use App\Model\Data\BusinessError;
+use App\Router;
+use App\Security\Auth;
+
+// ----------------------------------------------------------- en-têtes HTTP
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('Referrer-Policy: same-origin');
+header("Content-Security-Policy: default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
+header('X-XSS-Protection: 0'); // navigation modernes : on s'appuie sur l'échappement, pas sur ce filtre hérité
+
+Auth::demarrer();
+
+$routeur = new Router();
+
+// ------------------------------------------------------------ front-office
+$routeur->get('/', [HomeController::class, 'index']);
+$routeur->get('/categories', [HomeController::class, 'categories']);
+$routeur->get('/a-propos', [HomeController::class, 'aPropos']);
+$routeur->get('/mentions-legales', [HomeController::class, 'mentionsLegales']);
+$routeur->get('/cgv', [HomeController::class, 'cgv']);
+
+$routeur->get('/catalogue', [CatalogueController::class, 'catalogue']);
+$routeur->get('/recherche', [CatalogueController::class, 'recherche']);
+$routeur->get('/produit/{slug}', [CatalogueController::class, 'produit']);
+
+$routeur->get('/inscription', [AuthController::class, 'formulaireInscription']);
+$routeur->post('/inscription', [AuthController::class, 'inscription']);
+$routeur->get('/connexion', [AuthController::class, 'formulaireConnexion']);
+$routeur->post('/connexion', [AuthController::class, 'connexion']);
+$routeur->get('/deconnexion', [AuthController::class, 'deconnexion']);
+
+$routeur->get('/compte', [CompteController::class, 'index'], 'client');
+$routeur->post('/compte', [CompteController::class, 'enregistrer'], 'client');
+$routeur->post('/compte/mot-de-passe', [CompteController::class, 'motDePasse'], 'client');
+
+$routeur->get('/panier', [PanierController::class, 'index']);
+$routeur->post('/panier/ajouter', [PanierController::class, 'ajouter']);
+$routeur->post('/panier/quantite', [PanierController::class, 'quantite']);
+$routeur->post('/panier/retirer', [PanierController::class, 'retirer']);
+
+$routeur->get('/commande/valider', [CommandeController::class, 'formulaire'], 'client');
+$routeur->post('/commande/valider', [CommandeController::class, 'valider'], 'client');
+$routeur->get('/mes-commandes', [CommandeController::class, 'mes'], 'client');
+$routeur->get('/mes-commandes/{id}', [CommandeController::class, 'detail'], 'client');
+$routeur->post('/mes-commandes/{id}/annulation', [CommandeController::class, 'annuler'], 'client');
+
+// ------------------------------------------------------------ back-office
+$routeur->get('/admin/connexion', [AuthController::class, 'formulaireConnexionAdmin']);
+$routeur->post('/admin/connexion', [AuthController::class, 'connexionAdmin']);
+$routeur->get('/admin/deconnexion', [AuthController::class, 'deconnexionAdmin']);
+
+$routeur->get('/admin', [DashboardController::class, 'index'], 'admin');
+
+$routeur->get('/admin/produits', [ProduitAdminController::class, 'index'], 'admin');
+$routeur->get('/admin/produit/nouveau', [ProduitAdminController::class, 'formulaireNouveau'], 'admin');
+$routeur->post('/admin/produit/nouveau', [ProduitAdminController::class, 'creer'], 'admin');
+$routeur->get('/admin/produit/{id}/modification', [ProduitAdminController::class, 'formulaireModifier'], 'admin');
+$routeur->post('/admin/produit/{id}/modification', [ProduitAdminController::class, 'enregistrerModification'], 'admin');
+$routeur->post('/admin/produits/{id}/suppression', [ProduitAdminController::class, 'supprimer'], 'admin');
+
+$routeur->get('/admin/categories', [CategorieAdminController::class, 'index'], 'admin');
+$routeur->post('/admin/categories', [CategorieAdminController::class, 'creer'], 'admin');
+$routeur->post('/admin/categories/{id}/modification', [CategorieAdminController::class, 'modifier'], 'admin');
+$routeur->post('/admin/categories/{id}/suppression', [CategorieAdminController::class, 'supprimer'], 'admin');
+
+$routeur->get('/admin/stocks', [StockAdminController::class, 'index'], 'admin');
+$routeur->post('/admin/stocks', [StockAdminController::class, 'ajuster'], 'admin');
+
+$routeur->get('/admin/commandes', [CommandeAdminController::class, 'index'], 'admin');
+$routeur->get('/admin/commandes/{id}', [CommandeAdminController::class, 'detail'], 'admin');
+$routeur->post('/admin/commandes/{id}/statut', [CommandeAdminController::class, 'changerStatut'], 'admin');
+
+$routeur->get('/admin/equipe', [EquipeAdminController::class, 'index'], 'super');
+$routeur->post('/admin/equipe', [EquipeAdminController::class, 'creer'], 'super');
+$routeur->post('/admin/equipe/{id}/basculer', [EquipeAdminController::class, 'basculer'], 'super');
+
+// ------------------------------------------------------------- dispatch
+try {
+    $routeur->executer($routeur->resoudre($_SERVER['REQUEST_METHOD'] ?? 'GET', $_SERVER['REQUEST_URI'] ?? '/'));
+} catch (BusinessError $e) {
+    // erreur métier remontée jusqu'ici : message humain, aucun détail interne
+    $_SESSION['flash_erreur'] = $e->messageHumain();
+    Auth::rediriger($_SERVER['HTTP_REFERER'] ?? '/');
+} catch (Throwable $e) {
+    http_response_code(500);
+    error_log('[MiniShop] ' . $e->getMessage() . ' @ ' . $e->getFile() . ':' . $e->getLine());
+    $debug = \App\Config\Database::config()['debug'] ?? false;
+    include __DIR__ . '/../app/View/errors/500.php';
 }
-
-http_response_code(200);
-header('Content-Type: text/html; charset=utf-8');
-?>
-<!doctype html>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MiniShop — dev</title>
-<style>
-  body{font-family:system-ui, sans-serif;max-width:720px;margin:3rem auto;padding:0 1rem;color:#0f172a;line-height:1.6}
-  a{color:#0ea5e9} code{background:#f1f5f9;padding:.15rem .35rem;border-radius:6px}
-  .card{border:1px solid #e2e8f0;border-radius:12px;padding:1rem;background:#fff}
-</style>
-<h1>MiniShop — environnement de développement</h1>
-<p>DocumentRoot = <code>public/</code> · Front controller <code>public/index.php</code> (provisoire, lot L8→L13).</p>
-<div class="card">
-  <h3 style="margin:.2rem 0">Outils dev</h3>
-  <ul>
-    <li><a href="/gen_volumes.php">/gen_volumes.php</a> — générateur de volumétrie (ENF-01/ENF-02, navigateur uniquement, dev-only)</li>
-    <li><a href="/mesurer.php">/mesurer.php</a> — mesure ENF-01 p95 &lt; 500 ms (remplace <code>tests/perf/mesurer.sh</code>, navigateur uniquement, dev-only)</li>
-    <li><code>php -S 0.0.0.0:8000 -t public</code> — serveur embarqué (prévisualisation Arena : <code>https://{port}-{sandboxId}.e2b.app</code>)</li>
-  </ul>
-  <p style="font-size:.85rem;color:#64748b">En prod ces outils répondent 404 si <code>APP_ENV</code> ≠ <code>dev</code>.</p>
-</div>
-<p style="font-size:.85rem;color:#64748b">CDC : <a href="../docs/01-cahier-des-charges-MiniShop.md">docs/01-cahier-des-charges-MiniShop.md</a> · SQL : <code>sql/01 → 02 → 03 → 04</code> → <code>scripts/load_db.sh</code></p>

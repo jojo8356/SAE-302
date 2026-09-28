@@ -1,0 +1,17 @@
+{
+    "table": "administrateur",
+    "auto_increment": 2,
+    "rows": [
+        {
+            "id_admin": 1,
+            "nom": "Nguyen",
+            "prenom": "Alice",
+            "email": "admin@minishop.fr",
+            "mot_de_passe_hash": "$2y$10$gV35PrZRa6LHciFQodZFFexSDqEmXfu.kcK2GOWeKdVLfKLe5g9Zi",
+            "role": "SUPER",
+            "actif": true,
+            "date_creation": "2026-09-28 12:26:53",
+            "derniere_connexion": "2026-09-28 12:26:53"
+        }
+    ]
+}

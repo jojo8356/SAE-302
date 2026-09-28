@@ -1,66 +1,69 @@
 <?php
+
 declare(strict_types=1);
+
+/**
+ * MiniShop — point d'accès unique à la couche de données (annexe 17.7 §1).
+ *
+ * L'application ne parle PAS à un SGBD : Database::store() retourne le pilote
+ * choisi par l'ÉNUMÉRATION App\Model\Data\StorageDriver, lu dans la
+ * configuration (app/Config/env.php — jamais commité — ou variables
+ * d'environnement) :
+ *
+ *   'storage_driver' => 'json'  → JsonStore (moteur JSON natif, actif)
+ *   'storage_driver' => 'sql'   → SqlStore  (migration finale, lots L14+)
+ *
+ * Les contrôleurs et les repositories ne connaissent QUE StoreInterface :
+ * basculer d'un pilote à l'autre ne change aucune autre ligne du projet.
+ */
 
 namespace App\Config;
 
-use PDO;
-use PDOException;
+use App\Model\Data\StorageDriver;
+use App\Model\Data\StoreInterface;
 
-/**
- * MiniShop — connexion PDO centralisée (cf. annexe 17.7 §1).
- * - Requêtes préparées réelles (EMU false) — SEC-01
- * - ERRMODE EXCEPTION — jamais de warning muet
- * - utf8mb4 / utf8mb4_unicode_ci identique MySQL et MariaDB
- */
 final class Database
 {
-    private static ?PDO $pdo = null;
+    private static ?StoreInterface $store = null;
 
-    /**
-     * Retourne le singleton PDO configuré via app/Config/env.php ou variables d'environnement.
-     * @param string|null $dbName Surcharge ponctuelle (volumétrie : minishop_perf)
-     */
-    public static function pdo(?string $dbName = null): PDO
+    /** @var array<string,mixed>|null configuration chargée */
+    private static ?array $config = null;
+
+    /** Retourne le store applicatif (singleton par requête). */
+    public static function store(): StoreInterface
     {
-        if (self::$pdo instanceof PDO && $dbName === null) {
-            return self::$pdo;
+        if (self::$store === null) {
+            $config = self::loadConfig();
+            $driver = StorageDriver::fromConfig($config['storage_driver'] ?? null);
+            self::$store = $driver === StorageDriver::JSON
+                ? \App\Model\Data\JsonStore::open(self::dataPath($config))
+                : $driver->createStore();
         }
 
-        $cfg = self::loadConfig();
-
-        $host = $cfg['db_host'] ?? '127.0.0.1';
-        $port = (int) ($cfg['db_port'] ?? 3306);
-        $name = $dbName ?? $cfg['db_name'] ?? $cfg['DB'] ?? 'minishop';
-        $user = $cfg['db_user'] ?? 'root';
-        $pass = $cfg['db_pass'] ?? '';
-
-        $dsn = sprintf('mysql:host=%s;port=%d;dbname=%s;charset=utf8mb4', $host, $port, $name);
-
-        $pdo = new PDO($dsn, $user, $pass, [
-            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_EMULATE_PREPARES   => false,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_STRINGIFY_FETCHES  => false,
-            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci",
-        ]);
-
-        if ($dbName === null) {
-            self::$pdo = $pdo;
-        }
-
-        return $pdo;
+        return self::$store;
     }
 
-    /** Crée un PDO vers une base précise (sans polluer le singleton). */
-    public static function pdoForDatabase(string $dbName): PDO
+    /** Chemin des données JSON (surchargeable : tests, volumétrie). */
+    public static function dataPath(array $config): string
     {
-        return self::pdo($dbName);
+        $configured = $config['data_path'] ?? null;
+
+        return $configured !== null && $configured !== ''
+            ? rtrim((string) $configured, '/')
+            : StorageDriver::defaultDataPath();
+    }
+
+    /** Configuration brute (dev/debug). @return array<string,mixed> */
+    public static function config(): array
+    {
+        return self::$config ??= self::loadConfig();
     }
 
     /** Réinitialise le singleton (tests). */
     public static function reset(): void
     {
-        self::$pdo = null;
+        self::$store = null;
+        self::$config = null;
     }
 
     /** @return array<string,mixed> */
@@ -68,32 +71,24 @@ final class Database
     {
         $candidates = [
             __DIR__ . '/env.php',
-            __DIR__ . '/../../config/env.php',
-            __DIR__ . '/../../.env',
+            dirname(__DIR__, 2) . '/config/env.php',
+            dirname(__DIR__, 2) . '/.env.php',
         ];
-        foreach ($candidates as $f) {
-            if (is_file($f)) {
-                $cfg = @include $f;
-                if (is_array($cfg)) {
-                    return $cfg;
-                }
-                // .env simple KEY=VALUE
-                if (is_string($cfg) || $cfg === 1) {
-                    $parsed = @parse_ini_file($f);
-                    if (is_array($parsed)) {
-                        return $parsed;
-                    }
+        foreach ($candidates as $fichier) {
+            if (is_file($fichier)) {
+                $config = include $fichier;
+                if (is_array($config)) {
+                    return $config;
                 }
             }
         }
+
         // Fallback : variables d'environnement seules
         return [
-            'db_host' => getenv('DB_HOST') ?: '127.0.0.1',
-            'db_port' => getenv('DB_PORT') ?: '3306',
-            'db_name' => getenv('DB') ?: getenv('DB_NAME') ?: 'minishop',
-            'db_user' => getenv('DB_USER') ?: 'root',
-            'db_pass' => getenv('DB_PASS') ?: '',
-            'env'     => getenv('APP_ENV') ?: 'dev',
+            'storage_driver' => getenv('STORAGE_DRIVER') ?: 'json',
+            'data_path' => getenv('DATA_PATH') ?: null,
+            'env' => getenv('APP_ENV') ?: 'dev',
+            'debug' => true,
         ];
     }
 }
