@@ -12,7 +12,7 @@ declare(strict_types=1);
  */
 $qs = static function (int $page) use ($parametres_url): string {
     $parametres = array_merge($parametres_url, ['page' => $page]);
-    $parametres = array_filter($parametres, static fn ($v) => $v !== null && $v !== '' && $v !== 0);
+    $parametres = array_filter($parametres, static fn (mixed $v) => $v !== null && $v !== '' && $v !== 0);
 
     return e('/catalogue?' . http_build_query($parametres));
 };

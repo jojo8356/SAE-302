@@ -7,28 +7,28 @@
             "valeur": "4.90",
             "unite": "EUR TTC",
             "comment": "Livraison standard, montant affiché avant la validation (art. L221-5 4° C. conso.)",
-            "date_modification": "2026-09-28 12:34:52"
+            "date_modification": "2026-09-28 12:47:38"
         },
         {
             "cle": "franchise_port",
             "valeur": "80.00",
             "unite": "EUR TTC",
             "comment": "Port offert au-delà de ce montant de marchandises",
-            "date_modification": "2026-09-28 12:34:52"
+            "date_modification": "2026-09-28 12:47:38"
         },
         {
             "cle": "tva_defaut",
             "valeur": "20.00",
             "unite": "%",
             "comment": "Taux par défaut proposé à la création d’un produit",
-            "date_modification": "2026-09-28 12:34:52"
+            "date_modification": "2026-09-28 12:47:38"
         },
         {
             "cle": "conservation_compte",
             "valeur": "36",
             "unite": "mois",
             "comment": "Données client en base active après le dernier contact (référentiel CNIL)",
-            "date_modification": "2026-09-28 12:34:52"
+            "date_modification": "2026-09-28 12:47:38"
         }
     ]
 }

@@ -11,7 +11,7 @@ declare(strict_types=1);
  * (UC-10, EF-ADM-01/02, RB-02/07/14/15/16/17/19)
  */
 $estCreation = $produit === null || ($produit === []);
-$v = static fn (string $cle, $defaut = '') => e($valeurs[$cle] ?? ($produit[$cle] ?? $defaut));
+$v = static fn (string $cle, string $defaut = '') => e($valeurs[$cle] ?? ($produit[$cle] ?? $defaut));
 ?>
 <h1><?= $estCreation ? 'Nouveau produit' : 'Modifier « ' . e($produit['nom'] ?? '') . ' »' ?></h1>
 

@@ -7,6 +7,7 @@
  *   php scripts/run-all-tests.php         (machine normale — même logique)
  *
  * Suites, de la plus rapide à la plus intégrée :
+ *   0. strict_types_lint.php — linter « strict types » (php-cs-fixer/PHPStan L9)
  *   1. engine_smoke.php   — moteur JSON (contraintes, triggers, transactions)
  *   2. run_tests.php      — règles de gestion T-01…T-29 (CDC §6)
  *   3. unit_tests.php     — unitaires (Text, Csrf, RB-11, PanierSession…)
@@ -23,6 +24,11 @@ const suites = [
 ];
 
 let échecs = 0;
+
+console.log(`\n${'='.repeat(64)}\n▸ Linter strict types — scripts/strict_types_lint.php\n${'='.repeat(64)}`);
+const lint = spawnSync('node', ['scripts/wasm_run.mjs', 'scripts/strict_types_lint.php'], { stdio: 'inherit' });
+if (lint.status !== 0) ++échecs;
+
 for (const [nom, fichier] of suites) {
   console.log(`\n${'='.repeat(64)}\n▸ ${nom} — ${fichier}\n${'='.repeat(64)}`);
   const r = spawnSync('node', ['scripts/wasm_run.mjs', fichier], { stdio: 'inherit' });
@@ -31,7 +37,7 @@ for (const [nom, fichier] of suites) {
 
 console.log(`\n${'='.repeat(64)}\n${'='.repeat(64)}`);
 if (échecs > 0) {
-  console.log(`SUITES PHP : ${échecs} suite(s) en échec ❌ — E2E non joué`);
+  console.log(`SUITES : ${échecs} étape(s) en échec ❌ — E2E non joué`);
   process.exit(1);
 }
 console.log('SUITES PHP : TOUT EST VERT ✅ — E2E :');

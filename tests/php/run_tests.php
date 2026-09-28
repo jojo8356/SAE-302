@@ -318,7 +318,7 @@ jouer('T-21', ['regle' => 'RB-18', 'attendu' => 'OK', 'travail' => static functi
     passe('frais_port = 0', (float) $apres['frais_port'] === 0.0);
     passe('montant_total = 0', (float) $apres['montant_total'] === 0.0);
     $histo = $store->select('order_status_history', [Filter::eq('order_id', (int) $commande['id_commande'])]);
-    passe('trace EN_PREPARATION → ANNULEE', (bool) array_filter($histo, static fn ($h) => $h['new_status'] === 'ANNULEE'));
+    passe('trace EN_PREPARATION → ANNULEE', (bool) array_filter($histo, static fn (array $h) => $h['new_status'] === 'ANNULEE'));
 }]);
 
 jouer('T-22', ['regle' => 'RB-11', 'attendu' => 'OK', 'travail' => static function (StoreInterface $store): void {
@@ -380,13 +380,13 @@ jouer('T-26', ['regle' => 'EF-ADM-05', 'attendu' => 'OK', 'travail' => static fu
     $produits = new ProduitRepository($store);
     passe('POWER-010 en RUPTURE (stock 0)', (bool) array_filter(
         $produits->alertesStock(),
-        static fn ($a) => $a['reference'] === 'POWER-010' && $a['etat'] === 'RUPTURE'
+        static fn (array $a) => $a['reference'] === 'POWER-010' && $a['etat'] === 'RUPTURE'
     ));
     passe('TST-900 (5/seuil 2) hors alerte', !in_array('TST-900', array_column($produits->alertesStock(), 'reference'), true));
     $produits->adjustStock(idTst($store), 'SET', 2, 'vidage test'); // stock = seuil → TRES_BAS
     passe('TST-900 passe TRES_BAS (stock = seuil)', (bool) array_filter(
         $produits->alertesStock(),
-        static fn ($a) => $a['reference'] === 'TST-900' && $a['etat'] === 'TRES_BAS'
+        static fn (array $a) => $a['reference'] === 'TST-900' && $a['etat'] === 'TRES_BAS'
     ));
     // cohérence exhaustive vue ↔ formule
     $etats = (new Views($store))->etatStocks();

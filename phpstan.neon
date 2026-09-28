@@ -1,0 +1,27 @@
+# MiniShop — config PHPStan (outil de développement, non requis pour
+# faire tourner l'application).
+#
+#   composer lint:types        → phpstan analyse --memory-limit=1G
+#
+# Le niveau 9 est le plus strict de l'analyse native : types natifs obligatoires
+# sur paramètres, retours et propriétés — exactement les trois vérifications
+# rejouées dans la sandbox par scripts/strict_types_lint.php (npm run
+# lint:types), quand Packagist n'est pas joignable.
+#
+# NB : les diagnostics riches (docblocks @param array<...>, null-safety des
+# tableaux…) ne sont vérifiables qu'ici, avec l'outil réel.
+
+includes:
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+
+parameters:
+    level: 9
+    paths:
+        - app
+        - public
+        - scripts
+        - tests/php
+    excludePaths:
+        - var
+        - node_modules
+    treatPhpDocTypesAsCertain: false

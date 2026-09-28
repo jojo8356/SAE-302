@@ -63,7 +63,7 @@ final class CatalogueController extends Controller
             'prix_max' => $criteres['prix_max'],
             'stock' => $criteres['en_stock'] ? '1' : null,
             'tri' => $criteres['tri'] !== '' && $criteres['tri'] !== 'nom' ? $criteres['tri'] : null,
-        ], static fn ($v) => $v !== null && $v !== '');
+        ], static fn (mixed $v) => $v !== null && $v !== '');
 
         $this->render($vue, [
             'resultat' => $resultat,
