@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="MiniShop">
+  <rect width="64" height="64" rx="14" fill="#1D4ED8"/>
+  <path d="M16 44V22l8 10 8-10v22" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="46" cy="26" r="4" fill="#C2410C"/>
+  <path d="M46 30v14h-8" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+</svg>

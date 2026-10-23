@@ -1,0 +1,90 @@
+@startuml mcd_minishop
+title MCD — MiniShop (8 entités)
+hide circle
+skinparam linetype ortho
+entity "CATEGORIE" as CAT {
+  * id_categorie <<PK>>
+  --
+  nom
+  slug
+  description
+}
+entity "PRODUIT" as PRO {
+  * id_produit <<PK>>
+  --
+  reference
+  nom
+  slug
+  prix_ht
+  tva
+  prix_ttc
+  stock
+  seuil_alerte
+  visible
+  * id_categorie <<FK>>
+}
+entity "CLIENT" as CLI {
+  * id_client <<PK>>
+  --
+  nom
+  prenom
+  email
+  mot_de_passe_hash
+  adresse_livraison
+  code_postal
+  ville
+  actif
+}
+entity "COMMANDE" as COM {
+  * id_commande <<PK>>
+  --
+  numero
+  date_commande
+  statut
+  montant_total
+  frais_port
+  adresse_livraison
+  * id_client <<FK>>
+}
+entity "LIGNE_COMMANDE" as LIG {
+  * id_ligne <<PK>>
+  --
+  quantite
+  prix_unitaire
+  total_ligne
+  * id_commande <<FK>>
+  * id_produit <<FK>>
+}
+entity "ADMINISTRATEUR" as ADM {
+  * id_admin <<PK>>
+  --
+  nom
+  email
+  mot_de_passe_hash
+  role
+  actif
+}
+entity "ORDER_STATUS_HISTORY" as HIS {
+  * id <<PK>>
+  --
+  order_id
+  old_status
+  new_status
+  changed_at
+  changed_by
+  commentaire
+}
+entity "PARAMETRE" as PAR {
+  * cle <<PK>>
+  --
+  valeur
+  unite
+  description
+}
+CAT ||--o{ PRO : contient
+CLI ||--o{ COM : passe
+COM ||--|{ LIG : contient
+PRO ||--o{ LIG : référence
+COM ||--o{ HIS : trace
+PAR .. PRO : TVA par défaut
+@enduml

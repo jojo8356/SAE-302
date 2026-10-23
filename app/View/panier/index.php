@@ -13,72 +13,99 @@ foreach ($recap['articles'] as $ligne) {
     $plafonne = $plafonne || !empty($ligne['plafonne']);
 }
 ?>
-<h1>Mon panier</h1>
+<header class="entete-page">
+    <div>
+        <h1>Mon panier</h1>
+        <p class="chapo"><?= count($recap['articles']) ?> article<?php if (count($recap['articles']) > 1) { echo 's'; } else { echo ''; } ?> · les prix et le stock sont recalculés par le serveur à chaque affichage.</p>
+    </div>
+</header>
 
 <?php if ($recap['articles'] === []): ?>
-    <p>Votre panier est vide.</p>
-    <p><a href="/catalogue">Parcourir le catalogue →</a></p>
+    <div class="etat-vide">
+        <p><strong>Votre panier est vide.</strong></p>
+        <p>Parcourez le catalogue pour trouver votre matériel.</p>
+        <p><a class="btn btn--acheter" href="/catalogue">Parcourir le catalogue →</a></p>
+    </div>
 <?php else: ?>
     <?php if ($plafonne): ?>
-        <p role="alert">Certains articles ont été ramenés au stock disponible (RB-18) :
-            la quantité maximale a été ajustée côté serveur.</p>
+        <p class="message message--erreur" role="alert">
+            <?= icone('alerte', 20) ?>
+            <span>Certains articles ont été ramenés au stock disponible (RB-18) : la quantité maximale a été ajustée côté serveur.</span>
+        </p>
     <?php endif; ?>
 
-    <table>
-        <caption>Panier — <?= count($recap['articles']) ?> article(s)</caption>
-        <thead>
-        <tr>
-            <th scope="col">Produit</th>
-            <th scope="col">Prix unitaire TTC</th>
-            <th scope="col">Quantité</th>
-            <th scope="col">Total TTC</th>
-            <th scope="col">Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php foreach ($recap['articles'] as $ligne): ?>
-            <tr<?php if (!empty($ligne['plafonne'])) { echo ' title="Quantité plafonnée au stock disponible (RB-18)"'; } else { echo ''; } ?>>
-                <td><a href="/produit/<?= e($ligne['slug']) ?>"><?= e($ligne['nom']) ?></a><br>
-                    <small>Réf. <?= e($ligne['reference']) ?> — stock : <?= (int) $ligne['stock_disponible'] ?></small></td>
-                <td><?= euros($ligne['prix_unitaire']) ?></td>
-                <td>
-                    <form method="post" action="/panier/quantite">
-                        <?= csrf_field() ?>
-                        <input type="hidden" name="id_produit" value="<?= (int) $ligne['id_produit'] ?>">
-                        <label>
-                            <input type="number" name="quantite" min="0" max="<?= (int) $ligne['stock_disponible'] ?>"
-                                   value="<?= (int) $ligne['quantite'] ?>">
-                        </label>
-                        <button type="submit">Mettre à jour</button>
-                    </form>
-                </td>
-                <td><?= euros($ligne['total_ligne']) ?></td>
-                <td>
-                    <form method="post" action="/panier/retirer">
-                        <?= csrf_field() ?>
-                        <input type="hidden" name="id_produit" value="<?= (int) $ligne['id_produit'] ?>">
-                        <button type="submit">Retirer</button>
-                    </form>
-                </td>
+    <div class="tableau-defilant">
+        <table class="tableau-panier tableau-nombres">
+            <caption>Panier — <?= count($recap['articles']) ?> article(s)</caption>
+            <thead>
+            <tr>
+                <th scope="col">Produit</th>
+                <th scope="col">Prix unitaire TTC</th>
+                <th scope="col">Quantité</th>
+                <th scope="col">Total TTC</th>
+                <th scope="col">Actions</th>
             </tr>
-        <?php endforeach; ?>
-        </tbody>
-        <tfoot>
-        <tr>
-            <th scope="row" colspan="3">Sous-total (marchandises TTC)</th>
-            <td colspan="2"><?= euros($recap['sous_total']) ?></td>
-        </tr>
-        <tr>
-            <th scope="row" colspan="3">Frais de port<br><small><?= e($recap['port_motif']) ?></small></th>
-            <td colspan="2"><?= euros($recap['frais_port']) ?></td>
-        </tr>
-        <tr>
-            <th scope="row" colspan="3">Total TTC</th>
-            <td colspan="2"><strong><?= euros($recap['total']) ?></strong></td>
-        </tr>
-        </tfoot>
-    </table>
+            </thead>
+            <tbody>
+            <?php foreach ($recap['articles'] as $ligne): ?>
+                <tr<?php if (!empty($ligne['plafonne'])) { echo ' title="Quantité plafonnée au stock disponible (RB-18)"'; } else { echo ''; } ?>>
+                    <td>
+                        <a href="/produit/<?= e($ligne['slug']) ?>"><?= e($ligne['nom']) ?></a><br>
+                        <small>Réf. <?= e($ligne['reference']) ?> — stock : <?= (int) $ligne['stock_disponible'] ?></small>
+                    </td>
+                    <td><?= euros($ligne['prix_unitaire']) ?></td>
+                    <td>
+                        <form method="post" action="/panier/quantite" class="actions-ligne">
+                            <?= csrf_field() ?>
+                            <input type="hidden" name="id_produit" value="<?= (int) $ligne['id_produit'] ?>">
+                            <label class="visuellement-cache" for="qte-<?= (int) $ligne['id_produit'] ?>">Quantité pour <?= e($ligne['nom']) ?></label>
+                            <input type="number" id="qte-<?= (int) $ligne['id_produit'] ?>" name="quantite" min="0" max="<?= (int) $ligne['stock_disponible'] ?>"
+                                   value="<?= (int) $ligne['quantite'] ?>" data-largeur-courte>
+                            <button type="submit" class="btn--secondaire btn--sm">Mettre à jour</button>
+                        </form>
+                    </td>
+                    <td><?= euros($ligne['total_ligne']) ?></td>
+                    <td>
+                        <form method="post" action="/panier/retirer" data-confirme="Retirer cet article du panier ?">
+                            <?= csrf_field() ?>
+                            <input type="hidden" name="id_produit" value="<?= (int) $ligne['id_produit'] ?>">
+                            <button type="submit" class="btn--danger btn--sm">Retirer</button>
+                        </form>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+            <tfoot>
+            <tr>
+                <th scope="row" colspan="3">Sous-total (marchandises TTC)</th>
+                <td colspan="2"><?= euros($recap['sous_total']) ?></td>
+            </tr>
+            <tr>
+                <th scope="row" colspan="3">Frais de port <small>(<?= e($recap['port_motif']) ?>)</small></th>
+                <td colspan="2"><?= euros($recap['frais_port']) ?></td>
+            </tr>
+            <tr>
+                <th scope="row" colspan="3">Total TTC</th>
+                <td colspan="2" data-total-panier><strong><?= euros($recap['total']) ?></strong></td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
 
-    <p><a href="/catalogue">← Continuer mes achats</a></p>
-    <p><a href="/commande/valider"><strong>Valider ma commande →</strong></a></p>
+    <div class="recap">
+        <h2>Récapitulatif</h2>
+        <dl>
+            <dt>Sous-total</dt>
+            <dd><?= euros($recap['sous_total']) ?></dd>
+            <dt>Frais de port</dt>
+            <dd><?= euros($recap['frais_port']) ?></dd>
+            <div class="total">
+                <dt><strong>Total TTC</strong></dt>
+                <dd><?= euros($recap['total']) ?></dd>
+            </div>
+        </dl>
+        <p class="texte-aide"><?= e($recap['port_motif']) ?> — montant affiché avant validation (art. L221-5 4° C. conso.).</p>
+        <a class="btn--acheter" href="/commande/valider">Valider ma commande →</a>
+        <p class="marge-haut"><a class="lien-retour" href="/catalogue">← Continuer mes achats</a></p>
+    </div>
 <?php endif; ?>

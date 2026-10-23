@@ -11,13 +11,19 @@
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.64",
         "phpstan/phpstan": "^1.12",
-        "phpstan/phpstan-strict-rules": "^1.6"
+        "phpstan/phpstan-strict-rules": "^1.6",
+        "phpunit/phpunit": "^11.0"
     },
     "scripts": {
         "cs:check": "php-cs-fixer check --diff",
         "cs:fix": "php-cs-fixer fix",
         "lint:types": "phpstan analyse --memory-limit=1G",
-        "lint:sandbox": "php scripts/strict_types_lint.php"
+        "lint:sandbox": "php scripts/strict_types_lint.php",
+        "test:unit": "phpunit --testsuite app",
+        "test:coverage": "phpunit --testsuite app --coverage-html build/coverage",
+        "test": [
+            "@test:unit"
+        ]
     },
     "config": {
         "sort-packages": true

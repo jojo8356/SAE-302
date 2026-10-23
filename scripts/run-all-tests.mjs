@@ -12,7 +12,9 @@
  *   2. run_tests.php      — règles de gestion T-01…T-29 (CDC §6)
  *   3. unit_tests.php     — unitaires (Text, Csrf, RB-11, PanierSession…)
  *   4. features_test.php  — fonctionnalités UC-01…UC-14 via les repositories
- *   5. wasm-e2e.mjs       — parcours HTTP complet (seed requis, pollue data/)
+ *   5. css_contract.php   — contrats du design system (tokens, contrastes, CSP)
+ *   6. tests/phpunit/**   — suite PHPUnit (exécutée par son runner hors ligne)
+ *   7. wasm-e2e.mjs       — parcours HTTP complet (seed requis, pollue data/)
  */
 import { spawnSync } from 'node:child_process';
 
@@ -21,6 +23,8 @@ const suites = [
   ['Règles de gestion', 'tests/php/run_tests.php'],
   ['Unitaires', 'tests/php/unit_tests.php'],
   ['Fonctionnalités', 'tests/php/features_test.php'],
+  ['Contrats de design', 'tests/php/css_contract.php'],
+  ['Unitaires PHPUnit', 'tests/phpunit/run-local.php'],
 ];
 
 let échecs = 0;
@@ -51,4 +55,4 @@ if (e2e.status !== 0) {
   console.log('E2E : ÉCHEC ❌');
   process.exit(1);
 }
-console.log('\nTOUTES LES SUITES SONT VERTES ✅ (moteur, règles, unitaires, fonctionnalités, E2E)');
+console.log('\nTOUTES LES SUITES SONT VERTES ✅ (moteur, règles, unitaires, fonctionnalités, design, PHPUnit, E2E)');

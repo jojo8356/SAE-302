@@ -1,0 +1,17 @@
+@startuml seq_recherche_produit
+title Séquence — rechercher un produit (UC-02, RB-19)
+actor Visiteur
+participant "CatalogueController" as CC
+participant "ProduitRepository" as PR
+database "Store" as DB
+Visiteur -> CC : GET /recherche?q=clavier
+CC -> CC : trim, troncature à 120 caractères
+CC -> PR : searchProducts(mot_cle)
+PR -> DB : LIKE sur nom, description, reference (fold accents)
+DB --> PR : produits visibles
+alt aucun résultat
+  CC --> Visiteur : 200 « aucun résultat » + catégories suggérées
+else résultats
+  CC --> Visiteur : 200 liste paginée + total_trouves
+end
+@enduml

@@ -1,0 +1,28 @@
+@startuml activite_passer_commande
+title Activité — passer commande
+start
+:Consulter le catalogue;
+:Ouvrir une fiche produit;
+if (Produit en stock ?) then (oui)
+  :Ajouter au panier;
+else (non)
+  :Bouton désactivé, message « rupture »;
+  stop
+endif
+:Consulter le panier (sous-total HT, TVA, port, total TTC);
+if (Client connecté ?) then (non)
+  :Se connecter ou créer un compte;
+else (oui)
+endif
+:Choisir / saisir l'adresse de livraison;
+:Valider la commande;
+if (Stock encore disponible ?) then (oui)
+  :Transaction : création commande + lignes + décrément;
+  :Statut PAYEE + historique;
+  :Afficher numéro et récapitulatif;
+  :Vider le panier;
+else (non)
+  :Message STOCK_INSUFFISANT, panier conservé;
+endif
+stop
+@enduml

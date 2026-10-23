@@ -74,14 +74,18 @@ $driver = StorageDriver::fromConfig('json');
 $check('StorageDriver::JSON actif par défaut', $driver === StorageDriver::JSON);
 $store = JsonStore::open($dataDir); // bac à sable isolé pour ce test
 $check('le pilote JSON est un JsonStore', $store instanceof JsonStore);
-$check('SqlStore refuse poliment (migration future)', (static function (): bool {
-    try {
-        \App\Model\Data\StorageDriver::SQL->createStore()->select('produit');
+$check('StorageDriver::SQL fournit un vrai pilote PDO', (static function (): bool {
+    $sql = \App\Model\Data\StorageDriver::SQL->createStore();
 
-        return false;
-    } catch (\RuntimeException $e) {
-        return str_contains($e->getMessage(), 'StorageDriver::JSON');
-    }
+    return $sql instanceof \App\Model\Data\SqlStore
+        && $sql instanceof \App\Model\Data\StoreInterface;
+})());
+$check('SqlStore construit tout son SQL en requêtes préparées', (static function (): bool {
+    $source = (string) file_get_contents(dirname(__DIR__, 2) . '/app/Model/Data/SqlStore.php');
+
+    return str_contains($source, 'prepare($sql)')
+        && str_contains($source, 'PDO::ATTR_EMULATE_PREPARES')
+        && !preg_match('/query\([\'"][^\'"]*\$/', $source);
 })());
 
 echo "\n== 2. seed & lecture ==\n";

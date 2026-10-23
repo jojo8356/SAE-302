@@ -4,32 +4,70 @@ declare(strict_types=1);
 
 /** @var list<array<string,mixed>> $categories @var list<array<string,mixed>> $nouveautes */
 ?>
-<h1>Bienvenue chez MiniShop</h1>
-<p>Catalogue en ligne : ordinateurs, audio, accessoires et objets connectés.
-Les prix affichés sont <strong>TTC</strong>, la disponibilité est celle du stock en temps réel.</p>
+<section class="hero" aria-labelledby="titre-hero">
+    <div>
+        <p class="pastille"><?= icone('eclair', 16) ?> Bienvenue chez MiniShop · prix TTC</p>
+        <h1 id="titre-hero">Le bon matériel, au bon prix, sans surprise.</h1>
+        <p>Ordinateurs, audio, accessoires et objets connectés. Le prix affiché est le prix payé :
+            TVA incluse, frais de port annoncés <strong>avant</strong> la validation.</p>
+        <div class="hero__actions">
+            <a class="btn btn--acheter" href="/catalogue">Voir le catalogue</a>
+            <a class="btn btn--secondaire" href="/categories">Parcourir les catégories</a>
+        </div>
+    </div>
+    <img class="hero__illustration" src="/img/illustration-achat.svg" alt="" width="320" height="260">
+</section>
 
-<h2>Nos catégories</h2>
-<ul>
-    <?php foreach ($categories as $categorie): ?>
-        <li>
-            <a href="/catalogue?cat=<?= (int) $categorie['id_categorie'] ?>">
-                <?= e($categorie['nom']) ?>
+<section aria-labelledby="titre-categories">
+    <h2 id="titre-categories">Nos catégories</h2>
+    <div class="grille grille--categories">
+        <?php foreach ($categories as $categorie): ?>
+            <a class="carte carte--lien carte-categorie" href="/catalogue?cat=<?= (int) $categorie['id_categorie'] ?>">
+                <div>
+                    <h3><?= e($categorie['nom']) ?></h3>
+                    <p class="texte-aide"><?= e($categorie['description']) ?></p>
+                </div>
+                <p class="carte-categorie__compte">
+                    <?= (int) $categorie['nb_produits'] ?> produit<?php if ($categorie['nb_produits'] > 1) { echo 's'; } else { echo ''; } ?>
+                    disponibles
+                </p>
             </a>
-            (<?= (int) $categorie['nb_produits'] ?> produit<?php if ($categorie['nb_produits'] > 1) { echo 's'; } else { echo ''; } ?>)
-            — <?= e($categorie['description']) ?>
-        </li>
-    <?php endforeach; ?>
-</ul>
+        <?php endforeach; ?>
+    </div>
+</section>
 
-<h2>Derniers ajouts</h2>
-<ul>
-    <?php foreach ($nouveautes as $produit): ?>
-        <li>
-            <a href="/produit/<?= e($produit['slug']) ?>"><?= e($produit['nom']) ?></a>
-            — <?= euros($produit['prix_ttc']) ?> TTC
-            (<?= e($produit['categorie']) ?>,
-            <?php if ((int) $produit['stock'] > 0) { echo (int) $produit['stock'] . ' en stock'; } else { echo 'rupture'; } ?>)
-        </li>
-    <?php endforeach; ?>
-</ul>
-<p><a href="/catalogue">Voir tout le catalogue →</a></p>
+<section aria-labelledby="titre-nouveautes">
+    <h2 id="titre-nouveautes">Derniers ajouts</h2>
+    <div class="grille grille--produits">
+        <?php foreach ($nouveautes as $produit): ?>
+            <article class="carte carte-produit">
+                <div class="carte-produit__media" aria-hidden="true"><?= e(mb_strtoupper(mb_substr((string) $produit['nom'], 0, 1))) ?></div>
+                <p class="carte-produit__categorie"><?= e($produit['categorie']) ?></p>
+                <h3 class="carte-produit__nom">
+                    <a href="/produit/<?= e($produit['slug']) ?>"><?= e($produit['nom']) ?></a>
+                </h3>
+                <p class="carte-produit__prix"><?= euros($produit['prix_ttc']) ?> <small>TTC</small></p>
+                <div class="carte-produit__pied">
+                    <?= badge_stock((int) $produit['stock']) ?>
+                    <a class="btn btn--secondaire btn--sm" href="/produit/<?= e($produit['slug']) ?>">Voir la fiche</a>
+                </div>
+            </article>
+        <?php endforeach; ?>
+    </div>
+    <p class="marge-haut"><a href="/catalogue">Voir tout le catalogue →</a></p>
+</section>
+
+<section class="reassurance" aria-label="Nos engagements">
+    <div class="reassurance__item">
+        <?= icone('camion', 24) ?>
+        <div><strong>Port annoncé avant paiement</strong><span>4,90 € — offert dès 80 € d'achat.</span></div>
+    </div>
+    <div class="reassurance__item">
+        <?= icone('retour', 24) ?>
+        <div><strong>Annulation possible</strong><span>Tant que la commande n'est pas expédiée.</span></div>
+    </div>
+    <div class="reassurance__item">
+        <?= icone('cadenas', 24) ?>
+        <div><strong>Paiement simulé</strong><span>Projet pédagogique : aucune carte demandée.</span></div>
+    </div>
+</section>

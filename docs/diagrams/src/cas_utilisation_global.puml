@@ -1,0 +1,45 @@
+@startuml cas_utilisation_global
+title MiniShop — cas d'utilisation (vue globale)
+left to right direction
+skinparam packageStyle rectangle
+actor "Visiteur" as V
+actor "Client" as C
+actor "Administrateur" as A
+rectangle "MiniShop" {
+  usecase "UC-01 Consulter le catalogue" as UC01
+  usecase "UC-02 Rechercher un produit" as UC02
+  usecase "UC-03 Consulter une fiche produit" as UC03
+  usecase "UC-04 Créer un compte" as UC04
+  usecase "UC-05 Se connecter / gérer son compte" as UC05
+  usecase "UC-06 Gérer son panier" as UC06
+  usecase "UC-07 Valider une commande" as UC07
+  usecase "UC-08 Consulter ses commandes" as UC08
+  usecase "UC-09 Annuler une commande" as UC09
+  usecase "UC-10 Gérer les produits" as UC10
+  usecase "UC-11 Gérer les catégories" as UC11
+  usecase "UC-12 Gérer les stocks" as UC12
+  usecase "UC-13 Consulter les commandes" as UC13
+  usecase "UC-14 Modifier le statut" as UC14
+  usecase "Gérer les comptes d'équipe" as UC15
+}
+V --> UC01
+V --> UC02
+V --> UC03
+V --> UC04
+V --> UC05
+V --> UC06
+C --> UC05
+C --> UC06
+C --> UC07
+C --> UC08
+C --> UC09
+A --> UC10
+A --> UC11
+A --> UC12
+A --> UC13
+A --> UC14
+A --> UC15
+UC07 ..> UC06 : <<include>>
+UC09 ..> UC08 : <<include>>
+UC15 ..> UC05 : <<extend>> : rôle SUPER
+@enduml

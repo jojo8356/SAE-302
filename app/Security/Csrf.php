@@ -33,6 +33,23 @@ final class Csrf
         return '<input type="hidden" name="_csrf" value="' . self::jeton() . '">';
     }
 
+    /**
+     * Vérifie le jeton sans interrompre (API JSON, test S-05).
+     *
+     * Utilisé par App\Controller\ApiController : une réponse 403 JSON est
+     * préférable à une redirection HTML quand le client attend du JSON.
+     */
+    public static function estValide(): bool
+    {
+        Auth::demarrer();
+        $recu = (string) ($_POST['_csrf'] ?? ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? ''));
+        if ($recu === '') {
+            return false;
+        }
+
+        return hash_equals(self::jeton(), $recu);
+    }
+
     /** Vérifie le jeton d'une requête POST ; interrompt si invalide. */
     public static function verifier(): void
     {

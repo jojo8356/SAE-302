@@ -13,6 +13,7 @@ use App\Config\Database;
 use App\Model\Data\Views;
 use App\Repository\CategorieRepository;
 use App\Repository\ProduitRepository;
+use App\Security\Csrf;
 
 final class HomeController extends Controller
 {
@@ -41,6 +42,77 @@ final class HomeController extends Controller
     public function cgv(): void
     {
         $this->render('home/cgv', [], 'Conditions générales de vente');
+    }
+
+    /** Page d'aide (raccourcis, FAQ courte, accessibilité) — EF-VIS-08. */
+    public function aide(): void
+    {
+        $this->render('home/aide', [], 'Aide');
+    }
+
+    /** Formulaire de contact (EF-GEN-05) — affichage. */
+    public function formulaireContact(): void
+    {
+        $this->render('home/contact', ['erreurs' => [], 'valeurs' => []], 'Nous contacter');
+    }
+
+    /**
+     * Traitement du formulaire de contact (EF-GEN-05).
+     *
+     * Le message n'est PAS stocké en base : aucune donnée personnelle n'est
+     * conservée par une maquette pédagogique (minimisation, RGPD). Il est
+     * écrit dans `var/log/contact.jsonl` (hors versionnement, ignoré par
+     * .gitignore) et un accusé de réception est affiché.
+     */
+    public function envoyerContact(): void
+    {
+        Csrf::verifier();
+
+        $nom = $this->str('nom', 120);
+        $email = $this->str('email', 190);
+        $message = $this->str('message', 2000);
+        $erreurs = [];
+
+        if ($nom === '') {
+            $erreurs[] = 'Le nom est obligatoire.';
+        }
+        if ($email === '' || filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+            $erreurs[] = 'Une adresse email valide est obligatoire.';
+        }
+        if (mb_strlen($message) < 10) {
+            $erreurs[] = 'Le message doit contenir au moins 10 caractères.';
+        }
+
+        if ($erreurs !== []) {
+            $this->render('home/contact', [
+                'erreurs' => $erreurs,
+                'valeurs' => ['nom' => $nom, 'email' => $email, 'message' => $message],
+            ], 'Nous contacter');
+
+            return;
+        }
+
+        $this->journaliserContact($nom, $email, $message);
+        $this->flashSucces('Message reçu. Nous répondons sous 2 jours ouvrés à l\'adresse indiquée.');
+        $this->rediriger('/contact');
+    }
+
+    /** Trace minimale du message (hors base, sans mot de passe ni IP). */
+    private function journaliserContact(string $nom, string $email, string $message): void
+    {
+        $dossier = MINISHOP_ROOT . '/var/log';
+        if (!is_dir($dossier) && !@mkdir($dossier, 0o775, true) && !is_dir($dossier)) {
+            return;
+        }
+
+        $ligne = json_encode([
+            'date' => date('c'),
+            'nom' => $nom,
+            'email' => $email,
+            'message' => mb_substr($message, 0, 500),
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        @file_put_contents($dossier . '/contact.jsonl', $ligne . "\n", FILE_APPEND | LOCK_EX);
     }
 
     /** Vue de synthèse du moteur de données (page « à propos » du projet). */

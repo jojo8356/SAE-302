@@ -1,0 +1,15 @@
+@startuml seq_consulter_catalogue
+title Séquence — consulter le catalogue (UC-01, EF-VIS-03/05)
+actor Visiteur
+participant "CatalogueController" as CC
+participant "ProduitRepository" as PR
+database "Store" as DB
+Visiteur -> CC : GET /catalogue?cat=2&prix_max=500&stock=1&tri=prix_asc&page=2
+CC -> CC : valider les filtres (liste blanche de tri, bornes)
+CC -> PR : searchProducts(criteres)
+PR -> DB : select produit + catégorie (paginé 12)
+DB --> PR : lignes + total
+PR --> CC : resultat{lignes, total, pages}
+CC --> Visiteur : 200 HTML (filtres réaffichés, pagination)
+note right of CC : filtres invalides ignorés, jamais de 500 (§4.3)
+@enduml

@@ -1,0 +1,57 @@
+@startuml diagramme_classes
+title MiniShop — diagramme de classes (couches)
+skinparam classAttributeIconSize 0
+package "Contrôleurs" {
+  class Router
+  class Controller
+  class CatalogueController
+  class PanierController
+  class CommandeController
+  class AdminController
+}
+package "Domaine / dépôts" {
+  class Produit
+  class Categorie
+  class Client
+  class Commande
+  class LigneCommande
+  class Parametre
+  class ProduitRepository
+  class CategorieRepository
+  class ClientRepository
+  class CommandeRepository
+  class ParametreRepository
+}
+package "Persistance" {
+  interface StoreInterface
+  class JsonStore
+  class SqlStore
+  class Triggers
+  class Views
+}
+package "Sécurité" {
+  class Auth
+  class Csrf
+}
+Router --> Controller
+Controller <|-- CatalogueController
+Controller <|-- PanierController
+Controller <|-- CommandeController
+Controller <|-- AdminController
+CatalogueController --> ProduitRepository
+PanierController --> PanierSession
+CommandeController --> CommandeRepository
+AdminController --> ProduitRepository
+CommandeRepository --> StoreInterface
+ProduitRepository --> StoreInterface
+StoreInterface <|.. JsonStore
+StoreInterface <|.. SqlStore
+Commande "1" *-- "1..*" LigneCommande
+Client "1" -- "0..*" Commande
+Categorie "1" -- "0..*" Produit
+Produit "1" -- "0..*" LigneCommande
+JsonStore --> Triggers
+JsonStore --> Views
+Controller --> Auth
+Controller --> Csrf
+@enduml

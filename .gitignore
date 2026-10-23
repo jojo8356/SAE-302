@@ -19,6 +19,8 @@ var/
 
 # --- artefacts générés (reproductibles par les scripts du dépôt)
 vendor/
+.phpunit.cache/
+build/coverage/
 node_modules/
 dist/
 docs/diagrams/*.svg.tmp

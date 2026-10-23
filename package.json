@@ -10,7 +10,9 @@
     "test:features": "node scripts/wasm_run.mjs tests/php/features_test.php",
     "test:e2e": "node scripts/wasm_run.mjs scripts/seed.php && node scripts/wasm-e2e.mjs",
     "test:all": "node scripts/run-all-tests.mjs",
-    "lint:types": "node scripts/wasm_run.mjs scripts/strict_types_lint.php"
+    "lint:types": "node scripts/wasm_run.mjs scripts/strict_types_lint.php",
+    "test:phpunit": "node scripts/wasm_run.mjs tests/phpunit/run-local.php",
+    "test:design": "node scripts/wasm_run.mjs tests/php/css_contract.php"
   },
   "dependencies": {
     "@php-wasm/node": "0.1.28"

@@ -92,7 +92,7 @@ process.stdout.write(B('T1 · pages publiques'));
   contient('accueil : bienvenue', accueil.text, 'Bienvenue chez MiniShop');
   contient('accueil : 4 catégories', accueil.text, 'Objets connectés');
   const catalogue = await anonyme.get('/catalogue');
-  check('catalogue : 11 produits visibles (RB-19)', (catalogue.text.match(/<li>/g) ?? []).length >= 11, 'moins de 11 <li>');
+  check('catalogue : 11 produits visibles (RB-19)', (catalogue.text.match(/carte carte-produit/g) ?? []).length >= 11, 'moins de 11 cartes produit');
   const recherche = await anonyme.get('/recherche?q=casque');
   contient('recherche « casque » trouve le Casque', recherche.text, 'Casque sans fil Aura');
   const fiche = await anonyme.get('/produit/casque-sans-fil-aura');
@@ -649,6 +649,105 @@ process.stdout.write(B('T13 · rôles administrateurs (RB-13, F-27)'));
   const jr = await revoke.csrf('/admin/connexion');
   const reConnexion = await revoke.post('/admin/connexion', { _csrf: jr, email: 'gestionnaire@minishop.fr', mot_de_passe: 'Gest2026!Ok' });
   check('compte désactivé : connexion refusée', reConnexion.httpStatusCode === 200 && !(reConnexion.headers.location ?? []).some((l) => String(l).includes('/admin')), `status ${reConnexion.httpStatusCode}`);
+}
+
+
+process.stdout.write(B('T14 · design, contact, API panier, paramètres (ajouts DA/tests)'));
+
+{
+  const visiteur = new Navigateur('t14-visiteur');
+
+  // --- design system servi et intégré --------------------------------
+  const accueilDA = await visiteur.get('/');
+  contient('gabarit : feuille de style du design system', accueilDA.text, '/css/app.css');
+  contient('gabarit : lien d\'évitement (2.4.1)', accueilDA.text, 'lien-evitement');
+  contient('gabarit : zone aria-live du panier', accueilDA.text, 'aria-live="polite"');
+  contient('gabarit : logo SVG inline', accueilDA.text, '<svg');
+
+  // --- pages nouvelles ------------------------------------------------
+  const aide = await visiteur.get('/aide');
+  check('GET /aide → 200', aide.httpStatusCode === 200, `status ${aide.httpStatusCode}`);
+  contient('aide : section accessibilité', aide.text, 'Accessibilité');
+
+  const contact = await visiteur.get('/contact');
+  check('GET /contact → 200', contact.httpStatusCode === 200, `status ${contact.httpStatusCode}`);
+  contient('contact : formulaire avec CSRF', contact.text, 'name="_csrf"');
+
+  const jetonContact = await visiteur.csrf('/contact');
+  const invalide = await visiteur.post('/contact', { _csrf: jetonContact, nom: '', email: 'pas-un-email', message: 'court' });
+  check('contact invalide → messages serveur', invalide.httpStatusCode === 200 && (invalide.text ?? '').includes('adresse email valide'), `status ${invalide.httpStatusCode}`);
+  const valide = await visiteur.post('/contact', {
+    _csrf: jetonContact, nom: 'Zoé Test', email: 'zoe.contact@example.test',
+    message: 'Bonjour, une question sur les frais de port et la disponibilité.',
+  });
+  check('contact valide → redirection', valide.httpStatusCode === 302, `status ${valide.httpStatusCode}`);
+
+  const mentions = await visiteur.get('/mentions');
+  check('alias /mentions → 200', mentions.httpStatusCode === 200, `status ${mentions.httpStatusCode}`);
+
+  // --- API panier (progressive enhancement) ---------------------------
+  const etat = await visiteur.get('/api/panier');
+  const typeEtat = (etat.headers['content-type'] ?? []).join(' ');
+  check('GET /api/panier → 200 JSON', etat.httpStatusCode === 200 && typeEtat.includes('application/json'), `status ${etat.httpStatusCode} / ${typeEtat}`);
+  let jsonEtat = {};
+  try { jsonEtat = JSON.parse(etat.text ?? '{}'); } catch { jsonEtat = {}; }
+  check('API : nombre_articles exposé', typeof jsonEtat.nombre_articles === 'number');
+
+  const sansJeton = await visiteur.post('/api/panier/ajouter', { id_produit: 1, quantite: 1 });
+  check('API sans jeton CSRF → 403', sansJeton.httpStatusCode === 403, `status ${sansJeton.httpStatusCode}`);
+
+  const jetonPanier = await visiteur.csrf('/contact'); // jeton de session (le panier vide n'a pas de formulaire)
+  const ajout = await visiteur.post('/api/panier/ajouter', { _csrf: jetonPanier, id_produit: 1, quantite: 1 });
+  let jsonAjout = {};
+  try { jsonAjout = JSON.parse(ajout.text ?? '{}'); } catch { jsonAjout = {}; }
+  check('API ajout → 200 ok', ajout.httpStatusCode === 200 && jsonAjout.ok === true, `status ${ajout.httpStatusCode}`);
+  check('API ajout → total renvoyé par le serveur', typeof jsonAjout.total_ttc === 'number');
+
+  const plafond = await visiteur.post('/api/panier/ajouter', { _csrf: jetonPanier, id_produit: 1, quantite: 9999 });
+  let jsonPlafond = {};
+  try { jsonPlafond = JSON.parse(plafond.text ?? '{}'); } catch { jsonPlafond = {}; }
+  const produit1 = (await lireTable('produit')).find((p) => p.id_produit === 1);
+  check('API : quantité plafonnée au stock (RB-18)',
+    plafond.httpStatusCode === 200 && (jsonPlafond.nombre_articles ?? 0) <= Number(produit1?.stock ?? 0),
+    `articles ${jsonPlafond.nombre_articles} / stock ${produit1?.stock}`);
+
+  // --- back-office : paramètres et filtre de stock ---------------------
+  const admin = new Navigateur('t14-admin');
+  const ja = await admin.csrf('/admin/connexion');
+  await admin.post('/admin/connexion', { _csrf: ja, email: 'admin@minishop.fr', mot_de_passe: 'Admin2026!' });
+
+  const parametres = await admin.get('/admin/parametres');
+  check('GET /admin/parametres → 200', parametres.httpStatusCode === 200, `status ${parametres.httpStatusCode}`);
+  contient('paramètres : frais de port éditables', parametres.text, 'Frais de port standard');
+
+  const jp = await admin.csrf('/admin/parametres');
+  const maj = await admin.post('/admin/parametres', {
+    _csrf: jp,
+    param_frais_port: '5.90',
+    param_franchise_port: '80.00',
+    param_tva_defaut: '20.00',
+    param_conservation_compte: '36',
+  });
+  check('paramètres enregistrés → redirection', maj.httpStatusCode === 302, `status ${maj.httpStatusCode}`);
+  const lignePort = (await lireTable('parametre')).find((p) => p.cle === 'frais_port');
+  check('frais de port persistés (5.90)', String(lignePort?.valeur) === '5.90', `valeur ${lignePort?.valeur}`);
+
+  // valeur refusée : non numérique
+  const jpInvalide = await admin.csrf('/admin/parametres');
+  await admin.post('/admin/parametres', { _csrf: jpInvalide, param_frais_port: 'gratuit' });
+  const apresInvalide = (await lireTable('parametre')).find((p) => p.cle === 'frais_port');
+  check('valeur non numérique refusée', String(apresInvalide?.valeur) === '5.90', `valeur ${apresInvalide?.valeur}`);
+
+  // on remet la valeur du jeu de démonstration
+  const jpRemise = await admin.csrf('/admin/parametres');
+  await admin.post('/admin/parametres', { _csrf: jpRemise, param_frais_port: '4.90' });
+
+  const rupture = await admin.get('/admin/stocks?etat=RUPTURE');
+  check('filtre stocks ?etat=RUPTURE → 200', rupture.httpStatusCode === 200, `status ${rupture.httpStatusCode}`);
+  contient('filtre stocks : compteurs affichés', rupture.text, 'Ruptures (');
+
+  const gestionnaireRefuse = await visiteur.get('/admin/parametres');
+  check('paramètres protégés (visiteur) → refus', [302, 403].includes(gestionnaireRefuse.httpStatusCode), `status ${gestionnaireRefuse.httpStatusCode}`);
 }
 
 await syncBack(php);
