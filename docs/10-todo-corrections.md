@@ -17,7 +17,7 @@
 - [x] `scripts/gen_volumes.sh` — enveloppe de `scripts/gen_volumes_cli.php`.
 - [x] `scripts/gen_volumes_cli.php` — `--load` n'utilise plus de sous-processus (contrôle 9) : chargement par `App\Tools\SqlLoader`.
 - [x] `app/Tools/SqlLoader.php` — découpage SQL (`DELIMITER`, chaînes, commentaires) + comptage des objets créés.
-- [ ] `scripts/build-docs.sh` — **absent**. Aucun rendu documentaire ne peut être produit par le dépôt.
+- [x] `scripts/build-docs.sh` — présent : 20 sources Markdown × 3 formats + diaporama, **58 rendus** produits, copie versionnée dans `livrables/` (`--only`, `--out`, `--no-livrables`).
 - [x] `docs/diagrams/render.sh` — présent (non versionné jusqu'ici : voir §8).
 - [x] `docs/diagrams/src/*.puml` — **14 sources** (cas d'usage ×3, classes, séquences ×5, activité, états, architecture, MCD, MLD).
 - [x] `public/css/`, `public/js/`, `public/img/` — design system, JS, SVG (voir §2).
@@ -71,13 +71,13 @@
 
 ## 5. Rendus — **rien de produit**
 
-- [ ] HTML autonome des documents — absent (`livrables/` n'existe pas).
-- [ ] DOCX — absent.
-- [ ] PDF — absent (le seul PDF du dépôt est `docs/sql-a-ecrire/requetes-sql-a-ecrire.pdf`).
-- [ ] Diaporama 12 slides — absent.
-- [!] Vidéo de secours 3 min — non produisible sans navigateur/encodeur.
-- [ ] `livrables/README.md` — absent.
-- Outillage disponible : `scripts/md_to_pdf.py` (fpdf2) — jamais exécuté sur les documents.
+- [x] HTML autonome des documents — `livrables/html/` (19 fichiers, images en base64, hors ligne).
+- [x] DOCX — `livrables/docx/` (19 fichiers, images intégrées).
+- [x] PDF — `livrables/pdf/` (19 fichiers A4 paginés, en-tête + pied de page).
+- [x] Diaporama 12 slides — `livrables/minishop-soutenance.pptx` (16:9, source `docs/12-diaporama-soutenance.md`).
+- [!] Vidéo de secours 3 min — non produisible sans navigateur/encodeur dans la sandbox.
+- [x] `livrables/README.md` — index généré (formats, documents, commandes de régénération).
+- Outillage : `scripts/md_to_{html,pdf,docx,pptx}.py` + `requirements-docs.txt` ; `bash scripts/build-docs.sh` rejoue tout en ~25 s.
 
 ## 6. Cohérence documentaire — **aucune correction appliquée**
 

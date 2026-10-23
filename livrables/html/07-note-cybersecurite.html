@@ -1,0 +1,854 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="SAÉ 302 — MiniShop : MiniShop — Note de cybersécurité#">
+<title>MiniShop — Note de cybersécurité# — MiniShop</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --papier: #fbfaf7;
+  --carte: #ffffff;
+  --trait: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-clair: #dbeafe;
+  --code: #f1f5f9;
+  --mesure: 72ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
+    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
+    --accent-clair: #1e3a8a; --code: #16223a;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  max-width: calc(var(--mesure) + 6rem);
+  background: var(--papier);
+  color: var(--encre);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
+h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
+p, li { max-width: var(--mesure); }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+}
+pre {
+  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
+  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.35rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+thead th { background: var(--accent-clair); }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
+img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li input[type="checkbox"] { margin-right: 0.4rem; }
+.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
+.toc > ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1rem; }
+footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+@media print {
+  :root { --papier: #fff; --carte: #fff; }
+  @page { size: A4; margin: 18mm 16mm; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#1-strategie-defense-en-profondeur-preuve-par-lattaque">1. Stratégie : défense en profondeur, preuve par l'attaque</a></li>
+<li><a href="#2-fondation-structurante-il-ny-a-rien-a-injecter-s-01">2. Fondation structurante : il n'y a rien à injecter (S-01)</a></li>
+<li><a href="#3-les-10-attaques-du-plan-de-validation-detail-par-faille">3. Les 10 attaques du plan de validation — détail par faille</a><ul>
+<li><a href="#s-01-injection-sqlrequete-neutralisee-par-construction">S-01 — Injection (SQL/requête) — ✅ neutralisée par construction</a></li>
+<li><a href="#s-02-xss-stocke-echappement-systematique-csp">S-02 — XSS stocké — ✅ échappement systématique + CSP</a></li>
+<li><a href="#s-03-idor-acces-aux-ressources-dautrui-controle-dappartenance-systematique">S-03 — IDOR (accès aux ressources d'autrui) — ✅ contrôle d'appartenance systématique</a></li>
+<li><a href="#s-04-falsification-du-prix-depuis-le-navigateur-le-serveur-fait-foi">S-04 — Falsification du prix depuis le navigateur — ✅ le serveur fait foi</a></li>
+<li><a href="#s-05-vol-fixation-de-session-regeneration-a-chaque-elevation-de-privilege">S-05 — Vol / fixation de session — ✅ régénération à chaque élévation de privilège</a></li>
+<li><a href="#s-06-csrf-sur-une-action-mutative-jeton-obligatoire-comparaison-constante">S-06 — CSRF sur une action mutative — ✅ jeton obligatoire, comparaison constante</a></li>
+<li><a href="#s-07-enumeration-et-exposition-de-surface-liste-blanche-racine-unique-en-tetes-durcis">S-07 — Énumération et exposition de surface — ✅ liste blanche, racine unique, en-têtes durcis</a></li>
+<li><a href="#s-08-fuite-dinformation-dans-les-messages-derreur-messages-generiques-details-cote-serveur">S-08 — Fuite d'information dans les messages d'erreur — ✅ messages génériques, détails côté serveur</a></li>
+<li><a href="#s-09-force-brute-sur-la-connexion-ecart-assume-correctif-propose">S-09 — Force brute sur la connexion — ⚠️ écart assumé, correctif proposé</a></li>
+<li><a href="#s-10-elevation-de-privilege-par-le-formulaire-cles-strictes-role-hors-de-portee-de-la-requete">S-10 — Élévation de privilège par le formulaire — ✅ clés strictes, rôle hors de portée de la requête</a></li>
+</ul>
+</li>
+<li><a href="#4-mesures-structurelles-transverses">4. Mesures structurelles transverses</a><ul>
+<li><a href="#41-mots-de-passe-rb-12-sec-04">4.1 Mots de passe (RB-12, SEC-04)</a></li>
+<li><a href="#42-sessions-et-espaces-separes-sec-05-rb-13">4.2 Sessions et espaces séparés (SEC-05, RB-13)</a></li>
+<li><a href="#43-journal-daudit-ef-gen-04-sec-13">4.3 Journal d'audit (EF-GEN-04, SEC-13)</a></li>
+<li><a href="#44-validation-des-entrees-en-profondeur-sec-02">4.4 Validation des entrées en profondeur (SEC-02)</a></li>
+<li><a href="#45-hygiene-du-code">4.5 Hygiène du code</a></li>
+</ul>
+</li>
+<li><a href="#5-tracabilite-exigence-code-test">5. Traçabilité exigence → code → test</a></li>
+<li><a href="#6-limites-assumees-et-pistes-de-durcissement">6. Limites assumées et pistes de durcissement</a></li>
+<li><a href="#7-annexe-rejouer-les-attaques">7. Annexe — rejouer les attaques</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="minishop-note-de-cybersecurite">MiniShop — Note de cybersécurité<a class="headerlink" href="#minishop-note-de-cybersecurite" title="Permanent link">#</a></h1>
+<blockquote>
+<p><strong>Objet</strong> : failles testées, corrections apportées et code correspondant.
+<strong>Périmètre</strong> : application MiniShop livrée (PHP 8.2, moteur de données JSON, zéro dépendance runtime), d'après le plan d'attaques S-01…S-10 du document de tests (<code>docs/02</code>, §5) et les exigences SEC-01…SEC-13 du cahier des charges (<code>docs/01</code>, §8).
+<strong>Date</strong> : 28/09/2026 · <strong>Rejouable</strong> : <code>npm run test:all</code> (toutes les attaques ci-dessous sont rejouées en continu par la suite E2E — aucune n'est vérifiée « à la main »).</p>
+</blockquote>
+<hr />
+<h2 id="1-strategie-defense-en-profondeur-preuve-par-lattaque">1. Stratégie : défense en profondeur, preuve par l'attaque<a class="headerlink" href="#1-strategie-defense-en-profondeur-preuve-par-lattaque" title="Permanent link">#</a></h2>
+<p>La sécurité de MiniShop repose sur <strong>quatre lignes de défense indépendantes</strong>, et chaque ligne est <em>attaquée</em> par la suite E2E (<code>scripts/wasm-e2e.mjs</code>, batteries T6, T12, T13 — 155 vérifications) :</p>
+<table>
+<thead>
+<tr>
+<th>Ligne</th>
+<th>Rôle</th>
+<th>Où dans le code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Validation &amp; moteur typé</td>
+<td>toute donnée entrante traverse des accesseurs typés bornés, puis un moteur à contraintes (types, ENUM, CHECK, UNIQUE, FK)</td>
+<td><code>app/Controller/Controller.php</code> (<code>int()</code>, <code>str()</code>, <code>float()</code>, <code>bool()</code>), <code>app/Model/Data/Schema.php</code>, <code>JsonStore.php</code></td>
+</tr>
+<tr>
+<td>2. Échappement systématique en sortie</td>
+<td>aucune vue n'affiche une donnée sans <code>e()</code></td>
+<td><code>app/Security/xss.php</code>, toutes les vues <code>app/View/**</code></td>
+</tr>
+<tr>
+<td>3. Authentification &amp; autorisation</td>
+<td>sessions durcies, jetons CSRF, gardes de rôle par route, contrôle d'appartenance</td>
+<td><code>app/Security/Auth.php</code>, <code>Csrf.php</code>, <code>app/Router.php</code>, contrôleurs</td>
+</tr>
+<tr>
+<td>4. Durcissement HTTP &amp; erreurs</td>
+<td>en-têtes défensifs, routeur à liste blanche, erreurs génériques, journal d'audit</td>
+<td><code>public/index.php</code>, <code>app/Model/Data/Journal.php</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Principe directeur</strong> : la sécurité n'est pas <em>documentée</em>, elle est <strong>exécutée</strong>. Chaque faille ci-dessous est accompagnée du test qui la rejoue — une régression est donc détectée par <code>npm run test:all</code>, pas par une relecture.</p>
+<hr />
+<h2 id="2-fondation-structurante-il-ny-a-rien-a-injecter-s-01">2. Fondation structurante : il n'y a rien à injecter (S-01)<a class="headerlink" href="#2-fondation-structurante-il-ny-a-rien-a-injecter-s-01" title="Permanent link">#</a></h2>
+<p>Avant même de parler de filtrage : <strong>l'application n'embarque aucun interpréteur de requêtes</strong>. La couche de données (§ contrainte de projet : « pas de SQL ») est un moteur JSON dont les requêtes sont <em>construites en PHP</em>, jamais <em>écrites en texte</em>.</p>
+<pre><code class="language-php">// app/Model/Data/Filter.php — une condition est un triplet PHP typé, pas une chaîne
+public static function eq(string $col, mixed $value): array
+{
+    return [$col, '=', $value];
+}
+
+// app/Model/Data/JsonStore.php — les opérateurs sont évalués dans un
+// switch à liste blanche ; une valeur ne peut JAMAIS devenir du code :
+private function matchesOne(array $row, array $condition): bool
+{
+    [$col, $op, $value] = [$condition[0], strtolower($condition[1]), $condition[2] ?? null];
+    $cell = $row[$col] ?? null;
+    switch ($op) {
+        case '=':  return $this-&gt;looseEquals($cell, $value);
+        case '!=': return !$this-&gt;looseEquals($cell, $value);
+        // … '&lt;', '&lt;=', '&gt;', '&gt;=', 'like', 'in', 'between', 'null' …
+        default:
+            throw new QueryError(&quot;Opérateur de filtre inconnu : « {$op} »&quot;);
+    }
+}
+</code></pre>
+<p>Trois conséquences de sécurité :</p>
+<ol>
+<li><strong>Aucune concaténation/interpolation de requête</strong> : <code>' OR 1=1 --</code> est traité comme un mot-clé de recherche ordinaire (recherche pliée insensible casse/accents), pas comme du langage.</li>
+<li><strong>Garde-fou structurel</strong> : une condition mal formée (clés non positionnelles — bug réel découvert par la campagne de tests et corrigé) lève <code>QueryError</code> au lieu de matcher silencieusement :</li>
+</ol>
+<pre><code class="language-php">// app/Model/Data/JsonStore.php::matches() — durcissement ajouté après découverte
+if (!array_is_list($condition)) {
+    throw new QueryError('Condition mal formée (liste [colonne, opérateur, valeur] attendue) : ' . var_export($condition, true));
+}
+</code></pre>
+<ol start="3">
+<li><strong>Contraintes de schéma en profondeur</strong> : même une donnée malveillante qui franchit les contrôleurs est confrontée au moteur (NOT NULL, types, ENUM de statuts, CHECK <code>prix_ht &gt; 0</code> / <code>stock &gt;= 0</code>, UNIQUE référence/email/slug, FK RESTRICT/CASCADE) — cf. <code>tests/php/engine_smoke.php</code>, vert.</li>
+</ol>
+<p><strong>Preuves (E2E T12)</strong> : <code>q=' OR 1=1 --</code> → 200, « 0 produit trouvé », la table <code>client</code> intacte ; <code>q=%'; DROP TABLE produit;--</code> → 200, aucune donnée perdue. <strong>Tests fonctionnels</strong> : tri inconnu (<code>?tri=prix_desc;DROP TABLE produit</code>) → repli sur la liste blanche <code>TRIS = ['nom','prix_asc','prix_desc','nouveaute','stock']</code> sans erreur.</p>
+<hr />
+<h2 id="3-les-10-attaques-du-plan-de-validation-detail-par-faille">3. Les 10 attaques du plan de validation — détail par faille<a class="headerlink" href="#3-les-10-attaques-du-plan-de-validation-detail-par-faille" title="Permanent link">#</a></h2>
+<h3 id="s-01-injection-sqlrequete-neutralisee-par-construction">S-01 — Injection (SQL/requête) — ✅ neutralisée par construction<a class="headerlink" href="#s-01-injection-sqlrequete-neutralisee-par-construction" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Risque</strong> (OWASP A03:2021)</td>
+<td>un payload dans un paramètre modifie la sémantique d'une requête pour lire/écrire la base</td>
+</tr>
+<tr>
+<td><strong>Attaque testée</strong></td>
+<td>E2E T12 : <code>GET /recherche?q=' OR 1=1 --</code> et <code>GET /recherche?q=%'; DROP TABLE produit;--</code> ; catalogue : <code>?tri=prix_desc;DROP TABLE produit</code></td>
+</tr>
+<tr>
+<td><strong>Défense</strong></td>
+<td>§2 ci-dessus : moteur JSON sans interpréteur, opérateurs en liste blanche, contraintes de schéma ; en aval, <code>filter_var(FILTER_VALIDATE_EMAIL)</code> sur les emails, <code>max</code>/<code>step</code> HTML complétés par les bornes serveur (<code>str('email', 190)</code>, etc.)</td>
+</tr>
+<tr>
+<td><strong>Preuve</strong></td>
+<td>E2E T12 (2 vérifications) + <code>features_test.php</code> « tri inconnu → repli liste blanche » + <code>run_tests.php</code> T-25</td>
+</tr>
+</tbody>
+</table>
+<h3 id="s-02-xss-stocke-echappement-systematique-csp">S-02 — XSS stocké — ✅ échappement systématique + CSP<a class="headerlink" href="#s-02-xss-stocke-echappement-systematique-csp" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Risque</strong> (OWASP A03)</td>
+<td>un script injecté en base est exécuté dans le navigateur d'autres utilisateurs (vol de cookie/session)</td>
+</tr>
+<tr>
+<td><strong>Attaque testée</strong></td>
+<td>E2E T12 : l'admin crée un produit nommé <code>&lt;script&gt;alert("xss")&lt;/script&gt; Bombe</code>, puis un visiteur ouvre <code>GET /recherche?q=Bombe</code></td>
+</tr>
+<tr>
+<td><strong>Défense</strong></td>
+<td>échappement <strong>à la sortie</strong> uniquement (jamais à l'entrée — on conserve la donnée originale), via un unique point de passage :</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-php">// app/Security/xss.php — chargé par bootstrap, utilisé par TOUTES les vues
+function e(mixed $valeur): string
+{
+    return htmlspecialchars((string) ($valeur ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+</code></pre>
+<p>En profondeur : <code>Content-Security-Policy: default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'</code> (<code>public/index.php</code>) — même un échappement manqué ne s'exécuterait pas.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Preuve</strong></td>
+<td>E2E T12 : la page contient <code>&amp;lt;script&amp;gt;</code> (littéral) et <strong>aucune</strong> occurrence de <code>&lt;script&gt;alert</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="s-03-idor-acces-aux-ressources-dautrui-controle-dappartenance-systematique">S-03 — IDOR (accès aux ressources d'autrui) — ✅ contrôle d'appartenance systématique<a class="headerlink" href="#s-03-idor-acces-aux-ressources-dautrui-controle-dappartenance-systematique" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Risque</strong> (OWASP A01)</td>
+<td><code>GET /mes-commandes/42</code> d'un autre client livre ses données</td>
+</tr>
+<tr>
+<td><strong>Attaque testée</strong></td>
+<td>E2E T12 : le client <em>bruno</em> boucle sur <code>/mes-commandes/1..4</code> ; E2E T6 : accès direct à une commande d'autrui ; fonctionnels : <code>cancelOrder</code> sur la commande d'un autre</td>
+</tr>
+<tr>
+<td><strong>Défense</strong></td>
+<td>l'identifiant de la requête n'est <strong>jamais</strong> suffisant : il est confronté à la session côté repository</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-php">// app/Controller/CommandeController.php + CommandeRepository.php
+if ($idClient !== null &amp;&amp; (int) $commande['id_client'] !== $idClient) {
+    throw new BusinessError('ACCES_NON_AUTORISE');
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Preuve</strong></td>
+<td>E2E T12 « boucle IDOR 1..4 : toujours redirigé » + T6 + <code>features_test.php</code> (refus <code>ACCES_NON_AUTORISE</code> sur annulation/validation d'autrui)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="s-04-falsification-du-prix-depuis-le-navigateur-le-serveur-fait-foi">S-04 — Falsification du prix depuis le navigateur — ✅ le serveur fait foi<a class="headerlink" href="#s-04-falsification-du-prix-depuis-le-navigateur-le-serveur-fait-foi" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Risque</strong></td>
+<td>ajouter <code>prix_unitaire: 0.01</code> au POST du panier pour acheter à 1 centime</td>
+</tr>
+<tr>
+<td><strong>Attaque testée</strong></td>
+<td>E2E T9 : <code>POST /panier/ajouter { id_produit: 5, quantite: 1, prix_unitaire: '0.01' }</code></td>
+</tr>
+<tr>
+<td><strong>Défense</strong></td>
+<td>le panier ne stocke que <code>id_produit → quantité</code> ; <strong>tout montant est recalculé en relisant le produit</strong> côté serveur, et figé à l'achat par le déclencheur (RB-06) :</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-php">// app/Model/PanierSession.php::recapitulatif() — le prix vient du magasin, jamais du client
+$produit = $this-&gt;store-&gt;find('produit', $idProduit);
+$prixTtc = round((float) $produit['prix_ht'] * (1 + (float) $produit['tva'] / 100), 2);
+</code></pre>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Preuve</strong></td>
+<td>E2E T9 : « prix serveur 154,80, pas 0,01 » ; <code>run_tests.php</code> (prix TTC figé, RB-06)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="s-05-vol-fixation-de-session-regeneration-a-chaque-elevation-de-privilege">S-05 — Vol / fixation de session — ✅ régénération à chaque élévation de privilège<a class="headerlink" href="#s-05-vol-fixation-de-session-regeneration-a-chaque-elevation-de-privilege" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Risque</strong></td>
+<td>imposer un identifiant de session connu avant la connexion (fixation), ou rejouer un cookie volé</td>
+</tr>
+<tr>
+<td><strong>Attaque testée</strong></td>
+<td>E2E T12 : un « pirate » impose son cookie <code>MINISHOPSESS=sid-pirate-fixe-123</code> puis se connecte en Alice</td>
+</tr>
+<tr>
+<td><strong>Défense</strong></td>
+<td>cookie durci + identifiant <strong>régénéré</strong> à la connexion (l'ancien est détruit) + mode strict :</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-php">// app/Security/Auth.php
+session_set_cookie_params([
+    'httponly' =&gt; true,   // inaccessible en JavaScript (atténue le vol par XSS)
+    'samesite' =&gt; 'Lax',  // le cookie n'est pas envoyé depuis un site tiers (atténue CSRF)
+    'secure'   =&gt; (($_SERVER['HTTPS'] ?? '') !== '' &amp;&amp; ($_SERVER['HTTPS'] ?? 'off') !== 'off'),
+]);
+session_name('MINISHOPSESS');
+ini_set('session.use_strict_mode', '1'); // identifiant inconnu ⇒ nouvelle session
+
+public static function connecterClient(int $idClient): void
+{
+    self::regenererId(); // anti-fixation (SEC-05, S-05) — l'ancien sid est invalidé
+    $_SESSION['client_id'] = $idClient;
+}
+</code></pre>
+<p>En WASM (bac à sable uniquement), <code>regenererId()</code> détruit le fichier du pool et tire un nouveau sid (<code>bin2hex(random_bytes(20))</code>) — comportement équivalent au <code>session_regenerate_id(true)</code> natif.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Preuve</strong></td>
+<td>E2E T12 : « session régénérée (anti-fixation) » (le sid final ≠ sid imposé) et « le panier volé est vide » (nouvelle session)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="s-06-csrf-sur-une-action-mutative-jeton-obligatoire-comparaison-constante">S-06 — CSRF sur une action mutative — ✅ jeton obligatoire, comparaison constante<a class="headerlink" href="#s-06-csrf-sur-une-action-mutative-jeton-obligatoire-comparaison-constante" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Risque</strong></td>
+<td>un site tiers fait poster un formulaire authentifié à l'insu du client (ajout au panier, validation de commande…)</td>
+</tr>
+<tr>
+<td><strong>Attaque testée</strong></td>
+<td>E2E T6 : <code>POST /connexion</code> sans jeton <code>_csrf</code></td>
+</tr>
+<tr>
+<td><strong>Défense</strong></td>
+<td><strong>aucune</strong> route POST n'échappe à <code>verifierCsrf()</code> (contrôleur de base) ; jeton par session de 64 hex (<code>random_bytes(32)</code>), comparé en temps constant :</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-php">// app/Security/Csrf.php
+public static function verifier(): void
+{
+    Auth::demarrer();
+    $recu = (string) ($_POST['_csrf'] ?? '');
+    if ($recu === '' || !hash_equals(self::jeton(), $recu)) {
+        http_response_code(403);
+        $_SESSION['flash_erreur'] = 'Jeton de sécurité invalide ou expiré (CSRF). Rechargez la page et réessayez.';
+        Auth::rediriger('/');
+    }
+}
+</code></pre>
+<p>L'atténuation est doublée par <code>SameSite=Lax</code> sur le cookie (S-05) — un POST inter-site n'emporte même pas la session.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Preuve</strong></td>
+<td>E2E T6 « POST sans CSRF rejeté » ; la totalité des ~30 formulaires de l'app exige un jeton (chaque test E2E le extrait d'abord) ; <code>unit_tests.php</code> (section Csrf)</td>
+</tr>
+<tr>
+<td><strong>Divergence assumée</strong></td>
+<td>le document de tests annonçait un refus <strong>419</strong> (code Laravel) ; nous renvoyons <strong>403 Forbidden</strong>, le code standard HTTP pour une autorisation refusée</td>
+</tr>
+</tbody>
+</table>
+<h3 id="s-07-enumeration-et-exposition-de-surface-liste-blanche-racine-unique-en-tetes-durcis">S-07 — Énumération et exposition de surface — ✅ liste blanche, racine unique, en-têtes durcis<a class="headerlink" href="#s-07-enumeration-et-exposition-de-surface-liste-blanche-racine-unique-en-tetes-durcis" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Risque</strong></td>
+<td>atteindre des fichiers hors périmètre (<code>.git</code>, sources SQL, config, logs), être encadré (clickjacking), ou lire des en-têtes bavards</td>
+</tr>
+<tr>
+<td><strong>Attaques testées</strong></td>
+<td>E2E T12 : <code>/../etc/passwd</code>, <code>/produit/../../etc/passwd</code>, <code>/%2e%2e/%2e%2e/etc/passwd</code>, <code>/.git/config</code>, <code>/sql/01-minishop-schema.sql</code>, <code>/app/Config/env.php</code>, <code>/var/log/application.log</code>, <code>/phpinfo.php</code> → <strong>tous 404</strong> ; vérification des 4 en-têtes défensifs</td>
+</tr>
+<tr>
+<td><strong>Défense</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-php">// public/index.php — en-têtes sur TOUTE réponse
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('Referrer-Policy: same-origin');
+header(&quot;Content-Security-Policy: default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'&quot;);
+header('X-XSS-Protection: 0'); // filtre hérité trompeur : désactivé, on s'appuie sur l'échappement
+</code></pre>
+<pre><code class="language-php">// app/Router.php — liste blanche EXPLICITE : aucune route dynamique, aucun
+// catch-all, aucune inclusion de fichier pilotée par la requête (anti-LFI/RFI)
+foreach ($routes as $motif =&gt; $route) {
+    $regex = '#^' . preg_replace('#\{([a-z_]+)\}#', '(?P&lt;$1&gt;[^/]+)', $motif) . '$#u';
+    if (preg_match($regex, $chemin, $m) === 1) { /* … */ }
+}
+http_response_code(404); // rien n'a matché → 404, et c'est le SEUL comportement
+</code></pre>
+<p>Le contrôleur frontal vit seul dans <code>public/</code> (DocumentRoot) ; <code>public/.htaccess</code> ajoute en défense en profondeur <code>Require all denied</code> sur <code>.env*</code> et <code>*.log|*.sql|*.md</code> si jamais des fichiers sensibles étaient copiés là par erreur. Aucun <code>phpinfo()</code> dans le code (grep = 0). Pas d'upload de fichiers : les images sont des URL stockées en base (la validation du type/taille d'upload du CDC §SEC-11 n'a donc pas de surface à défendre ici).</p>
+<p>Deux <strong>outils de développement</strong> assumés vivent aussi dans <code>public/</code> (<code>gen_volumes.php</code>, <code>mesurer.php</code> — ENF-01/02, conçus ainsi par le CDC §.htaccess) : servis en environnement de développement, ils <strong>se bloquent eux-mêmes en production</strong> (détection <code>APP_ENV</code>/env.php → 404 volontaire, « pas 403, pour ne pas révéler l'existence de l'outil »). Ils n'ont accès à aucune table du moteur applicatif : le générateur cible la base SQL de référence (harness de volumétrie), jamais <code>data/minishop</code>.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Divergence assumée</strong></td>
+<td>le bac à sable PHP-WASM émet <code>x-powered-by: PHP/8.2.0-dev</code> (signature du runtime de <strong>développement</strong>, pas de l'application). En production Apache/FPM, l'effacement relève de la config serveur (<code>expose_php=Off</code>, <code>ServerTokens Prod</code>) — consigné dans la roadmap §6</td>
+</tr>
+</tbody>
+</table>
+<h3 id="s-08-fuite-dinformation-dans-les-messages-derreur-messages-generiques-details-cote-serveur">S-08 — Fuite d'information dans les messages d'erreur — ✅ messages génériques, détails côté serveur<a class="headerlink" href="#s-08-fuite-dinformation-dans-les-messages-derreur-messages-generiques-details-cote-serveur" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Risque</strong></td>
+<td>une erreur verbeuse révèle schéma, chemins, requêtes ou existence de comptes (aide à l'attaque)</td>
+</tr>
+<tr>
+<td><strong>Attaques testées</strong></td>
+<td>E2E T2/T8 : mauvais mot de passe, email inconnu, compte bloqué, ancien mot de passe incorrect ; erreurs métier (RB-02 prix invalide, STOCK_INSUFFISANT, transitions interdites) affichées sur toutes les batteries</td>
+</tr>
+<tr>
+<td><strong>Défense</strong></td>
+<td>deux niveaux : les erreurs <strong>métier</strong> ne portent qu'un code + un libellé humain ; les erreurs <strong>techniques</strong> n'affichent rien du tout :</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-php">// public/index.php — filet de sécurité global
+catch (BusinessError $e) {
+    $_SESSION['flash_erreur'] = $e-&gt;messageHumain(); // « Aucun stock suffisant… » — aucun SQL, aucun chemin
+    Auth::rediriger($_SERVER['HTTP_REFERER'] ?? '/');
+} catch (Throwable $e) {
+    http_response_code(500);
+    error_log('[MiniShop] ' . $e-&gt;getMessage() . ' @ ' . $e-&gt;getFile() . ':' . $e-&gt;getLine()); // serveur seulement
+    include __DIR__ . '/../app/View/errors/500.php'; // page générique
+}
+</code></pre>
+<pre><code class="language-php">// app/Controller/AuthController.php — pas d'énumération de comptes (SEC-05)
+$erreur = $identifiants['statut'] === 'COMPTE_BLOQUE'
+    ? 'Ce compte est bloqué. Contactez le support.'
+    : 'Email ou mot de passe erroné.'; // même message si l'email n'existe pas ou si le mot de passe est faux
+</code></pre>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Preuve</strong></td>
+<td>E2E T2/T8 (« message générique », « ancien mot de passe désormais refusé ») ; les 5 suites exécutent des dizaines de refus métier sans jamais voir un détail interne. Le journal d'audit ne contient ni mot de passe ni hash (EF-GEN-04, vérifié T11)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="s-09-force-brute-sur-la-connexion-ecart-assume-correctif-propose">S-09 — Force brute sur la connexion — ⚠️ écart assumé, correctif proposé<a class="headerlink" href="#s-09-force-brute-sur-la-connexion-ecart-assume-correctif-propose" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Risque</strong></td>
+<td>deviner un mot de passe à force de tentatives</td>
+</tr>
+<tr>
+<td><strong>Ce qui est en place</strong></td>
+<td>messages neutres identiques (pas d'énumération), <code>password_verify</code> (comparaison à temps constant), mots de passe hachés bcrypt (coût par tentative élevé), CSRF sur le formulaire</td>
+</tr>
+<tr>
+<td><strong>Ce qui manque</strong></td>
+<td>la <strong>temporisation après 5 échecs</strong> prévue par le document de tests (SEC-04/06) n'est <strong>pas implémentée</strong> : les tentatives échouent proprement et immédiatement. C'est l'écart le plus significatif de la livraison</td>
+</tr>
+<tr>
+<td><strong>Correctif proposé</strong> (à intégrer au lot L12)</td>
+<td>compteur d'échecs par email en table dédiée, temporisation exponentielle côté serveur :</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-php">// Proposition — app/Security/Throttle.php (esquisse, ~25 lignes)
+// après chaque échec : insert dans `tentative_connexion` (email, ip, at)
+// avant chaque essai : $n = échecs des 15 dernières minutes
+// if ($n &gt;= 5) usleep(min($n - 4, 10) * 500_000);  // 0,25 s → 1,25 s, plafonné
+// succès ou changement de mot de passe : purge des lignes de l'email
+</code></pre>
+<p>À défaut de table, un <code>$_SESSION['echecs']</code> protège déjà par session (pas par compte) — la version table est la bonne.</p>
+<h3 id="s-10-elevation-de-privilege-par-le-formulaire-cles-strictes-role-hors-de-portee-de-la-requete">S-10 — Élévation de privilège par le formulaire — ✅ clés strictes, rôle hors de portée de la requête<a class="headerlink" href="#s-10-elevation-de-privilege-par-le-formulaire-cles-strictes-role-hors-de-portee-de-la-requete" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Risque</strong></td>
+<td><code>POST /inscription</code> avec <code>role=ADMIN</code> (ou <code>role=SUPER</code>) crée un administrateur</td>
+</tr>
+<tr>
+<td><strong>Attaque testée</strong></td>
+<td>E2E T12 : inscription d'« Ida » avec <code>role: 'SUPER'</code> glissé dans le POST ; T13 : un GESTIONNAIRE tente <code>POST /admin/equipe</code> pour créer un SUPER</td>
+</tr>
+<tr>
+<td><strong>Défense</strong></td>
+<td>le contrôleur ne lit <strong>que</strong> les clés attendues (<code>nom</code>, <code>prenom</code>, <code>email</code>, <code>mot_de_passe</code>, <code>confirmation</code>, <code>cgv</code>) — tout champ additionnel est ignoré ; le rôle d'un admin ne vient <strong>jamais</strong> de la requête mais de la table <code>administrateur</code>, et les gardes de routes s'appliquent <strong>avant</strong> le contrôleur :</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-php">// app/Router.php — la garde précède l'action : impossible de « oublier » de vérifier
+public function executer(array $route): void
+{
+    match ($route['garde']) {
+        'client' =&gt; Auth::exigeClient(),
+        'admin'  =&gt; Auth::exigeAdmin(),
+        'super'  =&gt; Auth::exigeSuper(), // 403 + « Réservé au rôle SUPER. »
+        default  =&gt; null,
+    };
+    // … puis seulement ici, l'action du contrôleur
+}
+
+// app/Security/Auth.php — le site public n'offre AUCUNE route créant un admin
+public static function exigeSuper(): array
+{
+    $admin = self::exigeAdmin();
+    if ($admin['role'] !== 'SUPER') {
+        \http_response_code(403);
+        $_SESSION['flash_erreur'] = 'Réservé au rôle SUPER.';
+        self::rediriger('/admin');
+    }
+    return $admin;
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Preuve</strong></td>
+<td>E2E T12 (« champ role=ADMIN ignoré », « le faux admin reste un simple client », table <code>administrateur</code> inchangée) + T13 (GESTIONNAIRE : back-office OK, <code>/admin/equipe</code> refusé, création d'admin impossible, SUPER peut désactiver un compte)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-mesures-structurelles-transverses">4. Mesures structurelles transverses<a class="headerlink" href="#4-mesures-structurelles-transverses" title="Permanent link">#</a></h2>
+<h3 id="41-mots-de-passe-rb-12-sec-04">4.1 Mots de passe (RB-12, SEC-04)<a class="headerlink" href="#41-mots-de-passe-rb-12-sec-04" title="Permanent link">#</a></h3>
+<ul>
+<li>Jamais stockés en clair : <code>password_hash($mdp, PASSWORD_BCRYPT)</code> (vérifié en E2E : le hash persisté commence par <code>$2y$</code> et fait 60 caractères).</li>
+<li>Comparaison uniquement par <code>password_verify()</code> (temps constant) ; le repository <strong>refuse</strong> un hash qui n'est pas une sortie de <code>password_hash()</code> (<code>HASH_MOT_DE_PASSE_INVALIDE</code>).</li>
+<li>Changement de mot de passe : ancien exigé et vérifié, confirmation requise (E2E T8 couvre : mauvais ancien refusé, ancien mot de passe révoqué après changement).</li>
+<li>Politique : 8 caractères minimum côté serveur (le <code>minlength</code> HTML n'est que du confort).</li>
+</ul>
+<h3 id="42-sessions-et-espaces-separes-sec-05-rb-13">4.2 Sessions et espaces séparés (SEC-05, RB-13)<a class="headerlink" href="#42-sessions-et-espaces-separes-sec-05-rb-13" title="Permanent link">#</a></h3>
+<ul>
+<li>Deux espaces <strong>strictement</strong> cloisonnés : <code>$_SESSION['client_id']</code> (front) et <code>$_SESSION['admin_id']</code> (back) ; un admin n'est pas un client et réciproquement (E2E T6).</li>
+<li><code>session.use_strict_mode=1</code> : un identifiant forgé inconnu crée une session neuve, il n'est pas adopté.</li>
+<li>Régénération à chaque élévation/destruction de privilège (connexion, déconnexion).</li>
+<li>Durée de vie contrôlée par le moteur PHP ; le pool du bac à sable WASM est un artefact de <strong>développement documenté</strong> (en-tête de <code>Auth.php</code>), remplacé par l'API session native sur tout serveur réel.</li>
+</ul>
+<h3 id="43-journal-daudit-ef-gen-04-sec-13">4.3 Journal d'audit (EF-GEN-04, SEC-13)<a class="headerlink" href="#43-journal-daudit-ef-gen-04-sec-13" title="Permanent link">#</a></h3>
+<ul>
+<li>Toute écriture du moteur est tracée en JSONL (<code>var/journal/db.jsonl</code>) : <code>{at, op, table, pk, actor: {id, role, nom}, old, new}</code> — <strong>qui</strong> a fait <strong>quoi</strong>, avec avant/après.</li>
+<li>La piste des statuts de commande (RB-11) est requêtable et affichée au back-office (<code>order_status_history</code>, transition + auteur + commentaire).</li>
+<li>Jamais de mot de passe ni de hash dans les journaux (données non loggées par conception : seules les lignes de tables passent, et <code>mot_de_passe_hash</code> n'est journalisé qu'en <code>old/new</code> lors d'un changement — à masquer si besoin, cf. §6).</li>
+</ul>
+<h3 id="44-validation-des-entrees-en-profondeur-sec-02">4.4 Validation des entrées en profondeur (SEC-02)<a class="headerlink" href="#44-validation-des-entrees-en-profondeur-sec-02" title="Permanent link">#</a></h3>
+<ul>
+<li>Accesseurs typés bornés dans le contrôleur de base : <code>$this-&gt;int('quantite')</code>, <code>$this-&gt;str('nom', 100)</code>, <code>$this-&gt;float('prix_min')</code>, <code>$this-&gt;bool('cgv')</code> — troncature et transtypage explicites <strong>avant</strong> tout usage.</li>
+<li>Puis contraintes du moteur (schéma) : types, NOT NULL, ENUM (<code>statut</code>), CHECK (<code>prix_ht &gt; 0</code>, <code>stock &gt;= 0</code>, <code>montant_total &gt;= 0</code>), UNIQUE (<code>reference</code>, <code>slug</code>, <code>email</code>, <code>numero</code>), FK (RESTRICT/CASCADE) — testées par <code>engine_smoke.php</code> et <code>run_tests.php</code>.</li>
+<li>Les montants traversent <code>round(..., 2)</code> et les comparaisons d'égalité monétaire des tests tolèrent <code>0.001</code>.</li>
+</ul>
+<h3 id="45-hygiene-du-code">4.5 Hygiène du code<a class="headerlink" href="#45-hygiene-du-code" title="Permanent link">#</a></h3>
+<ul>
+<li><code>declare(strict_types=1)</code> dans <strong>100 % des fichiers PHP exécutables</strong> (81/81 ; seul <code>app/Model/Data/Errors.php</code>, pure documentation, n'en a pas besoin) — vérifiable : <code>grep -rL "declare(strict_types=1)" app/ public/ tests/php/ scripts/</code>.</li>
+<li><strong>Zéro dépendance runtime</strong> (pas de Composer dans l'application) : la surface d'attaque par dépendance (supply chain) est nulle.</li>
+<li><code>app/Config/env.php</code> (identifiants) est non versionné (<code>.gitignore</code>), seul <code>env.example.php</code> est livré ; <code>debug</code> désactivé par défaut.</li>
+<li>Une classe par fichier, autoload PSR-4, pas d'<code>eval</code>, pas de <code>include</code> dynamique, pas de fonctions dangereuses (<code>system</code>, <code>exec</code>, <code>shell_exec</code>… — grep nul).</li>
+</ul>
+<hr />
+<h2 id="5-tracabilite-exigence-code-test">5. Traçabilité exigence → code → test<a class="headerlink" href="#5-tracabilite-exigence-code-test" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Exigence</th>
+<th>Contre-mesure (code)</th>
+<th>Preuve exécutée</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S-01 / SEC-01/02</td>
+<td>moteur JSON sans interpréteur, <code>Filter</code>, <code>matchesOne</code> (liste blanche), schéma à contraintes</td>
+<td>E2E T12 (2), <code>features_test</code> (tri), <code>run_tests</code> T-25</td>
+</tr>
+<tr>
+<td>S-02 / SEC-03</td>
+<td><code>e()</code> = <code>htmlspecialchars(ENT_QUOTES, UTF-8)</code> + CSP</td>
+<td>E2E T12 (2)</td>
+</tr>
+<tr>
+<td>S-03 / SEC-08</td>
+<td>contrôle d'appartenance (<code>ACCES_NON_AUTORISE</code>)</td>
+<td>E2E T12 (boucle IDOR), T6, <code>features_test</code></td>
+</tr>
+<tr>
+<td>S-04 / SEC-10</td>
+<td>prix recalculé serveur (<code>PanierSession::recapitulatif</code>), figé (RB-06)</td>
+<td>E2E T9, <code>run_tests</code></td>
+</tr>
+<tr>
+<td>S-05 / SEC-05</td>
+<td>cookie durci + <code>regenererId()</code> à l'élévation</td>
+<td>E2E T12 (2)</td>
+</tr>
+<tr>
+<td>S-06 / SEC-06</td>
+<td><code>Csrf::verifier()</code> (<code>hash_equals</code>, 403) sur <strong>tout</strong> POST</td>
+<td>E2E T6, <code>unit_tests</code></td>
+</tr>
+<tr>
+<td>S-07 / SEC-11</td>
+<td>routeur liste blanche, <code>DocumentRoot=public/</code>, <code>.htaccess</code>, 5 en-têtes</td>
+<td>E2E T12 (8 chemins + 4 en-têtes), T1</td>
+</tr>
+<tr>
+<td>S-08 / SEC-12</td>
+<td><code>messageHumain()</code> des erreurs métier ; <code>Throwable</code> → 500 générique + <code>error_log</code> ; messages d'auth unifiés</td>
+<td>E2E T2/T8 + 5 suites</td>
+</tr>
+<tr>
+<td>S-09 / SEC-04/06</td>
+<td>messages neutres + bcrypt + temps constant — <strong>temporisation : non implémentée (§3)</strong></td>
+<td>E2E T2 (messages) — écart documenté</td>
+</tr>
+<tr>
+<td>S-10 / SEC-10 / RB-13</td>
+<td>gardes de route avant contrôleur, clés strictes, rôle hors requête</td>
+<td>E2E T12 (3), T13 (6), T6</td>
+</tr>
+<tr>
+<td>SEC-13 / EF-GEN-04</td>
+<td>journal JSONL horodaté avec acteur</td>
+<td>E2E T11 (4 vérifications)</td>
+</tr>
+<tr>
+<td>RB-12</td>
+<td>bcrypt + <code>password_verify</code> + hash non-sortie-refusé</td>
+<td>E2E T2/T8, <code>features_test</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-limites-assumees-et-pistes-de-durcissement">6. Limites assumées et pistes de durcissement<a class="headerlink" href="#6-limites-assumees-et-pistes-de-durcissement" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Limite</th>
+<th>Statut / proposition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Anti-force-brute</strong> (temporisation après 5 échecs)</td>
+<td>non implémenté — correctif esquisssé en §3-S-09 (compteur + temporisation exponentielle) ; à intégrer au lot L12</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>x-powered-by</code> du bac à sable WASM</td>
+<td>artefact du runtime de dev ; en production : <code>expose_php=Off</code>, <code>ServerTokens Prod</code> (config serveur, hors application)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>HTTPS/TLS, HSTS</td>
+<td>hors périmètre applicatif (reverse proxy) ; le cookie passe <code>secure</code> dès que <code>HTTPS</code> est détecté</td>
+</tr>
+<tr>
+<td>4</td>
+<td>En-tête <code>Permissions-Policy</code></td>
+<td>prévu par le CDC (SEC-11), pas encore émis — une ligne à ajouter dans <code>public/index.php</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Journal <code>old/new</code> lors d'un changement de mot de passe</td>
+<td>le hash bcrypt transite dans l'entrée de journal (il est déjà haché, jamais en clair) ; à masquer si la politique de rétention l'exige</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Clé CSRF par session (pas par formulaire)</td>
+<td>standard et suffisant avec <code>SameSite=Lax</code> ; une rotation par formulaire renforcerait contre la fixation de jeton</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Expiration/rotation automatique des sessions</td>
+<td>déléguée au moteur PHP ; à borner explicitement (<code>session.gc_maxlifetime</code>) en production</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Images = URL externes</td>
+<td>pas d'upload (pas de surface) ; si un upload est ajouté un jour : type MIME + extension + taille + stockage hors <code>DocumentRoot</code> (SEC-11)</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Outils de volumétrie/mesure (<code>public/gen_volumes.php</code>, <code>mesurer.php</code>)</td>
+<td>hérités de la phase SQL : ils visent la base MySQL de référence, pas le moteur JSON ; verrou = <code>APP_ENV</code> (404 en prod). À re-brancher sur le moteur JSON ou à retirer de <code>public/</code> au lot ENF-01</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="7-annexe-rejouer-les-attaques">7. Annexe — rejouer les attaques<a class="headerlink" href="#7-annexe-rejouer-les-attaques" title="Permanent link">#</a></h2>
+<pre><code class="language-bash">npm run test:all          # 5 suites : moteur, règles 29/29, unitaires 98/98,
+                          # fonctionnalités 108/108, E2E 155/155
+                          # (T6+T12+T13 = 45 vérifications de sécurité)
+</code></pre>
+<p>Attaques rejouables individuellement (extraits de <code>scripts/wasm-e2e.mjs</code>) :</p>
+<pre><code class="language-js">// S-01  GET /recherche?q=' OR 1=1 --            → 200, « 0 produit trouvé »
+// S-02  produit « &lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt; » → affiché « &amp;lt;script&amp;gt; »
+// S-03  boucle /mes-commandes/1..4 en Bruno      → 302 systématique
+// S-04  POST /panier/ajouter {prix_unitaire:0.01} → total au vrai prix serveur
+// S-05  cookie imposé puis connexion             → sid régénéré, panier vide
+// S-06  POST /connexion sans _csrf               → 403 + redirection
+// S-07  /.git/config, /sql/…, /../etc/passwd     → 404 ; 4 en-têtes vérifiés
+// S-10  inscription avec role=SUPER              → client simple, table admin intacte
+</code></pre>
+<p><em>Note rédigée le 28/09/2026 — toutes les affirmations ci-dessus sont vérifiables dans le dépôt : les extraits de code sont cités fidèlement, les tests sont exécutables par <code>npm run test:all</code>.</em></p>
+<footer class="doc">
+  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/07-note-cybersecurite.md</code>
+  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+</footer>
+</main>
+</body>
+</html>

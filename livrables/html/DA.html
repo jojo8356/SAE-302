@@ -1,0 +1,1101 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="SAÉ 302 — MiniShop : DA — Direction artistique MiniShop#">
+<title>DA — Direction artistique MiniShop# — MiniShop</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --papier: #fbfaf7;
+  --carte: #ffffff;
+  --trait: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-clair: #dbeafe;
+  --code: #f1f5f9;
+  --mesure: 72ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
+    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
+    --accent-clair: #1e3a8a; --code: #16223a;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  max-width: calc(var(--mesure) + 6rem);
+  background: var(--papier);
+  color: var(--encre);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
+h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
+p, li { max-width: var(--mesure); }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+}
+pre {
+  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
+  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.35rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+thead th { background: var(--accent-clair); }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
+img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li input[type="checkbox"] { margin-right: 0.4rem; }
+.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
+.toc > ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1rem; }
+footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+@media print {
+  :root { --papier: #fff; --carte: #fff; }
+  @page { size: A4; margin: 18mm 16mm; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#1-methode">1. Méthode</a></li>
+<li><a href="#2-benchmark-5-concurrents">2. Benchmark — 5 concurrents</a><ul>
+<li><a href="#21-amazonfr-la-reference-de-la-densite">2.1 Amazon.fr — la référence de la densité</a></li>
+<li><a href="#22-cdiscountcom-le-prix-comme-argument-central">2.2 Cdiscount.com — le prix comme argument central</a></li>
+<li><a href="#23-fnaccom-leditorialisation">2.3 Fnac.com — l'éditorialisation</a></li>
+<li><a href="#24-boulangercom-la-recherche-produit-outillee">2.4 Boulanger.com — la recherche produit outillée</a></li>
+<li><a href="#25-back-market-la-confiance-par-le-design">2.5 Back Market — la confiance par le design</a></li>
+</ul>
+</li>
+<li><a href="#3-synthese-comparative">3. Synthèse comparative</a></li>
+<li><a href="#4-positionnement">4. Positionnement</a></li>
+<li><a href="#5-palette">5. Palette</a></li>
+<li><a href="#6-typographie">6. Typographie</a></li>
+<li><a href="#7-grille-espacement-formes">7. Grille, espacement, formes</a></li>
+<li><a href="#8-composants-12">8. Composants (12)</a></li>
+<li><a href="#9-accessibilite-wcag-21-aa">9. Accessibilité (WCAG 2.1 AA)</a></li>
+<li><a href="#10-iconographie-et-imagerie">10. Iconographie et imagerie</a></li>
+<li><a href="#11-regles-editoriales-microcopy">11. Règles éditoriales (microcopy)</a></li>
+<li><a href="#12-mise-en-uvre">12. Mise en œuvre</a></li>
+<li><a href="#13-ce-que-la-da-ne-fait-pas-bornes">13. Ce que la DA ne fait pas (bornes)</a></li>
+<li><a href="#14-responsive-et-adaptation-continue">14. Responsive et adaptation continue</a><ul>
+<li><a href="#141-principe-fluide-dabord-paliers-pour-la-composition">14.1 Principe : fluide d'abord, paliers pour la composition</a></li>
+<li><a href="#142-paliers">14.2 Paliers</a></li>
+<li><a href="#143-techniques-appliquees-et-pourquoi">14.3 Techniques appliquées (et pourquoi)</a></li>
+<li><a href="#144-matrice-de-validation">14.4 Matrice de validation</a></li>
+<li><a href="#145-sources-et-regles-appliquees">14.5 Sources et règles appliquées</a></li>
+<li><a href="#146-limites-assumees">14.6 Limites assumées</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<h1 id="da-direction-artistique-minishop">DA — Direction artistique MiniShop<a class="headerlink" href="#da-direction-artistique-minishop" title="Permanent link">#</a></h1>
+<blockquote>
+<p><strong>Version 1.0 — 23/10/2026.</strong> Document de conception visuelle du front-office et du back-office.
+Il précède l'implémentation (<code>public/css/app.css</code>) et la <strong>valide</strong> : chaque décision ci-dessous
+correspond à un token ou un composant du code, et au test <code>tests/php/css_contract.php</code>.</p>
+<p><strong>Périmètre.</strong> Interface web responsive (360 px → 1440 px), deux contextes (boutique, back-office),
+14 écrans, accessibilité <strong>WCAG 2.1 AA</strong> (ENF-08), zéro dépendance externe (polices système, SVG inline,
+aucune CDN) pour rester conforme à <code>ENF-20</code> (« aucune dépendance runtime hors PHP/MySQL/Apache »).</p>
+</blockquote>
+<hr />
+<h2 id="1-methode">1. Méthode<a class="headerlink" href="#1-methode" title="Permanent link">#</a></h2>
+<ol>
+<li><strong>Benchmark</strong> de 5 acteurs français du e-commerce high-tech (Amazon, Cdiscount, Fnac, Boulanger, Back Market).</li>
+<li><strong>Grille d'analyse</strong> en 10 critères : hiérarchie visuelle, densité, navigation, fiche produit, panier,
+   confiance, filtres, back-office, accessibilité, cohérence.</li>
+<li><strong>Synthèse</strong> : ce qu'on reprend, ce qu'on refuse, et pourquoi.</li>
+<li><strong>Direction artistique</strong> : positionnement, palette, typographie, grille, composants, mouvement.</li>
+<li><strong>Implémentation</strong> : tokens CSS, composants, tests contractuels.</li>
+</ol>
+<p>Le benchmark porte sur des <strong>patterns observables</strong> (structures, hiérarchies, comportements), pas sur des
+captures : aucune marque, logo ou ressource de ces sites n'est réutilisée.</p>
+<hr />
+<h2 id="2-benchmark-5-concurrents">2. Benchmark — 5 concurrents<a class="headerlink" href="#2-benchmark-5-concurrents" title="Permanent link">#</a></h2>
+<h3 id="21-amazonfr-la-reference-de-la-densite">2.1 Amazon.fr — la référence de la densité<a class="headerlink" href="#21-amazonfr-la-reference-de-la-densite" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Critère</th>
+<th>Observation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Navigation</td>
+<td>Mega-menu à 3 niveaux + barre de recherche omniprésente, collante, avec suggestions</td>
+</tr>
+<tr>
+<td>Fiche produit</td>
+<td>Colonne média / colonne « buy box » / blocs de réassurance empilés ; le prix et le CTA sont dans un encadré à droite</td>
+</tr>
+<tr>
+<td>Confiance</td>
+<td>Date de livraison estimée, retours 30 jours, avis clients notés et filtrables</td>
+</tr>
+<tr>
+<td>Densité</td>
+<td>Très élevée : 8 à 12 blocs visibles sans scroller ; peu d'air</td>
+</tr>
+<tr>
+<td>Accessibilité</td>
+<td>Contrastes corrects mais liens peu différenciés du texte, focus parfois discret</td>
+</tr>
+</tbody>
+</table>
+<p><strong>On reprend</strong> : la <em>buy box</em> (prix + disponibilité + quantité + CTA dans un même cadre), la date/le délai
+de livraison, les badges de réassurance.
+<strong>On refuse</strong> : la densité publicitaire, l'empilement de carrousels, les faux compteurs d'urgence.</p>
+<h3 id="22-cdiscountcom-le-prix-comme-argument-central">2.2 Cdiscount.com — le prix comme argument central<a class="headerlink" href="#22-cdiscountcom-le-prix-comme-argument-central" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Critère</th>
+<th>Observation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hiérarchie</td>
+<td>Prix en très gros, rouge/orange ; remise en pourcentage en pastille</td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Recherche + catégories larges ; beaucoup de promotions en page d'accueil</td>
+</tr>
+<tr>
+<td>Fiche produit</td>
+<td>Vendeurs multiples dans un même « buy box » (marketplace)</td>
+</tr>
+<tr>
+<td>Confiance</td>
+<td>Labels de paiement, retrait magasin</td>
+</tr>
+<tr>
+<td>Risque</td>
+<td>La couleur saturée partout brouille la hiérarchie : tout crie, donc rien ne ressort</td>
+</tr>
+</tbody>
+</table>
+<p><strong>On reprend</strong> : la lisibilité du prix TTC et du taux de TVA, le contraste prix / reste.
+<strong>On refuse</strong> : l'usage du rouge pour un prix (le rouge est réservé aux <strong>erreurs</strong> dans notre système).</p>
+<h3 id="23-fnaccom-leditorialisation">2.3 Fnac.com — l'éditorialisation<a class="headerlink" href="#23-fnaccom-leditorialisation" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Critère</th>
+<th>Observation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Structure</td>
+<td>Blocs éditoriaux (« sélection », « à la une ») alternant avec des grilles produits</td>
+</tr>
+<tr>
+<td>Typographie</td>
+<td>Serif pour les titres éditoriaux, sans-serif pour l'interface</td>
+</tr>
+<tr>
+<td>Fiche produit</td>
+<td>Conseils, avis, produits complémentaires</td>
+</tr>
+<tr>
+<td>Densité</td>
+<td>Moyenne, beaucoup de blanc ; rythme visuel net</td>
+</tr>
+<tr>
+<td>Back-office</td>
+<td>Non observable (public)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>On reprend</strong> : le <strong>rythme</strong> (alternance sections pleine largeur / grilles) et la hiérarchie de titres
+claire ; la double famille typographique est écartée (dépendance à une police web).</p>
+<h3 id="24-boulangercom-la-recherche-produit-outillee">2.4 Boulanger.com — la recherche produit outillée<a class="headerlink" href="#24-boulangercom-la-recherche-produit-outillee" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Critère</th>
+<th>Observation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Filtres</td>
+<td>Colonne de filtres à facettes, compteurs, « voir plus », filtres actifs en pastilles retirables</td>
+</tr>
+<tr>
+<td>Grille</td>
+<td>Cartes produit homogènes (image, titre 2 lignes max, prix, dispo magasin)</td>
+</tr>
+<tr>
+<td>Fiche produit</td>
+<td>Sélecteur de variantes, comparaison, disponibilité par magasin</td>
+</tr>
+<tr>
+<td>Confiance</td>
+<td>Retrait en 1 h, installation, garantie</td>
+</tr>
+<tr>
+<td>Accessibilité</td>
+<td>Pastilles de filtres annoncées, focus visible sur les champs</td>
+</tr>
+</tbody>
+</table>
+<p><strong>On reprend</strong> : les <strong>filtres à facettes avec état dans l'URL</strong>, les pastilles de filtres actifs, la carte
+produit homogène (hauteur fixe du bloc titre).
+<strong>On refuse</strong> : la comparaison multi-produits et le sélecteur de magasin (hors périmètre §11.2).</p>
+<h3 id="25-back-market-la-confiance-par-le-design">2.5 Back Market — la confiance par le design<a class="headerlink" href="#25-back-market-la-confiance-par-le-design" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Critère</th>
+<th>Observation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ton</td>
+<td>Éditorial, décalé, très lisible ; la marque porte la promesse écologique</td>
+</tr>
+<tr>
+<td>Confiance</td>
+<td>Garantie, « satisfait ou remboursé » et notes visibles au-dessus de la ligne de flottaison</td>
+</tr>
+<tr>
+<td>Couleur</td>
+<td>Une couleur de marque unique (turquoise) + neutres ; CTA sombre, très contrasté</td>
+</tr>
+<tr>
+<td>Densité</td>
+<td>Faible : grande respiration, une idée par section</td>
+</tr>
+<tr>
+<td>Accessibilité</td>
+<td>Très bon contraste, focus visible, cibles ≥ 44 px</td>
+</tr>
+</tbody>
+</table>
+<p><strong>On reprend</strong> : la <strong>restriction chromatique</strong> (une couleur de marque + un accent d'action), le CTA sombre
+ou très contrasté, la respiration, les cibles tactiles ≥ 44 px.</p>
+<hr />
+<h2 id="3-synthese-comparative">3. Synthèse comparative<a class="headerlink" href="#3-synthese-comparative" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Critère</th>
+<th>Amazon</th>
+<th>Cdiscount</th>
+<th>Fnac</th>
+<th>Boulanger</th>
+<th>Back Market</th>
+<th><strong>MiniShop</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Densité</td>
+<td>très haute</td>
+<td>haute</td>
+<td>moyenne</td>
+<td>haute</td>
+<td>basse</td>
+<td><strong>moyenne-basse</strong></td>
+</tr>
+<tr>
+<td>Couleur d'action</td>
+<td>orange</td>
+<td>rouge</td>
+<td>jaune</td>
+<td>orange</td>
+<td>noir</td>
+<td><strong>ambre <code>#C2410C</code></strong></td>
+</tr>
+<tr>
+<td>Hiérarchie du prix</td>
+<td>forte</td>
+<td>très forte</td>
+<td>moyenne</td>
+<td>forte</td>
+<td>moyenne</td>
+<td><strong>forte, sobre</strong></td>
+</tr>
+<tr>
+<td>Filtres dans l'URL</td>
+<td>oui</td>
+<td>partiel</td>
+<td>oui</td>
+<td>oui</td>
+<td>oui</td>
+<td><strong>oui (URL partageable)</strong></td>
+</tr>
+<tr>
+<td>Buy box</td>
+<td>oui</td>
+<td>oui</td>
+<td>oui</td>
+<td>oui</td>
+<td>oui</td>
+<td><strong>oui</strong></td>
+</tr>
+<tr>
+<td>Réassurance</td>
+<td>forte</td>
+<td>moyenne</td>
+<td>moyenne</td>
+<td>forte</td>
+<td>très forte</td>
+<td><strong>3 preuves, pas 10</strong></td>
+</tr>
+<tr>
+<td>Typographie</td>
+<td>1 famille</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td><strong>1 famille système</strong></td>
+</tr>
+<tr>
+<td>Respect AA</td>
+<td>partiel</td>
+<td>partiel</td>
+<td>oui</td>
+<td>oui</td>
+<td>oui</td>
+<td><strong>AA vérifié, contrastes calculés</strong></td>
+</tr>
+<tr>
+<td>Back-office soigné</td>
+<td>inconnu</td>
+<td>inconnu</td>
+<td>inconnu</td>
+<td>inconnu</td>
+<td>inconnu</td>
+<td><strong>oui (différenciateur)</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Conclusion du benchmark.</strong> Les concurrents gagnent sur la densité et la réassurance, mais payent en
+charge visuelle et en accessibilité. Notre projet est un <strong>exercice noté</strong> : la démonstration de la
+cohérence (prix TTC, stock réel, règles métier) doit être <strong>plus lisible</strong> qu'un site commercial.
+Nous choisissons donc : <strong>peu d'éléments, très contrastés, hiérarchisés, accessibles</strong>, avec un
+back-office au même niveau de soin que la boutique — c'est rare et c'est un argument de soutenance.</p>
+<hr />
+<h2 id="4-positionnement">4. Positionnement<a class="headerlink" href="#4-positionnement" title="Permanent link">#</a></h2>
+<blockquote>
+<p><strong>« La précision technique, sans la froideur. »</strong></p>
+</blockquote>
+<p>Trois piliers :</p>
+<ol>
+<li><strong>Clarté du prix</strong> — le prix TTC domine, le HT et la TVA sont disponibles mais discrets ; le port est
+   toujours annoncé avant validation (<code>ENF-14</code>, obligation légale).</li>
+<li><strong>Honnêteté de l'état</strong> — le stock est réel : <code>En stock</code>, <code>Bientôt épuisé (N)</code>, <code>Rupture</code> sont trois
+   états visuellement distincts, jamais un faux compte à rebours.</li>
+<li><strong>Sobriété outillée</strong> — un fond papier chaud, une encre bleu-nuit, un seul accent d'action ; le
+   back-office utilise la même grammaire en version dense.</li>
+</ol>
+<hr />
+<h2 id="5-palette">5. Palette<a class="headerlink" href="#5-palette" title="Permanent link">#</a></h2>
+<p>Contrastes calculés selon WCAG 2.1 (ratio <code>(L1+0.05)/(L2+0.05)</code>), vérifiés par <code>tests/php/css_contract.php</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Valeur</th>
+<th>Rôle</th>
+<th>Contraste</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--papier</code></td>
+<td><code>#FBFAF7</code></td>
+<td>fond général (blanc chaud, moins fatigant qu'un blanc pur)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>--surface</code></td>
+<td><code>#FFFFFF</code></td>
+<td>cartes, tableaux, formulaires</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>--encre</code></td>
+<td><code>#0F172A</code></td>
+<td>texte principal, titres</td>
+<td><strong>17,1:1</strong> sur papier</td>
+</tr>
+<tr>
+<td><code>--encre-douce</code></td>
+<td><code>#475569</code></td>
+<td>texte secondaire, légendes</td>
+<td><strong>7,3:1</strong> sur papier</td>
+</tr>
+<tr>
+<td><code>--bordure</code></td>
+<td><code>#E2E8F0</code></td>
+<td>séparateurs, contours de champs</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>--primaire</code></td>
+<td><code>#1D4ED8</code></td>
+<td>liens, éléments actifs, focus</td>
+<td><strong>6,7:1</strong> sur blanc</td>
+</tr>
+<tr>
+<td><code>--primaire-fonce</code></td>
+<td><code>#1E3A8A</code></td>
+<td>survol, en-têtes de tableau</td>
+<td><strong>10,4:1</strong></td>
+</tr>
+<tr>
+<td><code>--accent</code></td>
+<td><code>#C2410C</code></td>
+<td><strong>action d'achat uniquement</strong> (CTA)</td>
+<td><strong>5,2:1</strong> sur blanc</td>
+</tr>
+<tr>
+<td><code>--accent-fonce</code></td>
+<td><code>#9A3412</code></td>
+<td>survol du CTA</td>
+<td>7,0:1</td>
+</tr>
+<tr>
+<td><code>--succes</code> / <code>--succes-fond</code></td>
+<td><code>#166534</code> / <code>#DCFCE7</code></td>
+<td>confirmation, stock disponible</td>
+<td><strong>6,5:1</strong></td>
+</tr>
+<tr>
+<td><code>--alerte</code> / <code>--alerte-fond</code></td>
+<td><code>#9A3412</code> / <code>#FFEDD5</code></td>
+<td>stock faible</td>
+<td><strong>6,4:1</strong></td>
+</tr>
+<tr>
+<td><code>--danger</code> / <code>--danger-fond</code></td>
+<td><code>#991B1B</code> / <code>#FEE2E2</code></td>
+<td>erreurs, rupture, annulation</td>
+<td><strong>6,8:1</strong></td>
+</tr>
+<tr>
+<td><code>--info</code> / <code>--info-fond</code></td>
+<td><code>#1E3A8A</code> / <code>#DBEAFE</code></td>
+<td>informations, neutre</td>
+<td><strong>8,5:1</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Règles d'usage</strong></p>
+<ul>
+<li>Le <strong>rouge ne sert jamais à afficher un prix</strong> (contrairement à Cdiscount) : il signifie <em>erreur</em> ou <em>rupture</em>.</li>
+<li>L'<strong>accent ambre</strong> est réservé aux actions qui engagent (ajouter au panier, valider la commande).
+  Un seul CTA accent par écran.</li>
+<li>Les <strong>badges d'état</strong> utilisent la paire <code>couleur / couleur-fond</code> : jamais de texte sur fond saturé
+  sans vérification de contraste.</li>
+<li>Aucune couleur n'est porteuse d'information seule : chaque badge a un <strong>libellé texte</strong> (daltonisme).</li>
+</ul>
+<hr />
+<h2 id="6-typographie">6. Typographie<a class="headerlink" href="#6-typographie" title="Permanent link">#</a></h2>
+<ul>
+<li><strong>Une seule famille</strong> : pile système <code>system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif</code>.
+  Avantages : zéro requête réseau (offline, soutenance sans Wi-Fi), rendu natif, <code>ENF-20</code> respecté.</li>
+<li><strong>Chiffres tabulaires</strong> (<code>font-variant-numeric: tabular-nums</code>) sur les prix, montants et stocks :
+  les colonnes de tableaux s'alignent.</li>
+<li>Échelle modulaire 1,25 (base 16 px) :</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Token</th>
+<th>px</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--t-xs</code></td>
+<td>12</td>
+<td>mentions, légendes</td>
+</tr>
+<tr>
+<td><code>--t-sm</code></td>
+<td>14</td>
+<td>texte secondaire, tableaux</td>
+</tr>
+<tr>
+<td><code>--t-md</code></td>
+<td>16</td>
+<td>texte courant</td>
+</tr>
+<tr>
+<td><code>--t-lg</code></td>
+<td>20</td>
+<td>sous-titres, prix de fiche</td>
+</tr>
+<tr>
+<td><code>--t-xl</code></td>
+<td>25</td>
+<td>titre de section</td>
+</tr>
+<tr>
+<td><code>--t-2xl</code></td>
+<td>31</td>
+<td>titre de page (h1)</td>
+</tr>
+<tr>
+<td><code>--t-3xl</code></td>
+<td>39</td>
+<td>prix principal de la fiche, chiffre-clé du back-office</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Longueur de ligne cible : <strong>60 à 75 caractères</strong> (<code>max-width: 68ch</code> sur les paragraphes de contenu).</li>
+<li>Interlignage : 1,5 pour le texte, 1,15 pour les titres.</li>
+</ul>
+<hr />
+<h2 id="7-grille-espacement-formes">7. Grille, espacement, formes<a class="headerlink" href="#7-grille-espacement-formes" title="Permanent link">#</a></h2>
+<ul>
+<li><strong>Unité de base 8 px</strong>, échelle : 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64.</li>
+<li>Conteneur : <code>max-width: 1180px</code>, gouttières 16 px mobile, 24 px tablette, 32 px desktop.</li>
+<li>Grilles : catalogue 1 / 2 / 3 colonnes (360 / 640 / 1024 px) ; back-office en <code>sidebar + contenu</code>.</li>
+<li>Rayons : 8 px (champs), 12 px (cartes), 999 px (pastilles).</li>
+<li>Ombres : deux niveaux seulement (<code>--ombre-1</code> au repos, <code>--ombre-2</code> au survol des cartes).</li>
+<li>Bordures : 1 px <code>--bordure</code> ; jamais de bordure décorative colorée en dehors des états.</li>
+</ul>
+<hr />
+<h2 id="8-composants-12">8. Composants (12)<a class="headerlink" href="#8-composants-12" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Composant</th>
+<th>Règle de conception</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>En-tête collant</strong></td>
+<td>logo SVG + navigation + badge panier (<code>aria-live</code>) ; hauteur 64 px, ombre au scroll</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Recherche</strong></td>
+<td>champ unique, <code>type=search</code>, bouton 44 px ; jamais de recherche « plein écran » (coût d'implémentation)</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Carte produit</strong></td>
+<td>image 4:3 (placeholder SVG si absente), catégorie, titre 2 lignes max, prix TTC, badge de stock, CTA</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Buy box</strong></td>
+<td>encadré collant à droite sur desktop : prix, TVA, disponibilité, quantité, CTA, réassurance</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Filtres à facettes</strong></td>
+<td>colonne à gauche desktop, accordéon mobile ; pastilles actives retirables ; état dans l'URL</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Pagination</strong></td>
+<td>Précédent / numéros / Suivant ; page courante <code>aria-current="page"</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>Tableau</strong> (back-office)</td>
+<td>en-têtes sombres, lignes zébrées, <code>caption</code>, chiffres alignés à droite</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>Formulaire</strong></td>
+<td>label au-dessus, aide en 14 px, erreur sous le champ + <code>aria-describedby</code>, focus 3 px</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Boutons</strong></td>
+<td>primaire (accent), secondaire (contour), discret (lien) ; 3 tailles ; état <code>disabled</code> explicite</td>
+</tr>
+<tr>
+<td>10</td>
+<td><strong>Badges d'état</strong></td>
+<td><code>Disponible</code> / <code>Bientôt épuisé</code> / <code>Rupture</code> / statuts de commande, toujours avec texte</td>
+</tr>
+<tr>
+<td>11</td>
+<td><strong>Messages flash</strong></td>
+<td>bandeau <code>role="status"</code> (succès) ou <code>role="alert"</code> (erreur), refermable, non bloquant</td>
+</tr>
+<tr>
+<td>12</td>
+<td><strong>État vide</strong></td>
+<td>une phrase qui explique quoi faire + un lien d'action (jamais une page blanche)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="9-accessibilite-wcag-21-aa">9. Accessibilité (WCAG 2.1 AA)<a class="headerlink" href="#9-accessibilite-wcag-21-aa" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Exigence</th>
+<th>Mise en œuvre</th>
+<th>Vérification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.4.3 Contraste texte</td>
+<td>palette calculée (min 5,2:1)</td>
+<td><code>tests/php/css_contract.php</code></td>
+</tr>
+<tr>
+<td>1.4.11 Contraste non-textuel</td>
+<td>bordures de champs ≥ 3:1 sur fond</td>
+<td>audit du thème</td>
+</tr>
+<tr>
+<td>2.1.1 Clavier</td>
+<td>tous les composants natifs (<code>button</code>, <code>a</code>, <code>input</code>), aucun <code>div</code> cliquable</td>
+<td>revue de code</td>
+</tr>
+<tr>
+<td>2.4.1 Contournement</td>
+<td><strong>lien d'évitement</strong> « Aller au contenu » premier élément focusable</td>
+<td><code>layout.php</code></td>
+</tr>
+<tr>
+<td>2.4.7 Focus visible</td>
+<td><code>:focus-visible</code> → contour 3 px + <code>outline-offset: 2px</code></td>
+<td>CSS</td>
+</tr>
+<tr>
+<td>3.3.1 Erreurs identifiées</td>
+<td>message sous le champ + résumé <code>role="alert"</code></td>
+<td>formulaires</td>
+</tr>
+<tr>
+<td>4.1.3 Statuts</td>
+<td><code>aria-live="polite"</code> sur le badge panier et le total</td>
+<td><code>layout.php</code>, <code>panier.js</code></td>
+</tr>
+<tr>
+<td>2.3.3 Animations</td>
+<td><code>prefers-reduced-motion</code> → transitions à 0,01 ms</td>
+<td>CSS</td>
+</tr>
+<tr>
+<td>1.4.4 Zoom 200 %</td>
+<td>aucune hauteur fixe sur les blocs de texte ; <code>rem</code> partout</td>
+<td>CSS</td>
+</tr>
+<tr>
+<td>2.5.5 Cibles tactiles</td>
+<td>minimum 44 × 44 px sur mobile</td>
+<td>CSS</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Décision assumée</strong> : pas de mode sombre en v1 (coût de test doublé pour un gain nul en soutenance) ;
+les tokens sont prêts (<code>[data-theme="dark"]</code> documenté) si la suite du projet le demande.</p>
+<hr />
+<h2 id="10-iconographie-et-imagerie">10. Iconographie et imagerie<a class="headerlink" href="#10-iconographie-et-imagerie" title="Permanent link">#</a></h2>
+<ul>
+<li><strong>Icônes SVG inline</strong> (course 24 px, trait 1,75 px) : <code>panier</code>, <code>recherche</code>, <code>coche</code>, <code>alerte</code>,
+  <code>croix</code>, <code>chevron</code>, <code>camion</code>, <code>cadenas</code>. Aucune bibliothèque externe, aucun sprite réseau.</li>
+<li><strong>Logo</strong> : un « M » en boucle ouverte (circuit imprimé) dans un carré arrondi <code>--primaire</code>,
+  décliné en <code>logo.svg</code> (horizontal) et <code>favicon.svg</code> (carré).</li>
+<li><strong>Images produit</strong> : le jeu de démonstration n'a pas de photos ; la carte affiche un <strong>placeholder
+  génératif</strong> (dégradé neutre + initiale du produit) — ce n'est jamais une image cassée.</li>
+<li><strong>Pas de photographie de banque d'images</strong> : le projet est pédagogique, on assume une direction
+  « fiche technique » plutôt qu'un e-commerce photographique.</li>
+</ul>
+<hr />
+<h2 id="11-regles-editoriales-microcopy">11. Règles éditoriales (microcopy)<a class="headerlink" href="#11-regles-editoriales-microcopy" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Contexte</th>
+<th>On écrit</th>
+<th>On n'écrit pas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Prix</td>
+<td><code>129,90 € TTC</code> (+ <code>soit 108,25 € HT · TVA 20 %</code>)</td>
+<td><code>129.9€</code>, <code>PROMO</code></td>
+</tr>
+<tr>
+<td>Stock</td>
+<td><code>En stock (12)</code>, <code>Bientôt épuisé (2)</code>, <code>Rupture</code></td>
+<td><code>Plus que 2 !!!</code>, <code>Dépêchez-vous</code></td>
+</tr>
+<tr>
+<td>Erreur</td>
+<td><code>Cet email est déjà utilisé. Connectez-vous ou choisissez-en un autre.</code></td>
+<td><code>Erreur 1062</code></td>
+</tr>
+<tr>
+<td>Succès</td>
+<td><code>Commande validée. Votre numéro : CMD-2026-0042.</code></td>
+<td><code>OK</code></td>
+</tr>
+<tr>
+<td>Vide</td>
+<td><code>Votre panier est vide. Parcourir le catalogue →</code></td>
+<td><code>Aucun résultat.</code></td>
+</tr>
+<tr>
+<td>Bouton</td>
+<td><code>Ajouter au panier</code> (verbe + objet)</td>
+<td><code>Envoyer</code>, <code>Valider</code> (seul)</td>
+</tr>
+</tbody>
+</table>
+<p>Ton : <strong>direct, factuel, sans urgence artificielle</strong>. Tutoiement interdit, vouvoiement systématique.</p>
+<hr />
+<h2 id="12-mise-en-uvre">12. Mise en œuvre<a class="headerlink" href="#12-mise-en-uvre" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Fichier</th>
+<th>Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>public/css/app.css</code></td>
+<td>tokens, remise à zéro, typographie, 12 composants, 3 paliers responsive, impression</td>
+</tr>
+<tr>
+<td><code>public/css/print.css</code></td>
+<td>impression des CGV et des récapitulatifs de commande</td>
+</tr>
+<tr>
+<td><code>public/js/panier.js</code></td>
+<td>ajout sans rechargement, badge <code>aria-live</code>, plafond serveur, confirmations</td>
+</tr>
+<tr>
+<td><code>public/js/ui.js</code></td>
+<td>menu mobile, compteur de caractères, focus après erreur</td>
+</tr>
+<tr>
+<td><code>public/img/logo.svg</code>, <code>logo-mark.svg</code>, <code>favicon.svg</code></td>
+<td>identité</td>
+</tr>
+<tr>
+<td><code>app/View/layout.php</code></td>
+<td>gabarit : skip-link, en-tête, nav, <code>aria-live</code>, pied de page</td>
+</tr>
+<tr>
+<td><code>tests/php/css_contract.php</code></td>
+<td>vérifie que chaque token existe, que les contrastes passent, que les classes utilisées dans les vues sont définies</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Tests contractuels</strong> (extrait) :</p>
+<pre><code class="language-bash">node scripts/wasm_run.mjs tests/php/css_contract.php
+# attendu : 24 vérifications — 24 OK
+#  ✓ tous les tokens sont définis
+#  ✓ contraste encre/papier 17.10 ≥ 4.5
+#  ✓ contraste accent/blanc 5.18 ≥ 4.5
+#  ✓ chaque classe utilisée dans les vues existe dans app.css
+#  ✓ prefers-reduced-motion géré
+#  ✓ focus-visible défini
+</code></pre>
+<hr />
+<h2 id="13-ce-que-la-da-ne-fait-pas-bornes">13. Ce que la DA ne fait pas (bornes)<a class="headerlink" href="#13-ce-que-la-da-ne-fait-pas-bornes" title="Permanent link">#</a></h2>
+<ul>
+<li>pas de thème sombre, pas de personnalisation par utilisateur ;</li>
+<li>pas de photos produit (jeu de démo sans médias) ;</li>
+<li>pas d'animations au-delà de 150 ms ;</li>
+<li>pas de framework CSS (ni Bootstrap ni Tailwind) : le design system est écrit à la main, ~700 lignes,
+  lisible et testable — argument de soutenance sur la maîtrise du CSS ;</li>
+<li>pas de police web : la pile système garantit un rendu identique hors ligne.</li>
+</ul>
+<hr />
+<h2 id="14-responsive-et-adaptation-continue">14. Responsive et adaptation continue<a class="headerlink" href="#14-responsive-et-adaptation-continue" title="Permanent link">#</a></h2>
+<blockquote>
+<p>Ajout demandé après la première revue : « aucun argument contre le design ».
+Cette section documente la stratégie, les paliers et les preuves — elle est
+vérifiée automatiquement par <code>tests/php/responsive_contract.php</code> (47 contrôles).</p>
+</blockquote>
+<h3 id="141-principe-fluide-dabord-paliers-pour-la-composition">14.1 Principe : fluide d'abord, paliers pour la composition<a class="headerlink" href="#141-principe-fluide-dabord-paliers-pour-la-composition" title="Permanent link">#</a></h3>
+<p>La mise en page ne « saute » pas d'un écran à l'autre : elle se dilate. Les
+tailles de titres, les gouttières et les espacements verticaux utilisent
+<code>clamp(min, préféré, max)</code>, la largeur utile <code>min(100% - 2 × gouttière, 1280px)</code>.
+Les points de rupture ne servent qu'aux <strong>changements de composition</strong> —
+c'est la règle que suivent Stripe, GOV.UK ou Material 3, et elle évite le
+« responsive à trois tailles figées » qui casse sur les formats pliables.</p>
+<h3 id="142-paliers">14.2 Paliers<a class="headerlink" href="#142-paliers" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Palier</th>
+<th>Ce qui change</th>
+<th>Justification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>≥ 87,5 em (1400 px)</td>
+<td>largeur utile 1280 px, page centrée</td>
+<td>au-delà, la mesure de lecture dépasse 75 caractères</td>
+</tr>
+<tr>
+<td>≤ 64 em (1024 px)</td>
+<td>navigation repliée en <code>&lt;details&gt;</code> (« Menu ») ; catalogue / fiche / panier / back-office en une colonne ; filtres en grille ; barre latérale d'admin horizontale</td>
+<td>tablette paysage et portrait : 8 entrées ne tiennent plus sur une ligne</td>
+</tr>
+<tr>
+<td>≤ 45 em (720 px)</td>
+<td>résultats avant les filtres (<code>order</code>) ; hero réduit ; KPI sur 2 colonnes ; pied sur 2 colonnes</td>
+<td>mobile large : le produit doit être visible sans défiler</td>
+</tr>
+<tr>
+<td>≤ 40 em (640 px)</td>
+<td>formulaires pleine largeur, tableaux à 14 px, récapitulatif non collant</td>
+<td>pouce + lisibilité</td>
+</tr>
+<tr>
+<td>≤ 35 em (560 px)</td>
+<td>panier en <strong>cartes étiquetées</strong> (<code>data-label</code>)</td>
+<td>un tableau de 5 colonnes n'est pas « reflowable » (WCAG 1.4.10)</td>
+</tr>
+<tr>
+<td>≤ 25 em (400 px)</td>
+<td>étiquette au-dessus de la valeur dans le panier</td>
+<td>320 px utiles seulement</td>
+</tr>
+<tr>
+<td>≤ 400 px</td>
+<td>pied et KPI sur 1 colonne, titres réduits</td>
+<td>iPhone SE / Galaxy A0x</td>
+</tr>
+<tr>
+<td>paysage ≤ 520 px de haut</td>
+<td>en-tête non collant, hero compact</td>
+<td>récupérer la hauteur utile</td>
+</tr>
+<tr>
+<td>impression</td>
+<td>navigation masquée, tableaux non rognés, <code>break-inside: avoid</code></td>
+<td>CGV et factures</td>
+</tr>
+</tbody>
+</table>
+<h3 id="143-techniques-appliquees-et-pourquoi">14.3 Techniques appliquées (et pourquoi)<a class="headerlink" href="#143-techniques-appliquees-et-pourquoi" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Technique</th>
+<th>Effet</th>
+<th>Référence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>clamp()</code> sur 8 tokens</td>
+<td>titres lisibles de 320 px à 1536 px sans 6 media queries</td>
+<td>type fluide</td>
+</tr>
+<tr>
+<td>Paliers en <code>em</code> (25 / 35 / 40 / 45 / 64 / 87,5)</td>
+<td>suivent la taille de police choisie par l'utilisateur, pas seulement la largeur de l'écran</td>
+<td>MDN, WCAG 1.4.4</td>
+</tr>
+<tr>
+<td><code>--gouttiere: clamp(1rem, 4vw, 2rem)</code></td>
+<td>marges latérales proportionnées</td>
+<td>grille 8 px</td>
+</tr>
+<tr>
+<td><code>@container</code> + <code>@supports</code></td>
+<td>une carte produit se compacte selon <strong>sa</strong> largeur, pas celle de l'écran</td>
+<td>container queries</td>
+</tr>
+<tr>
+<td><code>&lt;details&gt;</code> pour le menu, ouvert sans JS</td>
+<td>navigation utilisable JavaScript désactivé (ENF-07)</td>
+<td>disclosure pattern (WAI-ARIA APG)</td>
+</tr>
+<tr>
+<td><code>min-width: 0</code> sur les enfants de grille</td>
+<td>supprime la cause n° 1 de scroll horizontal</td>
+<td>CSS Grid</td>
+</tr>
+<tr>
+<td>Régions défilantes <code>tabindex="0"</code> + ombres</td>
+<td>tableaux accessibles au clavier avec affordance visuelle</td>
+<td>WCAG 2.1.1</td>
+</tr>
+<tr>
+<td>Champs à <code>max(16px, 1rem)</code></td>
+<td>empêche le zoom automatique iOS</td>
+<td>Safari</td>
+</tr>
+<tr>
+<td>Cibles ≥ 44 px (48 px pour le CTA d'achat)</td>
+<td>dépasse le minimum AA (24 px) et couvre Apple HIG (44 pt)</td>
+<td>WCAG 2.5.8 / 2.5.5, Apple HIG</td>
+</tr>
+<tr>
+<td><code>100dvh</code>, <code>env(safe-area-inset-*)</code></td>
+<td>encoches et barre d'outils mobile</td>
+<td>iOS / Android</td>
+</tr>
+<tr>
+<td><code>forced-colors</code>, <code>prefers-contrast</code>, <code>prefers-reduced-motion</code></td>
+<td>respect des réglages système</td>
+<td>WCAG 1.4.12 / 2.3.3</td>
+</tr>
+<tr>
+<td><code>overflow-x: clip</code> sur <code>html</code></td>
+<td>filet anti-débordement sans casser <code>position: sticky</code></td>
+<td>CSS Overflow 3</td>
+</tr>
+<tr>
+<td><code>text-wrap: balance / pretty</code></td>
+<td>pas de veuves sur les titres</td>
+<td>typographie</td>
+</tr>
+</tbody>
+</table>
+<h3 id="144-matrice-de-validation">14.4 Matrice de validation<a class="headerlink" href="#144-matrice-de-validation" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Largeur</th>
+<th>Attendu</th>
+<th>Vérifié par</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>320 px</td>
+<td>aucun défilement horizontal, menu replié, panier en cartes</td>
+<td>contrat responsive + revue manuelle</td>
+</tr>
+<tr>
+<td>375 / 414 px</td>
+<td>idem, cibles ≥ 44 px</td>
+<td><code>@media (pointer: coarse)</code></td>
+</tr>
+<tr>
+<td>768 px</td>
+<td>une colonne, filtres en grille, résultats avant filtres</td>
+<td>palier 720/1024</td>
+</tr>
+<tr>
+<td>1024 px</td>
+<td>deux colonnes d'admin conservées, catalogue empilé</td>
+<td>palier 1024</td>
+</tr>
+<tr>
+<td>1440 px</td>
+<td>largeur bornée 1280 px, mesure ≤ 75 caractères</td>
+<td><code>--mesure</code></td>
+</tr>
+<tr>
+<td>200 % de zoom</td>
+<td>pas de contenu coupé (aucune hauteur fixe sur les blocs de texte)</td>
+<td>revue manuelle</td>
+</tr>
+<tr>
+<td>impression</td>
+<td>navigation absente, tableaux complets</td>
+<td><code>print.css</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="145-sources-et-regles-appliquees">14.5 Sources et règles appliquées<a class="headerlink" href="#145-sources-et-regles-appliquees" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Règle retenue</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reflow à 320 px, exception pour les tableaux de données, interdiction de bloquer le zoom</td>
+<td><a href="https://www.w3.org/WAI/WCAG21/Understanding/reflow.html">W3C — Understanding SC 1.4.10 Reflow</a></td>
+</tr>
+<tr>
+<td>Concevoir petit d'abord, une colonne, maximum ~75 caractères par ligne, largeur de page bornée</td>
+<td><a href="https://design-system.service.gov.uk/styles/layout/">GOV.UK Design System — Layout</a></td>
+</tr>
+<tr>
+<td>Paliers en unités relatives plutôt qu'en pixels de terminal</td>
+<td><a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Responsive_Design">MDN — Responsive design</a></td>
+</tr>
+<tr>
+<td>Cible tactile : 24 px minimum (AA), 44 px (AAA), 44 pt Apple, 48 dp Material</td>
+<td><a href="https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html">WCAG 2.5.8</a> · Apple HIG · Material 3</td>
+</tr>
+<tr>
+<td>Un seul <code>&lt;h1&gt;</code>, hiérarchie de titres, liens d'évitement, focus visible</td>
+<td>WCAG 2.4.1 / 2.4.7 · WAI-ARIA APG (disclosure)</td>
+</tr>
+</tbody>
+</table>
+<p>Les paliers GOV.UK (40 em / 48 em / 64 em) ont servi de référence ; nous
+utilisons 25 / 35 / 40 / 45 / 64 / 87,5 em parce que le catalogue a besoin
+d'un palier supplémentaire pour le passage en cartes du panier.</p>
+<h3 id="146-limites-assumees">14.6 Limites assumées<a class="headerlink" href="#146-limites-assumees" title="Permanent link">#</a></h3>
+<ul>
+<li>Aucun navigateur n'est installé dans l'environnement de production des
+  livrables : la validation est <strong>statique</strong> (contrat de 47 vérifications) plus
+  un protocole manuel de 5 largeurs décrit ci-dessus. Une revue sur appareils
+  réels reste à cocher dans le PV de recette (doc <code>02</code>).</li>
+<li>Pas de <code>:has()</code> ni de <code>color-mix()</code> indispensables : les rares usages de
+  <code>color-mix()</code> ont un repli par couleur littérale dans la même règle.</li>
+</ul>
+<footer class="doc">
+  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/DA.md</code>
+  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+</footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="SAÉ 302 — MiniShop : 10 — Todolist des corrections (audit 09) — état vérifié#">
+<title>10 — Todolist des corrections (audit 09) — état vérifié# — MiniShop</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --papier: #fbfaf7;
+  --carte: #ffffff;
+  --trait: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-clair: #dbeafe;
+  --code: #f1f5f9;
+  --mesure: 72ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
+    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
+    --accent-clair: #1e3a8a; --code: #16223a;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  max-width: calc(var(--mesure) + 6rem);
+  background: var(--papier);
+  color: var(--encre);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
+h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
+p, li { max-width: var(--mesure); }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+}
+pre {
+  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
+  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.35rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+thead th { background: var(--accent-clair); }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
+img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li input[type="checkbox"] { margin-right: 0.4rem; }
+.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
+.toc > ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1rem; }
+footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+@media print {
+  :root { --papier: #fff; --carte: #fff; }
+  @page { size: A4; margin: 18mm 16mm; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#0-bloquants-installation-ci-base">0. Bloquants — installation, CI, base</a></li>
+<li><a href="#1-base-de-donnees-pdo-bareme-iii">1. Base de données / PDO (barème iii)</a></li>
+<li><a href="#2-design-demande-explicite-fait">2. Design (demande explicite) — fait</a></li>
+<li><a href="#3-fonctionnel">3. Fonctionnel</a></li>
+<li><a href="#4-tests-grandes-entreprises">4. Tests « grandes entreprises »</a></li>
+<li><a href="#5-rendus-rien-de-produit">5. Rendus — rien de produit</a></li>
+<li><a href="#6-coherence-documentaire-aucune-correction-appliquee">6. Cohérence documentaire — aucune correction appliquée</a></li>
+<li><a href="#7-reste-a-faire-hors-depot-ne-peut-pas-etre-fait-par-un-agent">7. Reste à faire hors dépôt (ne peut pas être fait par un agent)</a></li>
+<li><a href="#8-ce-que-la-version-precedente-de-ce-document-affirmait-a-tort">8. Ce que la version précédente de ce document affirmait à tort</a></li>
+<li><a href="#commandes-de-verification-etat-reel">Commandes de vérification (état réel)</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="10-todolist-des-corrections-audit-09-etat-verifie">10 — Todolist des corrections (audit <code>09</code>) — état <strong>vérifié</strong><a class="headerlink" href="#10-todolist-des-corrections-audit-09-etat-verifie" title="Permanent link">#</a></h1>
+<blockquote>
+<p>Suivi d'exécution de l'audit <a href="09-audit-ecarts.html"><code>09-audit-ecarts.md</code></a>.
+Légende : <code>[x]</code> fait <strong>et vérifié sur disque</strong> · <code>[ ]</code> <strong>toujours manquant</strong> · <code>[~]</code> fait autrement, justifié · <code>[!]</code> bloqué par l'environnement.
+Chaque ligne indique le fichier concerné et la commande qui permet de le constater.</p>
+<p><strong>Dernière vérification :</strong> 2026-10-23 · branche <code>arena/6e1d3706-sae-302</code>.
+Cette version remplace la précédente, qui cochait des livrables <strong>absents du dépôt</strong> (voir §8).</p>
+</blockquote>
+<hr />
+<h2 id="0-bloquants-installation-ci-base">0. Bloquants — installation, CI, base<a class="headerlink" href="#0-bloquants-installation-ci-base" title="Permanent link">#</a></h2>
+<ul>
+<li>✅ <code>scripts/load_db.sh</code> — chargement <code>sql/01→04</code> en une commande. Repli <code>mysql</code> si PHP absent ; nom de base paramétrable (<code>DB=minishop_test</code>).</li>
+<li>✅ <code>scripts/load_db.php</code> — moteur PDO du précédent (aucun client <code>mysql</code> requis, <code>DELIMITER</code> géré).</li>
+<li>✅ <code>scripts/run_sql_tests.sh</code> — enveloppe officielle des 29 tests (délègue à <code>tests/sql/run_tests.sh</code>).</li>
+<li>✅ <code>scripts/gen_volumes.sh</code> — enveloppe de <code>scripts/gen_volumes_cli.php</code>.</li>
+<li>✅ <code>scripts/gen_volumes_cli.php</code> — <code>--load</code> n'utilise plus de sous-processus (contrôle 9) : chargement par <code>App\Tools\SqlLoader</code>.</li>
+<li>✅ <code>app/Tools/SqlLoader.php</code> — découpage SQL (<code>DELIMITER</code>, chaînes, commentaires) + comptage des objets créés.</li>
+<li>☐ <code>scripts/build-docs.sh</code> — <strong>absent</strong>. Aucun rendu documentaire ne peut être produit par le dépôt.</li>
+<li>✅ <code>docs/diagrams/render.sh</code> — présent (non versionné jusqu'ici : voir §8).</li>
+<li>✅ <code>docs/diagrams/src/*.puml</code> — <strong>14 sources</strong> (cas d'usage ×3, classes, séquences ×5, activité, états, architecture, MCD, MLD).</li>
+<li>✅ <code>public/css/</code>, <code>public/js/</code>, <code>public/img/</code> — design system, JS, SVG (voir §2).</li>
+<li>✅ <code>tests/charge/reserver.sh</code> — présent (20 demandes / 12 exemplaires).</li>
+<li>✅ <code>tests/perf/mesurer.sh</code> — présent (+ <code>mesurer_sql.sh</code>).</li>
+<li>✅ <code>.gitlab/merge_request_templates/{Lot,Bugfix,Docs,Release}.md</code> — présents.</li>
+<li>✅ <strong>PHPUnit</strong> — <code>composer.json</code> (<code>phpunit/phpunit ^11</code>), <code>phpunit.xml</code>, <code>tests/phpunit/</code> (6 classes, 34 tests) + runner hors ligne.</li>
+<li>☐ CI GitLab — <code>base-tests</code> et <code>unit</code> ont désormais leurs scripts, mais le job <code>docs</code> échoue encore (<code>render.sh</code> absent) ; aucun pipeline n'a été exécuté ici.</li>
+<li>☐ CI GitHub — le job <code>unit</code> reste tolérant : aucun PHPUnit réel n'a été joué dans cette sandbox.</li>
+<li>✅ <code>var/.gitkeep</code> — présent.</li>
+</ul>
+<h2 id="1-base-de-donnees-pdo-bareme-iii">1. Base de données / PDO (barème iii)<a class="headerlink" href="#1-base-de-donnees-pdo-bareme-iii" title="Permanent link">#</a></h2>
+<ul>
+<li>✅ <code>app/Model/Data/SqlStore.php</code> — <strong>implémentation PDO réelle</strong> : <code>select/find/count/sum/exists/all</code>, <code>insert/update/delete/nextId</code>, transactions, <code>appeler()</code> pour les procédures, traduction <code>SQLSTATE 45000 → BusinessError</code> et <code>23000 → ConstraintError</code>, <code>PDO::ATTR_EMULATE_PREPARES = false</code>, noms de tables/colonnes validés par <code>Schema</code>.</li>
+<li>✅ Contrat unifié : <code>StoreInterface::transactional()</code> ajouté (implémenté par <code>JsonStore</code> <strong>et</strong> <code>SqlStore</code>).</li>
+<li>☐ <strong>Les procédures stockées ne sont toujours pas appelées par les dépôts</strong> : <code>SqlStore::appeler('sp_…')</code> existe mais aucun <code>Repository</code> ne l'utilise. Avec <code>storage_driver = 'sql'</code>, l'application écrit en SQL direct — les 16 déclencheurs s'exécutent, les 17 procédures non. La phrase du CDC §16.2 (« effectivement appelées ») reste <strong>fausse</strong>.</li>
+<li>☐ <code>tests/php/sql_integration.php</code> — <strong>absent</strong> : aucune exécution MySQL dans cette sandbox.</li>
+<li>☐ Documentation de bascule (<code>storage_driver = 'sql'</code>) — non écrite.</li>
+</ul>
+<h2 id="2-design-demande-explicite-fait">2. Design (demande explicite) — <strong>fait</strong><a class="headerlink" href="#2-design-demande-explicite-fait" title="Permanent link">#</a></h2>
+<ul>
+<li>✅ <code>docs/DA.md</code> — étude de 5 concurrents (patterns observables) → direction artistique (palette + ratios, typographie système, grille 8 px, 12 composants, microcopy, bornes).</li>
+<li>✅ <code>public/css/app.css</code> — design system (35 tokens, composants, responsive, <code>:focus-visible</code>, <code>prefers-reduced-motion</code>, <code>prefers-contrast</code>).</li>
+<li>✅ <code>public/css/print.css</code> — feuille d'impression.</li>
+<li>✅ <code>public/js/panier.js</code>, <code>public/js/ui.js</code> — panier sans rechargement (<code>fetch</code>, <code>aria-live</code>, badge), validations et focus.</li>
+<li>✅ <code>public/img/{logo,logo-mark,favicon,illustration-achat}.svg</code>.</li>
+<li>✅ <code>app/View/layout.php</code> — skip-link, nav <code>aria-current</code>, badge panier, flashs, pied de page.</li>
+<li>✅ <code>app/Controller/ApiController.php</code> + routes <code>/api/panier/*</code> — JSON, CSRF, montants serveur.</li>
+<li>✅ CSP alignée (<code>style-src 'self'</code>, <code>script-src 'self'</code>) sans affaiblir le reste.</li>
+</ul>
+<h2 id="3-fonctionnel">3. Fonctionnel<a class="headerlink" href="#3-fonctionnel" title="Permanent link">#</a></h2>
+<ul>
+<li>✅ Page <strong>contact</strong> (<code>GET/POST /contact</code>, CSRF, accusé de réception, journalisation).</li>
+<li>✅ Route <strong><code>/mentions</code></strong> (alias de <code>/mentions-legales</code>) et <code>/aide</code>.</li>
+<li>✅ Filtre <strong><code>/admin/stocks?etat=…</code></strong> + tri par criticité.</li>
+<li>✅ Écran <strong>paramètres</strong> <code>/admin/parametres</code> (frais de port, franchise, TVA par défaut), garde <code>admin</code>.</li>
+<li>✅ Indicateurs <strong>du jour</strong> + cumul au tableau de bord.</li>
+<li>☐ Alias <code>POST /admin/produits</code> — <strong>absent</strong> (<code>public/index.php</code> n'expose que <code>GET /admin/produits</code> et <code>POST /admin/produit/nouveau</code>).</li>
+<li>✅ 404/403/500 habillées par le design system.</li>
+</ul>
+<h2 id="4-tests-grandes-entreprises">4. Tests « grandes entreprises »<a class="headerlink" href="#4-tests-grandes-entreprises" title="Permanent link">#</a></h2>
+<ul>
+<li>✅ Pyramide réelle : <code>tests/phpunit</code> (unitaires) → <code>tests/php/{engine_smoke,run_tests,unit_tests,features_test,css_contract}</code> (intégration/contrats) → <code>scripts/wasm-e2e.mjs</code> (E2E HTTP) → <code>tests/security</code>.</li>
+<li>✅ <strong>PHPUnit</strong> : 6 classes, <strong>34 tests</strong> (<code>TextTest</code>, <code>FilterTest</code>, <code>PrixTest</code>, <code>TriggersTest</code>, <code>JsonStoreTest</code>, <code>SecurityContractTest</code>).</li>
+<li>✅ <code>tests/phpunit/run-local.php</code> — runner hors ligne (<code>npm run test:phpunit</code>).</li>
+<li>✅ <code>tests/php/css_contract.php</code> — 28 vérifications (tokens, contrastes AA, classes des vues, a11y, intégration).</li>
+<li>☐ <code>scripts/coverage.php</code> — <strong>absent</strong> ; <code>phpunit.xml</code> ne produit pas de couverture.</li>
+<li>☐ <code>tests/php/contract_http.php</code> — <strong>absent</strong> : les contrats HTTP ne sont couverts que par l'E2E.</li>
+<li>☐ <code>docs/11-strategie-tests.md</code> — <strong>absent</strong>.</li>
+<li>✅ <code>npm run test:all</code> exécute <strong>7 suites</strong> + l'E2E (moteur, règles, unitaires, fonctionnalités, design, responsive, PHPUnit) ; le linter strict-types est un contrôle séparé.</li>
+</ul>
+<h2 id="5-rendus-rien-de-produit">5. Rendus — <strong>rien de produit</strong><a class="headerlink" href="#5-rendus-rien-de-produit" title="Permanent link">#</a></h2>
+<ul>
+<li>☐ HTML autonome des documents — absent (<code>livrables/</code> n'existe pas).</li>
+<li>☐ DOCX — absent.</li>
+<li>☐ PDF — absent (le seul PDF du dépôt est <code>docs/sql-a-ecrire/requetes-sql-a-ecrire.pdf</code>).</li>
+<li>☐ Diaporama 12 slides — absent.</li>
+<li>[!] Vidéo de secours 3 min — non produisible sans navigateur/encodeur.</li>
+<li>☐ <code>livrables/README.md</code> — absent.</li>
+<li>Outillage disponible : <code>scripts/md_to_pdf.py</code> (fpdf2) — jamais exécuté sur les documents.</li>
+</ul>
+<h2 id="6-coherence-documentaire-aucune-correction-appliquee">6. Cohérence documentaire — <strong>aucune correction appliquée</strong><a class="headerlink" href="#6-coherence-documentaire-aucune-correction-appliquee" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Point</th>
+<th>État</th>
+<th>Preuve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>29 tests SQL partout</td>
+<td>[ ]</td>
+<td><code>docs/03</code> : « 28/28 » (l. 13, 27) et « 27 / 27 » ; <code>.gitlab-ci.yml</code> : « 28 tests »</td>
+</tr>
+<tr>
+<td>E2E 180</td>
+<td>[x]</td>
+<td><code>README.md</code> corrigé (T1…T14, 180/180)</td>
+</tr>
+<tr>
+<td>PHP 8.2 minimum</td>
+<td>[x]</td>
+<td>prérequis README aligné sur <code>composer.json</code></td>
+</tr>
+<tr>
+<td><code>ENF-13</code> dupliqué → <code>ENF-22</code></td>
+<td>[ ]</td>
+<td><code>annexe-enf.md</code> : deux lignes <code>ENF-13</code> (l. 20 et 34), aucun <code>ENF-22</code></td>
+</tr>
+<tr>
+<td>MCD 8 entités</td>
+<td>[ ]</td>
+<td><code>docs/03</code> l. 23 : « MCD (7 entités) »</td>
+</tr>
+<tr>
+<td>Noms <code>01_minishop_schema.sql</code></td>
+<td>[ ]</td>
+<td><code>docs/07</code> et <code>docs/09</code> citent encore <code>01-minishop-schema.sql</code></td>
+</tr>
+<tr>
+<td>CDC §16.1/§16.4 à jour</td>
+<td>[ ]</td>
+<td>§16.1 : « à développer » / « à produire » ; §16.4 : « le code PHP n'est pas encore écrit »</td>
+</tr>
+<tr>
+<td>Doc <code>02</code> : 33 <code>F-xx</code> exécutés + PV</td>
+<td>[ ]</td>
+<td>33 lignes « conçu » ; « PV de recette laissé à compléter » ; « lots L8→L13 »</td>
+</tr>
+<tr>
+<td>Doc <code>03</code> aligné sur l'application</td>
+<td>[ ]</td>
+<td>scénario encore écrit pour un terminal MySQL</td>
+</tr>
+<tr>
+<td>README : arborescence, chiffres, badges</td>
+<td>[~]</td>
+<td>chiffres et « zéro CSS » corrigés ; badge GitLab toujours factice (<code>gitlab.example.com</code>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-reste-a-faire-hors-depot-ne-peut-pas-etre-fait-par-un-agent">7. Reste à faire hors dépôt (ne peut pas être fait par un agent)<a class="headerlink" href="#7-reste-a-faire-hors-depot-ne-peut-pas-etre-fait-par-un-agent" title="Permanent link">#</a></h2>
+<ul>
+<li>[!] <strong>Noms, prénoms, numéros étudiants</strong> des 3 membres + emails → README §Membres et CDC §3.3 (aucune identité ne peut être inventée).</li>
+<li>[!] <strong>Dépôt GitLab réel</strong> + courriel « Composition SAE » à la référente ; badge et URLs à remplacer.</li>
+<li>[!] <strong>Rejeu des 32 commits</strong> par les 3 personnes (<code>docs/08</code> + <code>scripts/rejeu_gitlab.py</code>) : l'historique doit être individuel et daté, il ne peut pas être fabriqué ici (le dépôt n'a qu'un commit).</li>
+<li>[!] <strong>Couverture PHPUnit chiffrée</strong> : nécessite Xdebug sur une machine réelle.</li>
+<li>[!] <strong>Mesures ENF-01/ENF-08/ENF-15</strong> : nécessitent un serveur HTTP et MySQL réels.</li>
+<li>[!] <strong>Vidéo de secours</strong> de la démo.</li>
+</ul>
+<hr />
+<h2 id="8-ce-que-la-version-precedente-de-ce-document-affirmait-a-tort">8. Ce que la version précédente de ce document affirmait à tort<a class="headerlink" href="#8-ce-que-la-version-precedente-de-ce-document-affirmait-a-tort" title="Permanent link">#</a></h2>
+<p>Deux erreurs distinctes, toutes deux vérifiées le 23/10/2026 :</p>
+<ol>
+<li><strong>Des livrables cochés <code>[x]</code> n'existaient pas du tout</strong> :
+   <code>scripts/build-docs.sh</code> · <code>scripts/coverage.php</code> · <code>tests/php/contract_http.php</code> ·
+   <code>tests/php/sql_integration.php</code> · <code>docs/11-strategie-tests.md</code> · <code>livrables/**</code> (HTML, DOCX, PDF, PPTX) ·
+   les appels des <strong>procédures stockées</strong> par les dépôts · les <strong>11 corrections de chiffres</strong> du §6.</li>
+<li><strong>Des livrables existaient sur le disque mais n'étaient pas versionnés</strong> (<code>git status</code> les listait
+   en <code>??</code>) : <code>docs/diagrams/render.sh</code>, <code>docs/diagrams/src/*.puml</code> (14), <code>tests/charge/reserver.sh</code>,
+   <code>tests/perf/mesurer.sh</code>, <code>.gitlab/merge_request_templates/*.md</code>, <code>var/.gitkeep</code>, <code>public/css|js|img</code>,
+   <code>tests/phpunit/**</code>, <code>docs/09</code>, <code>docs/10</code>. Un clone du dépôt ne les contenait pas : ils sont
+   désormais suivis par Git (voir le commit de cette passe).</li>
+</ol>
+<hr />
+<h2 id="commandes-de-verification-etat-reel">Commandes de vérification (état réel)<a class="headerlink" href="#commandes-de-verification-etat-reel" title="Permanent link">#</a></h2>
+<pre><code class="language-bash">npm install                            # une fois (PHP-WASM)
+node scripts/run-all-tests.mjs         # 6 suites + E2E — attendu : tout vert
+npm run test:phpunit                   # 34 tests PHPUnit hors ligne
+npm run test:design                    # 28 contrats de design
+bash tests/security/controles.sh       # 10/10 conformes
+bash -n scripts/{load_db,run_sql_tests,gen_volumes}.sh
+ls scripts/build-docs.sh docs/diagrams/render.sh tests/perf/mesurer.sh   # → introuvables
+</code></pre>
+<footer class="doc">
+  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/10-todo-corrections.md</code>
+  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+</footer>
+</main>
+</body>
+</html>

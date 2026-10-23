@@ -17,7 +17,7 @@
 | A | Fichiers référencés mais **absents** | 🔴 bloquant | v (README), iii | 🟡 **partiel** — `load_db.sh` (+ variante PDO), `run_sql_tests.sh`, `gen_volumes.sh`, `public/css|js|img`, PHPUnit : livrés. **Manquent** `build-docs.sh`, `coverage.php`, `contract_http.php`, `livrables/**`, `composer.lock`. Le reste (diagrammes `.puml` + `render.sh`, `tests/charge`, `tests/perf`, gabarits de MR, `var/.gitkeep`) existe mais n'était **pas versionné** — corrigé dans cette passe. |
 | B | L'application **ne tourne pas sur MySQL/PDO** | 🔴 majeur | iii (−1 par procédure/trigger « non appelé »), ii | 🟡 **partiel** — `SqlStore` est une vraie implémentation PDO (requêtes préparées, transactions, `CALL`, traduction des `SIGNAL`). **Reste** : brancher les dépôts sur `sp_*`, tester sur MySQL, documenter la bascule ; le défaut reste JSON. |
 | C | **Aucune interface** : ni CSS, ni JS, ni images | 🟠 fort | iii, ENF-05/07/08 | ✅ **résolu** — design system, impression, JS panier/UI, SVG, gabarit, API JSON, CSP, **responsive 320 px → 1536 px** (48 contrôles). |
-| D | **Rendus non produits** : PDF/DOCX, diaporama, vidéo | 🟠 fort | i, ii, iv | 🔴 **inchangé** — `livrables/` n'existe pas ; `md_to_pdf.py` n'a jamais été exécuté sur les documents. |
+| D | **Rendus non produits** : PDF/DOCX, diaporama, vidéo | 🟠 fort | i, ii, iv | 🟢 **corrigé** — `bash scripts/build-docs.sh` produit 58 rendus : `livrables/html` (19, autonomes), `livrables/pdf` (19), `livrables/docx` (19), `livrables/minishop-soutenance.pptx` (12 diapositives) + index. Seule la vidéo de secours reste impossible ici. |
 | E | **Preuves et traçabilité** (historique GitLab, PV de recette) | 🟠 fort | v (10 pts individuels), iii | 🔴 **inchangé** — 1 commit, placeholders « Étudiant·e A/B/C », doc `02` encore « conçu », CDC §16.1/§16.4 périmés. |
 | F | Scripts de mesure/charge promis | 🟡 moyen | ENF-01/02, concurrence | ✅ **livrés** — `gen_volumes.sh`, `tests/perf/mesurer.sh`, `tests/charge/reserver.sh` (mesures **non exécutées** ici : pas de serveur ni de MySQL). |
 | G | Écarts fonctionnels ponctuels | 🟡 moyen | iii | ✅ **quasi résolu** — contact, `/mentions`, `/aide`, filtre stocks, écran paramètres, indicateurs du jour. Reste l'alias `POST /admin/produits`. |
@@ -41,8 +41,8 @@ affirmations du CDC sont fausses par construction.
 | `scripts/run_sql_tests.sh` | README étape 4, `.gitlab-ci.yml`, doc `02` §1/§2, doc `03` §1/§2/§3, doc `06` | La commande qui produit « 29/29 » n'existe pas (seul `tests/sql/run_tests.sh` existe, à un autre chemin) ; `base-tests` échoue |
 | `docs/diagrams/render.sh` | `.gitlab-ci.yml` job `docs`, `.github/workflows/ci.yml`, README « Compléments livrés », doc `02` §1 | Job GitLab `docs` en échec ; les 14 PNG ne sont **pas reproductibles** |
 | `docs/diagrams/src/*.puml` | CDC §16.2 (« tous en source `.puml` + PNG rendus »), `.gitignore` (`!docs/diagrams/src/`) | La source des diagrammes **n'existe pas** : seul le PNG est versionné. Correction d'un diagramme = le redessiner à la main |
-| `scripts/build-docs.sh` | README « Documents et rendus », CDC, doc `06`, `annexe-sql.md` | Aucun rendu documentaire ne peut être produit par le dépôt |
-| `dist/**` (`.docx`, `html/`) et `livrables/**` | README (deux sections), CDC, doc `03` | Les rendus « images intégrées, lisibles hors ligne » **n'existent pas** |
+| `scripts/build-docs.sh` | README « Documents et rendus », CDC, doc `06`, `annexe-sql.md` | ✅ présent — 20 sources × 3 formats + diaporama, ~25 s, aucune ressource réseau |
+| `dist/**` (`.docx`, `html/`) et `livrables/**` | README (deux sections), CDC, doc `03` | ✅ `livrables/` versionné (html + pdf + docx + pptx + index) ; `dist/` reste l'artefact régénérable hors Git |
 | `public/css/`, `public/js/panier.js`, `public/img/` | README arborescence, CDC §4.5.2/§4.5.3, doc `02` §9, annexe GitLab (`feat/L13-js-panier`) | Le dossier `public/` ne contient que `index.php`, `.htaccess`, `gen_volumes.php`, `mesurer.php` |
 | `tests/charge/reserver.sh` | README, CDC (C-01 « 20 demandes / 12 exemplaires »), doc `02` §1, doc `05` (`D5-L14-04`), doc `06` | Le test anti-survente sous concurrence **n'est pas livré** ; le dossier `tests/charge/` n'existe pas |
 | `tests/perf/mesurer.sh` | README, `annexe-enf.md` (`ENF-01`, p95 HTTP), doc `02`, doc `04` | `ENF-01` côté HTTP **non mesurable** ; seul `tests/perf/mesurer_sql.sh` existe |
@@ -111,8 +111,8 @@ Conséquences directes sur les pénalités que le CDC prétend neutraliser (§16
 | PDF/DOCX des 5 documents (i, ii, iii) | **aucun** — seuls des `.md` ; le seul PDF du dépôt est `docs/sql-a-ecrire/requetes-sql-a-ecrire.pdf` |
 | Diaporama de soutenance « 12 diapositives exportées en PDF » (doc `03` §1) | **aucun** fichier `.pdf`/`.pptx`/`.odp` |
 | Vidéo de secours 3 min (doc `03` §1) | **aucune** |
-| `livrables/*.docx` + `livrables/html/*.html` (README) | **dossier absent** |
-| `dist/` régénérable par `scripts/build-docs.sh` | script absent, `pandoc` non installé ici ; `artefacts/*.html` existe (7 fichiers) mais n'est **pas** ce que le README décrit |
+| `livrables/*.docx` + `livrables/html/*.html` (README) | ✅ 19 documents dans chaque format |
+| `dist/` régénérable par `scripts/build-docs.sh` | ✅ script présent, **sans pandoc** (markdown + fpdf2 + python-docx + python-pptx) ; `dist/` reste hors Git |
 
 ---
 
@@ -191,7 +191,7 @@ Conséquences directes sur les pénalités que le CDC prétend neutraliser (§16
 3. **Rejouer les 32 commits sur le vrai GitLab** (doc `08` + `scripts/rejeu_gitlab.py`), créer les tags
    `v0-cadrage`→`v5-rendu`, renseigner les **vrais noms/emails** dans le README et le CDC, remplacer les URL
    `example.com`. *(≈ 1 j)*
-4. **Produire les rendus** : PDF/DOCX des 5 documents, diaporama 12 slides, `livrables/`. *(≈ 0,5 j)*
+4. ~~**Produire les rendus** : PDF/DOCX, diaporama 12 slides, `livrables/`.~~ **fait** — `bash scripts/build-docs.sh`.
 5. **Compléter le PV de recette** du doc `02` : passer les 33 `F-xx` en « exécuté/conforme » avec captures,
    ajouter les 10 tests de sécurité et les 2 tests d'installation. *(≈ 0,5 j)*
 6. **Interface minimale** : une feuille de style (contraste/focus), `panier.js` + endpoint JSON, `aria-live`. *(2–3 j)*

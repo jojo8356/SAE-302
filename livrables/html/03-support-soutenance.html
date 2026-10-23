@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="SAÉ 302 — MiniShop : Support et déroulé de la soutenance — MiniShop (15 minutes)#">
+<title>Support et déroulé de la soutenance — MiniShop (15 minutes)# — MiniShop</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --papier: #fbfaf7;
+  --carte: #ffffff;
+  --trait: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-clair: #dbeafe;
+  --code: #f1f5f9;
+  --mesure: 72ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
+    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
+    --accent-clair: #1e3a8a; --code: #16223a;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  max-width: calc(var(--mesure) + 6rem);
+  background: var(--papier);
+  color: var(--encre);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
+h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
+p, li { max-width: var(--mesure); }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+}
+pre {
+  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
+  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.35rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+thead th { background: var(--accent-clair); }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
+img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li input[type="checkbox"] { margin-right: 0.4rem; }
+.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
+.toc > ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1rem; }
+footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+@media print {
+  :root { --papier: #fff; --carte: #fff; }
+  @page { size: A4; margin: 18mm 16mm; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#1-materiel-a-preparer">1. Matériel à préparer</a></li>
+<li><a href="#2-deroule-minute-par-minute">2. Déroulé minute par minute</a></li>
+<li><a href="#3-questions-anticipees-et-reponses-courtes-a-connaitre-par-cur">3. Questions anticipées et réponses courtes (à connaître par cœur)</a><ul>
+<li><a href="#31-les-trois-decisions-hors-sujet-a-defendre-en-30-secondes-chacune">3.1 Les trois décisions « hors sujet » à défendre en 30 secondes chacune</a></li>
+</ul>
+</li>
+<li><a href="#4-check-list-de-la-derniere-demi-heure-avant-lentree-en-salle">4. Check-list de la dernière demi-heure avant l'entrée en salle</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="support-et-deroule-de-la-soutenance-minishop-15-minutes">Support et déroulé de la soutenance — MiniShop (15 minutes)<a class="headerlink" href="#support-et-deroule-de-la-soutenance-minishop-15-minutes" title="Permanent link">#</a></h1>
+<p>Document n° 4 du rendu (barème iv : soutenance + questions, 10 points). Le plan ci-dessous est <strong>chronométré</strong>
+et répartit la parole entre les 3 personnes ; chaque minute est reliée à une section du cahier des charges,
+de sorte qu'aucune affirmation ne soit hors document.</p>
+<h2 id="1-materiel-a-preparer">1. Matériel à préparer<a class="headerlink" href="#1-materiel-a-preparer" title="Permanent link">#</a></h2>
+<ul>
+<li>support <code>docs/03-support-soutenance.md</code> exporté en PDF (12 diapositives, une par minute) ;</li>
+<li>poste prêt : <code>php -S 127.0.0.1:8000 -t public</code> lancé, base <strong>rejouée à froid</strong> (<code>./scripts/load_db.sh</code>),
+  deux navigateurs ouverts (front-office en navigation privée côté client, back-office à côté) ;</li>
+<li>terminal ouvert sur <code>mysql minishop</code> avec les 4 requêtes de preuve §12.3.5 déjà collées ;</li>
+<li>capture figée de la sortie de <code>./scripts/run_sql_tests.sh</code> (28/28) en secours si le réseau/la machine flanche ;</li>
+<li>liens GitLab prêts (dépôt, MR, <code>git shortlog -sne</code>, README) ;</li>
+<li><strong>filet de sécurité</strong> : 3 minutes de démo enregistrées (vidéo locale) au cas où rien ne se lance.</li>
+</ul>
+<h2 id="2-deroule-minute-par-minute">2. Déroulé minute par minute<a class="headerlink" href="#2-deroule-minute-par-minute" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">min</th>
+<th>Qui</th>
+<th>Contenu</th>
+<th>Preuve affichée</th>
+<th>Réf. CDC</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">0-1</td>
+<td>A</td>
+<td>Contexte de l'entreprise, problème du tableur partagé, ce que MiniShop doit changer ; acteurs</td>
+<td>1 slide (état actuel + 3 acteurs)</td>
+<td>§1.1, §3</td>
+</tr>
+<tr>
+<td style="text-align: right;">1-2</td>
+<td>A</td>
+<td>Périmètre strict (in/out), objectifs mesurables, règle anti-dérive</td>
+<td>table §13.1 / §2.3</td>
+<td>§2, §11.2</td>
+</tr>
+<tr>
+<td style="text-align: right;">2-4</td>
+<td>B</td>
+<td><strong>Modélisation</strong> : MCD (7 entités), 3 cardinalités défendues, MLD, normalisation (3FN, 2 dénormalisations protégées)</td>
+<td><code>mcd_minishop.png</code>, tableau §12.1.3</td>
+<td>§12.1-§12.3</td>
+</tr>
+<tr>
+<td style="text-align: right;">4-6</td>
+<td>B</td>
+<td><strong>SQL</strong> : script rejoué en direct (<code>load_db.sh</code> : 8 tables, 3 vues, 1 fonction + 17 procédures, 16 triggers) + les 4 requêtes de preuve qui renvoient 0 ligne</td>
+<td>terminal</td>
+<td>§12.4, §12.3.5</td>
+</tr>
+<tr>
+<td style="text-align: right;">6-8</td>
+<td>B</td>
+<td><strong>Procédures stockées</strong> : <code>sp_add_order_line</code> ligne à ligne (verrou, snapshot, décrément, montant) ; réponse à la question pédagogique (centralisation, sécurité, transactions, réutilisabilité, contrôle d'accès)</td>
+<td>code + §12.5.1</td>
+<td>§12.5</td>
+</tr>
+<tr>
+<td style="text-align: right;">8-9</td>
+<td>B</td>
+<td><strong>Triggers</strong> : les 2 imposés (stock, historique) + les 4 de protection ; montrer qu'un <code>UPDATE</code> manuel est refusé</td>
+<td>terminal : <code>UPDATE produit SET stock = -5</code> → <code>RB03_STOCK_NE_PEUT_PAS_ETRE_NEGATIF</code></td>
+<td>§12.6, T-03</td>
+</tr>
+<tr>
+<td style="text-align: right;">9-10</td>
+<td>C</td>
+<td><strong>Tests</strong> : <code>run_sql_tests.sh</code> rejoué → 28/28, en insistant sur les 15 tests qui contournent l'application + le registre d'anomalies (A-01 à A-08, dont A-08 trouvée <strong>en mesurant</strong> la volumétrie réelle)</td>
+<td>terminal + §7 du doc de tests</td>
+<td>§15, doc tests</td>
+</tr>
+<tr>
+<td style="text-align: right;">10-12</td>
+<td>C</td>
+<td><strong>Démo front</strong> : recherche (filtres dans l'URL), fiche produit, panier avec plafond de stock, commande validée → numéro, stock qui baisse</td>
+<td>navigateur</td>
+<td>§4.2-§4.4</td>
+</tr>
+<tr>
+<td style="text-align: right;">12-13</td>
+<td>C</td>
+<td><strong>Sécurité en direct</strong> : (1) payload SQLi sans effet, (2) nom de produit <code>&lt;script&gt;</code> affiché en texte, (3) <code>?id=</code> d'un autre client → 404, (4) prix falsifié ignoré (snapshot)</td>
+<td>navigateur + requêtes</td>
+<td>§8</td>
+</tr>
+<tr>
+<td style="text-align: right;">13-14</td>
+<td>A</td>
+<td><strong>Back-office</strong> : création d'un produit (TTC calculé en base), ajustement de stock refusé en négatif, changement de statut + historique, et <strong>une transition interdite refusée</strong></td>
+<td>navigateur</td>
+<td>§4.5, F-22/F-26/F-29</td>
+</tr>
+<tr>
+<td style="text-align: right;">14-15</td>
+<td>A</td>
+<td>Organisation : MVC en 3 couches (1 slide), GitLab (3 auteurs, MR par lot, CI qui casse sur une concaténation SQL), livrables et difficultés, ce qui est volontairement hors périmètre</td>
+<td><code>git shortlog</code>, <code>.gitlab-ci.yml</code></td>
+<td>§9, §14, §11.2</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Contraintes de tenue du temps</strong> : pas de lecture de slide, chaque personne/terms tenus en ≤ 2 min sans
+dépassement, et la démonstration SQL se fait dans un terminal pré-rempli (pas de saisie longue). Deux
+répétitions chronométrées sont planifiées (S11, S12) — les dérives typiques sont la modélisation qui mange
+la démo, et la démo qui mange les questions.</p>
+<h2 id="3-questions-anticipees-et-reponses-courtes-a-connaitre-par-cur">3. Questions anticipées et réponses courtes (à connaître par cœur)<a class="headerlink" href="#3-questions-anticipees-et-reponses-courtes-a-connaitre-par-cur" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Question probable</th>
+<th>Réponse (10 à 30 s)</th>
+<th>Réf.</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pourquoi une procédure stockée plutôt que du PHP pour la commande ?</td>
+<td>Atomicité et verrous côté serveur, logique unique pour 4 appelants, privilèges réduits sur les tables, 1 aller-retour au lieu de 2N+2 ; le coût est la portabilité et le debuggage — nous l'assumons pour les écritures seulement</td>
+<td>§12.5.1</td>
+</tr>
+<tr>
+<td>Pourquoi garder <code>prix_ttc</code> et <code>montant_total</code> si c'est calculable ?</td>
+<td>Deux dénormalisations <strong>tracées et verrouillées</strong> par trigger : elles portent la valeur contractuelle du moment de l'achat (facturation) et évitent une agrégation à chaque affichage ; sans le trigger, la redondance serait une anomalie</td>
+<td>§12.3.2, §12.3.4</td>
+</tr>
+<tr>
+<td>Pourquoi <code>total_ligne</code> et pas <code>prix × quantité</code> à la demande ?</td>
+<td>Pour la même raison : le prix payé ne doit plus jamais bouger ; le trigger le recalcule à l'insertion et l'immutabilité l'interdit après</td>
+<td>RB-06, RB-09, T-11</td>
+</tr>
+<tr>
+<td>Pourquoi deux tables CLIENT et ADMINISTRATEUR et pas une table UTILISATEUR avec un rôle ?</td>
+<td>Données et cycle de vie disjoints, aucune écriture possible sur la table admin depuis le front (SEC-10), contrôle d'accès plus simple à prouver ; le surcoût est nul à notre échelle</td>
+<td>V4 du §12.8</td>
+</tr>
+<tr>
+<td>Pourquoi le <code>BROUILLON</code> existe-t-il, on ne peut pas créer la commande directement en <code>EN_PREPARATION</code> ?</td>
+<td>Sinon <code>RB-04</code> (au moins une ligne) est violée à la création ; le brouillon est l'état « panier convertible », jamais exposé à l'admin (<code>COMMANDE_NON_TRAITABLE</code>)</td>
+<td>V3 du §12.8, T-16</td>
+</tr>
+<tr>
+<td>Comment est garantie l'absence de survente ?</td>
+<td>Verrou <code>SELECT … FOR UPDATE</code> sur la ligne de stock + contrôle dans la procédure <strong>et</strong> dans le trigger <code>BEFORE INSERT</code> ; le test de charge : 20 demandes sur 12 exemplaires → 12 commandes, 8 refus, stock 0</td>
+<td>§2.3, C-01</td>
+</tr>
+<tr>
+<td>Que se passe-t-il si un développeur oublie le contrôle d'appartenance dans un contrôleur ?</td>
+<td>La procédure refuse (<code>ACCES_NON_AUTORISE</code>) : le test <code>T-18</code> appelle <code>sp_confirm_order</code> avec le mauvais client et vérifie le rejet — c'est notre preuve de défense en profondeur</td>
+<td>SEC-08, T-18</td>
+</tr>
+<tr>
+<td>Pourquoi un trigger et pas la procédure pour écrire l'historique ?</td>
+<td>Sinon un <code>UPDATE</code> manuel (import, reprise, correction) ne serait pas tracé ; et le test <code>T-22</code> vérifie aussi l'<strong>absence de doublon</strong>, ce qui prouve que la procédure n'écrit pas</td>
+<td>A-02, T-22</td>
+</tr>
+<tr>
+<td>Comment prouvez-vous que vous n'avez pas d'injection SQL ?</td>
+<td>3 verrous : requêtes préparées réelles (<code>EMULATE_PREPARES=false</code>), tout SQL dynamique déplacé dans la procédure, contrôle <code>grep</code> bloquant en CI ; plus le test d'attaque S-01 avec 12 payloads</td>
+<td>§8.1, §15.3</td>
+</tr>
+<tr>
+<td>Et si on passe par phpMyAdmin pour modifier le stock à -5 ?</td>
+<td>Refusé par le CHECK et par le trigger (<code>RB03_…</code>) : c'est le test <code>T-02</code>/<code>T-03</code>, exactement le scénario demandé</td>
+<td>§6.2</td>
+</tr>
+<tr>
+<td>Pourquoi le mot de passe est-il vérifié en PHP et pas en base ?</td>
+<td>Seul <code>password_verify()</code> sait comparer bcrypt en temps constant ; la base ne renvoie donc que le hash via <code>sp_get_credentials</code>, la comparaison reste dans l'application</td>
+<td>§8.4, séquence 1</td>
+</tr>
+<tr>
+<td>Quelle règle vous a posé le plus de difficulté, et pourquoi ?</td>
+<td><code>RB-06</code> + immuabilité : nous avons d'abord laissé le trigger de snapshot « réparer » silencieusement les UPDATE au lieu de les refuser ; l'ordre de création des triggers est déterministe dans MySQL, nous l'avons corrigé et figé par le test <code>T-11</code></td>
+<td>A-01</td>
+</tr>
+<tr>
+<td>Que feriez-vous en poursuite (hors périmètre) ?</td>
+<td>Panier persistant (variante V1 prête), paiement réel avec journal de transactions, politique de prix par remise (une table <code>REMISE</code> + snapshot), export comptable, et tests Playwright bout en bout</td>
+<td>§12.8, §11.2</td>
+</tr>
+<tr>
+<td>Où est la contribution de chacun dans GitLab ?</td>
+<td>3 auteurs, une MR par lot du §13.3, commits par zone (front/back/base pour chacun) ; la CI échoue sur une concaténation SQL ou un test de base non conforme</td>
+<td>§14</td>
+</tr>
+<tr>
+<td>Faut-il relancer la CI après un merge ?</td>
+<td>Non : la MR est déjà testée <strong>sur son commit de fusion</strong> (<code>refs/pull/&lt;n&gt;/merge</code>, <em>merge result</em> GitLab), donc si la PR est verte, le run post-merge rejoue les mêmes 6 jobs sur le même arbre et ne peut rien révéler de plus. On ne relance que si <code>main</code> a avancé, si le run a été annulé, ou après une panne d'infrastructure</td>
+<td>§14.2</td>
+</tr>
+<tr>
+<td>Une MR peut-elle être mergée avec un pipeline rouge ?</td>
+<td>Non : <code>php-lint</code>, <code>security-scan</code>, <code>base-tests</code>, <code>unit</code> et <code>docs</code> sont bloquants (<code>style</code> est le seul en <code>allow_failure</code>) ; c'est ce qui rend la pénalité visible pendant le développement et non au rendu</td>
+<td>§14.2</td>
+</tr>
+</tbody>
+</table>
+<h3 id="31-les-trois-decisions-hors-sujet-a-defendre-en-30-secondes-chacune">3.1 Les trois décisions « hors sujet » à défendre en 30 secondes chacune<a class="headerlink" href="#31-les-trois-decisions-hors-sujet-a-defendre-en-30-secondes-chacune" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Décision</th>
+<th>Phrase à dire</th>
+<th>Si le jury insiste</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Les frais de port sont dans le périmètre</strong></td>
+<td>« Ce n'est pas une fonctionnalité de confort : l'article <strong>L221-5 4° du code de la consommation</strong> et l'article <strong>5 §1 e) de la directive 2011/83/UE</strong> imposent d'afficher le prix total <strong>y compris les frais de livraison avant la validation</strong> du panier. Sans cela le professionnel ne peut tout simplement pas les réclamer. »</td>
+<td>Montrer <code>RB-20</code>, <code>sp_compute_shipping</code>, <code>T-28</code> (port calculé avant validation, <strong>figé</strong> à la validation, <strong>non saisissable</strong>) et la table <code>parametre</code> : la règle 4,90 EUR / franchise 80 EUR se change sans toucher au code. Préciser ce qui reste <strong>exclu</strong> : transporteur, tarif par pays, suivi de colis.</td>
+</tr>
+<tr>
+<td><strong>Ventes interdites à stock nul</strong></td>
+<td>« <code>RB-04</code>/<code>RB-18</code> : on ne vend pas ce qu'on n'a pas. Le stock est réservé ligne par ligne sous verrou <code>FOR UPDATE</code>, et un <code>CHECK (stock &gt;= 0)</code> + un trigger bloquent même une écriture SQL directe. »</td>
+<td>Exécution en direct : <code>UPDATE produit SET stock = -1</code> → <code>RB03_STOCK_NE_PEUT_PAS_ETRE_NEGATIF</code> (<code>T-02</code>).</td>
+</tr>
+<tr>
+<td><strong>Deux rôles d'administrateur, pas de MFA</strong></td>
+<td>« L'énoncé dit simplement &lt;&lt; rôle administrateur &gt;&gt;. On a appliqué le moindre privilège — <strong>OWASP ASVS V4.1.3</strong> et le guide <strong>ANSSI</strong> R27/R29 — en séparant <code>SUPER</code> (comptes d'équipe) de <code>GESTIONNAIRE</code> (catalogue et commandes). La MFA, exigée par ASVS V4.3.1, est <strong>explicitement hors périmètre et écrite comme un écart</strong> au §8.10 du cahier des charges, avec ce qu'il faudrait pour la livrer. »</td>
+<td>Montrer <code>EF-ADM-10</code> (garde <code>SUPER</code>), <code>F-32</code> (un <code>GESTIONNAIRE</code> reçoit 403 sur la gestion d'équipe) et le §8.10 (tableau des écarts).</td>
+</tr>
+<tr>
+<td><strong>Volumétrie chiffrée, pas supposée</strong></td>
+<td>« Le client visé fait <strong>200 produits et 1 000 commandes par an</strong> : on a donc généré ce volume avec <code>scripts/gen_volumes.sh</code> — <strong>par appels aux procédures</strong>, pas par des <code>INSERT</code> bruts — pour que <code>ENF-01</code> (&lt; 500 ms p95) soit mesuré sur des données réalistes et cohérentes avec les règles. »</td>
+<td>Montrer le bilan du générateur : <code>ttc_incoherents = 0</code>, <code>montants_incoherents = 0</code> sur le jeu généré : les règles tiennent aussi à 1 000 commandes.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-check-list-de-la-derniere-demi-heure-avant-lentree-en-salle">4. Check-list de la dernière demi-heure avant l'entrée en salle<a class="headerlink" href="#4-check-list-de-la-derniere-demi-heure-avant-lentree-en-salle" title="Permanent link">#</a></h2>
+<ul>
+<li>☐ <code>./scripts/load_db.sh</code> rejoué à froid, compteurs corrects (8 tables, 3 vues, 1 fonction, 17 procédures, 16 triggers, 12 produits, 4 commandes de démo)</li>
+<li>☐ <code>./scripts/run_sql_tests.sh</code> → <strong>27 / 27</strong></li>
+<li>☐ 1 page de chaque zone ouverte et fonctionnelle (catalogue, fiche, panier, commande, admin produits, admin commandes)</li>
+<li>☐ les 4 requêtes de preuve §12.3.5 collées dans le terminal, prêtes à être exécutées</li>
+<li>☐ les 3 requêtes « attaques » prêtes : <code>UPDATE produit SET stock = -5 …</code>, <code>CALL sp_confirm_order(...)</code>, <code>SELECT COUNT(*) FROM client</code></li>
+<li>☐ <code>git shortlog -sne main</code> exécuté et visible (3 auteurs)</li>
+<li>☐ diaporama exporté en PDF, projeté sans connexion</li>
+<li>☐ chrono réglé sur 15 min, une personne désignée « gardien du temps »</li>
+</ul>
+<footer class="doc">
+  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/03-support-soutenance.md</code>
+  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+</footer>
+</main>
+</body>
+</html>

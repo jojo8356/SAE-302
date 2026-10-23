@@ -111,13 +111,27 @@ npm run test:all        # ou : node scripts/run-all-tests.mjs
 | Unitaires PHPUnit | `tests/phpunit/` | `Text`, `Filter`, moteur JSON (contraintes, transactions), matrice RB-11, prix TTC, contrats de sécurité — exécutés hors ligne par `run-local.php` | ✅ 34/34 |
 | E2E HTTP | `scripts/wasm-e2e.mjs` | T1…T14 : parcours réels (cookies + CSRF) — pages publiques, auth, commande 488,40 €, annulation, back-office, cloisonnement, catalogue avancé, compte, panier (plafond/re-tri/prix falsifié), CRUD admin, filtres + audit + journal, **sécurité offensive** (injection, XSS stocké, IDOR, fixation de session, traversées, escalation), rôles RB-13, contact/API/paramètres | ✅ 180/180 |
 
-Commandes individuelles : `npm test` (règles), `npm run test:units`, `npm run test:features`, `npm run test:design`, `npm run test:phpunit`, `npm run test:e2e` (re-seed puis parcours HTTP ; l'E2E **pollue** `data/minishop` par construction — re-seeder ensuite : `node scripts/wasm_run.mjs scripts/seed.php`).
+Commandes individuelles : `npm test` (règles), `npm run test:units`, `npm run test:features`, `npm run test:design`, `npm run test:responsive`, `npm run test:phpunit`, `npm run test:e2e`. L'E2E est désormais **hermétique** : `scripts/e2e.mjs` photographie `data/minishop`, joue le seed et le parcours HTTP, puis restaure le jeu de démonstration à l'identique — même en cas d'échec (`scripts/data_snapshot.mjs`).
 
 Les suites PHP sont **autonomes** (aucun SQL, magasins JSON temporaires par section) : elles s'exécutent telles quelles avec `php tests/php/<suite>.php` sur une machine normale, ou via `node scripts/wasm_run.mjs` en sandbox.
 
 **Qualité de code type « Packagist »** : sur machine normale (avec Composer), `composer cs:check` (php-cs-fixer, config `.php-cs-fixer.php`) et `composer lint:types` (PHPStan level 9 + strict-rules, config `phpstan.neon`) — tous deux en `require-dev`, **aucune dépendance runtime**. Dans la sandbox (Packagist injoignable), `npm run lint:types` rejoue les mêmes vérifications via le tokenizer PHP. Passages du 28/09 : 4 fermetures non typées corrigées, puis **éradication des 156 opérateurs ternaires du livrable** (vues, contrôleurs, dépôts, moteur, tests) remplacés par des `if/else` — règle maison ajoutée au linter.
 
-Compléments livrés par ailleurs : `bash tests/security/controles.sh` (contrôles statiques), `bash tests/charge/reserver.sh` (survente), `bash tests/perf/mesurer.sh` (p95, ENF-01), `docs/diagrams/render.sh` (14 diagrammes), `./scripts/build-docs.sh` (assemblage documentaire complet).
+Compléments livrés par ailleurs : `bash tests/security/controles.sh` (contrôles statiques, 10/10), `bash tests/charge/reserver.sh` (survente), `bash tests/perf/mesurer.sh` (p95, ENF-01), `docs/diagrams/render.sh` (14 diagrammes PlantUML), `bash scripts/build-docs.sh` (assemblage documentaire complet : HTML autonome, PDF, Word, diaporama).
+
+## Captures d'écran responsive (preuve visuelle du design)
+
+`scripts/screenshots.mjs` capture **32 pages** à plusieurs largeurs (320, 390, 768, 1024, 1440 px par défaut) dans trois sessions (public, client, back-office), puis produit une galerie HTML et un rapport Markdown. Un audit **WCAG 1.4.10** est injecté dans chaque page : tout élément qui déborde horizontalement est listé (les tableaux de données `.tableau-defilant` et les éléments `position: fixed` sont exclus, conformément à l'exception normative).
+
+```bash
+node scripts/wasm-serve.mjs 8080        # ou : php -S 127.0.0.1:8000 -t public
+npm install --save-dev puppeteer        # une seule fois (~150 Mo, Chromium inclus)
+npm run shots                           # 5 largeurs, 160 captures
+npm run shots -- --all-widths --pdf      # 8 largeurs + PDF d'impression
+npm run shots:check                      # diagnostic en 2 s, sans navigateur
+```
+
+Sorties : `captures/<page>/<largeur>.png`, `captures/index.html` (galerie), `captures/rapport.md` (débordements, contrastes de mise en page, tailles). Code de sortie `1` dès qu'un débordement ou une page en erreur est détecté → utilisable en CI. `--check` rejoue les 32 routes et les deux connexions sans navigateur : c'est la preuve vérifiable dans un environnement sans Chromium. Options détaillées : `node scripts/screenshots.mjs --help`.
 
 *Historique : la campagne SQL d'origine (`./scripts/run_sql_tests.sh`, 29/29, rapport `tests/sql/rapport_tests_sql.md`) reste jouable — `sql/` sert de référence comportementale au moteur JSON.*
 
@@ -127,10 +141,11 @@ Compléments livrés par ailleurs : `bash tests/security/controles.sh` (contrôl
 app/Config, app/Controller, app/Model, app/Repository, app/Security, app/View
 docs/{01-cahier-des-charges, 02-document-tests-validation, 03-support-soutenance, 04-conception-bd-et-sql, 05-wbs-projet, 06-todolist}, docs/annexes, docs/diagrams/{src/*.puml, *.png}
 public/{index.php, .htaccess, css, js, img, gen_volumes.php, mesurer.php (dev-only, navigateur)}
-scripts/{load_db.sh, run_sql_tests.sh, deploy.php, build-docs.sh, gen_volumes.php (wrapper dev)}
+scripts/{load_db.sh, load_db.php, run_sql_tests.sh, deploy.php, build-docs.sh, md_to_{html,pdf,docx,pptx}.py (rendus documentaires), screenshots.mjs (captures responsive), e2e.mjs + data_snapshot.mjs (E2E hermétique), gen_volumes.php (wrapper dev)}
 sql/{01_minishop_schema.sql, 02_minishop_procedures.sql, 03_minishop_triggers.sql, 04_minishop_demo.sql}
 tests/{sql/** (manifest, fixture, tNN_*.sql, rapport), security/controles.sh, charge/reserver.sh, perf/mesurer_sql.sh, perf/mesurer.php→public/mesurer.php, php/**}
-var/log  ·  .gitignore  ·  .gitlab-ci.yml (6 jobs, prod)  ·  .github/workflows/ci.yml (6 jobs, dev/GitHub)
+livrables/{html,pdf,docx,minishop-soutenance.pptx} (rendus versionnés)  ·  var/log  ·  .gitignore
+.gitlab-ci.yml (6 jobs, prod)  ·  .github/workflows/ci.yml (6 jobs, dev/GitHub)
 ```
 
 ## Documents et rendus (les diagrammes ne s'affichent PAS dans un aperçu sans réseau)

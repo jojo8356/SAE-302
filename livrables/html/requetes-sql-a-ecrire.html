@@ -1,0 +1,2427 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="SAÉ 302 — MiniShop : MiniShop — Liste complète des requêtes SQL RESTANT À ÉCRIRE#">
+<title>MiniShop — Liste complète des requêtes SQL RESTANT À ÉCRIRE# — MiniShop</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --papier: #fbfaf7;
+  --carte: #ffffff;
+  --trait: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-clair: #dbeafe;
+  --code: #f1f5f9;
+  --mesure: 72ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
+    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
+    --accent-clair: #1e3a8a; --code: #16223a;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  max-width: calc(var(--mesure) + 6rem);
+  background: var(--papier);
+  color: var(--encre);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
+h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
+p, li { max-width: var(--mesure); }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+}
+pre {
+  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
+  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.35rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+thead th { background: var(--accent-clair); }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
+img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li input[type="checkbox"] { margin-right: 0.4rem; }
+.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
+.toc > ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1rem; }
+footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+@media print {
+  :root { --papier: #fff; --carte: #fff; }
+  @page { size: A4; margin: 18mm 16mm; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#0-ce-qui-est-deja-fait-a-ne-pas-reecrire">0. Ce qui est DÉJÀ FAIT (à ne pas réécrire)</a><ul>
+<li><a href="#01-tables-8-sql01_minishop_schemasql">0.1 Tables (8) — sql/01_minishop_schema.sql</a></li>
+<li><a href="#02-vues-3-a-lire-par-select-quand-elles-suffisent">0.2 Vues (3) — à lire par SELECT quand elles suffisent</a></li>
+<li><a href="#03-procedures-fonction-17-1-a-appeler-par-call">0.3 Procédures / fonction (17 + 1) — à appeler par CALL</a></li>
+<li><a href="#04-triggers-16-sql03_minishop_triggerssql">0.4 Triggers (16) — sql/03_minishop_triggers.sql</a></li>
+</ul>
+</li>
+<li><a href="#1-regles-communes-a-toutes-les-requetes-ecrites-dans-lapplication">1. Règles communes à TOUTES les requêtes écrites dans l'application</a></li>
+<li><a href="#2-requetes-a-ecrire-par-module">2. Requêtes à écrire, par module</a><ul>
+<li><a href="#21-module-commun-layout-en-tete-pages-publiques">2.1 Module Commun (layout, en-tête, pages publiques)</a></li>
+<li><a href="#22-module-visiteur-catalogue-recherche-fiche-produit-uc-01-uc-02-uc-03">2.2 Module Visiteur — Catalogue, recherche, fiche produit (UC-01, UC-02, UC-03)</a></li>
+<li><a href="#23-module-compte-client-inscription-connexion-profil-uc-04-uc-05">2.3 Module Compte client — inscription, connexion, profil (UC-04, UC-05)</a></li>
+<li><a href="#24-module-panier-et-commande-uc-06-uc-07-uc-08-uc-09">2.4 Module Panier et Commande (UC-06, UC-07, UC-08, UC-09)</a></li>
+<li><a href="#25-module-back-office-produits-categories-stocks-uc-10-uc-11-uc-12">2.5 Module Back-office — Produits, catégories, stocks (UC-10, UC-11, UC-12)</a></li>
+<li><a href="#26-module-back-office-commandes-statuts-audit-indicateurs-uc-13-uc-14">2.6 Module Back-office — Commandes, statuts, audit, indicateurs (UC-13, UC-14)</a></li>
+<li><a href="#27-module-back-office-gestion-des-comptes-administrateurs-super-only">2.7 Module Back-office — Gestion des comptes administrateurs (SUPER only)</a></li>
+<li><a href="#28-module-securite-csrf-journalisation">2.8 Module Sécurité / CSRF / journalisation</a></li>
+<li><a href="#29-installateur-ci-scripts">2.9 Installateur / CI / scripts</a></li>
+</ul>
+</li>
+<li><a href="#3-recapitulatif-des-requetes-a-ecrire-check-list-pour-la-collegue">3. Récapitulatif des requêtes à écrire (check-list pour la collègue)</a></li>
+<li><a href="#4-bonnes-pratiques-et-pieges-a-eviter">4. Bonnes pratiques et pièges à éviter</a></li>
+<li><a href="#5-references">5. Références</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="minishop-liste-complete-des-requetes-sql-restant-a-ecrire">MiniShop — Liste complète des requêtes SQL RESTANT À ÉCRIRE<a class="headerlink" href="#minishop-liste-complete-des-requetes-sql-restant-a-ecrire" title="Permanent link">#</a></h1>
+<p><strong>Projet</strong> : MiniShop (SAÉ 302) — boutique en ligne pédagogique
+<strong>Public</strong> : la personne en charge des requêtes SQL de l'application PHP
+<strong>Version</strong> : 1.0 — 23 septembre 2026
+<strong>Base</strong> : MariaDB 11.8, schéma <code>minishop</code>, charset <code>utf8mb4</code></p>
+<hr />
+<h2 id="0-ce-qui-est-deja-fait-a-ne-pas-reecrire">0. Ce qui est DÉJÀ FAIT (à ne pas réécrire)<a class="headerlink" href="#0-ce-qui-est-deja-fait-a-ne-pas-reecrire" title="Permanent link">#</a></h2>
+<p>Les objets suivants existent dans <code>sql/</code> et <strong>ne doivent pas être recodés en PHP</strong> — l'application ne fait
+que les appeler ou lire les vues. Toute réimplémentation en PHP des procédures métier est sanctionnée
+(pénalité MVC/SP mentionnée dans la todolist).</p>
+<h3 id="01-tables-8-sql01_minishop_schemasql">0.1 Tables (8) — <code>sql/01_minishop_schema.sql</code><a class="headerlink" href="#01-tables-8-sql01_minishop_schemasql" title="Permanent link">#</a></h3>
+<p><code>administrateur</code>, <code>client</code>, <code>categorie</code>, <code>produit</code>, <code>parametre</code>, <code>commande</code>,
+<code>ligne_commande</code>, <code>order_status_history</code>.</p>
+<h3 id="02-vues-3-a-lire-par-select-quand-elles-suffisent">0.2 Vues (3) — à lire par <code>SELECT</code> quand elles suffisent<a class="headerlink" href="#02-vues-3-a-lire-par-select-quand-elles-suffisent" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Vue</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>v_etat_stock</code></td>
+<td>état du stock (<code>RUPTURE</code>/<code>TRES_BAS</code>/<code>DISPONIBLE</code>) pour chaque produit</td>
+</tr>
+<tr>
+<td><code>v_catalogue</code></td>
+<td>catalogue client (produits <code>visible=1</code> + catégorie + état de stock)</td>
+</tr>
+<tr>
+<td><code>v_commandes_client</code></td>
+<td>liste des commandes avec nom du client et nombre de lignes</td>
+</tr>
+</tbody>
+</table>
+<h3 id="03-procedures-fonction-17-1-a-appeler-par-call">0.3 Procédures / fonction (17 + 1) — à appeler par <code>CALL</code><a class="headerlink" href="#03-procedures-fonction-17-1-a-appeler-par-call" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Procédure / Fonction</th>
+<th>Rôle</th>
+<th>Ecran qui l'appelle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fn_param(cle, defaut)</code></td>
+<td>lit un paramètre métier (<code>frais_port</code>, <code>franchise_port</code>, <code>tva_defaut</code>…)</td>
+<td>plusieurs écrans</td>
+</tr>
+<tr>
+<td><code>sp_create_account(nom, prenom, email, mdp, tel, …)</code></td>
+<td>création d'un compte client</td>
+<td>UC-04 inscription</td>
+</tr>
+<tr>
+<td><code>sp_get_credentials(email)</code></td>
+<td>récupère le hash pour vérifier le mot de passe</td>
+<td>UC-05 connexion</td>
+</tr>
+<tr>
+<td><code>sp_update_client(id, nom, prenom, email, tel, adr, cp, ville)</code></td>
+<td>modification de compte</td>
+<td>EF-CLI-01</td>
+</tr>
+<tr>
+<td><code>sp_search_products(q, cat, prix_min, prix_max, stock, tri, page, page_size)</code></td>
+<td>recherche/filtres/pagination catalogue</td>
+<td>UC-01/UC-02</td>
+</tr>
+<tr>
+<td><code>sp_save_product(...)</code> / <code>sp_delete_product(id)</code></td>
+<td>CRUD produit (suppression logique si commandé)</td>
+<td>UC-10</td>
+</tr>
+<tr>
+<td><code>sp_save_category(...)</code> / <code>sp_delete_category(id)</code></td>
+<td>CRUD catégorie</td>
+<td>UC-11</td>
+</tr>
+<tr>
+<td><code>sp_adjust_stock(id, mode, qte, motif, admin_id)</code></td>
+<td>ajustement de stock (SET/DELTA)</td>
+<td>UC-12</td>
+</tr>
+<tr>
+<td><code>sp_create_order(id_client, adr)</code> / <code>sp_add_order_line(id, prod, qte)</code></td>
+<td>création de commande à la main (démo)</td>
+<td>— (interne, démo)</td>
+</tr>
+<tr>
+<td><code>sp_create_order_from_basket(id_client, adr, lignes_json)</code></td>
+<td>crée une commande entière depuis le panier (transaction, décrément stock)</td>
+<td>UC-07 validation</td>
+</tr>
+<tr>
+<td><code>sp_confirm_order(id)</code></td>
+<td>confirme la commande (calcul frais de port, montant total)</td>
+<td>UC-07</td>
+</tr>
+<tr>
+<td><code>sp_compute_shipping(id)</code></td>
+<td>recalcule les frais de port (appelé par confirm)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>sp_update_order_status(id, cible, auteur, role, commentaire)</code></td>
+<td>transition de statut (matrice RB-11)</td>
+<td>UC-14</td>
+</tr>
+<tr>
+<td><code>sp_cancel_order(id, client, commentaire)</code></td>
+<td>annulation client (restitution stock par trigger)</td>
+<td>UC-09</td>
+</tr>
+<tr>
+<td><code>sp_revenue_report(deb, fin)</code></td>
+<td>CA par statut, panier moyen, top produits</td>
+<td>EF-ADM-09 indicateurs</td>
+</tr>
+</tbody>
+</table>
+<h3 id="04-triggers-16-sql03_minishop_triggerssql">0.4 Triggers (16) — <code>sql/03_minishop_triggers.sql</code><a class="headerlink" href="#04-triggers-16-sql03_minishop_triggerssql" title="Permanent link">#</a></h3>
+<p>Calculent automatiquement <code>prix_ttc</code>, <code>total_ligne</code>, le snapshot <code>prix_unitaire</code>, les décréments/restitutions
+de stock, la matrice de transitions RB-11, la piste <code>order_status_history</code>, les blocages RB-14
+(catégorie occupée, produit commandé), l'interdiction de modifier <code>montant_total</code>/<code>frais_port</code> (RB-15).</p>
+<hr />
+<h2 id="1-regles-communes-a-toutes-les-requetes-ecrites-dans-lapplication">1. Règles communes à TOUTES les requêtes écrites dans l'application<a class="headerlink" href="#1-regles-communes-a-toutes-les-requetes-ecrites-dans-lapplication" title="Permanent link">#</a></h2>
+<p>Avant toute requête, appliquer ces règles (sinon les tests de sécurité S-01…S-08 échoueront) :</p>
+<ol>
+<li><strong>Toujours utiliser PDO avec requêtes préparées</strong> (<code>$pdo-&gt;prepare(...)</code> + <code>execute([...])</code>).
+   <strong>Jamais</strong> de concaténation de variables dans la chaîne SQL.</li>
+<li><strong>Liste blanche pour les tris et les filtres</strong> : <code>tri</code>, <code>sens</code>, <code>colonne de tri</code> doivent être vérifiés
+   côté PHP avant d'être injectés dans un <code>ORDER BY</code> (les clauses ORDER BY ne peuvent pas être paramétrées).</li>
+<li><strong>Noms de colonnes en backticks</strong> si nécessaire, mais jamais de noms dynamiques non validés.</li>
+<li><strong>Aucune valeur numérique dans le SQL</strong> pour les seuils métiers (frais de port, franchise, TVA,
+   pagination par défaut) : les lires via <code>fn_param(...)</code> ou la table <code>parametre</code>.</li>
+<li><strong>Toute écriture métier passe par une procédure</strong> (voir §0.3). Seules des lectures <code>SELECT</code> et des
+   écritures purement techniques (mise à jour de <code>derniere_connexion</code>, blocage d'admin, etc.) sont
+   autorisées en direct.</li>
+<li><strong>Pagination bornée</strong> : <code>page_size</code> par défaut = 12, maximum 60. <code>OFFSET</code> calculé comme
+   <code>(page - 1) * page_size</code> après avoir casté <code>page</code> en entier ≥ 1.</li>
+<li><strong>Les montants sont renvoyés en tant que chaînes/décimales</strong> par PDO pour éviter les erreurs
+   d'arrondi float — ne caster ni en <code>(float)</code> ni en <code>(int)</code>.</li>
+</ol>
+<hr />
+<h2 id="2-requetes-a-ecrire-par-module">2. Requêtes à écrire, par module<a class="headerlink" href="#2-requetes-a-ecrire-par-module" title="Permanent link">#</a></h2>
+<blockquote>
+<p><strong>Légende des colonnes</strong>
+- <strong>Id</strong> : référence EF/SEC/ENF du CDC
+- <strong>Écran/Référence</strong> : route et nom du cas d'usage
+- <strong>Question à répondre</strong> : ce que la requête doit ramener ou faire, en langage métier
+- <strong>Type</strong> : <code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>CALL proc</code>, <code>UPDATE derniere_connexion</code>…
+- <strong>Tables/Vues</strong> : tables ou vues mises en jeu
+- <strong>Filtres / contraintes</strong> : clauses WHERE / JOIN obligatoires
+- <strong>Tri / Pagination</strong> : ORDER BY / LIMIT
+- <strong>Retour attendu</strong> : colonnes ou lignes que la requête doit fournir à la vue</p>
+</blockquote>
+<hr />
+<h3 id="21-module-commun-layout-en-tete-pages-publiques">2.1 Module Commun (layout, en-tête, pages publiques)<a class="headerlink" href="#21-module-commun-layout-en-tete-pages-publiques" title="Permanent link">#</a></h3>
+<h4 id="q-com-01-lire-un-parametre-metier">Q-COM-01 — Lire un paramètre métier<a class="headerlink" href="#q-com-01-lire-un-parametre-metier" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>ENF-14, RB-15</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td>tous les écrans (footer, panier, commande)</td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Quelle est la valeur actuelle du paramètre <code>frais_port</code> ? de <code>franchise_port</code> ? de <code>tva_defaut</code> ?</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SELECT</code> simple (ou utiliser <code>SELECT fn_param('frais_port', '4.90') AS v</code>)</td>
+</tr>
+<tr>
+<td><strong>Tables</strong></td>
+<td><code>parametre</code></td>
+</tr>
+<tr>
+<td><strong>Filtres</strong></td>
+<td><code>WHERE cle = ?</code></td>
+</tr>
+<tr>
+<td><strong>Tri</strong></td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Retour</strong></td>
+<td>une ligne, une colonne <code>valeur</code> (DECIMAL 10,2 typiquement)</td>
+</tr>
+</tbody>
+</table>
+<p>SQL attendu :</p>
+<pre><code class="language-sql">SELECT valeur FROM parametre WHERE cle = :cle;
+-- ou, pour avoir une valeur par défaut si la clé manque :
+SELECT fn_param(:cle, :defaut) AS valeur;
+</code></pre>
+<h4 id="q-com-02-liste-des-categories-pour-le-menu-principal">Q-COM-02 — Liste des catégories pour le menu principal<a class="headerlink" href="#q-com-02-liste-des-categories-pour-le-menu-principal" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-VIS-01</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td>layout principal (menu), page <code>/categories</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Afficher chaque catégorie avec son nom, son slug et le nombre de produits visibles qu'elle contient.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SELECT</code> avec <code>LEFT JOIN</code> et <code>COUNT</code></td>
+</tr>
+<tr>
+<td><strong>Tables</strong></td>
+<td><code>categorie</code>, <code>produit</code></td>
+</tr>
+<tr>
+<td><strong>Filtres</strong></td>
+<td>compter uniquement les produits avec <code>visible = 1</code> ; les catégories sans produit visible doivent apparaître avec un compteur à 0</td>
+</tr>
+<tr>
+<td><strong>Tri</strong></td>
+<td><code>ORDER BY c.nom ASC</code></td>
+</tr>
+<tr>
+<td><strong>Retour</strong></td>
+<td><code>id_categorie, nom, slug, nb_produits</code></td>
+</tr>
+</tbody>
+</table>
+<p>SQL attendu :</p>
+<pre><code class="language-sql">SELECT c.id_categorie, c.nom, c.slug,
+       COUNT(p.id_produit) AS nb_produits
+  FROM categorie c
+  LEFT JOIN produit p ON p.id_categorie = c.id_categorie AND p.visible = 1
+ GROUP BY c.id_categorie, c.nom, c.slug
+ ORDER BY c.nom ASC;
+</code></pre>
+<h4 id="q-com-03-verifier-quun-administrateur-est-actif-middleware">Q-COM-03 — Vérifier qu'un administrateur est actif (middleware)<a class="headerlink" href="#q-com-03-verifier-quun-administrateur-est-actif-middleware" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>SEC-04, EF-ADM-10</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td>middleware d'authentification back-office</td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>L'administrateur connecté (id en session) existe-t-il, est-il <code>actif = 1</code> et quel est son rôle ?</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SELECT</code> pour contrôle de session</td>
+</tr>
+<tr>
+<td><strong>Tables</strong></td>
+<td><code>administrateur</code></td>
+</tr>
+<tr>
+<td><strong>Filtres</strong></td>
+<td><code>WHERE id_admin = ? AND actif = 1</code></td>
+</tr>
+<tr>
+<td><strong>Retour</strong></td>
+<td><code>id_admin, nom, prenom, email, role</code> (une seule ligne)</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-sql">SELECT id_admin, nom, prenom, email, role
+  FROM administrateur
+ WHERE id_admin = :id AND actif = 1
+ LIMIT 1;
+</code></pre>
+<h4 id="q-com-04-mettre-a-jour-lhorodatage-de-derniere-connexion-client">Q-COM-04 — Mettre à jour l'horodatage de dernière connexion (client)<a class="headerlink" href="#q-com-04-mettre-a-jour-lhorodatage-de-derniere-connexion-client" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-VIS-07</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td>POST <code>/connexion</code> après <code>password_verify</code> réussi</td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Enregistrer la date/heure actuelle dans <code>derniere_connexion</code> du client qui vient de se connecter.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>UPDATE</code></td>
+</tr>
+<tr>
+<td><strong>Tables</strong></td>
+<td><code>client</code></td>
+</tr>
+<tr>
+<td><strong>Filtres</strong></td>
+<td><code>WHERE id_client = ?</code></td>
+</tr>
+<tr>
+<td><strong>Retour</strong></td>
+<td>— (mise à jour uniquement)</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-sql">UPDATE client
+   SET derniere_connexion = CURRENT_TIMESTAMP
+ WHERE id_client = :id;
+</code></pre>
+<h4 id="q-com-05-mettre-a-jour-lhorodatage-de-derniere-connexion-admin">Q-COM-05 — Mettre à jour l'horodatage de dernière connexion (admin)<a class="headerlink" href="#q-com-05-mettre-a-jour-lhorodatage-de-derniere-connexion-admin" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-ADM-10</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td>POST <code>/admin/connexion</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Idem Q-COM-04 pour la table <code>administrateur</code>.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>UPDATE</code></td>
+</tr>
+<tr>
+<td><strong>Tables</strong></td>
+<td><code>administrateur</code></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-sql">UPDATE administrateur
+   SET derniere_connexion = CURRENT_TIMESTAMP
+ WHERE id_admin = :id;
+</code></pre>
+<hr />
+<h3 id="22-module-visiteur-catalogue-recherche-fiche-produit-uc-01-uc-02-uc-03">2.2 Module Visiteur — Catalogue, recherche, fiche produit (UC-01, UC-02, UC-03)<a class="headerlink" href="#22-module-visiteur-catalogue-recherche-fiche-produit-uc-01-uc-02-uc-03" title="Permanent link">#</a></h3>
+<h4 id="q-vis-01-liste-des-produits-du-catalogue-sans-recherche-ni-filtre">Q-VIS-01 — Liste des produits du catalogue (sans recherche ni filtre)<a class="headerlink" href="#q-vis-01-liste-des-produits-du-catalogue-sans-recherche-ni-filtre" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-VIS-01, EF-VIS-05</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>GET /catalogue</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Retourner une page de produits visibles avec leur catégorie et leur état de stock.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SELECT</code> sur vue + LIMIT/OFFSET</td>
+</tr>
+<tr>
+<td><strong>Tables/Vues</strong></td>
+<td>préférer <code>v_catalogue</code> (joint déjà catégorie + état), ou <code>produit</code> + <code>categorie</code> + <code>v_etat_stock</code></td>
+</tr>
+<tr>
+<td><strong>Filtres</strong></td>
+<td><code>v_catalogue</code> filtre déjà <code>visible = 1</code> ; pas de filtre supplémentaire sur la page d'accueil</td>
+</tr>
+<tr>
+<td><strong>Tri</strong></td>
+<td><code>ORDER BY p.date_creation DESC</code> par défaut ; la liste blanche des tris autorisés comprend : <code>nom</code>, <code>prix_ttc ASC</code>, <code>prix_ttc DESC</code>, <code>date_creation DESC</code></td>
+</tr>
+<tr>
+<td><strong>Pagination</strong></td>
+<td><code>LIMIT :page_size OFFSET :offset</code> (page_size par défaut 12, max 60)</td>
+</tr>
+<tr>
+<td><strong>Retour</strong></td>
+<td><code>id_produit, reference, slug, nom, prix_ttc, stock, categorie, categorie_slug, etat, image_url</code></td>
+</tr>
+<tr>
+<td><strong>Note</strong> : <strong>Également besoin de compter le total</strong> (Q-VIS-02) pour afficher « page n/N ».</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-sql">SELECT id_produit, reference, slug, nom, prix_ht, tva, prix_ttc, stock,
+       categorie, categorie_slug, etat, image_url
+  FROM v_catalogue
+ ORDER BY date_creation DESC -- tri validé par la liste blanche PHP
+ LIMIT :limit OFFSET :offset;
+</code></pre>
+<h4 id="q-vis-02-compter-le-nombre-total-de-produits-du-catalogue-pour-pagination">Q-VIS-02 — Compter le nombre total de produits du catalogue (pour pagination)<a class="headerlink" href="#q-vis-02-compter-le-nombre-total-de-produits-du-catalogue-pour-pagination" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-VIS-05, ENF-04</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td>catalogue et recherche</td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Combien de produits correspondent aux critères courants (utile pour calculer le nombre de pages) ?</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SELECT COUNT(*)</code></td>
+</tr>
+<tr>
+<td><strong>Tables/Vues</strong></td>
+<td><code>v_catalogue</code> (avec les mêmes clauses WHERE qu'en Q-VIS-03 quand filtres actifs)</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-sql">SELECT COUNT(*) AS total FROM v_catalogue;
+-- avec filtres : WHERE id_categorie = :cat AND prix_ttc BETWEEN :min AND :max ...
+</code></pre>
+<h4 id="q-vis-03-catalogue-filtre-trie-categorie-prix-stock">Q-VIS-03 — Catalogue filtré + trié (catégorie, prix, stock)<a class="headerlink" href="#q-vis-03-catalogue-filtre-trie-categorie-prix-stock" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-VIS-03</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>GET /catalogue?cat=&amp;prix_min=&amp;prix_max=&amp;stock=1&amp;tri=</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Retourner la page de produits correspondant au(x) filtre(s) cumulés.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SELECT</code> avec <code>WHERE</code> dynamique</td>
+</tr>
+<tr>
+<td><strong>Filtres</strong></td>
+<td><code>v_catalogue.id_categorie = :cat</code> si catégorie précisée · <code>prix_ttc BETWEEN :prix_min AND :prix_max</code> si les deux bornes sont renseignées · <code>stock &gt; 0</code> si <code>stock=1</code> (disponibles uniquement)</td>
+</tr>
+<tr>
+<td><strong>Tri</strong></td>
+<td>liste blanche identique à Q-VIS-01</td>
+</tr>
+<tr>
+<td><strong>Retour</strong></td>
+<td>mêmes colonnes que Q-VIS-01</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Astuce : <strong>Alternative</strong> : au lieu de reconstruire le WHERE à la main, il est <strong>recommandé</strong> d'appeler la procédure
+<code>sp_search_products(NULL, :cat, :prix_min, :prix_max, :stock_only, :tri, :page, :page_size)</code>
+(elle fait exactement ce travail). La requête ci-dessous reste à écrire pour la page <code>/catalogue</code>
+qui n'a pas de terme de recherche, mais elle peut très bien appeler la procédure avec <code>q=NULL</code>.</p>
+</blockquote>
+<h4 id="q-vis-04-recherche-plein-texte">Q-VIS-04 — Recherche plein texte<a class="headerlink" href="#q-vis-04-recherche-plein-texte" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-VIS-02, SEC-02</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>GET /recherche?q=...</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Retourner les produits visibles dont le nom, la description ou la référence contient le terme <code>q</code> (insensible à la casse et aux accents).</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>CALL sp_search_products(...)</code> — <strong>ne pas réécrire la recherche à la main</strong></td>
+</tr>
+<tr>
+<td><strong>Paramètres</strong></td>
+<td><code>q</code> (1-120 car., trim), puis les mêmes filtres que Q-VIS-03, tri, page, page_size</td>
+</tr>
+<tr>
+<td><strong>Retour</strong></td>
+<td>la procédure retourne deux jeux de résultats : 1) la liste paginée (colonnes idem Q-VIS-01), 2) une ligne <code>total_trouves</code></td>
+</tr>
+</tbody>
+</table>
+<p>Appel PDO attendu :</p>
+<pre><code class="language-php">$stmt = $pdo-&gt;prepare(&quot;CALL sp_search_products(:q, :cat, :pmin, :pmax, :stock, :tri, :page, :psize)&quot;);
+$stmt-&gt;execute([...]);
+$rows = $stmt-&gt;fetchAll();
+$stmt-&gt;nextRowset();
+$total = $stmt-&gt;fetchColumn();
+</code></pre>
+<h4 id="q-vis-05-fiche-produit-detaillee">Q-VIS-05 — Fiche produit détaillée<a class="headerlink" href="#q-vis-05-fiche-produit-detaillee" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-VIS-04</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>GET /produit/{slug}</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Afficher toutes les informations d'un produit visible à partir de son slug. Si le produit est masqué (<code>visible=0</code>) ou n'existe pas, renvoyer NULL pour que le contrôleur émette un 404.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SELECT</code> sur <code>v_catalogue</code> (ou <code>produit</code> + <code>categorie</code> + <code>v_etat_stock</code>)</td>
+</tr>
+<tr>
+<td><strong>Filtres</strong></td>
+<td><code>WHERE slug = :slug</code> ; <strong>ne pas oublier que <code>v_catalogue</code> ne contient que <code>visible = 1</code></strong> (donc un produit masqué ne sera pas trouvé, ce qui est le comportement 404 voulu)</td>
+</tr>
+<tr>
+<td><strong>Retour</strong></td>
+<td>toutes les colonnes produit + <code>categorie</code>, <code>categorie_slug</code>, <code>etat</code>, une information <code>disponible</code> (<code>stock &gt; 0</code>) dérivable de <code>stock</code></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-sql">SELECT id_produit, reference, slug, nom, description,
+       prix_ht, tva, prix_ttc, stock,
+       categorie, categorie_slug, etat, image_url
+  FROM v_catalogue
+ WHERE slug = :slug
+ LIMIT 1;
+</code></pre>
+<blockquote>
+<p>Astuce : Si vous avez besoin de la fiche <strong>même quand <code>visible = 0</code></strong> (page d'admin), utiliser directement
+<code>produit</code> JOIN <code>categorie</code> JOIN <code>v_etat_stock</code> sans le filtre <code>visible</code>.</p>
+</blockquote>
+<h4 id="q-vis-06-produits-dune-categorie-pour-lister-une-categorie-seule">Q-VIS-06 — Produits d'une catégorie pour lister une catégorie seule<a class="headerlink" href="#q-vis-06-produits-dune-categorie-pour-lister-une-categorie-seule" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-VIS-03 (variante)</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>GET /categorie/{slug}</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Même liste paginée que Q-VIS-01, mais filtrée par le slug de la catégorie (et non son id).</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SELECT v_catalogue JOIN categorie</code> ou ajouter <code>categorie_slug = :slug</code> dans Q-VIS-03</td>
+</tr>
+</tbody>
+</table>
+<h4 id="q-vis-07-verifier-lexistence-dun-produit-pour-lajout-panier-avant-call">Q-VIS-07 — Vérifier l'existence d'un produit pour l'ajout panier (avant CALL)<a class="headerlink" href="#q-vis-07-verifier-lexistence-dun-produit-pour-lajout-panier-avant-call" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-CLI-03, RB-03, RB-18</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>POST /panier/ajouter</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Le produit <code>id_produit</code> existe-t-il, est-il visible, et quel est son stock actuel ? Utilisée côté PHP avant d'inscrire dans la session (le panier est en session, pas en base).</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SELECT</code></td>
+</tr>
+<tr>
+<td><strong>Tables</strong></td>
+<td><code>produit</code></td>
+</tr>
+<tr>
+<td><strong>Filtres</strong></td>
+<td><code>WHERE id_produit = ? AND visible = 1</code></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-sql">SELECT id_produit, nom, slug, prix_ttc, stock
+  FROM produit
+ WHERE id_produit = :id AND visible = 1
+ LIMIT 1;
+</code></pre>
+<hr />
+<h3 id="23-module-compte-client-inscription-connexion-profil-uc-04-uc-05">2.3 Module Compte client — inscription, connexion, profil (UC-04, UC-05)<a class="headerlink" href="#23-module-compte-client-inscription-connexion-profil-uc-04-uc-05" title="Permanent link">#</a></h3>
+<h4 id="q-cli-01-creer-un-compte-client">Q-CLI-01 — Créer un compte client<a class="headerlink" href="#q-cli-01-creer-un-compte-client" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-VIS-06, RB-01, RB-12, RB-13</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>POST /inscription</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Créer un nouveau client après validation des champs.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><strong><code>CALL sp_create_account(...)</code></strong> — ne jamais faire d'<code>INSERT INTO client</code> direct</td>
+</tr>
+<tr>
+<td><strong>Paramètres</strong></td>
+<td>nom, prenom, email, mot_de_passe_hash (produit par <code>password_hash($mdp, PASSWORD_BCRYPT)</code> en PHP), telephone (NULL possible)</td>
+</tr>
+<tr>
+<td><strong>Retour</strong></td>
+<td><code>@code</code> (valeurs possibles : <code>OK</code>, <code>EMAIL_DEJA_UTILISE</code>, <code>EMAIL_INVALIDE</code>, <code>MDP_TROP_FAIBLE</code>) + <code>@new_id</code> (id du client créé)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="q-cli-02-connexion-recuperer-les-identifiants-dun-client">Q-CLI-02 — Connexion : récupérer les identifiants d'un client<a class="headerlink" href="#q-cli-02-connexion-recuperer-les-identifiants-dun-client" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-VIS-07, RB-12, SEC-04/05</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>POST /connexion</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Récupérer l'id, le hash et l'état actif du client à partir de l'email saisi.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><strong><code>CALL sp_get_credentials(:email, 'CLIENT')</code></strong> — puis vérifier <code>actif = 1</code> en PHP</td>
+</tr>
+<tr>
+<td><strong>Retour</strong></td>
+<td><code>id_client, mot_de_passe_hash, actif</code> — la comparaison du mot de passe se fait en PHP par <code>password_verify()</code>, <strong>jamais</strong> en SQL</td>
+</tr>
+<tr>
+<td><strong>Important</strong> : la même procédure accepte <code>'ADMIN'</code> comme second paramètre pour le back-office.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="q-cli-03-recuperer-les-informations-dun-client-pour-la-page-mon-compte">Q-CLI-03 — Récupérer les informations d'un client pour la page "Mon compte"<a class="headerlink" href="#q-cli-03-recuperer-les-informations-dun-client-pour-la-page-mon-compte" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-CLI-01</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>GET /compte</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Afficher le formulaire pré-rempli avec nom, prénom, email, téléphone, adresse, CP, ville.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SELECT</code></td>
+</tr>
+<tr>
+<td><strong>Tables</strong></td>
+<td><code>client</code></td>
+</tr>
+<tr>
+<td><strong>Filtres</strong></td>
+<td><code>WHERE id_client = :id</code> (id depuis la session)</td>
+</tr>
+<tr>
+<td><strong>SEC-08</strong> : <strong>jamais</strong> on ne passe l'id par la requête HTTP sur cette page ; on le lit depuis <code>$_SESSION['user_id']</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-sql">SELECT id_client, nom, prenom, email, telephone,
+       adresse_livraison, code_postal, ville, actif, date_creation
+  FROM client
+ WHERE id_client = :id
+ LIMIT 1;
+</code></pre>
+<h4 id="q-cli-04-modifier-les-informations-dun-client">Q-CLI-04 — Modifier les informations d'un client<a class="headerlink" href="#q-cli-04-modifier-les-informations-dun-client" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-CLI-01</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>POST /compte</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Mettre à jour nom, prénom, email, téléphone, adresse, CP, ville.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><strong><code>CALL sp_update_client(...)</code></strong> — ne pas faire d'UPDATE direct</td>
+</tr>
+<tr>
+<td><strong>Retour</strong></td>
+<td><code>@code = OK</code> ou <code>EMAIL_DEJA_UTILISE</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="q-cli-05-changer-le-mot-de-passe-dun-client-verification-ancien-mdp">Q-CLI-05 — Changer le mot de passe d'un client (vérification ancien mdp)<a class="headerlink" href="#q-cli-05-changer-le-mot-de-passe-dun-client-verification-ancien-mdp" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-CLI-02, RB-12</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>POST /compte/mot-de-passe</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>1) Vérifier l'ancien mot de passe en relisant le hash ; 2) si OK, mettre à jour le hash.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td>1) <code>SELECT mot_de_passe_hash FROM client WHERE id_client = :id</code> ; 2) <code>password_verify()</code> en PHP ; 3) <code>UPDATE client SET mot_de_passe_hash = :hash WHERE id_client = :id</code></td>
+</tr>
+<tr>
+<td><strong>Important</strong> : cette opération n'a pas de procédure dédiée. Regénérer l'ID de session (<code>session_regenerate_id(true)</code>) après succès.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-sql">-- Étape 1 (lecture)
+SELECT mot_de_passe_hash FROM client WHERE id_client = :id LIMIT 1;
+-- Étape 3 (écriture, après password_verify + password_hash en PHP)
+UPDATE client
+   SET mot_de_passe_hash = :hash
+ WHERE id_client = :id;
+</code></pre>
+<hr />
+<h3 id="24-module-panier-et-commande-uc-06-uc-07-uc-08-uc-09">2.4 Module Panier et Commande (UC-06, UC-07, UC-08, UC-09)<a class="headerlink" href="#24-module-panier-et-commande-uc-06-uc-07-uc-08-uc-09" title="Permanent link">#</a></h3>
+<p>Le panier vit <strong>en session PHP</strong>, pas en base. Aucun <code>INSERT/UPDATE</code> sur une table "panier".
+Les requêtes SQL de ce module concernent :
+- la lecture des produits du panier pour recalculer les prix <strong>depuis la base</strong> (pas depuis le navigateur),
+- l'appel à la procédure transactionnelle de création de commande,
+- la lecture de l'historique et du détail des commandes.</p>
+<h4 id="q-pan-01-reserver-les-donnees-produits-du-panier-pour-affichagerecalcul">Q-PAN-01 — Réserver les données produits du panier pour affichage/recalcul<a class="headerlink" href="#q-pan-01-reserver-les-donnees-produits-du-panier-pour-affichagerecalcul" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-CLI-06, EF-GEN-01, RB-15/16</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>GET /panier</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Pour chaque <code>id_produit</code> dans le panier session, récupérer le <strong>prix TTC courant</strong>, le nom, le slug, le stock et la visibilité. Les totaux (sous-total HT, TVA, total TTC) sont recalculés côté serveur à partir de ces données, <strong>pas</strong> à partir des prix stockés dans la session client.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SELECT ... WHERE id_produit IN (...)</code></td>
+</tr>
+<tr>
+<td><strong>Tables</strong></td>
+<td><code>produit</code></td>
+</tr>
+<tr>
+<td><strong>Filtres</strong></td>
+<td><code>WHERE id_produit IN (?,?,?,?)</code> (liste d'ids issue de la session)</td>
+</tr>
+<tr>
+<td><strong>Gestion des cas limites</strong> : un produit devenu <code>visible=0</code> ou qui n'existe plus doit être retiré du panier (et signalé) ; une quantité supérieure au stock doit être écrêtée au stock courant côté PHP (message <code>STOCK_INSUFFISANT</code>).</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-sql">SELECT id_produit, nom, slug, prix_ht, tva, prix_ttc, stock, visible, image_url
+  FROM produit
+ WHERE id_produit IN (:id1, :id2, :id3 /* ... */);
+</code></pre>
+<blockquote>
+<p>PDO ne permet pas de binder directement un tableau : on génère autant de <code>?</code> que d'éléments du panier
+(avec une limite de sécurité à ~100 pour éviter les abus).</p>
+</blockquote>
+<h4 id="q-ord-01-calcul-des-frais-de-port-avant-validation-apercu">Q-ORD-01 — Calcul des frais de port avant validation (aperçu)<a class="headerlink" href="#q-ord-01-calcul-des-frais-de-port-avant-validation-apercu" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-CLI-06, RB-15</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td>page panier</td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Quel serait le montant des frais de port pour un panier d'un montant TTC donné ? (Si le total ≥ <code>franchise_port</code>, port = 0 ; sinon port = <code>frais_port</code>.)</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SELECT</code> calculatoire (pas d'<code>UPDATE</code> pour l'aperçu)</td>
+</tr>
+<tr>
+<td><strong>Tables</strong></td>
+<td><code>parametre</code></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-sql">SELECT CASE
+         WHEN :total_ttc &gt;= (SELECT CAST(valeur AS DECIMAL(10,2))
+                               FROM parametre WHERE cle = 'franchise_port')
+         THEN 0.00
+         ELSE (SELECT CAST(valeur AS DECIMAL(10,2))
+                 FROM parametre WHERE cle = 'frais_port')
+       END AS frais_port_estime;
+</code></pre>
+<h4 id="q-ord-02-creer-la-commande-depuis-le-panier-transaction-complete">Q-ORD-02 — Créer la commande depuis le panier (transaction complète)<a class="headerlink" href="#q-ord-02-creer-la-commande-depuis-le-panier-transaction-complete" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-CLI-07, RB-04/05/06/18</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>POST /commande/valider</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Créer une commande ENTIÈREMENT par procédure : insert de la commande, insert des lignes, décrément du stock par trigger, calcul des frais de port, mise à jour du montant_total.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><strong><code>CALL sp_create_order_from_basket(...)</code></strong> + <code>CALL sp_confirm_order(...)</code> en seconde étape, <strong>dans une seule transaction PDO</strong> (<code>$pdo-&gt;beginTransaction()</code> / <code>commit()</code> / <code>rollBack()</code> en cas d'erreur).</td>
+</tr>
+<tr>
+<td><strong>Paramètres</strong></td>
+<td><code>id_client</code> (session), <code>adresse_livraison</code>, <code>lignes_json</code> (chaîne JSON du tableau <code>[{id_produit, quantite}, ...]</code>)</td>
+</tr>
+<tr>
+<td><strong>Retour</strong></td>
+<td><code>@code</code> parmi : <code>OK</code>, <code>STOCK_INSUFFISANT</code>, <code>PANIER_VIDE</code>, <code>PRODUIT_INEXISTANT</code>, <code>ADRESSE_MANQUANTE</code> ; <code>@new_cid</code> (id_commande créé), <code>@numero</code> (numéro CMD2026-NNNNNN)</td>
+</tr>
+</tbody>
+</table>
+<p>Appel type :</p>
+<pre><code class="language-sql">CALL sp_create_order_from_basket(:client, :adresse, :json);
+-- puis si @code = 'OK' :
+CALL sp_confirm_order(@new_cid);
+-- et enfin COMMIT (via PDO)
+</code></pre>
+<blockquote>
+<p>Attention : <strong>Piège classique</strong> : la procédure effectue elle-même des COMMIT/ROLLBACK internes ? Non — elle
+signale les erreurs via <code>@code</code> et l'application décide du rollback (c'est pourquoi les tests T-29
+vérifient que le stock revient en cas d'erreur). Vérifiez le comportement exact en lisant le
+corps de <code>sp_create_order_from_basket</code> dans <code>sql/02_minishop_procedures.sql</code>.</p>
+</blockquote>
+<h4 id="q-ord-03-historique-des-commandes-dun-client">Q-ORD-03 — Historique des commandes d'un client<a class="headerlink" href="#q-ord-03-historique-des-commandes-dun-client" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-CLI-08, RB-08, SEC-08</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>GET /mes-commandes</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Afficher la liste paginée des commandes du client connecté, avec date, numéro, statut, montant total, frais de port, nombre d'articles.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SELECT</code> sur vue <code>v_commandes_client</code></td>
+</tr>
+<tr>
+<td><strong>Filtres</strong></td>
+<td><strong>OBLIGATOIRE : <code>id_client = :id</code></strong> où <code>:id</code> vient de <code>$_SESSION['user_id']</code>. Jamais confier l'id à l'URL sur cette page.</td>
+</tr>
+<tr>
+<td><strong>Tri</strong></td>
+<td><code>ORDER BY date_commande DESC</code></td>
+</tr>
+<tr>
+<td><strong>Pagination</strong></td>
+<td><code>LIMIT/OFFSET</code> (10 par défaut, max 50)</td>
+</tr>
+<tr>
+<td><strong>Retour</strong></td>
+<td>colonnes de <code>v_commandes_client</code></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-sql">SELECT id_commande, numero, statut, montant_total, frais_port,
+       date_commande, nb_lignes
+  FROM v_commandes_client
+ WHERE id_client = :id
+ ORDER BY date_commande DESC
+ LIMIT :limit OFFSET :offset;
+</code></pre>
+<h4 id="q-ord-04-detail-dune-commande-lignes-prix-payes">Q-ORD-04 — Détail d'une commande (lignes + prix payés)<a class="headerlink" href="#q-ord-04-detail-dune-commande-lignes-prix-payes" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-CLI-09, RB-06, SEC-08</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>GET /mes-commandes/{id}</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Afficher le détail d'une commande appartenant <strong>au client connecté</strong> : adresse, montants, lignes avec le snapshot du prix au moment de l'achat.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td>2 <code>SELECT</code> successifs</td>
+</tr>
+<tr>
+<td><strong>Filtres</strong></td>
+<td>systématiquement <code>WHERE id_commande = :cid AND id_client = :id</code> (jointure avec <code>commande</code> pour les lignes) — si ça ne ramène rien → 404</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-sql">-- Entête de commande (contrôle d'appartenance dans la clause WHERE)
+SELECT id_commande, numero, statut, montant_total, frais_port,
+       adresse_livraison, commentaire, date_commande, date_modification
+  FROM commande
+ WHERE id_commande = :cid AND id_client = :id
+ LIMIT 1;
+
+-- Lignes de la commande (prix déjà figés par trigger trg_ligne_prix_snapshot)
+SELECT l.id_ligne, l.id_produit, p.nom, p.slug, p.image_url,
+       l.quantite, l.prix_unitaire, l.total_ligne
+  FROM ligne_commande l
+  JOIN produit p ON p.id_produit = l.id_produit
+ WHERE l.id_commande = :cid
+ ORDER BY l.id_ligne ASC;
+</code></pre>
+<h4 id="q-ord-05-historique-des-statuts-piste-daudit-cote-client">Q-ORD-05 — Historique des statuts (piste d'audit) côté client<a class="headerlink" href="#q-ord-05-historique-des-statuts-piste-daudit-cote-client" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-CLI-09</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td>détail de commande</td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Afficher la chronologie des statuts de la commande.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SELECT</code> sur <code>order_status_history</code> en filtrant sur l'id_commande après avoir vérifié l'appartenance (Q-ORD-04 a déjà ramené l'entête).</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-sql">SELECT old_status, new_status, changed_by_role, commentaire, changed_at
+  FROM order_status_history
+ WHERE order_id = :cid
+ ORDER BY changed_at ASC, id ASC;
+</code></pre>
+<h4 id="q-ord-06-annuler-une-commande">Q-ORD-06 — Annuler une commande<a class="headerlink" href="#q-ord-06-annuler-une-commande" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-CLI-10, RB-11/18/20</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>POST /mes-commandes/{id}/annulation</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Annuler une commande si elle n'est ni EXPEDIEE ni LIVREE. La procédure remet le stock par trigger, passe le statut à ANNULEE, remet frais_port et montant_total à 0 et écrit dans l'historique.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><strong><code>CALL sp_cancel_order(:cid, :client, :commentaire)</code></strong></td>
+</tr>
+<tr>
+<td><strong>Retour</strong></td>
+<td><code>@code = OK</code> ou <code>COMMANDE_NON_ANNULABLE</code> ou <code>ACCES_NON_AUTORISE</code> ou <code>COMMANDE_INTROUVABLE</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="25-module-back-office-produits-categories-stocks-uc-10-uc-11-uc-12">2.5 Module Back-office — Produits, catégories, stocks (UC-10, UC-11, UC-12)<a class="headerlink" href="#25-module-back-office-produits-categories-stocks-uc-10-uc-11-uc-12" title="Permanent link">#</a></h3>
+<h4 id="q-adm-01-lister-les-produits-back-office-y-compris-masques">Q-ADM-01 — Lister les produits (back-office, y compris masqués)<a class="headerlink" href="#q-adm-01-lister-les-produits-back-office-y-compris-masques" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-ADM-01</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>GET /admin/produits</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Liste paginée de <strong>tous</strong> les produits (y compris <code>visible = 0</code>) avec catégorie, état de stock, prix TTC.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SELECT</code> — ne pas utiliser <code>v_catalogue</code> (qui exclut les masqués) ; faire la jointure à la main</td>
+</tr>
+<tr>
+<td><strong>Tables</strong></td>
+<td><code>produit</code>, <code>categorie</code>, <code>v_etat_stock</code></td>
+</tr>
+<tr>
+<td><strong>Filtres</strong> : recherche par nom OU référence LIKE, filtre par <code>visible</code>, filtre par catégorie, filtre par état (<code>etat = 'RUPTURE'</code>, etc.)</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Tri</strong> : liste blanche <code>nom</code>, <code>prix_ttc</code>, <code>stock</code>, <code>date_modification</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-sql">SELECT p.id_produit, p.reference, p.slug, p.nom, p.prix_ht, p.tva, p.prix_ttc,
+       p.stock, p.visible, p.date_modification,
+       c.nom AS categorie, e.etat
+  FROM produit p
+  JOIN categorie c     ON c.id_categorie = p.id_categorie
+  JOIN v_etat_stock e  ON e.id_produit  = p.id_produit
+ WHERE (:q IS NULL OR p.nom LIKE :qlike OR p.reference LIKE :qlike)
+   AND (:cat IS NULL OR p.id_categorie = :cat)
+   AND (:vis IS NULL OR p.visible = :vis)
+ ORDER BY p.date_modification DESC
+ LIMIT :limit OFFSET :offset;
+</code></pre>
+<p>(puis un <code>SELECT COUNT(*)</code> calqué sur les mêmes filtres pour la pagination.)</p>
+<h4 id="q-adm-02-charger-un-produit-pour-le-formulaire-dedition">Q-ADM-02 — Charger un produit pour le formulaire d'édition<a class="headerlink" href="#q-adm-02-charger-un-produit-pour-le-formulaire-dedition" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-ADM-01</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>GET /admin/produits/{id}/editer</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Toutes les colonnes d'un produit pour pré-remplir le formulaire (y compris <code>visible = 0</code>).</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SELECT</code> produit par id</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-sql">SELECT p.*, c.nom AS categorie
+  FROM produit p
+  JOIN categorie c ON c.id_categorie = p.id_categorie
+ WHERE p.id_produit = :id
+ LIMIT 1;
+</code></pre>
+<h4 id="q-adm-03-creer-modifier-un-produit">Q-ADM-03 — Créer / modifier un produit<a class="headerlink" href="#q-adm-03-creer-modifier-un-produit" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-ADM-01, RB-02/07/14/16</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>POST /admin/produits</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Création ou mise à jour d'un produit (la procédure gère l'<code>INSERT</code> ou l'<code>UPDATE</code> selon que <code>p_id_produit</code> est fourni).</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><strong><code>CALL sp_save_product(...)</code></strong></td>
+</tr>
+<tr>
+<td><strong>Retour</strong></td>
+<td><code>@code = OK</code> / <code>REFERENCE_DEJA_UTILISEE</code> / <code>SLUG_DEJA_UTILISE</code> / <code>RB02_PRIX_DOIT_ETRE_STRICTEMENT_POSITIF</code> / <code>CATEGORIE_INTROUVABLE</code>, et <code>@new_id</code> (id du produit)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="q-adm-04-supprimer-ou-masquer-un-produit">Q-ADM-04 — Supprimer (ou masquer) un produit<a class="headerlink" href="#q-adm-04-supprimer-ou-masquer-un-produit" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-ADM-02, RB-09/14</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>POST /admin/produits/{id}/suppression</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Supprimer un produit s'il n'a jamais été commandé (DELETE physique), sinon le basculer en <code>visible = 0</code>. La procédure <code>sp_delete_product</code> gère les deux cas.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><strong><code>CALL sp_delete_product(:id)</code></strong> — ne jamais faire de <code>DELETE FROM produit</code> direct (le trigger <code>trg_produit_delete</code> l'interdirait si le produit est référencé)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="q-adm-05-liste-des-categories">Q-ADM-05 — Liste des catégories<a class="headerlink" href="#q-adm-05-liste-des-categories" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-ADM-03</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>GET /admin/categories</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Afficher toutes les catégories avec le nombre de produits (même masqués) qu'elles contiennent.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SELECT</code> avec JOIN + COUNT</td>
+</tr>
+<tr>
+<td><strong>Différence avec Q-COM-02</strong> : compter <strong>tous</strong> les produits, pas seulement les visibles</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-sql">SELECT c.id_categorie, c.nom, c.slug, c.description,
+       COUNT(p.id_produit) AS nb_produits
+  FROM categorie c
+  LEFT JOIN produit p ON p.id_categorie = c.id_categorie
+ GROUP BY c.id_categorie, c.nom, c.slug, c.description
+ ORDER BY c.nom ASC;
+</code></pre>
+<h4 id="q-adm-06-charger-une-categorie-pour-ledition">Q-ADM-06 — Charger une catégorie pour l'édition<a class="headerlink" href="#q-adm-06-charger-une-categorie-pour-ledition" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-ADM-03</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>GET /admin/categories/{id}/editer</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Une catégorie par id.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SELECT * FROM categorie WHERE id_categorie = :id LIMIT 1;</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="q-adm-07-creermodifiersupprimer-une-categorie">Q-ADM-07 — Créer/modifier/supprimer une catégorie<a class="headerlink" href="#q-adm-07-creermodifiersupprimer-une-categorie" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-ADM-03, RB-07/08/14</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>POST /admin/categories</code> et <code>POST /admin/categories/{id}/suppression</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>CRUD catégorie.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><strong><code>CALL sp_save_category(...)</code></strong> / <strong><code>CALL sp_delete_category(:id)</code></strong> — la suppression lève <code>CATEGORIE_NON_VIDE_REASSIGNER_LES_PRODUITS</code> si des produits y sont rattachés.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="q-adm-08-liste-des-categories-pour-le-select-du-formulaire-produit">Q-ADM-08 — Liste des catégories pour le <code>&lt;select&gt;</code> du formulaire produit<a class="headerlink" href="#q-adm-08-liste-des-categories-pour-le-select-du-formulaire-produit" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-ADM-01</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td>formulaire création/édition produit</td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Fournir la liste complète des catégories (id, nom) pour peupler un <code>&lt;select&gt;</code>.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SELECT id_categorie, nom FROM categorie ORDER BY nom ASC;</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="q-adm-09-ajuster-le-stock">Q-ADM-09 — Ajuster le stock<a class="headerlink" href="#q-adm-09-ajuster-le-stock" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-ADM-04, RB-03/17/18</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>POST /admin/stocks</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Ajouter/retirer du stock (mode <code>DELTA</code>) ou fixer sa valeur absolue (mode <code>SET</code>), avec motif.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><strong><code>CALL sp_adjust_stock(:id, :mode, :qte, :motif, :admin_id)</code></strong> — la procédure pose un verrou (<code>FOR UPDATE</code>) et lève <code>RB03_STOCK_NE_PEUT_PAS_ETRE_NEGATIF</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="q-adm-10-alertes-de-stock-ruptures-et-seuils">Q-ADM-10 — Alertes de stock (ruptures et seuils)<a class="headerlink" href="#q-adm-10-alertes-de-stock-ruptures-et-seuils" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-ADM-05, ENF-13</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>GET /admin/stocks?etat=alerte</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Liste des produits dont l'état est <code>RUPTURE</code> ou <code>TRES_BAS</code>, triés par criticité (rupture d'abord, puis stock croissant).</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SELECT</code> sur <code>v_etat_stock</code> JOIN <code>produit</code> JOIN <code>categorie</code></td>
+</tr>
+<tr>
+<td><strong>Filtres</strong></td>
+<td><code>WHERE e.etat IN ('RUPTURE','TRES_BAS')</code></td>
+</tr>
+<tr>
+<td><strong>Tri</strong></td>
+<td><code>ORDER BY FIELD(e.etat, 'RUPTURE','TRES_BAS'), e.stock ASC</code></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-sql">SELECT e.id_produit, p.reference, p.nom, e.stock, e.seuil_alerte, e.etat,
+       c.nom AS categorie
+  FROM v_etat_stock e
+  JOIN produit p   ON p.id_produit   = e.id_produit
+  JOIN categorie c ON c.id_categorie = p.id_categorie
+ WHERE e.etat IN ('RUPTURE','TRES_BAS')
+ ORDER BY FIELD(e.etat, 'RUPTURE','TRES_BAS'), e.stock ASC;
+</code></pre>
+<hr />
+<h3 id="26-module-back-office-commandes-statuts-audit-indicateurs-uc-13-uc-14">2.6 Module Back-office — Commandes, statuts, audit, indicateurs (UC-13, UC-14)<a class="headerlink" href="#26-module-back-office-commandes-statuts-audit-indicateurs-uc-13-uc-14" title="Permanent link">#</a></h3>
+<h4 id="q-adm-11-liste-des-commandes-back-office">Q-ADM-11 — Liste des commandes (back-office)<a class="headerlink" href="#q-adm-11-liste-des-commandes-back-office" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-ADM-06</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>GET /admin/commandes</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Lister les commandes avec possibilité de filtrer par statut, client (id/email), période (date_min, date_max), montant min/max.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SELECT</code> sur <code>v_commandes_client</code> (déjà jointe au client) + <code>WHERE</code> dynamique</td>
+</tr>
+<tr>
+<td><strong>Tri</strong> : liste blanche <code>numero</code>, <code>date_commande</code>, <code>montant_total</code>, <code>client</code> ; par défaut <code>date_commande DESC</code></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Pagination</strong> : 20 par page, max 100</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Bonus</strong> : renvoyer également le <code>SUM(montant_total)</code> des lignes filtrées (utile à l'admin) via une seconde requête <code>SELECT SUM(...)</code> avec les mêmes filtres.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-sql">SELECT id_commande, numero, client, id_client, statut, montant_total,
+       frais_port, date_commande, nb_lignes
+  FROM v_commandes_client
+ WHERE (:statut IS NULL OR statut = :statut)
+   AND (:deb IS NULL OR date_commande &gt;= :deb)
+   AND (:fin IS NULL OR date_commande &lt;= :fin)
+   AND (:client IS NULL
+        OR id_client = :client_id
+        OR client LIKE :client_like)
+ ORDER BY date_commande DESC
+ LIMIT :limit OFFSET :offset;
+</code></pre>
+<h4 id="q-adm-12-detail-dune-commande-cote-admin">Q-ADM-12 — Détail d'une commande côté admin<a class="headerlink" href="#q-adm-12-detail-dune-commande-cote-admin" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-ADM-08</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>GET /admin/commandes/{id}</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Entête complet de la commande, les lignes (prix snapshot), le client (toutes ses coordonnées), la piste d'audit.</td>
+</tr>
+<tr>
+<td><strong>Type</strong> : plusieurs <code>SELECT</code> (pas de contrôle d'appartenance — l'admin voit tout) :</td>
+<td></td>
+</tr>
+<tr>
+<td>1. entête : <code>commande</code> JOIN <code>client</code> par <code>id_commande</code></td>
+<td></td>
+</tr>
+<tr>
+<td>2. lignes : identique à Q-ORD-04 (seconde requête)</td>
+<td></td>
+</tr>
+<tr>
+<td>3. historique : identique à Q-ORD-05</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-sql">-- 1. Entête + client
+SELECT o.*, cl.nom, cl.prenom, cl.email, cl.telephone,
+       cl.adresse_livraison AS cl_adr, cl.code_postal AS cl_cp, cl.ville AS cl_ville
+  FROM commande o
+  JOIN client cl ON cl.id_client = o.id_client
+ WHERE o.id_commande = :cid
+ LIMIT 1;
+
+-- 2. Lignes : identique à Q-ORD-04 (ligne_commande JOIN produit)
+-- 3. Historique : identique à Q-ORD-05 (order_status_history par order_id)
+</code></pre>
+<h4 id="q-adm-13-modifier-le-statut-dune-commande">Q-ADM-13 — Modifier le statut d'une commande<a class="headerlink" href="#q-adm-13-modifier-le-statut-dune-commande" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-ADM-07, RB-09/11</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>POST /admin/commandes/{id}/statut</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Passer une commande à un nouveau statut avec commentaire (commentaire obligatoire quand le statut cible est <code>ANNULEE</code>).</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><strong><code>CALL sp_update_order_status(:cid, :new_status, :admin_id, 'ADMIN', :commentaire)</code></strong> — la procédure + le trigger <code>trg_commande_transition_statut</code> vérifient la matrice RB-11 et lèvent <code>RB11_TRANSITION_STATUT_INTERDITE</code> si la transition est interdite</td>
+</tr>
+</tbody>
+</table>
+<h4 id="q-adm-14-piste-daudit-des-statuts-back-office">Q-ADM-14 — Piste d'audit des statuts (back-office)<a class="headerlink" href="#q-adm-14-piste-daudit-des-statuts-back-office" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-ADM-08</td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Même requête que Q-ORD-05 mais en affichant en plus l'identité de l'auteur (nom/prenom si admin, "Le client" si client). Cela requiert une jointure spécifique parce que <code>changed_by</code> pointe soit vers <code>client</code> soit vers <code>administrateur</code> selon <code>changed_by_role</code>.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SELECT</code> avec deux LEFT JOIN</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-sql">SELECT h.old_status, h.new_status, h.changed_by_role, h.commentaire, h.changed_at,
+       CASE h.changed_by_role
+         WHEN 'CLIENT' THEN CONCAT(cl.prenom, ' ', cl.nom)
+         WHEN 'ADMIN'  THEN CONCAT(ad.prenom, ' ', ad.nom, ' (', ad.role, ')')
+         ELSE 'Système'
+       END AS auteur
+  FROM order_status_history h
+  LEFT JOIN client cl         ON h.changed_by_role = 'CLIENT'
+                             AND cl.id_client = h.changed_by
+  LEFT JOIN administrateur ad ON h.changed_by_role = 'ADMIN'
+                             AND ad.id_admin  = h.changed_by
+ WHERE h.order_id = :cid
+ ORDER BY h.changed_at ASC, h.id ASC;
+</code></pre>
+<h4 id="q-adm-15-indicateurs-du-tableau-de-bord">Q-ADM-15 — Indicateurs du tableau de bord<a class="headerlink" href="#q-adm-15-indicateurs-du-tableau-de-bord" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-ADM-09</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>GET /admin</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>CA encaissé du jour, CA par statut, panier moyen, top 5 des produits les plus vendus, nombre de commandes en attente, nombre de produits en rupture.</td>
+</tr>
+<tr>
+<td><strong>Type</strong> :</td>
+<td></td>
+</tr>
+<tr>
+<td>- CA par statut, panier moyen, top produits → <strong><code>CALL sp_revenue_report(:deb, :fin)</code></strong> (la procédure retourne plusieurs jeux de résultats)</td>
+<td></td>
+</tr>
+<tr>
+<td>- Compteurs rapides → <code>SELECT COUNT/SUM</code> directs</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Compteurs rapides à écrire en direct :</p>
+<pre><code class="language-sql">-- Nombre de commandes en attente (EN_PREPARATION)
+SELECT COUNT(*) AS nb_en_preparation
+  FROM commande WHERE statut = 'EN_PREPARATION';
+
+-- Nombre de produits en rupture
+SELECT COUNT(*) AS nb_ruptures
+  FROM v_etat_stock WHERE etat = 'RUPTURE';
+
+-- CA du jour
+SELECT COALESCE(SUM(montant_total), 0) AS ca_jour
+  FROM commande
+ WHERE statut IN ('PAYEE','EXPEDIEE','LIVREE')
+   AND DATE(date_commande) = CURRENT_DATE;
+</code></pre>
+<hr />
+<h3 id="27-module-back-office-gestion-des-comptes-administrateurs-super-only">2.7 Module Back-office — Gestion des comptes administrateurs (SUPER only)<a class="headerlink" href="#27-module-back-office-gestion-des-comptes-administrateurs-super-only" title="Permanent link">#</a></h3>
+<h4 id="q-adm-16-liste-des-administrateurs">Q-ADM-16 — Liste des administrateurs<a class="headerlink" href="#q-adm-16-liste-des-administrateurs" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-ADM-10, RB-12/13</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>GET /admin/equipe</code> (rôle SUPER uniquement, contrôlé en PHP)</td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Tous les administrateurs avec leur rôle et état.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SELECT id_admin, nom, prenom, email, role, actif, derniere_connexion FROM administrateur ORDER BY nom, prenom;</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="q-adm-17-creer-un-administrateur">Q-ADM-17 — Créer un administrateur<a class="headerlink" href="#q-adm-17-creer-un-administrateur" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-ADM-10</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>POST /admin/equipe</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Créer un nouveau compte admin. Aucune procédure n'existe pour cela — INSERT direct, avec hash généré par <code>password_hash()</code> en PHP.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>INSERT INTO administrateur(...) VALUES(...)</code></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-sql">INSERT INTO administrateur (nom, prenom, email, mot_de_passe_hash, role, actif)
+VALUES (:nom, :prenom, :email, :hash, :role, 1);
+</code></pre>
+<h4 id="q-adm-18-bloquer-debloquer-un-administrateur">Q-ADM-18 — Bloquer / débloquer un administrateur<a class="headerlink" href="#q-adm-18-bloquer-debloquer-un-administrateur" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-ADM-10</td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Passer <code>actif</code> de 0 à 1 ou inversement.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>UPDATE administrateur SET actif = :actif WHERE id_admin = :id;</code></td>
+</tr>
+<tr>
+<td><strong>Sécurité</strong> : interdire à un admin de se bloquer lui-même.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="q-adm-19-changer-le-role-dun-administrateur">Q-ADM-19 — Changer le rôle d'un administrateur<a class="headerlink" href="#q-adm-19-changer-le-role-dun-administrateur" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-ADM-10</td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Passer un compte de <code>GESTIONNAIRE</code> à <code>SUPER</code> et vice-versa.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>UPDATE administrateur SET role = :role WHERE id_admin = :id;</code> — le nouveau rôle doit être validé par la liste blanche <code>('SUPER','GESTIONNAIRE')</code> en PHP avant bind.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="q-adm-20-connexion-administrateur">Q-ADM-20 — Connexion administrateur<a class="headerlink" href="#q-adm-20-connexion-administrateur" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-ADM-10, SEC-04</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>POST /admin/connexion</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Même logique que Q-CLI-02 mais pour le back-office.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><strong><code>CALL sp_get_credentials(:email, 'ADMIN')</code></strong> → vérification <code>actif=1</code> → <code>password_verify()</code> en PHP → mise à jour de <code>derniere_connexion</code> (Q-COM-05) → <code>session_regenerate_id(true)</code>.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="28-module-securite-csrf-journalisation">2.8 Module Sécurité / CSRF / journalisation<a class="headerlink" href="#28-module-securite-csrf-journalisation" title="Permanent link">#</a></h3>
+<h4 id="q-sec-01-lire-un-utilisateur-par-son-token-se-souvenir-de-moi-si-implemente">Q-SEC-01 — Lire un utilisateur par son token "se souvenir de moi" (SI implémenté)<a class="headerlink" href="#q-sec-01-lire-un-utilisateur-par-son-token-se-souvenir-de-moi-si-implemente" title="Permanent link">#</a></h4>
+<p>Non prévu par le CDC → à ne pas implémenter.</p>
+<h4 id="q-sec-02-journal-des-rejets-de-regles-optionnel-ef-gen-04">Q-SEC-02 — Journal des rejets de règles (optionnel EF-GEN-04)<a class="headerlink" href="#q-sec-02-journal-des-rejets-de-regles-optionnel-ef-gen-04" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-GEN-04, SEC-13</td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Enregistrer les rejets (tentatives de suppression d'un produit référencé, IDOR, CSRF, etc.) dans une table de log.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td>La table de log n'est <strong>pas</strong> encore dans le schéma actuel. Soit vous la créez (migration à faire), soit vous utilisez le fichier <code>app/var/log/app.log</code> via Monolog/error_log. Cette requête n'est pas à écrire tant que la table n'existe pas — elle devra être ajoutée dans un script de migration.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="29-installateur-ci-scripts">2.9 Installateur / CI / scripts<a class="headerlink" href="#29-installateur-ci-scripts" title="Permanent link">#</a></h3>
+<h4 id="q-inst-01-verifier-que-la-base-est-bien-initialisee-installphp">Q-INST-01 — Vérifier que la base est bien initialisée (install.php)<a class="headerlink" href="#q-inst-01-verifier-que-la-base-est-bien-initialisee-installphp" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Id</strong></td>
+<td>EF-GEN-06</td>
+</tr>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>public/install.php</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Vérifier que les 8 tables existent et qu'il y a au moins un administrateur et un client.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SHOW TABLES LIKE 'client';</code> ou <code>SELECT COUNT(*) FROM administrateur;</code> — pas de requête métier particulière, c'est un simple contrôle.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="q-inst-02-verifier-que-ladministrateur-de-seed-est-present-ci">Q-INST-02 — Vérifier que l'administrateur de seed est présent (CI)<a class="headerlink" href="#q-inst-02-verifier-que-ladministrateur-de-seed-est-present-ci" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Écran</strong></td>
+<td><code>.gitlab-ci.yml</code> job <code>seed</code></td>
+</tr>
+<tr>
+<td><strong>Question</strong></td>
+<td>Compter les lignes insérées dans chaque table après <code>scripts/load_db.sh</code>.</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>SELECT COUNT(*) FROM &lt;table&gt;;</code> sur les 8 tables — déjà implémenté dans <code>load_db.sh</code> (à terminer, cf. tâche D3-L5-05 dans la todolist).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-recapitulatif-des-requetes-a-ecrire-check-list-pour-la-collegue">3. Récapitulatif des requêtes à écrire (check-list pour la collègue)<a class="headerlink" href="#3-recapitulatif-des-requetes-a-ecrire-check-list-pour-la-collegue" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Id</th>
+<th>Écran</th>
+<th>Procédure à appeler</th>
+<th>Ou requête à écrire</th>
+<th>Fait [OK]</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q-COM-01</td>
+<td>tous</td>
+<td>—</td>
+<td><code>SELECT valeur FROM parametre</code> ou <code>fn_param()</code></td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-COM-02</td>
+<td>menu catégories</td>
+<td>—</td>
+<td><code>categorie LEFT JOIN produit WHERE visible=1 COUNT</code></td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-COM-03</td>
+<td>auth admin</td>
+<td>—</td>
+<td><code>SELECT ... FROM administrateur WHERE id=? AND actif=1</code></td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-COM-04</td>
+<td>connexion client</td>
+<td>—</td>
+<td><code>UPDATE client SET derniere_connexion = ...</code></td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-COM-05</td>
+<td>connexion admin</td>
+<td>—</td>
+<td><code>UPDATE administrateur SET derniere_connexion = ...</code></td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-VIS-01</td>
+<td><code>/catalogue</code></td>
+<td>—</td>
+<td><code>SELECT ... FROM v_catalogue ORDER BY ... LIMIT ? OFFSET ?</code></td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-VIS-02</td>
+<td>catalogue (pagination)</td>
+<td>—</td>
+<td><code>SELECT COUNT(*) FROM v_catalogue</code> (+ filtres)</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-VIS-03</td>
+<td>catalogue filtré</td>
+<td>(facultatif <code>sp_search_products(q=NULL,...)</code>)</td>
+<td>SELECT sur v_catalogue avec WHERE dynamique</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-VIS-04</td>
+<td><code>/recherche</code></td>
+<td><strong><code>sp_search_products</code></strong></td>
+<td>— (appel seulement)</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-VIS-05</td>
+<td><code>/produit/{slug}</code></td>
+<td>—</td>
+<td><code>SELECT ... FROM v_catalogue WHERE slug=?</code></td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-VIS-06</td>
+<td><code>/categorie/{slug}</code></td>
+<td>—</td>
+<td>Q-VIS-03 avec <code>categorie_slug=?</code></td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-VIS-07</td>
+<td>ajouter panier</td>
+<td>—</td>
+<td><code>SELECT stock, visible FROM produit WHERE id=?</code></td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-CLI-01</td>
+<td><code>/inscription</code></td>
+<td><strong><code>sp_create_account</code></strong></td>
+<td>—</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-CLI-02</td>
+<td><code>/connexion</code> (client)</td>
+<td><strong><code>sp_get_credentials(email, 'CLIENT')</code></strong></td>
+<td>—</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-CLI-03</td>
+<td><code>/compte</code></td>
+<td>—</td>
+<td><code>SELECT ... FROM client WHERE id=?</code></td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-CLI-04</td>
+<td>POST <code>/compte</code></td>
+<td><strong><code>sp_update_client</code></strong></td>
+<td>—</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-CLI-05</td>
+<td>mdp oublié/changé</td>
+<td>—</td>
+<td>SELECT hash puis UPDATE hash</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-PAN-01</td>
+<td><code>/panier</code></td>
+<td>—</td>
+<td><code>SELECT ... FROM produit WHERE id IN (?)</code></td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ORD-01</td>
+<td>panier (aperçu port)</td>
+<td>—</td>
+<td>SELECT CASE ... (calcul frais de port)</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ORD-02</td>
+<td>POST <code>/commande/valider</code></td>
+<td><strong><code>sp_create_order_from_basket</code> + <code>sp_confirm_order</code></strong></td>
+<td>— (transaction PDO)</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ORD-03</td>
+<td><code>/mes-commandes</code></td>
+<td>—</td>
+<td><code>SELECT ... FROM v_commandes_client WHERE id_client=?</code></td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ORD-04</td>
+<td>détail commande client</td>
+<td>—</td>
+<td>SELECT entête + SELECT lignes</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ORD-05</td>
+<td>détail commande (historique)</td>
+<td>—</td>
+<td>SELECT sur <code>order_status_history</code></td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ORD-06</td>
+<td>annulation</td>
+<td><strong><code>sp_cancel_order</code></strong></td>
+<td>—</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ADM-01</td>
+<td><code>/admin/produits</code></td>
+<td>—</td>
+<td>SELECT produit + categorie + v_etat_stock</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ADM-02</td>
+<td>édition produit</td>
+<td>—</td>
+<td>SELECT produit WHERE id=?</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ADM-03</td>
+<td>POST produit</td>
+<td><strong><code>sp_save_product</code></strong></td>
+<td>—</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ADM-04</td>
+<td>suppression produit</td>
+<td><strong><code>sp_delete_product</code></strong></td>
+<td>—</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ADM-05</td>
+<td><code>/admin/categories</code></td>
+<td>—</td>
+<td>SELECT categorie LEFT JOIN produit COUNT</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ADM-06</td>
+<td>édition catégorie</td>
+<td>—</td>
+<td>SELECT categorie WHERE id=?</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ADM-07</td>
+<td>CRUD catégorie</td>
+<td><strong><code>sp_save_category</code> / <code>sp_delete_category</code></strong></td>
+<td>—</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ADM-08</td>
+<td>select catégories (form)</td>
+<td>—</td>
+<td>SELECT id, nom FROM categorie ORDER BY nom</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ADM-09</td>
+<td>stocks</td>
+<td><strong><code>sp_adjust_stock</code></strong></td>
+<td>—</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ADM-10</td>
+<td>alertes stocks</td>
+<td>—</td>
+<td>SELECT sur <code>v_etat_stock</code> WHERE etat IN ('RUPTURE','TRES_BAS')</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ADM-11</td>
+<td><code>/admin/commandes</code></td>
+<td>—</td>
+<td>SELECT sur <code>v_commandes_client</code> WHERE dynamique</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ADM-12</td>
+<td>détail commande admin</td>
+<td>—</td>
+<td>SELECT entête + lignes + historique (3 requêtes)</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ADM-13</td>
+<td>changement statut</td>
+<td><strong><code>sp_update_order_status</code></strong></td>
+<td>—</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ADM-14</td>
+<td>audit (admin)</td>
+<td>—</td>
+<td>SELECT history + LEFT JOIN client/admin</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ADM-15</td>
+<td>tableau de bord</td>
+<td><strong><code>sp_revenue_report</code></strong> + 3 SELECT directs (compteurs)</td>
+<td>—</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ADM-16</td>
+<td><code>/admin/equipe</code></td>
+<td>—</td>
+<td>SELECT administrateur ORDER BY nom</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ADM-17</td>
+<td>créer admin</td>
+<td>—</td>
+<td><code>INSERT INTO administrateur(...)</code></td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ADM-18</td>
+<td>bloquer/débloquer admin</td>
+<td>—</td>
+<td><code>UPDATE administrateur SET actif=?</code></td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ADM-19</td>
+<td>changer rôle admin</td>
+<td>—</td>
+<td><code>UPDATE administrateur SET role=?</code></td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-ADM-20</td>
+<td>connexion admin</td>
+<td><strong><code>sp_get_credentials(email, 'ADMIN')</code></strong></td>
+<td>—</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-INST-01</td>
+<td><code>install.php</code></td>
+<td>—</td>
+<td><code>SHOW TABLES</code> / comptages</td>
+<td>[ ]</td>
+</tr>
+<tr>
+<td>Q-INST-02</td>
+<td>CI seed</td>
+<td>—</td>
+<td><code>SELECT COUNT(*) FROM &lt;table&gt;</code> (dans load_db.sh)</td>
+<td>[ ]</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total : 43 requêtes à écrire / appels de procédures à câbler.</strong></p>
+<hr />
+<h2 id="4-bonnes-pratiques-et-pieges-a-eviter">4. Bonnes pratiques et pièges à éviter<a class="headerlink" href="#4-bonnes-pratiques-et-pieges-a-eviter" title="Permanent link">#</a></h2>
+<ol>
+<li><strong>Ne jamais réécrire les règles métier en PHP</strong> : <code>frais_port</code>, calcul du TTC, décrément de stock,
+   matrice de statuts, suppression logique, tout passe par les procédures et triggers.</li>
+<li><strong>Jamais de <code>SELECT *</code> en production</strong> dans les écrans : ne sélectionner que les colonnes utiles
+   (j'ai mis <code>*</code> dans certains exemples pour simplifier, mais dans le code final listez explicitement
+   les colonnes nécessaires à la vue).</li>
+<li><strong>Ne jamais faire de DELETE / UPDATE sur <code>commande</code> ou <code>ligne_commande</code> en direct côté client</strong> :
+   les triggers interdiront les montants calculés (RB-15) et les transitions de statut interdites (RB-11),
+   mais c'est une erreur de conception de tenter de les contourner.</li>
+<li><strong>Transactions</strong> : seule <code>sp_create_order_from_basket</code> + <code>sp_confirm_order</code> nécessitent une transaction
+   applicative explicite. Toutes les autres procédures sont autonomes.</li>
+<li><strong>Pagination</strong> : toujours exécuter le <code>COUNT(*)</code> <strong>avant</strong> le <code>SELECT ... LIMIT</code> avec les <strong>mêmes
+   filtres</strong>, sinon le nombre de pages sera faux.</li>
+<li><strong>Tests</strong> : les requêtes écrites doivent faire passer les tests <code>tests/sql/tNN_*.sql</code> (29 tests)
+   et les cas fonctionnels F-01…F-31, ainsi que les contrôles S-01…S-08 (cf. <code>tests/security/controles.sh</code>
+   à terminer par A).</li>
+<li><strong>Lecture des codes retour</strong> : toutes les procédures renvoient un <code>@code</code> de type VARCHAR.
+   Toujours le récupérer et le mapper vers un message utilisateur traduit (table de correspondance
+   dans le code PHP : <code>OK</code>, <code>STOCK_INSUFFISANT</code>, <code>EMAIL_DEJA_UTILISE</code>, <code>COMMANDE_NON_ANNULABLE</code>,
+   <code>RB11_TRANSITION_STATUT_INTERDITE</code>, <code>RB03_STOCK_NE_PEUT_PAS_ETRE_NEGATIF</code>, <code>REFERENCE_DEJA_UTILISEE</code>,
+   <code>SLUG_DEJA_UTILISE</code>, <code>CATEGORIE_NON_VIDE</code>, <code>CATEGORIE_INTROUVABLE</code>, <code>PRODUIT_REFERENCE_INTERDIT_DE_SUPPRIMER</code>,
+   <code>ACCES_NON_AUTORISE</code>, <code>PANIER_VIDE</code>, <code>ADRESSE_MANQUANTE</code>, <code>PRODUIT_INEXISTANT</code>,
+   <code>COMMANDE_INTROUVABLE</code>, <code>RB02_PRIX_DOIT_ETRE_STRICTEMENT_POSITIF</code>).</li>
+</ol>
+<hr />
+<h2 id="5-references">5. Références<a class="headerlink" href="#5-references" title="Permanent link">#</a></h2>
+<ul>
+<li>Schéma complet : <code>sql/01_minishop_schema.sql</code></li>
+<li>Procédures : <code>sql/02_minishop_procedures.sql</code></li>
+<li>Triggers : <code>sql/03_minishop_triggers.sql</code></li>
+<li>Données de démo : <code>sql/04_minishop_demo.sql</code></li>
+<li>Exigences EF-<em>/SEC-</em>/RB-* : <code>docs/01-cahier-des-charges-MiniShop.md</code> §4</li>
+<li>WBS : <code>docs/05-wbs-projet.md</code></li>
+<li>Todolist : <code>docs/06-todolist.md</code> (v1.1 — 2 développeurs)</li>
+<li>Tests SQL : <code>tests/sql/</code> (29 tests rejouables via <code>./scripts/run_sql_tests.sh</code>)</li>
+</ul>
+<footer class="doc">
+  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/sql-a-ecrire/requetes-sql-a-ecrire.md</code>
+  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+</footer>
+</main>
+</body>
+</html>

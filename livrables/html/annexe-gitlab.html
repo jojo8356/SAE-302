@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="SAÉ 302 — MiniShop : Annexe 17.9 — Charte GitLab, modèle de MR et README.md du dépôt#">
+<title>Annexe 17.9 — Charte GitLab, modèle de MR et README.md du dépôt# — MiniShop</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --papier: #fbfaf7;
+  --carte: #ffffff;
+  --trait: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-clair: #dbeafe;
+  --code: #f1f5f9;
+  --mesure: 72ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
+    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
+    --accent-clair: #1e3a8a; --code: #16223a;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  max-width: calc(var(--mesure) + 6rem);
+  background: var(--papier);
+  color: var(--encre);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
+h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
+p, li { max-width: var(--mesure); }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+}
+pre {
+  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
+  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.35rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+thead th { background: var(--accent-clair); }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
+img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li input[type="checkbox"] { margin-right: 0.4rem; }
+.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
+.toc > ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1rem; }
+footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+@media print {
+  :root { --papier: #fff; --carte: #fff; }
+  @page { size: A4; margin: 18mm 16mm; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#1-ouverture-et-acces-semaine-1">1. Ouverture et accès (semaine 1)</a></li>
+<li><a href="#2-decoupage-des-branches-une-branche-une-mr-un-lot-du-133">2. Découpage des branches (une branche = une MR = un lot du §13.3)</a></li>
+<li><a href="#3-modele-de-description-de-mr-a-coller-dans-le-gabarit-gitlabmerge_request_templateslotmd">3. Modèle de description de MR (à coller dans le gabarit .gitlab/merge_request_templates/Lot.md)</a></li>
+<li><a href="#4-convention-de-messages-de-commit">4. Convention de messages de commit</a></li>
+<li><a href="#5-ce-qui-ne-doit-jamais-etre-commite">5. Ce qui ne doit jamais être commité</a></li>
+<li><a href="#6-modele-de-readmemd-livre-exactement-ce-fichier-a-la-racine-du-depot">6. Modèle de README.md livré (exactement ce fichier à la racine du dépôt)</a></li>
+<li><a href="#7-ci-le-fichier-de-controle-livre-homeusergitlab-ciyml-6-jobs">7. CI : le fichier de contrôle livré (/home/user/.gitlab-ci.yml, 6 jobs)</a></li>
+<li><a href="#8-ce-que-le-jury-regarde-en-premier-auto-controle-avant-le-rendu">8. Ce que le jury regarde en premier (auto-contrôle avant le rendu)</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="annexe-179-charte-gitlab-modele-de-mr-et-readmemd-du-depot">Annexe 17.9 — Charte GitLab, modèle de MR et <code>README.md</code> du dépôt<a class="headerlink" href="#annexe-179-charte-gitlab-modele-de-mr-et-readmemd-du-depot" title="Permanent link">#</a></h1>
+<h2 id="1-ouverture-et-acces-semaine-1">1. Ouverture et accès (semaine 1)<a class="headerlink" href="#1-ouverture-et-acces-semaine-1" title="Permanent link">#</a></h2>
+<ol>
+<li>Créer le dépôt <strong>privé</strong> <code>minishop-sae-&lt;groupe&gt;</code> sur le GitLab de l'établissement (ou <code>gitlab.com</code> si imposé).</li>
+<li>Ajouter les 3 développeurs (<strong>Developer</strong>) et l'enseignante (<strong>Reporter</strong>, au minimum, pour pouvoir lire le code, les MR et l'historique).</li>
+<li>Envoyer le courriel obligatoire : à <code>thanh-phuong.nguyen@univ-cotedazur.fr</code>, <strong>sujet <code>Composition SAE</code></strong>, corps : noms/prénoms/numéros étudiants, rôle de chacun (cf. RACI §3.3 du CDC), <strong>URL du dépôt</strong>.</li>
+<li>Protéger <code>main</code> (pas de push direct) ; activer les MR ; <strong>désactiver le squash</strong> pour conserver les commits individuels ; activer « Delete source branch ».</li>
+<li>Tag initial <code>v0-cadrage</code> ; tags de jalons <code>v1-mcd</code>, <code>v2-base</code>, <code>v3-front</code>, <code>v4-back</code>, <code>v5-rendu</code>.</li>
+</ol>
+<h2 id="2-decoupage-des-branches-une-branche-une-mr-un-lot-du-133">2. Découpage des branches (une branche = une MR = un lot du §13.3)<a class="headerlink" href="#2-decoupage-des-branches-une-branche-une-mr-un-lot-du-133" title="Permanent link">#</a></h2>
+<pre><code>feat/L04-mcd-mld            docs/L02-cahier-des-charges     feat/L06-procedures-stockees
+feat/L05-script-sql         feat/L07-triggers               test/L14-suite-sql
+feat/L08-socle-mvc          feat/L09-catalogue-visiteur     feat/L10-panier-commande
+feat/L11-back-office        feat/L12-securite-csrf          feat/L13-js-panier
+fix/T09-rollback-stock      docs/L16-support-soutenance
+</code></pre>
+<h2 id="3-modele-de-description-de-mr-a-coller-dans-le-gabarit-gitlabmerge_request_templateslotmd">3. Modèle de description de MR (à coller dans le gabarit <code>.gitlab/merge_request_templates/Lot.md</code>)<a class="headerlink" href="#3-modele-de-description-de-mr-a-coller-dans-le-gabarit-gitlabmerge_request_templateslotmd" title="Permanent link">#</a></h2>
+<pre><code class="language-markdown">## Lot concerné
+L10 — panier + commande
+
+## Exigences couvertes
+EF-CLI-03, EF-CLI-04, EF-CLI-05, EF-CLI-06, EF-CLI-07
+Règles touchées : RB-04, RB-05, RB-06, RB-15, RB-18
+
+## Ce que ça change (côté base / PHP / IHM)
+- `sp_add_order_line` : verrou FOR UPDATE + agrégation des quantités déjà réservées
+- `CommandeRepository::confirmerDepuisPanier()` : un seul CALL, transaction, traduction des codes
+- `public/js/panier.js` : mises à jour par textContent (aucun innerHTML)
+
+## Preuves
+- ✅ `scripts/run_sql_tests.sh` → 29/29
+- ✅ `php -l` sur les fichiers modifiés
+- ✅ capture du parcours F-17 (commande créée, stock 16 → 14)
+- ✅ `grep` CI n° 1, 2, 5 : aucun résultat
+
+## Régression vérifiée
+commande multi-lignes, annulation puis re-commande, panier hors session.
+
+## Auteur / relecteur
+Auteur : @dev-c — Relecteur : @dev-b (obligatoire, autre que l'auteur)
+</code></pre>
+<h2 id="4-convention-de-messages-de-commit">4. Convention de messages de commit<a class="headerlink" href="#4-convention-de-messages-de-commit" title="Permanent link">#</a></h2>
+<pre><code>&lt;type&gt;(&lt;périmètre&gt;): &lt;impératif, minuscule, ≤ 72 caractères&gt;
+
+type ∈ { feat, fix, refactor, test, docs, style, chore, security }
+périmètre ∈ { base, sql, modele, repo, controller, vue, js, secu, tests, docs, ci, readme }
+
+exemples :
+feat(sql): ajoute sp_create_order_from_basket avec transaction unique
+fix(vue): échappe le nom du produit dans la fiche (e() manquant)
+test(base): T-11 vérifie le rejet et non la réparation du prix d'une ligne
+security(session): régénère l'id de session à l'ouverture et à la montée de rôle
+</code></pre>
+<h2 id="5-ce-qui-ne-doit-jamais-etre-commite">5. Ce qui ne doit <strong>jamais</strong> être commité<a class="headerlink" href="#5-ce-qui-ne-doit-jamais-etre-commite" title="Permanent link">#</a></h2>
+<p><code>app/Config/env.php</code> (identifiants MySQL), tout fichier <code>.env</code> réel, les journaux <code>var/log/*</code>, les dumps SQL contenant des données réelles, <code>vendor/</code>, <code>node_modules/</code>, les captures d'écran de test (référencées par un lien wiki ou compressées dans <code>tests/captures/</code> si légères), les hashes de mots de passe autres que ceux de démonstration.</p>
+<h2 id="6-modele-de-readmemd-livre-exactement-ce-fichier-a-la-racine-du-depot">6. Modèle de <code>README.md</code> livré (exactement ce fichier à la racine du dépôt)<a class="headerlink" href="#6-modele-de-readmemd-livre-exactement-ce-fichier-a-la-racine-du-depot" title="Permanent link">#</a></h2>
+<p>Le fichier <code>README.md</code> du dépôt (reproduit intégralement dans le dépôt de ce rendu) contient : présentation du projet, membres et rôles, prérequis, installation en 5 commandes, comptes de démonstration avec <strong>mots de passe de démo</strong>, exécution des tests (SQL, charge, statiques), arborescence, lien vers les documents (CDC, tests, soutenance), procédure de sauvegarde/restauration, et la table des 29 tests SQL avec leur commande de rejeu. <strong>Critère d'acceptation</strong> : un tiers, sur une machine propre, doit pouvoir installer et lancer la démo en ≤ 15 min en suivant uniquement le README (<code>ENF-13</code>).</p>
+<h2 id="7-ci-le-fichier-de-controle-livre-homeusergitlab-ciyml-6-jobs">7. CI : le fichier de contrôle livré (<code>/home/user/.gitlab-ci.yml</code>, 6 jobs)<a class="headerlink" href="#7-ci-le-fichier-de-controle-livre-homeusergitlab-ciyml-6-jobs" title="Permanent link">#</a></h2>
+<pre><code class="language-yaml"># .gitlab-ci.yml (extrait des jobs obligatoires)
+stages: [validate, db, test, docs]
+php-lint:      { stage: validate, script: [ &quot;find app public -name '*.php' -exec php -l {} \\;&quot; ] }
+security-scan: { stage: validate, script: [ &quot;bash tests/security/controles.sh&quot; ] }   # 10 grep bloquants
+base-tests:
+  stage: db
+  services: [ mysql:8.0 ]
+  variables: { MYSQL_DATABASE: minishop_test, MYSQL_ALLOW_EMPTY_PASSWORD: &quot;yes&quot;, DB_TEST: minishop_test }
+  before_script: [ &quot;apt-get update -qq &amp;&amp; apt-get install -y -qq default-mysql-client&quot; ]
+  script: [ &quot;DB_USER=root bash scripts/run_sql_tests.sh&quot; ]
+  artifacts: { paths: [ &quot;tests/sql/rapport_tests_sql.md&quot;, &quot;tests/sql/out&quot; ] }
+</code></pre>
+<p><strong>Règle « pas de re-run » (à appliquer telle quelle).</strong> Si le pipeline est <strong>vert avant le merge</strong> (statut de la
+MR : « Pipeline passed »), <strong>aucun re-run n'est nécessaire après le merge</strong> : le pipeline post-merge rejoue les
+6 mêmes jobs, sur le même arbre de fichiers (GitLab CI teste la MR sur son <em>merge result</em>, GitHub Actions sur
+<code>refs/pull/&lt;n&gt;/merge</code>). Le run post-merge sert de <strong>preuve et de badge</strong>, pas de contrôle — on ne clique donc ni
+« Retry » côté GitLab, ni « Re-run jobs » côté GitHub. Exceptions, à connaître pour la soutenance : <code>main</code> a
+avancé entre le run de la MR et le merge (la chaîne re-démarre seule), run <strong>annulé</strong> (<code>interruptible: true</code>),
+échec de code corrigé puis poussé (c'est le <code>push</code> qui relance, jamais un re-run manuel), <code>style</code> en échec
+<code>allow_failure</code> (non bloquant), <strong>panne d'infrastructure</strong> (un seul <em>Retry</em> justifié, anomalie consignée).
+Tableau complet : <strong>CDC §14.2</strong>.</p>
+<h2 id="8-ce-que-le-jury-regarde-en-premier-auto-controle-avant-le-rendu">8. Ce que le jury regarde en premier (auto-contrôle avant le rendu)<a class="headerlink" href="#8-ce-que-le-jury-regarde-en-premier-auto-controle-avant-le-rendu" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Point</th>
+<th>Où le prouver</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pipeline <strong>vert avant le merge</strong> (et non un re-run après coup)</td>
+<td>onglet <em>Pipelines</em> de la MR « Pipeline passed » (GitHub : <code>gh pr checks &lt;n&gt;</code>) ; <strong>règle</strong> « pas de re-run » du §7</td>
+</tr>
+<tr>
+<td>Les 6 jobs tournent sans <code>allow_failure</code> déguisé</td>
+<td>seul <code>style</code> est en <code>allow_failure: true</code> (§7)</td>
+</tr>
+<tr>
+<td>Pipeline qui <strong>casse</strong> sur une concaténation SQL</td>
+<td>contrôle <code>security-scan</code> n° 1 (<code>tests/security/controles.sh</code>)</td>
+</tr>
+</tbody>
+</table>
+<footer class="doc">
+  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/annexes/annexe-gitlab.md</code>
+  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+</footer>
+</main>
+</body>
+</html>

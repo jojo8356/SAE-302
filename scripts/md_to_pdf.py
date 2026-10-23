@@ -1,434 +1,455 @@
 #!/usr/bin/env python3
-"""Convert docs/sql-a-ecrire/requetes-sql-a-ecrire.md to PDF using fpdf2.
+"""MiniShop — convertit un document Markdown en PDF (fpdf2).
 
-Simplified Markdown → PDF : headings (#, ##, ###), bold (**...**), inline code
-(`...`), fenced code blocks (```...```), bullet/numbered lists, horizontal rules (---),
-pipe tables (|), and paragraphs. Good enough for a working document.
+    python3 scripts/md_to_pdf.py docs/01-cahier-des-charges-MiniShop.md \
+        --out dist/pdf/01-cahier-des-charges-MiniShop.pdf
+
+Markdown pris en charge : titres (1→4), paragraphes, gras/italique/code en
+ligne, listes à puces et numérotées (un niveau d'imbrication), blocs de code
+clos, tableaux à tuyaux, citations, règles horizontales et **images PNG/JPEG**
+(redimensionnées à la largeur utile, jamais coupées).
+
+Le rendu est volontairement sobre : A4, marges de 18 mm, en-tête avec le
+titre du document et pagination, pied de page avec la mention SAÉ 302.
+Les caractères que DejaVu ne sait pas dessiner (emoji de suivi de tâches)
+sont traduits en équivalents ASCII lisibles.
 """
-import os, re, sys, textwrap
 
-from fpdf import FPDF
+from __future__ import annotations
 
-MD_PATH = "/home/user/SAE-302/docs/sql-a-ecrire/requetes-sql-a-ecrire.md"
-PDF_PATH = "/home/user/SAE-302/docs/sql-a-ecrire/requetes-sql-a-ecrire.pdf"
+import argparse
+import os
+import re
+import sys
+import textwrap
+from pathlib import Path
 
-# --- Font configuration -------------------------------------------------------
-# We need a TTF font that supports the full Latin-1 range (French accents) and
-# has a mono variant for code blocks. DejaVu is shipped with fpdf2.
-from fpdf.enums import XPos, YPos
+try:
+    from fpdf import FPDF
+    from fpdf.enums import XPos, YPos
+except ImportError:  # pragma: no cover
+    print("✘ module Python « fpdf2 » absent : pip install fpdf2", file=sys.stderr)
+    raise SystemExit(2)
 
-FONT_DIR = None
-for cand in [
-    "/usr/share/fonts/truetype/dejavu",
-    "/usr/share/fonts/dejavu",
-]:
-    if os.path.isdir(cand):
-        FONT_DIR = cand
-        break
-if not FONT_DIR:
-    # fall back: try to locate via fc-list
-    import subprocess
-    out = subprocess.run(["fc-list", "DejaVuSans.ttf"], capture_output=True, text=True).stdout
-    if out.strip():
-        FONT_DIR = os.path.dirname(out.strip().split(":")[0])
-if not FONT_DIR:
-    print("ERROR: DejaVu fonts not found; install fonts-dejavu-core", file=sys.stderr)
-    sys.exit(1)
+RACINE = Path(__file__).resolve().parent.parent
+
+ACCENT = (29, 78, 216)        # #1D4ED8
+ENCRE = (15, 23, 42)          # #0F172A
+ENCRE_DOUCE = (71, 85, 105)   # #475569
+TRAIT = (203, 213, 225)       # #CBD5E1
+FOND = (241, 245, 249)        # #F1F5F9
+
+SUBSTITUTIONS = {
+    "✅": "[x]", "☐": "[ ]", "◐": "[~]", "⚠️": "!", "⚠": "!", "✘": "x",
+    "✓": "v", "→": "->", "←": "<-", "↔": "<->", "≤": "<=", "≥": ">=",
+    "≠": "!=", "…": "...", "€": "EUR", "—": "-", "–": "-", "’": "'",
+    "“": '"', "”": '"', "•": "-", "·": "-", " ": " ", " ": " ",
+}
 
 
-class PDF(FPDF):
-    def __init__(self):
+def nettoyer(texte: str) -> str:
+    """Remplace les caractères hors DejaVu et normalise les espaces."""
+    for source, cible in SUBSTITUTIONS.items():
+        texte = texte.replace(source, cible)
+    # emoji et pictogrammes résiduels
+    return re.sub(r"[\U0001F000-\U0001FAFF\u2600-\u27BF\uFE0F]", "", texte)
+
+
+def trouver_polices() -> str:
+    for candidat in ("/usr/share/fonts/truetype/dejavu", "/usr/share/fonts/dejavu",
+                     "/usr/local/share/fonts/dejavu", os.path.expanduser("~/.fonts")):
+        if os.path.isdir(candidat) and os.path.isfile(os.path.join(candidat, "DejaVuSans.ttf")):
+            return candidat
+    print("✘ polices DejaVu introuvables : installez fonts-dejavu-core", file=sys.stderr)
+    raise SystemExit(2)
+
+
+class Document(FPDF):
+    """PDF A4 avec en-tête (titre courant) et pied de page normalisés."""
+
+    def __init__(self, titre_courant: str) -> None:
         super().__init__(orientation="P", unit="mm", format="A4")
+        self.titre_courant = nettoyer(titre_courant)
         self.set_auto_page_break(auto=True, margin=18)
         self.set_margins(18, 18, 18)
-        self.add_font("DejaVu", "", os.path.join(FONT_DIR, "DejaVuSans.ttf"))
-        self.add_font("DejaVu", "B", os.path.join(FONT_DIR, "DejaVuSans-Bold.ttf"))
-        self.add_font("DejaVu", "I", os.path.join(FONT_DIR, "DejaVuSans.ttf"))  # no Oblique shipped; fall back to regular
-        self.add_font("DejaVuMono", "", os.path.join(FONT_DIR, "DejaVuSansMono.ttf"))
-        self.add_font("DejaVuMono", "B", os.path.join(FONT_DIR, "DejaVuSansMono-Bold.ttf"))
-        self.set_font("DejaVu", "", 10)
+        dossier = trouver_polices()
+        self.add_font("Doc", "", os.path.join(dossier, "DejaVuSans.ttf"))
+        self.add_font("Doc", "B", os.path.join(dossier, "DejaVuSans-Bold.ttf"))
+        self.add_font("Doc", "I", os.path.join(dossier, "DejaVuSans.ttf"))
+        self.add_font("Mono", "", os.path.join(dossier, "DejaVuSansMono.ttf"))
+        self.add_font("Mono", "B", os.path.join(dossier, "DejaVuSansMono-Bold.ttf"))
+        self.set_font("Doc", "", 10)
+        self.set_text_color(*ENCRE)
 
-    def header(self):
-        if self.page_no() > 1:
-            self.set_font("DejaVu", "I", 8)
-            self.set_text_color(120, 120, 120)
-            self.cell(0, 6, "MiniShop — Requêtes SQL à écrire", align="L")
-            self.cell(0, 6, f"page {self.page_no()}", align="R",
-                      new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-            self.set_text_color(0, 0, 0)
-            self.ln(2)
+    def header(self) -> None:
+        if self.page_no() == 1:
+            return
+        self.set_font("Doc", "", 8)
+        self.set_text_color(*ENCRE_DOUCE)
+        self.cell(0, 6, self.titre_courant[:90], align="L")
+        self.cell(0, 6, f"page {self.page_no()}", align="R", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        self.set_draw_color(*TRAIT)
+        self.line(self.l_margin, self.get_y(), self.w - self.r_margin, self.get_y())
+        self.ln(4)
+        self.set_text_color(*ENCRE)
 
-    def footer(self):
-        self.set_y(-12)
-        self.set_font("DejaVu", "I", 8)
-        self.set_text_color(120, 120, 120)
-        self.cell(0, 6, "SAÉ 302 · MiniShop · v1.0 — 23 sept. 2026", align="C")
-        self.set_text_color(0, 0, 0)
-
-
-# -----------------------------------------------------------------------------
-# Minimal markdown tokeniser / renderer
-# -----------------------------------------------------------------------------
-
-INLINE_BOLD = re.compile(r"\*\*(.+?)\*\*")
-INLINE_CODE = re.compile(r"`([^`]+)`")
-INLINE_ITAL = re.compile(r"(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)")
+    def footer(self) -> None:
+        self.set_y(-14)
+        self.set_font("Doc", "", 7.5)
+        self.set_text_color(*ENCRE_DOUCE)
+        self.cell(0, 5, "SAÉ 302 — MiniShop · document généré par scripts/md_to_pdf.py", align="C")
 
 
-def write_rich(pdf: PDF, text: str, base_size=10, code=False, bold=False):
-    """Write a single line with inline **bold**, *italic*, `code` markup."""
-    # We split the line into segments by alternating bold/code/italic patterns.
-    # Simple approach: repeatedly find the earliest special pattern.
-    pos = 0
-    size = base_size - 1 if code else base_size
-    font_family = "DejaVuMono" if code else "DejaVu"
-    style = "B" if bold else ""
-    pdf.set_font(font_family, style, size)
-    if code:
-        pdf.set_text_color(40, 40, 40)
+# --------------------------------------------------------------------------- #
+#  Rendu en ligne (gras / italique / code)
+# --------------------------------------------------------------------------- #
+MOTIFS = [
+    ("code", re.compile(r"`([^`]+)`")),
+    ("gras", re.compile(r"\*\*(.+?)\*\*")),
+    ("ital", re.compile(r"(?<![\w*])\*([^*\n]+)\*(?![\w*])")),
+]
 
-    tokens = []
-    i = 0
-    while i < len(text):
-        m_b = INLINE_BOLD.search(text, i)
-        m_c = INLINE_CODE.search(text, i)
-        m_i = INLINE_ITAL.search(text, i)
-        candidates = [m for m in (m_b, m_c, m_i) if m is not None]
-        if not candidates:
-            tokens.append(("t", text[i:]))
+
+def segments(texte: str) -> list[tuple[str, str]]:
+    """Découpe une ligne en segments (type, contenu)."""
+    sortie: list[tuple[str, str]] = []
+    reste = texte
+    while reste:
+        meilleur = None
+        for genre, motif in MOTIFS:
+            trouve = motif.search(reste)
+            if trouve and (meilleur is None or trouve.start() < meilleur[0].start()):
+                meilleur = (trouve, genre)
+        if meilleur is None:
+            sortie.append(("texte", reste))
             break
-        m = min(candidates, key=lambda x: x.start())
-        if m.start() > i:
-            tokens.append(("t", text[i:m.start()]))
-        if m.re is INLINE_BOLD:
-            tokens.append(("b", m.group(1)))
-        elif m.re is INLINE_CODE:
-            tokens.append(("c", m.group(1)))
+        trouve, genre = meilleur
+        if trouve.start() > 0:
+            sortie.append(("texte", reste[: trouve.start()]))
+        sortie.append((genre, trouve.group(1)))
+        reste = reste[trouve.end():]
+    return sortie
+
+
+class Redacteur:
+    def __init__(self, pdf: Document, source: Path) -> None:
+        self.pdf = pdf
+        self.source = source
+
+    # -- helpers ------------------------------------------------------------
+    def _police(self, genre: str, taille: float) -> None:
+        if genre == "code":
+            self.pdf.set_font("Mono", "", max(taille - 1, 6))
+            self.pdf.set_text_color(30, 58, 138)
+        elif genre == "gras":
+            self.pdf.set_font("Doc", "B", taille)
+            self.pdf.set_text_color(*ENCRE)
+        elif genre == "ital":
+            self.pdf.set_font("Doc", "I", taille)
+            self.pdf.set_text_color(*ENCRE)
         else:
-            tokens.append(("i", m.group(1)))
-        i = m.end()
+            self.pdf.set_font("Doc", "", taille)
+            self.pdf.set_text_color(*ENCRE)
 
-    for kind, val in tokens:
-        if kind == "t":
-            pdf.set_font(font_family, style, size)
-            pdf.write(size * 0.55, val)
-        elif kind == "b":
-            pdf.set_font(font_family, "B", size)
-            pdf.write(size * 0.55, val)
-        elif kind == "i":
-            pdf.set_font(font_family, "I", size)
-            pdf.write(size * 0.55, val)
-        elif kind == "c":
-            # simulate inline-code highlight via a small colored cell background
-            pdf.set_font("DejaVuMono", "", size)
-            cw = pdf.get_string_width(val) + 1.2
-            cx = pdf.get_x(); cy = pdf.get_y()
-            pdf.set_fill_color(230, 236, 242)
-            pdf.rect(cx, cy, cw, size * 0.62 + 0.6, style="F")
-            pdf.set_text_color(20, 60, 110)
-            pdf.write(size * 0.55, val)
-            pdf.set_text_color(0, 0, 0)
-    if code:
-        pdf.set_text_color(0, 0, 0)
+    def ligne_riche(self, texte: str, taille: float, hauteur_ligne: float) -> None:
+        for genre, contenu in segments(nettoyer(texte)):
+            self._police(genre, taille)
+            self.pdf.write(hauteur_ligne, contenu)
 
+    # -- blocs --------------------------------------------------------------
+    def titre(self, texte: str, niveau: int) -> None:
+        tailles = {1: 19, 2: 14, 3: 11.5, 4: 10.5}
+        taille = tailles.get(niveau, 10)
+        self.pdf.ln(4 if niveau > 1 else 0)
+        self.pdf.set_font("Doc", "B", taille)
+        self.pdf.set_text_color(*(ACCENT if niveau <= 2 else ENCRE))
+        self.pdf.multi_cell(0, taille * 0.55, nettoyer(texte), new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        if niveau <= 2:
+            self.pdf.set_draw_color(*ACCENT)
+            y = self.pdf.get_y() + 0.6
+            self.pdf.line(self.pdf.l_margin, y, self.pdf.w - self.pdf.r_margin, y)
+        self.pdf.ln(2.4)
+        self.pdf.set_text_color(*ENCRE)
 
-def paragraph(pdf: PDF, text: str, size=10, indent=0):
-    if indent:
-        pdf.set_x(pdf.l_margin + indent)
-    write_rich(pdf, text, base_size=size)
-    pdf.ln(size * 0.55 + 2)
+    def paragraphe(self, texte: str, retrait: float = 0) -> None:
+        self.pdf.set_x(self.pdf.l_margin + retrait)
+        self.ligne_riche(texte, 10, 5.6)
+        self.pdf.ln(7.4)
 
+    def puce(self, texte: str, niveau: int = 0) -> None:
+        retrait = 4 + niveau * 5
+        self.pdf.set_x(self.pdf.l_margin + retrait)
+        self.pdf.set_font("Doc", "", 10)
+        self.pdf.set_text_color(*ENCRE)
+        self.pdf.write(5.6, "• " if niveau == 0 else "– ")
+        self.ligne_riche(texte, 10, 5.6)
+        self.pdf.ln(6.6)
 
-def heading(pdf: PDF, text: str, level: int):
-    sizes = {1: 18, 2: 14, 3: 12, 4: 11}
-    size = sizes.get(level, 10)
-    pdf.ln(3)
-    pdf.set_font("DejaVu", "B", size)
-    if level == 1:
-        # title page-like
-        pdf.set_text_color(20, 60, 110)
-        pdf.multi_cell(0, size * 0.65, text, align="L",
-                       new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        pdf.set_draw_color(20, 60, 110)
-        y = pdf.get_y()
-        pdf.line(pdf.l_margin, y, pdf.w - pdf.r_margin, y)
-        pdf.ln(3)
-    elif level == 2:
-        pdf.set_text_color(20, 60, 110)
-        pdf.multi_cell(0, size * 0.65, text,
-                       new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        y = pdf.get_y()
-        pdf.set_draw_color(20, 60, 110)
-        pdf.line(pdf.l_margin, y, pdf.w - pdf.r_margin, y)
-        pdf.ln(2)
-    else:
-        pdf.set_text_color(40, 40, 40)
-        pdf.multi_cell(0, size * 0.6, text,
-                       new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        pdf.ln(1)
-    pdf.set_text_color(0, 0, 0)
+    def numerotee(self, numero: int, texte: str) -> None:
+        self.pdf.set_x(self.pdf.l_margin + 5)
+        self.pdf.set_font("Doc", "", 10)
+        self.pdf.write(5.6, f"{numero}. ")
+        self.ligne_riche(texte, 10, 5.6)
+        self.pdf.ln(6.6)
 
+    def code(self, lignes: list[str]) -> None:
+        if not lignes:
+            return
+        self.pdf.ln(1)
+        self.pdf.set_font("Mono", "", 8)
+        largeur = self.pdf.w - self.pdf.l_margin - self.pdf.r_margin
+        hauteur = 4.4
+        for brute in lignes:
+            morceaux = textwrap.wrap(nettoyer(brute).replace("\t", "    "), width=98,
+                                     replace_whitespace=False, drop_whitespace=False) or [""]
+            for morceau in morceaux:
+                if self.pdf.get_y() + hauteur > self.pdf.h - self.pdf.b_margin - 2:
+                    self.pdf.add_page()
+                self.pdf.set_fill_color(*FOND)
+                self.pdf.set_text_color(30, 41, 59)
+                self.pdf.cell(largeur, hauteur, " " + morceau, fill=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        self.pdf.ln(3)
+        self.pdf.set_font("Doc", "", 10)
+        self.pdf.set_text_color(*ENCRE)
 
-def render_code_block(pdf: PDF, code_lines):
-    pdf.ln(1)
-    pdf.set_fill_color(245, 247, 250)
-    pdf.set_draw_color(210, 215, 222)
-    pdf.set_font("DejaVuMono", "", 8.5)
-    line_h = 4.6
-    for line in code_lines:
-        x = pdf.get_x()
-        y = pdf.get_y()
-        # wrap long code lines by characters
-        max_chars = 96  # approx at 8.5pt with DejaVu Mono
-        wrapped = textwrap.wrap(line, width=max_chars,
-                                replace_whitespace=False, drop_whitespace=False) or [""]
-        for wl in wrapped:
-            if pdf.get_y() + line_h > pdf.h - pdf.b_margin:
-                pdf.add_page()
-            pdf.cell(pdf.w - pdf.l_margin - pdf.r_margin, line_h, wl,
-                     border="LR", fill=True, ln=1)
-    # bottom border
-    x = pdf.l_margin
-    y = pdf.get_y()
-    pdf.set_draw_color(210, 215, 222)
-    pdf.line(x, y, pdf.w - pdf.r_margin, y)
-    pdf.ln(2)
-    pdf.set_font("DejaVu", "", 10)
+    def citation(self, lignes: list[str]) -> None:
+        if not lignes:
+            return
+        largeur = self.pdf.w - self.pdf.l_margin - self.pdf.r_margin
+        for ligne in lignes:
+            if self.pdf.get_y() + 6 > self.pdf.h - self.pdf.b_margin:
+                self.pdf.add_page()
+            y = self.pdf.get_y()
+            self.pdf.set_fill_color(219, 234, 254)
+            self.pdf.rect(self.pdf.l_margin, y, largeur, 6.4, style="F")
+            self.pdf.set_fill_color(*ACCENT)
+            self.pdf.rect(self.pdf.l_margin, y, 1.2, 6.4, style="F")
+            self.pdf.set_xy(self.pdf.l_margin + 4, y + 1.1)
+            self.ligne_riche(ligne, 9.5, 5.4)
+            self.pdf.ln(7.2)
+        self.pdf.ln(1)
 
+    def tableau(self, lignes: list[list[str]]) -> None:
+        if len(lignes) < 2:
+            return
+        entetes = [nettoyer(c).strip() for c in lignes[0]]
+        corps = [[nettoyer(c).strip() for c in ligne] for ligne in lignes[2:]]
+        colonnes = len(entetes)
+        largeur = self.pdf.w - self.pdf.l_margin - self.pdf.r_margin
+        # largeur proportionnelle au contenu (bornée pour rester lisible)
+        poids = []
+        for index in range(colonnes):
+            longueur = max([len(entetes[index])] + [len(l[index]) if index < len(l) else 0 for l in corps])
+            poids.append(max(6, min(longueur, 45)))
+        total = sum(poids)
+        largeurs = [largeur * p / total for p in poids]
 
-def render_bullet(pdf: PDF, text: str, level=0):
-    bullet = "• " if level == 0 else "– "
-    indent = 4 + level * 4
-    pdf.set_x(pdf.l_margin + indent)
-    pdf.set_font("DejaVu", "", 10)
-    pdf.write(5.5, bullet)
-    write_rich(pdf, text, base_size=10)
-    pdf.ln(6)
+        def cellules(valeurs: list[str], gras: bool, fond: tuple[int, int, int] | None) -> None:
+            hauteurs = []
+            for index, valeur in enumerate(valeurs):
+                lignes_cellule = textwrap.wrap(valeur, width=max(8, int(largeurs[index] / 1.55))) or [""]
+                hauteurs.append(lignes_cellule)
+            hauteur_ligne = 4.1
+            hauteur = max(len(h) for h in hauteurs) * hauteur_ligne + 1.8
+            if self.pdf.get_y() + hauteur > self.pdf.h - self.pdf.b_margin:
+                self.pdf.add_page()
+            y = self.pdf.get_y()
+            x = self.pdf.l_margin
+            for index, contenu in enumerate(hauteurs):
+                self.pdf.set_draw_color(*TRAIT)
+                if fond:
+                    self.pdf.set_fill_color(*fond)
+                self.pdf.rect(x, y, largeurs[index], hauteur, style="DF" if fond else "D")
+                self.pdf.set_xy(x + 1.3, y + 1)
+                self.pdf.set_font("Doc", "B" if gras else "", 8)
+                self.pdf.set_text_color(*(ENCRE if not gras else (255, 255, 255)))
+                for numero, ligne in enumerate(contenu):
+                    if numero:
+                        self.pdf.set_xy(x + 1.3, y + 1 + numero * hauteur_ligne)
+                    self.pdf.cell(largeurs[index] - 2, hauteur_ligne, ligne,
+                                  new_x=XPos.RIGHT, new_y=YPos.TOP)
+                x += largeurs[index]
+            self.pdf.set_xy(self.pdf.l_margin, y + hauteur)
+            self.pdf.set_text_color(*ENCRE)
 
+        cellules(entetes, True, ACCENT)
+        for index, ligne in enumerate(corps):
+            valeurs = (ligne + [""] * colonnes)[:colonnes]
+            cellules(valeurs, False, FOND if index % 2 else None)
+        self.pdf.ln(3)
 
-def render_numbered(pdf: PDF, num: int, text: str):
-    prefix = f"{num}. "
-    pdf.set_x(pdf.l_margin + 4)
-    pdf.set_font("DejaVu", "", 10)
-    pdf.write(5.5, prefix)
-    write_rich(pdf, text, base_size=10)
-    pdf.ln(6)
-
-
-def hr(pdf: PDF):
-    pdf.ln(2)
-    pdf.set_draw_color(180, 180, 180)
-    y = pdf.get_y()
-    pdf.line(pdf.l_margin, y, pdf.w - pdf.r_margin, y)
-    pdf.ln(3)
-
-
-def render_table(pdf: PDF, rows):
-    """Render a pipe table with simple column sizing. First row is header, second is separator (---)."""
-    if len(rows) < 2:
-        return
-    header = [c.strip() for c in rows[0]]
-    body = rows[2:]
-    n_cols = len(header)
-    # Compute available width
-    avail = pdf.w - pdf.l_margin - pdf.r_margin
-    col_w = avail / n_cols
-
-    # Header
-    pdf.set_fill_color(20, 60, 110)
-    pdf.set_text_color(255, 255, 255)
-    pdf.set_font("DejaVu", "B", 9)
-    h_h = 6
-    x0 = pdf.get_x()
-    y0 = pdf.get_y()
-    if y0 + h_h > pdf.h - pdf.b_margin:
-        pdf.add_page()
-        y0 = pdf.get_y()
-    for i, h in enumerate(header):
-        pdf.set_xy(x0 + i * col_w, y0)
-        pdf.cell(col_w, h_h, clean_cell(h), border=1, fill=True, align="L")
-    pdf.set_xy(x0, y0 + h_h)
-    pdf.set_text_color(0, 0, 0)
-    pdf.set_font("DejaVu", "", 8.5)
-
-    for ridx, row in enumerate(body):
-        cells = [clean_cell(c) for c in row] + [""] * (n_cols - len(row))
-        cells = cells[:n_cols]
-        # Compute row height (wrap every cell)
-        wraps = []
-        for c in cells:
-            # ~ how many chars per line for that col width at 8.5pt DejaVu? ~ 5.1 chars per 10 mm
-            chars_per_line = max(8, int(col_w / 1.7))
-            wrapped = textwrap.wrap(c, width=chars_per_line) or [""]
-            wraps.append(wrapped)
-        n_lines = max(len(w) for w in wraps)
-        h_row = n_lines * 4.3 + 1.2
-        y = pdf.get_y()
-        if y + h_row > pdf.h - pdf.b_margin:
-            pdf.add_page()
-            y = pdf.get_y()
-        if ridx % 2 == 1:
-            pdf.set_fill_color(245, 247, 250)
-        else:
-            pdf.set_fill_color(255, 255, 255)
-        # draw cells
-        for i, w in enumerate(wraps):
-            x = x0 + i * col_w
-            pdf.set_xy(x, y)
-            # fill rectangle
-            pdf.rect(x, y, col_w, h_row, style="DF")
-            pdf.set_xy(x + 1.2, y + 0.8)
-            for ln_i, line in enumerate(w):
-                # Inline bold/code in table cells
-                if ln_i > 0:
-                    pdf.set_xy(x + 1.2, y + 0.8 + ln_i * 4.3)
-                # render without fill to keep table color; inline code will still be blue-ish
-                write_rich(pdf, line, base_size=8.5)
-        pdf.set_xy(x0, y + h_row)
-    pdf.ln(2)
-    pdf.set_font("DejaVu", "", 10)
+    def image(self, chemin: str, legende: str) -> None:
+        cible = (self.source.parent / chemin).resolve()
+        if not cible.is_file():
+            cible = (RACINE / chemin).resolve()
+        if not cible.is_file():
+            self.pdf.set_font("Doc", "I", 8.5)
+            self.pdf.set_text_color(*ENCRE_DOUCE)
+            self.pdf.multi_cell(0, 4.6, f"[image absente : {chemin}]", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+            return
+        largeur = self.pdf.w - self.pdf.l_margin - self.pdf.r_margin
+        try:
+            infos = self.pdf.image(str(cible), w=min(largeur, 150), x=self.pdf.l_margin)
+        except Exception as erreur:  # image exotique : on n'interrompt pas le rendu
+            print(f"  ⚠ image ignorée ({cible.name}) : {erreur}", file=sys.stderr)
+            return
+        self.pdf.ln(2)
+        if legende:
+            self.pdf.set_font("Doc", "I", 8.5)
+            self.pdf.set_text_color(*ENCRE_DOUCE)
+            self.pdf.multi_cell(0, 4.4, nettoyer(legende), align="C",
+                                new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+            self.pdf.set_text_color(*ENCRE)
+        self.pdf.ln(3)
+        del infos
 
 
-def clean_cell(s: str) -> str:
-    # remove bold/code markers for table (simpler)
-    s = re.sub(r"\*\*(.+?)\*\*", r"\1", s)
-    s = re.sub(r"`([^`]+)`", r"\1", s)
-    s = re.sub(r"\*(.+?)\*", r"\1", s)
-    return s.strip()
-
-
-def blockquote(pdf: PDF, lines):
-    pdf.ln(1)
-    pdf.set_fill_color(255, 249, 232)
-    pdf.set_draw_color(230, 200, 100)
-    pdf.set_font("DejaVu", "I", 9.5)
-    for ln in lines:
-        if pdf.get_y() + 5.5 > pdf.h - pdf.b_margin:
-            pdf.add_page()
-        x = pdf.l_margin
-        y = pdf.get_y()
-        pdf.rect(x, y, pdf.w - x - pdf.r_margin, 6.5, style="DF")
-        pdf.set_xy(x + 3, y + 1.2)
-        write_rich(pdf, ln, base_size=9.5)
-        pdf.ln(7)
-    pdf.ln(1)
-    pdf.set_font("DejaVu", "", 10)
-
-
-# -----------------------------------------------------------------------------
-
-def md_to_pdf(md_text: str, out_path: str):
-    pdf = PDF()
+def convertir(source: Path, sortie: Path, titre: str | None = None) -> int:
+    markdown = source.read_text(encoding="utf-8")
+    premier_titre = re.search(r"^#\s+(.+)$", markdown, flags=re.M)
+    titre_document = titre or (premier_titre.group(1).strip() if premier_titre else source.stem)
+    pdf = Document(titre_document)
     pdf.add_page()
+    redacteur = Redacteur(pdf, source)
 
-    lines = md_text.splitlines()
-    i = 0
-    in_code = False
-    code_buf = []
-    table_buf = []
-    quote_buf = []
-    num_idx = 0  # numbered list counter per contiguous block
+    lignes = markdown.splitlines()
+    index = 0
+    dans_code = False
+    code: list[str] = []
+    table: list[list[str]] = []
+    citation: list[str] = []
+    numero = 0
 
-    def flush_table():
-        nonlocal table_buf
-        if table_buf:
-            render_table(pdf, table_buf)
-            table_buf = []
+    def vider_table() -> None:
+        nonlocal table
+        if table:
+            redacteur.tableau(table)
+            table = []
 
-    def flush_quote():
-        nonlocal quote_buf
-        if quote_buf:
-            blockquote(pdf, quote_buf)
-            quote_buf = []
+    def vider_citation() -> None:
+        nonlocal citation
+        if citation:
+            redacteur.citation(citation)
+            citation = []
 
-    while i < len(lines):
-        line = lines[i].rstrip()
+    while index < len(lignes):
+        brute = lignes[index].rstrip()
 
-        # fenced code
-        if line.startswith("```"):
-            flush_table(); flush_quote()
-            if in_code:
-                render_code_block(pdf, code_buf)
-                code_buf = []
-                in_code = False
+        if brute.startswith("```"):
+            vider_table(); vider_citation()
+            if dans_code:
+                redacteur.code(code)
+                code = []
+                dans_code = False
             else:
-                in_code = True
-                code_buf = []
-            i += 1
+                dans_code = True
+            index += 1
             continue
-        if in_code:
-            code_buf.append(line)
-            i += 1
+        if dans_code:
+            code.append(brute)
+            index += 1
             continue
 
-        # table row?
-        if line.startswith("|") and line.endswith("|"):
-            flush_quote()
-            table_buf.append([c for c in line.strip("|").split("|")])
-            i += 1
+        if brute.startswith("|") and brute.rstrip().endswith("|"):
+            vider_citation()
+            table.append([c for c in brute.strip().strip("|").split("|")])
+            index += 1
             continue
-        else:
-            if table_buf:
-                flush_table()
+        vider_table()
 
-        # blockquote
-        if line.startswith(">"):
-            quote_buf.append(line[1:].strip())
-            i += 1
+        if brute.startswith(">"):
+            citation.append(brute.lstrip("> ").strip())
+            index += 1
             continue
-        else:
-            if quote_buf:
-                flush_quote()
+        vider_citation()
 
-        # horizontal rule
-        if re.match(r"^\s*---+\s*$", line):
-            hr(pdf); i += 1; continue
+        if re.match(r"^\s*(---|\*\*\*)\s*$", brute):
+            pdf.ln(2)
+            pdf.set_draw_color(*TRAIT)
+            y = pdf.get_y()
+            pdf.line(pdf.l_margin, y, pdf.w - pdf.r_margin, y)
+            pdf.ln(4)
+            index += 1
+            continue
 
-        # headings
-        m = re.match(r"^(#{1,4})\s+(.*)$", line)
-        if m:
-            level = len(m.group(1))
-            heading(pdf, m.group(2).strip(), level); i += 1; num_idx = 0; continue
+        trouve = re.match(r"^(#{1,4})\s+(.*)$", brute)
+        if trouve:
+            redacteur.titre(trouve.group(2), len(trouve.group(1)))
+            index += 1
+            numero = 0
+            continue
 
-        # bullet list
-        m = re.match(r"^\s*[-*]\s+(.*)$", line)
-        if m:
-            render_bullet(pdf, m.group(1).strip()); i += 1; num_idx = 0; continue
+        trouve_image = re.match(r'^\s*!\[([^\]]*)\]\(([^)\s]+)[^)]*\)\s*$', brute)
+        if trouve_image:
+            redacteur.image(trouve_image.group(2), trouve_image.group(1))
+            index += 1
+            continue
 
-        # numbered list
-        m = re.match(r"^\s*\d+\.\s+(.*)$", line)
-        if m:
-            num_idx += 1
-            render_numbered(pdf, num_idx, m.group(1).strip()); i += 1; continue
+        trouve = re.match(r"^(\s*)[-*+]\s+(.*)$", brute)
+        if trouve:
+            redacteur.puce(trouve.group(2), 1 if len(trouve.group(1)) >= 2 else 0)
+            index += 1
+            numero = 0
+            continue
 
-        # blank line
-        if line.strip() == "":
-            pdf.ln(2); i += 1; num_idx = 0; continue
+        trouve = re.match(r"^\s*\d+[.)]\s+(.*)$", brute)
+        if trouve:
+            numero += 1
+            redacteur.numerotee(numero, trouve.group(1))
+            index += 1
+            continue
 
-        # paragraph (accumulate until blank/structural)
-        para = [line.strip()]
-        j = i + 1
-        while j < len(lines):
-            nxt = lines[j].rstrip()
-            if (nxt.strip() == "" or nxt.startswith("#") or nxt.startswith("```")
-                or nxt.startswith("|") or nxt.startswith(">")
-                or re.match(r"^\s*[-*]\s+", nxt) or re.match(r"^\s*\d+\.\s+", nxt)
-                or re.match(r"^\s*---+\s*$", nxt)):
+        if not brute.strip():
+            pdf.ln(1.5)
+            index += 1
+            numero = 0
+            continue
+
+        paragraphe = [brute.strip()]
+        suivant = index + 1
+        while suivant < len(lignes):
+            candidat = lignes[suivant].rstrip()
+            if (not candidat.strip() or candidat.startswith("#") or candidat.startswith("```")
+                    or candidat.startswith("|") or candidat.startswith(">")
+                    or re.match(r"^\s*[-*+]\s+", candidat) or re.match(r"^\s*\d+[.)]\s+", candidat)
+                    or re.match(r"^\s*(---|\*\*\*)\s*$", candidat)
+                    or re.match(r'^\s*!\[', candidat)):
                 break
-            para.append(nxt.strip())
-            j += 1
-        paragraph(pdf, " ".join(para))
-        i = j
-        num_idx = 0
+            paragraphe.append(candidat.strip())
+            suivant += 1
+        redacteur.paragraphe(" ".join(paragraphe))
+        index = suivant
+        numero = 0
 
-    # flush any trailing blocks
-    flush_table(); flush_quote()
+    vider_table()
+    vider_citation()
+    if code:
+        redacteur.code(code)
 
-    pdf.output(out_path)
-    print(f"PDF written: {out_path}")
+    sortie.parent.mkdir(parents=True, exist_ok=True)
+    pdf.output(str(sortie))
+    return pdf.page_no()
+
+
+def main(argv: list[str] | None = None) -> int:
+    analyseur = argparse.ArgumentParser(description="Markdown → PDF (SAÉ 302 — MiniShop).")
+    analyseur.add_argument("source", type=Path)
+    analyseur.add_argument("--out", type=Path)
+    analyseur.add_argument("--titre")
+    arguments = analyseur.parse_args(argv)
+
+    source = arguments.source if arguments.source.is_absolute() else Path.cwd() / arguments.source
+    if not source.is_file():
+        print(f"✘ source introuvable : {source}", file=sys.stderr)
+        return 2
+    sortie = arguments.out or source.with_suffix(".pdf")
+    if not sortie.is_absolute():
+        sortie = Path.cwd() / sortie
+
+    pages = convertir(source, sortie, arguments.titre)
+    print(f"✓ {sortie}  ({pages} pages, {sortie.stat().st_size // 1024} Ko)")
+    return 0
 
 
 if __name__ == "__main__":
-    with open(MD_PATH, encoding="utf-8") as f:
-        md = f.read()
-    md_to_pdf(md, PDF_PATH)
+    raise SystemExit(main())

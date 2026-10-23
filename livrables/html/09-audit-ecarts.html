@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="SAÉ 302 — MiniShop : 09 — Audit des écarts : ce qu&#x27;il manque#">
+<title>09 — Audit des écarts : ce qu&#x27;il manque# — MiniShop</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --papier: #fbfaf7;
+  --carte: #ffffff;
+  --trait: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-clair: #dbeafe;
+  --code: #f1f5f9;
+  --mesure: 72ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
+    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
+    --accent-clair: #1e3a8a; --code: #16223a;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  max-width: calc(var(--mesure) + 6rem);
+  background: var(--papier);
+  color: var(--encre);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
+h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
+p, li { max-width: var(--mesure); }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+}
+pre {
+  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
+  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.35rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+thead th { background: var(--accent-clair); }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
+img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li input[type="checkbox"] { margin-right: 0.4rem; }
+.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
+.toc > ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1rem; }
+footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+@media print {
+  :root { --papier: #fff; --carte: #fff; }
+  @page { size: A4; margin: 18mm 16mm; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#0-synthese">0. Synthèse</a></li>
+<li><a href="#a-fichiers-references-mais-absents-bloquant">A. Fichiers référencés mais absents — 🔴 bloquant</a></li>
+<li><a href="#b-lapplication-ne-tourne-pas-sur-mysqlpdo-ecart-technique-majeur">B. L'application ne tourne pas sur MySQL/PDO — 🔴 écart technique majeur</a></li>
+<li><a href="#c-interface-ni-css-ni-javascript-ni-images-fort">C. Interface : ni CSS, ni JavaScript, ni images — 🟠 fort</a></li>
+<li><a href="#d-rendus-non-produits-fort">D. Rendus non produits — 🟠 fort</a></li>
+<li><a href="#e-preuves-et-tracabilite-fort-10-points-individuels">E. Preuves et traçabilité — 🟠 fort (10 points individuels)</a></li>
+<li><a href="#f-scripts-de-mesure-et-de-charge-moyen">F. Scripts de mesure et de charge — 🟡 moyen</a></li>
+<li><a href="#g-ecarts-fonctionnels-petits-mais-reperables-en-demo">G. Écarts fonctionnels (petits, mais repérables en démo) — 🟡</a></li>
+<li><a href="#h-incoherences-chiffrees-a-corriger-credibilite-des-documents">H. Incohérences chiffrées à corriger — 🟡 (crédibilité des documents)</a></li>
+<li><a href="#i-plan-de-correction-propose-par-ordre-de-rentabilite">I. Plan de correction proposé (par ordre de rentabilité)</a></li>
+<li><a href="#j-ce-qui-est-complet-ne-pas-y-retoucher">J. Ce qui est complet (ne pas y retoucher)</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="09-audit-des-ecarts-ce-quil-manque">09 — Audit des écarts : ce qu'il manque<a class="headerlink" href="#09-audit-des-ecarts-ce-quil-manque" title="Permanent link">#</a></h1>
+<blockquote>
+<p><strong>Objet.</strong> Confronter ce que les documents <strong>promettent</strong> (README, CDC <code>01</code>, doc tests <code>02</code>, WBS <code>05</code>,
+todolist <code>06</code>, annexes, CI) à ce que le dépôt <strong>contient réellement</strong>. Chaque écart ci-dessous est
+vérifiable par la commande citée. Les points sont classés par impact sur le barème
+(i spécification 20 · ii base de données 20 · iii application 30 · iv soutenance 10 · v GitLab 10).</p>
+<p><strong>Méthode.</strong> Audit statique du dépôt + exécution réelle de <code>node scripts/run-all-tests.mjs</code>
+et <code>bash tests/security/controles.sh</code> le 23/10/2026.</p>
+</blockquote>
+<h2 id="0-synthese">0. Synthèse<a class="headerlink" href="#0-synthese" title="Permanent link">#</a></h2>
+<p><strong>Statut vérifié le 23/10/2026</strong> (les détails et les commandes de preuve sont dans <code>10-todo-corrections.md</code>).</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Bloc</th>
+<th style="text-align: right;">Gravité</th>
+<th>Points exposés</th>
+<th>Statut</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>Fichiers référencés mais <strong>absents</strong></td>
+<td style="text-align: right;">🔴 bloquant</td>
+<td>v (README), iii</td>
+<td>🟡 <strong>partiel</strong> — <code>load_db.sh</code> (+ variante PDO), <code>run_sql_tests.sh</code>, <code>gen_volumes.sh</code>, <code>public/css|js|img</code>, PHPUnit : livrés. <strong>Manquent</strong> <code>build-docs.sh</code>, <code>coverage.php</code>, <code>contract_http.php</code>, <code>livrables/**</code>, <code>composer.lock</code>. Le reste (diagrammes <code>.puml</code> + <code>render.sh</code>, <code>tests/charge</code>, <code>tests/perf</code>, gabarits de MR, <code>var/.gitkeep</code>) existe mais n'était <strong>pas versionné</strong> — corrigé dans cette passe.</td>
+</tr>
+<tr>
+<td>B</td>
+<td>L'application <strong>ne tourne pas sur MySQL/PDO</strong></td>
+<td style="text-align: right;">🔴 majeur</td>
+<td>iii (−1 par procédure/trigger « non appelé »), ii</td>
+<td>🟡 <strong>partiel</strong> — <code>SqlStore</code> est une vraie implémentation PDO (requêtes préparées, transactions, <code>CALL</code>, traduction des <code>SIGNAL</code>). <strong>Reste</strong> : brancher les dépôts sur <code>sp_*</code>, tester sur MySQL, documenter la bascule ; le défaut reste JSON.</td>
+</tr>
+<tr>
+<td>C</td>
+<td><strong>Aucune interface</strong> : ni CSS, ni JS, ni images</td>
+<td style="text-align: right;">🟠 fort</td>
+<td>iii, ENF-05/07/08</td>
+<td>✅ <strong>résolu</strong> — design system, impression, JS panier/UI, SVG, gabarit, API JSON, CSP, <strong>responsive 320 px → 1536 px</strong> (48 contrôles).</td>
+</tr>
+<tr>
+<td>D</td>
+<td><strong>Rendus non produits</strong> : PDF/DOCX, diaporama, vidéo</td>
+<td style="text-align: right;">🟠 fort</td>
+<td>i, ii, iv</td>
+<td>🔴 <strong>inchangé</strong> — <code>livrables/</code> n'existe pas ; <code>md_to_pdf.py</code> n'a jamais été exécuté sur les documents.</td>
+</tr>
+<tr>
+<td>E</td>
+<td><strong>Preuves et traçabilité</strong> (historique GitLab, PV de recette)</td>
+<td style="text-align: right;">🟠 fort</td>
+<td>v (10 pts individuels), iii</td>
+<td>🔴 <strong>inchangé</strong> — 1 commit, placeholders « Étudiant·e A/B/C », doc <code>02</code> encore « conçu », CDC §16.1/§16.4 périmés.</td>
+</tr>
+<tr>
+<td>F</td>
+<td>Scripts de mesure/charge promis</td>
+<td style="text-align: right;">🟡 moyen</td>
+<td>ENF-01/02, concurrence</td>
+<td>✅ <strong>livrés</strong> — <code>gen_volumes.sh</code>, <code>tests/perf/mesurer.sh</code>, <code>tests/charge/reserver.sh</code> (mesures <strong>non exécutées</strong> ici : pas de serveur ni de MySQL).</td>
+</tr>
+<tr>
+<td>G</td>
+<td>Écarts fonctionnels ponctuels</td>
+<td style="text-align: right;">🟡 moyen</td>
+<td>iii</td>
+<td>✅ <strong>quasi résolu</strong> — contact, <code>/mentions</code>, <code>/aide</code>, filtre stocks, écran paramètres, indicateurs du jour. Reste l'alias <code>POST /admin/produits</code>.</td>
+</tr>
+<tr>
+<td>H</td>
+<td>Incohérences chiffrées</td>
+<td style="text-align: right;">🟡 moyen (crédibilité)</td>
+<td>i, ii, iv</td>
+<td>🔴 <strong>inchangé</strong> — 28/28, 150/150, PHP 8.1, <code>ENF-13</code> dupliqué, 7 entités, noms de fichiers SQL, statuts §16.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Vert et vérifié</strong> : <code>node scripts/run-all-tests.mjs</code> → linter 0 violation / 86 fichiers, moteur 98/98,
+règles 108/108, fonctionnalités OK, design 28/28, PHPUnit 34/34, E2E 180/180 ;
+<code>bash tests/security/controles.sh</code> → 10/10 + auto-test.</p>
+<hr />
+<h2 id="a-fichiers-references-mais-absents-bloquant">A. Fichiers référencés mais absents — 🔴 bloquant<a class="headerlink" href="#a-fichiers-references-mais-absents-bloquant" title="Permanent link">#</a></h2>
+<p>Le dépôt <strong>référence 11 fichiers qui n'existent pas</strong>. Trois conséquences immédiates : la procédure
+d'installation du README ne peut pas aboutir, le pipeline GitLab (la cible notée) est rouge, et plusieurs
+affirmations du CDC sont fausses par construction.</p>
+<table>
+<thead>
+<tr>
+<th>Fichier attendu</th>
+<th>Référencé par</th>
+<th>Conséquence réelle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>scripts/load_db.sh</code></td>
+<td>README « Installation » étape 3, <code>.gitlab-ci.yml</code> (<code>before_script</code> de <code>base-tests</code> et <code>unit</code>), <code>EF-GEN-06</code>, doc <code>02</code> §1, doc <code>03</code> §1/§2, doc <code>04</code></td>
+<td><strong>Installation impossible telle que documentée</strong> ; job GitLab <code>base-tests</code> et <code>unit</code> en échec ; la « rejouabilité de la base » n'est pas démontrable en une commande</td>
+</tr>
+<tr>
+<td><code>scripts/run_sql_tests.sh</code></td>
+<td>README étape 4, <code>.gitlab-ci.yml</code>, doc <code>02</code> §1/§2, doc <code>03</code> §1/§2/§3, doc <code>06</code></td>
+<td>La commande qui produit « 29/29 » n'existe pas (seul <code>tests/sql/run_tests.sh</code> existe, à un autre chemin) ; <code>base-tests</code> échoue</td>
+</tr>
+<tr>
+<td><code>docs/diagrams/render.sh</code></td>
+<td><code>.gitlab-ci.yml</code> job <code>docs</code>, <code>.github/workflows/ci.yml</code>, README « Compléments livrés », doc <code>02</code> §1</td>
+<td>Job GitLab <code>docs</code> en échec ; les 14 PNG ne sont <strong>pas reproductibles</strong></td>
+</tr>
+<tr>
+<td><code>docs/diagrams/src/*.puml</code></td>
+<td>CDC §16.2 (« tous en source <code>.puml</code> + PNG rendus »), <code>.gitignore</code> (<code>!docs/diagrams/src/</code>)</td>
+<td>La source des diagrammes <strong>n'existe pas</strong> : seul le PNG est versionné. Correction d'un diagramme = le redessiner à la main</td>
+</tr>
+<tr>
+<td><code>scripts/build-docs.sh</code></td>
+<td>README « Documents et rendus », CDC, doc <code>06</code>, <code>annexe-sql.md</code></td>
+<td>Aucun rendu documentaire ne peut être produit par le dépôt</td>
+</tr>
+<tr>
+<td><code>dist/**</code> (<code>.docx</code>, <code>html/</code>) et <code>livrables/**</code></td>
+<td>README (deux sections), CDC, doc <code>03</code></td>
+<td>Les rendus « images intégrées, lisibles hors ligne » <strong>n'existent pas</strong></td>
+</tr>
+<tr>
+<td><code>public/css/</code>, <code>public/js/panier.js</code>, <code>public/img/</code></td>
+<td>README arborescence, CDC §4.5.2/§4.5.3, doc <code>02</code> §9, annexe GitLab (<code>feat/L13-js-panier</code>)</td>
+<td>Le dossier <code>public/</code> ne contient que <code>index.php</code>, <code>.htaccess</code>, <code>gen_volumes.php</code>, <code>mesurer.php</code></td>
+</tr>
+<tr>
+<td><code>tests/charge/reserver.sh</code></td>
+<td>README, CDC (C-01 « 20 demandes / 12 exemplaires »), doc <code>02</code> §1, doc <code>05</code> (<code>D5-L14-04</code>), doc <code>06</code></td>
+<td>Le test anti-survente sous concurrence <strong>n'est pas livré</strong> ; le dossier <code>tests/charge/</code> n'existe pas</td>
+</tr>
+<tr>
+<td><code>tests/perf/mesurer.sh</code></td>
+<td>README, <code>annexe-enf.md</code> (<code>ENF-01</code>, p95 HTTP), doc <code>02</code>, doc <code>04</code></td>
+<td><code>ENF-01</code> côté HTTP <strong>non mesurable</strong> ; seul <code>tests/perf/mesurer_sql.sh</code> existe</td>
+</tr>
+<tr>
+<td><code>scripts/gen_volumes.sh</code></td>
+<td>doc <code>03</code> §3.1, <code>annexe-enf.md</code> (<code>ENF-01</code>/<code>ENF-02</code>), doc <code>02</code>, doc <code>05</code></td>
+<td>Le générateur de volumétrie n'existe qu'en PHP (<code>scripts/gen_volumes.php</code> + <code>public/gen_volumes.php</code>) et via <code>app/Tools/VolumetryGenerator.php</code></td>
+</tr>
+<tr>
+<td><code>.gitlab/merge_request_templates/Lot.md</code></td>
+<td>annexe <code>17.9</code> §3</td>
+<td>Le gabarit de MR décrit n'existe pas dans le dépôt</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Autres manques de la chaîne de livraison</strong></p>
+<ul>
+<li><strong>PHPUnit</strong> : le CDC et le doc <code>02</code> annoncent « PHPUnit (unitaires) », <code>.gitlab-ci.yml</code> lance
+  <code>./vendor/bin/phpunit --testsuite app</code> → <code>phpunit</code> n'est <strong>pas</strong> dans <code>composer.json</code>, il n'y a <strong>ni</strong>
+  <code>phpunit.xml</code> <strong>ni</strong> suite <code>app</code>. Job GitLab <code>unit</code> rouge ; côté GitHub le job sort en <code>exit 0</code>
+  silencieusement (il ne teste donc rien).</li>
+<li><strong><code>composer.lock</code></strong> absent : installation dev non reproductible (mineur).</li>
+<li><strong><code>var/.gitkeep</code></strong> : <code>.gitignore</code> prévoit <code>!var/.gitkeep</code> mais le fichier n'est pas versionné ; le
+  journal <code>var/journal/db.jsonl</code> n'a donc pas de dossier d'accueil (dégradation silencieuse).</li>
+</ul>
+<hr />
+<h2 id="b-lapplication-ne-tourne-pas-sur-mysqlpdo-ecart-technique-majeur">B. L'application ne tourne pas sur MySQL/PDO — 🔴 écart technique majeur<a class="headerlink" href="#b-lapplication-ne-tourne-pas-sur-mysqlpdo-ecart-technique-majeur" title="Permanent link">#</a></h2>
+<p>C'est <strong>le</strong> point qui coûte le plus de points au barème iii (« Application Web PHP/MySQL/PDO »).</p>
+<table>
+<thead>
+<tr>
+<th>Constat</th>
+<th>Preuve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Le pilote SQL est une coquille : toutes ses méthodes lèvent <code>RuntimeException</code></td>
+<td><code>app/Model/Data/SqlStore.php</code> — constante <code>MESSAGE</code>, aucune requête</td>
+</tr>
+<tr>
+<td>Le pilote actif est JSON, par défaut et en configuration</td>
+<td><code>StorageDriver::DEFAULT = self::JSON</code> ; <code>env.example.php</code> → <code>'storage_driver' =&gt; 'json'</code> ; données dans <code>data/minishop/*.json</code></td>
+</tr>
+<tr>
+<td>Aucune requête PDO dans le métier</td>
+<td><code>grep -rn "PDO" app/</code> → 1 seul usage applicatif : <code>app/Tools/VolumetryGenerator.php</code></td>
+</tr>
+<tr>
+<td>Les 17 procédures, 16 triggers et 3 vues ne sont <strong>jamais appelés</strong> par l'application</td>
+<td>les écritures passent par <code>JsonStore</code> + <code>app/Model/Data/Triggers.php</code> + <code>Views.php</code></td>
+</tr>
+<tr>
+<td>Le WBS le dit lui-même</td>
+<td>doc <code>05</code> : « <strong>D4 — Application Web PHP / MySQL / PDO — 146 h, 0 h, 0 %</strong> »</td>
+</tr>
+</tbody>
+</table>
+<p>Conséquences directes sur les pénalités que le CDC prétend neutraliser (§16.2) :</p>
+<ul>
+<li>« manque une procédure stockée — <strong>application</strong> » (−1, max −5) : les procédures existent mais ne sont
+  <strong>pas appelées</strong> par le code PHP. La phrase du CDC « mêmes 17 procédures, <strong>effectivement appelées</strong> par
+  les contrôleurs » est aujourd'hui <strong>fausse</strong>.</li>
+<li>« manque un déclencheur — <strong>application</strong> » (−1, max −5) : idem, ce sont les triggers JSON qui s'exécutent.</li>
+<li>« une requête mauvaise pour l'injection SQL » : il n'y a <strong>aucune requête SQL</strong> à auditer côté
+  application ; les affirmations de <code>docs/07</code> et de <code>docs/03</code> (<code>EMULATE_PREPARES=false</code>, requêtes
+  préparées réelles) ne sont pas vérifiables sur ce code.</li>
+</ul>
+<blockquote>
+<p>Le comportement fonctionnel et les règles métier tiennent (les tests le prouvent), mais la <strong>contrainte
+technique du sujet</strong> (PHP + MySQL + PDO + procédures + triggers <strong>utilisés</strong>) n'est pas satisfaite.
+Deux issues : (1) implémenter <code>SqlStore</code> sur PDO puis basculer <code>storage_driver = 'sql'</code> ;
+(2) à défaut, assurer la démo sur MySQL via <code>load_db.sh</code> et <strong>écrire explicitement l'écart</strong> dans le CDC
+et le doc de tests (aujourd'hui le CDC affirme le contraire).</p>
+</blockquote>
+<hr />
+<h2 id="c-interface-ni-css-ni-javascript-ni-images-fort">C. Interface : ni CSS, ni JavaScript, ni images — 🟠 fort<a class="headerlink" href="#c-interface-ni-css-ni-javascript-ni-images-fort" title="Permanent link">#</a></h2>
+<ul>
+<li><code>app/View/layout.php</code> l'annonce : « gabarit commun (HTML sémantique, <strong>volontairement SANS CSS</strong>) ».</li>
+<li>Aucun <code>fetch</code>, aucun <code>&lt;script&gt;</code>, aucune référence CSS dans les vues (<code>grep -rn "css\|&lt;script\|fetch(" app/View</code> → 0 résultat).</li>
+<li>Aucune route ne répond en JSON (aucun <code>json_encode</code> dans <code>app/Controller</code>) : l'ajout au panier « sans
+  rechargement » décrit au CDC §4.5.3 (points 1 à 6 : badge, <code>aria-live</code>, <code>history.replaceState</code>,
+  confirmation avant action destructive) <strong>n'existe pas</strong>.</li>
+<li>Conséquences documentaires : §4.5.2 « écrans livrés (maquette) » et <code>ENF-08</code> (WCAG 2.1 AA : contrastes,
+  focus visible, annonces <code>aria-live</code>) ne peuvent pas être validés — il n'y a pas de feuille de style.</li>
+<li><code>ENF-07</code> (« tout fonctionne JS désactivé ») est vrai <strong>par vacuité</strong> : il n'y a pas de JS du tout.</li>
+</ul>
+<hr />
+<h2 id="d-rendus-non-produits-fort">D. Rendus non produits — 🟠 fort<a class="headerlink" href="#d-rendus-non-produits-fort" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Attendu</th>
+<th>État</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PDF/DOCX des 5 documents (i, ii, iii)</td>
+<td><strong>aucun</strong> — seuls des <code>.md</code> ; le seul PDF du dépôt est <code>docs/sql-a-ecrire/requetes-sql-a-ecrire.pdf</code></td>
+</tr>
+<tr>
+<td>Diaporama de soutenance « 12 diapositives exportées en PDF » (doc <code>03</code> §1)</td>
+<td><strong>aucun</strong> fichier <code>.pdf</code>/<code>.pptx</code>/<code>.odp</code></td>
+</tr>
+<tr>
+<td>Vidéo de secours 3 min (doc <code>03</code> §1)</td>
+<td><strong>aucune</strong></td>
+</tr>
+<tr>
+<td><code>livrables/*.docx</code> + <code>livrables/html/*.html</code> (README)</td>
+<td><strong>dossier absent</strong></td>
+</tr>
+<tr>
+<td><code>dist/</code> régénérable par <code>scripts/build-docs.sh</code></td>
+<td>script absent, <code>pandoc</code> non installé ici ; <code>artefacts/*.html</code> existe (7 fichiers) mais n'est <strong>pas</strong> ce que le README décrit</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="e-preuves-et-tracabilite-fort-10-points-individuels">E. Preuves et traçabilité — 🟠 fort (10 points individuels)<a class="headerlink" href="#e-preuves-et-tracabilite-fort-10-points-individuels" title="Permanent link">#</a></h2>
+<ol>
+<li><strong>Historique Git</strong> : 1 seul commit, auteur unique <code>Jojokes</code>, <strong>aucun tag</strong> (<code>git log --oneline</code> /
+   <code>git tag</code>). Le barème v demande une contribution <strong>régulière et individuelle</strong> de 3 personnes :
+   <code>git shortlog -sne</code> ne peut rien démontrer. Le doc <code>08</code> (fiche des 32 commits + <code>scripts/rejeu_gitlab.py</code>)
+   est une <strong>recette de rejeu</strong>, pas un historique : il faut l'exécuter sur le vrai dépôt GitLab.</li>
+<li><strong>Dépôt GitLab</strong> : inexistant / non renseigné. Deux URL factices dans le dépôt :
+   <code>gitlab.example.com</code> (badge README ligne 3) et <code>gitlab.example.fr</code> (doc <code>08</code>). Le badge est donc mort.</li>
+<li><strong>Membres</strong> : README §« Membres et rôles » contient des libellés génériques <code>Étudiant·e A / B / C</code>
+   — <strong>ni noms, ni numéros étudiants, ni adresses</strong> ; la répartition RACI du CDC §3.3 en dépend.
+   Le courriel obligatoire « Composition SAE » à la référente n'a aucune trace dans le dépôt.</li>
+<li><strong>PV de recette</strong> : doc <code>02</code> §10 conclut « la partie <strong>application</strong> doit être reçue… (lots L8→L13) »
+   et laisse « le PV de recette […] à compléter ». Les <strong>33 tests fonctionnels <code>F-xx</code> sont tous au statut
+   « conçu »</strong>, aucun « exécuté ». C'est <strong>périmé</strong> : l'application est désormais livrée et les 5 suites
+   passent — il manque le procès-verbal et les preuves (captures) des 33 cas.</li>
+<li><strong>Statuts du CDC §16.1 périmés</strong> : livrable iii « à développer (S6→S11) », iv « à produire »,
+   v « continu » ; §16.4 : « <strong>le code PHP n'est pas encore écrit</strong> ». Faux depuis la livraison de <code>app/</code>.</li>
+</ol>
+<hr />
+<h2 id="f-scripts-de-mesure-et-de-charge-moyen">F. Scripts de mesure et de charge — 🟡 moyen<a class="headerlink" href="#f-scripts-de-mesure-et-de-charge-moyen" title="Permanent link">#</a></h2>
+<ul>
+<li><strong><code>ENF-01</code> (p95 &lt; 500 ms)</strong> : protocole décrit, mesure <strong>HTTP jamais faite</strong> (<code>tests/perf/mesurer.sh</code>
+  absent). Seule la mesure base existe (<code>tests/perf/mesurer_sql.sh</code>, 15–17 ms annoncés).</li>
+<li><strong>Concurrence / anti-survente (C-01)</strong> : le scénario 20 demandes / 12 exemplaires est décrit, le test
+  n'est pas livré (<code>tests/charge/reserver.sh</code> absent). Le CDC l'utilise comme réponse-type en soutenance.</li>
+<li><strong><code>ENF-15</code> (sauvegarde/restauration <code>--routines --triggers</code>)</strong> : protocole écrit, « à exécuter en S11 » —
+  aucune trace d'exécution.</li>
+<li><strong><code>ENF-08</code> (WCAG)</strong>, <strong><code>ENF-09</code> (<code>phpcs</code>)</strong>, <strong><code>ENF-18</code> (navigateurs)</strong> : « protocole livré / à exécuter
+  par l'équipe », non exécutés. <code>phpcs</code> n'est de toute façon pas installable hors ligne et la CI le met en
+  <code>allow_failure</code>.</li>
+</ul>
+<hr />
+<h2 id="g-ecarts-fonctionnels-petits-mais-reperables-en-demo">G. Écarts fonctionnels (petits, mais repérables en démo) — 🟡<a class="headerlink" href="#g-ecarts-fonctionnels-petits-mais-reperables-en-demo" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Écart</th>
+<th>Détail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Page <strong>contact</strong> inexistante</td>
+<td><code>EF-GEN-05</code> promet « CGV / mentions légales / <strong>contact</strong> » ; seules <code>/cgv</code>, <code>/mentions-legales</code>, <code>/a-propos</code> existent</td>
+</tr>
+<tr>
+<td>Route <code>/mentions</code> annoncée</td>
+<td><code>EF-VIS-08</code> écrit <code>GET /cgv</code>, <code>/mentions</code> ; la route réelle est <code>/mentions-legales</code></td>
+</tr>
+<tr>
+<td>Filtre <strong>stocks</strong> non implémenté</td>
+<td><code>EF-ADM-05</code> promet <code>GET /admin/stocks?etat=alerte</code> + tri par criticité ; <code>StockAdminController::index()</code> ignore tout paramètre et affiche la liste complète</td>
+</tr>
+<tr>
+<td>Pas d'écran <strong>paramètres</strong></td>
+<td><code>frais_port</code> (4,90 €), franchise (80 €) et TVA par défaut sont en base/JSON mais <strong>non modifiables depuis le back-office</strong> ; le doc <code>03</code> affirme pourtant que « la règle se change sans toucher au code » (vrai techniquement, non démontrable en IHM)</td>
+</tr>
+<tr>
+<td>Routes du CDC ≠ routes réelles</td>
+<td>ex. <code>EF-ADM-01</code> : <code>POST /admin/produits</code> alors que le code expose <code>/admin/produit/nouveau</code> (+ <code>/modification</code>) ; à corriger dans le CDC ou dans le routeur</td>
+</tr>
+<tr>
+<td>Aucun endpoint JSON</td>
+<td>voir §C : le panier AJAX décrit n'a pas de contrepartie serveur</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="h-incoherences-chiffrees-a-corriger-credibilite-des-documents">H. Incohérences chiffrées à corriger — 🟡 (crédibilité des documents)<a class="headerlink" href="#h-incoherences-chiffrees-a-corriger-credibilite-des-documents" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Où</th>
+<th>Écrit</th>
+<th>Réalité</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>docs/03</code> §1, §2 (2 fois)</td>
+<td>« <strong>28/28</strong> » puis « 28 tests »</td>
+<td>29 tests SQL</td>
+</tr>
+<tr>
+<td><code>docs/03</code> §4 (check-list)</td>
+<td>« <strong>27 / 27</strong> »</td>
+<td>29</td>
+</tr>
+<tr>
+<td><code>.gitlab-ci.yml</code> (commentaires jobs 4 et 8)</td>
+<td>« <strong>28 tests</strong> »</td>
+<td>29</td>
+</tr>
+<tr>
+<td><code>README.md</code> (tableau des tests)</td>
+<td>E2E « <strong>150/150</strong> »</td>
+<td><strong>155/155</strong> exécutés</td>
+</tr>
+<tr>
+<td><code>README.md</code></td>
+<td>« <strong>5 suites</strong> vertes » + un tableau de <strong>6</strong> lignes (linter inclus)</td>
+<td>5 suites + 1 linter</td>
+</tr>
+<tr>
+<td><code>README.md</code> prérequis</td>
+<td>PHP <strong>8.1+</strong></td>
+<td><code>composer.json</code> exige <strong>&gt;=8.2</strong> ; docs annoncent 8.2</td>
+</tr>
+<tr>
+<td><code>docs/03</code> §2</td>
+<td>« MCD (<strong>7</strong> entités) »</td>
+<td>CDC §12.1.2 et §16.2 : <strong>8</strong> entités</td>
+</tr>
+<tr>
+<td><code>docs/annexes/annexe-enf.md</code></td>
+<td>identifiant <strong><code>ENF-13</code> utilisé deux fois</strong> (alertes stock, puis README ≤ 15 min)</td>
+<td>doublon → renuméroter (ENF-22)</td>
+</tr>
+<tr>
+<td><code>docs/04</code>, annexes</td>
+<td><code>sql/01-minishop-schema.sql</code> (tirets)</td>
+<td>fichiers réels : <code>01_minishop_schema.sql</code> (soulignés)</td>
+</tr>
+<tr>
+<td><code>docs/01</code> §16.2</td>
+<td>« 7 diagrammes livrés […] en source <code>.puml</code> »</td>
+<td>14 PNG, <strong>0 source</strong></td>
+</tr>
+<tr>
+<td>CDC §4.1 <code>EF-ADM-09</code></td>
+<td>« indicateurs <strong>du jour</strong> »</td>
+<td>le tableau de bord calcule le CA <strong>sur tout l'historique</strong> (aucun filtre de date)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="i-plan-de-correction-propose-par-ordre-de-rentabilite">I. Plan de correction proposé (par ordre de rentabilité)<a class="headerlink" href="#i-plan-de-correction-propose-par-ordre-de-rentabilite" title="Permanent link">#</a></h2>
+<ol>
+<li><strong>Rétablir les 3 scripts critiques</strong> (<code>load_db.sh</code>, <code>run_sql_tests.sh</code>, <code>render.sh</code>) et les brancher sur
+   l'existant (<code>scripts/seed.php</code>, <code>tests/sql/run_tests.sh</code>, sources <code>.puml</code> à recréer) → CI GitLab verte,
+   installation reproductible. <em>(≈ 1 j)</em></li>
+<li><strong>Statuer sur MySQL/PDO</strong> : implémenter <code>SqlStore</code> (PDO, requêtes préparées, <code>CALL</code> des procédures) ou
+   assumer l'écart par écrit dans le CDC et le doc de tests. C'est le plus gros risque de points (barème iii). <em>(3–5 j ou 2 h de rédaction d'écart)</em></li>
+<li><strong>Rejouer les 32 commits sur le vrai GitLab</strong> (doc <code>08</code> + <code>scripts/rejeu_gitlab.py</code>), créer les tags
+   <code>v0-cadrage</code>→<code>v5-rendu</code>, renseigner les <strong>vrais noms/emails</strong> dans le README et le CDC, remplacer les URL
+   <code>example.com</code>. <em>(≈ 1 j)</em></li>
+<li><strong>Produire les rendus</strong> : PDF/DOCX des 5 documents, diaporama 12 slides, <code>livrables/</code>. <em>(≈ 0,5 j)</em></li>
+<li><strong>Compléter le PV de recette</strong> du doc <code>02</code> : passer les 33 <code>F-xx</code> en « exécuté/conforme » avec captures,
+   ajouter les 10 tests de sécurité et les 2 tests d'installation. <em>(≈ 0,5 j)</em></li>
+<li><strong>Interface minimale</strong> : une feuille de style (contraste/focus), <code>panier.js</code> + endpoint JSON, <code>aria-live</code>. <em>(2–3 j)</em></li>
+<li><strong>Livrer</strong> <code>tests/perf/mesurer.sh</code>, <code>tests/charge/reserver.sh</code>, <code>scripts/gen_volumes.sh</code> et exécuter
+   <code>ENF-01</code>, <code>ENF-08</code>, <code>ENF-09</code>, <code>ENF-15</code>. <em>(≈ 0,5 j)</em></li>
+<li><strong>Corriger le §H</strong> (chiffres et identifiants) dans tous les documents, et aligner les routes du CDC. <em>(≈ 2 h)</em></li>
+<li><strong>Petits écarts fonctionnels</strong> : page contact, filtre stocks, écran paramètres. <em>(≈ 0,5 j)</em></li>
+</ol>
+<hr />
+<h2 id="j-ce-qui-est-complet-ne-pas-y-retoucher">J. Ce qui est complet (ne pas y retoucher)<a class="headerlink" href="#j-ce-qui-est-complet-ne-pas-y-retoucher" title="Permanent link">#</a></h2>
+<ul>
+<li>Les <strong>5 documents</strong> (<code>01</code>→<code>05</code>) + <code>07</code> + <code>08</code> + les 5 annexes : plan complet, exigences identifiées,
+  matrices de traçabilité — c'est la partie la plus solide du dépôt.</li>
+<li>Les <strong>14 diagrammes</strong> PNG (cas d'usage ×3, classes, séquences ×5, activité, états, architecture, MCD, MLD).</li>
+<li>Le <strong>SQL</strong> : <code>01</code>→<code>04</code> présents (8 tables, 3 vues, 1 fonction, 17 procédures, 16 triggers), 29 fichiers de
+  test + <code>rapport_tests_sql.md</code>.</li>
+<li>L'<strong>application PHP</strong> : 79 fichiers, architecture MVC réelle, autoloader PSR-4 sans dépendance,
+  CSRF, sessions durcies, en-têtes, échappement, 5 suites vertes, 10 contrôles sécurité verts.</li>
+<li>Les <strong>deux pipelines</strong> existent (GitLab + GitHub) et sont documentés.</li>
+</ul>
+<footer class="doc">
+  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/09-audit-ecarts.md</code>
+  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+</footer>
+</main>
+</body>
+</html>
