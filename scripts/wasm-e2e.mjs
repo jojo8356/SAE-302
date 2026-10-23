@@ -13,14 +13,45 @@
  */
 
 import { createPhp, syncBack, WASM_ROOT } from './wasm_lib.mjs';
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 
 const REPO = join(import.meta.dirname, '..');
-if (!existsSync(join(REPO, 'data/minishop/produit.json'))) {
+const DATA = join(REPO, 'data/minishop');
+if (!existsSync(join(DATA, 'produit.json'))) {
   console.error('[wasm-e2e] base absente — lancez : node scripts/wasm_run.mjs scripts/seed.php');
   process.exit(2);
+}
+
+// ---------------------------------------------------------------------------
+//  Hermétisme : le parcours E2E écrit (inscriptions, commandes, changements de
+//  mot de passe). Il travaille donc sur une COPIE jetable du jeu de données :
+//  data/minishop est photographié au démarrage, restauré à la sortie (même en
+//  cas d'échec ou de Ctrl-C). Sans cela, lancer les tests abîmait les comptes
+//  de démonstration livrés (mot de passe d'alice remplacé, produits « TEST-… »
+//  visibles au catalogue).
+// ---------------------------------------------------------------------------
+const photographie = new Map(
+  readdirSync(DATA)
+    .filter((nom) => nom.endsWith('.json'))
+    .map((nom) => [nom, readFileSync(join(DATA, nom))]),
+);
+let restaure = false;
+const restaurerDonnees = () => {
+  if (restaure) return;
+  restaure = true;
+  for (const nom of readdirSync(DATA)) {
+    if (nom.endsWith('.json') && !photographie.has(nom)) rmSync(join(DATA, nom), { force: true });
+  }
+  for (const [nom, contenu] of photographie) writeFileSync(join(DATA, nom), contenu);
+};
+process.on('exit', restaurerDonnees);
+for (const signal of ['SIGINT', 'SIGTERM']) {
+  process.on(signal, () => {
+    restaurerDonnees();
+    process.exit(130);
+  });
 }
 
 const php = await createPhp('http://localhost:8080/');
@@ -751,6 +782,7 @@ process.stdout.write(B('T14 · design, contact, API panier, paramètres (ajouts 
 }
 
 await syncBack(php);
+restaurerDonnees(); // data/minishop retrouve son état d'avant le test
 process.stdout.write(`\n${'='.repeat(60)}\n`);
 if (échecs === 0) {
   console.log(`E2E : TOUT EST VERT ✅  (${tests} vérifications)`);

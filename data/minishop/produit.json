@@ -1,6 +1,6 @@
 {
     "table": "produit",
-    "auto_increment": 17,
+    "auto_increment": 13,
     "rows": [
         {
             "id_produit": 1,
@@ -217,42 +217,6 @@
             "image_url": "img/band.jpg",
             "date_creation": "2026-09-28 13:26:23",
             "date_modification": "2026-09-28 13:26:23"
-        },
-        {
-            "id_produit": 14,
-            "reference": "TEST-997",
-            "nom": "Produit TEST-997 E2E",
-            "slug": "produit-test-997-e2e",
-            "description": "pagination",
-            "prix_ht": 5,
-            "tva": 20,
-            "prix_ttc": 6,
-            "stock": 10,
-            "stock_initial": 10,
-            "seuil_alerte": 2,
-            "id_categorie": 1,
-            "visible": true,
-            "image_url": null,
-            "date_creation": "2026-09-28 13:26:26",
-            "date_modification": "2026-09-28 13:26:26"
-        },
-        {
-            "id_produit": 15,
-            "reference": "TEST-996",
-            "nom": "Produit TEST-996 E2E",
-            "slug": "produit-test-996-e2e",
-            "description": "pagination",
-            "prix_ht": 5,
-            "tva": 20,
-            "prix_ttc": 6,
-            "stock": 10,
-            "stock_initial": 10,
-            "seuil_alerte": 2,
-            "id_categorie": 1,
-            "visible": true,
-            "image_url": null,
-            "date_creation": "2026-09-28 13:26:26",
-            "date_modification": "2026-09-28 13:26:26"
         }
     ]
 }

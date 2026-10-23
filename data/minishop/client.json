@@ -1,20 +1,20 @@
 {
     "table": "client",
-    "auto_increment": 6,
+    "auto_increment": 4,
     "rows": [
         {
             "id_client": 1,
             "nom": "Dupont",
             "prenom": "Alice",
             "email": "alice@example.com",
-            "mot_de_passe_hash": "$2y$10$PwC8d5hphDnRhN6z6vybc.t78/kPtxd03VbWOIIQ4M9iIEn45kEFC",
+            "mot_de_passe_hash": "$2y$10$JqQvanqOS7e4I/1CgfAyC.V7lNILQFih9lskaHwaR8YnegewuDk7S",
             "telephone": "0698765433",
             "adresse_livraison": "24 avenue Jean Médecin",
             "code_postal": "06000",
             "ville": "Nice",
             "actif": true,
             "date_creation": "2026-09-28 13:26:23",
-            "derniere_connexion": "2026-09-28 13:26:27"
+            "derniere_connexion": "2026-10-23 13:51:10"
         },
         {
             "id_client": 2,
@@ -43,34 +43,6 @@
             "actif": true,
             "date_creation": "2026-09-28 13:26:23",
             "derniere_connexion": "2026-09-28 13:26:26"
-        },
-        {
-            "id_client": 4,
-            "nom": "Durand",
-            "prenom": "Zoé",
-            "email": "zoe@example.com",
-            "mot_de_passe_hash": "$2y$10$RFtT0jAaDhl9oNgiM2a3je2NMbjuzk1rmBq/UsqDW00u48nElZESa",
-            "telephone": null,
-            "adresse_livraison": null,
-            "code_postal": null,
-            "ville": null,
-            "actif": true,
-            "date_creation": "2026-09-28 13:26:24",
-            "derniere_connexion": "2026-09-28 13:26:24"
-        },
-        {
-            "id_client": 5,
-            "nom": "Escalade",
-            "prenom": "Ida",
-            "email": "ida@example.com",
-            "mot_de_passe_hash": "$2y$10$knYUXtTzTwj/N4esuSlI4uRNXVLLwjQKK9Cula0DGBtjfo0bn3/J.",
-            "telephone": null,
-            "adresse_livraison": null,
-            "code_postal": null,
-            "ville": null,
-            "actif": true,
-            "date_creation": "2026-09-28 13:26:27",
-            "derniere_connexion": "2026-09-28 13:26:27"
         }
     ]
 }

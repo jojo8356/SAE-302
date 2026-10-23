@@ -13,8 +13,8 @@
 import http from 'node:http';
 import { randomUUID } from 'node:crypto';
 import { createPhp, syncBack, REPO_ROOT } from './wasm_lib.mjs';
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, readFileSync, statSync } from 'node:fs';
+import { extname, join, normalize, sep } from 'node:path';
 
 const PORT = Number(process.argv[2] ?? process.env.PORT ?? 8080);
 const BASE_URL = `http://localhost:${PORT}/`;
@@ -28,11 +28,58 @@ if (!existsSync(join(REPO_ROOT, 'data/minishop/produit.json'))) {
 const php = await createPhp(BASE_URL);
 console.log(`[wasm-serve] PHP 8.2 (WASM) prêt — http://0.0.0.0:${PORT}/ (racine : public/)`);
 
+/**
+ * Fichiers statiques (CSS, JS, images) : le runtime PHP-WASM n'a pas de
+ * serveur web devant lui, donc /css/app.css serait routé vers PHP et
+ * répondrait 404 — la page s'afficherait sans style. On les sert ici,
+ * comme le ferait Apache ou `php -S`.
+ */
+const TYPES = {
+  '.css': 'text/css; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8',
+  '.mjs': 'text/javascript; charset=utf-8',
+  '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp',
+  '.ico': 'image/x-icon',
+  '.woff2': 'font/woff2',
+  '.json': 'application/json; charset=utf-8',
+  '.txt': 'text/plain; charset=utf-8',
+};
+
+function servirStatique(req, res, cheminUrl) {
+  if (req.method !== 'GET' && req.method !== 'HEAD') return false;
+  if (!cheminUrl.startsWith('/css/') && !cheminUrl.startsWith('/js/') &&
+      !cheminUrl.startsWith('/img/') && cheminUrl !== '/favicon.ico') {
+    return false;
+  }
+  // anti-traversée : on normalise et on vérifie que le chemin reste dans public/
+  const relatif = normalize(decodeURIComponent(cheminUrl)).replace(/^([/\\])+/, '');
+  const absolu = join(REPO_ROOT, 'public', relatif);
+  if (!absolu.startsWith(join(REPO_ROOT, 'public') + sep)) return false;
+  if (!existsSync(absolu) || !statSync(absolu).isFile()) return false;
+
+  const corps = readFileSync(absolu);
+  res.writeHead(200, {
+    'content-type': TYPES[extname(absolu).toLowerCase()] ?? 'application/octet-stream',
+    'content-length': corps.length,
+    'cache-control': 'no-cache',
+    'x-content-type-options': 'nosniff',
+  });
+  res.end(req.method === 'HEAD' ? undefined : corps);
+  return true;
+}
+
 /** File d'attente : le runtime WASM traite une requête à la fois. */
 let file = Promise.resolve();
 const enqueue = (task) => (file = file.then(task, task));
 
 const serveur = http.createServer((req, res) => {
+  if (servirStatique(req, res, (req.url ?? '/').split('?')[0])) {
+    return;
+  }
   enqueue(async () => {
     try {
       const morceaux = [];
