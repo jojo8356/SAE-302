@@ -34,7 +34,7 @@ foreach ($recap['articles'] as $ligne) {
         </p>
     <?php endif; ?>
 
-    <div class="tableau-defilant">
+    <div class="tableau-defilant tableau-defilant--carte" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
         <table class="tableau-panier tableau-nombres">
             <caption>Panier — <?= count($recap['articles']) ?> article(s)</caption>
             <thead>
@@ -49,12 +49,12 @@ foreach ($recap['articles'] as $ligne) {
             <tbody>
             <?php foreach ($recap['articles'] as $ligne): ?>
                 <tr<?php if (!empty($ligne['plafonne'])) { echo ' title="Quantité plafonnée au stock disponible (RB-18)"'; } else { echo ''; } ?>>
-                    <td>
+                    <td data-label="Produit">
                         <a href="/produit/<?= e($ligne['slug']) ?>"><?= e($ligne['nom']) ?></a><br>
                         <small>Réf. <?= e($ligne['reference']) ?> — stock : <?= (int) $ligne['stock_disponible'] ?></small>
                     </td>
-                    <td><?= euros($ligne['prix_unitaire']) ?></td>
-                    <td>
+                    <td data-label="Prix unitaire TTC"><?= euros($ligne['prix_unitaire']) ?></td>
+                    <td data-label="Quantité">
                         <form method="post" action="/panier/quantite" class="actions-ligne">
                             <?= csrf_field() ?>
                             <input type="hidden" name="id_produit" value="<?= (int) $ligne['id_produit'] ?>">
@@ -64,8 +64,8 @@ foreach ($recap['articles'] as $ligne) {
                             <button type="submit" class="btn--secondaire btn--sm">Mettre à jour</button>
                         </form>
                     </td>
-                    <td><?= euros($ligne['total_ligne']) ?></td>
-                    <td>
+                    <td data-label="Total TTC"><?= euros($ligne['total_ligne']) ?></td>
+                    <td data-label="Actions">
                         <form method="post" action="/panier/retirer" data-confirme="Retirer cet article du panier ?">
                             <?= csrf_field() ?>
                             <input type="hidden" name="id_produit" value="<?= (int) $ligne['id_produit'] ?>">

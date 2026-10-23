@@ -10,6 +10,47 @@
 (function () {
     'use strict';
 
+    /* ------------------------------------------------------------------
+       Menu principal repliable (≤ 64em ≈ 1024 px).
+       Le <details> est rendu OUVERT dans le HTML : sans JavaScript, tous
+       les liens restent accessibles (ENF-07). Ici on le referme sur petit
+       écran, on le rouvre au-delà du palier, on gère Échap et le clic
+       extérieur — les trois comportements attendus d'un menu disclosure.
+       ------------------------------------------------------------------ */
+    var menu = document.querySelector('[data-menu]');
+    if (menu) {
+        var boutonMenu = menu.querySelector('summary');
+        var petitEcran = window.matchMedia('(max-width: 64em)');
+
+        var synchroniser = function () {
+            if (petitEcran.matches) {
+                menu.removeAttribute('open');
+            } else {
+                menu.setAttribute('open', '');
+            }
+        };
+        synchroniser();
+
+        if (typeof petitEcran.addEventListener === 'function') {
+            petitEcran.addEventListener('change', synchroniser);
+        } else if (typeof petitEcran.addListener === 'function') {
+            petitEcran.addListener(synchroniser);
+        }
+
+        document.addEventListener('keydown', function (evenement) {
+            if (evenement.key !== 'Escape' || !menu.hasAttribute('open') || !petitEcran.matches) {
+                return;
+            }
+            menu.removeAttribute('open');
+            if (boutonMenu) { boutonMenu.focus(); }
+        });
+
+        document.addEventListener('click', function (evenement) {
+            if (!petitEcran.matches || !menu.hasAttribute('open')) { return; }
+            if (!menu.contains(evenement.target)) { menu.removeAttribute('open'); }
+        });
+    }
+
     /* Lien d'évitement : donne le focus réel au contenu (2.4.1). */
     var evitement = document.querySelector('.lien-evitement');
     var contenu = document.getElementById('contenu');

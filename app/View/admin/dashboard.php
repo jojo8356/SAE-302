@@ -47,7 +47,7 @@ declare(strict_types=1);
     <?php if ($alertes === []): ?>
         <p class="message message--succes"><?= icone('coche', 20) ?><span>Aucune alerte : tous les stocks sont au-dessus de leur seuil.</span></p>
     <?php else: ?>
-        <div class="tableau-defilant">
+        <div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
             <table class="tableau-nombres">
                 <caption>Produits sous le seuil — le stock ne peut jamais devenir négatif (RB-03)</caption>
                 <thead><tr><th scope="col">Référence</th><th scope="col">Produit</th><th scope="col">Stock</th><th scope="col">Seuil</th><th scope="col">État</th></tr></thead>
@@ -70,7 +70,7 @@ declare(strict_types=1);
 
 <section>
     <h2>Chiffre d'affaires par statut</h2>
-    <div class="tableau-defilant">
+    <div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
         <table class="tableau-nombres">
             <thead><tr><th scope="col">Statut</th><th scope="col">Nb commandes</th><th scope="col">Montant total</th><th scope="col">Montant moyen</th></tr></thead>
             <tbody>
@@ -89,7 +89,7 @@ declare(strict_types=1);
 
 <section>
     <h2>Top 5 produits</h2>
-    <div class="tableau-defilant">
+    <div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
         <table class="tableau-nombres">
             <thead><tr><th scope="col">#</th><th scope="col">Produit</th><th scope="col">Unités</th><th scope="col">CA</th></tr></thead>
             <tbody>

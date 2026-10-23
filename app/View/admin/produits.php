@@ -26,6 +26,7 @@ declare(strict_types=1);
 
 <p><?= (int) $resultat['total'] ?> produit(s) — page <?= (int) $resultat['page'] ?> / <?= (int) $resultat['pages'] ?></p>
 
+<div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
 <table>
     <caption>Le back-office voit aussi les produits masqués (RB-19)</caption>
     <thead>
@@ -57,6 +58,7 @@ declare(strict_types=1);
     <?php endforeach; ?>
     </tbody>
 </table>
+</div>
 
 <?php if ($resultat['pages'] > 1): ?>
     <p>

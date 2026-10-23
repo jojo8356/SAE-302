@@ -10,7 +10,8 @@ declare(strict_types=1);
     <p>Vous n'avez pas encore de commande.</p>
     <p><a href="/catalogue">Parcourir le catalogue →</a></p>
 <?php else: ?>
-    <table>
+    <div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
+<table>
         <caption>Historique de vos commandes (prix figés à l'achat — RB-06)</caption>
         <thead>
         <tr>
@@ -31,4 +32,5 @@ declare(strict_types=1);
         <?php endforeach; ?>
         </tbody>
     </table>
+</div>
 <?php endif; ?>

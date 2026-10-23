@@ -36,6 +36,7 @@ declare(strict_types=1);
 
 <p><?= count($commandes) ?> commande(s) affichée(s) (100 max)</p>
 
+<div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
 <table>
     <thead>
     <tr>
@@ -56,3 +57,4 @@ declare(strict_types=1);
     <?php endforeach; ?>
     </tbody>
 </table>
+</div>

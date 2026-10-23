@@ -17,11 +17,11 @@ testée, et son cahier des charges complet.
 | **Référente** | Thanh-Phuong Nguyen — `thanh-phuong.nguyen@univ-cotedazur.fr` |
 | **Documents** | [`docs/01-cahier-des-charges-MiniShop.md`](docs/01-cahier-des-charges-MiniShop.md) (spécification **et** conception de base de données) · [`docs/02-document-tests-validation.md`](docs/02-document-tests-validation.md) · [`docs/03-support-soutenance.md`](docs/03-support-soutenance.md) · [`docs/04-conception-bd-et-sql.md`](docs/04-conception-bd-et-sql.md) (livrable n°3 autonome : MCD, MLD, normalisation, analyse + **liens vers les scripts SQL livrés en fichiers**) · [`docs/05-wbs-projet.md`](docs/05-wbs-projet.md) (WBS : 6 divisions, 16 lots, 86 tâches individuelles, charges bottom-up, plan de charge, Gantt, chemin critique) · [`docs/08-fiche-suivi-commits.md`](docs/08-fiche-suivi-commits.md) (fiche de suivi des 32 commits + script de rejeu vers un nouveau GitLab) |
 | **Scripts SQL** | [`sql/01_minishop_schema.sql`](sql/01_minishop_schema.sql) (DDL + données) · [`sql/02_minishop_procedures.sql`](sql/02_minishop_procedures.sql) (1 fonction + 17 procédures) · [`sql/03_minishop_triggers.sql`](sql/03_minishop_triggers.sql) (16 déclencheurs) · [`sql/04_minishop_demo.sql`](sql/04_minishop_demo.sql) (démo via `CALL`) — chaîne validée de zéro sur MariaDB 11.8.6 |
-| **État** | base de données + 29 tests SQL **exécutés avec succès** (règles RB-01…RB-20, vues, frais de port) ; application PHP spécifiée (code à produire aux lots L8→L13 du planning) |
+| **État** | base de données + 29 tests SQL **exécutés avec succès** (règles RB-01…RB-20, vues, frais de port) ; application PHP **livrée** (MVC, design system, suite PHPUnit, E2E HTTP 180 vérifications) ; écarts restants suivis dans [`docs/10-todo-corrections.md`](docs/10-todo-corrections.md) |
 
 ## Prérequis
 
-- PHP **8.1+** avec les extensions `pdo_mysql`, `mbstring`, `json`, `intl`
+- PHP **8.2+** avec les extensions `pdo_mysql`, `mbstring`, `json`, `intl`
 - MySQL **8.0.16+** (les contraintes `CHECK` sont appliquées depuis cette version) **ou MariaDB 10.6+**
 - Apache 2.4 avec `mod_rewrite` (ou le serveur embarqué PHP pour un essai rapide)
 - client `mysql` / `mariadb` en ligne de commande, `bash`
@@ -82,8 +82,8 @@ UNION ALL SELECT 'triggers',   COUNT(*) FROM (SELECT DISTINCT TRIGGER_NAME FROM 
 
 | Zone | Statut | Comment le vérifier |
 |---|---|---|
-| `app/**`, `public/**`, `data/`, `scripts/seed.php` | **application livrée et testée** (PHP pur, moteur JSON, zéro CSS, zéro SQL) | `npm run test:all` → 5 suites vertes (29 + 98 + 108 + 150 vérifications) |
-| `app/Model/Data/` | moteur « JSON-comme-SGBD » : schéma, contraintes (NOT NULL/ENUM/CHECK/UNIQUE/FK), triggers, transactions, vues, journal JSONL — piloté par l'énumération `StorageDriver` (JSON actif, SQL en stub pour la fusion finale) | `node scripts/wasm_run.mjs tests/php/engine_smoke.php` |
+| `app/**`, `public/**`, `data/`, `scripts/seed.php` | **application livrée et testée** (PHP pur, moteur JSON, **design system CSS/JS + SVG**) | `npm run test:all` → 7 suites vertes (108 + 28 + 48 + 34 + 180 vérifications) |
+| `app/Model/Data/` | moteur « JSON-comme-SGBD » : schéma, contraintes (NOT NULL/ENUM/CHECK/UNIQUE/FK), triggers, transactions, vues, journal JSONL — piloté par l'énumération `StorageDriver` (JSON actif ; `SqlStore` = pilote PDO réel, procédures à brancher) | `node scripts/wasm_run.mjs tests/php/engine_smoke.php` |
 | `tests/php/**`, `scripts/wasm-e2e.mjs`, `scripts/run-all-tests.mjs` | **livrés et exécutés** (voir « Tests livrés » ci-dessus) | `npm run test:all` |
 | `sql/`, `tests/sql/`, `docs/` (CDC, tests, soutenance, annexes, diagrammes) | **livrés** ; `sql/` = référence comportementale du moteur JSON | `./scripts/run_sql_tests.sh` → 29/29 |
 | `tests/security/controles.sh`, `tests/charge/reserver.sh`, `tests/perf/mesurer.sh` | **scripts livrés** ; les deux derniers supposent l'application en service | `bash -n` passe |
@@ -91,7 +91,7 @@ UNION ALL SELECT 'triggers',   COUNT(*) FROM (SELECT DISTINCT TRIGGER_NAME FROM 
 
 ## Tests livrés
 
-L'application est livrée avec **cinq suites, toutes vertes**, exécutables d'un bloc :
+L'application est livrée avec **sept suites, toutes vertes**, exécutables d'un bloc :
 
 ```bash
 npm run test:all        # ou : node scripts/run-all-tests.mjs
@@ -101,14 +101,17 @@ npm run test:all        # ou : node scripts/run-all-tests.mjs
 
 | Suite | Fichier | Couverture | Verdict |
 |---|---|---|---|
-| Linter strict types | `scripts/strict_types_lint.php` | règle `declare_strict_types` de php-cs-fixer + types natifs « PHPStan level 9 » (params, retours, propriétés) + **règle maison : opérateur ternaire interdit** (`? :` et `?:`, remplacés par `if/else` ; `??` et types nullables `?int` autorisés) sur **tout le livrable PHP** | ✅ 0 violation / 79 fichiers |
+| Linter strict types | `scripts/strict_types_lint.php` | règle `declare_strict_types` de php-cs-fixer + types natifs « PHPStan level 9 » (params, retours, propriétés) + **règle maison : opérateur ternaire interdit** (`? :` et `?:`, remplacés par `if/else` ; `??` et types nullables `?int` autorisés) sur **tout le livrable PHP** | ✅ 0 violation / 86 fichiers |
 | Moteur JSON | `tests/php/engine_smoke.php` | contraintes, triggers, transactions, journal du moteur | ✅ vert |
 | Règles de gestion | `tests/php/run_tests.php` | T-01…T-29 du document de tests (RB-01…RB-20, vues, frais de port) | ✅ 29/29 |
 | Unitaires | `tests/php/unit_tests.php` | `Text` (fold/slug/collation), échappement, CSRF, **matrice RB-11 complète** (36 couples), `Filter`, `PanierSession`, prix TTC, journal | ✅ 98/98 |
 | Fonctionnalités | `tests/php/features_test.php` | **UC-01…UC-14** via les repositories (catalogue, compte, panier, commande, annulation, back-office, indicateurs) | ✅ 108/108 |
-| E2E HTTP | `scripts/wasm-e2e.mjs` | T1…T13 : parcours réels (cookies + CSRF) — pages publiques, auth, commande 488,40 €, annulation, back-office, cloisonnement, catalogue avancé, compte, panier (plafond/re-tri/prix falsifié), CRUD admin, filtres + audit + journal, **sécurité offensive** (injection, XSS stocké, IDOR, fixation de session, traversées, escalation), rôles RB-13 | ✅ 150/150 |
+| Contrats de design | `tests/php/css_contract.php` | tokens de `docs/DA.md`, contrastes WCAG calculés, classes des vues réellement définies, `prefers-reduced-motion`, feuille d'impression | ✅ 28/28 |
+| Contrat responsive | `tests/php/responsive_contract.php` | 320 px → 1536 px : paliers en `em`, menu repliable, tableaux accessibles, panier en cartes, `dvh`, encoches, `pointer: coarse`, container queries | ✅ 48/48 |
+| Unitaires PHPUnit | `tests/phpunit/` | `Text`, `Filter`, moteur JSON (contraintes, transactions), matrice RB-11, prix TTC, contrats de sécurité — exécutés hors ligne par `run-local.php` | ✅ 34/34 |
+| E2E HTTP | `scripts/wasm-e2e.mjs` | T1…T14 : parcours réels (cookies + CSRF) — pages publiques, auth, commande 488,40 €, annulation, back-office, cloisonnement, catalogue avancé, compte, panier (plafond/re-tri/prix falsifié), CRUD admin, filtres + audit + journal, **sécurité offensive** (injection, XSS stocké, IDOR, fixation de session, traversées, escalation), rôles RB-13, contact/API/paramètres | ✅ 180/180 |
 
-Commandes individuelles : `npm test` (règles), `npm run test:units`, `npm run test:features`, `npm run test:e2e` (re-seed puis parcours HTTP ; l'E2E **pollue** `data/minishop` par construction — re-seeder ensuite : `node scripts/wasm_run.mjs scripts/seed.php`).
+Commandes individuelles : `npm test` (règles), `npm run test:units`, `npm run test:features`, `npm run test:design`, `npm run test:phpunit`, `npm run test:e2e` (re-seed puis parcours HTTP ; l'E2E **pollue** `data/minishop` par construction — re-seeder ensuite : `node scripts/wasm_run.mjs scripts/seed.php`).
 
 Les suites PHP sont **autonomes** (aucun SQL, magasins JSON temporaires par section) : elles s'exécutent telles quelles avec `php tests/php/<suite>.php` sur une machine normale, ou via `node scripts/wasm_run.mjs` en sandbox.
 

@@ -67,7 +67,7 @@
 - [ ] `scripts/coverage.php` — **absent** ; `phpunit.xml` ne produit pas de couverture.
 - [ ] `tests/php/contract_http.php` — **absent** : les contrats HTTP ne sont couverts que par l'E2E.
 - [ ] `docs/11-strategie-tests.md` — **absent**.
-- [~] `npm run test:all` exécute **6 suites** + l'E2E (moteur, règles, unitaires, fonctionnalités, design, PHPUnit) : le « 7 suites » annoncé comptait le linter, qui n'est pas une suite.
+- [x] `npm run test:all` exécute **7 suites** + l'E2E (moteur, règles, unitaires, fonctionnalités, design, responsive, PHPUnit) ; le linter strict-types est un contrôle séparé.
 
 ## 5. Rendus — **rien de produit**
 
@@ -84,15 +84,15 @@
 | Point | État | Preuve |
 |---|---|---|
 | 29 tests SQL partout | [ ] | `docs/03` : « 28/28 » (l. 13, 27) et « 27 / 27 » ; `.gitlab-ci.yml` : « 28 tests » |
-| E2E 155 | [ ] | `README.md` l. 109 : « 150/150 » (réel : 180 depuis l'ajout T14) |
-| PHP 8.2 minimum | [ ] | `README.md` prérequis : « PHP 8.1+ » |
+| E2E 180 | [x] | `README.md` corrigé (T1…T14, 180/180) |
+| PHP 8.2 minimum | [x] | prérequis README aligné sur `composer.json` |
 | `ENF-13` dupliqué → `ENF-22` | [ ] | `annexe-enf.md` : deux lignes `ENF-13` (l. 20 et 34), aucun `ENF-22` |
 | MCD 8 entités | [ ] | `docs/03` l. 23 : « MCD (7 entités) » |
 | Noms `01_minishop_schema.sql` | [ ] | `docs/07` et `docs/09` citent encore `01-minishop-schema.sql` |
 | CDC §16.1/§16.4 à jour | [ ] | §16.1 : « à développer » / « à produire » ; §16.4 : « le code PHP n'est pas encore écrit » |
 | Doc `02` : 33 `F-xx` exécutés + PV | [ ] | 33 lignes « conçu » ; « PV de recette laissé à compléter » ; « lots L8→L13 » |
 | Doc `03` aligné sur l'application | [ ] | scénario encore écrit pour un terminal MySQL |
-| README : arborescence, chiffres, badges | [ ] | « zéro CSS, zéro SQL » ; badge `gitlab.example.com` |
+| README : arborescence, chiffres, badges | [~] | chiffres et « zéro CSS » corrigés ; badge GitLab toujours factice (`gitlab.example.com`) |
 
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 

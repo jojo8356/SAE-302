@@ -17,6 +17,7 @@ declare(strict_types=1);
     </ul>
 <?php endif; ?>
 
+<div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
 <table>
     <caption>Récapitulatif de votre panier</caption>
     <thead>
@@ -38,6 +39,7 @@ declare(strict_types=1);
     <tr><th scope="row" colspan="3">Total à payer</th><td><strong><?= euros($recap['total']) ?></strong></td></tr>
     </tfoot>
 </table>
+</div>
 
 <form method="post" action="/commande/valider">
     <?= csrf_field() ?>

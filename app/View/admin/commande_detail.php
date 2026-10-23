@@ -18,6 +18,7 @@ declare(strict_types=1);
 <?php endif; ?>
 
 <h2>Lignes (prix TTC figés — RB-06)</h2>
+<div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
 <table>
     <thead><tr><th scope="col">Produit</th><th scope="col">Réf.</th><th scope="col">Prix unitaire TTC</th><th scope="col">Qté</th><th scope="col">Total TTC</th></tr></thead>
     <tbody>
@@ -32,6 +33,7 @@ declare(strict_types=1);
     <?php endforeach; ?>
     </tbody>
 </table>
+</div>
 
 <h2>Changer le statut (matrice RB-11 appliquée par le moteur)</h2>
 <?php if ($transitions === []): ?>
@@ -56,6 +58,7 @@ declare(strict_types=1);
 <?php endif; ?>
 
 <h2>Piste d'audit des statuts (RB-11)</h2>
+<div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
 <table>
     <thead><tr><th scope="col">Quand</th><th scope="col">Statut</th><th scope="col">Par</th><th scope="col">Commentaire</th></tr></thead>
     <tbody>
@@ -69,5 +72,6 @@ declare(strict_types=1);
     <?php endforeach; ?>
     </tbody>
 </table>
+</div>
 
 <p><a href="/admin/commandes">← Toutes les commandes</a></p>

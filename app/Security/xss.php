@@ -126,6 +126,7 @@ function icone(string $nom, int $taille = 24): string
         'retour' => '<path d="M4 9h11a5 5 0 0 1 0 10H8"/><path d="M8 5L4 9l4 4"/>',
         'user' => '<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>',
         'eclair' => '<path d="M13 2L5 13h6l-1 9 8-11h-6z"/>',
+        'menu' => '<path d="M4 7h16M4 12h16M4 17h16"/>',
     ];
     $contenu = $traces[$nom] ?? $traces['coche'];
 

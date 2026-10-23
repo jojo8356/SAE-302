@@ -29,6 +29,7 @@ declare(strict_types=1);
 </form>
 
 <h2>Catégories existantes</h2>
+<div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
 <table>
     <thead><tr><th scope="col">Nom</th><th scope="col">Slug</th><th scope="col">Produits visibles</th><th scope="col">Description</th><th scope="col">Actions</th></tr></thead>
     <tbody>
@@ -57,3 +58,4 @@ declare(strict_types=1);
     <?php endforeach; ?>
     </tbody>
 </table>
+</div>

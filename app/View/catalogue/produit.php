@@ -27,7 +27,8 @@ $stock = (int) $produit['stock'];
         <p><?= e($produit['description']) ?></p>
 
         <h2>Caractéristiques</h2>
-        <table class="tableau-nombres">
+        <div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
+<table class="tableau-nombres">
             <caption>Informations produit</caption>
             <tbody>
             <tr><th scope="row">Prix HT</th><td><?= euros($produit['prix_ht']) ?></td></tr>
@@ -36,6 +37,7 @@ $stock = (int) $produit['stock'];
             <tr><th scope="row">Disponibilité</th><td><?= badge_etat((string) $etat_stock) ?></td></tr>
             </tbody>
         </table>
+</div>
     </div>
 
     <aside class="achat carte" aria-label="Acheter ce produit">

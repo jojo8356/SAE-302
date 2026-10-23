@@ -45,19 +45,21 @@
     --t-sm: 0.875rem;
     --t-md: 1rem;
     --t-lg: 1.25rem;
-    --t-xl: 1.5625rem;
-    --t-2xl: 1.9531rem;
-    --t-3xl: 2.4414rem;
+    /* Échelle fluide : chaque titre s'adapte à la largeur de fenêtre
+       (clamp = borne basse mobile, croissance, borne haute desktop). */
+    --t-xl: clamp(1.3rem, 1.1rem + 0.9vw, 1.5625rem);
+    --t-2xl: clamp(1.55rem, 1.2rem + 1.6vw, 1.9531rem);
+    --t-3xl: clamp(1.85rem, 1.25rem + 2.6vw, 2.4414rem);
 
     /* Espacement — unité 8 px */
     --e-1: 0.25rem;
     --e-2: 0.5rem;
     --e-3: 0.75rem;
     --e-4: 1rem;
-    --e-5: 1.5rem;
-    --e-6: 2rem;
-    --e-7: 3rem;
-    --e-8: 4rem;
+    --e-5: clamp(1.15rem, 1rem + 0.6vw, 1.5rem);
+    --e-6: clamp(1.5rem, 1.2rem + 1.1vw, 2rem);
+    --e-7: clamp(1.9rem, 1.35rem + 2vw, 3rem);
+    --e-8: clamp(2.4rem, 1.6rem + 3vw, 4rem);
 
     /* Formes */
     --r-sm: 8px;
@@ -68,6 +70,11 @@
     --ombre-2: 0 8px 24px rgb(15 23 42 / 10%), 0 2px 6px rgb(15 23 42 / 6%);
     --contour: 3px solid var(--primaire);
     --largeur: 1180px;
+    /* Gouttière latérale fluide : 16 px sur mobile, 32 px au-delà de 900 px.
+       Évite le « padding casse-cou » figé à 16 px sur grand écran. */
+    --gouttiere: clamp(1rem, 4vw, 2rem);
+    /* Longueur de ligne confortable (60–75 caractères, DA §4). */
+    --mesure: 68ch;
     --transition: 150ms ease-out;
 }
 
@@ -81,25 +88,49 @@
 html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
+    /* En-tête collant : un ancre ne doit pas se cacher dessous. */
+    scroll-padding-top: 5.5rem;
+    /* Filet de sécurité contre les débordements horizontaux.
+       `clip` ne crée pas de conteneur de défilement, contrairement à
+       `hidden` : l'en-tête `position: sticky` reste donc collant. */
+    overflow-x: hidden;
+    overflow-x: clip;
 }
 
 body {
     margin: 0;
+    /* Les URL, références et emails longs ne doivent jamais élargir la page. */
+    overflow-wrap: break-word;
     background: var(--papier);
     color: var(--encre);
     font-family: var(--police);
     font-size: var(--t-md);
     line-height: 1.5;
+    /* 100dvh suit la barre d'outils mobile qui se rétracte (100vh, non). */
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
 }
 
 img,
-svg {
+svg,
+video,
+canvas {
     max-width: 100%;
     height: auto;
     display: block;
+}
+
+/* Les enfants de grille ont `min-width: auto` par défaut : c'est LA cause
+   classique des débordements horizontaux (un tableau large dans une colonne
+   `1fr` pousse toute la page). On neutralise une fois pour toutes. */
+.grille > *,
+.catalogue > *,
+.fiche > *,
+.hero > *,
+.admin > * {
+    min-width: 0;
 }
 
 hr {
@@ -118,6 +149,22 @@ li + li {
 }
 
 /* ------------------------------------------------------ 3. Typographie */
+
+/* `balance` évite les veuves sur les titres, `pretty` les lignes orphelines :
+   deux réglages typographiques standard des design systems récents, ignorés
+   proprement par les navigateurs qui ne les connaissent pas. */
+h1,
+h2,
+h3,
+legend {
+    text-wrap: balance;
+}
+
+p,
+li,
+figcaption {
+    text-wrap: pretty;
+}
 h1,
 h2,
 h3,
@@ -219,15 +266,18 @@ a:hover {
 
 /* --------------------------------------------------------- 4. Structure */
 .conteneur {
-    width: min(100% - 2rem, var(--largeur));
+    width: min(100% - 2 * var(--gouttiere), var(--largeur));
     margin-inline: auto;
+    /* Encoche et barre gestuelle iOS : rien ne passe sous le matériel. */
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
 }
 
 body > main {
     flex: 1;
-    width: min(100% - 2rem, var(--largeur));
+    width: min(100% - 2 * var(--gouttiere), var(--largeur));
     margin: 0 auto;
-    padding: var(--e-6) 0 var(--e-8);
+    padding: clamp(1.25rem, 3vw, 2rem) 0 var(--e-8);
 }
 
 /* En-tête */
@@ -337,7 +387,7 @@ body > main {
     background: var(--encre);
     color: #e2e8f0;
     margin-top: var(--e-8);
-    padding: var(--e-7) 0 var(--e-5);
+    padding: var(--e-7) 0 calc(var(--e-5) + env(safe-area-inset-bottom));
 }
 
 .pied a {
@@ -943,13 +993,32 @@ td[data-numerique],
 }
 
 .tableau-defilant {
+    position: relative;
     overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
     border-radius: var(--r-md);
+    /* Ombres de défilement (technique « scroll shadows ») : elles signalent
+       qu'il reste du contenu à droite/gauche sans JavaScript. */
+    background:
+        linear-gradient(to right, var(--surface) 30%, rgb(255 255 255 / 0%)) left center,
+        linear-gradient(to left, var(--surface) 30%, rgb(255 255 255 / 0%)) right center,
+        radial-gradient(farthest-side at 0 50%, rgb(15 23 42 / 14%), rgb(15 23 42 / 0%)) left center,
+        radial-gradient(farthest-side at 100% 50%, rgb(15 23 42 / 14%), rgb(15 23 42 / 0%)) right center;
+    background-repeat: no-repeat;
+    background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+    background-attachment: local, local, scroll, scroll;
+}
+
+.tableau-defilant:focus-visible {
+    outline: var(--contour);
+    outline-offset: 2px;
 }
 
 .tableau-defilant table {
     margin-bottom: 0;
-    min-width: 640px;
+    min-width: 560px;
 }
 
 /* ------------------------------------------------------- 9. Formulaires */
@@ -980,6 +1049,8 @@ input,
 select,
 textarea {
     font: inherit;
+    /* 16 px = seuil sous lequel iOS zoome automatiquement au focus. */
+    font-size: max(16px, 1rem);
     color: var(--encre);
     background: var(--surface);
     border: 1px solid var(--bordure-forte);
@@ -1377,65 +1448,325 @@ select[data-largeur-courte] {
 }
 
 /* ----------------------------------------------------- 14. Responsive */
-@media (width <= 1024px) {
+/*
+   Stratégie (DA §14) — celle des design systems d'agence :
+   • le fond est fluide (clamp, gouttières, `min()`) : la majorité des mises
+     en page s'adaptent SANS point de rupture ;
+   • les points de rupture ne servent qu'aux changements de COMPOSITION
+     (grilles, tableaux, navigation) — pas au simple rétrécissement ;
+   • paliers exprimés en `em` et non en `px` : 25em/35em/40em/45em/64em/87.5em.
+     Un palier en px ignore l'agrandissement de la police par l'utilisateur ;
+     en em, il suit le réglage du navigateur (WCAG 1.4.4 Resize Text) ;
+   • paliers validés : 320 · 360 · 390 · 414 · 768 · 834 · 1024 · 1280 · 1536 ;
+   • aucune largeur fixe en `100vw` (source classique de scroll horizontal),
+     aucune police < 12 px.
+*/
+
+/* 14.0 Cibles tactiles et confort de saisie ------------------------- */
+@media (pointer: coarse) {
+    a,
+    button,
+    summary,
+    .btn,
+    input[type="submit"],
+    input[type="checkbox"],
+    input[type="radio"] {
+        min-height: 44px;
+    }
+
+    input[type="checkbox"],
+    input[type="radio"] {
+        width: 24px;
+        height: 24px;
+    }
+
+    /* Sur tactile, le survol n'existe pas : on garde un état actif visible. */
+    .carte--lien:hover {
+        transform: none;
+    }
+}
+
+/* 14.1 Navigation repliable (≤ 1024 px) ---------------------------- */
+.nav-principal__details {
+    position: relative;
+}
+
+.nav-principal__bouton {
+    display: none;
+    align-items: center;
+    gap: var(--e-2);
+    min-height: 44px;
+    padding: 0 var(--e-3);
+    border: 1px solid var(--bordure-forte);
+    border-radius: var(--r-sm);
+    background: var(--surface);
+    color: var(--encre);
+    font-weight: 700;
+    font-size: var(--t-sm);
+    cursor: pointer;
+    list-style: none;
+}
+
+.nav-principal__bouton::-webkit-details-marker,
+.nav-principal__bouton::marker {
+    content: "";
+    display: none;
+}
+
+@media (max-width: 64em) {
+    .nav-principal {
+        margin-left: auto;
+    }
+
+    .nav-principal__bouton {
+        display: inline-flex;
+    }
+
+    .nav-principal__details[open] > .nav-principal__bouton {
+        background: var(--surface-2);
+        border-color: var(--primaire);
+    }
+
+    .nav-principal .nav-principal__liste {
+        position: absolute;
+        right: 0;
+        top: calc(100% + var(--e-2));
+        z-index: 40;
+        display: grid;
+        grid-auto-rows: minmax(44px, auto);
+        gap: 2px;
+        min-width: min(17rem, calc(100vw - 2 * var(--gouttiere)));
+        max-height: min(70vh, 26rem);
+        overflow-y: auto;
+        padding: var(--e-2);
+        background: var(--surface);
+        border: 1px solid var(--bordure);
+        border-radius: var(--r-md);
+        box-shadow: var(--ombre-2);
+    }
+
+    .nav-principal__liste li {
+        margin: 0;
+    }
+
+    .nav-principal__liste a {
+        width: 100%;
+        min-height: 44px;
+        justify-content: flex-start;
+        white-space: normal;
+        text-align: left;
+        line-height: 1.25;
+        padding-block: var(--e-2);
+    }
+
+    .nav-principal .nav-separateur {
+        display: none;
+    }
+}
+
+/* 14.2 Tablette large : les compositions à deux colonnes s'empilent - */
+@media (max-width: 64em) {
     .catalogue,
     .fiche,
     .admin,
     .hero {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .panneau-filtres,
     .achat,
-    .admin__nav {
+    .admin__nav,
+    .recap {
         position: static;
     }
 
     .hero {
         padding: var(--e-5);
+        gap: var(--e-5);
+    }
+
+    .hero__illustration {
+        width: min(100%, 280px);
+    }
+
+    .admin__nav {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: var(--e-1);
+    }
+
+    /* Les filtres passent en grille : 6 champs sur 3 colonnes plutôt
+       qu'une colonne de 6 × 80 px qui repousse les produits hors écran. */
+    .panneau-filtres fieldset {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+        gap: var(--e-3);
+        align-items: end;
+    }
+
+    .panneau-filtres legend {
+        grid-column: 1 / -1;
+        float: none;
+    }
+
+    .panneau-filtres fieldset > p {
+        margin: 0;
+    }
+
+    .admin__nav ul {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: var(--e-1);
+    }
+
+    .admin__nav a {
+        white-space: nowrap;
+    }
+}
+
+/* 14.3 Mobile large : les résultats passent AVANT les filtres ------- */
+@media (max-width: 45em) {
+    .catalogue > .panneau-filtres {
+        order: 2;
+    }
+
+    .catalogue > :not(.panneau-filtres) {
+        order: 1;
+    }
+
+    .entete__barre {
+        min-height: 56px;
+        gap: var(--e-2);
+    }
+
+    .entete {
+        /* Sur petit écran, la barre reste collante mais compacte. */
+        position: sticky;
+    }
+
+    .hero {
+        padding: var(--e-4);
+        text-align: left;
+    }
+
+    .hero h1 {
+        font-size: var(--t-2xl);
+    }
+
+    .hero p {
+        font-size: var(--t-md);
     }
 
     .hero__illustration {
         display: none;
     }
 
-    .admin__nav ul {
+    .pied__grille {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pied {
+        margin-top: var(--e-6);
+        padding-top: var(--e-6);
+    }
+
+    .kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .actions-ligne {
         display: flex;
         flex-wrap: wrap;
-        gap: var(--e-1);
+        gap: var(--e-2);
+    }
+
+    .actions-ligne .btn,
+    .actions-ligne button {
+        flex: 1 1 auto;
+    }
+
+    .hero__actions .btn,
+    .form-inline .btn,
+    .form-inline button {
+        flex: 1 1 100%;
     }
 }
 
-@media (width <= 640px) {
+/* 14.4 Mobile : une colonne, tableaux lisibles, formulaires pleine
+   largeur (c'est le palier où la majorité des sites cassent) --------- */
+@media (max-width: 40em) {
     :root {
-        --t-2xl: 1.6rem;
-        --t-3xl: 1.9rem;
+        --largeur: 100%;
     }
 
     body > main {
         padding-top: var(--e-4);
     }
 
-    .entete__barre {
-        padding: var(--e-2) 0;
+    h1 {
+        font-size: var(--t-2xl);
     }
 
-    .nav-principal {
+    .chapo {
+        font-size: var(--t-md);
+    }
+
+    .entete-page {
+        align-items: flex-start;
+    }
+
+    .pied__grille {
+        gap: var(--e-4);
+    }
+
+    .pied__bas {
+        display: flex;
+        flex-direction: column;
+        gap: var(--e-2);
+    }
+
+    /* Tableaux : on reste à 14 px lisibles (jamais 12 px) et on fait
+       défiler DANS le cadre, pas la page. */
+    table {
+        font-size: var(--t-sm);
+    }
+
+    th,
+    td {
+        padding: var(--e-2) var(--e-3);
+        white-space: normal;
+    }
+
+    .tableau-defilant table {
+        min-width: 520px;
+    }
+
+    .recap {
         width: 100%;
         margin-left: 0;
     }
 
-    .nav-principal ul {
-        gap: 0;
+    .recap__ligne {
+        font-size: var(--t-sm);
     }
 
-    .nav-principal a {
-        padding: 0 var(--e-2);
-        font-size: var(--t-xs);
+    .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
     }
 
-    .nav-principal .nav-separateur {
-        display: none;
+    .form-inline {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--e-2);
+    }
+
+    .carte {
+        padding: var(--e-3);
+    }
+
+    .carte-produit__nom {
+        min-height: 0;
     }
 
     fieldset {
@@ -1444,17 +1775,236 @@ select[data-largeur-courte] {
 
     input,
     select,
-    textarea {
+    textarea,
+    button,
+    .btn {
+        width: 100%;
         max-width: none;
     }
 
-    table {
-        font-size: var(--t-xs);
+    .entete-page .btn,
+    .actions-ligne .btn {
+        width: auto;
     }
 
-    th,
-    td {
-        padding: var(--e-2);
+    .erreur-page {
+        margin: var(--e-6) auto;
+    }
+
+    .erreur-page__code {
+        font-size: 3.5rem;
+    }
+}
+
+/* 14.5 Panier en cartes sous 560 px : un tableau de 5 colonnes est
+   illisible (et non conforme à 1.4.10 Reflow). On bascule en cartes
+   étiquetées avec `data-label` — le contenu et l'ordre de lecture sont
+   conservés, seule la présentation change. ---------------------------- */
+@media (max-width: 35em) {
+    .tableau-defilant--carte {
+        overflow: visible;
+        background: none;
+    }
+
+    .tableau-defilant--carte table {
+        min-width: 0;
+    }
+
+    .tableau-panier,
+    .tableau-panier tbody,
+    .tableau-panier tr,
+    .tableau-panier td,
+    .tableau-panier tfoot {
+        display: block;
+        width: 100%;
+    }
+
+    .tableau-panier thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+    }
+
+    .tableau-panier {
+        border: 0;
+        background: none;
+        border-radius: 0;
+    }
+
+    .tableau-panier tr {
+        border: 1px solid var(--bordure);
+        border-radius: var(--r-md);
+        background: var(--surface);
+        padding: var(--e-3);
+        margin-bottom: var(--e-3);
+        box-shadow: var(--ombre-1);
+    }
+
+    .tableau-panier td {
+        display: grid;
+        grid-template-columns: 8.5rem minmax(0, 1fr);
+        gap: var(--e-2);
+        align-items: center;
+        border: 0;
+        padding: var(--e-1) 0;
+    }
+
+    .tableau-panier td::before {
+        content: attr(data-label);
+        font-size: var(--t-xs);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--encre-douce);
+    }
+
+    .tableau-panier td[data-label="Produit"] {
+        display: block;
+        padding-bottom: var(--e-2);
+    }
+
+    .tableau-panier td[data-label="Produit"]::before {
+        display: block;
+        margin-bottom: var(--e-1);
+    }
+
+    /* Pied du tableau = récapitulatif empilé, aligné à droite */
+    .tableau-panier tfoot {
+        border-top: 1px solid var(--bordure);
+        margin-top: var(--e-2);
+    }
+
+    .tableau-panier tfoot tr {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: var(--e-2);
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        background: none;
+        padding: var(--e-2) 0;
+        margin: 0;
+    }
+
+    .tableau-panier tfoot th,
+    .tableau-panier tfoot td {
+        display: block;
+        border: 0;
+        padding: 0;
+        text-align: left;
+        white-space: normal;
+    }
+
+    .tableau-panier tfoot td {
+        text-align: right;
+    }
+
+    .tableau-panier td .actions-ligne,
+    .tableau-panier td form {
+        width: 100%;
+    }
+}
+
+/* 14.6 Très petits écrans (320–400 px) ------------------------------ */
+@media (max-width: 25em) {
+    :root {
+        --t-xs: 0.75rem;
+        --t-sm: 0.8125rem;
+    }
+
+    /* 136 px d'étiquette à gauche ne laissent pas 120 px utiles à 320 px :
+       l'étiquette passe au-dessus de la valeur. */
+    .tableau-panier td {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--e-1);
+    }
+
+    .tableau-panier td::before {
+        margin-bottom: 0;
+    }
+
+    .marque span {
+        font-size: var(--t-md);
+    }
+
+    .pied__grille {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .kpis {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .message {
+        padding: var(--e-2) var(--e-3);
+    }
+
+    .entete-page {
+        gap: var(--e-2);
+    }
+}
+
+/* 14.7 Téléphone en paysage : on récupère de la hauteur ------------- */
+@media (orientation: landscape) and (max-height: 520px) {
+    .entete {
+        position: static;
+    }
+
+    .hero {
+        padding: var(--e-4);
+    }
+
+    .hero__illustration {
+        display: none;
+    }
+
+    body > main {
+        padding-top: var(--e-3);
+    }
+}
+
+/* 14.8 Grands écrans : la page respire, la mesure de lecture reste
+   bornée (au-delà de 75 caractères, l'œil perd la ligne) -------------- */
+@media (min-width: 87.5em) {
+    :root {
+        --largeur: 1280px;
+    }
+}
+
+/* 14.9 Adaptation au CONTENEUR et non au viewport (container queries).
+   Une carte produit étroite dans une grille de 4 colonnes doit se
+   compacter même sur un écran de 1600 px : c'est ce que fait un design
+   system moderne, le viewport ne le sait pas. */
+@supports (container-type: inline-size) {
+    .carte-produit {
+        container-type: inline-size;
+        container-name: carte;
+    }
+
+    @container carte (max-width: 240px) {
+        .carte-produit__pied {
+            flex-direction: column;
+            align-items: stretch;
+            gap: var(--e-2);
+        }
+
+        .carte-produit__prix {
+            font-size: var(--t-md);
+        }
+    }
+
+    .kpis {
+        container-type: inline-size;
+    }
+
+    @container (max-width: 320px) {
+        .kpi__valeur {
+            font-size: var(--t-lg);
+        }
     }
 }
 
@@ -1467,6 +2017,32 @@ select[data-largeur-courte] {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
+    }
+}
+
+/* Mode contraste forcé (Windows haute visibilité) : les couleurs imposées
+   par le système peuvent effacer les fonds et les ombres — on redessine les
+   frontières essentielles. */
+@media (forced-colors: active) {
+    .carte,
+    .btn,
+    input,
+    select,
+    textarea,
+    table,
+    .tableau-defilant,
+    .nav-principal__bouton,
+    .nav-principal .nav-principal__liste {
+        border: 1px solid CanvasText;
+    }
+
+    .badge,
+    .pastille-panier {
+        border: 1px solid CanvasText;
+    }
+
+    :focus-visible {
+        outline: 3px solid Highlight;
     }
 }
 

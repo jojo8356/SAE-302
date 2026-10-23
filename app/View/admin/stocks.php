@@ -38,7 +38,7 @@ declare(strict_types=1);
         <p><a class="btn btn--secondaire" href="/admin/stocks">Voir tous les stocks</a></p>
     </div>
 <?php else: ?>
-    <div class="tableau-defilant">
+    <div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
         <table class="tableau-nombres">
             <caption>v_etat_stock — le moteur refuse tout stock négatif (RB-03) et journalise chaque mouvement avec son auteur</caption>
             <thead>

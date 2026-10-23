@@ -14,6 +14,7 @@ $annulable = in_array($commande['statut'], ['BROUILLON', 'EN_PREPARATION', 'PAYE
 </p>
 
 <h2>Articles (prix TTC figés à l'achat — RB-06)</h2>
+<div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
 <table>
     <thead>
     <tr><th scope="col">Produit</th><th scope="col">Prix unitaire TTC</th><th scope="col">Qté</th><th scope="col">Total TTC</th></tr>
@@ -33,8 +34,10 @@ $annulable = in_array($commande['statut'], ['BROUILLON', 'EN_PREPARATION', 'PAYE
     <tr><th scope="row" colspan="3">Montant total TTC</th><td><strong><?= euros($commande['montant_total']) ?></strong></td></tr>
     </tfoot>
 </table>
+</div>
 
 <h2>Piste des statuts (RB-11 — alimentée automatiquement par le moteur)</h2>
+<div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
 <table>
     <thead><tr><th scope="col">Quand</th><th scope="col">Statut</th><th scope="col">Par</th><th scope="col">Commentaire</th></tr></thead>
     <tbody>
@@ -48,6 +51,7 @@ $annulable = in_array($commande['statut'], ['BROUILLON', 'EN_PREPARATION', 'PAYE
     <?php endforeach; ?>
     </tbody>
 </table>
+</div>
 
 <?php if ($annulable): ?>
     <h2>Annuler ma commande</h2>

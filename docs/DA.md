@@ -299,3 +299,87 @@ node scripts/wasm_run.mjs tests/php/css_contract.php
 - pas de framework CSS (ni Bootstrap ni Tailwind) : le design system est écrit à la main, ~700 lignes,
   lisible et testable — argument de soutenance sur la maîtrise du CSS ;
 - pas de police web : la pile système garantit un rendu identique hors ligne.
+
+---
+
+## 14. Responsive et adaptation continue
+
+> Ajout demandé après la première revue : « aucun argument contre le design ».
+> Cette section documente la stratégie, les paliers et les preuves — elle est
+> vérifiée automatiquement par `tests/php/responsive_contract.php` (47 contrôles).
+
+### 14.1 Principe : fluide d'abord, paliers pour la composition
+
+La mise en page ne « saute » pas d'un écran à l'autre : elle se dilate. Les
+tailles de titres, les gouttières et les espacements verticaux utilisent
+`clamp(min, préféré, max)`, la largeur utile `min(100% - 2 × gouttière, 1280px)`.
+Les points de rupture ne servent qu'aux **changements de composition** —
+c'est la règle que suivent Stripe, GOV.UK ou Material 3, et elle évite le
+« responsive à trois tailles figées » qui casse sur les formats pliables.
+
+### 14.2 Paliers
+
+| Palier | Ce qui change | Justification |
+|---|---|---|
+| ≥ 87,5 em (1400 px) | largeur utile 1280 px, page centrée | au-delà, la mesure de lecture dépasse 75 caractères |
+| ≤ 64 em (1024 px) | navigation repliée en `<details>` (« Menu ») ; catalogue / fiche / panier / back-office en une colonne ; filtres en grille ; barre latérale d'admin horizontale | tablette paysage et portrait : 8 entrées ne tiennent plus sur une ligne |
+| ≤ 45 em (720 px) | résultats avant les filtres (`order`) ; hero réduit ; KPI sur 2 colonnes ; pied sur 2 colonnes | mobile large : le produit doit être visible sans défiler |
+| ≤ 40 em (640 px) | formulaires pleine largeur, tableaux à 14 px, récapitulatif non collant | pouce + lisibilité |
+| ≤ 35 em (560 px) | panier en **cartes étiquetées** (`data-label`) | un tableau de 5 colonnes n'est pas « reflowable » (WCAG 1.4.10) |
+| ≤ 25 em (400 px) | étiquette au-dessus de la valeur dans le panier | 320 px utiles seulement |
+| ≤ 400 px | pied et KPI sur 1 colonne, titres réduits | iPhone SE / Galaxy A0x |
+| paysage ≤ 520 px de haut | en-tête non collant, hero compact | récupérer la hauteur utile |
+| impression | navigation masquée, tableaux non rognés, `break-inside: avoid` | CGV et factures |
+
+### 14.3 Techniques appliquées (et pourquoi)
+
+| Technique | Effet | Référence |
+|---|---|---|
+| `clamp()` sur 8 tokens | titres lisibles de 320 px à 1536 px sans 6 media queries | type fluide |
+| Paliers en `em` (25 / 35 / 40 / 45 / 64 / 87,5) | suivent la taille de police choisie par l'utilisateur, pas seulement la largeur de l'écran | MDN, WCAG 1.4.4 |
+| `--gouttiere: clamp(1rem, 4vw, 2rem)` | marges latérales proportionnées | grille 8 px |
+| `@container` + `@supports` | une carte produit se compacte selon **sa** largeur, pas celle de l'écran | container queries |
+| `<details>` pour le menu, ouvert sans JS | navigation utilisable JavaScript désactivé (ENF-07) | disclosure pattern (WAI-ARIA APG) |
+| `min-width: 0` sur les enfants de grille | supprime la cause n° 1 de scroll horizontal | CSS Grid |
+| Régions défilantes `tabindex="0"` + ombres | tableaux accessibles au clavier avec affordance visuelle | WCAG 2.1.1 |
+| Champs à `max(16px, 1rem)` | empêche le zoom automatique iOS | Safari |
+| Cibles ≥ 44 px (48 px pour le CTA d'achat) | dépasse le minimum AA (24 px) et couvre Apple HIG (44 pt) | WCAG 2.5.8 / 2.5.5, Apple HIG |
+| `100dvh`, `env(safe-area-inset-*)` | encoches et barre d'outils mobile | iOS / Android |
+| `forced-colors`, `prefers-contrast`, `prefers-reduced-motion` | respect des réglages système | WCAG 1.4.12 / 2.3.3 |
+| `overflow-x: clip` sur `html` | filet anti-débordement sans casser `position: sticky` | CSS Overflow 3 |
+| `text-wrap: balance / pretty` | pas de veuves sur les titres | typographie |
+
+### 14.4 Matrice de validation
+
+| Largeur | Attendu | Vérifié par |
+|---|---|---|
+| 320 px | aucun défilement horizontal, menu replié, panier en cartes | contrat responsive + revue manuelle |
+| 375 / 414 px | idem, cibles ≥ 44 px | `@media (pointer: coarse)` |
+| 768 px | une colonne, filtres en grille, résultats avant filtres | palier 720/1024 |
+| 1024 px | deux colonnes d'admin conservées, catalogue empilé | palier 1024 |
+| 1440 px | largeur bornée 1280 px, mesure ≤ 75 caractères | `--mesure` |
+| 200 % de zoom | pas de contenu coupé (aucune hauteur fixe sur les blocs de texte) | revue manuelle |
+| impression | navigation absente, tableaux complets | `print.css` |
+
+### 14.5 Sources et règles appliquées
+
+| Règle retenue | Source |
+|---|---|
+| Reflow à 320 px, exception pour les tableaux de données, interdiction de bloquer le zoom | [W3C — Understanding SC 1.4.10 Reflow](https://www.w3.org/WAI/WCAG21/Understanding/reflow.html) |
+| Concevoir petit d'abord, une colonne, maximum ~75 caractères par ligne, largeur de page bornée | [GOV.UK Design System — Layout](https://design-system.service.gov.uk/styles/layout/) |
+| Paliers en unités relatives plutôt qu'en pixels de terminal | [MDN — Responsive design](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Responsive_Design) |
+| Cible tactile : 24 px minimum (AA), 44 px (AAA), 44 pt Apple, 48 dp Material | [WCAG 2.5.8](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html) · Apple HIG · Material 3 |
+| Un seul `<h1>`, hiérarchie de titres, liens d'évitement, focus visible | WCAG 2.4.1 / 2.4.7 · WAI-ARIA APG (disclosure) |
+
+Les paliers GOV.UK (40 em / 48 em / 64 em) ont servi de référence ; nous
+utilisons 25 / 35 / 40 / 45 / 64 / 87,5 em parce que le catalogue a besoin
+d'un palier supplémentaire pour le passage en cartes du panier.
+
+### 14.6 Limites assumées
+
+- Aucun navigateur n'est installé dans l'environnement de production des
+  livrables : la validation est **statique** (contrat de 47 vérifications) plus
+  un protocole manuel de 5 largeurs décrit ci-dessus. Une revue sur appareils
+  réels reste à cocher dans le PV de recette (doc `02`).
+- Pas de `:has()` ni de `color-mix()` indispensables : les rares usages de
+  `color-mix()` ont un repli par couleur littérale dans la même règle.

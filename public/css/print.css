@@ -56,3 +56,25 @@ td {
     border: 1px solid #333;
     page-break-inside: avoid;
 }
+
+/* Les régions défilantes ne doivent pas rogner le tableau sur papier. */
+.tableau-defilant {
+    overflow: visible;
+    background: none;
+}
+
+.carte,
+.recap,
+table,
+tr,
+figure {
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+h2,
+h3,
+thead {
+    break-after: avoid;
+    page-break-after: avoid;
+}

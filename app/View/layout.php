@@ -59,7 +59,7 @@ $lienNav = static function (string $href, string $libelle) use ($cheminCourant):
 <html lang="fr">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="description" content="MiniShop — catalogue en ligne de matériel informatique et d'objets connectés. Prix TTC, stock en temps réel, commande et suivi.">
     <meta name="theme-color" content="#1D4ED8">
     <title><?= e($titrePage ?? 'MiniShop') ?> — MiniShop</title>
@@ -80,8 +80,13 @@ $lienNav = static function (string $href, string $libelle) use ($cheminCourant):
         </a>
 
         <nav class="nav-principal" aria-label="Navigation principale">
-            <ul>
-                <?= $lienNav('/catalogue', 'Catalogue') // HTML-SAFE : échappé par le helper ?>
+            <details class="nav-principal__details" data-menu open>
+                <summary class="nav-principal__bouton">
+                    <?= icone('menu', 22) ?>
+                    <span>Menu</span>
+                </summary>
+                <ul class="nav-principal__liste">
+                    <?= $lienNav('/catalogue', 'Catalogue') // HTML-SAFE : échappé par le helper ?>
                 <?= $lienNav('/categories', 'Catégories') // HTML-SAFE : échappé par le helper ?>
                 <li><a href="/contact">Contact</a></li>
                 <li aria-hidden="true" class="nav-separateur"></li>
@@ -104,7 +109,8 @@ $lienNav = static function (string $href, string $libelle) use ($cheminCourant):
                     <li><a href="/admin">Back-office (<?= e($admin['role']) ?>)</a></li>
                     <li><a href="/admin/deconnexion">Quitter le BO</a></li>
                 <?php endif; ?>
-            </ul>
+                </ul>
+            </details>
         </nav>
     </div>
 </header>
