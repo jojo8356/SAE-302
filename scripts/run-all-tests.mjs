@@ -15,7 +15,7 @@
  *   5. css_contract.php   — contrats du design system (tokens, contrastes, CSP)
  *   6. responsive_contract.php — robustesse responsive (320 px → 1536 px)
  *   6. tests/phpunit/**   — suite PHPUnit (exécutée par son runner hors ligne)
- *   7. wasm-e2e.mjs       — parcours HTTP complet (seed requis, pollue data/)
+ *   7. e2e.mjs            — seed + parcours HTTP complet, données restaurées
  */
 import { spawnSync } from 'node:child_process';
 
@@ -48,11 +48,9 @@ if (échecs > 0) {
 }
 console.log('SUITES PHP : TOUT EST VERT ✅ — E2E :');
 
-// l'E2E exige un magasin propre (il le pollue par construction : syncBack)
-const seed = spawnSync('node', ['scripts/wasm_run.mjs', 'scripts/seed.php'], { stdio: 'inherit' });
-const e2e = seed.status === 0
-  ? spawnSync('node', ['scripts/wasm-e2e.mjs'], { stdio: 'inherit' })
-  : { status: 1 };
+// l'E2E exige un magasin propre et écrit (seed + parcours) : scripts/e2e.mjs
+// photographie data/minishop avant, le restaure après — même en cas d'échec.
+const e2e = spawnSync('node', ['scripts/e2e.mjs'], { stdio: 'inherit' });
 if (e2e.status !== 0) {
   console.log('E2E : ÉCHEC ❌');
   process.exit(1);
