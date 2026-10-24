@@ -17,6 +17,7 @@
 - [x] `scripts/gen_volumes.sh` — enveloppe de `scripts/gen_volumes_cli.php`.
 - [x] `scripts/gen_volumes_cli.php` — `--load` n'utilise plus de sous-processus (contrôle 9) : chargement par `App\Tools\SqlLoader`.
 - [x] `app/Tools/SqlLoader.php` — découpage SQL (`DELIMITER`, chaînes, commentaires) + comptage des objets créés.
+- [x] `run.sh` — lancement local en une commande (PHP ≥ 8.2, extensions, `env.php`, seed, serveur + `scripts/dev-router.php`). Sans le routeur, `php -S -t public` renvoyait **404 sur `/catalogue`** (le serveur intégré ignore `.htaccess`) : corrigé et vérifié sur 10 cas (`/`, `/catalogue`, assets, `.env`, `../`, `.md`, `.sql`).
 - [x] `scripts/build-docs.sh` — présent : 20 sources Markdown × 3 formats + diaporama, **58 rendus** produits, copie versionnée dans `livrables/` (`--only`, `--out`, `--no-livrables`).
 - [x] `docs/diagrams/render.sh` — présent (non versionné jusqu'ici : voir §8).
 - [x] `docs/diagrams/src/*.puml` — **14 sources** (cas d'usage ×3, classes, séquences ×5, activité, états, architecture, MCD, MLD).

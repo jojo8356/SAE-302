@@ -43,10 +43,17 @@ DB_USER=root DB_PASS='...' ./scripts/load_db.sh
 DB_USER=root DB_PASS='...' ./scripts/run_sql_tests.sh   # 29 tests, attendu : « Tests conformes : 29 / 29 »
 
 # 5. lancer (développement) — en production : DocumentRoot = public/
-php -S localhost:8000 -t public
+./run.sh                    # tout-en-un : vérifie PHP, sème les données, démarre
+PORT=8080 ./run.sh          # autre port
+./run.sh --check            # diagnostic seul (ne démarre rien)
 #   http://localhost:8000/            (front-office)
-#   http://localhost:8000/admin        (back-office, compte admin requis)
+#   http://localhost:8000/catalogue
+#   http://localhost:8000/admin/connexion   (back-office)
 ```
+
+Sans `run.sh` (équivalent manuel) : `php -S localhost:8000 -t public scripts/dev-router.php`.
+Le troisième argument est **indispensable** : le serveur intégré de PHP n'applique pas
+`public/.htaccess`, donc sans routeur `/catalogue` ou `/produit/…` répondent 404.
 
 Le script `load_db.sh` encapsule les fichiers contenant des procédures/triggers avec un
 `DELIMITER $$` (le client `mysql` n'accepte pas `DELIMITER` en mode batch). Sous MySQL Workbench ou
@@ -124,7 +131,7 @@ Compléments livrés par ailleurs : `bash tests/security/controles.sh` (contrôl
 `scripts/screenshots.mjs` capture **32 pages** à plusieurs largeurs (320, 390, 768, 1024, 1440 px par défaut) dans trois sessions (public, client, back-office), puis produit une galerie HTML et un rapport Markdown. Un audit **WCAG 1.4.10** est injecté dans chaque page : tout élément qui déborde horizontalement est listé (les tableaux de données `.tableau-defilant` et les éléments `position: fixed` sont exclus, conformément à l'exception normative).
 
 ```bash
-node scripts/wasm-serve.mjs 8080        # ou : php -S 127.0.0.1:8000 -t public
+node scripts/wasm-serve.mjs 8080        # ou : ./run.sh  (php -S + routeur)
 npm install --save-dev puppeteer        # une seule fois (~150 Mo, Chromium inclus)
 npm run shots                           # 5 largeurs, 160 captures
 npm run shots -- --all-widths --pdf      # 8 largeurs + PDF d'impression
@@ -141,7 +148,8 @@ Sorties : `captures/<page>/<largeur>.png`, `captures/index.html` (galerie), `cap
 app/Config, app/Controller, app/Model, app/Repository, app/Security, app/View
 docs/{01-cahier-des-charges, 02-document-tests-validation, 03-support-soutenance, 04-conception-bd-et-sql, 05-wbs-projet, 06-todolist}, docs/annexes, docs/diagrams/{src/*.puml, *.png}
 public/{index.php, .htaccess, css, js, img, gen_volumes.php, mesurer.php (dev-only, navigateur)}
-scripts/{load_db.sh, load_db.php, run_sql_tests.sh, deploy.php, build-docs.sh, md_to_{html,pdf,docx,pptx}.py (rendus documentaires), screenshots.mjs (captures responsive), e2e.mjs + data_snapshot.mjs (E2E hermétique), gen_volumes.php (wrapper dev)}
+run.sh (lancement local en une commande — PHP, données, serveur + routeur)
+scripts/{load_db.sh, load_db.php, dev-router.php, run_sql_tests.sh, deploy.php, build-docs.sh, md_to_{html,pdf,docx,pptx}.py (rendus documentaires), screenshots.mjs (captures responsive), e2e.mjs + data_snapshot.mjs (E2E hermétique), gen_volumes.php (wrapper dev)}
 sql/{01_minishop_schema.sql, 02_minishop_procedures.sql, 03_minishop_triggers.sql, 04_minishop_demo.sql}
 tests/{sql/** (manifest, fixture, tNN_*.sql, rapport), security/controles.sh, charge/reserver.sh, perf/mesurer_sql.sh, perf/mesurer.php→public/mesurer.php, php/**}
 livrables/{html,pdf,docx,minishop-soutenance.pptx} (rendus versionnés)  ·  var/log  ·  .gitignore

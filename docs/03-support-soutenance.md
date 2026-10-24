@@ -7,7 +7,7 @@ de sorte qu'aucune affirmation ne soit hors document.
 ## 1. Matériel à préparer
 
 - support `docs/03-support-soutenance.md` exporté en PDF (12 diapositives, une par minute) ;
-- poste prêt : `php -S 127.0.0.1:8000 -t public` lancé, base **rejouée à froid** (`./scripts/load_db.sh`),
+- poste prêt : `./run.sh` lancé (équivalent : `php -S 127.0.0.1:8000 -t public scripts/dev-router.php`), base **rejouée à froid** (`./scripts/load_db.sh`),
   deux navigateurs ouverts (front-office en navigation privée côté client, back-office à côté) ;
 - terminal ouvert sur `mysql minishop` avec les 4 requêtes de preuve §12.3.5 déjà collées ;
 - capture figée de la sortie de `./scripts/run_sql_tests.sh` (28/28) en secours si le réseau/la machine flanche ;
