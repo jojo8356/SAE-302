@@ -13,7 +13,12 @@ $stock = (int) $produit['stock'];
 
 <div class="fiche">
     <div>
-        <div class="fiche__media" aria-hidden="true"><?= e(mb_strtoupper(mb_substr((string) $produit['nom'], 0, 1))) ?></div>
+        <?php $visuel = visuel_produit($produit['image_url'] ?? null, (string) $produit['nom'], 800, 600); ?>
+        <?php if ($visuel !== null): ?>
+            <div class="fiche__media"><?= $visuel // HTML-SAFE : URL validée et échappée par le helper ?></div>
+        <?php else: ?>
+            <div class="fiche__media fiche__media--repli" aria-hidden="true"><?= e(initiale_produit((string) $produit['nom'])) ?></div>
+        <?php endif; ?>
 
         <h1><?= e($produit['nom']) ?></h1>
         <p class="fiche__meta">

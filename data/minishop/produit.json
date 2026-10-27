@@ -16,9 +16,9 @@
             "seuil_alerte": 3,
             "id_categorie": 1,
             "visible": true,
-            "image_url": "img/zen14.jpg",
-            "date_creation": "2026-09-28 13:26:23",
-            "date_modification": "2026-09-28 13:26:23"
+            "image_url": "img/produits/zen14.jpg",
+            "date_creation": "2026-10-27 19:20:08",
+            "date_modification": "2026-10-27 19:20:08"
         },
         {
             "id_produit": 2,
@@ -34,9 +34,9 @@
             "seuil_alerte": 2,
             "id_categorie": 1,
             "visible": true,
-            "image_url": "img/turbox.jpg",
-            "date_creation": "2026-09-28 13:26:23",
-            "date_modification": "2026-09-28 13:26:23"
+            "image_url": "img/produits/turbox.jpg",
+            "date_creation": "2026-10-27 19:20:08",
+            "date_modification": "2026-10-27 19:20:08"
         },
         {
             "id_produit": 3,
@@ -52,9 +52,9 @@
             "seuil_alerte": 5,
             "id_categorie": 1,
             "visible": true,
-            "image_url": "img/qhd27.jpg",
-            "date_creation": "2026-09-28 13:26:23",
-            "date_modification": "2026-09-28 13:26:23"
+            "image_url": "img/produits/qhd27.jpg",
+            "date_creation": "2026-10-27 19:20:08",
+            "date_modification": "2026-10-27 19:20:08"
         },
         {
             "id_produit": 4,
@@ -70,9 +70,9 @@
             "seuil_alerte": 10,
             "id_categorie": 1,
             "visible": true,
-            "image_url": "img/k87.jpg",
-            "date_creation": "2026-09-28 13:26:23",
-            "date_modification": "2026-09-28 13:26:23"
+            "image_url": "img/produits/k87.jpg",
+            "date_creation": "2026-10-27 19:20:08",
+            "date_modification": "2026-10-27 19:20:08"
         },
         {
             "id_produit": 5,
@@ -88,9 +88,9 @@
             "seuil_alerte": 5,
             "id_categorie": 2,
             "visible": true,
-            "image_url": "img/aura.jpg",
-            "date_creation": "2026-09-28 13:26:23",
-            "date_modification": "2026-09-28 13:26:24"
+            "image_url": "img/produits/aura.jpg",
+            "date_creation": "2026-10-27 19:20:08",
+            "date_modification": "2026-10-27 19:20:08"
         },
         {
             "id_produit": 6,
@@ -106,9 +106,9 @@
             "seuil_alerte": 8,
             "id_categorie": 2,
             "visible": true,
-            "image_url": "img/boom.jpg",
-            "date_creation": "2026-09-28 13:26:23",
-            "date_modification": "2026-09-28 13:26:23"
+            "image_url": "img/produits/boom.jpg",
+            "date_creation": "2026-10-27 19:20:08",
+            "date_modification": "2026-10-27 19:20:08"
         },
         {
             "id_produit": 7,
@@ -119,14 +119,14 @@
             "prix_ht": 99,
             "tva": 20,
             "prix_ttc": 118.8,
-            "stock": 0,
+            "stock": 2,
             "stock_initial": 2,
             "seuil_alerte": 1,
             "id_categorie": 2,
             "visible": true,
-            "image_url": "img/procast.jpg",
-            "date_creation": "2026-09-28 13:26:23",
-            "date_modification": "2026-09-28 13:26:26"
+            "image_url": "img/produits/procast.jpg",
+            "date_creation": "2026-10-27 19:20:08",
+            "date_modification": "2026-10-27 19:20:08"
         },
         {
             "id_produit": 8,
@@ -142,9 +142,9 @@
             "seuil_alerte": 6,
             "id_categorie": 3,
             "visible": true,
-            "image_url": "img/sac25.jpg",
-            "date_creation": "2026-09-28 13:26:23",
-            "date_modification": "2026-09-28 13:26:23"
+            "image_url": "img/produits/sac25.jpg",
+            "date_creation": "2026-10-27 19:20:08",
+            "date_modification": "2026-10-27 19:20:08"
         },
         {
             "id_produit": 9,
@@ -160,9 +160,9 @@
             "seuil_alerte": 30,
             "id_categorie": 3,
             "visible": true,
-            "image_url": "img/usbc.jpg",
-            "date_creation": "2026-09-28 13:26:23",
-            "date_modification": "2026-09-28 13:26:23"
+            "image_url": "img/produits/usbc.jpg",
+            "date_creation": "2026-10-27 19:20:08",
+            "date_modification": "2026-10-27 19:20:08"
         },
         {
             "id_produit": 10,
@@ -178,9 +178,9 @@
             "seuil_alerte": 5,
             "id_categorie": 3,
             "visible": true,
-            "image_url": "img/power20.jpg",
-            "date_creation": "2026-09-28 13:26:23",
-            "date_modification": "2026-09-28 13:26:23"
+            "image_url": "img/produits/power20.jpg",
+            "date_creation": "2026-10-27 19:20:08",
+            "date_modification": "2026-10-27 19:20:08"
         },
         {
             "id_produit": 11,
@@ -196,9 +196,9 @@
             "seuil_alerte": 3,
             "id_categorie": 4,
             "visible": true,
-            "image_url": "img/fit2.jpg",
-            "date_creation": "2026-09-28 13:26:23",
-            "date_modification": "2026-09-28 13:26:24"
+            "image_url": "img/produits/fit2.jpg",
+            "date_creation": "2026-10-27 19:20:08",
+            "date_modification": "2026-10-27 19:20:08"
         },
         {
             "id_produit": 12,
@@ -214,9 +214,9 @@
             "seuil_alerte": 15,
             "id_categorie": 4,
             "visible": false,
-            "image_url": "img/band.jpg",
-            "date_creation": "2026-09-28 13:26:23",
-            "date_modification": "2026-09-28 13:26:23"
+            "image_url": "img/produits/band.jpg",
+            "date_creation": "2026-10-27 19:20:08",
+            "date_modification": "2026-10-27 19:20:08"
         }
     ]
 }

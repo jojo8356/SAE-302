@@ -242,21 +242,31 @@ les tokens sont prêts (`[data-theme="dark"]` documenté) si la suite du projet 
   `croix`, `chevron`, `camion`, `cadenas`. Aucune bibliothèque externe, aucun sprite réseau.
 - **Logo** : un « M » en boucle ouverte (circuit imprimé) dans un carré arrondi `--primaire`,
   décliné en `logo.svg` (horizontal) et `favicon.svg` (carré).
-- **Images produit** : le jeu de démonstration n'a pas de photos ; la carte affiche un **placeholder
-  génératif** (dégradé neutre + initiale du produit) — ce n'est jamais une image cassée.
-- **Une photographie, une seule** : l'illustration du hero (`public/img/illustration-achat.jpg`,
-  960 × 524, 63 Ko). Le reste de l'interface reste en direction « fiche technique » (aplats, traits,
-  tokens), ce qui évite l'écueil inverse — un catalogue de vignettes photographiques inégales qui
-  donne une impression de bricolage.
-  - **Pourquoi une photo ici** : le hero est la seule zone où l'on vend une *ambiance* ; ailleurs,
-    on vend des *caractéristiques*. Une illustration vectorielle abstraite n'y racontait rien.
+- **Images produit** : les 12 produits du jeu de démonstration ont un **packshot réel**
+  (`public/img/produits/*.jpg`, 800 × 600, 15–49 Ko, tous produits selon la même recette : objet seul,
+  fond neutre `--surface-2`, ombre de contact douce, lumière venant du haut à gauche). C'est ce qui
+  distingue un site crédible d'une maquette. Le **repli** (dégradé + initiale, cadre en pointillés)
+  subsiste pour tout produit sans visuel ou dont le fichier a disparu : une image cassée est pire
+  qu'une absence d'image, et `image_produit()` ne renvoie jamais d'URL non résolue.
+- **Photographie assumée, à deux niveaux** : une image d'**ambiance** dans le hero
+  (`public/img/illustration-achat.jpg`, 960 × 524, 63 Ko) et un **packshot par produit**
+  (`public/img/produits/*.jpg`). L'interface reste par ailleurs en direction « fiche technique »
+  (aplats, filets, tokens) : la photo sert la preuve, pas la décoration.
+  - **Pourquoi deux niveaux** : le hero vend une *ambiance*, la carte vend un *objet*. Le même
+    cadrage ne peut pas servir les deux — d'où l'ambiance en 16/9 et les packshots en 4/3.
+  - **Cohérence imposée** : mêmes fond, même lumière, même cadrage sur les 12 packshots. Un site
+    dont les vignettes viennent de sources différentes « sent » l'assemblage ; c'est la première
+    chose qu'un correcteur remarque.
   - **Provenance** : image générée pour le projet (aucun droit de tiers, aucune banque d'images,
     aucune requête réseau — ENF-20 tenu). Palette alignée sur `--primaire` (cobalt) et `--accent`
     (terracotta), fond crème proche de `--papier`.
   - **Contraintes tenues** : `width`/`height` déclarés (aucun décalage de mise en page au chargement),
-    `loading="eager"` + `fetchpriority="high"` (elle est au-dessus de la ligne de flottaison),
-    `alt` descriptif, `object-fit: cover` pour ne jamais déformer, masquée sous 35 em faute de place
-    utile. Poids ≤ 250 Ko vérifié par `tests/php/css_contract.php`.
+    `loading="eager"` + `fetchpriority="high"` pour le hero (au-dessus de la ligne de flottaison),
+    `loading="lazy"` pour les vignettes (une grille de 12 produits ne doit pas retarder le premier
+    écran), `alt` descriptif pour l'ambiance et **`alt=""` pour les packshots** — le nom du produit
+    est déjà le titre de la carte, le répéter ferait bavarder un lecteur d'écran.
+    `object-fit: cover` en carte, `contain` sur la fiche (on ne rogne pas le sujet). Poids ≤ 250 Ko
+    pour le hero, ≤ 120 Ko par packshot : vérifié par `tests/php/css_contract.php`.
   - **Règle** : toute nouvelle photo de produit devra suivre la même grille (fond neutre, lumière
     douce, 16/9 ou 4/3, ≤ 250 Ko) sous peine de casser la cohérence du hero.
 

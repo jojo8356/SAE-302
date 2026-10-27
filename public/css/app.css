@@ -606,6 +606,26 @@ body > main {
     color: var(--primaire-fonce);
     letter-spacing: -0.04em;
     overflow: hidden;
+    /* CADRE de l'image : un liseré intérieur évite que les packshots, tous sur
+       fond clair, se confondent avec la carte (effet « image flottante »). */
+    border: 1px solid var(--bordure);
+}
+
+.carte-produit__media:has(.carte-produit__image) {
+    background: var(--surface);
+}
+
+/* Le visuel remplit le cadre sans jamais être déformé ni déborder. */
+.carte-produit__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Repli : dégradé + initiale, quand il n'y a pas de visuel (ou visuel cassé). */
+.carte-produit__media--repli {
+    border-style: dashed;
 }
 
 .carte-produit__categorie {
@@ -806,16 +826,29 @@ body > main {
 }
 
 .fiche__media {
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 4 / 3;
     border-radius: var(--r-md);
     border: 1px solid var(--bordure);
-    background: linear-gradient(140deg, #eef2ff, #f8fafc 60%, #fff7ed);
+    background: var(--surface);
     display: grid;
     place-items: center;
     font-size: var(--t-3xl);
     font-weight: 800;
     color: var(--primaire-fonce);
     margin-bottom: var(--e-5);
+    overflow: hidden;
+}
+
+.fiche__media--repli {
+    background: linear-gradient(140deg, #eef2ff, #f8fafc 60%, #fff7ed);
+    border-style: dashed;
+}
+
+/* Même visuel que la carte, en plus grand : `contain` pour ne rien rogner
+   sur une fiche où le produit est le sujet. */
+.fiche__media .carte-produit__image {
+    object-fit: contain;
+    padding: var(--e-3);
 }
 
 .fiche__meta {
@@ -1307,13 +1340,34 @@ select[data-largeur-courte] {
     font-size: var(--t-sm);
 }
 
+/* État vide : un bloc centré, pas une bannière pleine largeur. `display:grid`
+   + `justify-items:center` garantit le centrage quel que soit le contenu, et
+   `max-width` garde une longueur de ligne lisible (DA §9 : ≤ 75 caractères). */
 .etat-vide {
+    display: grid;
+    justify-items: center;
+    gap: var(--e-2);
+    max-width: 42rem;
+    margin-inline: auto;
     text-align: center;
-    padding: var(--e-7) var(--e-4);
+    padding: var(--e-6) var(--e-5);
     background: var(--surface);
     border: 1px dashed var(--bordure-forte);
     border-radius: var(--r-md);
     color: var(--encre-douce);
+}
+
+.etat-vide > * {
+    max-width: 36rem;
+}
+
+/* Le bouton garde la largeur de son libellé : étiré sur 600 px, il ne
+   ressemblait plus à un bouton mais à une bannière. */
+.etat-vide .btn {
+    justify-self: center;
+    width: auto;
+    max-width: 100%;
+    margin-top: var(--e-2);
 }
 
 .etat-vide p:last-child {

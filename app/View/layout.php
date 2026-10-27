@@ -41,12 +41,31 @@ $liensAdmin = [
     '/admin/equipe' => 'Équipe',
 ];
 
-/** Lien de navigation avec état courant exposé aux technologies d'assistance. */
-$lienNav = static function (string $href, string $libelle) use ($cheminCourant): string {
-    $courant = $cheminCourant === $href;
-    if (!$courant && $href !== '/' && str_starts_with($cheminCourant, $href)) {
-        $courant = true;
+/**
+ * Cette page est-elle celle du lien ? (exact, ou préfixe pour les sous-pages)
+ *
+ * Un seul calcul, réutilisé par tous les liens : mélanger les deux logiques
+ * donnait des incohérences visibles — « Catégories » restait marqué actif sur
+ * /contact parce que ce lien-là, écrit à la main, ne calculait rien du tout.
+ */
+$estCourant = static function (string $href) use ($cheminCourant): bool {
+    if ($cheminCourant === $href) {
+        return true;
     }
+    if ($href === '/' || !str_starts_with($cheminCourant, $href)) {
+        return false;
+    }
+
+    // Préfixe, mais sur une frontière de segment : /catalogue ne doit pas
+    // marquer actif /catalogue-promo, ni /compte marquer /compte-rendu.
+    $suite = substr($cheminCourant, strlen($href), 1);
+
+    return $suite === '' || $suite === '/' || $suite === '?';
+};
+
+/** Lien de navigation avec état courant exposé aux technologies d'assistance. */
+$lienNav = static function (string $href, string $libelle) use ($estCourant): string {
+    $courant = $estCourant($href);
     $attribut = '';
     if ($courant) {
         $attribut = ' aria-current="page"';
@@ -88,22 +107,22 @@ $lienNav = static function (string $href, string $libelle) use ($cheminCourant):
                 <ul class="nav-principal__liste">
                     <?= $lienNav('/catalogue', 'Catalogue') // HTML-SAFE : échappé par le helper ?>
                 <?= $lienNav('/categories', 'Catégories') // HTML-SAFE : échappé par le helper ?>
-                <li><a href="/contact">Contact</a></li>
+                <?= $lienNav('/contact', 'Contact') // HTML-SAFE : échappé par le helper ?>
                 <li aria-hidden="true" class="nav-separateur"></li>
                 <li>
-                    <a href="/panier" aria-label="Panier, <?= (int) $nbArticlesPanier ?> article<?php if ($nbArticlesPanier > 1) { echo 's'; } else { echo ''; } ?>">
+                    <a href="/panier"<?php if ($estCourant('/panier')) { echo ' aria-current="page"'; } ?> aria-label="Panier, <?= (int) $nbArticlesPanier ?> article<?php if ($nbArticlesPanier > 1) { echo 's'; } else { echo ''; } ?>">
                         <?= icone('panier', 20) ?>
                         <span>Panier</span>
                         <span class="pastille-panier" id="badge-panier" <?php if ($nbArticlesPanier <= 0) { echo 'hidden'; } ?>><?= (int) $nbArticlesPanier ?></span>
                     </a>
                 </li>
                 <?php if (($client ?? null) !== null): ?>
-                    <li><a href="/compte"<?php if ($cheminCourant === '/compte') { echo ' aria-current="page"'; } ?>>Mon compte (<?= e($client['prenom']) ?>)</a></li>
+                    <li><a href="/compte"<?php if ($estCourant('/compte')) { echo ' aria-current="page"'; } ?>>Mon compte (<?= e($client['prenom']) ?>)</a></li>
                     <?= $lienNav('/mes-commandes', 'Mes commandes') // HTML-SAFE : échappé par le helper ?>
                     <li><a href="/deconnexion">Déconnexion</a></li>
                 <?php elseif (($admin ?? null) === null): ?>
-                    <li><a href="/connexion">Connexion</a></li>
-                    <li><a href="/inscription">Créer un compte</a></li>
+                    <?= $lienNav('/connexion', 'Connexion') // HTML-SAFE : échappé par le helper ?>
+                    <?= $lienNav('/inscription', 'Créer un compte') // HTML-SAFE : échappé par le helper ?>
                 <?php endif; ?>
                 <?php if (($admin ?? null) !== null): ?>
                     <li><a href="/admin">Back-office (<?= e($admin['role']) ?>)</a></li>
@@ -178,7 +197,7 @@ $lienNav = static function (string $href, string $libelle) use ($cheminCourant):
                 <h2>Informations</h2>
                 <ul>
                     <li><a href="/a-propos">À propos</a></li>
-                    <li><a href="/contact">Contact</a></li>
+                    <?= $lienNav('/contact', 'Contact') // HTML-SAFE : échappé par le helper ?>
                     <li><a href="/cgv">Conditions générales de vente</a></li>
                     <li><a href="/mentions-legales">Mentions légales</a></li>
                 </ul>

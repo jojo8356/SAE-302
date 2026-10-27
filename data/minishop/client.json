@@ -7,42 +7,42 @@
             "nom": "Dupont",
             "prenom": "Alice",
             "email": "alice@example.com",
-            "mot_de_passe_hash": "$2y$10$JqQvanqOS7e4I/1CgfAyC.V7lNILQFih9lskaHwaR8YnegewuDk7S",
-            "telephone": "0698765433",
-            "adresse_livraison": "24 avenue Jean Médecin",
+            "mot_de_passe_hash": "$2y$10$cmMyth.wCqtCFb1./pROsurmafoX5.sYEZgIGtA5sVSbzABLTAAwm",
+            "telephone": "0612345678",
+            "adresse_livraison": "12 rue de France",
             "code_postal": "06000",
             "ville": "Nice",
             "actif": true,
-            "date_creation": "2026-09-28 13:26:23",
-            "derniere_connexion": "2026-10-23 13:51:10"
+            "date_creation": "2026-10-27 19:20:08",
+            "derniere_connexion": "2026-10-27 19:20:08"
         },
         {
             "id_client": 2,
             "nom": "Martin",
             "prenom": "Bruno",
             "email": "bruno@example.com",
-            "mot_de_passe_hash": "$2y$10$SBLZQGtvBeZnMizaYRJ/rugYwr0l1Ymvzr561D.j.OK/Iy3f94.QO",
+            "mot_de_passe_hash": "$2y$10$cmMyth.wCqtCFb1./pROsurmafoX5.sYEZgIGtA5sVSbzABLTAAwm",
             "telephone": "0698765432",
             "adresse_livraison": "5 avenue Jean Médecin",
             "code_postal": "06000",
             "ville": "Nice",
             "actif": true,
-            "date_creation": "2026-09-28 13:26:23",
-            "derniere_connexion": "2026-09-28 13:26:26"
+            "date_creation": "2026-10-27 19:20:08",
+            "derniere_connexion": "2026-10-27 19:20:08"
         },
         {
             "id_client": 3,
             "nom": "Moretti",
             "prenom": "Carla",
             "email": "carla@example.com",
-            "mot_de_passe_hash": "$2y$10$SBLZQGtvBeZnMizaYRJ/rugYwr0l1Ymvzr561D.j.OK/Iy3f94.QO",
+            "mot_de_passe_hash": "$2y$10$cmMyth.wCqtCFb1./pROsurmafoX5.sYEZgIGtA5sVSbzABLTAAwm",
             "telephone": null,
             "adresse_livraison": "8 rue Papin",
             "code_postal": "06300",
             "ville": "Nice",
             "actif": true,
-            "date_creation": "2026-09-28 13:26:23",
-            "derniere_connexion": "2026-09-28 13:26:26"
+            "date_creation": "2026-10-27 19:20:08",
+            "derniere_connexion": "2026-10-27 19:20:08"
         }
     ]
 }

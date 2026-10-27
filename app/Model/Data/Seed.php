@@ -92,18 +92,18 @@ final class Seed
 
         // id_categorie : 1 Informatique, 2 Audio, 3 Accessoires, 4 Objets connectés
         $produits = [
-            ['PC-PORT-001', 'Ordinateur portable Zen 14', 'ordinateur-portable-zen-14', 'Écran IPS 14", 16 Go de RAM, SSD 512 Go, autonomie 12 h.', 699.00, 20.00, 12, 3, 1, 1, 'img/zen14.jpg'],
-            ['PC-FIXE-002', 'Station de travail Turbo X', 'station-de-travail-turbo-x', 'Boîtier compact, 8 cœurs, 32 Go de RAM, SSD NVMe 1 To.', 1249.00, 20.00, 4, 2, 1, 1, 'img/turbox.jpg'],
-            ['ECRA-003', 'Écran 27" QHD', 'ecran-27-qhd', 'Dalle IPS QHD 75 Hz, HDR10, pied réglable.', 179.90, 20.00, 25, 5, 1, 1, 'img/qhd27.jpg'],
-            ['CLAV-004', 'Clavier mécanique K87', 'clavier-mecanique-k87', 'Switches tactiles, rétroéclairage, sans fil 2,4 GHz.', 79.00, 20.00, 40, 10, 1, 1, 'img/k87.jpg'],
-            ['CASQ-005', 'Casque sans fil Aura', 'casque-sans-fil-aura', 'Réduction de bruit active, 35 h d’autonomie.', 129.00, 20.00, 18, 5, 2, 1, 'img/aura.jpg'],
-            ['ENCH-006', 'Enceinte portable Boom', 'enceinte-portable-boom', 'IPX7, 20 h d’autonomie, stéréo TrueWireless.', 59.00, 20.00, 30, 8, 2, 1, 'img/boom.jpg'],
-            ['MICRO-007', 'Micro studio ProCast', 'micro-studio-procast', 'Condensateur cardioïde, bras articulé inclus.', 99.00, 20.00, 2, 1, 2, 1, 'img/procast.jpg'],
-            ['SAC-008', 'Sac à dos 25 L nomade', 'sac-a-dos-25-l-nomade', 'Compartiment 16", tissu déperlant, port USB.', 49.00, 20.00, 22, 6, 3, 1, 'img/sac25.jpg'],
-            ['CABLE-009', 'Câble USB-C 2 m renforcé', 'cable-usb-c-2-m-renforce', 'Charge 100 W, transfert 10 Gbps, tresse nylon.', 12.50, 20.00, 150, 30, 3, 1, 'img/usbc.jpg'],
-            ['POWER-010', 'Batterie externe 20 000 mAh', 'batterie-externe-20-000-mah', 'Charge rapide 65 W, deux ports USB-C.', 45.00, 20.00, 0, 5, 3, 1, 'img/power20.jpg'],
-            ['MONTRE-011', 'Montre connectée Fit 2', 'montre-connectee-fit-2', 'Cardio, GPS, 14 jours d’autonomie, étanche 5 ATM.', 149.00, 20.00, 9, 3, 4, 1, 'img/fit2.jpg'],
-            ['BRAC-012', 'Bracelet connecté Band', 'bracelet-connecte-band', 'Suivi du sommeil et des notifications, 10 jours.', 35.00, 20.00, 60, 15, 4, 0, 'img/band.jpg'],
+            ['PC-PORT-001', 'Ordinateur portable Zen 14', 'ordinateur-portable-zen-14', 'Écran IPS 14", 16 Go de RAM, SSD 512 Go, autonomie 12 h.', 699.00, 20.00, 12, 3, 1, 1, 'img/produits/zen14.jpg'],
+            ['PC-FIXE-002', 'Station de travail Turbo X', 'station-de-travail-turbo-x', 'Boîtier compact, 8 cœurs, 32 Go de RAM, SSD NVMe 1 To.', 1249.00, 20.00, 4, 2, 1, 1, 'img/produits/turbox.jpg'],
+            ['ECRA-003', 'Écran 27" QHD', 'ecran-27-qhd', 'Dalle IPS QHD 75 Hz, HDR10, pied réglable.', 179.90, 20.00, 25, 5, 1, 1, 'img/produits/qhd27.jpg'],
+            ['CLAV-004', 'Clavier mécanique K87', 'clavier-mecanique-k87', 'Switches tactiles, rétroéclairage, sans fil 2,4 GHz.', 79.00, 20.00, 40, 10, 1, 1, 'img/produits/k87.jpg'],
+            ['CASQ-005', 'Casque sans fil Aura', 'casque-sans-fil-aura', 'Réduction de bruit active, 35 h d’autonomie.', 129.00, 20.00, 18, 5, 2, 1, 'img/produits/aura.jpg'],
+            ['ENCH-006', 'Enceinte portable Boom', 'enceinte-portable-boom', 'IPX7, 20 h d’autonomie, stéréo TrueWireless.', 59.00, 20.00, 30, 8, 2, 1, 'img/produits/boom.jpg'],
+            ['MICRO-007', 'Micro studio ProCast', 'micro-studio-procast', 'Condensateur cardioïde, bras articulé inclus.', 99.00, 20.00, 2, 1, 2, 1, 'img/produits/procast.jpg'],
+            ['SAC-008', 'Sac à dos 25 L nomade', 'sac-a-dos-25-l-nomade', 'Compartiment 16", tissu déperlant, port USB.', 49.00, 20.00, 22, 6, 3, 1, 'img/produits/sac25.jpg'],
+            ['CABLE-009', 'Câble USB-C 2 m renforcé', 'cable-usb-c-2-m-renforce', 'Charge 100 W, transfert 10 Gbps, tresse nylon.', 12.50, 20.00, 150, 30, 3, 1, 'img/produits/usbc.jpg'],
+            ['POWER-010', 'Batterie externe 20 000 mAh', 'batterie-externe-20-000-mah', 'Charge rapide 65 W, deux ports USB-C.', 45.00, 20.00, 0, 5, 3, 1, 'img/produits/power20.jpg'],
+            ['MONTRE-011', 'Montre connectée Fit 2', 'montre-connectee-fit-2', 'Cardio, GPS, 14 jours d’autonomie, étanche 5 ATM.', 149.00, 20.00, 9, 3, 4, 1, 'img/produits/fit2.jpg'],
+            ['BRAC-012', 'Bracelet connecté Band', 'bracelet-connecte-band', 'Suivi du sommeil et des notifications, 10 jours.', 35.00, 20.00, 60, 15, 4, 0, 'img/produits/band.jpg'],
         ];
         $rows = [];
         $now = date('Y-m-d H:i:s');

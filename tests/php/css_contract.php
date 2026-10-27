@@ -240,6 +240,104 @@ $check('illustration : servie localement, aucune requête distante',
 $check('illustration : feuille de style bornant l’affichage (object-fit)',
     str_contains((string) file_get_contents($racine . '/public/css/app.css'), 'object-fit: cover'));
 
+
+// --- Visuels produits : vraies photos, repli propre, aucune image cassée -----
+$dossierVisuels = $racine . '/public/img/produits';
+$check('dossier des visuels produits livré', is_dir($dossierVisuels));
+$attendus = [
+    'zen14.jpg', 'turbox.jpg', 'qhd27.jpg', 'k87.jpg', 'aura.jpg', 'boom.jpg',
+    'procast.jpg', 'sac25.jpg', 'usbc.jpg', 'power20.jpg', 'fit2.jpg', 'band.jpg',
+];
+$manquants = [];
+$nonJpeg = [];
+$tropLourds = [];
+$mauvaisFormat = [];
+foreach ($attendus as $fichier) {
+    $chemin = $dossierVisuels . '/' . $fichier;
+    if (!is_file($chemin)) {
+        $manquants[] = $fichier;
+        continue;
+    }
+    $entete = (string) file_get_contents($chemin, false, null, 0, 3);
+    if (bin2hex($entete) !== 'ffd8ff') {
+        $nonJpeg[] = $fichier;
+    }
+    if ((int) filesize($chemin) > 120 * 1024) {
+        $tropLourds[] = $fichier;
+    }
+    $dimensions = getimagesize($chemin);
+    if (!is_array($dimensions) || $dimensions[0] < 400 || $dimensions[1] < 300) {
+        $mauvaisFormat[] = $fichier;
+    }
+}
+$check('12 visuels produits livrés', $manquants === [], implode(', ', $manquants));
+$check('visuels produits : vraies images JPEG', $nonJpeg === [], implode(', ', $nonJpeg));
+$check('visuels produits : poids ≤ 120 Ko', $tropLourds === [], implode(', ', $tropLourds));
+$check('visuels produits : au moins 400 × 300 px', $mauvaisFormat === [], implode(', ', $mauvaisFormat));
+
+// Les URL du jeu de démonstration doivent toutes pointer sur un fichier réel :
+// une référence orpheline produirait exactement l'image cassée qu'on veut éviter.
+$donnees = $racine . '/data/minishop/produit.json';
+if (is_file($donnees)) {
+    $contenu = json_decode((string) file_get_contents($donnees), true);
+    $lignes = [];
+    if (is_array($contenu) && isset($contenu['rows']) && is_array($contenu['rows'])) {
+        $lignes = $contenu['rows'];
+    }
+    $orphelines = [];
+    foreach ($lignes as $ligne) {
+        $url = (string) ($ligne['image_url'] ?? '');
+        if ($url === '') {
+            continue;
+        }
+        if (!is_file($racine . '/public/' . $url)) {
+            $orphelines[] = $url;
+        }
+    }
+    $check('jeu de démonstration : chaque image_url existe vraiment',
+        $orphelines === [], implode(', ', $orphelines));
+}
+
+// Le repli doit exister dans le CSS et dans la vue : pas seulement la photo.
+$css = (string) file_get_contents($racine . '/public/css/app.css');
+$check('CSS : le visuel remplit son cadre sans déformation (object-fit)',
+    preg_match('/\.carte-produit__image\s*\{[^}]*object-fit:\s*cover/s', $css) === 1);
+$check('CSS : repli dédié (dégradé + initiale)',
+    str_contains($css, '.carte-produit__media--repli'));
+$catalogueVue = (string) file_get_contents($racine . '/app/View/catalogue/index.php');
+$check('vue catalogue : visuel utilisé quand il existe',
+    str_contains($catalogueVue, 'visuel_produit('));
+$check('vue catalogue : repli quand il manque',
+    str_contains($catalogueVue, 'initiale_produit('));
+$check('visuel : image décorative (alt vide, le nom est déjà dans le titre)',
+    str_contains($catalogueVue, 'visuel_produit(') && preg_match('/visuel_produit\([^)]*\)/', (string) file_get_contents($racine . '/app/Security/xss.php')) !== null);
+$check('helpers : une URL distante est refusée',
+    (static function () use ($racine): bool {
+        require_once $racine . '/app/Security/xss.php';
+        return image_produit('https://exemple.fr/p.jpg') === null
+            && image_produit('//exemple.fr/p.jpg') === null
+            && image_produit('../secret.jpg') === null
+            && image_produit('') === null;
+    })());
+$check('helpers : un fichier absent ne produit pas de balise cassée',
+    (static function () use ($racine): bool {
+        require_once $racine . '/app/Security/xss.php';
+        return image_produit('img/produits/inexistant.jpg') === null
+            && visuel_produit('img/produits/inexistant.jpg', 'X') === null;
+    })());
+$check('helpers : un visuel existant produit une balise dimensionnée',
+    (static function () use ($racine): bool {
+        require_once $racine . '/app/Security/xss.php';
+        $balise = visuel_produit('img/produits/zen14.jpg', 'Ordinateur');
+        return is_string($balise) && str_contains($balise, 'width="600"')
+            && str_contains($balise, 'height="450"') && str_contains($balise, 'loading="lazy"');
+    })());
+$check('helpers : initiale accentuée correctement pliée',
+    (static function () use ($racine): bool {
+        require_once $racine . '/app/Security/xss.php';
+        return initiale_produit('Écran 27 pouces') === 'É';
+    })());
+
 // ------------------------------------------------------------------ verdict
 echo "\n" . str_repeat('=', 60) . "\n";
 if ($echecs === 0) {

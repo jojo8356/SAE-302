@@ -134,3 +134,61 @@ function icone(string $nom, int $taille = 24): string
         . 'stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" '
         . 'aria-hidden="true" focusable="false">' . $contenu . '</svg>';
 }
+
+/**
+ * URL d'un visuel produit, validée (jamais d'URL distante, jamais de `javascript:`).
+ *
+ * Une image cassée est pire qu'une absence d'image : on ne renvoie donc une
+ * URL que si elle est locale et que le fichier existe réellement. Le repli
+ * (dégradé + initiale) prend le relais partout ailleurs.
+ */
+function image_produit(?string $url): ?string
+{
+    if ($url === null) {
+        return null;
+    }
+    $url = trim($url);
+    if ($url === '' || preg_match('#^(https?:)?//#i', $url) === 1) {
+        return null;
+    }
+    // Traversée de répertoire refusée (SEC-07).
+    if (str_contains($url, '..') || str_starts_with($url, '/')) {
+        return null;
+    }
+    $chemin = dirname(__DIR__, 2) . '/public/' . $url;
+    if (!is_file($chemin)) {
+        return null;
+    }
+
+    return '/' . ltrim($url, '/');
+}
+
+/** Initiale affichée quand un produit n'a pas de visuel (ou un visuel cassé). */
+function initiale_produit(string $nom): string
+{
+    $premiere = mb_substr($nom, 0, 1, 'UTF-8');
+    if (function_exists('mb_strtoupper')) {
+        return mb_strtoupper($premiere, 'UTF-8');
+    }
+
+    return strtoupper($premiere);
+}
+
+/**
+ * Balise <img> d'un visuel produit, ou `null` si le produit n'en a pas.
+ *
+ * `width`/`height` réservent toujours la place (aucun décalage de mise en
+ * page), `loading="lazy"` : une grille de 12 produits ne doit pas retarder
+ * l'affichage des premières cartes.
+ */
+function visuel_produit(?string $url, string $nom, int $largeur = 600, int $hauteur = 450): ?string
+{
+    $source = image_produit($url);
+    if ($source === null) {
+        return null;
+    }
+
+    return '<img class="carte-produit__image" src="' . e($source) . '"'
+        . ' alt="" width="' . $largeur . '" height="' . $hauteur . '"'
+        . ' loading="lazy" decoding="async">';
+}

@@ -139,7 +139,12 @@ $lienSans = static function (string $cle) use ($parametres_url): string {
             <div class="grille grille--produits">
                 <?php foreach ($resultat['lignes'] as $produit): ?>
                     <article class="carte carte-produit">
-                        <div class="carte-produit__media" aria-hidden="true"><?= e(mb_strtoupper(mb_substr((string) $produit['nom'], 0, 1))) ?></div>
+                        <?php $visuel = visuel_produit($produit['image_url'] ?? null, (string) $produit['nom']); ?>
+                        <?php if ($visuel !== null): ?>
+                            <div class="carte-produit__media"><?= $visuel // HTML-SAFE : URL validée et échappée par le helper ?></div>
+                        <?php else: ?>
+                            <div class="carte-produit__media carte-produit__media--repli" aria-hidden="true"><?= e(initiale_produit((string) $produit['nom'])) ?></div>
+                        <?php endif; ?>
                         <p class="carte-produit__categorie"><?= e($produit['categorie']) ?></p>
                         <h2 class="carte-produit__nom">
                             <a href="/produit/<?= e($produit['slug']) ?>"><?= e($produit['nom']) ?></a>
