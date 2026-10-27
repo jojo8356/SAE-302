@@ -521,6 +521,44 @@ echo "\n15. DSN et repli socket Unix (App\\Config\\DbConnexion)\n";
 
     $config = Database::config();
     $check('clé db_socket exposée par la configuration', array_key_exists('db_socket', $config));
+
+
+    // Le chemin exact suivi par « db_init.php --compte » : écrire les
+    // identifiants dans .env, vider les caches, relire la configuration.
+    $dossierCompte = sys_get_temp_dir() . '/minishop-compte-' . bin2hex(random_bytes(4));
+    @mkdir($dossierCompte, 0775, true);
+    $envCompte = $dossierCompte . '/.env';
+    file_put_contents($envCompte, "DB_USER=root\nDB_PASSWORD=\nSTORAGE_DRIVER=json\n");
+    putenv(Env::VARIABLE_FICHIER . '=' . $envCompte);
+    Env::reinitialiser();
+    Database::reset();
+    $avant = Database::config();
+    $check('départ : DB_USER = root (ce que --compte doit remplacer)', ($avant['db_user'] ?? '') === 'root');
+
+    $motDePasseCompte = DbProvision::motDePasse();
+    $modifiees = EnvFile::definirPlusieurs([
+        'DB_USER' => 'minishop',
+        'DB_PASSWORD' => $motDePasseCompte,
+    ]);
+    Database::reset();
+    Env::reinitialiser();
+    $apres = Database::config();
+    $check('identifiants reportés dans .env', $modifiees === ['DB_USER', 'DB_PASSWORD'], implode(',', $modifiees));
+    $check('configuration rechargée : utilisateur applicatif', ($apres['db_user'] ?? '') === 'minishop');
+    $check('configuration rechargée : mot de passe généré', ($apres['db_pass'] ?? '') === $motDePasseCompte);
+    $check('rechargement sans redémarrage (caches vidés)', ($apres['storage_driver'] ?? '') === 'json');
+    $check('le mot de passe n’est pas cité dans l’en-tête du fichier',
+        !str_contains((string) file_get_contents($envCompte), 'root\n'));
+    $relecture = (string) file_get_contents($envCompte);
+    $check('mot de passe écrit sans transformation (hexadécimal)',
+        str_contains($relecture, 'DB_PASSWORD=' . $motDePasseCompte));
+
+    putenv(Env::VARIABLE_FICHIER);
+    Env::reinitialiser();
+    Database::reset();
+    @unlink($envCompte);
+    @rmdir($dossierCompte);
+
 }
 
 // ============================================================ 16. compte applicatif

@@ -213,7 +213,11 @@ if ($socketDetectee === null) {
     $socketDetectee = DbConnexion::socketLocale();
 }
 if ($socketDetectee !== null) {
-    echo '   socket Unix   : ' . $socketDetectee . "  (repli si le compte refuse le TCP)\n";
+    // Ne promet pas un contournement : si le compte utilise le greffon
+    // unix_socket, la socket ne débloque rien (elle compare l'utilisateur du
+    // système, pas un mot de passe) — voir app/Tools/DbProvision.php.
+    echo '   socket Unix   : ' . $socketDetectee
+        . "  (tentée après un refus TCP ; inopérante avec un compte unix_socket)\n";
 }
 
 if (!$installateur->baseValide()) {
@@ -353,10 +357,19 @@ if ($existe && $options['keep']) {
 }
 
 if ($existe && !$options['keep']) {
-    echo "\n⚠ la base « " . $installateur->base() . " » existe déjà et sera SUPPRIMÉE.\n";
-    if (!confirmer('   Continuer ?', $options['yes'])) {
-        echo "abandon — rien n'a été modifié.\n";
-        exit(3);
+    // Une base créée à l'instant (--compte) n'a aucune table : la reconstruire
+    // ne détruit rien. On ne demande confirmation que pour de vraies données.
+    $inventaireAvant = $installateur->inventaire();
+    $tablesAvant = max(0, (int) ($inventaireAvant['tables'] ?? 0));
+    if ($tablesAvant > 0) {
+        echo "\n⚠ la base « " . $installateur->base() . " » existe déjà ("
+            . $tablesAvant . " table(s)) et sera SUPPRIMÉE.\n";
+        if (!confirmer('   Continuer ?', $options['yes'])) {
+            echo "abandon — rien n'a été modifié.\n";
+            exit(3);
+        }
+    } else {
+        echo "   base « " . $installateur->base() . " » vide (aucune table) : recréation sans confirmation\n";
     }
 }
 
