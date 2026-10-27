@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tools;
 
 use PDO;
+use PDOException;
 use RuntimeException;
 
 /**
@@ -55,14 +56,29 @@ final class SqlLoader
         $instructions = self::decouper($contenu);
 
         $executees = 0;
+        $numero = 0;
         foreach ($instructions as $instruction) {
+            ++$numero;
             if ($ignorerBases && preg_match('/^(DROP|CREATE)\s+DATABASE\b/i', $instruction) === 1) {
                 continue;
             }
             if ($ignorerBases && preg_match('/^USE\s+/i', $instruction) === 1) {
                 continue;
             }
-            $this->pdo->exec($instruction);
+            try {
+                $this->pdo->exec($instruction);
+            } catch (PDOException $erreur) {
+                // Sans ce contexte, l'utilisateur reçoit un « SQLSTATE[42000] »
+                // anonyme alors que le fichier SQL peut contenir 300 instructions.
+                $extrait = preg_replace('/\s+/', ' ', substr($instruction, 0, 160));
+                throw new RuntimeException(
+                    'échec dans ' . basename($fichier) . ', instruction ' . $numero
+                    . ' (sur ' . count($instructions) . ') : ' . $erreur->getMessage()
+                    . "\n    début de l’instruction : " . $extrait,
+                    0,
+                    $erreur,
+                );
+            }
             ++$executees;
         }
 
@@ -73,9 +89,20 @@ final class SqlLoader
      * Découpe un script SQL en instructions exécutables par PDO.
      *
      * Gère :
-     *   - les commentaires `-- …` et `# …` en début de ligne ;
-     *   - les chaînes '…' et "…" (les `;` qu'elles contiennent sont ignorés) ;
+     *   - les commentaires `-- …`, `# …` et `/* … *\/` **y compris indentés**
+     *     et en fin de ligne (MySQL : `--` suivi d'un blanc) ;
+     *   - les chaînes '…' et "…" (avec `\\` et le doublement `''`), les
+     *     identifiants `…` — les `;` qu'ils contiennent sont ignorés ;
      *   - `DELIMITER xx` / `DELIMITER ;` (corps de procédures et de triggers).
+     *
+     * Le bug corrigé ici mérite d'être raconté : la première version ne
+     * reconnaissait un commentaire qu'en **colonne 0**. Or ces fichiers
+     * contiennent des commentaires indentés (`  -- c'est l'interet de …`).
+     * L'apostrophe de « l'interet » faisait donc basculer le lecteur en mode
+     * chaîne : le délimiteur `$$` n'était plus vu, plusieurs procédures
+     * étaient recollées en une seule instruction, et MariaDB répondait
+     * « syntax error near '$$' ». Le symptôme désignait MariaDB alors que la
+     * faute était dans ce fichier.
      *
      * @return list<string>
      */
@@ -91,14 +118,21 @@ final class SqlLoader
         while ($i < $longueur) {
             $caractere = $script[$i];
 
-            // Dans une chaîne : on ne s'arrête qu'au guillemet fermant.
+            // 1. Dans une chaîne / un identifiant : seul le guillemet fermant
+            //    (ou son doublement, ou un échappement) compte.
             if ($guillemet !== null) {
-                $courante .= $caractere;
                 if ($caractere === '\\' && $i + 1 < $longueur) {
-                    $courante .= $script[$i + 1];
+                    $courante .= $caractere . $script[$i + 1];
                     $i += 2;
                     continue;
                 }
+                // MySQL accepte '' dans '…' et "" dans "…" pour échapper.
+                if ($caractere === $guillemet && $i + 1 < $longueur && $script[$i + 1] === $guillemet) {
+                    $courante .= $caractere . $caractere;
+                    $i += 2;
+                    continue;
+                }
+                $courante .= $caractere;
                 if ($caractere === $guillemet) {
                     $guillemet = null;
                 }
@@ -106,22 +140,56 @@ final class SqlLoader
                 continue;
             }
 
-            // Commentaire de fin de ligne.
-            $debutLigne = ($i === 0) || ($script[$i - 1] === "\n");
-            $estCommentaire = $debutLigne
-                && ($caractere === '#'
-                    || ($caractere === '-' && substr($script, $i, 3) === '-- ')
-                    || ($caractere === '-' && substr($script, $i, 3) === '--' . "\n"));
-            if ($estCommentaire) {
-                $fin = strpos($script, "\n", $i);
-                if ($fin === false) {
+            // 2. DELIMITER : instruction du client, interprétée ici. Reconnue
+            //    en début de ligne, indentation comprise.
+            if (preg_match('/\G[ \t]*DELIMITER[ \t]+(\S+)/i', $script, $trouve, 0, $i) === 1
+                && ($i === 0 || $script[$i - 1] === "\n")) {
+                $delimiteur = $trouve[1];
+                $i += strlen($trouve[0]);
+                // On saute la fin de ligne : elle ne contient rien d'exécutable.
+                $finLigne = strpos($script, "\n", $i);
+                if ($finLigne === false) {
                     $i = $longueur;
                 } else {
-                    $i = $fin + 1;
+                    $i = $finLigne + 1;
                 }
                 continue;
             }
 
+            // 3. Commentaires — où qu'ils soient, y compris indentés.
+            //    `--` n'ouvre un commentaire que suivi d'un blanc (règle MySQL) :
+            //    `a - -b` reste du code, `1--2` aussi.
+            $suitBlanc = ($i + 2 < $longueur)
+                && in_array($script[$i + 2], [' ', "\t", "\n", "\r"], true);
+            $estTiretTiret = ($caractere === '-' && substr($script, $i, 2) === '--'
+                && ($i + 2 >= $longueur || $suitBlanc));
+            if ($caractere === '#' || $estTiretTiret) {
+                $finLigne = strpos($script, "\n", $i);
+                if ($finLigne === false) {
+                    $i = $longueur;
+                } else {
+                    $i = $finLigne + 1;
+                }
+                continue;
+            }
+            if ($caractere === '/' && substr($script, $i, 2) === '/*') {
+                // Les commentaires « exécutables » de MySQL (`/*!40101 … */`)
+                // portent des instructions : on les conserve tels quels.
+                if (substr($script, $i, 3) === '/*!') {
+                    $courante .= '/*!';
+                    $i += 3;
+                    continue;
+                }
+                $fermeture = strpos($script, '*/', $i + 2);
+                if ($fermeture === false) {
+                    $i = $longueur;
+                } else {
+                    $i = $fermeture + 2;
+                }
+                continue;
+            }
+
+            // 4. Guillemets : on entre en mode chaîne.
             if ($caractere === "'" || $caractere === '"' || $caractere === '`') {
                 $guillemet = $caractere;
                 $courante .= $caractere;
@@ -129,16 +197,10 @@ final class SqlLoader
                 continue;
             }
 
-            // DELIMITER (instruction client, à interpréter ici).
-            if ($debutLigne && preg_match('/\G[ \t]*DELIMITER[ \t]+(\S+)/i', $script, $trouve, 0, $i) === 1) {
-                $delimiteur = $trouve[1];
-                $i += strlen($trouve[0]);
-                continue;
-            }
-
-            // Fin d'instruction ?
-            if (substr($script, $i, strlen($delimiteur)) === $delimiteur) {
-                $i += strlen($delimiteur);
+            // 5. Fin d'instruction ?
+            $longueurDelimiteur = strlen($delimiteur);
+            if (substr($script, $i, $longueurDelimiteur) === $delimiteur) {
+                $i += $longueurDelimiteur;
                 $instruction = trim($courante);
                 if ($instruction !== '') {
                     $instructions[] = $instruction;

@@ -41,6 +41,7 @@ use App\Config\DbConnexion;
 use App\Tools\DbInstaller;
 use App\Tools\DbProvision;
 use App\Tools\Revision;
+use App\Tools\SqlLoader;
 use App\Tools\EnvFile;
 
 // en CLI, pas d'en-têtes de cookie de session (tests silencieux)
@@ -641,6 +642,102 @@ echo "\n17. Empreinte de révision affichée par les scripts (App\\Tools\\Revisi
     $check('1698 : sudo php proposé', str_contains($texte1698, 'sudo php'));
     $check('1698 : aucune promesse de socket magique',
         !str_contains($texte1698, 'introuvable') || str_contains($texte1698, 'quel que soit le mot de passe'));
+}
+
+// ============================================================ 18. découpage SQL
+echo "\n18. Découpage des scripts SQL (App\\Tools\\SqlLoader::decouper)\n";
+{
+    // Cas synthétiques : chacun correspond à une erreur réellement rencontrée.
+    $cas = [
+        ['SELECT 1; SELECT 2;', 2, 'deux instructions sur une ligne'],
+        ["SELECT ';';", 1, 'point-virgule dans une chaîne'],
+        ["SELECT 'a'';b';", 1, 'apostrophe doublée : le ; reste dans la chaîne'],
+        ["SELECT 1 -- un commentaire\n;", 1, 'commentaire de fin de ligne'],
+        ["SELECT 1 # un commentaire\n;", 1, 'commentaire dièse'],
+        ["SELECT 1 /* bloc */;", 1, 'commentaire de bloc'],
+        ["-- c'est l'apostrophe qui casse tout\nSELECT 1;", 1, 'commentaire en colonne 0 avec apostrophe'],
+        ["  -- c'est l'apostrophe qui casse tout\n  SELECT 1;", 1, 'commentaire INDENTÉ avec apostrophe (bug corrigé)'],
+        ["SELECT 1-1;", 1, 'a-1 reste du code (-- exige un blanc)'],
+        ["SELECT 1 --2;", 1, '1--2 reste du code'],
+        ["DELIMITER $$\nCREATE PROCEDURE p() BEGIN SELECT 1; END $$\nDELIMITER ;\nSELECT 2;", 2, 'DELIMITER $$ : le ; interne ne coupe pas'],
+        ["  DELIMITER $$\nCREATE PROCEDURE p() BEGIN SELECT ';'; END $$\nDELIMITER ;", 1, 'DELIMITER indenté + point-virgule dans une chaîne'],
+        ["DELIMITER //\nCREATE TRIGGER t BEFORE INSERT ON x FOR EACH ROW BEGIN SET @a = 1; END //\nDELIMITER ;", 1, 'délimiteur // et corps à une instruction'],
+        ["SELECT 1;;; SELECT 2", 2, 'délimiteurs vides ignorés'],
+        ["SELECT 1", 1, 'dernière instruction sans délimiteur'],
+    ];
+    foreach ($cas as [$script, $attendu, $libelle]) {
+        $obtenu = SqlLoader::decouper($script);
+        $check($libelle, count($obtenu) === $attendu, 'obtenu ' . count($obtenu) . ' : ' . implode(' | ', $obtenu));
+        foreach ($obtenu as $instruction) {
+            $check($libelle . ' — aucun $$ résiduel', !str_contains($instruction, '$$'));
+        }
+    }
+
+    // Fichiers réels du projet : c'est là que le bug se manifestait.
+    $racine = dirname(__DIR__, 2);
+    $attentes = [
+        'sql/01_minishop_schema.sql' => ['CREATE TABLE' => 8, 'CREATE OR REPLACE VIEW' => 3, 'cards' => 28, 'cards_max' => 32],
+        'sql/02_minishop_procedures.sql' => ['CREATE PROCEDURE' => 17, 'CREATE FUNCTION' => 1],
+        'sql/03_minishop_triggers.sql' => ['CREATE TRIGGER' => 16],
+        'sql/04_minishop_demo.sql' => [],
+    ];
+    foreach ($attentes as $fichier => $comptes) {
+        $chemin = $racine . '/' . $fichier;
+        $check($fichier . ' livré', is_file($chemin));
+        $instructions = SqlLoader::decouper((string) file_get_contents($chemin));
+        $residuel = 0;
+        $delimiteurResiduel = 0;
+        foreach ($instructions as $instruction) {
+            if (str_contains($instruction, '$$')) {
+                ++$residuel;
+            }
+            if (preg_match('/^\s*DELIMITER\b/i', $instruction) === 1) {
+                ++$delimiteurResiduel;
+            }
+        }
+        $check($fichier . ' — aucun « $$ » dans une instruction', $residuel === 0, $residuel . ' instruction(s)');
+        $check($fichier . ' — aucune ligne DELIMITER exécutée', $delimiteurResiduel === 0);
+        $source = (string) file_get_contents($chemin);
+        foreach ($comptes as $motif => $attendu) {
+            if ($motif === 'cards' || $motif === 'cards_max') {
+                continue;
+            }
+            $presents = preg_match_all('/^' . preg_quote($motif, '/') . '\s/im', $source);
+            $decoupes = 0;
+            foreach ($instructions as $instruction) {
+                if (preg_match('/^' . preg_quote($motif, '/') . '\s/i', $instruction) === 1) {
+                    ++$decoupes;
+                }
+            }
+            $check($fichier . ' — ' . $attendu . ' × ' . $motif . ' présents dans le source', $presents === $attendu, (string) $presents);
+            $check($fichier . ' — ' . $attendu . ' × ' . $motif . ' correctement délimités', $decoupes === $attendu, (string) $decoupes);
+        }
+        // Un corps `BEGIN … END` doit finir par END (sinon il a été coupé au
+        // premier point-virgule interne). Un trigger à instruction unique
+        // (`SET NEW.x = …`) n'a pas de BEGIN : il ne compte que pour le
+        // recollement, symptôme exact du bug corrigé.
+        $incompletes = 0;
+        $recolles = 0;
+        foreach ($instructions as $instruction) {
+            if (preg_match('/^CREATE\s+(PROCEDURE|FUNCTION|TRIGGER)\b/i', $instruction) !== 1) {
+                continue;
+            }
+            $corps = rtrim($instruction);
+            if (preg_match('/\bBEGIN\b/i', $corps) === 1 && preg_match('/END\s*$/i', $corps) !== 1) {
+                ++$incompletes;
+            }
+            if (preg_match_all('/CREATE\s+(PROCEDURE|FUNCTION|TRIGGER)\b/i', $corps) > 1) {
+                ++$recolles;
+            }
+        }
+        $check($fichier . ' — aucun corps BEGIN…END incomplet', $incompletes === 0, $incompletes . ' incomplet(s)');
+        $check($fichier . ' — aucune routine recollée avec une autre', $recolles === 0, $recolles . ' recollée(s)');
+        if (isset($comptes['cards'])) {
+            $check($fichier . ' — nombre d’instructions plausible',
+                count($instructions) >= $comptes['cards'] && count($instructions) <= $comptes['cards_max'],
+                (string) count($instructions));
+        }
+    }
 }
 
 // ============================================================ synthèse

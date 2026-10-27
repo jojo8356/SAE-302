@@ -19,7 +19,7 @@ export const REPO_ROOT = join(import.meta.dirname, '..');
 export const WASM_ROOT = '/repo';
 
 /** Dossiers utiles au fonctionnement de l'application dans le runtime WASM. */
-export const UPLOAD_DIRS = ['app', 'public', 'data', 'tests/php', 'tests/phpunit', 'scripts'];
+export const UPLOAD_DIRS = ['app', 'public', 'data', 'tests/php', 'tests/phpunit', 'scripts', 'sql'];
 
 /** Dossiers que l'application peut muter → à rapatrier sur l'hôte. */
 export const MUTABLE_DIRS = ['data', 'var'];
