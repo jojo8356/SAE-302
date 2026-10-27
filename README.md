@@ -71,9 +71,15 @@ scripts/maj-depuis-branche.sh github/arena/6e1d3706-sae-302
 
 Le script ne raisonne que sur la divergence réelle (`git merge-base`) : il charge les fichiers
 ajoutés/modifiés, supprime ceux que la branche a réellement supprimés, et **ne touche jamais** aux
-fichiers propres à votre copie. Il refuse un arbre de travail sale (les modifications locales seraient
-écrasées : `git stash` ou `--force`), n'écrit rien avant d'avoir annoncé son plan, et termine par la
-révision obtenue.
+fichiers propres à votre copie (par exemple `sql/05_minishop_requetes.sql`, ou le travail de votre
+binôme). Le tri se fait fichier par fichier :
+
+- contenu déjà identique à la branche → « déjà à jour », rien à faire (c'est le cas d'une synchro
+  précédente : `git checkout` indexe les fichiers chargés, donc l'arbre est sale après coup — un refus
+  global aurait bloqué toute mise à jour ultérieure) ;
+- modifié localement **et** différent de la branche → refus nominatif, `git stash` ou `--force`.
+
+Il annonce toujours son plan avant d'écrire, et termine par la révision obtenue.
 
 `run.sh` et `php scripts/db_init.php` affichent de leur côté la **révision du code** exécuté
 (`code : cf1606a · 2026-10-27`, ou `+ modifications locales`) : à comparer avec
