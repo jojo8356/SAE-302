@@ -82,12 +82,6 @@ BASE="$(git merge-base HEAD "$BRANCHE" 2>/dev/null)" || {
     exit 2
 }
 
-if [ -n "$(git status --porcelain)" ] && [ "$FORCER" -ne 1 ]; then
-    echo "✘ arbre de travail sale : les modifications locales seraient écrasées." >&2
-    echo "  git stash        (ou git commit) puis relancez, ou --force pour assumer." >&2
-    exit 3
-fi
-
 echo "base commune : $(git rev-parse --short "$BASE")   branche : $BRANCHE ($(git rev-parse --short "$BRANCHE"))"
 echo
 
@@ -112,16 +106,60 @@ while IFS=$'\t' read -r statut chemin; do
     esac
 done <<< "$ETATS"
 
-echo "à mettre à jour : ${#A_CHARGER[@]} fichier(s)"
-echo "à supprimer     : ${#A_SUPPRIMER[@]} fichier(s)"
+# ---------------------------------------------------------------------------
+# Tri par fichier — indispensable : `git checkout <branche> -- …` INDEXE les
+# fichiers chargés. Après une synchro réussie, l'arbre est donc sale par
+# construction, et refuser globalement bloquait toute mise à jour ultérieure.
+# On ne traite donc que les fichiers dont le CONTENU diffère encore :
+#   - déjà identique à la branche (cas d'une synchro précédente) → rien à faire ;
+#   - modifié localement depuis HEAD et différent de la branche → conflit réel,
+#     signalé nommément ; `--force` pour l'écraser.
+# ---------------------------------------------------------------------------
+A_JOUR=()
+A_ECRIRE=()
+CONFLITS=()
+
+for fichier in "${A_CHARGER[@]:-}"; do
+    [ -z "$fichier" ] && continue
+    # Contenu déjà celui de la branche ? (fichier absent = à écrire)
+    if git cat-file -e "$BRANCHE:$fichier" 2>/dev/null \
+        && git diff --quiet "$BRANCHE" -- "$fichier" 2>/dev/null; then
+        A_JOUR+=("$fichier")
+        continue
+    fi
+    A_ECRIRE+=("$fichier")
+done
+
+for fichier in "${A_ECRIRE[@]:-}"; do
+    [ -z "$fichier" ] && continue
+    # Modification locale (index ou répertoire) par rapport à HEAD ?
+    if [ -n "$(git status --porcelain -- "$fichier" 2>/dev/null)" ]; then
+        CONFLITS+=("$fichier")
+    fi
+done
+
+if [ "${#CONFLITS[@]}" -gt 0 ] && [ "$FORCER" -ne 1 ]; then
+    echo "✘ ${#CONFLITS[@]} fichier(s) modifiés localement seraient écrasés :" >&2
+    printf '    %s\n' "${CONFLITS[@]:0:12}" >&2
+    if [ "${#CONFLITS[@]}" -gt 12 ]; then
+        echo "    … et $(( ${#CONFLITS[@]} - 12 )) autre(s)" >&2
+    fi
+    echo "  git stash   (ou git commit) puis relancez, ou --force pour assumer." >&2
+    exit 3
+fi
+
+echo "déjà à jour      : ${#A_JOUR[@]} fichier(s)"
+echo "à mettre à jour  : ${#A_ECRIRE[@]} fichier(s)"
+echo "à supprimer      : ${#A_SUPPRIMER[@]} fichier(s)"
 echo
 
-if [ "${#A_CHARGER[@]}" -gt 0 ]; then
+if [ "${#A_ECRIRE[@]}" -gt 0 ]; then
     # Un seul appel : rapide, et atomique du point de vue de l'index.
-    if ! git checkout "$BRANCHE" -- "${A_CHARGER[@]}"; then
+    if ! git checkout "$BRANCHE" -- "${A_ECRIRE[@]}"; then
         echo "✘ le chargement a échoué — rien n'est perdu, relancez après vérification." >&2
         exit 1
     fi
+    echo "  ${#A_ECRIRE[@]} fichier(s) écrits"
 fi
 
 for fichier in "${A_SUPPRIMER[@]:-}"; do
@@ -137,7 +175,7 @@ echo "✓ copie alignée sur $BRANCHE"
 echo "  appliqué : $(git --no-pager diff --shortstat "$BASE" "$BRANCHE" -- "${CHEMINS[@]}")"
 RESTANT="$(git --no-pager diff --name-only "$BRANCHE" -- "${CHEMINS[@]}" | wc -l | tr -d ' ')"
 if [ "$RESTANT" -gt 0 ]; then
-    echo "  $RESTANT fichier(s) diffèrent encore (fichiers propres à cette copie, ex. travail local) :"
+    echo "  $RESTANT fichier(s) diffèrent encore — travail PROPRE à cette copie (jamais touché par ce script) :"
     git --no-pager diff --name-only "$BRANCHE" -- "${CHEMINS[@]}" | head -8 | sed 's/^/    /'
 fi
 echo
