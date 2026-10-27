@@ -47,6 +47,28 @@ function lancer(string $fichier): int
     return $code;
 }
 
+// Préflight : une extension absente produit des échecs trompeurs (recherche
+// insensible aux accents, sessions, MySQL). On le dit AVANT les suites.
+$extensionsRequises = [
+    'mbstring' => 'pliage casse/accents (Text::fold, T-25, slugs)',
+    'json' => 'moteur de données JSON',
+];
+$extensionsAbsentes = [];
+foreach ($extensionsRequises as $extension => $role) {
+    if (!extension_loaded($extension)) {
+        $extensionsAbsentes[$extension] = $role;
+    }
+}
+
+if ($extensionsAbsentes !== []) {
+    echo "\n⚠ extensions PHP manquantes — les échecs ci-dessous en découleront :\n";
+    foreach ($extensionsAbsentes as $extension => $role) {
+        echo '   - ' . $extension . ' : ' . $role . "\n";
+    }
+    echo "   paquets Debian/Ubuntu : sudo apt install php" . PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION
+        . "-mbstring php" . PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION . "-mysql\n\n";
+}
+
 $echecs = 0;
 $jouees = 0;
 
