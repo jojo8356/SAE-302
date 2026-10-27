@@ -85,6 +85,16 @@ Il annonce toujours son plan avant d'écrire, et termine par la révision obtenu
 (`code : cf1606a · 2026-10-27`, ou `+ modifications locales`) : à comparer avec
 `git log -1 --oneline github/arena/6e1d3706-sae-302` **avant** de signaler un bug.
 
+Enfin, `run.sh` **avertit tout seul** quand la copie est en retard :
+
+```
+⚠ copie de travail en retard sur github/arena/… (12 commit(s) que cette copie n'a pas)
+```
+
+Le calcul se fait sur l'empreinte laissée par `scripts/maj-depuis-branche.sh`
+(`.git/minishop-synchro`) et non sur `HEAD` : une synchro de fichiers ne déplace pas la tête de
+branche, donc comparer à `HEAD` allumait une alerte permanente — que l'on finit par ignorer.
+
 > **Ubuntu 24.04 / Debian 12** : le paquet `mysql-server` n'existe plus, il est remplacé par
 > `mariadb-server` (`sudo apt install mariadb-server && sudo systemctl enable --now mariadb`).
 > C'est une cible supportée (MariaDB ≥ 10.6) : `php scripts/db_init.php --check` affiche la version
@@ -224,7 +234,7 @@ npm run test:all        # ou : node scripts/run-all-tests.mjs
 | Règles de gestion | `tests/php/run_tests.php` | T-01…T-29 du document de tests (RB-01…RB-20, vues, frais de port) | ✅ 29/29 |
 | Unitaires | `tests/php/unit_tests.php` | `Text` (fold/slug/collation), échappement, CSRF, **matrice RB-11 complète** (36 couples), `Filter`, `PanierSession`, prix TTC, journal, **`.env`**, versions SGBD, **DSN et repli socket Unix** | ✅ 267/267 |
 | Fonctionnalités | `tests/php/features_test.php` | **UC-01…UC-14** via les repositories (catalogue, compte, panier, commande, annulation, back-office, indicateurs) | ✅ 108/108 |
-| Contrats de design | `tests/php/css_contract.php` | tokens de `docs/DA.md`, contrastes WCAG calculés, classes des vues réellement définies, `prefers-reduced-motion`, feuille d'impression, **illustration du hero** (signature JPEG, dimensions, poids, `alt`, CLS) | ✅ 40/40 |
+| Contrats de design | `tests/php/css_contract.php` | tokens de `docs/DA.md`, contrastes WCAG calculés, classes des vues réellement définies, `prefers-reduced-motion`, feuille d'impression, **illustration du hero** (signature JPEG, dimensions, poids, `alt`, CLS) | ✅ 55/55 |
 | Contrat responsive | `tests/php/responsive_contract.php` | 320 px → 1536 px : paliers en `em`, menu repliable, tableaux accessibles, panier en cartes, `dvh`, encoches, `pointer: coarse`, container queries | ✅ 48/48 |
 | Unitaires PHPUnit | `tests/phpunit/` | `Text`, `Filter`, moteur JSON (contraintes, transactions), matrice RB-11, prix TTC, contrats de sécurité — exécutés hors ligne par `run-local.php` | ✅ 34/34 |
 | E2E HTTP | `scripts/wasm-e2e.mjs` | T1…T14 : parcours réels (cookies + CSRF) — pages publiques, auth, commande 488,40 €, annulation, back-office, cloisonnement, catalogue avancé, compte, panier (plafond/re-tri/prix falsifié), CRUD admin, filtres + audit + journal, **sécurité offensive** (injection, XSS stocké, IDOR, fixation de session, traversées, escalation), rôles RB-13, contact/API/paramètres | ✅ 180/180 |

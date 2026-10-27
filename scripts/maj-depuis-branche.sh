@@ -178,6 +178,13 @@ if [ "$RESTANT" -gt 0 ]; then
     echo "  $RESTANT fichier(s) diffèrent encore — travail PROPRE à cette copie (jamais touché par ce script) :"
     git --no-pager diff --name-only "$BRANCHE" -- "${CHEMINS[@]}" | head -8 | sed 's/^/    /'
 fi
+# Empreinte de synchro : run.sh s'en sert pour dire si la copie est à jour
+# SANS dépendre de HEAD (une synchro de fichiers ne déplace pas la tête de
+# branche — la comparer à HEAD produisait une alerte permanente, donc ignorée).
+if [ -d .git ]; then
+    printf '%s\n%s\n' "$(git rev-parse "$BRANCHE")" "$BRANCHE" > .git/minishop-synchro 2>/dev/null || true
+fi
+
 echo
 echo "révision du code : $(git rev-parse --short HEAD)$(if [ -n "$(git status --porcelain --untracked-files=no)" ]; then echo ' + modifications locales'; fi)"
 echo "vérification : php scripts/db_init.php --check | head -6   (ligne « code : … »)"

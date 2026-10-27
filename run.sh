@@ -136,6 +136,47 @@ fi
 
 echo "   config     : $SOURCES"
 echo "   code       : $REVISION"
+
+# --- dérive de la copie de travail -----------------------------------------
+# Un message d'erreur produit par une révision antérieure ressemble à un bug
+# de la révision courante : c'est arrivé plusieurs fois. On compare donc la
+# copie à la dernière synchro connue (empreinte laissée par
+# scripts/maj-depuis-branche.sh), et non à HEAD : une synchro de fichiers ne
+# déplace pas la tête de branche, donc comparer à HEAD allumait une alerte
+# permanente — que l'on finit par ignorer, ce qui annule l'intérêt.
+DERIVE=""
+SUIVI="${MINISHOP_REF:-}"
+EMPREINTE="$RACINE/.git/minishop-synchro"
+BASE_DERIVE=""
+
+if command -v git >/dev/null 2>&1 && git -C "$RACINE" rev-parse --git-dir >/dev/null 2>&1; then
+    if [ -f "$EMPREINTE" ]; then
+        BASE_DERIVE="$(head -1 "$EMPREINTE" 2>/dev/null || echo '')"
+        [ -z "$SUIVI" ] && SUIVI="$(sed -n 2p "$EMPREINTE" 2>/dev/null || echo '')"
+    fi
+    [ -z "$BASE_DERIVE" ] && BASE_DERIVE="$(git -C "$RACINE" rev-parse HEAD 2>/dev/null || echo '')"
+    if [ -z "$SUIVI" ]; then
+        SUIVI="$(git -C "$RACINE" for-each-ref --format='%(refname:short)' refs/remotes 2>/dev/null | grep -E 'arena/' | head -1 || true)"
+    fi
+
+    if [ -n "$BASE_DERIVE" ] && [ -n "$SUIVI" ]; then
+        RETARD="$(git -C "$RACINE" rev-list --count "$BASE_DERIVE..$SUIVI" 2>/dev/null || echo 0)"
+        if [ "$RETARD" -gt 0 ]; then
+            DERIVE="$SUIVI ($RETARD commit(s) que cette copie n'a pas)"
+        fi
+    fi
+fi
+
+if [ -n "$DERIVE" ]; then
+    jaune "⚠ copie de travail en retard sur $DERIVE"
+    echo "    les fichiers exécutés ne sont pas ceux de la branche : un bug apparent"
+    echo "    peut n'être que du code périmé. Mettre à jour :"
+    echo "      git fetch github"
+    echo "      git checkout $SUIVI -- scripts/maj-depuis-branche.sh"
+    echo "      scripts/maj-depuis-branche.sh $SUIVI app data public sql tests docs README.md scripts"
+    echo
+fi
+
 echo "   pilote     : $PILOTE"
 if [ "$PILOTE" = "sql" ]; then
     echo "   base       : $DB_NOM @ $DB_HOTE:$DB_PORT ($DB_UTILISATEUR)"
