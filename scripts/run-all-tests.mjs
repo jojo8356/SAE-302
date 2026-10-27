@@ -19,6 +19,22 @@
  */
 import { spawnSync } from 'node:child_process';
 
+// Sur une machine avec PHP natif, AUCUNE dépendance npm n'est nécessaire :
+// on exécute directement `php <script>`. Le runtime WASM (@php-wasm/node) ne
+// sert que dans les environnements sans PHP (sandbox de développement).
+const phpExiste = spawnSync('php', ['-r', 'echo PHP_VERSION;'], { encoding: 'utf8' }).status === 0;
+
+/** Construit la commande d'un script PHP : natif si possible, sinon WASM. */
+const commande = (fichier) => {
+  if (phpExiste) return ['php', [fichier]];
+  return ['node', ['scripts/wasm_run.mjs', fichier]];
+};
+
+const lancer = (fichier) => {
+  const [programme, arguments_] = commande(fichier);
+  return spawnSync(programme, arguments_, { stdio: 'inherit' });
+};
+
 const suites = [
   ['Moteur JSON', 'tests/php/engine_smoke.php'],
   ['Règles de gestion', 'tests/php/run_tests.php'],
@@ -31,13 +47,17 @@ const suites = [
 
 let échecs = 0;
 
+console.log(phpExiste
+  ? '\nExécution en PHP natif (aucune dépendance npm requise).'
+  : '\nPHP natif absent : exécution via le runtime WASM (@php-wasm/node).');
+
 console.log(`\n${'='.repeat(64)}\n▸ Linter strict types — scripts/strict_types_lint.php\n${'='.repeat(64)}`);
-const lint = spawnSync('node', ['scripts/wasm_run.mjs', 'scripts/strict_types_lint.php'], { stdio: 'inherit' });
+const lint = lancer('scripts/strict_types_lint.php');
 if (lint.status !== 0) ++échecs;
 
 for (const [nom, fichier] of suites) {
   console.log(`\n${'='.repeat(64)}\n▸ ${nom} — ${fichier}\n${'='.repeat(64)}`);
-  const r = spawnSync('node', ['scripts/wasm_run.mjs', fichier], { stdio: 'inherit' });
+  const r = lancer(fichier);
   if (r.status !== 0) ++échecs;
 }
 
@@ -47,6 +67,17 @@ if (échecs > 0) {
   process.exit(1);
 }
 console.log('SUITES PHP : TOUT EST VERT ✅ — E2E :');
+
+// L'E2E pilote l'application par requêtes HTTP internes : il repose sur le
+// runtime WASM. Sans PHP natif, il tourne partout ; avec PHP natif, il faut
+// le paquet npm — on l'annonce clairement au lieu d'échouer salement.
+const e2eDisponible = !phpExiste || spawnSync('node', ['-e', "require.resolve('@php-wasm/node')"]).status === 0;
+if (!e2eDisponible) {
+  console.log('⏭  E2E ignoré : @php-wasm/node absent (npm install).');
+  console.log('   Les 8 suites PHP ci-dessus sont vertes ; pour l’E2E complet :');
+  console.log('     npm install && npm run test:e2e');
+  process.exit(0);
+}
 
 // l'E2E exige un magasin propre et écrit (seed + parcours) : scripts/e2e.mjs
 // photographie data/minishop avant, le restaure après — même en cas d'échec.

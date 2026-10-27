@@ -145,8 +145,16 @@ if [ "$PILOTE" = "sql" ] || [ "$ACTION" = "db" ] || [ "$ACTION" = "db-reset" ] |
 fi
 
 if [ -n "$MANQUANTES" ]; then
+    # Les paquets Debian/Ubuntu sont versionnés : php8.2-mbstring, php8.4-mysql…
+    # On reprend la version réellement installée (8.4 ici) au lieu de supposer 8.2.
+    SUITE_PHP="$MAJEURE.$MINEURE"
     rouge "✘ extension(s) PHP manquante(s) :$MANQUANTES"
-    echo "  sudo apt install php8.2-mbstring php8.2-mysql php8.2-intl"
+    echo "  Debian / Ubuntu / Mint :"
+    echo "      sudo apt install php$SUITE_PHP-mbstring php$SUITE_PHP-mysql php$SUITE_PHP-intl"
+    echo "  (vérifier ensuite : php -m | grep -Ei 'mbstring|pdo_mysql|intl')"
+    echo "  Fedora / RHEL :  sudo dnf install php-mbstring php-mysqlnd php-intl"
+    echo "  Arch          :  sudo pacman -S php  (mbstring et pdo_mysql sont compilés dans php)"
+    echo "  macOS (brew)  :  brew install php"
     exit 1
 fi
 
@@ -222,6 +230,9 @@ if [ "$ACTION" = "diagnostic" ]; then
     if [ "$PILOTE" = "sql" ]; then
         php scripts/db_init.php --check || true
         echo
+    fi
+    if ! command -v npm >/dev/null 2>&1; then
+        echo "  npm absent : les suites de tests se lancent en PHP natif (php scripts/run-all-tests.php)."
     fi
     vert "✓ environnement prêt — lancez : ./run.sh"
     echo "  ouvrir   : http://localhost:$PORT/  ·  /catalogue  ·  /admin/connexion"

@@ -50,9 +50,19 @@ function erreur(string $texte): void
     echo $texte;
 }
 
+/** Longueur d'une chaîne, avec ou sans l'extension mbstring. */
+function longueur(string $texte): int
+{
+    if (function_exists('mb_strlen')) {
+        return mb_strlen($texte);
+    }
+
+    return strlen($texte);
+}
+
 function titre(string $texte): void
 {
-    echo "\n" . $texte . "\n" . str_repeat('-', min(LARGEUR, max(20, mb_strlen($texte)))) . "\n";
+    echo "\n" . $texte . "\n" . str_repeat('-', min(LARGEUR, max(20, longueur($texte)))) . "\n";
 }
 
 function pastille(bool $valeur): string

@@ -151,6 +151,10 @@ npm run test:all        # ou : node scripts/run-all-tests.mjs
 | Unitaires PHPUnit | `tests/phpunit/` | `Text`, `Filter`, moteur JSON (contraintes, transactions), matrice RB-11, prix TTC, contrats de sécurité — exécutés hors ligne par `run-local.php` | ✅ 34/34 |
 | E2E HTTP | `scripts/wasm-e2e.mjs` | T1…T14 : parcours réels (cookies + CSRF) — pages publiques, auth, commande 488,40 €, annulation, back-office, cloisonnement, catalogue avancé, compte, panier (plafond/re-tri/prix falsifié), CRUD admin, filtres + audit + journal, **sécurité offensive** (injection, XSS stocké, IDOR, fixation de session, traversées, escalation), rôles RB-13, contact/API/paramètres | ✅ 180/180 |
 
+Avec un PHP local, **aucune dépendance npm n'est nécessaire** : `php scripts/run-all-tests.php`
+(ou `npm run test:all:native`) lance les 8 suites directement. `npm run test:all` détecte PHP natif et
+l'utilise ; il ne bascule sur le runtime WASM que dans un environnement sans PHP.
+
 Commandes individuelles : `npm test` (règles), `npm run test:units`, `npm run test:features`, `npm run test:design`, `npm run test:responsive`, `npm run test:phpunit`, `npm run test:e2e`. L'E2E est désormais **hermétique** : `scripts/e2e.mjs` photographie `data/minishop`, joue le seed et le parcours HTTP, puis restaure le jeu de démonstration à l'identique — même en cas d'échec (`scripts/data_snapshot.mjs`).
 
 Les suites PHP sont **autonomes** (aucun SQL, magasins JSON temporaires par section) : elles s'exécutent telles quelles avec `php tests/php/<suite>.php` sur une machine normale, ou via `node scripts/wasm_run.mjs` en sandbox.
