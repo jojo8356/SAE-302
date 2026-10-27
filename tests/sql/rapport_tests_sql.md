@@ -2,23 +2,21 @@
 
 *PV de recette côté base — généré par le harnais `tests/sql/` (source de vérité : `tests/sql/manifest.txt`).*
 
-> ⚠️ **Ce rapport est celui d'une campagne antérieure, rejouée sur une copie de travail locale.**
-> Rejouée sur les fichiers de cette branche, la campagne du 27/10/2026 a donné **22/29** : sept
-> scénarios s'appuyaient sur des données qui n'existent pas dans `sql/01` + `sql/04`
+> **Rejeu du 27/10/2026 sur cette révision — 29/29 conformes.** La campagne lancée par
+> `php tests/php/sql_integration.php` (base `minishop_test`, MariaDB 11.8.6, Debian 13) a d'abord
+> donné **22/29** : sept scénarios dépendaient d'un état qu'ils ne créaient pas eux-mêmes
 > (commandes de démonstration renumérotées, brouillon vide supprimé par la fixture, hash de
-> 61 caractères dans une colonne `CHAR(60)`, assertion de montant ignorant les frais de port).
-> Six ont été corrigés pour construire eux-mêmes leur cas ; le septième (T-26) attend le rejeu.
-> Les sept causes sont désormais identifiées et corrigées : six scénarios construisent leur
-> propre cas, et le septième venait de la **collation de session** (`ERROR 1267 Illegal mix`
-> entre `utf8mb4_unicode_ci` du schéma et `utf8mb4_uca1400_ai_ci`, défaut de MariaDB 11.4+,
-> sur une colonne de vue). **Ce fichier sera régénéré par `bash tests/sql/run_tests.sh` sur la
-> révision finale** — il ne doit pas être présenté en soutenance avant que la mention ci-dessus
-> ait disparu.
+> 61 caractères dans une colonne `CHAR(60)`, assertion de montant ignorant les frais de port),
+> et le septième butait sur la **collation de session** (`ERROR 1267 Illegal mix` entre
+> `utf8mb4_unicode_ci` du schéma et `utf8mb4_uca1400_ai_ci`, défaut de MariaDB 11.4+, sur une
+> colonne de vue). Après correction — scénarios reconstruits, session alignée sur le schéma côté
+> PDO **et** côté client SQL — la campagne rend **29/29**. Détail des sept causes :
+> `docs/10-todo-corrections.md` §4 bis.
 
 | | |
 |---|---|
 | **SGBD** | MariaDB 11.8.6 (Debian) — cible : MySQL 8.0.16+ ou MariaDB 10.6+ |
-| **Date de la campagne** | 23 septembre 2026 |
+| **Date de la campagne** | 23/09/2026 (campagne initiale) · **27/10/2026 (rejeu sur cette révision : 29/29)** |
 | **Jeu de données** | `sql/01` (référence) + `sql/04` (commandes créées par `CALL`) + `tests/sql/fixture.sql` (état déterministe) |
 
 ## 1. Chargement et inventaire (chaîne rejouée de zéro)
@@ -31,6 +29,7 @@
 | 4. Démo via `CALL` | `mysql -u root -p minishop < sql/04_minishop_demo.sql` | ✅ sans erreur |
 
 Inventaire vérifié dans `information_schema` : **8 tables · 3 vues · 1 fonction · 17 procédures · 16 déclencheurs**
+(le harnais affiche « tables 11 » parce qu'`information_schema.tables` compte aussi les 3 vues : 8 + 3)
 (minima du sujet : 5 procédures, 5 déclencheurs) ; 9 traces dans `order_status_history`
 (`NULL→BROUILLON` ×4, `BROUILLON→EN_PREPARATION` ×3, `EN_PREPARATION→PAYEE`, `PAYEE→EXPEDIEE`).
 

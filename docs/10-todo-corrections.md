@@ -102,7 +102,7 @@ Rejouée sur une base réelle le 27/10 (`php tests/php/sql_integration.php`), la
 
 **Leçon retenue, et inscrite dans le code** : un test qui s'appuie sur un état qu'il ne crée pas lui-même ne teste rien — il constate. Les corrections remplacent les références au jeu de démonstration par des objets créés par le scénario, ce qui les rend indépendants de l'ordre des campagnes et de la fixture.
 
-Conséquence documentaire : `tests/sql/rapport_tests_sql.md` et `docs/02` portent maintenant un avertissement explicite — le 29/29 affiché est celui d'une campagne antérieure, pas de cette révision.
+**Rejeu du 27/10/2026 : 29/29 conformes** (`SQL : CAMPAGNE CONFORME ✅`), sur `minishop_test` créée puis supprimée — la base de développement n'est jamais touchée. Les sept causes sont donc soldées, et l'avertissement qui figurait dans `tests/sql/rapport_tests_sql.md` et `docs/02` a été remplacé par le compte rendu de ce rejeu.
 
 ## 5. Rendus — **rien de produit**
 
