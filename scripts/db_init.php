@@ -196,6 +196,13 @@ if ($options['check']) {
     $controles = $installateur->diagnostiquer();
     $toutBon = afficherControles($controles);
 
+    if (!$installateur->serveurJoignable()) {
+        echo "\n   Remèdes :\n";
+        echo "     • le service tourne-t-il ?   systemctl status mariadb\n";
+        echo "     • compte applicatif créé ?   sudo mariadb  puis CREATE USER + GRANT\n";
+        echo "     • identifiants justes ?      DB_USER / DB_PASSWORD dans .env\n";
+    }
+
     $inventaire = $installateur->inventaire();
     if (($inventaire['tables'] ?? -1) >= 0) {
         titre('Contenu');

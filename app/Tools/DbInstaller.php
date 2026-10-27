@@ -48,6 +48,9 @@ final class DbInstaller
     public const PRODUITS_DEMO = 12;
     public const CLIENTS_DEMO = 3;
 
+    /** Dernier message d'erreur de connexion (diagnostic détaillé). */
+    private string $derniereErreur = '';
+
     public function __construct(
         private readonly string $hote,
         private readonly string $port,
@@ -158,8 +161,15 @@ final class DbInstaller
                 PDO::ATTR_EMULATE_PREPARES => false,
             ]);
         } catch (PDOException $erreur) {
-            throw new RuntimeException(self::expliquer($erreur, $this->hote, $this->port), 0, $erreur);
+            $this->derniereErreur = self::expliquer($erreur, $this->hote, $this->port);
+            throw new RuntimeException($this->derniereErreur, 0, $erreur);
         }
+    }
+
+    /** Dernière erreur de connexion lisible (`''` si aucune). */
+    public function derniereErreur(): string
+    {
+        return $this->derniereErreur;
     }
 
     /** Message d'aide à partir du code d'erreur MySQL. */
@@ -168,9 +178,11 @@ final class DbInstaller
         $code = (int) ($erreur->errorInfo[1] ?? 0);
         $message = $erreur->getMessage();
 
-        if ($code === 1045) {
-            return "Identifiants refusés pour $hote:$port (mot de passe ou utilisateur incorrect). "
-                . 'Vérifiez DB_USER / DB_PASSWORD dans .env.';
+        if ($code === 1045 || $code === 1698) {
+            return "Identifiants refusés pour $hote:$port (utilisateur ou mot de passe incorrect). "
+                . 'Sous MariaDB/MySQL, « root » s\'authentifie par socket Unix et ne peut pas servir '
+                . 'à PHP en TCP : créez un compte applicatif (voir README, « Base de données locale ») '
+                . 'et renseignez DB_USER / DB_PASSWORD dans .env. Détail : ' . $message;
         }
         if ($code === 1049) {
             return "La base demandée n'existe pas encore : lancez « php scripts/db_init.php ».";
@@ -183,6 +195,12 @@ final class DbInstaller
                 . "    Linux  : sudo systemctl start mysql   (ou mariadb)\n"
                 . "    macOS  : brew services start mysql\n"
                 . "    Windows: net start MySQL80            (services.msc)";
+        }
+
+        if (str_contains($message, 'could not find driver')) {
+            return "L'extension PHP « pdo_mysql » n'est pas chargée : PDO ne sait pas parler à MySQL.\n"
+                . '    Debian/Ubuntu : sudo apt install php' . PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION . '-mysql\n'
+                . '    puis vérifier : php -m | grep pdo_mysql';
         }
 
         return "Connexion MySQL impossible sur $hote:$port : " . $message;
@@ -459,6 +477,8 @@ final class DbInstaller
         $detailServeur = 'injoignable';
         if ($joignable) {
             $detailServeur = $this->hote . ':' . $this->port;
+        } elseif ($this->derniereErreur !== '') {
+            $detailServeur = $this->derniereErreur;
         }
         $controles[] = [
             'controle' => 'serveur MySQL',

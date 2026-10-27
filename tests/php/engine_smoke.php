@@ -97,6 +97,39 @@ $check('SqlStore s’instancie sans PDO (connexion paresseuse)', (static functio
     return $constructeur !== null
         && $constructeur->getNumberOfRequiredParameters() === 0;
 })());
+$check('classes globales (intl, PDO…) référencées en absolu dans app/', (static function (): bool {
+    // Dans un espace de noms, `new Collator()` cherche App\Model\Data\Collator.
+    // L'erreur ne se voit QUE sur une machine où l'extension est chargée : la
+    // sandbox sans intl la masquait. On vérifie donc la déclaration, pas le
+    // comportement.
+    $globales = ['Collator', 'Transliterator', 'Normalizer', 'IntlDateFormatter', 'IntlCalendar'];
+    $motif = '/(?<![\\\\\w$])(' . implode('|', $globales) . ')\s*(::|\()/';
+    $coupables = [];
+    $iterateur = new \RecursiveIteratorIterator(
+        new \RecursiveDirectoryIterator(dirname(__DIR__, 2) . '/app', \FilesystemIterator::SKIP_DOTS),
+    );
+    foreach ($iterateur as $fichier) {
+        if (!$fichier->isFile() || $fichier->getExtension() !== 'php') {
+            continue;
+        }
+        $source = (string) file_get_contents($fichier->getPathname());
+        // on ignore les docblocks (lignes de commentaire)
+        $lignes = preg_split('/\R/', $source);
+        if ($lignes === false) {
+            continue;
+        }
+        foreach ($lignes as $numero => $ligne) {
+            if (str_starts_with(ltrim($ligne), '*') || str_starts_with(ltrim($ligne), '//')) {
+                continue;
+            }
+            if (preg_match($motif, $ligne) === 1) {
+                $coupables[] = basename($fichier->getPathname()) . ':' . ($numero + 1);
+            }
+        }
+    }
+
+    return $coupables === [];
+})());
 $check('SqlStore construit tout son SQL en requêtes préparées', (static function (): bool {
     $source = (string) file_get_contents(dirname(__DIR__, 2) . '/app/Model/Data/SqlStore.php');
 
