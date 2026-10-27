@@ -127,9 +127,16 @@ A_JOUR=()
 A_ECRIRE=()
 A_REECRIRE=()
 CONFLITS=()
+MOI="scripts/maj-depuis-branche.sh"
 
 for fichier in "${A_CHARGER[@]:-}"; do
     [ -z "$fichier" ] && continue
+    # Ne JAMAIS se réécrire en cours d'exécution : bash lit le fichier pendant
+    # qu'il tourne, le remplacer peut lui faire exécuter un mélange des deux
+    # versions. Sa mise à jour est annoncée, à appliquer au tour suivant.
+    if [ "$fichier" = "$MOI" ]; then
+        continue
+    fi
     # Contenu déjà celui de la branche ? (fichier absent = à écrire)
     if git cat-file -e "$BRANCHE:$fichier" 2>/dev/null \
         && git diff --quiet "$BRANCHE" -- "$fichier" 2>/dev/null; then
@@ -174,6 +181,14 @@ if [ "${#CONFLITS[@]}" -gt 0 ] && [ "$FORCER" -ne 1 ]; then
     exit 3
 fi
 
+if git cat-file -e "$BRANCHE:$MOI" 2>/dev/null \
+    && ! git diff --quiet "$BRANCHE" -- "$MOI" 2>/dev/null; then
+    echo "  ⓘ une version plus récente de ce script existe sur $BRANCHE"
+    echo "    (non appliquée ici : il ne peut pas se réécrire en cours d'exécution)"
+    echo "    git checkout $BRANCHE -- $MOI   puis relancer"
+    echo
+fi
+
 echo "déjà à jour      : ${#A_JOUR[@]} fichier(s)"
 echo "à mettre à jour  : ${#A_ECRIRE[@]} fichier(s) (dont ${#A_REECRIRE[@]} écrit(s) par une synchro précédente)"
 echo "à supprimer      : ${#A_SUPPRIMER[@]} fichier(s)"
@@ -206,12 +221,60 @@ for fichier in "${A_SUPPRIMER[@]:-}"; do
     fi
 done
 
+# ---------------------------------------------------------------------------
+# Fichiers fantômes : présents ici, absents de la base commune ET de la
+# branche suivie. Ni du travail local, ni des fichiers de la branche : ce sont
+# des résidus d'une synchro ANTÉRIEURE (la branche contenait le fichier à
+# l'époque, elle l'a supprimé depuis). Le diff base→branche ne peut pas les
+# voir, d'où cette passe séparée.
+#
+#   - au registre avec la même empreinte → c'est notre dépôt, on supprime ;
+#   - sinon → listé « à vérifier » : on ne détruit jamais un fichier dont on
+#     ne peut pas prouver qu'il vient de nous (travail local possible).
+# ---------------------------------------------------------------------------
+FANTOMES_SUPPRIMES=()
+FANTOMES_A_VERIFIER=()
+
+while IFS= read -r fichier; do
+    [ -z "$fichier" ] && continue
+    git cat-file -e "$BRANCHE:$fichier" 2>/dev/null && continue
+    git cat-file -e "$BASE:$fichier" 2>/dev/null && continue
+    [ -f "$fichier" ] || continue
+    MEMOIRE=""
+    if [ -f "$REGISTRE" ]; then
+        MEMOIRE="$(awk -F'\t' -v f="$fichier" '$1 == f { print $2 }' "$REGISTRE" 2>/dev/null | tail -1)"
+    fi
+    ACTUEL="$(git hash-object "$fichier" 2>/dev/null || echo '')"
+    if [ -n "$MEMOIRE" ] && [ -n "$ACTUEL" ] && [ "$ACTUEL" = "$MEMOIRE" ]; then
+        FANTOMES_SUPPRIMES+=("$fichier")
+    else
+        FANTOMES_A_VERIFIER+=("$fichier")
+    fi
+done <<< "$(git ls-files -- "${CHEMINS[@]}" 2>/dev/null)"
+
+for fichier in "${FANTOMES_SUPPRIMES[@]:-}"; do
+    [ -z "$fichier" ] && continue
+    git rm -q -- "$fichier" 2>/dev/null || rm -f "$fichier"
+done
+
+if [ "${#FANTOMES_SUPPRIMES[@]}" -gt 0 ] && [ -n "${FANTOMES_SUPPRIMES[0]:-}" ]; then
+    echo "  ${#FANTOMES_SUPPRIMES[@]} résidu(s) d'une synchro antérieure supprimé(s) :"
+    printf '    %s\n' "${FANTOMES_SUPPRIMES[@]}"
+fi
+
+if [ "${#FANTOMES_A_VERIFIER[@]}" -gt 0 ] && [ -n "${FANTOMES_A_VERIFIER[0]:-}" ]; then
+    echo "  ${#FANTOMES_A_VERIFIER[@]} fichier(s) absent(s) de la base ET de la branche — à vérifier vous-même"
+    echo "  (travail local possible : ce script n'y touche pas) :"
+    printf '    %s\n' "${FANTOMES_A_VERIFIER[@]:0:10}"
+    echo "    suppression, si ce sont bien des résidus : git rm <fichier>"
+fi
+
 echo
 echo "✓ copie alignée sur $BRANCHE"
 echo "  appliqué : $(git --no-pager diff --shortstat "$BASE" "$BRANCHE" -- "${CHEMINS[@]}")"
 RESTANT="$(git --no-pager diff --name-only "$BRANCHE" -- "${CHEMINS[@]}" | wc -l | tr -d ' ')"
 if [ "$RESTANT" -gt 0 ]; then
-    echo "  $RESTANT fichier(s) diffèrent encore — travail PROPRE à cette copie (jamais touché par ce script) :"
+    echo "  $RESTANT fichier(s) diffèrent encore — travail PROPRE à cette copie (jamais touché) :"
     git --no-pager diff --name-only "$BRANCHE" -- "${CHEMINS[@]}" | head -8 | sed 's/^/    /'
 fi
 # Empreinte de synchro : run.sh s'en sert pour dire si la copie est à jour
