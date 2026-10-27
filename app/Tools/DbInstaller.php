@@ -312,6 +312,49 @@ final class DbInstaller
         return $inventaire;
     }
 
+    /** Version annoncée par le serveur (`10.11.6-MariaDB`, `8.0.36`, …). */
+    public function versionServeur(): string
+    {
+        try {
+            $pdo = $this->connexion(true);
+            $valeur = $pdo->query('SELECT VERSION()')->fetchColumn();
+            if (!is_string($valeur)) {
+                return '';
+            }
+
+            return trim($valeur);
+        } catch (RuntimeException | PDOException) {
+            return '';
+        }
+    }
+
+    /**
+     * Le serveur applique-t-il réellement les contraintes `CHECK` ?
+     *
+     * MySQL ne les applique qu'à partir de 8.0.16 (avant, elles sont parsées
+     * puis ignorées : RB-02/RB-03 passeraient silencieusement) ; MariaDB les
+     * applique depuis 10.2, mais le projet exige 10.6+ pour les autres objets.
+     */
+    public static function versionCompatible(string $version): bool
+    {
+        $version = trim($version);
+        if ($version === '') {
+            return false;
+        }
+
+        if (preg_match('/(\d+)\.(\d+)\.(\d+)/', $version, $morceaux) !== 1) {
+            return false;
+        }
+
+        $normalisee = $morceaux[1] . '.' . $morceaux[2] . '.' . $morceaux[3];
+        $estMariaDb = stripos($version, 'mariadb') !== false;
+        if ($estMariaDb) {
+            return version_compare($normalisee, '10.6.0', '>=');
+        }
+
+        return version_compare($normalisee, '8.0.16', '>=');
+    }
+
     /** Jeu de caractères de la connexion (doit être utf8mb4). */
     public function jeuCaracteres(): string
     {
@@ -347,6 +390,17 @@ final class DbInstaller
             'controle' => 'base « ' . $this->base . ' »',
             'ok' => $accessible,
             'detail' => $detailBase,
+        ];
+
+        $version = $this->versionServeur();
+        $detailVersion = $version;
+        if ($version === '') {
+            $detailVersion = 'indisponible';
+        }
+        $controles[] = [
+            'controle' => 'version du serveur',
+            'ok' => self::versionCompatible($version),
+            'detail' => $detailVersion . ' (MySQL ≥ 8.0.16 ou MariaDB ≥ 10.6)',
         ];
 
         $attendu = [
@@ -414,6 +468,15 @@ final class DbInstaller
 
         if (!$joignable) {
             return $controles;
+        }
+
+        $version = $this->versionServeur();
+        if ($version !== '') {
+            $controles[] = [
+                'controle' => 'version du serveur',
+                'ok' => self::versionCompatible($version),
+                'detail' => $version . ' (MySQL ≥ 8.0.16 ou MariaDB ≥ 10.6)',
+            ];
         }
 
         $existe = $this->baseExiste();

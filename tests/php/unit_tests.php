@@ -37,6 +37,7 @@ use App\Model\PanierSession;
 use App\Repository\ParametreRepository;
 use App\Repository\ProduitRepository;
 use App\Security\Csrf;
+use App\Tools\DbInstaller;
 use App\Tools\EnvFile;
 
 // en CLI, pas d'en-têtes de cookie de session (tests silencieux)
@@ -425,6 +426,26 @@ echo "\n13. Configuration .env (App\\Config\\Env, EnvFile, Database)\n";
     }
     @rmdir($dossier);
     $check('environnement rendu (config par défaut)', Database::driver() === 'json');
+}
+
+// ============================================================ 14. compatibilité SGBD
+echo "\n14. Versions MySQL / MariaDB acceptées (App\\Tools\\DbInstaller)\n";
+{
+    $cas = [
+        ['10.11.6-MariaDB-0+deb12u1', true,  'MariaDB 10.11 (Debian 12) accepté'],
+        ['10.6.18-MariaDB',           true,  'MariaDB 10.6 (minimum) accepté'],
+        ['10.3.39-MariaDB',           false, 'MariaDB 10.3 refusé (< 10.6)'],
+        ['8.0.36-0ubuntu0.22.04.1',   true,  'MySQL 8.0.36 accepté'],
+        ['8.0.16',                    true,  'MySQL 8.0.16 (minimum CHECK) accepté'],
+        ['8.0.15',                    false, 'MySQL 8.0.15 refusé (CHECK ignoré)'],
+        ['5.7.44-log',                false, 'MySQL 5.7 refusé'],
+        ['8.4.2',                     true,  'MySQL 8.4 accepté'],
+        ['',                          false, 'version vide refusée'],
+        ['inconnue',                  false, 'version illisible refusée'],
+    ];
+    foreach ($cas as [$version, $attendu, $libelle]) {
+        $check($libelle, DbInstaller::versionCompatible($version) === $attendu, 'version : ' . $version);
+    }
 }
 
 // ============================================================ synthèse

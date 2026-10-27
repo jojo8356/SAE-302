@@ -55,6 +55,11 @@ PORT=8080 ./run.sh          # autre port (prioritaire sur .env)
 #   http://localhost:8000/admin/connexion   (back-office)
 ```
 
+> **Ubuntu 24.04 / Debian 12** : le paquet `mysql-server` n'existe plus, il est remplacé par
+> `mariadb-server` (`sudo apt install mariadb-server && sudo systemctl enable --now mariadb`).
+> C'est une cible supportée (MariaDB ≥ 10.6) : `php scripts/db_init.php --check` affiche la version
+> détectée et refuse un serveur trop ancien (MySQL < 8.0.16 ignorerait silencieusement les `CHECK`).
+
 ### Configuration : `.env` (et rien d'autre)
 
 Un seul fichier de configuration, **local** et ignoré par Git ; le modèle `.env.example` est versionné.
