@@ -417,6 +417,66 @@ final class SqlStore implements StoreInterface
         return [];
     }
 
+    // ------------------------------------------------- compatibilité dépôts
+
+    /**
+     * `CALL` d'une procédure, paramètres OUT retournés sous la clé `out`.
+     *
+     * Forme attendue par les dépôts (App\Repository\*) qui passent par les
+     * procédures stockées quand le pilote SQL est actif :
+     *
+     *   $r = $store->callProcedure('sp_create_order', [$idClient, $adresse],
+     *                              ['id_commande', 'numero']);
+     *   $id = (int) $r['out']['id_commande'];
+     *
+     * C'est un adaptateur de `appeler()` : éviter deux variantes de la même
+     * logique (une seule implémentation, testée).
+     *
+     * @param list<mixed>  $entrees paramètres IN, dans l'ordre de la procédure
+     * @param list<string> $sorties noms des paramètres OUT à récupérer
+     * @return array{out: array<string,mixed>}
+     */
+    public function callProcedure(string $procedure, array $entrees = [], array $sorties = []): array
+    {
+        return ['out' => $this->appeler($procedure, $entrees, $sorties)];
+    }
+
+    /**
+     * Appelle une fonction stockée (sql/02 : `fn_param`, calcul des frais de
+     * port par exemple) et retourne sa valeur.
+     *
+     * @param list<mixed> $entrees paramètres IN, dans l'ordre
+     */
+    public function callFunction(string $fonction, array $entrees = []): mixed
+    {
+        if (preg_match('/^fn_[a-z0-9_]+$/', $fonction) !== 1) {
+            throw new RuntimeException('nom de fonction invalide : ' . $fonction);
+        }
+
+        $marqueurs = array_fill(0, count($entrees), '?');
+        $sql = 'SELECT ' . $fonction . '(' . implode(', ', $marqueurs) . ')';
+        $statement = $this->executer($sql, $entrees);
+        $valeur = $statement->fetchColumn();
+
+        return $valeur;
+    }
+
+    /**
+     * Valeur d'une variable de session MySQL (`@p_code_retour`…), utile après
+     * un `CALL` dont on ne récupère pas les paramètres OUT nommés.
+     */
+    public function sessionVariable(string $nom): mixed
+    {
+        if (preg_match('/^@?([a-z0-9_]+)$/i', $nom, $morceaux) !== 1) {
+            throw new RuntimeException('nom de variable de session invalide : ' . $nom);
+        }
+
+        $requete = 'SELECT @' . $morceaux[1];
+        $valeur = $this->pdo()->query($requete)->fetchColumn();
+
+        return $valeur;
+    }
+
     // ------------------------------------------------------------- interne
 
     /** @return array<string,mixed> */

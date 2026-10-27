@@ -37,7 +37,7 @@
 
 - [x] `app/Model/Data/SqlStore.php` — **implémentation PDO réelle** : `select/find/count/sum/exists/all`, `insert/update/delete/nextId`, transactions, `appeler()` pour les procédures, traduction `SQLSTATE 45000 → BusinessError` et `23000 → ConstraintError`, `PDO::ATTR_EMULATE_PREPARES = false`, noms de tables/colonnes validés par `Schema`.
 - [x] Contrat unifié : `StoreInterface::transactional()` ajouté (implémenté par `JsonStore` **et** `SqlStore`).
-- [ ] **Les procédures stockées ne sont toujours pas appelées par les dépôts** : `SqlStore::appeler('sp_…')` existe mais aucun `Repository` ne l'utilise. Avec `storage_driver = 'sql'`, l'application écrit en SQL direct — les 16 déclencheurs s'exécutent, les 17 procédures non. La phrase du CDC §16.2 (« effectivement appelées ») reste **fausse**.
+- [~] **Les procédures stockées sont appelées, mais par une classe non branchée** : les 5 dépôts appellent bien `callProcedure('sp_…')`, protégé par `instanceof PdoStore` — or `StorageDriver` instancie `SqlStore`, donc la branche procédurale n'est **jamais** exécutée et l'application écrit en SQL direct. Unification faite côté socle : `SqlStore` expose désormais `callProcedure` / `callFunction` / `sessionVariable` (adaptateurs de `appeler()`), et `SqlStore` s'instancie sans PDO (vérifié par `engine_smoke`). Reste à basculer les 5 dépôts de `PdoStore` vers `SqlStore` et à supprimer le doublon — commandes fournies dans le README de fusion.
 - [ ] `tests/php/sql_integration.php` — **absent** : aucune exécution MySQL dans cette sandbox.
 - [ ] Documentation de bascule (`storage_driver = 'sql'`) — non écrite.
 

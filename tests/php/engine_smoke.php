@@ -80,6 +80,23 @@ $check('StorageDriver::SQL fournit un vrai pilote PDO', (static function (): boo
     return $sql instanceof \App\Model\Data\SqlStore
         && $sql instanceof \App\Model\Data\StoreInterface;
 })());
+$check('SqlStore expose callProcedure (API attendue par les dépôts)', (static function (): bool {
+    $reflexion = new \ReflectionClass(\App\Model\Data\SqlStore::class);
+
+    return $reflexion->hasMethod('callProcedure')
+        && $reflexion->hasMethod('callFunction')
+        && $reflexion->hasMethod('sessionVariable')
+        && $reflexion->hasMethod('appeler')
+        && $reflexion->getMethod('callProcedure')->isPublic();
+})());
+$check('SqlStore s’instancie sans PDO (connexion paresseuse)', (static function (): bool {
+    // StorageDriver fait `new SqlStore()` : le constructeur doit accepter zéro
+    // argument, sinon le pilote SQL est inutilisable côté application.
+    $constructeur = (new \ReflectionClass(\App\Model\Data\SqlStore::class))->getConstructor();
+
+    return $constructeur !== null
+        && $constructeur->getNumberOfRequiredParameters() === 0;
+})());
 $check('SqlStore construit tout son SQL en requêtes préparées', (static function (): bool {
     $source = (string) file_get_contents(dirname(__DIR__, 2) . '/app/Model/Data/SqlStore.php');
 
