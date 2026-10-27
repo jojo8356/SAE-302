@@ -20,7 +20,7 @@ Les tests de base sont **exécutés et rejouables** ; les tests fonctionnels con
 
 Commande unique : `./scripts/run_sql_tests.sh` (manifeste `tests/sql/manifest.txt`, fixture d'état avant chaque test, journal par test).
 
-**Résultat consigné : 29 tests / 29 conformes.** 15 de ces tests contournent volontairement l'application (`INSERT`/`UPDATE`/`DELETE` écrits à la main) : la conformité prouve que les règles ne dépendent pas du code PHP.
+**Résultat consigné : 29 tests / 29 conformes** lors de la campagne du 23/09, sur la copie de travail de l'équipe. ⚠️ Rejouée le 27/10 sur les fichiers de **cette** branche, la même campagne donne 22/29 : sept scénarios dépendaient de données absentes de `sql/01` + `sql/04` (voir `docs/10-todo-corrections.md` §4). Six sont corrigés, le rejeu de la révision finale reste à consigner. 15 de ces tests contournent volontairement l'application (`INSERT`/`UPDATE`/`DELETE` écrits à la main) : la conformité prouve que les règles ne dépendent pas du code PHP.
 
 | Test | Règle | Vérification — attendu | Résultat |
 |---|---|---|---|

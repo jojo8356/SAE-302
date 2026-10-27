@@ -86,6 +86,24 @@
 - [x] **Piège fermé** : `scripts/run-all-tests.php` avait été créé sans balise `<?php` (PHP affichait donc son contenu au lieu de l'exécuter) — le linter ne couvrait pas `scripts/` autrement que par `seed.php`. Cible par défaut étendue aux scripts applicatifs (95 fichiers analysés au lieu de 90) ; `deploy.php` et `gen_volumes*.php`, antérieurs et non applicatifs, restent hors périmètre et c'est documenté.
 - [x] `npm run test:all` exécute **8 suites** + l'autotest du harnais + l'E2E (moteur, règles, unitaires, fonctionnalités, design, responsive, contrats HTTP, PHPUnit) ; le linter strict-types est un contrôle séparé. L'**intégration SQL** est jouée quand un serveur est joignable, annoncée NON JOUÉ sinon.
 
+## 4 bis. Campagne SQL : sept scénarios qui ne testaient pas ce qu'ils annonçaient
+
+Rejouée sur une base réelle le 27/10 (`php tests/php/sql_integration.php`), la campagne a donné **22/29**. Aucun de ces sept échecs ne venait du schéma : tous venaient des **scénarios eux-mêmes**, qui supposaient une base différente de celle que produit `sql/01` + `sql/04`. Ils n'avaient jamais été rejoués sur les fichiers de cette branche — le 29/29 consigné provenait de la copie locale de l'équipe.
+
+| Test | Cause réelle | Correction |
+|---|---|---|
+| T-04 | hash de **61** caractères inséré dans `mot_de_passe_hash CHAR(60)` → erreur 1406 « Data too long », qui masquait la contrainte UNIQUE visée | hash de 60 caractères exactement |
+| T-07 | visait `CMD2026-000002`, brouillon vide que **la fixture supprime** avant chaque test → `INSERT ... SELECT` sur 0 ligne, donc « réussi » sans rien contrôler | le test crée sa commande par `sp_create_order` |
+| T-08 | même dépendance à `CMD2026-000002` | idem |
+| T-15 | supposait `PC-PORT-001` commandé dans `CMD2026-000001` ; la démo y met `CASQ-005` et `CABLE-009` → le `DELETE` réussissait | le test crée une commande et une ligne `TST-900`, puis tente le `DELETE` |
+| T-20 | même hypothèse fausse : `sp_delete_product` **supprimait réellement** le produit (et le retirait du jeu de démo pour les tests suivants) | idem, sur `TST-900` : bascule `visible=0` attendue, puis restitution |
+| T-23 | exigeait `montant_total = 12.00` alors que la commande est sous la franchise : le port de 4.90 s'ajoute (16.90) — l'assertion contredisait `ENF-14` | `montant_total = marchandises + frais_port`, et vérification que le **prix produit** a bien augmenté (sinon le test ne prouve rien) |
+| T-26 | inconnue à ce stade : le harnais n'affichait que `rc=1` | le harnais affiche désormais la fin de `stderr` ; rejeu nécessaire pour trancher |
+
+**Leçon retenue, et inscrite dans le code** : un test qui s'appuie sur un état qu'il ne crée pas lui-même ne teste rien — il constate. Les corrections remplacent les références au jeu de démonstration par des objets créés par le scénario, ce qui les rend indépendants de l'ordre des campagnes et de la fixture.
+
+Conséquence documentaire : `tests/sql/rapport_tests_sql.md` et `docs/02` portent maintenant un avertissement explicite — le 29/29 affiché est celui d'une campagne antérieure, pas de cette révision.
+
 ## 5. Rendus — **rien de produit**
 
 - [x] HTML autonome des documents — `livrables/html/` (19 fichiers, images en base64, hors ligne).

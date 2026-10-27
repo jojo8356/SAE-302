@@ -120,7 +120,13 @@ while IFS='|' read -r tid regle desc attendu fichier; do
           ok=1; raison="OK"
         fi
       else
-        ok=0; raison="attendu OK mais le script a echoue (rc=$rc)"
+        # Sans le message, un « rc=1 » n'est pas diagnosticable : on affiche la
+        # fin de stderr (premiere erreur) au lieu de la seule valeur du code.
+        detail="$(echo "$stderr" | tr '\n' ' ' | tr -s ' ' | cut -c1-220)"
+        if [ -z "$detail" ]; then
+          detail="(aucun message sur stderr — voir $log)"
+        fi
+        ok=0; raison="attendu OK mais le script a echoue (rc=$rc) : $detail"
       fi ;;
     ERREUR:*)
       motif="${attendu#ERREUR:}"

@@ -2,6 +2,15 @@
 
 *PV de recette côté base — généré par le harnais `tests/sql/` (source de vérité : `tests/sql/manifest.txt`).*
 
+> ⚠️ **Ce rapport est celui d'une campagne antérieure, rejouée sur une copie de travail locale.**
+> Rejouée sur les fichiers de cette branche, la campagne du 27/10/2026 a donné **22/29** : sept
+> scénarios s'appuyaient sur des données qui n'existent pas dans `sql/01` + `sql/04`
+> (commandes de démonstration renumérotées, brouillon vide supprimé par la fixture, hash de
+> 61 caractères dans une colonne `CHAR(60)`, assertion de montant ignorant les frais de port).
+> Six ont été corrigés pour construire eux-mêmes leur cas ; le septième (T-26) attend le rejeu.
+> **Ce fichier sera régénéré par `bash tests/sql/run_tests.sh` sur la révision finale** — il ne
+> doit pas être présenté en soutenance avant que la mention ci-dessus ait disparu.
+
 | | |
 |---|---|
 | **SGBD** | MariaDB 11.8.6 (Debian) — cible : MySQL 8.0.16+ ou MariaDB 10.6+ |
