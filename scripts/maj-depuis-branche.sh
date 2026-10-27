@@ -73,7 +73,17 @@ cd "$RACINE" || exit 2
 
 if ! git rev-parse --verify --quiet "$BRANCHE^{commit}" >/dev/null; then
     echo "✘ référence inconnue : $BRANCHE" >&2
-    echo "  → git fetch <remote>   puis réessayez (git branch -r pour la liste)." >&2
+    DISTANT="${BRANCHE%%/*}"
+    if [ "$DISTANT" != "$BRANCHE" ] && ! git remote get-url "$DISTANT" >/dev/null 2>&1; then
+        echo "  ✘ il n'existe aucun remote nommé « $DISTANT » dans cette copie." >&2
+        echo "    Un « git fetch $DISTANT … » interrogerait donc un autre serveur (typiquement" >&2
+        echo "    le dépôt d'école, qui demande un mot de passe). Ajoutez le remote GitHub :" >&2
+        echo "      git remote add github https://github.com/jojo8356/SAE-302.git" >&2
+        echo "      git fetch github arena/6e1d3706-sae-302" >&2
+        echo "      bash scripts/maj-depuis-branche.sh $BRANCHE" >&2
+    else
+        echo "  → git fetch $DISTANT   puis réessayez (git branch -r pour la liste)." >&2
+    fi
     exit 2
 fi
 
