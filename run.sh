@@ -126,7 +126,16 @@ PORT="${PORT:-${PORT_CONFIG:-8000}}"
 HOST="${HOST:-${HOST_CONFIG:-0.0.0.0}}"
 SOURCES="${SOURCES:-(défauts)}"
 
+# Empreinte du code : un message d'erreur d'une révision antérieure (fichiers
+# récupérés un par un) ressemble sinon à un bug de la révision courante. À
+# comparer avec « git log -1 --oneline github/<branche> ».
+REVISION="$(git -C "$RACINE" rev-parse --short HEAD 2>/dev/null || echo 'inconnue')"
+if [ -n "$(git -C "$RACINE" status --porcelain --untracked-files=no 2>/dev/null)" ]; then
+    REVISION="$REVISION + modifications locales"
+fi
+
 echo "   config     : $SOURCES"
+echo "   code       : $REVISION"
 echo "   pilote     : $PILOTE"
 if [ "$PILOTE" = "sql" ]; then
     echo "   base       : $DB_NOM @ $DB_HOTE:$DB_PORT ($DB_UTILISATEUR)"

@@ -40,6 +40,7 @@ use App\Security\Csrf;
 use App\Config\DbConnexion;
 use App\Tools\DbInstaller;
 use App\Tools\DbProvision;
+use App\Tools\Revision;
 use App\Tools\EnvFile;
 
 // en CLI, pas d'en-têtes de cookie de session (tests silencieux)
@@ -572,6 +573,36 @@ echo "\n16. Création du compte MySQL applicatif (App\\Tools\\DbProvision)\n";
 
     $check('client SQL détecté ou absent, jamais une exception',
         DbProvision::clientSql() === null || in_array(DbProvision::clientSql(), ['mariadb', 'mysql'], true));
+}
+
+// ============================================================ 17. empreinte du code
+echo "\n17. Empreinte de révision affichée par les scripts (App\\Tools\\Revision)\n";
+{
+    Revision::reinitialiser();
+    $empreinte = Revision::courante();
+    $check('une empreinte est toujours retournée', $empreinte !== '');
+    $check('jamais une exception, même hors dépôt Git',
+        is_string($empreinte) && (str_contains($empreinte, 'inconnue') || preg_match('/^[0-9a-f]{4,}/', $empreinte) === 1),
+        $empreinte);
+    // Dans la sandbox (PHP-WASM), git ne peut pas être lancé : « inconnue ».
+    // Sur une machine avec dépôt : « sha · AAAA-MM-JJ ».
+    if (!str_contains($empreinte, 'inconnue')) {
+        $check('format « sha · date »', preg_match('/^[0-9a-f]{4,}\s·\s\d{4}-\d{2}-\d{2}$/', $empreinte) === 1, $empreinte);
+    }
+    $check('deuxième appel identique (mise en cache)', Revision::courante() === $empreinte);
+    Revision::reinitialiser();
+    $check('cache vidable', Revision::courante() === $empreinte);
+    $check('état de travail interrogeable sans erreur', is_bool(Revision::modifie()));
+
+    // Le message d'erreur 1698 doit renvoyer vers la solution réelle, et non
+    // vers un repli qui ne peut pas fonctionner par conception.
+    $refus = new PDOException("SQLSTATE[HY000] [1698] Access denied for user 'root'@'localhost'");
+    $refus->errorInfo = ['HY000', 1698, "Access denied for user 'root'@'localhost'"];
+    $texte1698 = DbConnexion::expliquer($refus, '127.0.0.1', '3306');
+    $check('1698 : « --compte » proposé', str_contains($texte1698, '--compte'));
+    $check('1698 : sudo php proposé', str_contains($texte1698, 'sudo php'));
+    $check('1698 : aucune promesse de socket magique',
+        !str_contains($texte1698, 'introuvable') || str_contains($texte1698, 'quel que soit le mot de passe'));
 }
 
 // ============================================================ synthèse

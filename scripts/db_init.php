@@ -36,6 +36,7 @@ use App\Config\Database;
 use App\Config\DbConnexion;
 use App\Config\Env;
 use App\Tools\DbProvision;
+use App\Tools\Revision;
 use App\Tools\DbInstaller;
 use App\Tools\EnvFile;
 
@@ -198,6 +199,14 @@ if ($sources !== []) {
 echo '   configuration : ' . $listeSources . "\n";
 echo '   cible         : ' . $installateur->cible() . ' (' . $installateur->utilisateur() . ")\n";
 echo '   pilote app    : ' . (string) ($config['storage_driver'] ?? 'json') . "  (STORAGE_DRIVER)\n";
+
+// Empreinte du code : un message d'erreur d'une révision antérieure (fichiers
+// récupérés un par un) ressemble sinon à un bug de la révision courante.
+$revision = Revision::courante();
+if (Revision::modifie()) {
+    $revision .= ' + modifications locales';
+}
+echo '   code          : ' . $revision . "\n";
 
 $socketDetectee = DbConnexion::socketConfiguree();
 if ($socketDetectee === null) {
