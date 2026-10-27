@@ -109,14 +109,23 @@ done <<< "$ETATS"
 # ---------------------------------------------------------------------------
 # Tri par fichier — indispensable : `git checkout <branche> -- …` INDEXE les
 # fichiers chargés. Après une synchro réussie, l'arbre est donc sale par
-# construction, et refuser globalement bloquait toute mise à jour ultérieure.
-# On ne traite donc que les fichiers dont le CONTENU diffère encore :
-#   - déjà identique à la branche (cas d'une synchro précédente) → rien à faire ;
-#   - modifié localement depuis HEAD et différent de la branche → conflit réel,
-#     signalé nommément ; `--force` pour l'écraser.
+# construction, et un refus global bloquerait toute mise à jour ultérieure.
+#
+# Le difficile est de distinguer :
+#   a) un fichier que NOUS avons écrit lors d'une synchro précédente (donc
+#      modifiable sans risque) ;
+#   b) un fichier réellement édité par l'utilisateur (à ne jamais écraser).
+# `git status` ne sait pas faire la différence : dans les deux cas le fichier
+# diffère de HEAD. D'où le registre .git/minishop-applied, qui mémorise le
+# contenu exact écrit par la dernière synchro (chemin + empreinte du blob).
+#   - contenu actuel == empreinte mémorisée  → c'est le nôtre, on remplace ;
+#   - contenu actuel != empreinte mémorisée  → vrai travail local, on refuse.
 # ---------------------------------------------------------------------------
+REGISTRE="$RACINE/.git/minishop-applied"
+
 A_JOUR=()
 A_ECRIRE=()
+A_REECRIRE=()
 CONFLITS=()
 
 for fichier in "${A_CHARGER[@]:-}"; do
@@ -132,8 +141,18 @@ done
 
 for fichier in "${A_ECRIRE[@]:-}"; do
     [ -z "$fichier" ] && continue
-    # Modification locale (index ou répertoire) par rapport à HEAD ?
-    if [ -n "$(git status --porcelain -- "$fichier" 2>/dev/null)" ]; then
+    if [ -z "$(git status --porcelain -- "$fichier" 2>/dev/null)" ]; then
+        continue                                    # intact depuis HEAD : sans risque
+    fi
+    # Sale : est-ce nous qui l'avons écrit ?
+    ACTUEL="$(git hash-object "$fichier" 2>/dev/null || echo '')"
+    MEMOIRE=""
+    if [ -f "$REGISTRE" ]; then
+        MEMOIRE="$(awk -F'\t' -v f="$fichier" '$1 == f { print $2 }' "$REGISTRE" 2>/dev/null | tail -1)"
+    fi
+    if [ -n "$MEMOIRE" ] && [ "$ACTUEL" = "$MEMOIRE" ] && [ -n "$ACTUEL" ]; then
+        A_REECRIRE+=("$fichier")                    # inchangé depuis notre écriture
+    else
         CONFLITS+=("$fichier")
     fi
 done
@@ -144,12 +163,19 @@ if [ "${#CONFLITS[@]}" -gt 0 ] && [ "$FORCER" -ne 1 ]; then
     if [ "${#CONFLITS[@]}" -gt 12 ]; then
         echo "    … et $(( ${#CONFLITS[@]} - 12 )) autre(s)" >&2
     fi
-    echo "  git stash   (ou git commit) puis relancez, ou --force pour assumer." >&2
+    echo >&2
+    echo "  Ce ne sont PAS des fichiers écrits par une synchro précédente : leur" >&2
+    echo "  contenu diffère de ce que ce script avait déposé (ou aucun registre" >&2
+    echo "  n'existe encore). Vérifiez ce que vous perdriez :" >&2
+    echo "      git diff --stat -- ${CONFLITS[0]}" >&2
+    echo "  puis :" >&2
+    echo "      git stash            (conserver votre version, relancer)" >&2
+    echo "      … --force            (assumer l'écrasement)" >&2
     exit 3
 fi
 
 echo "déjà à jour      : ${#A_JOUR[@]} fichier(s)"
-echo "à mettre à jour  : ${#A_ECRIRE[@]} fichier(s)"
+echo "à mettre à jour  : ${#A_ECRIRE[@]} fichier(s) (dont ${#A_REECRIRE[@]} écrit(s) par une synchro précédente)"
 echo "à supprimer      : ${#A_SUPPRIMER[@]} fichier(s)"
 echo
 
@@ -160,6 +186,16 @@ if [ "${#A_ECRIRE[@]}" -gt 0 ]; then
         exit 1
     fi
     echo "  ${#A_ECRIRE[@]} fichier(s) écrits"
+
+    # Registre : empreinte du contenu réellement déposé, pour reconnaître au
+    # prochain passage nos propres écritures et ne pas les confondre avec du
+    # travail local.
+    : > "$REGISTRE"
+    for fichier in "${A_ECRIRE[@]:-}"; do
+        [ -z "$fichier" ] && continue
+        [ -f "$fichier" ] || continue
+        printf '%s\t%s\n' "$fichier" "$(git hash-object "$fichier" 2>/dev/null || echo '')" >> "$REGISTRE"
+    done
 fi
 
 for fichier in "${A_SUPPRIMER[@]:-}"; do
