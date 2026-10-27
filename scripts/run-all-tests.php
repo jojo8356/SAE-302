@@ -1,3 +1,5 @@
+<?php
+
 /**
  * MiniShop — exécute TOUTES les suites de tests, en PHP NATIF.
  *

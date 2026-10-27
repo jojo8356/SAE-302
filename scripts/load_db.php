@@ -45,8 +45,10 @@ function erreur(string $texte): void
 }
 
 $installateur = DbInstaller::depuisVariables();
-$sansDemo = (getenv('SKIP_DEMO') ?: '0') === '1';
-$conserver = (getenv('KEEP') ?: '0') === '1';
+$valeurDemo = getenv('SKIP_DEMO');
+$sansDemo = $valeurDemo === '1';
+$valeurKeep = getenv('KEEP');
+$conserver = $valeurKeep === '1';
 
 if (!$installateur->baseValide()) {
     erreur('✘ nom de base invalide : ' . $installateur->base() . "\n");

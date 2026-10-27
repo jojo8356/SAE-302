@@ -71,6 +71,7 @@
 - [ ] `scripts/coverage.php` — **absent** ; `phpunit.xml` ne produit pas de couverture.
 - [ ] `tests/php/contract_http.php` — **absent** : les contrats HTTP ne sont couverts que par l'E2E.
 - [ ] `docs/11-strategie-tests.md` — **absent**.
+- [x] **Piège fermé** : `scripts/run-all-tests.php` avait été créé sans balise `<?php` (PHP affichait donc son contenu au lieu de l'exécuter) — le linter ne couvrait pas `scripts/` autrement que par `seed.php`. Cible par défaut étendue aux scripts applicatifs (95 fichiers analysés au lieu de 90) ; `deploy.php` et `gen_volumes*.php`, antérieurs et non applicatifs, restent hors périmètre et c'est documenté.
 - [x] `npm run test:all` exécute **7 suites** + l'E2E (moteur, règles, unitaires, fonctionnalités, design, responsive, PHPUnit) ; le linter strict-types est un contrôle séparé.
 
 ## 5. Rendus — **rien de produit**
