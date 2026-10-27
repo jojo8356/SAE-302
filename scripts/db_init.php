@@ -17,6 +17,11 @@ declare(strict_types=1);
  *   DB_HOST="127.0.0.1"  DB_PORT="3306"  DB_NAME="minishop"
  *   DB_USER="root"       DB_PASSWORD=""  STORAGE_DRIVER="json"
  *
+ * Cas de root sous Debian/Ubuntu : le compte n'accepte que l'authentification
+ * par socket Unix. Rien à faire de particulier — la connexion bascule
+ * automatiquement sur la socket locale, ou sur `DB_SOCKET=/run/mysqld/mysqld.sock`
+ * si elle est ailleurs.
+ *
  * Une variable d'environnement réelle gagne sur le fichier :
  *   DB_NAME=minishop_test php scripts/db_init.php --yes
  *
@@ -27,6 +32,7 @@ declare(strict_types=1);
 require_once dirname(__DIR__) . '/app/bootstrap.php';
 
 use App\Config\Database;
+use App\Config\DbConnexion;
 use App\Tools\DbInstaller;
 use App\Tools\EnvFile;
 
@@ -42,7 +48,7 @@ const LARGEUR = 74;
 function erreur(string $texte): void
 {
     if (defined('STDERR')) {
-        erreur($texte);
+        fwrite(STDERR, $texte);
 
         return;
     }
@@ -184,6 +190,14 @@ echo '   configuration : ' . $listeSources . "\n";
 echo '   cible         : ' . $installateur->cible() . ' (' . $installateur->utilisateur() . ")\n";
 echo '   pilote app    : ' . (string) ($config['storage_driver'] ?? 'json') . "  (STORAGE_DRIVER)\n";
 
+$socketDetectee = DbConnexion::socketConfiguree();
+if ($socketDetectee === null) {
+    $socketDetectee = DbConnexion::socketLocale();
+}
+if ($socketDetectee !== null) {
+    echo '   socket Unix   : ' . $socketDetectee . "  (repli si le compte refuse le TCP)\n";
+}
+
 if (!$installateur->baseValide()) {
     erreur("\n✘ nom de base invalide : « " . $installateur->base() . " »\n");
     erreur("  lettres, chiffres et _ uniquement (DB_NAME dans .env)\n");
@@ -201,6 +215,7 @@ if ($options['check']) {
         echo "     • le service tourne-t-il ?   systemctl status mariadb\n";
         echo "     • compte applicatif créé ?   sudo mariadb  puis CREATE USER + GRANT\n";
         echo "     • identifiants justes ?      DB_USER / DB_PASSWORD dans .env\n";
+        echo "     • socket ailleurs ?          DB_SOCKET=/run/mysqld/mysqld.sock dans .env\n";
     }
 
     $inventaire = $installateur->inventaire();

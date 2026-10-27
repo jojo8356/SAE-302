@@ -30,6 +30,7 @@ declare(strict_types=1);
 namespace App\Model\Data;
 
 use App\Config\Database;
+use App\Config\DbConnexion;
 use PDO;
 use PDOException;
 use RuntimeException;
@@ -83,20 +84,14 @@ final class SqlStore implements StoreInterface
         $hote = (string) ($config['db_host'] ?? '127.0.0.1');
         $port = (string) ($config['db_port'] ?? 3306);
         $base = (string) ($config['db_name'] ?? 'minishop');
-        $utilisateur = (string) ($config['db_user'] ?? 'root');
-        $motDePasse = (string) ($config['db_pass'] ?? '');
 
         try {
-            $dsn = sprintf('mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4', $hote, $port, $base);
-            $this->pdo = new PDO($dsn, $utilisateur, $motDePasse, [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES => false,
-            ]);
+            // DSN et repli socket Unix centralisés (voir App\Config\DbConnexion).
+            $this->pdo = DbConnexion::ouvrir($base, $config);
         } catch (PDOException $e) {
             throw new RuntimeException(
-                'Connexion MySQL impossible (' . $hote . ':' . $port . '/' . $base . ') : ' . $e->getMessage()
-                . ' — lancez ./scripts/load_db.sh ou repassez en pilote JSON.',
+                DbConnexion::expliquer($e, $hote, $port)
+                . "\n    Base visée : " . $base . ' — ou repassez en pilote JSON (STORAGE_DRIVER=json).',
                 0,
                 $e,
             );

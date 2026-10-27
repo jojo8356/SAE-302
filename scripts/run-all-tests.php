@@ -10,6 +10,11 @@
  * Chaque suite est lancée dans son propre processus : un échec n'empêche pas
  * les suivantes de s'exécuter, et le code retour final est 1 si une seule a
  * échoué.
+ *
+ * Le parcours E2E (`scripts/e2e.mjs`) est une suite Node : il n'est joué que
+ * si Node et sa dépendance `@php-wasm/node` sont présents — sinon l'étape est
+ * annoncée comme NON JOUÉE (jamais comme réussie), avec la commande exacte.
+ * Un « tout est vert » qui aurait ignoré l'E2E en silence serait un mensonge.
  */
 
 declare(strict_types=1);
@@ -38,7 +43,13 @@ function section(string $texte): void
 /** Lance un script PHP enfant et retourne son code de sortie. */
 function lancer(string $fichier): int
 {
-    $commande = escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($fichier) . ' 2>&1';
+    return lancerAvec(PHP_BINARY, $fichier);
+}
+
+/** Lance un script avec un interpréteur donné (`php`, `node`…). */
+function lancerAvec(string $interpreteur, string $fichier): int
+{
+    $commande = escapeshellarg($interpreteur) . ' ' . escapeshellarg($fichier) . ' 2>&1';
     $sortie = [];
     $code = 0;
     exec($commande, $sortie, $code);
@@ -47,11 +58,34 @@ function lancer(string $fichier): int
     return $code;
 }
 
+/** Chemin de l'exécutable Node.js, ou `null` s'il est absent. */
+function noeud(): ?string
+{
+    $sortie = [];
+    $code = 0;
+    exec('node --version 2>&1', $sortie, $code);
+    if ($code !== 0) {
+        return null;
+    }
+    $version = trim(implode(' ', $sortie));
+    if (!str_starts_with($version, 'v')) {
+        return null;
+    }
+
+    return 'node';
+}
+
 // Préflight : une extension absente produit des échecs trompeurs (recherche
 // insensible aux accents, sessions, MySQL). On le dit AVANT les suites.
 $extensionsRequises = [
     'mbstring' => 'pliage casse/accents (Text::fold, T-25, slugs)',
     'json' => 'moteur de données JSON',
+];
+// Facultatives : sans elles l'application fonctionne (repli documenté), mais
+// la qualité du pliage et des tris diffère de la collation MySQL.
+$extensionsOptionnelles = [
+    'intl' => 'translittération ICU et collation française (repli : table latine)',
+    'pdo_mysql' => 'pilote SQL (repli : pilote JSON)',
 ];
 $extensionsAbsentes = [];
 foreach ($extensionsRequises as $extension => $role) {
@@ -67,6 +101,12 @@ if ($extensionsAbsentes !== []) {
     }
     echo "   paquets Debian/Ubuntu : sudo apt install php" . PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION
         . "-mbstring php" . PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION . "-mysql\n\n";
+}
+
+foreach ($extensionsOptionnelles as $extension => $role) {
+    if (!extension_loaded($extension)) {
+        echo '   ⓘ extension facultative absente : ' . $extension . ' (' . $role . ")\n";
+    }
 }
 
 $echecs = 0;
@@ -85,13 +125,43 @@ foreach (SUITES as [$nom, $fichier]) {
     }
 }
 
+// --------------------------------------------------------------- parcours E2E
+section('▸ Parcours E2E — scripts/e2e.mjs');
+$e2eJoue = false;
+$noeud = noeud();
+$dependance = $racine . '/node_modules/@php-wasm/node';
+
+if ($noeud === null) {
+    echo "  ⏭  NON JOUÉ : Node.js est absent de cette machine.\n";
+    echo "     Installez Node 20+ puis : node scripts/e2e.mjs\n";
+} elseif (!is_dir($dependance)) {
+    echo "  ⏭  NON JOUÉ : la dépendance @php-wasm/node n'est pas installée.\n";
+    echo "     npm install  puis : node scripts/e2e.mjs\n";
+} elseif (!is_file('scripts/e2e.mjs')) {
+    echo "  ❌ fichier absent\n";
+    ++$echecs;
+} else {
+    $e2eJoue = true;
+    ++$jouees;
+    if (lancerAvec((string) $noeud, 'scripts/e2e.mjs') !== 0) {
+        ++$echecs;
+    }
+}
+
 section(str_repeat('=', 0));
 
+$e2eEtat = 'joué ✅';
+if (!$e2eJoue) {
+    $e2eEtat = 'NON JOUÉ ⏭ (voir ci-dessus)';
+}
+
 if ($echecs > 0) {
-    echo 'SUITES : ' . $echecs . ' étape(s) en échec ❌ — E2E non joué' . "\n";
+    echo 'SUITES : ' . $echecs . ' étape(s) en échec ❌ — E2E : ' . $e2eEtat . "\n";
     exit(1);
 }
 
-echo 'SUITES PHP : TOUT EST VERT ✅ (' . $jouees . " suites)\n";
-echo "\nE2E : nécessite un serveur HTTP ; lancez « node scripts/e2e.mjs » ou « ./run.sh --e2e ».\n";
+echo 'SUITES : TOUT EST VERT ✅ (' . $jouees . " étapes) — E2E : " . $e2eEtat . "\n";
+if (!$e2eJoue) {
+    echo "nb : la base JSON reste intacte, l'E2E ne modifie rien durablement.\n";
+}
 exit(0);

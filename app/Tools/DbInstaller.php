@@ -29,6 +29,7 @@ declare(strict_types=1);
 namespace App\Tools;
 
 use App\Config\Database;
+use App\Config\DbConnexion;
 use PDO;
 use PDOException;
 use RuntimeException;
@@ -57,6 +58,7 @@ final class DbInstaller
         private readonly string $base,
         private readonly string $utilisateur,
         private readonly string $motDePasse,
+        private readonly string $socket = '',
     ) {
     }
 
@@ -71,6 +73,7 @@ final class DbInstaller
             (string) ($config['db_name'] ?? 'minishop'),
             (string) ($config['db_user'] ?? 'root'),
             (string) ($config['db_pass'] ?? ''),
+            (string) ($config['db_socket'] ?? ''),
         );
     }
 
@@ -82,6 +85,7 @@ final class DbInstaller
         $base = getenv('DB_NAME');
         $utilisateur = getenv('DB_USER');
         $motDePasse = getenv('DB_PASS');
+        $socket = getenv('DB_SOCKET');
 
         if ($base === false || $base === '') {
             $base = getenv('DB');
@@ -98,11 +102,21 @@ final class DbInstaller
         if ($motDePasse === false) {
             $motDePasse = '';
         }
+        if ($socket === false) {
+            $socket = '';
+        }
         if ($base === false || $base === '') {
             $base = 'minishop';
         }
 
-        return new self((string) $hote, (string) $port, (string) $base, (string) $utilisateur, (string) $motDePasse);
+        return new self(
+            (string) $hote,
+            (string) $port,
+            (string) $base,
+            (string) $utilisateur,
+            (string) $motDePasse,
+            (string) $socket,
+        );
     }
 
     public function base(): string
@@ -140,6 +154,9 @@ final class DbInstaller
     /**
      * Connexion PDO. `$avecBase = false` pour l'administration du serveur
      * (création / suppression de la base).
+     *
+     * Délègue à `DbConnexion`, qui gère le repli sur la socket Unix quand le
+     * compte (root sous Debian/Ubuntu) n'accepte pas l'authentification TCP.
      */
     public function connexion(bool $avecBase = true): PDO
     {
@@ -149,21 +166,36 @@ final class DbInstaller
             );
         }
 
-        $dsn = sprintf('mysql:host=%s;port=%s;charset=utf8mb4', $this->hote, $this->port);
+        $base = null;
         if ($avecBase) {
-            $dsn = sprintf('mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4', $this->hote, $this->port, $this->base);
+            $base = $this->base;
         }
 
         try {
-            return new PDO($dsn, $this->utilisateur, $this->motDePasse, [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES => false,
-            ]);
+            return DbConnexion::ouvrir($base, $this->configuration());
         } catch (PDOException $erreur) {
             $this->derniereErreur = self::expliquer($erreur, $this->hote, $this->port);
             throw new RuntimeException($this->derniereErreur, 0, $erreur);
         }
+    }
+
+    /** Configuration effective de CET installateur (il peut différer du `.env`). */
+    private function configuration(): array
+    {
+        return [
+            'db_host' => $this->hote,
+            'db_port' => $this->port,
+            'db_name' => $this->base,
+            'db_user' => $this->utilisateur,
+            'db_pass' => $this->motDePasse,
+            'db_socket' => $this->socket,
+        ];
+    }
+
+    /** Socket Unix utilisée par la dernière connexion réussie (`null` = TCP). */
+    public function socketUtilisee(): ?string
+    {
+        return DbConnexion::socketUtilisee();
     }
 
     /** Dernière erreur de connexion lisible (`''` si aucune). */
@@ -172,38 +204,10 @@ final class DbInstaller
         return $this->derniereErreur;
     }
 
-    /** Message d'aide à partir du code d'erreur MySQL. */
+    /** Message d'aide à partir du code d'erreur MySQL (délégué à DbConnexion). */
     public static function expliquer(PDOException $erreur, string $hote, string $port): string
     {
-        $code = (int) ($erreur->errorInfo[1] ?? 0);
-        $message = $erreur->getMessage();
-
-        if ($code === 1045 || $code === 1698) {
-            return "Identifiants refusés pour $hote:$port (utilisateur ou mot de passe incorrect). "
-                . 'Sous MariaDB/MySQL, « root » s\'authentifie par socket Unix et ne peut pas servir '
-                . 'à PHP en TCP : créez un compte applicatif (voir README, « Base de données locale ») '
-                . 'et renseignez DB_USER / DB_PASSWORD dans .env. Détail : ' . $message;
-        }
-        if ($code === 1049) {
-            return "La base demandée n'existe pas encore : lancez « php scripts/db_init.php ».";
-        }
-        $injoignable = in_array($code, [2002, 2006, 2013], true)
-            || str_contains($message, 'Connection refused')
-            || str_contains($message, 'gone away');
-        if ($injoignable) {
-            return "Aucun serveur MySQL n'écoute sur $hote:$port. Démarrez-le :\n"
-                . "    Linux  : sudo systemctl start mysql   (ou mariadb)\n"
-                . "    macOS  : brew services start mysql\n"
-                . "    Windows: net start MySQL80            (services.msc)";
-        }
-
-        if (str_contains($message, 'could not find driver')) {
-            return "L'extension PHP « pdo_mysql » n'est pas chargée : PDO ne sait pas parler à MySQL.\n"
-                . '    Debian/Ubuntu : sudo apt install php' . PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION . '-mysql\n'
-                . '    puis vérifier : php -m | grep pdo_mysql';
-        }
-
-        return "Connexion MySQL impossible sur $hote:$port : " . $message;
+        return DbConnexion::expliquer($erreur, $hote, $port);
     }
 
     /** La base existe-t-elle sur le serveur ? */
@@ -485,6 +489,15 @@ final class DbInstaller
             'ok' => $joignable,
             'detail' => $detailServeur,
         ];
+
+        $socket = DbConnexion::socketUtilisee();
+        if ($socket !== null) {
+            $controles[] = [
+                'controle' => 'authentification',
+                'ok' => true,
+                'detail' => 'socket Unix ' . $socket . ' (compte sans accès TCP)',
+            ];
+        }
 
         if (!$joignable) {
             return $controles;

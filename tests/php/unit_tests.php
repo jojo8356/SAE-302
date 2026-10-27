@@ -37,6 +37,7 @@ use App\Model\PanierSession;
 use App\Repository\ParametreRepository;
 use App\Repository\ProduitRepository;
 use App\Security\Csrf;
+use App\Config\DbConnexion;
 use App\Tools\DbInstaller;
 use App\Tools\EnvFile;
 
@@ -446,6 +447,76 @@ echo "\n14. Versions MySQL / MariaDB acceptées (App\\Tools\\DbInstaller)\n";
     foreach ($cas as [$version, $attendu, $libelle]) {
         $check($libelle, DbInstaller::versionCompatible($version) === $attendu, 'version : ' . $version);
     }
+}
+
+// ============================================================ 15. connexion SGBD
+echo "\n15. DSN et repli socket Unix (App\\Config\\DbConnexion)\n";
+{
+    $local = ['db_host' => '127.0.0.1', 'db_port' => '3306', 'db_user' => 'root', 'db_pass' => '', 'db_socket' => ''];
+    $distant = ['db_host' => 'db.exemple.fr', 'db_port' => '3307', 'db_user' => 'app', 'db_pass' => 'x', 'db_socket' => ''];
+
+    $dsn = DbConnexion::dsnTcp($local, 'minishop');
+    $check('DSN TCP : hôte, port, base', $dsn === 'mysql:host=127.0.0.1;port=3306;dbname=minishop;charset=utf8mb4', $dsn);
+    $check('DSN TCP : jeu de caractères imposé', str_ends_with($dsn, 'charset=utf8mb4'));
+    $check('DSN sans base (administration serveur)',
+        DbConnexion::dsnTcp($local) === 'mysql:host=127.0.0.1;port=3306;charset=utf8mb4');
+    $check('DSN socket : pas de host ni de port',
+        DbConnexion::dsnSocket('/run/mysqld/mysqld.sock', 'minishop')
+            === 'mysql:unix_socket=/run/mysqld/mysqld.sock;dbname=minishop;charset=utf8mb4');
+
+    $check('hôte 127.0.0.1 considéré comme local', DbConnexion::hoteLocal($local));
+    $check('hôte « localhost » considéré comme local',
+        DbConnexion::hoteLocal(['db_host' => 'LOCALHOST']));
+    $check('hôte distant non local', !DbConnexion::hoteLocal($distant));
+    $check('aucune socket proposée pour un serveur distant',
+        DbConnexion::socketLocale($distant) === null);
+
+    $dsns = DbConnexion::dsns('minishop', $local);
+    $check('TCP essayé en premier (comportement du .env respecté)', $dsns[0] === DbConnexion::dsnTcp($local, 'minishop'));
+    $check('au plus deux DSN pour un poste local', count($dsns) <= 2, (string) count($dsns));
+    foreach ($dsns as $essai) {
+        $check('DSN bien formé : ' . $essai, str_starts_with($essai, 'mysql:') && str_contains($essai, 'charset=utf8mb4'));
+    }
+
+    // DB_SOCKET explicite et inexistante : ignorée (on ne casse pas le TCP)
+    $avecFaux = ['db_host' => '127.0.0.1', 'db_socket' => '/tmp/inexistant-' . bin2hex(random_bytes(4)) . '.sock'];
+    $check('DB_SOCKET inexistante ignorée', DbConnexion::socketConfiguree($avecFaux) === null);
+
+    // DB_SOCKET explicite et existante : prioritaire
+    $fauxSocket = sys_get_temp_dir() . '/minishop-test-' . bin2hex(random_bytes(4)) . '.sock';
+    if (@file_put_contents($fauxSocket, '') !== false) {
+        $avecSocket = ['db_host' => '127.0.0.1', 'db_port' => '3306', 'db_socket' => $fauxSocket];
+        $check('DB_SOCKET existante retenue', DbConnexion::socketConfiguree($avecSocket) === $fauxSocket);
+        $prioritaires = DbConnexion::dsns('minishop', $avecSocket);
+        $check('socket imposée essayée en premier', $prioritaires[0] === DbConnexion::dsnSocket($fauxSocket, 'minishop'));
+        $check('DSN unix_socket ne contient ni host ni port',
+            !str_contains($prioritaires[0], 'host=') && !str_contains($prioritaires[0], 'port='));
+        @unlink($fauxSocket);
+    }
+
+    // Un message d'erreur francophone et actionnable, jamais un code nu
+    $erreur = new PDOException("SQLSTATE[HY000] [1698] Access denied for user 'root'@'localhost'");
+    $erreur->errorInfo = ['HY000', 1698, "Access denied for user 'root'@'localhost'"];
+    $texte = DbConnexion::expliquer($erreur, '127.0.0.1', '3306');
+    $check('erreur 1698 expliquée (socket Unix)', str_contains($texte, 'socket Unix'));
+    $check('erreur 1698 : DB_SOCKET proposée', str_contains($texte, 'DB_SOCKET'));
+
+    $refus = new PDOException('SQLSTATE[HY000] [1045] Access denied');
+    $refus->errorInfo = ['HY000', 1045, 'Access denied'];
+    $check('erreur 1045 : identifiants', str_contains(DbConnexion::expliquer($refus, 'h', '1'), 'Identifiants refusés'));
+
+    $pilote = new PDOException('could not find driver');
+    $pilote->errorInfo = ['HY000', 0, 'could not find driver'];
+    $check('pdo_mysql absent : paquet indiqué',
+        str_contains(DbConnexion::expliquer($pilote, 'h', '1'), 'pdo_mysql'));
+
+    $muet = new PDOException('SQLSTATE[HY000] [2002] Connection refused');
+    $muet->errorInfo = ['HY000', 2002, 'Connection refused'];
+    $check('serveur arrêté : commande de démarrage',
+        str_contains(DbConnexion::expliquer($muet, 'h', '3306'), 'systemctl start mariadb'));
+
+    $config = Database::config();
+    $check('clé db_socket exposée par la configuration', array_key_exists('db_socket', $config));
 }
 
 // ============================================================ synthèse

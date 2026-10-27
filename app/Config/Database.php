@@ -23,6 +23,8 @@ declare(strict_types=1);
  *
  *   cp .env.example .env
  *   # .env : STORAGE_DRIVER="sql"  DB_NAME="minishop"  DB_USER="minishop"  DB_PASSWORD="…"
+ *   #        DB_SOCKET="" (vide = TCP 127.0.0.1:3306, repli automatique sur la
+ *   #        socket Unix si le compte n'accepte que ce mode — cas de root sur Debian)
  *   php scripts/db_init.php        # crée la base, les 8 tables, 17 procédures, 16 triggers
  *
  * Les contrôleurs et les repositories ne connaissent QUE StoreInterface.
@@ -48,6 +50,7 @@ final class Database
         'db_name' => 'minishop',
         'db_user' => 'root',
         'db_pass' => '',
+        'db_socket' => '',
     ];
 
     /** Variable d'environnement → clé de configuration. */
@@ -61,6 +64,7 @@ final class Database
         'DB_NAME' => 'db_name',
         'DB_USER' => 'db_user',
         'DB_PASSWORD' => 'db_pass',
+        'DB_SOCKET' => 'db_socket',
     ];
 
     /** Alias historiques acceptés (scripts existants, habitudes). */

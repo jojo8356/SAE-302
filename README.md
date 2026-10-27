@@ -71,9 +71,46 @@ Un seul fichier de configuration, **local** et ignoré par Git ; le modèle `.en
 | `DB_HOST` / `DB_PORT` | `127.0.0.1` / `3306` | serveur MySQL |
 | `DB_NAME` | `minishop` | base utilisée (`[A-Za-z0-9_]+`) |
 | `DB_USER` / `DB_PASSWORD` | `root` / *(vide)* | identifiants MySQL |
+| `DB_SOCKET` | *(vide)* | socket Unix explicite (`/run/mysqld/mysqld.sock`) ; vide = TCP puis repli socket |
 | `DATA_PATH` | *(vide)* | dossier des données du pilote JSON (`data/minishop` par défaut) |
 | `APP_ENV` / `APP_DEBUG` | `dev` / `1` | environnement et erreurs détaillées |
 | `PORT` / `HOST` | `8000` / `0.0.0.0` | serveur de développement de `run.sh` |
+
+### Base de données locale
+
+```bash
+php scripts/db_init.php --check      # diagnostic (serveur, version, base, objets)
+php scripts/db_init.php --yes        # crée la base, les 8 tables, 17 procédures, 16 déclencheurs
+php scripts/db_init.php --switch     # passe STORAGE_DRIVER=sql dans .env
+./run.sh --db                        # les trois d'un coup, puis démarre le serveur
+```
+
+**`root` sous Debian/Ubuntu n'accepte pas le TCP.** Le paquet `mariadb-server` crée
+`root@localhost` avec le greffon `unix_socket` : PHP, qui se connecte sur `127.0.0.1:3306`,
+reçoit `SQLSTATE[HY000] [1698] Access denied`. Depuis cette version, `App\Config\DbConnexion`
+détecte ce code précis et **réessaie automatiquement par la socket Unix** (`/run/mysqld/mysqld.sock`
+et chemins équivalents) : `./run.sh --db` fonctionne donc sans rien configurer. Si la socket est
+ailleurs, une seule ligne suffit :
+
+```ini
+DB_SOCKET=/run/mysqld/mysqld.sock
+```
+
+Pour travailler avec un compte dédié (recommandé dès que la base n'est plus jetable) :
+
+```sql
+-- sudo mariadb
+CREATE DATABASE IF NOT EXISTS minishop CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER IF NOT EXISTS 'minishop'@'localhost' IDENTIFIED BY 'motdepasse_local';
+CREATE USER IF NOT EXISTS 'minishop'@'127.0.0.1' IDENTIFIED BY 'motdepasse_local';
+GRANT ALL PRIVILEGES ON minishop.* TO 'minishop'@'localhost';
+GRANT ALL PRIVILEGES ON minishop.* TO 'minishop'@'127.0.0.1';
+```
+
+```ini
+DB_USER=minishop
+DB_PASSWORD=motdepasse_local
+```
 
 Ordre de priorité : **variables d'environnement réelles** > `.env` > `app/Config/env.php` (ancien format,
 encore lu pour compatibilité) > valeurs par défaut du code. L'application ne lit ce fichier qu'à un seul
@@ -141,10 +178,10 @@ npm run test:all        # ou : node scripts/run-all-tests.mjs
 
 | Suite | Fichier | Couverture | Verdict |
 |---|---|---|---|
-| Linter strict types | `scripts/strict_types_lint.php` | règle `declare_strict_types` de php-cs-fixer + types natifs « PHPStan level 9 » (params, retours, propriétés) + **règle maison : opérateur ternaire interdit** (`? :` et `?:`, remplacés par `if/else` ; `??` et types nullables `?int` autorisés) sur **tout le livrable PHP** | ✅ 0 violation / 86 fichiers |
+| Linter strict types | `scripts/strict_types_lint.php` | règle `declare_strict_types` de php-cs-fixer + types natifs « PHPStan level 9 » (params, retours, propriétés) + **règle maison : opérateur ternaire interdit** (`? :` et `?:`, remplacés par `if/else` ; `??` et types nullables `?int` autorisés) sur **tout le livrable PHP** | ✅ 0 violation / 96 fichiers |
 | Moteur JSON | `tests/php/engine_smoke.php` | contraintes, triggers, transactions, journal du moteur | ✅ vert |
 | Règles de gestion | `tests/php/run_tests.php` | T-01…T-29 du document de tests (RB-01…RB-20, vues, frais de port) | ✅ 29/29 |
-| Unitaires | `tests/php/unit_tests.php` | `Text` (fold/slug/collation), échappement, CSRF, **matrice RB-11 complète** (36 couples), `Filter`, `PanierSession`, prix TTC, journal | ✅ 98/98 |
+| Unitaires | `tests/php/unit_tests.php` | `Text` (fold/slug/collation), échappement, CSRF, **matrice RB-11 complète** (36 couples), `Filter`, `PanierSession`, prix TTC, journal, **`.env`**, versions SGBD, **DSN et repli socket Unix** | ✅ 153/153 |
 | Fonctionnalités | `tests/php/features_test.php` | **UC-01…UC-14** via les repositories (catalogue, compte, panier, commande, annulation, back-office, indicateurs) | ✅ 108/108 |
 | Contrats de design | `tests/php/css_contract.php` | tokens de `docs/DA.md`, contrastes WCAG calculés, classes des vues réellement définies, `prefers-reduced-motion`, feuille d'impression | ✅ 28/28 |
 | Contrat responsive | `tests/php/responsive_contract.php` | 320 px → 1536 px : paliers en `em`, menu repliable, tableaux accessibles, panier en cartes, `dvh`, encoches, `pointer: coarse`, container queries | ✅ 48/48 |
@@ -152,8 +189,10 @@ npm run test:all        # ou : node scripts/run-all-tests.mjs
 | E2E HTTP | `scripts/wasm-e2e.mjs` | T1…T14 : parcours réels (cookies + CSRF) — pages publiques, auth, commande 488,40 €, annulation, back-office, cloisonnement, catalogue avancé, compte, panier (plafond/re-tri/prix falsifié), CRUD admin, filtres + audit + journal, **sécurité offensive** (injection, XSS stocké, IDOR, fixation de session, traversées, escalation), rôles RB-13, contact/API/paramètres | ✅ 180/180 |
 
 Avec un PHP local, **aucune dépendance npm n'est nécessaire** : `php scripts/run-all-tests.php`
-(ou `npm run test:all:native`) lance les 8 suites directement. `npm run test:all` détecte PHP natif et
-l'utilise ; il ne bascule sur le runtime WASM que dans un environnement sans PHP.
+(ou `npm run test:all:native`) lance les 8 suites directement, puis le parcours E2E s'il trouve Node
+et `@php-wasm/node` — sinon l'étape est annoncée **NON JOUÉE** avec la commande exacte, jamais comptée
+comme verte. `npm run test:all` détecte PHP natif et l'utilise ; il ne bascule sur le runtime WASM que
+dans un environnement sans PHP.
 
 Commandes individuelles : `npm test` (règles), `npm run test:units`, `npm run test:features`, `npm run test:design`, `npm run test:responsive`, `npm run test:phpunit`, `npm run test:e2e`. L'E2E est désormais **hermétique** : `scripts/e2e.mjs` photographie `data/minishop`, joue le seed et le parcours HTTP, puis restaure le jeu de démonstration à l'identique — même en cas d'échec (`scripts/data_snapshot.mjs`).
 
