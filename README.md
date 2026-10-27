@@ -33,22 +33,50 @@ testée, et son cahier des charges complet.
 # 1. cloner et placer le projet
 git clone <URL_DU_DEPOT> minishop && cd minishop
 
-# 2. configuration (jamais commitée)
-cp app/Config/env.example.php app/Config/env.php      # puis éditer db_user / db_pass
+# 2. configuration locale (jamais commitée)
+cp .env.example .env        # puis éditer DB_USER / DB_PASSWORD si vous passez en MySQL
 
-# 3. créer la base, les tables, les 16 triggers, la fonction + 17 procédures et le jeu de démonstration
-DB_USER=root DB_PASS='...' ./scripts/load_db.sh
+# 3. créer la base MySQL locale : 8 tables, 3 vues, 1 fonction, 17 procédures,
+#    16 triggers et le jeu de démonstration (12 produits, 3 clients)
+./run.sh --db               # = php scripts/db_init.php --switch  (bascule .env sur sql)
+#   autre base   : DB_NAME=minishop_test php scripts/db_init.php --yes
+#   sans démo    : php scripts/db_init.php --no-demo
+#   diagnostic   : php scripts/db_init.php --check
 
 # 4. vérifier que la base est saine (29 tests de règles de gestion, vues et frais de port)
-DB_USER=root DB_PASS='...' ./scripts/run_sql_tests.sh   # 29 tests, attendu : « Tests conformes : 29 / 29 »
+DB_USER=root DB_PASS='...' ./scripts/run_sql_tests.sh   # attendu : « Tests conformes : 29 / 29 »
 
 # 5. lancer (développement) — en production : DocumentRoot = public/
-./run.sh                    # tout-en-un : vérifie PHP, sème les données, démarre
-PORT=8080 ./run.sh          # autre port
+./run.sh                    # tout-en-un : vérifie PHP, prépare les données, démarre
+PORT=8080 ./run.sh          # autre port (prioritaire sur .env)
 ./run.sh --check            # diagnostic seul (ne démarre rien)
 #   http://localhost:8000/            (front-office)
 #   http://localhost:8000/catalogue
 #   http://localhost:8000/admin/connexion   (back-office)
+```
+
+### Configuration : `.env` (et rien d'autre)
+
+Un seul fichier de configuration, **local** et ignoré par Git ; le modèle `.env.example` est versionné.
+`run.sh` le crée au premier lancement.
+
+| Clé | Défaut | Rôle |
+|---|---|---|
+| `STORAGE_DRIVER` | `json` | `json` = moteur JSON natif (aucun service) · `sql` = MySQL/MariaDB via PDO |
+| `DB_HOST` / `DB_PORT` | `127.0.0.1` / `3306` | serveur MySQL |
+| `DB_NAME` | `minishop` | base utilisée (`[A-Za-z0-9_]+`) |
+| `DB_USER` / `DB_PASSWORD` | `root` / *(vide)* | identifiants MySQL |
+| `DATA_PATH` | *(vide)* | dossier des données du pilote JSON (`data/minishop` par défaut) |
+| `APP_ENV` / `APP_DEBUG` | `dev` / `1` | environnement et erreurs détaillées |
+| `PORT` / `HOST` | `8000` / `0.0.0.0` | serveur de développement de `run.sh` |
+
+Ordre de priorité : **variables d'environnement réelles** > `.env` > `app/Config/env.php` (ancien format,
+encore lu pour compatibilité) > valeurs par défaut du code. L'application ne lit ce fichier qu'à un seul
+endroit (`App\Config\Env`, via `App\Config\Database`) : aucun contrôleur ne connaît d'identifiant.
+
+```bash
+DB_NAME=minishop_test php scripts/db_init.php --yes    # base jetable pour les essais
+STORAGE_DRIVER=json ./run.sh                           # forcer le JSON sans toucher au .env
 ```
 
 Sans `run.sh` (équivalent manuel) : `php -S localhost:8000 -t public scripts/dev-router.php`.
@@ -148,7 +176,8 @@ Sorties : `captures/<page>/<largeur>.png`, `captures/index.html` (galerie), `cap
 app/Config, app/Controller, app/Model, app/Repository, app/Security, app/View
 docs/{01-cahier-des-charges, 02-document-tests-validation, 03-support-soutenance, 04-conception-bd-et-sql, 05-wbs-projet, 06-todolist}, docs/annexes, docs/diagrams/{src/*.puml, *.png}
 public/{index.php, .htaccess, css, js, img, gen_volumes.php, mesurer.php (dev-only, navigateur)}
-run.sh (lancement local en une commande — PHP, données, serveur + routeur)
+.env.example (configuration versionnée — copier vers .env)  ·  run.sh (lancement local en une commande)
+app/Config/Env.php + app/Tools/{DbInstaller,EnvFile,SqlLoader}.php (configuration et base MySQL)
 scripts/{load_db.sh, load_db.php, dev-router.php, run_sql_tests.sh, deploy.php, build-docs.sh, md_to_{html,pdf,docx,pptx}.py (rendus documentaires), screenshots.mjs (captures responsive), e2e.mjs + data_snapshot.mjs (E2E hermétique), gen_volumes.php (wrapper dev)}
 sql/{01_minishop_schema.sql, 02_minishop_procedures.sql, 03_minishop_triggers.sql, 04_minishop_demo.sql}
 tests/{sql/** (manifest, fixture, tNN_*.sql, rapport), security/controles.sh, charge/reserver.sh, perf/mesurer_sql.sh, perf/mesurer.php→public/mesurer.php, php/**}

@@ -2,37 +2,47 @@
 # =====================================================================
 # MiniShop — lancement local en une commande.
 #
-#   ./run.sh                 # http://localhost:8000 (port 8000)
-#   PORT=8080 ./run.sh       # autre port
+#   ./run.sh                 # http://localhost:8000 (pilote lu dans .env)
+#   ./run.sh --check         # diagnostic complet, ne démarre rien
+#   ./run.sh --db            # crée la base MySQL locale puis bascule .env sur sql
+#   ./run.sh --db-reset      # idem en supprimant la base existante (--yes)
+#   ./run.sh --db-check      # diagnostic de la base MySQL seulement
 #   ./run.sh --reset         # réinstalle le jeu de démonstration JSON
 #   ./run.sh --no-seed       # ne touche pas aux données
-#   ./run.sh --check         # diagnostic seul, ne lance pas le serveur
+#   PORT=8080 ./run.sh       # autre port (prioritaire sur .env)
 #
 # Ce que fait le script :
-#   1. vérifie PHP ≥ 8.2 et les extensions utiles (pdo_mysql si pilote SQL) ;
-#   2. crée app/Config/env.php depuis le modèle s'il est absent (jamais commité) ;
-#   3. sème data/minishop si le jeu de démonstration manque (pilote JSON) ;
-#   4. démarre le serveur intégré avec scripts/dev-router.php, qui reproduit
+#   1. vérifie PHP ≥ 8.2 et les extensions utiles (pdo_mysql si pilote sql) ;
+#   2. crée `.env` depuis `.env.example` s'il est absent (jamais commité) ;
+#   3. lit la configuration par App\Config\Database (donc `.env`) ;
+#   4. prépare les données : seed JSON, ou base MySQL via scripts/db_init.php ;
+#   5. démarre le serveur intégré avec scripts/dev-router.php, qui reproduit
 #      les règles du .htaccess (sinon /catalogue renvoie 404).
 #
-# Variables d'environnement : PORT, HOST (défaut 0.0.0.0), APP_ENV (dev|test).
+# Variables d'environnement prioritaires : PORT, HOST, APP_ENV,
+# STORAGE_DRIVER, DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD.
 # =====================================================================
 set -uo pipefail
 
 RACINE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$RACINE" || exit 1
 
-PORT="${PORT:-8000}"
-HOST="${HOST:-0.0.0.0}"
 ACTION="servir"
+FORCER=0
 
 for argument in "$@"; do
     case "$argument" in
-        --reset)   ACTION="reset" ;;
-        --no-seed) ACTION="servir-sans-seed" ;;
-        --check)   ACTION="diagnostic" ;;
-        -h|--help) sed -n '2,24p' "$0"; exit 0 ;;
-        *) echo "✘ option inconnue : $argument (--reset, --no-seed, --check, --help)" >&2; exit 2 ;;
+        --db)       ACTION="db" ;;
+        --db-reset) ACTION="db-reset" ;;
+        --db-check) ACTION="db-check" ;;
+        --reset)    ACTION="reset" ;;
+        --no-seed)  ACTION="servir-sans-seed" ;;
+        --check)    ACTION="diagnostic" ;;
+        --yes|-y)   FORCER=1 ;;
+        -h|--help)  sed -n '2,26p' "$0"; exit 0 ;;
+        *) echo "✘ option inconnue : $argument" >&2
+           echo "  options : --db --db-reset --db-check --check --reset --no-seed --yes --help" >&2
+           exit 2 ;;
     esac
 done
 
@@ -64,34 +74,71 @@ if [ "$MAJEURE" -lt 8 ] || { [ "$MAJEURE" -eq 8 ] && [ "$MINEURE" -lt 2 ]; }; th
 fi
 echo "   PHP        : $VERSION_PHP"
 
-# --- 2. extensions ---------------------------------------------------------
+# --- 2. configuration locale (.env) ---------------------------------------
+CREATION_ENV=0
+if [ ! -f .env ]; then
+    if [ -f .env.example ]; then
+        cp .env.example .env
+    else
+        : > .env
+    fi
+    CREATION_ENV=1
+    jaune "→ .env créé depuis .env.example (fichier local, ignoré par Git)."
+fi
+
+# Lecture unique de la configuration effective (défauts + .env + environnement).
+# Soutiré ligne à ligne (pas de `mapfile` : absent du bash 3.2 livré avec macOS).
+CONFIG="$(php -r '
+    require "app/bootstrap.php";
+    $config = \App\Config\Database::config();
+    echo (string) ($config["storage_driver"] ?? "json"), "\n";
+    echo (string) ($config["db_host"] ?? "127.0.0.1"), "\n";
+    echo (string) ($config["db_port"] ?? "3306"), "\n";
+    echo (string) ($config["db_name"] ?? "minishop"), "\n";
+    echo (string) ($config["db_user"] ?? "root"), "\n";
+    echo (string) \App\Config\Env::get("PORT", "8000"), "\n";
+    echo (string) \App\Config\Env::get("HOST", "0.0.0.0"), "\n";
+    $sources = \App\Config\Database::sources();
+    echo $sources === [] ? "(défauts)" : implode(", ", $sources), "\n";
+' 2>/dev/null)"
+
+ligne_config() {
+    printf '%s\n' "$CONFIG" | sed -n "${1}p"
+}
+
+PILOTE="$(ligne_config 1)"
+DB_HOTE="$(ligne_config 2)"
+DB_PORT="$(ligne_config 3)"
+DB_NOM="$(ligne_config 4)"
+DB_UTILISATEUR="$(ligne_config 5)"
+PORT_CONFIG="$(ligne_config 6)"
+HOST_CONFIG="$(ligne_config 7)"
+SOURCES="$(ligne_config 8)"
+
+PILOTE="${PILOTE:-json}"
+DB_HOTE="${DB_HOTE:-127.0.0.1}"
+DB_PORT="${DB_PORT:-3306}"
+DB_NOM="${DB_NOM:-minishop}"
+DB_UTILISATEUR="${DB_UTILISATEUR:-root}"
+PORT="${PORT:-${PORT_CONFIG:-8000}}"
+HOST="${HOST:-${HOST_CONFIG:-0.0.0.0}}"
+SOURCES="${SOURCES:-(défauts)}"
+
+echo "   config     : $SOURCES"
+echo "   pilote     : $PILOTE"
+if [ "$PILOTE" = "sql" ]; then
+    echo "   base       : $DB_NOM @ $DB_HOTE:$DB_PORT ($DB_UTILISATEUR)"
+fi
+echo "   adresse    : http://localhost:$PORT/"
+
+# --- 3. extensions ---------------------------------------------------------
 MANQUANTES=""
 for extension in mbstring json; do
     if ! php -r "exit(extension_loaded('$extension') ? 0 : 1);" 2>/dev/null; then
         MANQUANTES="$MANQUANTES $extension"
     fi
 done
-
-# --- 3. configuration locale ----------------------------------------------
-CREATION_ENV=0
-if [ ! -f app/Config/env.php ]; then
-    cp app/Config/env.example.php app/Config/env.php
-    CREATION_ENV=1
-    jaune "→ app/Config/env.php créé depuis le modèle (fichier ignoré par Git)."
-fi
-
-PILOTE="$(php -r '
-$fichier = "app/Config/env.php";
-$config = is_file($fichier) ? (array) include $fichier : [];
-echo isset($config["storage_driver"]) ? (string) $config["storage_driver"] : "json";
-' 2>/dev/null)"
-if [ -z "$PILOTE" ]; then
-    PILOTE="json"
-fi
-echo "   pilote     : $PILOTE"
-echo "   adresse    : http://localhost:$PORT/"
-
-if [ "$PILOTE" = "sql" ]; then
+if [ "$PILOTE" = "sql" ] || [ "$ACTION" = "db" ] || [ "$ACTION" = "db-reset" ] || [ "$ACTION" = "db-check" ]; then
     if ! php -r 'exit(extension_loaded("pdo_mysql") ? 0 : 1);' 2>/dev/null; then
         MANQUANTES="$MANQUANTES pdo_mysql"
     fi
@@ -103,9 +150,60 @@ if [ -n "$MANQUANTES" ]; then
     exit 1
 fi
 
-# --- 4. données ------------------------------------------------------------
+# --- 4. base MySQL ---------------------------------------------------------
+lancer_db_init() {
+    if [ "$FORCER" -eq 1 ]; then
+        php scripts/db_init.php "$1" --yes
+    else
+        php scripts/db_init.php "$1"
+    fi
+}
+
+case "$ACTION" in
+    db)
+        echo
+        lancer_db_init --switch
+        code=$?
+        if [ "$code" -ne 0 ]; then
+            rouge "✘ installation de la base interrompue (code $code)."
+            exit "$code"
+        fi
+        echo
+        vert "✓ base prête et .env basculé sur STORAGE_DRIVER=\"sql\"."
+        echo "   relancer : ./run.sh"
+        exit 0
+        ;;
+    db-reset)
+        echo
+        if [ "$FORCER" -ne 1 ]; then
+            echo "⚠ la base « $DB_NOM » sera supprimée puis recréée."
+            echo "  relancez avec : ./run.sh --db-reset --yes"
+            exit 3
+        fi
+        lancer_db_init --switch
+        code=$?
+        [ "$code" -ne 0 ] && exit "$code"
+        vert "✓ base recréée et .env basculé sur sql — relancer : ./run.sh"
+        exit 0
+        ;;
+    db-check)
+        echo
+        php scripts/db_init.php --check
+        exit $?
+        ;;
+esac
+
+# --- 5. données ------------------------------------------------------------
 if [ "$PILOTE" = "sql" ]; then
-    echo "   données    : MySQL (vérifier la base : ./scripts/load_db.sh puis ./scripts/run_sql_tests.sh)"
+    if php scripts/db_init.php --check >/dev/null 2>&1; then
+        echo "   données    : MySQL ($DB_NOM @ $DB_HOTE:$DB_PORT)"
+    else
+        jaune "→ base MySQL absente ou incomplète."
+        echo "  création : ./run.sh --db"
+        if [ "$ACTION" = "diagnostic" ]; then
+            php scripts/db_init.php --check
+        fi
+    fi
 else
     if [ "$ACTION" = "reset" ]; then
         jaune "→ réinstallation du jeu de démonstration…"
@@ -118,17 +216,23 @@ else
     fi
 fi
 
-# --- 5. diagnostic seul ----------------------------------------------------
+# --- 6. diagnostic seul ----------------------------------------------------
 if [ "$ACTION" = "diagnostic" ]; then
     echo
+    if [ "$PILOTE" = "sql" ]; then
+        php scripts/db_init.php --check || true
+        echo
+    fi
     vert "✓ environnement prêt — lancez : ./run.sh"
-    echo "  ouvrir   : http://localhost:$PORT/  ·  /admin  ·  /catalogue"
+    echo "  ouvrir   : http://localhost:$PORT/  ·  /catalogue  ·  /admin/connexion"
     echo "  comptes  : alice@example.com / Demo2026!   ·   admin@minishop.fr / Admin2026!"
-    [ "$CREATION_ENV" -eq 1 ] && echo "  pensez à relire app/Config/env.php (db_user / db_pass) si vous passez en MySQL."
+    if [ "$CREATION_ENV" -eq 1 ]; then
+        echo "  .env créé : relisez-le si vous passez sur MySQL (DB_USER / DB_PASSWORD)."
+    fi
     exit 0
 fi
 
-# --- 6. serveur ------------------------------------------------------------
+# --- 7. serveur ------------------------------------------------------------
 echo
 vert "✓ serveur : http://localhost:$PORT/"
 echo "   front    : http://localhost:$PORT/"

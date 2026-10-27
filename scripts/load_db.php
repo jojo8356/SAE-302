@@ -3,94 +3,120 @@
 declare(strict_types=1);
 
 /**
- * MiniShop — chargement de la base MySQL/MariaDB (DDL + routines + triggers).
+ * MiniShop — chargement de la base MySQL/MariaDB (enveloppe historique).
  *
- * Remplace un enchaînement de `mysql < sql/0x.sql` par du PHP/PDO : la même
- * commande fonctionne sous Linux, macOS, Windows et dans les conteneurs de CI
- * où le client `mysql` n'est pas installé. L'analyse des `DELIMITER` est faite
- * par App\Tools\SqlLoader.
+ * Conservé pour les scripts et la documentation existants
+ * (`./scripts/load_db.sh`, CI, campagnes de mesure). Il délègue tout à
+ * App\Tools\DbInstaller : même comportement que `php scripts/db_init.php`,
+ * mais piloté par variables d'environnement seulement (pratique en CI).
  *
  * Usage :
  *   php scripts/load_db.php                       # base « minishop » + démo
  *   DB=minishop_test php scripts/load_db.php      # base de test
- *   SKIP_DEMO=1 php scripts/load_db.php           # sans sql/04 (jeu de démo)
+ *   SKIP_DEMO=1 php scripts/load_db.php           # sans sql/04 (démo)
+ *   KEEP=1 php scripts/load_db.php                # ne recrée pas si déjà valide
  *
- * Variables : DB (minishop), DB_HOST (127.0.0.1), DB_PORT (3306),
- *             DB_USER (root), DB_PASS (''), SKIP_DEMO (0).
+ * Variables : DB / DB_NAME, DB_HOST, DB_PORT, DB_USER, DB_PASS,
+ *             SKIP_DEMO (0|1), KEEP (0|1).
  *
- * Code retour : 0 succès, 1 échec de connexion ou de chargement.
+ * Code retour : 0 succès, 1 échec de connexion ou de chargement, 2 nom invalide.
  */
 
 require_once dirname(__DIR__) . '/app/bootstrap.php';
 
-use App\Tools\SqlLoader;
+use App\Tools\DbInstaller;
 
-$base = (string) (getenv('DB') ?: 'minishop');
-if (preg_match('/^[A-Za-z0-9_]+$/', $base) !== 1) {
-    fwrite(STDERR, "✘ nom de base invalide : $base\n");
+/**
+ * Écrit sur la sortie d'erreur.
+ *
+ * La constante STDERR n'existe que sous le SAPI CLI : le runtime PHP-WASM
+ * utilisé pour les tests de la sandbox ne la définit pas. On retombe alors sur
+ * la sortie standard — le message reste affiché, seul le canal change.
+ */
+function erreur(string $texte): void
+{
+    if (defined('STDERR')) {
+        erreur($texte);
+
+        return;
+    }
+
+    echo $texte;
+}
+
+$installateur = DbInstaller::depuisVariables();
+$sansDemo = (getenv('SKIP_DEMO') ?: '0') === '1';
+$conserver = (getenv('KEEP') ?: '0') === '1';
+
+if (!$installateur->baseValide()) {
+    erreur('✘ nom de base invalide : ' . $installateur->base() . "\n");
     exit(2);
 }
 
-$hote = (string) (getenv('DB_HOST') ?: '127.0.0.1');
-$port = (string) (getenv('DB_PORT') ?: '3306');
-$utilisateur = (string) (getenv('DB_USER') ?: 'root');
-$motDePasse = (string) (getenv('DB_PASS') ?: '');
-$sansDemo = (getenv('SKIP_DEMO') ?: '0') === '1';
-
-$options = [
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::ATTR_EMULATE_PREPARES => false,
-];
+echo '== MiniShop : chargement de la base « ' . $installateur->base() . " » sur "
+    . $installateur->hote() . ':' . $installateur->port() . " ==\n";
 
 try {
-    $serveur = new PDO(
-        sprintf('mysql:host=%s;port=%s;charset=utf8mb4', $hote, $port),
-        $utilisateur,
-        $motDePasse,
-        $options,
-    );
-    $serveur->exec('CREATE DATABASE IF NOT EXISTS `' . $base . '` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci');
-} catch (PDOException $erreur) {
-    fwrite(STDERR, "✘ connexion MySQL impossible ($hote:$port) : " . $erreur->getMessage() . "\n");
-    fwrite(STDERR, "  Vérifiez que le service tourne et que DB_USER/DB_PASS sont corrects.\n");
-    exit(1);
-}
-
-try {
-    $pdo = new PDO(
-        sprintf('mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4', $hote, $port, $base),
-        $utilisateur,
-        $motDePasse,
-        $options,
-    );
-
-    $fichiers = [
-        dirname(__DIR__) . '/sql/01_minishop_schema.sql',
-        dirname(__DIR__) . '/sql/02_minishop_procedures.sql',
-        dirname(__DIR__) . '/sql/03_minishop_triggers.sql',
-    ];
-    if (!$sansDemo) {
-        $fichiers[] = dirname(__DIR__) . '/sql/04_minishop_demo.sql';
+    if ($conserver && $installateur->baseExiste()) {
+        $controles = $installateur->verifier($installateur->inventaire(), !$sansDemo);
+        $incomplet = false;
+        foreach ($controles as $controle) {
+            if (!$controle['ok']) {
+                $incomplet = true;
+            }
+        }
+        if (!$incomplet) {
+            echo "✔ base déjà conforme (KEEP=1) — rien à faire.\n";
+            exit(0);
+        }
+        erreur("→ base incomplète : reconstruction (KEEP=1 ignoré).\n");
     }
 
-    $chargeur = new SqlLoader($pdo);
-    foreach ($fichiers as $fichier) {
-        $nombre = $chargeur->chargerFichier($fichier, true);
-        printf("   %-45s %3d instruction(s)\n", basename($fichier), $nombre);
+    if ($installateur->baseExiste()) {
+        $installateur->supprimerBase();
     }
+    $installateur->creerBase();
 
-    $objets = $chargeur->compteObjets();
+    $comptes = $installateur->charger(
+        DbInstaller::scripts(!$sansDemo),
+        static function (string $fichier, int $nombre): void {
+            printf("   %-32s %3d instruction(s)\n", $fichier, $nombre);
+        },
+    );
+
+    $inventaire = $installateur->inventaire();
     printf(
-        "\n✔ base « %s » chargée : %d tables, %d procédures, %d fonction(s), %d déclencheurs, %d vues\n",
-        $base,
-        $objets['tables'],
-        $objets['procedures'],
-        $objets['fonctions'],
-        $objets['triggers'],
-        $objets['vues'],
+        "   tables %d · vues %d · procédures %d · fonctions %d · triggers %d\n",
+        $inventaire['tables'],
+        $inventaire['vues'],
+        $inventaire['procedures'],
+        $inventaire['fonctions'],
+        $inventaire['triggers'],
     );
+    printf(
+        "   produits %d · clients %d · commandes %d\n",
+        $inventaire['produits'],
+        $inventaire['clients'],
+        $inventaire['commandes'],
+    );
+
+    $conformes = true;
+    foreach ($installateur->verifier($inventaire, !$sansDemo) as $controle) {
+        if (!$controle['ok']) {
+            $conformes = false;
+            erreur('   ❌ ' . $controle['controle'] . ' — ' . $controle['detail'] . "\n");
+        }
+    }
+
+    if (!$conformes) {
+        erreur("✘ base chargée mais incomplète : voir les contrôles ci-dessus.\n");
+        exit(1);
+    }
+
+    $total = array_sum($comptes);
+    echo '✔ base « ' . $installateur->base() . " » prête ($total instructions exécutées).\n";
+    exit(0);
 } catch (Throwable $erreur) {
-    fwrite(STDERR, "✘ chargement échoué : " . $erreur->getMessage() . "\n");
+    erreur('✘ ' . $erreur->getMessage() . "\n");
     exit(1);
 }

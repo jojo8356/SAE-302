@@ -94,6 +94,23 @@ export async function runScript(php, relativePath) {
   return { text: result.text ?? '', errors, exitCode: result.exitCode ?? 0 };
 }
 
+/**
+ * Exécute un script PHP avec des arguments de ligne de commande.
+ *
+ * Le runtime php-wasm n'expose pas `$argv` en mode « scriptPath » : on amorce
+ * un fragment PHP qui place les arguments dans $_SERVER puis charge le script.
+ * Les scripts concernés lisent $_SERVER['argv'] (voir scripts/db_init.php).
+ */
+export async function runScriptAvecArguments(php, relativePath, args = []) {
+  // argv[0] = script (chemin dans le runtime), argv[1…] = arguments bruts
+  const chemins = [`${WASM_ROOT}/${relativePath}`, ...args];
+  const amorce = `<?php $_SERVER['argv'] = ${JSON.stringify(chemins)}; `
+    + `$_SERVER['argc'] = ${chemins.length}; require ${JSON.stringify(`${WASM_ROOT}/${relativePath}`)};`;
+  const result = await php.run({ code: amorce });
+  const errors = result.errors ?? '';
+  return { text: result.text ?? '', errors, exitCode: result.exitCode ?? 0 };
+}
+
 /** Vrai si le chemin hôte existe (utilitaire). */
 export function hostExists(p) {
   return existsSync(join(REPO_ROOT, p));

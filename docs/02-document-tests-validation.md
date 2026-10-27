@@ -56,7 +56,7 @@ Commande unique : `./scripts/run_sql_tests.sh` (manifeste `tests/sql/manifest.tx
 
 | ID | Titre | Préconditions | Étapes | Résultats attendus | Règles / ENF | Statut |
 |---|---|---|---|---|---|---|
-| F-00 | Installation de bout en bout | base vierge, `git clone`, `env.php` copié | exécuter `scripts/load_db.sh` puis `./run.sh` (ou `php -S 127.0.0.1:8000 -t public scripts/dev-router.php`) | sortie : tables 8, vues 3, fonctions 1, procédures 17, triggers ≥ 5, 12 produits, 3 clients ; page d'accueil en HTTP 200 ; le tout en ≤ 15 min | ENF-13 | prêt à rejouer |
+| F-00 | Installation de bout en bout | base vierge, `git clone`, `env.php` copié | copier `.env.example` vers `.env`, exécuter `./run.sh --db` (ou `php scripts/db_init.php --switch`) puis `./run.sh` (équivalent manuel : `php -S 127.0.0.1:8000 -t public scripts/dev-router.php`) | sortie : tables 8, vues 3, fonctions 1, procédures 17, triggers ≥ 5, 12 produits, 3 clients ; page d'accueil en HTTP 200 ; le tout en ≤ 15 min | ENF-13 | prêt à rejouer |
 | F-01 | Liste des catégories | seed chargé | GET /categories | 4 catégories avec leur nombre de produits visibles (Objets connectés = 1 visible, Audio = 3) | RB-08, RB-19 | conçu |
 | F-02 | Recherche simple | seed chargé | GET /recherche?q=casque | 1 résultat : « Casque sans fil Aura » ; le mot-clé est conservé dans l'URL ; aucune trace de SQL dans la page | RB-19, SEC-01 | conçu |
 | F-03 | Filtres cumulés + tri | seed chargé | GET /catalogue?cat=2&prix_max=160&stock=1&tri=prix_asc puis copier l'URL en navigation privée | 3 produits triés 70.80 / 118.80 / 154.80 € ; l'URL collée reproduit exactement la même page | RB-19, ENF-04/05 | conçu |

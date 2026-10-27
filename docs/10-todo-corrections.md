@@ -17,6 +17,8 @@
 - [x] `scripts/gen_volumes.sh` — enveloppe de `scripts/gen_volumes_cli.php`.
 - [x] `scripts/gen_volumes_cli.php` — `--load` n'utilise plus de sous-processus (contrôle 9) : chargement par `App\Tools\SqlLoader`.
 - [x] `app/Tools/SqlLoader.php` — découpage SQL (`DELIMITER`, chaînes, commentaires) + comptage des objets créés.
+- [x] **Configuration par `.env`** — `App\Config\Env` (analyse sans `eval`, priorités documentées), `.env.example` versionné, `App\Tools\EnvFile` (édition ligne à ligne, commentaires conservés), `App\Config\Database` qui fusionne défauts → `env.php` → `.env` → environnement. 24 vérifications dédiées dans `tests/php/unit_tests.php` §13.
+- [x] **Base MySQL locale en une commande** — `php scripts/db_init.php` (`--check`, `--keep`, `--no-demo`, `--yes`, `--switch`) et `./run.sh --db` : création de la base, chargement `sql/01→04`, vérification réelle des objets (8 tables, 3 vues, 17 procédures, 1 fonction, triggers, utf8mb4) et bascule de `.env` sur `sql`. `scripts/load_db.php` délègue au même `App\Tools\DbInstaller` (plus de logique dupliquée) et accepte `KEEP=1`.
 - [x] `run.sh` — lancement local en une commande (PHP ≥ 8.2, extensions, `env.php`, seed, serveur + `scripts/dev-router.php`). Sans le routeur, `php -S -t public` renvoyait **404 sur `/catalogue`** (le serveur intégré ignore `.htaccess`) : corrigé et vérifié sur 10 cas (`/`, `/catalogue`, assets, `.env`, `../`, `.md`, `.sql`).
 - [x] `scripts/build-docs.sh` — présent : 20 sources Markdown × 3 formats + diaporama, **58 rendus** produits, copie versionnée dans `livrables/` (`--only`, `--out`, `--no-livrables`).
 - [x] `docs/diagrams/render.sh` — présent (non versionné jusqu'ici : voir §8).

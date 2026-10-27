@@ -23,6 +23,8 @@ require dirname(__DIR__, 2) . '/app/bootstrap.php';
 // « headers already sent » — purement cosmétique pour un harnais CLI.
 ob_start();
 
+use App\Config\Database;
+use App\Config\Env;
 use App\Model\Data\BusinessError;
 use App\Model\Data\Filter;
 use App\Model\Data\JsonStore;
@@ -35,6 +37,7 @@ use App\Model\PanierSession;
 use App\Repository\ParametreRepository;
 use App\Repository\ProduitRepository;
 use App\Security\Csrf;
+use App\Tools\EnvFile;
 
 // en CLI, pas d'en-têtes de cookie de session (tests silencieux)
 if (PHP_SAPI !== 'wasm' && !headers_sent()) {
@@ -345,6 +348,83 @@ echo "\n12. Journal d'audit (EF-GEN-04)\n";
     $check('le journal porte l\'opération, la table et les états', ($derniere['op'] ?? '') === 'update'
         && ($derniere['table'] ?? '') === 'produit'
         && ($derniere['old']['stock'] ?? null) === 18 && ($derniere['new']['stock'] ?? null) === 17);
+}
+
+// ============================================================ 13. configuration .env
+echo "\n13. Configuration .env (App\\Config\\Env, EnvFile, Database)\n";
+{
+    // Fichier de travail : jamais celui du développeur (MINISHOP_ENV_FILE).
+    $dossier = sys_get_temp_dir() . '/minishop-env-' . bin2hex(random_bytes(4));
+    mkdir($dossier, 0775, true);
+    $fichier = $dossier . '/.env';
+    $modele = "# commentaire ignoré\n"
+        . "\n"
+        . "STORAGE_DRIVER=json\n"
+        . "DB_NAME=\"minishop locale\"      # commentaire de fin de ligne\n"
+        . "export DB_USER='racine'\n"
+        . "  DB_PORT = 3307  \n"
+        . "APP_DEBUG=oui\n"
+        . "1_INVALIDE=non\n"
+        . "ligne sans egal\n";
+    file_put_contents($fichier, $modele);
+    putenv(Env::VARIABLE_FICHIER . '=' . $fichier);
+    Env::reinitialiser();
+
+    $valeurs = Env::toutes();
+    $check('clé simple lue', ($valeurs['STORAGE_DRIVER'] ?? null) === 'json');
+    $check('guillemets et commentaire de fin retirés', ($valeurs['DB_NAME'] ?? null) === 'minishop locale');
+    $check('préfixe « export » toléré', ($valeurs['DB_USER'] ?? null) === 'racine');
+    $check('espaces autour de = et valeur ignorés', ($valeurs['DB_PORT'] ?? null) === '3307');
+    $check('commentaire et ligne vide ignorés', !array_key_exists('#', $valeurs) && count($valeurs) === 5);
+    $check('clé invalide rejetée', !array_key_exists('1_INVALIDE', $valeurs));
+    $check('ligne sans « = » ignorée', !in_array('ligne sans egal', $valeurs, true));
+
+    $check('booléen : « oui » → true', Env::booleen('APP_DEBUG', false) === true);
+    $check('booléen : clé absente → défaut', Env::booleen('APP_DEBUG_ABSENT', true) === true);
+    $check('entier : valeur numérique', Env::entier('DB_PORT', 3306) === 3307);
+    $check('entier : valeur non numérique → défaut', Env::entier('DB_NAME', 3306) === 3306);
+    $check('valeur absente → défaut fourni', Env::get('INCONNUE', 'repli') === 'repli');
+
+    // priorité : variable d'environnement réelle > fichier
+    putenv('DB_NAME=prioritaire');
+    Env::reinitialiser();
+    $check('l’environnement gagne sur le fichier', Env::get('DB_NAME') === 'prioritaire');
+    putenv('DB_NAME');
+    Env::reinitialiser();
+
+    // Database::config() reflète le fichier (et convertit les types)
+    Database::reset();
+    $config = Database::config();
+    $check('Database lit le .env', ($config['db_name'] ?? null) === 'minishop locale');
+    $check('db_port converti en entier', ($config['db_port'] ?? null) === 3307);
+    $check('debug converti en booléen', ($config['debug'] ?? null) === true);
+    $check('pilote lu (« json »)', ($config['storage_driver'] ?? null) === 'json');
+
+    // EnvFile : écriture sans perdre les commentaires
+    $modifie = EnvFile::definir('STORAGE_DRIVER', 'sql');
+    $contenu = (string) file_get_contents($fichier);
+    $check('EnvFile remplace une clé existante', $modifie && str_contains($contenu, 'STORAGE_DRIVER=sql'));
+    $check('EnvFile conserve les commentaires', str_contains($contenu, '# commentaire ignoré'));
+    $check('EnvFile conserve les autres clés', str_contains($contenu, "DB_USER='racine'"));
+    $ajoute = EnvFile::definir('NOUVELLE_CLE', 'valeur avec espaces');
+    $contenu = (string) file_get_contents($fichier);
+    $check('EnvFile ajoute une clé absente', $ajoute && str_contains($contenu, 'NOUVELLE_CLE="valeur avec espaces"'));
+    $check('EnvFile : valeur relue sans guillemets', EnvFile::valeur('NOUVELLE_CLE') === 'valeur avec espaces');
+    $check('EnvFile n’écrit rien si la valeur est identique', EnvFile::definir('NOUVELLE_CLE', 'valeur avec espaces') === false);
+
+    // nettoyage : on rend l'environnement au reste de la suite
+    putenv(Env::VARIABLE_FICHIER);
+    Env::reinitialiser();
+    Database::reset();
+    $restes = glob($dossier . '/*');
+    if ($restes === false) {
+        $restes = [];
+    }
+    foreach ($restes as $reste) {
+        @unlink($reste);
+    }
+    @rmdir($dossier);
+    $check('environnement rendu (config par défaut)', Database::driver() === 'json');
 }
 
 // ============================================================ synthèse
