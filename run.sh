@@ -5,6 +5,8 @@
 #   ./run.sh                 # http://localhost:8000 (pilote lu dans .env)
 #   ./run.sh --check         # diagnostic complet, ne démarre rien
 #   ./run.sh --db            # crée la base MySQL locale puis bascule .env sur sql
+#                            # (crée aussi un compte applicatif via sudo si « root »
+#                            #  n'accepte pas le TCP : greffon unix_socket de Debian)
 #   ./run.sh --db-reset      # idem en supprimant la base existante (--yes)
 #   ./run.sh --db-check      # diagnostic de la base MySQL seulement
 #   ./run.sh --reset         # réinstalle le jeu de démonstration JSON
@@ -20,7 +22,7 @@
 #      les règles du .htaccess (sinon /catalogue renvoie 404).
 #
 # Variables d'environnement prioritaires : PORT, HOST, APP_ENV,
-# STORAGE_DRIVER, DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD.
+# STORAGE_DRIVER, DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD, DB_SOCKET.
 # =====================================================================
 set -uo pipefail
 
@@ -160,17 +162,19 @@ fi
 
 # --- 4. base MySQL ---------------------------------------------------------
 lancer_db_init() {
+    # --compte : si « root » refuse le TCP (greffon unix_socket de Debian),
+    # db_init.php crée un compte applicatif dédié via « sudo mariadb ».
     if [ "$FORCER" -eq 1 ]; then
-        php scripts/db_init.php "$1" --yes
+        php scripts/db_init.php "$@" --yes
     else
-        php scripts/db_init.php "$1"
+        php scripts/db_init.php "$@"
     fi
 }
 
 case "$ACTION" in
     db)
         echo
-        lancer_db_init --switch
+        lancer_db_init --switch --compte
         code=$?
         if [ "$code" -ne 0 ]; then
             rouge "✘ installation de la base interrompue (code $code)."
@@ -188,7 +192,7 @@ case "$ACTION" in
             echo "  relancez avec : ./run.sh --db-reset --yes"
             exit 3
         fi
-        lancer_db_init --switch
+        lancer_db_init --switch --compte
         code=$?
         [ "$code" -ne 0 ] && exit "$code"
         vert "✓ base recréée et .env basculé sur sql — relancer : ./run.sh"

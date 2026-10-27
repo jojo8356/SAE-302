@@ -39,6 +39,7 @@ use App\Repository\ProduitRepository;
 use App\Security\Csrf;
 use App\Config\DbConnexion;
 use App\Tools\DbInstaller;
+use App\Tools\DbProvision;
 use App\Tools\EnvFile;
 
 // en CLI, pas d'en-têtes de cookie de session (tests silencieux)
@@ -499,7 +500,9 @@ echo "\n15. DSN et repli socket Unix (App\\Config\\DbConnexion)\n";
     $erreur->errorInfo = ['HY000', 1698, "Access denied for user 'root'@'localhost'"];
     $texte = DbConnexion::expliquer($erreur, '127.0.0.1', '3306');
     $check('erreur 1698 expliquée (socket Unix)', str_contains($texte, 'socket Unix'));
-    $check('erreur 1698 : DB_SOCKET proposée', str_contains($texte, 'DB_SOCKET'));
+    $check('erreur 1698 : création du compte proposée', str_contains($texte, '--compte'));
+    $check('erreur 1698 : utilisateur du système nommé', str_contains($texte, 'utilisateur du SYSTÈME'));
+    $check('erreur 1698 : alternative « sudo php » proposée', str_contains($texte, 'sudo php scripts/db_init.php'));
 
     $refus = new PDOException('SQLSTATE[HY000] [1045] Access denied');
     $refus->errorInfo = ['HY000', 1045, 'Access denied'];
@@ -517,6 +520,58 @@ echo "\n15. DSN et repli socket Unix (App\\Config\\DbConnexion)\n";
 
     $config = Database::config();
     $check('clé db_socket exposée par la configuration', array_key_exists('db_socket', $config));
+}
+
+// ============================================================ 16. compte applicatif
+echo "\n16. Création du compte MySQL applicatif (App\\Tools\\DbProvision)\n";
+{
+    // root ne doit jamais être renforcé : on bascule sur le compte standard.
+    putenv('DB_USER=root');
+    putenv('MINISHOP_ENV_FILE=/tmp/inexistant-minishop.env');
+    Env::reinitialiser();
+    Database::reset();
+    $provision = DbProvision::depuisConfiguration();
+    $check('DB_USER=root → compte applicatif « minishop »', $provision->utilisateur() === 'minishop');
+    putenv(Env::VARIABLE_FICHIER);
+    putenv('DB_USER');
+    Env::reinitialiser();
+    Database::reset();
+
+    $provision = new DbProvision('minishop', 'minishop');
+    $check('nom de base et d’utilisateur validés', $provision->valide());
+    $check('injection dans le nom de base refusée', !(new DbProvision('minishop; DROP TABLE x', 'minishop'))->valide());
+    $check('injection dans l’utilisateur refusée', !(new DbProvision('minishop', "min'@'%"))->valide());
+    $check('nom trop long refusé', !(new DbProvision(str_repeat('a', 33), 'minishop'))->valide());
+    $check('base vide refusée', !(new DbProvision('', 'minishop'))->valide());
+
+    $motDePasse = DbProvision::motDePasse();
+    $check('mot de passe hexadécimal de 32 caractères', preg_match('/^[0-9a-f]{32}$/', $motDePasse) === 1);
+    $check('mot de passe aléatoire (deux tirages diffèrent)', DbProvision::motDePasse() !== $motDePasse);
+
+    $instructions = $provision->instructions($motDePasse);
+    $texte = implode("\n", $instructions);
+    $check('base créée en utf8mb4_unicode_ci', str_contains($texte, 'CREATE DATABASE IF NOT EXISTS `minishop`')
+        && str_contains($texte, 'utf8mb4_unicode_ci'));
+    $check('deux hôtes couverts (localhost + 127.0.0.1)',
+        str_contains($texte, "'minishop'@'localhost'") && str_contains($texte, "'minishop'@'127.0.0.1'"));
+    $check('mot de passe présent pour chaque hôte',
+        substr_count($texte, 'IDENTIFIED BY') === 4, (string) substr_count($texte, 'IDENTIFIED BY'));
+    $check('ALTER USER réaligne un compte préexistant',
+        substr_count($texte, 'ALTER USER') === 2);
+    $check('droits limités à la base du projet (jamais *.*)',
+        !str_contains($texte, '*.*') && substr_count($texte, 'GRANT ALL PRIVILEGES ON `minishop`.*') === 2);
+    $check('privilèges rechargés', str_contains($texte, 'FLUSH PRIVILEGES'));
+    $check('aucune instruction sans point-virgule dans script()', substr_count($provision->script($motDePasse), ";\n") === count($instructions));
+    $check('script() copiable en une commande', str_starts_with($provision->script($motDePasse), 'CREATE DATABASE'));
+
+    // Sans client SQL (sandbox), l'échec doit être explicite, jamais silencieux.
+    $resultat = $provision->creerCompte($motDePasse);
+    $check('création sans client SQL : échec explicite', $resultat['ok'] === false && $resultat['methode'] !== '');
+    $check('création refusée si les noms sont invalides',
+        (new DbProvision('base interdite', 'minishop'))->creerCompte('x')['ok'] === false);
+
+    $check('client SQL détecté ou absent, jamais une exception',
+        DbProvision::clientSql() === null || in_array(DbProvision::clientSql(), ['mariadb', 'mysql'], true));
 }
 
 // ============================================================ synthèse

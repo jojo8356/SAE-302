@@ -223,17 +223,26 @@ final class DbConnexion
         }
 
         if ($code === 1698) {
+            // unix_socket compare l'utilisateur du SYSTÈME, pas un mot de passe :
+            // aucune socket, aussi bien détectée soit-elle, ne débloque le cas
+            // si PHP ne tourne pas sous le même utilisateur que le compte.
+            $utilisateur = self::utilisateurCourant();
+            $systeme = self::utilisateurSysteme();
             $socket = self::socketLocale();
             $ligneSocket = '';
             if ($socket !== null) {
                 $ligneSocket = '    socket détectée : ' . $socket . "\n";
             }
 
-            return "Le compte « " . self::utilisateurCourant() . " » n'accepte que l'authentification par socket Unix\n"
-                . "    (comportement par défaut de root sous Debian/Ubuntu) et la socket locale est introuvable.\n"
+            return "Le compte « " . $utilisateur . " » n'accepte que l'authentification par socket Unix "
+                . "(greffon unix_socket).\n"
+                . "    Ce greffon compare l'utilisateur du SYSTÈME : ici PHP tourne sous « "
+                . $systeme . " », le compte est « " . $utilisateur . " » → refus, quel que soit le mot de passe.\n"
                 . $ligneSocket
-                . '    Remèdes : soit renseigner DB_SOCKET=/run/mysqld/mysqld.sock dans .env, '
-                . 'soit créer un compte applicatif (README, « Base de données locale »).' . "\n"
+                . "    Remèdes :\n"
+                . "      1. créer le compte applicatif automatiquement : php scripts/db_init.php --compte --yes\n"
+                . "         (ou ./run.sh --db, qui le fait tout seul)\n"
+                . '      2. ou exécuter la commande en root : sudo php scripts/db_init.php' . "\n"
                 . '    Détail : ' . $message;
         }
 
@@ -259,6 +268,33 @@ final class DbConnexion
         }
 
         return "Connexion MySQL impossible sur $hote:$port : " . $message;
+    }
+
+    /** Utilisateur du SYSTÈME sous lequel tourne PHP (comparé par unix_socket). */
+    public static function utilisateurSysteme(): string
+    {
+        if (function_exists('posix_geteuid') && function_exists('posix_getpwuid')) {
+            $identite = posix_getpwuid(posix_geteuid());
+            if (is_array($identite) && isset($identite['name']) && is_string($identite['name'])) {
+                return $identite['name'];
+            }
+        }
+
+        // `getenv('USER')` évite un fork : sous PHP-WASM (sandbox), exec() ne
+        // peut pas créer de processus et émet un avertissement.
+        $variable = getenv('USER');
+        if (is_string($variable) && $variable !== '') {
+            return $variable;
+        }
+
+        $lignes = [];
+        $code = 1;
+        @exec('id -un 2>/dev/null', $lignes, $code);
+        if ($code === 0 && $lignes !== []) {
+            return trim($lignes[0]);
+        }
+
+        return get_current_user();
     }
 
     /** Utilisateur configuré, pour les messages d'erreur. */

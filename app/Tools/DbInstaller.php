@@ -52,6 +52,9 @@ final class DbInstaller
     /** Dernier message d'erreur de connexion (diagnostic détaillé). */
     private string $derniereErreur = '';
 
+    /** Code d'erreur MySQL du dernier échec (1698 = unix_socket, 2002 = service arrêté). */
+    private int $dernierCode = 0;
+
     public function __construct(
         private readonly string $hote,
         private readonly string $port,
@@ -175,6 +178,7 @@ final class DbInstaller
             return DbConnexion::ouvrir($base, $this->configuration());
         } catch (PDOException $erreur) {
             $this->derniereErreur = self::expliquer($erreur, $this->hote, $this->port);
+            $this->dernierCode = (int) ($erreur->errorInfo[1] ?? 0);
             throw new RuntimeException($this->derniereErreur, 0, $erreur);
         }
     }
@@ -196,6 +200,18 @@ final class DbInstaller
     public function socketUtilisee(): ?string
     {
         return DbConnexion::socketUtilisee();
+    }
+
+    /** Code MySQL du dernier échec de connexion (`0` si aucun). */
+    public function codeDerniereErreur(): int
+    {
+        return $this->dernierCode;
+    }
+
+    /** Le dernier échec est-il un refus d'identifiants (root en socket Unix) ? */
+    public function refusIdentifiants(): bool
+    {
+        return in_array($this->dernierCode, [1045, 1698], true);
     }
 
     /** Dernière erreur de connexion lisible (`''` si aucune). */

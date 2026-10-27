@@ -85,16 +85,27 @@ php scripts/db_init.php --switch     # passe STORAGE_DRIVER=sql dans .env
 ./run.sh --db                        # les trois d'un coup, puis démarre le serveur
 ```
 
-**`root` sous Debian/Ubuntu n'accepte pas le TCP.** Le paquet `mariadb-server` crée
-`root@localhost` avec le greffon `unix_socket` : PHP, qui se connecte sur `127.0.0.1:3306`,
-reçoit `SQLSTATE[HY000] [1698] Access denied`. Depuis cette version, `App\Config\DbConnexion`
-détecte ce code précis et **réessaie automatiquement par la socket Unix** (`/run/mysqld/mysqld.sock`
-et chemins équivalents) : `./run.sh --db` fonctionne donc sans rien configurer. Si la socket est
-ailleurs, une seule ligne suffit :
+**`root` sous Debian/Ubuntu n'accepte pas le TCP.** Le paquet `mariadb-server` crée `root@localhost`
+avec le greffon `unix_socket` : ce greffon ne compare pas un mot de passe, il compare **l'utilisateur du
+système** du processus qui se connecte. `sudo mariadb` passe (le shell est root), `php` non (il tourne sous
+votre compte) — et aucune option côté PHP ne peut contourner cette décision du SGBD, socket Unix comprise.
 
-```ini
-DB_SOCKET=/run/mysqld/mysqld.sock
+`./run.sh --db` règle donc le problème **tout seul**, avec l'option `--compte` :
+
+1. un `sudo mariadb` ponctuel (mot de passe sudo demandé une fois) ;
+2. création de `minishop@localhost` et `minishop@127.0.0.1` avec un mot de passe aléatoire hexadécimal ;
+3. droits **limités à `minishop.*`** (jamais `*.*`) ;
+4. écriture de `DB_USER` / `DB_PASSWORD` dans `.env` (fichier local, ignoré par Git).
+
+```bash
+php scripts/db_init.php --compte --yes    # équivalent manuel, sans run.sh
+php scripts/db_init.php --check           # vérifier ensuite (connexion + inventaire)
 ```
+
+Si `sudo` est indisponible, la commande affiche le SQL exact à exécuter à la main, mot de passe compris :
+rien n'est caché, rien n'est laissé à moitié fait.
+
+`DB_SOCKET` reste utile dans un seul cas : une socket sur un chemin non standard, ou PHP lancé en root.
 
 Pour travailler avec un compte dédié (recommandé dès que la base n'est plus jetable) :
 
@@ -178,10 +189,10 @@ npm run test:all        # ou : node scripts/run-all-tests.mjs
 
 | Suite | Fichier | Couverture | Verdict |
 |---|---|---|---|
-| Linter strict types | `scripts/strict_types_lint.php` | règle `declare_strict_types` de php-cs-fixer + types natifs « PHPStan level 9 » (params, retours, propriétés) + **règle maison : opérateur ternaire interdit** (`? :` et `?:`, remplacés par `if/else` ; `??` et types nullables `?int` autorisés) sur **tout le livrable PHP** | ✅ 0 violation / 96 fichiers |
+| Linter strict types | `scripts/strict_types_lint.php` | règle `declare_strict_types` de php-cs-fixer + types natifs « PHPStan level 9 » (params, retours, propriétés) + **règle maison : opérateur ternaire interdit** (`? :` et `?:`, remplacés par `if/else` ; `??` et types nullables `?int` autorisés) sur **tout le livrable PHP** | ✅ 0 violation / 97 fichiers |
 | Moteur JSON | `tests/php/engine_smoke.php` | contraintes, triggers, transactions, journal du moteur | ✅ vert |
 | Règles de gestion | `tests/php/run_tests.php` | T-01…T-29 du document de tests (RB-01…RB-20, vues, frais de port) | ✅ 29/29 |
-| Unitaires | `tests/php/unit_tests.php` | `Text` (fold/slug/collation), échappement, CSRF, **matrice RB-11 complète** (36 couples), `Filter`, `PanierSession`, prix TTC, journal, **`.env`**, versions SGBD, **DSN et repli socket Unix** | ✅ 153/153 |
+| Unitaires | `tests/php/unit_tests.php` | `Text` (fold/slug/collation), échappement, CSRF, **matrice RB-11 complète** (36 couples), `Filter`, `PanierSession`, prix TTC, journal, **`.env`**, versions SGBD, **DSN et repli socket Unix** | ✅ 174/174 |
 | Fonctionnalités | `tests/php/features_test.php` | **UC-01…UC-14** via les repositories (catalogue, compte, panier, commande, annulation, back-office, indicateurs) | ✅ 108/108 |
 | Contrats de design | `tests/php/css_contract.php` | tokens de `docs/DA.md`, contrastes WCAG calculés, classes des vues réellement définies, `prefers-reduced-motion`, feuille d'impression | ✅ 28/28 |
 | Contrat responsive | `tests/php/responsive_contract.php` | 320 px → 1536 px : paliers en `em`, menu repliable, tableaux accessibles, panier en cartes, `dvh`, encoches, `pointer: coarse`, container queries | ✅ 48/48 |

@@ -11,6 +11,7 @@ declare(strict_types=1);
  *   php scripts/db_init.php --keep          # ne touche à rien si tout est déjà là
  *   php scripts/db_init.php --check         # diagnostic seul (n'écrit rien)
  *   php scripts/db_init.php --switch        # écrit STORAGE_DRIVER="sql" dans .env
+ *   php scripts/db_init.php --compte        # crée le compte applicatif (sudo mariadb)
  *
  * La cible vient du fichier `.env` (modèle `.env.example`, jamais commité) :
  *
@@ -33,6 +34,8 @@ require_once dirname(__DIR__) . '/app/bootstrap.php';
 
 use App\Config\Database;
 use App\Config\DbConnexion;
+use App\Config\Env;
+use App\Tools\DbProvision;
 use App\Tools\DbInstaller;
 use App\Tools\EnvFile;
 
@@ -121,6 +124,7 @@ $options = [
     'demo' => true,
     'yes' => false,
     'switch' => false,
+    'compte' => false,
     'help' => false,
 ];
 
@@ -147,13 +151,16 @@ foreach ($argumentsBruts as $argument) {
         case '--switch':
             $options['switch'] = true;
             break;
+        case '--compte':
+            $options['compte'] = true;
+            break;
         case '--help':
         case '-h':
             $options['help'] = true;
             break;
         default:
             erreur('✘ option inconnue : ' . $argument . "\n");
-            erreur("  options : --check --keep --no-demo --yes --switch --help\n");
+            erreur("  options : --check --keep --no-demo --yes --switch --compte --help\n");
             exit(2);
     }
 }
@@ -168,6 +175,8 @@ MiniShop — base de données locale
   php scripts/db_init.php --no-demo     schéma, procédures, triggers — sans données
   php scripts/db_init.php --yes         ne demande pas de confirmation (DESTRUCTIF)
   php scripts/db_init.php --switch      bascule .env sur STORAGE_DRIVER="sql"
+  php scripts/db_init.php --compte      crée le compte MySQL applicatif si root
+                                        refuse le TCP (unix_socket, Debian/Ubuntu)
 
 Configuration : .env à la racine (modèle .env.example).
 Variables lues : DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD.
@@ -212,8 +221,12 @@ if ($options['check']) {
 
     if (!$installateur->serveurJoignable()) {
         echo "\n   Remèdes :\n";
-        echo "     • le service tourne-t-il ?   systemctl status mariadb\n";
-        echo "     • compte applicatif créé ?   sudo mariadb  puis CREATE USER + GRANT\n";
+        if ($installateur->refusIdentifiants()) {
+            echo "     • création automatique du compte : php scripts/db_init.php --compte --yes\n";
+            echo "       (ou ./run.sh --db, qui l'enchaîne)\n";
+        } else {
+            echo "     • le service tourne-t-il ?   systemctl status mariadb\n";
+        }
         echo "     • identifiants justes ?      DB_USER / DB_PASSWORD dans .env\n";
         echo "     • socket ailleurs ?          DB_SOCKET=/run/mysqld/mysqld.sock dans .env\n";
     }
@@ -238,11 +251,79 @@ if ($options['check']) {
     exit(1);
 }
 
+// ------------------------------------- compte applicatif (root en unix_socket)
+// root sous Debian/Ubuntu = greffon unix_socket : il compare l'utilisateur du
+// SYSTÈME. PHP tourne sous un utilisateur normal, donc aucun repli côté PHP ne
+// peut fonctionner. On crée un compte dédié avec un `sudo mariadb` ponctuel.
+if ($options['compte'] && !$installateur->serveurJoignable()) {
+    if ($installateur->refusIdentifiants()) {
+        titre('Compte applicatif');
+        echo "   « " . $installateur->utilisateur() . " » n'accepte pas le TCP : "
+            . "authentification par socket Unix réservée à l'utilisateur du système.\n";
+
+        $provision = DbProvision::depuisConfiguration();
+        if (!$provision->valide()) {
+            erreur("✘ nom de base ou d'utilisateur invalide — corrigez DB_NAME / DB_USER dans .env\n");
+            exit(2);
+        }
+
+        $motDePasse = DbProvision::motDePasse();
+        echo '   création du compte « ' . $provision->utilisateur() . ' » sur « '
+            . $provision->base() . " » (sudo demandé une fois)\n";
+
+        $resultat = $provision->creerCompte($motDePasse);
+        if (!$resultat['ok']) {
+            erreur("\n✘ création automatique impossible (" . $resultat['methode'] . ")\n");
+            if ($resultat['sortie'] !== '') {
+                erreur('  ' . str_replace("\n", "\n  ", $resultat['sortie']) . "\n");
+            }
+            erreur("\n  Exécutez ce SQL en root (une seule fois) :\n\n");
+            foreach ($provision->instructions($motDePasse) as $instruction) {
+                erreur('    ' . $instruction . ";\n");
+            }
+            erreur("\n  puis, dans .env :\n");
+            erreur('    DB_USER=' . $provision->utilisateur() . "\n");
+            erreur('    DB_PASSWORD=' . $motDePasse . "\n\n");
+            exit(1);
+        }
+
+        echo "   ✓ compte créé (droits limités à « " . $provision->base() . " »)\n";
+
+        EnvFile::initialiser();
+        EnvFile::definirPlusieurs([
+            'DB_USER' => $provision->utilisateur(),
+            'DB_PASSWORD' => $motDePasse,
+        ]);
+
+        // La configuration est en cache : on la recharge avant de retenter.
+        Database::reset();
+        Env::reinitialiser();
+        $installateur = DbInstaller::depuisConfiguration();
+
+        if ($installateur->serveurJoignable()) {
+            echo "   ✓ connexion établie avec « " . $provision->utilisateur() . " »\n";
+            echo "   .env mis à jour : DB_USER, DB_PASSWORD (mot de passe aléatoire, hors Git)\n";
+        } else {
+            erreur("\n✘ le compte a été créé mais la connexion échoue encore :\n  "
+                . $installateur->derniereErreur() . "\n");
+            exit(1);
+        }
+    }
+}
+
 // --------------------------------------------------------- accès au serveur
 if (!$installateur->serveurJoignable()) {
+    if ($installateur->refusIdentifiants()) {
+        erreur("\n✘ " . $installateur->derniereErreur() . "\n\n");
+        erreur("  créez le compte applicatif en une commande :\n");
+        erreur("    php scripts/db_init.php --compte --yes\n");
+        erreur("  (ou : ./run.sh --db, qui le fait automatiquement)\n");
+        exit(1);
+    }
+
     erreur("\n✘ serveur MySQL injoignable sur " . $installateur->hote() . ':' . $installateur->port() . "\n");
     erreur("  Démarrez le service :\n");
-    erreur("    Linux   : sudo systemctl start mysql    (ou mariadb)\n");
+    erreur("    Linux   : sudo systemctl start mariadb   (ou mysql)\n");
     erreur("    macOS   : brew services start mysql\n");
     erreur("    Windows : net start MySQL80\n");
     erreur("  Vérifiez ensuite DB_USER / DB_PASSWORD dans .env (fichier .env.example).\n");
