@@ -104,6 +104,18 @@ Rejouée sur une base réelle le 27/10 (`php tests/php/sql_integration.php`), la
 
 **Rejeu du 27/10/2026 : 29/29 conformes** (`SQL : CAMPAGNE CONFORME ✅`), sur `minishop_test` créée puis supprimée — la base de développement n'est jamais touchée. Les sept causes sont donc soldées, et l'avertissement qui figurait dans `tests/sql/rapport_tests_sql.md` et `docs/02` a été remplacé par le compte rendu de ce rejeu.
 
+## 4 ter. Une suite de tests a modifié la machine : garde-fou
+
+Constaté sur la machine de recette, en lançant `php scripts/run-all-tests.php` : la suite unitaire a **réellement exécuté `sudo mariadb`**. La vérification « création du compte impossible sans client SQL » appelait `DbProvision::creerCompte()` ; en sandbox aucun client n'existe, donc elle constatait l'échec — sur une machine avec MariaDB, le client existe et l'appel a fait un vrai `CREATE/ALTER USER`. Le mot de passe du compte applicatif a été remplacé par une valeur aléatoire écrite nulle part, et **toutes les connexions PDO suivantes ont échoué en `1045`**, y compris l'intégration SQL, qui s'est alors annoncée « NON JOUÉ » (elle ne mentait pas, mais pour une mauvaise raison).
+
+Trois corrections :
+
+1. **Garde-fou dans le produit** — `DbProvision::contexteDeTest()` : `creerCompte()` et `ajouterBaseAnnexe()` refusent d'agir quand `MINISHOP_TESTS=1`. Le drapeau est posé par les trois exécuteurs (suite unitaire, `run-all-tests.php`, `run-all-tests.mjs`), les enfants en héritent.
+2. **La vérification est remplacée** par deux contrôles du garde-fou lui-même (une suite ne crée ni compte ni base), au lieu d'un appel qui dépendait de la présence d'un client sur la machine.
+3. **`environnement rendu (config par défaut)`** échouait aussi sur sa machine : la vérification relisait le vrai `.env`, où `STORAGE_DRIVER=sql`. Elle isole désormais la lecture dans un fichier inexistant avant de conclure — un test ne dépend pas de la configuration du poste.
+
+Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont le résultat dépend du poste (client présent, `.env` rempli) n'est pas un test, c'est une mesure d'environnement.
+
 ## 5. Rendus — **rien de produit**
 
 - [x] HTML autonome des documents — `livrables/html/` (19 fichiers, images en base64, hors ligne).

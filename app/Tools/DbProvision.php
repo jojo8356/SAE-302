@@ -121,6 +121,14 @@ final class DbProvision
      */
     public function creerCompte(string $motDePasse): array
     {
+        if (self::contexteDeTest()) {
+            return [
+                'ok' => false,
+                'sortie' => 'refusé : contexte de test (MINISHOP_TESTS=1)',
+                'methode' => 'refusé',
+            ];
+        }
+
         if (!$this->valide()) {
             return [
                 'ok' => false,
@@ -220,6 +228,14 @@ final class DbProvision
      */
     public function ajouterBaseAnnexe(string $baseAnnexe): array
     {
+        if (self::contexteDeTest()) {
+            return [
+                'ok' => false,
+                'sortie' => 'refusé : contexte de test (MINISHOP_TESTS=1)',
+                'methode' => 'refusé',
+            ];
+        }
+
         if (!self::baseValide($baseAnnexe)) {
             return [
                 'ok' => false,
@@ -250,6 +266,24 @@ final class DbProvision
         }
 
         return null;
+    }
+
+    /**
+     * Une suite de tests ne doit jamais provisionner le système.
+     *
+     * Incident réel : une vérification unitaire appelait `creerCompte()` pour
+     * constater l'échec en l'absence de client SQL. Sur une machine où le client
+     * existe, elle a exécuté un vrai `sudo mariadb` : le mot de passe du compte
+     * applicatif a été remplacé par une valeur aléatoire écrite nulle part, et
+     * toutes les connexions PDO suivantes ont échoué en `1045`.
+     *
+     * Le garde-fou rend l'accident impossible même si un futur test se trompe :
+     * `MINISHOP_TESTS=1` (posé par les suites et par les exécuteurs) suffit à
+     * refuser toute création de compte ou de base.
+     */
+    public static function contexteDeTest(): bool
+    {
+        return getenv('MINISHOP_TESTS') === '1';
     }
 
     /** `sudo` est-il installé ? */

@@ -40,6 +40,11 @@ use App\Security\Csrf;
 use App\Config\DbConnexion;
 use App\Tools\DbInstaller;
 use App\Tools\DbProvision;
+
+// Aucune suite de tests ne provisionne le système (comptes, bases) : le
+// drapeau est lu par DbProvision::contexteDeTest(). Posé ici pour couvrir
+// toutes les sections, pas seulement celle qui parle de provisionnement.
+putenv('MINISHOP_TESTS=1');
 use App\Tools\Revision;
 use App\Tools\SqlLoader;
 use App\Tools\EnvFile;
@@ -429,7 +434,17 @@ echo "\n13. Configuration .env (App\\Config\\Env, EnvFile, Database)\n";
         @unlink($reste);
     }
     @rmdir($dossier);
+    // On isole AVANT de conclure : sur un poste dont le `.env` porte
+    // STORAGE_DRIVER=sql (cas réel après `./run.sh --db`), lire « config par
+    // défaut » en relisant le vrai fichier donnait « sql » et faisait échouer
+    // la vérification — le test dépendait de la configuration de la machine.
+    putenv('MINISHOP_ENV_FILE=' . sys_get_temp_dir() . '/minishop-inexistant-' . getmypid() . '.env');
+    Env::reinitialiser();
+    Database::reset();
     $check('environnement rendu (config par défaut)', Database::driver() === 'json');
+    putenv(Env::VARIABLE_FICHIER);
+    Env::reinitialiser();
+    Database::reset();
 }
 
 // ============================================================ 14. compatibilité SGBD
@@ -631,9 +646,20 @@ echo "\n16. Création du compte MySQL applicatif (App\\Tools\\DbProvision)\n";
     $check('aucune instruction sans point-virgule dans script()', substr_count($provision->script($motDePasse), ";\n") === count($instructions));
     $check('script() copiable en une commande', str_starts_with($provision->script($motDePasse), 'CREATE DATABASE'));
 
-    // Sans client SQL (sandbox), l'échec doit être explicite, jamais silencieux.
-    $resultat = $provision->creerCompte($motDePasse);
-    $check('création sans client SQL : échec explicite', $resultat['ok'] === false && $resultat['methode'] !== '');
+    // Une suite de tests ne provisionne JAMAIS le système.
+    //
+    // Incident réel : cette section appelait `creerCompte()` pour constater
+    // l'échec en l'absence de client SQL. Sur une machine où le client existe,
+    // elle a exécuté un vrai `sudo mariadb` — mot de passe du compte applicatif
+    // remplacé par une valeur aléatoire écrite nulle part, puis `1045` sur
+    // toutes les connexions PDO. Le drapeau ci-dessous rend l'accident
+    // impossible, et il est lui-même vérifié ici.
+    $refusCompte = $provision->creerCompte($motDePasse);
+    $check('aucune création de compte depuis une suite de tests (garde-fou)',
+        $refusCompte['ok'] === false && $refusCompte['methode'] === 'refusé', $refusCompte['sortie']);
+    $refusAnnexe = $provision->ajouterBaseAnnexe('minishop_test_interdit');
+    $check('aucune création de base depuis une suite de tests (garde-fou)',
+        $refusAnnexe['ok'] === false && $refusAnnexe['methode'] === 'refusé', $refusAnnexe['sortie']);
     $check('création refusée si les noms sont invalides',
         (new DbProvision('base interdite', 'minishop'))->creerCompte('x')['ok'] === false);
 

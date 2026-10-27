@@ -20,6 +20,10 @@
 import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 
+// Les suites héritent du drapeau : aucune ne peut créer un compte MySQL ni une
+// base sur la machine (cf. DbProvision::contexteDeTest()).
+process.env.MINISHOP_TESTS = '1';
+
 // Sur une machine avec PHP natif, AUCUNE dépendance npm n'est nécessaire :
 // on exécute directement `php <script>`. Le runtime WASM (@php-wasm/node) ne
 // sert que dans les environnements sans PHP (sandbox de développement).

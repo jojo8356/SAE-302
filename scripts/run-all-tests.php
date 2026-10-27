@@ -22,6 +22,10 @@ declare(strict_types=1);
 $racine = dirname(__DIR__);
 chdir($racine);
 
+// Les suites héritent du drapeau : aucune ne peut créer un compte MySQL ni une
+// base sur la machine (cf. DbProvision::contexteDeTest()).
+putenv('MINISHOP_TESTS=1');
+
 const SUITES = [
     ['Linter strict types', 'scripts/strict_types_lint.php'],
     ['Moteur JSON', 'tests/php/engine_smoke.php'],
