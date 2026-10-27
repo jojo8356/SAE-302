@@ -34,6 +34,10 @@ export const ERREUR_PHP = 255;
 export function verdict(sortie) {
   if (/PHP (Fatal error|Parse error)/.test(sortie)) return ERREUR_PHP;
   if (sortie.includes('❌')) return ECHEC;
+  // `✘` préfixe les erreurs des outils en ligne de commande (`db_init.php`,
+  // `capture_perf.sh`). Aucune suite verte n'en imprime : mesuré sur les 9
+  // suites. Sans cette règle, `db_init.php --test-db` en échec sortait en 0.
+  if (sortie.includes('✘')) return ECHEC;
   if (sortie.includes('NON JOUÉ') && !sortie.includes('✅')) return NON_JOUE;
   return VERT;
 }
@@ -53,6 +57,8 @@ if (lanceDirectement) {
     ['fatale après des ✅', '✅ 3 contrôles\nPHP Fatal error: OOM', ERREUR_PHP],
     ['non joué avec une réussite partielle', '✅ 3 contrôles\nNON JOUÉ : E2E', VERT],
     ['sortie vide', '', VERT],
+    ['outil CLI en échec', "✘ création automatique impossible", ECHEC],
+    ['outil CLI, avertissement sans échec', 'ⓘ extension facultative absente : intl', VERT],
   ];
 
   let echecs = 0;

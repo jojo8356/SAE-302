@@ -46,6 +46,10 @@ cp .env.example .env        # puis éditer DB_USER / DB_PASSWORD si vous passez 
 # 4. vérifier que la base est saine (29 tests de règles de gestion, vues et frais de port)
 DB_USER=root DB_PASS='...' ./scripts/run_sql_tests.sh   # attendu : « Tests conformes : 29 / 29 »
 
+# 5. (optionnel) rejouer ces 29 scénarios depuis PHP, sur une base jetable
+php scripts/db_init.php --test-db      # crée minishop_test + droits (sudo une fois)
+php tests/php/sql_integration.php      # 29 scénarios, puis la base de test est supprimée
+
 # 5. lancer (développement) — en production : DocumentRoot = public/
 ./run.sh                    # tout-en-un : vérifie PHP, prépare les données, démarre
 PORT=8080 ./run.sh          # autre port (prioritaire sur .env)

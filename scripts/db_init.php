@@ -126,6 +126,7 @@ $options = [
     'yes' => false,
     'switch' => false,
     'compte' => false,
+    'testdb' => false,
     'help' => false,
 ];
 
@@ -155,13 +156,16 @@ foreach ($argumentsBruts as $argument) {
         case '--compte':
             $options['compte'] = true;
             break;
+        case '--test-db':
+            $options['testdb'] = true;
+            break;
         case '--help':
         case '-h':
             $options['help'] = true;
             break;
         default:
             erreur('✘ option inconnue : ' . $argument . "\n");
-            erreur("  options : --check --keep --no-demo --yes --switch --compte --help\n");
+            erreur("  options : --check --keep --no-demo --yes --switch --compte --test-db --help\n");
             exit(2);
     }
 }
@@ -178,6 +182,10 @@ MiniShop — base de données locale
   php scripts/db_init.php --switch      bascule .env sur STORAGE_DRIVER="sql"
   php scripts/db_init.php --compte      crée le compte MySQL applicatif si root
                                         refuse le TCP (unix_socket, Debian/Ubuntu)
+  php scripts/db_init.php --test-db     crée la base ANNEXE des tests d'intégration
+                                        (minishop_test) et y accorde les droits
+                                        au compte applicatif — n'élargit rien sur
+                                        la base de production
 
 Configuration : .env à la racine (modèle .env.example).
 Variables lues : DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD.
@@ -198,6 +206,48 @@ if ($sources !== []) {
 }
 echo '   configuration : ' . $listeSources . "\n";
 echo '   cible         : ' . $installateur->cible() . ' (' . $installateur->utilisateur() . ")\n";
+
+// ------------------------------------------------- base annexe des tests SQL
+// Pourquoi une option distincte : le compte applicatif n'a volontairement des
+// droits que sur SA base. Les tests d'intégration (`tests/php/sql_integration.php`)
+// ont besoin d'une base jetable ; l'ouvrir ici, explicitement, évite d'élargir
+// les droits du compte sur `minishop` et évite qu'un test exécute sudo à
+// l'improviste au milieu d'une campagne.
+if ($options['testdb']) {
+    $baseAnnexe = 'minishop_test';
+    $demandee = getenv('MINISHOP_TEST_DB');
+    if (is_string($demandee) && $demandee !== '') {
+        $baseAnnexe = $demandee;
+    }
+
+    titre('Base annexe des tests d\'intégration');
+    $provision = DbProvision::depuisConfiguration();
+    // Afficher le compte que les GRANT visent réellement : `depuisConfiguration()`
+    // remplace « root » par le compte applicatif, et annoncer « root » ici
+    // enverrait l'utilisateur chercher un problème de droits inexistant.
+    echo '   base : « ' . $baseAnnexe . " » (droits accordés à « " . $provision->utilisateur() . " »)\n";
+
+    $resultat = $provision->ajouterBaseAnnexe($baseAnnexe);
+
+    if ($resultat['ok']) {
+        echo "   ✓ base créée et droits accordés (" . $resultat['methode'] . ")\n";
+        echo "\n   Vous pouvez lancer : php tests/php/sql_integration.php\n";
+        exit(0);
+    }
+
+    erreur("\n✘ création automatique impossible (" . $resultat['methode'] . ")\n");
+    if ($resultat['sortie'] !== '') {
+        erreur('  ' . str_replace("\n", "\n  ", $resultat['sortie']) . "\n");
+    }
+    erreur("\n  Exécutez ce SQL en root (une seule fois) :\n\n");
+    erreur("    sudo mariadb <<'SQL'\n");
+    foreach ($provision->instructionsBaseAnnexe($baseAnnexe) as $instruction) {
+        erreur('    ' . $instruction . ";\n");
+    }
+    erreur("    SQL\n\n");
+    echo "  Puis : php tests/php/sql_integration.php\n";
+    exit(1);
+}
 echo '   pilote app    : ' . (string) ($config['storage_driver'] ?? 'json') . "  (STORAGE_DRIVER)\n";
 
 // Empreinte du code : un message d'erreur d'une révision antérieure (fichiers

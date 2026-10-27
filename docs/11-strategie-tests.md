@@ -37,6 +37,8 @@ Le mot « mince » est important : réécrire les 29 cas en PHP aurait produit d
 
 L'isolation est le point délicat : `tests/sql/fixture.sql` réinitialise l'état **avant chaque scénario** — lancée sur la base de développement, la campagne effacerait les commandes de démonstration. C'est pourquoi l'enveloppe ne touche jamais la base applicative, et pourquoi `--garder` existe pour inspecter le résultat.
 
+Un détail découvert sur la machine de recette : le compte applicatif `minishop` n'a volontairement de droits que sur `minishop.*` (moindre privilège), donc `CREATE DATABASE minishop_test` est refusé — `1044 Access denied`. Ce n'est pas un bug du test, c'est la politique de droits qui fonctionne. La base annexe s'ouvre donc **explicitement**, par `php scripts/db_init.php --test-db` : elle crée `minishop_test` et y accorde les droits, **sans** toucher au mot de passe du compte ni élargir quoi que ce soit sur la base de production. Le test, lui, ne demande jamais `sudo` de lui-même ; en cas de refus, il affiche la commande à lancer.
+
 Dégradation : sans client `mariadb`/`mysql` dans le `PATH`, ou sans serveur joignable, le test annonce **NON JOUÉ** et sort en code 2. `scripts/run-all-tests.mjs` distingue ce cas d'un échec — un test qu'on ne peut pas jouer doit le dire, pas mentir en vert ni échouer pour de mauvaises raisons.
 
 ### 2.3 Tests de bout en bout (étage 6) — ce que l'utilisateur voit
@@ -119,8 +121,9 @@ php scripts/run-all-tests.php         # machine avec PHP natif
 node scripts/wasm_run.mjs tests/php/run_tests.php
 php tests/php/run_tests.php
 
-# SQL réel (crée puis supprime minishop_test)
-php tests/php/sql_integration.php
+# SQL réel : la base de test doit exister une fois pour toutes
+php scripts/db_init.php --test-db      # crée minishop_test + droits (sudo une fois)
+php tests/php/sql_integration.php      # la remplit, rejoue les 29 scénarios, la supprime
 
 # performance base, sur minishop_perf
 sudo bash scripts/capture_perf.sh

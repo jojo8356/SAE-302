@@ -612,6 +612,30 @@ echo "\n16. Création du compte MySQL applicatif (App\\Tools\\DbProvision)\n";
 
     $check('client SQL détecté ou absent, jamais une exception',
         DbProvision::clientSql() === null || in_array(DbProvision::clientSql(), ['mariadb', 'mysql'], true));
+
+    // --- base annexe des tests d'intégration (demandée par la machine réelle :
+    // « 1044 Access denied for user 'minishop'@'localhost' to database
+    // 'minishop_test' » — le compte applicatif n'a, à raison, de droits que sur
+    // sa base ; le test SQL ne peut donc pas créer la sienne).
+    $annexe = implode("\n", $provision->instructionsBaseAnnexe('minishop_test'));
+    $check('base annexe créée en utf8mb4_unicode_ci',
+        str_contains($annexe, 'CREATE DATABASE IF NOT EXISTS `minishop_test`')
+        && str_contains($annexe, 'utf8mb4_unicode_ci'));
+    $check('droits accordés sur la base annexe pour les deux hôtes',
+        substr_count($annexe, 'GRANT ALL PRIVILEGES ON `minishop_test`.*') === 2
+        && str_contains($annexe, "'minishop'@'localhost'")
+        && str_contains($annexe, "'minishop'@'127.0.0.1'"));
+    $check('la base annexe n’élargit jamais les droits (jamais *.*)', !str_contains($annexe, '*.*'));
+    $check('la base annexe ne touche pas au mot de passe du compte',
+        !str_contains($annexe, 'IDENTIFIED BY') && !str_contains($annexe, 'ALTER USER')
+        && !str_contains($annexe, 'CREATE USER'));
+    $check('la base de production n’est pas modifiée par la base annexe',
+        !str_contains($annexe, 'ON `minishop`.*'));
+    $check('nom de base annexe validé',
+        DbProvision::baseValide('minishop_test') && !DbProvision::baseValide('minishop; DROP TABLE x')
+        && !DbProvision::baseValide(str_repeat('a', 33)) && !DbProvision::baseValide(''));
+    $check('base annexe invalide : refus explicite, sans exécution',
+        $provision->ajouterBaseAnnexe('minishop; DROP TABLE x')['ok'] === false);
 }
 
 // ============================================================ 17. empreinte du code

@@ -129,6 +129,21 @@ final class DbProvision
             ];
         }
 
+        return $this->executerEnRoot($this->instructions($motDePasse));
+    }
+
+    /**
+     * Exécute des instructions SQL en root via `sudo <client> < fichier`.
+     *
+     * Le SQL passe par un fichier (0600) et non par stdin : stdin reste libre
+     * pour la demande de mot de passe sudo, et une instruction contenant des
+     * guillemets n'a rien à échapper dans une ligne de commande.
+     *
+     * @param list<string> $instructions
+     * @return array{ok:bool, sortie:string, methode:string}
+     */
+    private function executerEnRoot(array $instructions): array
+    {
         $client = self::clientSql();
         if ($client === null) {
             return [
@@ -148,7 +163,7 @@ final class DbProvision
         }
 
         @chmod($fichier, 0600);
-        file_put_contents($fichier, implode(";\n", $this->instructions($motDePasse)) . ";\n");
+        file_put_contents($fichier, implode(";\n", $instructions) . ";\n");
 
         // Le SQL est passé par un fichier : stdin reste libre pour la demande
         // de mot de passe sudo (elle se fait sur /dev/tty de toute façon).
@@ -165,6 +180,55 @@ final class DbProvision
             'sortie' => trim(implode("\n", $lignes)),
             'methode' => 'sudo ' . $client,
         ];
+    }
+
+    /**
+     * Instructions pour une base ANNEXE (tests d'intégration : `minishop_test`).
+     *
+     * Elles créent la base et accordent les droits au compte applicatif, sans
+     * jamais toucher à son mot de passe ni élargir ses droits sur la base de
+     * production. Le moindre privilège reste la règle : `minishop` n'a des
+     * droits que sur `minishop` et sur la base de test explicitement nommée.
+     *
+     * @return list<string>
+     */
+    public function instructionsBaseAnnexe(string $baseAnnexe): array
+    {
+        $instructions = [
+            'CREATE DATABASE IF NOT EXISTS `' . $baseAnnexe . '` '
+                . 'CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci',
+        ];
+        foreach (self::HOTES as $hote) {
+            $compte = "'" . $this->utilisateur . "'@'" . $hote . "'";
+            $instructions[] = 'GRANT ALL PRIVILEGES ON `' . $baseAnnexe . '`.* TO ' . $compte;
+        }
+        $instructions[] = 'FLUSH PRIVILEGES';
+
+        return $instructions;
+    }
+
+    /** Le nom d'une base annexe est sûr (pas d'injection possible). */
+    public static function baseValide(string $nom): bool
+    {
+        return preg_match('/^[A-Za-z0-9_]{1,32}$/', $nom) === 1;
+    }
+
+    /**
+     * Crée une base annexe et ses droits, en passant par `sudo mariadb`.
+     *
+     * @return array{ok:bool, sortie:string, methode:string}
+     */
+    public function ajouterBaseAnnexe(string $baseAnnexe): array
+    {
+        if (!self::baseValide($baseAnnexe)) {
+            return [
+                'ok' => false,
+                'sortie' => 'nom de base invalide (lettres, chiffres et _ uniquement)',
+                'methode' => 'aucune',
+            ];
+        }
+
+        return $this->executerEnRoot($this->instructionsBaseAnnexe($baseAnnexe));
     }
 
     /** Commande SQL exécutable en root, prête à copier-coller. */

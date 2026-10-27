@@ -86,7 +86,22 @@ try {
     $installateur->creerBase();
     echo "   ✓ « " . $base . " » créée (utf8mb4_unicode_ci)\n";
 } catch (Throwable $erreur) {
-    echo "   ❌ création impossible : " . $erreur->getMessage() . "\n";
+    $message = $erreur->getMessage();
+    echo "   ❌ création impossible : " . $message . "\n";
+
+    // 1044 : pas le droit de créer la base ; 1142 : pas le droit d'y écrire.
+    // Ce n'est pas un bug du test : le compte applicatif n'a volontairement de
+    // droits que sur sa base. Le remède est une commande, pas un contournement.
+    $refus = str_contains($message, '1044')
+        || str_contains($message, '1142')
+        || str_contains($message, 'Access denied');
+    if ($refus) {
+        echo "\n   Le compte « " . (string) ($config['db_user'] ?? '?') . " » n'a pas de droits sur"
+            . " « " . $base . " » — c'est voulu (moindre privilège).\n";
+        echo "   Créez la base de test une fois pour toutes, puis relancez :\n\n";
+        echo "       php scripts/db_init.php --test-db\n\n";
+        echo "   (crée « " . $base . " » et y accorde les droits ; sudo demandé une fois)\n";
+    }
     exit(1);
 }
 
