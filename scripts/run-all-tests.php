@@ -30,6 +30,7 @@ const SUITES = [
     ['Fonctionnalités', 'tests/php/features_test.php'],
     ['Contrats de design', 'tests/php/css_contract.php'],
     ['Contrat responsive', 'tests/php/responsive_contract.php'],
+    ['Contrats HTTP', 'tests/php/contract_http.php'],
     ['Unitaires PHPUnit', 'tests/phpunit/run-local.php'],
 ];
 
@@ -125,6 +126,30 @@ foreach (SUITES as [$nom, $fichier]) {
     }
 }
 
+// ------------------------------------------------- intégration SQL (facultative)
+// `sql_integration.php` sort en code 2 quand il n'y a pas de serveur : ce n'est
+// PAS un échec, c'est une suite non jouable ici. La distinguer évite deux
+// comportements également faux : un rouge qui accuse le code, ou un vert qui
+// prétend avoir testé le SQL.
+section('▸ Intégration SQL — tests/php/sql_integration.php');
+$sqlEtat = 'NON JOUÉ ⏭ (serveur ou client MySQL absent)';
+if (!is_file('tests/php/sql_integration.php')) {
+    echo "  ❌ fichier absent\n";
+    ++$echecs;
+    $sqlEtat = 'fichier absent ❌';
+} else {
+    ++$jouees;
+    $codeSql = lancer('tests/php/sql_integration.php');
+    if ($codeSql === 0) {
+        $sqlEtat = 'joué ✅';
+    } elseif ($codeSql === 2) {
+        --$jouees;
+    } else {
+        ++$echecs;
+        $sqlEtat = 'ÉCHEC ❌';
+    }
+}
+
 // --------------------------------------------------------------- parcours E2E
 section('▸ Parcours E2E — scripts/e2e.mjs');
 $e2eJoue = false;
@@ -160,7 +185,7 @@ if ($echecs > 0) {
     exit(1);
 }
 
-echo 'SUITES : TOUT EST VERT ✅ (' . $jouees . " étapes) — E2E : " . $e2eEtat . "\n";
+echo 'SUITES : TOUT EST VERT ✅ (' . $jouees . " étapes) — SQL : " . $sqlEtat . ' — E2E : ' . $e2eEtat . "\n";
 if (!$e2eJoue) {
     echo "nb : la base JSON reste intacte, l'E2E ne modifie rien durablement.\n";
 }

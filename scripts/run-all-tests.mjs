@@ -18,6 +18,7 @@
  *   7. e2e.mjs            — seed + parcours HTTP complet, données restaurées
  */
 import { spawnSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
 
 // Sur une machine avec PHP natif, AUCUNE dépendance npm n'est nécessaire :
 // on exécute directement `php <script>`. Le runtime WASM (@php-wasm/node) ne
@@ -42,6 +43,7 @@ const suites = [
   ['Fonctionnalités', 'tests/php/features_test.php'],
   ['Contrats de design', 'tests/php/css_contract.php'],
   ['Contrat responsive', 'tests/php/responsive_contract.php'],
+  ['Contrats HTTP', 'tests/php/contract_http.php'],
   ['Unitaires PHPUnit', 'tests/phpunit/run-local.php'],
 ];
 
@@ -50,6 +52,12 @@ let échecs = 0;
 console.log(phpExiste
   ? '\nExécution en PHP natif (aucune dépendance npm requise).'
   : '\nPHP natif absent : exécution via le runtime WASM (@php-wasm/node).');
+
+// Le harnais se vérifie lui-même : sans cela, une régression du calcul du
+// verdict rendrait toutes les suites vertes par construction.
+console.log(`\n${'='.repeat(64)}\n▸ Autotest du verdict WASM — scripts/wasm_verdict.mjs\n${'='.repeat(64)}`);
+const autotest = spawnSync('node', ['scripts/wasm_verdict.mjs'], { stdio: 'inherit' });
+if (autotest.status !== 0) ++échecs;
 
 console.log(`\n${'='.repeat(64)}\n▸ Linter strict types — scripts/strict_types_lint.php\n${'='.repeat(64)}`);
 const lint = lancer('scripts/strict_types_lint.php');
@@ -61,12 +69,30 @@ for (const [nom, fichier] of suites) {
   if (r.status !== 0) ++échecs;
 }
 
+// Intégration SQL : code 2 = suite non jouable ici (pas de serveur), ce n'est
+// pas un échec. La compter comme telle ferait échouer la sandbox sur une suite
+// qu'elle ne peut structurellement pas exécuter.
+let étatsql = 'NON JOUÉ ⏭ (serveur ou client MySQL absent)';
+if (!existsSync('tests/php/sql_integration.php')) {
+  console.log('  ❌ fichier absent');
+  ++échecs;
+  étatsql = 'fichier absent ❌';
+} else {
+  console.log(`\n${'='.repeat(64)}\n▸ Intégration SQL — tests/php/sql_integration.php\n${'='.repeat(64)}`);
+  const sql = lancer('tests/php/sql_integration.php');
+  if (sql.status === 0) étatsql = 'joué ✅';
+  if (sql.status !== 0 && sql.status !== 2) {
+    ++échecs;
+    étatsql = 'ÉCHEC ❌';
+  }
+}
+
 console.log(`\n${'='.repeat(64)}\n${'='.repeat(64)}`);
 if (échecs > 0) {
   console.log(`SUITES : ${échecs} étape(s) en échec ❌ — E2E non joué`);
   process.exit(1);
 }
-console.log('SUITES PHP : TOUT EST VERT ✅ — E2E :');
+console.log(`SUITES PHP : TOUT EST VERT ✅ — SQL : ${étatsql} — E2E :`);
 
 // L'E2E pilote l'application par requêtes HTTP internes : il repose sur le
 // runtime WASM. Sans PHP natif, il tourne partout ; avec PHP natif, il faut

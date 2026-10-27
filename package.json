@@ -14,6 +14,10 @@
     "test:phpunit": "node scripts/wasm_run.mjs tests/phpunit/run-local.php",
     "test:design": "node scripts/wasm_run.mjs tests/php/css_contract.php",
     "test:responsive": "node scripts/wasm_run.mjs tests/php/responsive_contract.php",
+    "test:http": "node scripts/wasm_run.mjs tests/php/contract_http.php",
+    "test:sql": "php tests/php/sql_integration.php",
+    "coverage": "php scripts/coverage.php --liste",
+    "perf": "bash scripts/capture_perf.sh",
     "shots": "node scripts/screenshots.mjs",
     "shots:check": "node scripts/screenshots.mjs --check",
     "test:all:native": "php scripts/run-all-tests.php"

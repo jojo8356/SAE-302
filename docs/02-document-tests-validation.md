@@ -127,7 +127,7 @@ Les 10 cas sont rejouables à la main (curl + navigateur). Les **10 contrôles s
 | P-01 | Catalogue filtré, 200 produits (volumétrie client retenue) | `bash tests/perf/mesurer.sh '/catalogue?cat=1&prix_max=500'` | p95 < 500 ms, ≤ 5 requêtes (`ENF-01`) |
 | P-02 | Recherche « casque » | `bash tests/perf/mesurer.sh '/recherche?q=casque'` | p95 < 500 ms ; `EXPLAIN` utilisant `idx_produit_visible` ou l'index `FULLTEXT` (`ENF-02`) |
 | P-03 | Validation de commande | `bash tests/perf/mesurer.sh '/commande/valider'` (POST) | p95 < 900 ms avec verrous |
-| **P-06** | **Performances côté base, sur le jeu de volumétrie** | `sudo bash scripts/capture_perf.sh` (ou `./scripts/gen_volumes.sh` puis `DB=minishop_perf ./tests/perf/mesurer_sql.sh 50`) — **verrouillé à chaque `bash scripts/build-docs.sh`** | **exécuté** (21/09/2026, jeu 212 produits / 992 commandes, **31 ms** commande complète le 21/09 à 12:19) : 15–18 ms de moyenne sur les 5 requêtes types, `EXPLAIN` sans `ALL` sur catalogue, recherche et « mes commandes » ; un `ALL` **documenté** sur l'agrégation par statut (anomalie A-08, non bloquante, §7) ; sortie consignée dans `tests/perf/dernieres_mesures.txt` (à joindre en soutenance) |
+| **P-06** | **Performances côté base, sur le jeu de volumétrie** | `sudo bash scripts/capture_perf.sh` (ou `./scripts/gen_volumes.sh` puis `DB=minishop_perf ./tests/perf/mesurer_sql.sh 50`) — **verrouillé à chaque `bash scripts/build-docs.sh`** | **exécuté** (21/09/2026, jeu 212 produits / 992 commandes, **31 ms** commande complète le 21/09 à 12:19) : 15–18 ms de moyenne sur les 5 requêtes types, `EXPLAIN` sans `ALL` sur catalogue, recherche et « mes commandes » ; un `ALL` **documenté** sur l'agrégation par statut (anomalie A-08, non bloquante, §7) ; sortie régénérée par `sudo bash scripts/capture_perf.sh` dans `tests/perf/dernieres_mesures.txt` (+ copie datée `mesures_<date>.txt`) — **fichier non versionné** : il contient des temps machine, à joindre au rendu après la campagne sur la machine de recette |
 | C-01 | Tentative de survente | `bash tests/charge/reserver.sh 20 12` | 12 commandes réussies, 8 refus `STOCK_INSUFFISANT`, stock final 0, aucune valeur négative (`RB-18`) |
 | C-02 | Rejeu du POST de commande | rejouer le même `POST /commande/valider` | une seule commande ; second envoi refusé (`SEC-06`, cas E2 d'UC-07) |
 | I-01 | Installation | machine propre, suivi du `README.md` seul | ≤ 15 min puis `run_sql_tests.sh` **29/29** (`ENF-13`) |
@@ -177,7 +177,7 @@ Signature de l'équipe, date : ………………… Validation du maître d'ouv
 
 | Exigence | Élément de modèle | Mécanisme de base | Point d'application PHP/IHM | Tests |
 |---|---|---|---|---|
-| EF-VIS-01/03/05 | `Categorie`, `Produit` | `sp_search_products`, index `idx_produit_visible`, vue `v_catalogue` | CatalogueController + `app/View/catalogue.php` | F-01, F-03, F-04, T-25 |
+| EF-VIS-01/03/05 | `Categorie`, `Produit` | `sp_search_products`, index `idx_produit_visible`, vue `v_catalogue` | CatalogueController + `app/View/catalogue/{index,produit}.php` | F-01, F-03, F-04, T-25 |
 | EF-VIS-02 | `Produit` | `sp_search_products` (marqueurs `?`) | recherche + liste blanche de tri | F-02, S-01, T-25 |
 | EF-VIS-04 | `Produit` | `trg_produit_ttc` | ProduitController + fiche | F-05, séquence §5.3.5 |
 | EF-VIS-06/07 | `Client` | `sp_create_account`, `sp_get_credentials` | AuthController, `Auth`, `Hasher` | F-06, F-07, F-08, T-04, T-05 |
