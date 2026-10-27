@@ -57,21 +57,27 @@ PORT=8080 ./run.sh          # autre port (prioritaire sur .env)
 
 ### Récupérer la dernière version d'une branche
 
-`git checkout <branche> -- fichier…` fichier par fichier est une source d'erreur : un fichier oublié
-laisse tourner une version périmée, dont les messages d'erreur ressemblent à des bugs. Pour éviter
-toute liste écrite à la main :
+`git checkout <branche> -- fichier1 fichier2 …` avec une liste écrite à la main laisse régulièrement un
+fichier périmé derrière soi — et le message d'erreur d'une révision antérieure ressemble alors à un bug
+de la révision courante. Deuxième piège, rencontré en vrai : la liste calculée par
+`git diff HEAD <branche> --name-only` contient aussi les fichiers que la branche **n'a jamais eus** (ils
+n'existent que dans votre copie), et `git checkout` échoue dessus avec « ne correspond à aucun fichier
+connu de git ».
 
 ```bash
 git fetch github
-# ce qui diffère réellement (lecture seule)
-git diff --stat HEAD github/arena/6e1d3706-sae-302 -- app scripts tests run.sh .env.example README.md docs
-# application de la différence, sans liste manuelle
-git checkout github/arena/6e1d3706-sae-302 -- $(git diff --name-only HEAD github/arena/6e1d3706-sae-302 -- app scripts tests run.sh .env.example README.md docs)
+scripts/maj-depuis-branche.sh github/arena/6e1d3706-sae-302
 ```
 
-`run.sh` et `php scripts/db_init.php` affichent maintenant la **révision du code** exécuté
-(`code : 6a7dde5 · 2026-10-27`, ou `+ modifications locales`) : à comparer avec
-`git log -1 --oneline github/arena/6e1d3706-sae-302` avant de signaler un bug.
+Le script ne raisonne que sur la divergence réelle (`git merge-base`) : il charge les fichiers
+ajoutés/modifiés, supprime ceux que la branche a réellement supprimés, et **ne touche jamais** aux
+fichiers propres à votre copie. Il refuse un arbre de travail sale (les modifications locales seraient
+écrasées : `git stash` ou `--force`), n'écrit rien avant d'avoir annoncé son plan, et termine par la
+révision obtenue.
+
+`run.sh` et `php scripts/db_init.php` affichent de leur côté la **révision du code** exécuté
+(`code : cf1606a · 2026-10-27`, ou `+ modifications locales`) : à comparer avec
+`git log -1 --oneline github/arena/6e1d3706-sae-302` **avant** de signaler un bug.
 
 > **Ubuntu 24.04 / Debian 12** : le paquet `mysql-server` n'existe plus, il est remplacé par
 > `mariadb-server` (`sudo apt install mariadb-server && sudo systemctl enable --now mariadb`).
