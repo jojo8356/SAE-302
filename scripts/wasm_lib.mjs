@@ -19,7 +19,10 @@ export const REPO_ROOT = join(import.meta.dirname, '..');
 export const WASM_ROOT = '/repo';
 
 /** Dossiers utiles au fonctionnement de l'application dans le runtime WASM. */
-export const UPLOAD_DIRS = ['app', 'public', 'data', 'tests/php', 'tests/phpunit', 'scripts', 'sql'];
+// `tests/sql` est monté aussi : les tests unitaires vérifient que le harnais SQL
+// aligne sa collation de session sur celle du schéma (cf. ERROR 1267 sur les
+// colonnes de vue). Sans ce montage, le contrôle serait muet en sandbox.
+export const UPLOAD_DIRS = ['app', 'public', 'data', 'tests/php', 'tests/phpunit', 'tests/sql', 'scripts', 'sql'];
 
 /** Dossiers que l'application peut muter → à rapatrier sur l'hôte. */
 export const MUTABLE_DIRS = ['data', 'var'];

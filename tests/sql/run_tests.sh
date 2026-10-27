@@ -47,6 +47,15 @@ if [ -z "$MYSQL" ]; then
   exit 2
 fi
 
+# Collation de session alignée sur celle du schéma (sql/01 : SET NAMES … unicode_ci).
+# Sans elle, sur MariaDB >= 11.4 le défaut utf8mb4_uca1400_ai_ci fait échouer
+# toute comparaison littéral <-> colonne de VUE : ERROR 1267 Illegal mix of
+# collations. Une colonne de table (collation implicite) l'emporte sur le
+# littéral, une colonne de vue non — d'où un échec qui ne concerne que les
+# requêtes sur les vues (T-26 sur v_etat_stock).
+COLLATION_SESSION='SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;'
+avec_collation() { printf '%s\n' "$COLLATION_SESSION"; cat "$1"; }
+
 MYSQL_AUTH=()
 [ -n "$DB_USER" ] && MYSQL_AUTH+=(-u"$DB_USER")
 [ -n "$DB_PASS" ] && MYSQL_AUTH+=("-p$DB_PASS")
@@ -59,6 +68,7 @@ mysqlq() {
 }
 
 echo "== MiniShop — tests SQL sur la base '$DB' ($DB_HOST) =="
+echo "   Collation de session : $(mysqlq -N -B -e "SELECT CONCAT(@@collation_connection, '  (base : ', @@collation_database, ')')" 2>/dev/null)"
 echo "   Sorties journaux : $OUT_DIR"
 echo ""
 
@@ -93,7 +103,7 @@ while IFS='|' read -r tid regle desc attendu fichier; do
   : > "$log"
 
   # 1. Fixture (etat deterministe)
-  mysqlq -v < "$FIXTURE" >> "$log" 2>&1
+  avec_collation "$FIXTURE" | mysqlq -v >> "$log" 2>&1
   fix_rc=$?
   if [ "$fix_rc" -ne 0 ]; then
     printf ' [FIX] %-6s %-6s %s\n' "$tid" "$regle" "fixture en echec (rc=$fix_rc) — voir $log"
@@ -102,7 +112,7 @@ while IFS='|' read -r tid regle desc attendu fichier; do
   fi
 
   # 2. Test lui-meme
-  mysqlq -v < "$SCRIPT_DIR/$fichier" > "$log.out" 2> "$log.err"
+  avec_collation "$SCRIPT_DIR/$fichier" | mysqlq -v > "$log.out" 2> "$log.err"
   rc=$?
   stdout=$(cat "$log.out" 2>/dev/null)
   stderr=$(cat "$log.err" 2>/dev/null)

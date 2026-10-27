@@ -8,8 +8,12 @@
 > (commandes de démonstration renumérotées, brouillon vide supprimé par la fixture, hash de
 > 61 caractères dans une colonne `CHAR(60)`, assertion de montant ignorant les frais de port).
 > Six ont été corrigés pour construire eux-mêmes leur cas ; le septième (T-26) attend le rejeu.
-> **Ce fichier sera régénéré par `bash tests/sql/run_tests.sh` sur la révision finale** — il ne
-> doit pas être présenté en soutenance avant que la mention ci-dessus ait disparu.
+> Les sept causes sont désormais identifiées et corrigées : six scénarios construisent leur
+> propre cas, et le septième venait de la **collation de session** (`ERROR 1267 Illegal mix`
+> entre `utf8mb4_unicode_ci` du schéma et `utf8mb4_uca1400_ai_ci`, défaut de MariaDB 11.4+,
+> sur une colonne de vue). **Ce fichier sera régénéré par `bash tests/sql/run_tests.sh` sur la
+> révision finale** — il ne doit pas être présenté en soutenance avant que la mention ci-dessus
+> ait disparu.
 
 | | |
 |---|---|

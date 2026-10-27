@@ -54,14 +54,40 @@ final class DbConnexion
     /** DSN effectivement retenu par la dernière connexion réussie. */
     private static ?string $dsnUtilise = null;
 
+    /**
+     * Collation de session imposée à chaque connexion.
+     *
+     * `sql/01`…`sql/03` créent tables, vues et routines sous
+     * `SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci`. Si la connexion garde le
+     * défaut du serveur, sur MariaDB ≥ 11.4 (`utf8mb4_uca1400_ai_ci`), comparer
+     * un littéral ou un paramètre à une colonne de VUE lève :
+     *
+     *     ERROR 1267 Illegal mix of collations (utf8mb4_unicode_ci,COERCIBLE)
+     *     and (utf8mb4_uca1400_ai_ci,COERCIBLE) for operation '='
+     *
+     * Une colonne de table a une collation « implicite », qui gagne contre le
+     * littéral ; une colonne de vue n'en a pas — les deux opérandes sont alors
+     * coercibles et MariaDB refuse de choisir. Aligner la session sur le schéma
+     * supprime la classe entière de défaut, au lieu de corriger un cas.
+     */
+    public const COLLATION = 'utf8mb4_unicode_ci';
+
     /** Options communes à toutes les connexions applicatives. */
     public static function options(): array
     {
-        return [
+        $options = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES => false,
         ];
+
+        // La constante n'existe que si pdo_mysql est chargée (le repli JSON
+        // fonctionne sans elle).
+        if (defined('PDO::MYSQL_ATTR_INIT_COMMAND')) {
+            $options[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET NAMES utf8mb4 COLLATE ' . self::COLLATION;
+        }
+
+        return $options;
     }
 
     /**

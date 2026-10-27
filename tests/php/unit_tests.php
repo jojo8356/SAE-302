@@ -461,6 +461,33 @@ echo "\n15. DSN et repli socket Unix (App\\Config\\DbConnexion)\n";
     $dsn = DbConnexion::dsnTcp($local, 'minishop');
     $check('DSN TCP : hôte, port, base', $dsn === 'mysql:host=127.0.0.1;port=3306;dbname=minishop;charset=utf8mb4', $dsn);
     $check('DSN TCP : jeu de caractères imposé', str_ends_with($dsn, 'charset=utf8mb4'));
+    // --- Collation de session : le défaut qui a fait échouer T-26 sur une base
+    // réelle. Une colonne de TABLE a une collation implicite et gagne contre le
+    // littéral ; une colonne de VUE n'en a pas, donc les deux opérandes sont
+    // « coercibles » et MariaDB 11.4+ (défaut utf8mb4_uca1400_ai_ci) refuse :
+    // ERROR 1267 Illegal mix of collations. La session doit être alignée sur le
+    // schéma, côté PDO comme côté harnais SQL.
+    $check('collation de session alignée sur le schéma',
+        DbConnexion::COLLATION === 'utf8mb4_unicode_ci', DbConnexion::COLLATION);
+    $options = DbConnexion::options();
+    $init = '';
+    if (defined('PDO::MYSQL_ATTR_INIT_COMMAND')) {
+        $init = (string) ($options[PDO::MYSQL_ATTR_INIT_COMMAND] ?? '');
+        $check('PDO : SET NAMES imposé à la connexion',
+            str_contains($init, 'SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci'), $init);
+    } else {
+        $check('PDO : init-command omise sans pdo_mysql (repli sans erreur)',
+            !array_key_exists('PDO::MYSQL_ATTR_INIT_COMMAND', $options));
+    }
+    foreach (['01_minishop_schema', '02_minishop_procedures', '03_minishop_triggers'] as $fichier) {
+        $contenu = (string) file_get_contents(dirname(__DIR__, 2) . '/sql/' . $fichier . '.sql');
+        $check('sql/' . $fichier . ' fixe la collation avant de créer les objets',
+            str_contains($contenu, 'SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci'));
+    }
+    $harnais = (string) file_get_contents(dirname(__DIR__, 2) . '/tests/sql/run_tests.sh');
+    $check('harnais SQL : session alignée (même collation que le schéma)',
+        str_contains($harnais, 'SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci'));
+
     $check('DSN sans base (administration serveur)',
         DbConnexion::dsnTcp($local) === 'mysql:host=127.0.0.1;port=3306;charset=utf8mb4');
     $check('DSN socket : pas de host ni de port',
