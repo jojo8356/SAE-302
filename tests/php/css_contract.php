@@ -201,11 +201,44 @@ $check('zone d\'annonces aria-live présente', str_contains($layout, 'aria-live=
 $check('langue déclarée (<html lang="fr">)', str_contains($layout, '<html lang="fr">'));
 $check('un seul <main> identifié (#contenu)', substr_count($layout, '<main') === 1 && str_contains($layout, 'id="contenu"'));
 
-foreach (['logo.svg', 'logo-mark.svg', 'favicon.svg', 'illustration-achat.svg'] as $image) {
+foreach (['logo.svg', 'logo-mark.svg', 'favicon.svg'] as $image) {
     $chemin = $racine . '/public/img/' . $image;
     $ok = is_file($chemin) && str_contains((string) file_get_contents($chemin), '<svg');
     $check('image ' . $image . ' livrée (SVG)', $ok);
 }
+
+// --- Illustration du hero : une VRAIE image, pas un dessin vectoriel --------
+$illustration = $racine . '/public/img/illustration-achat.jpg';
+$check('illustration du hero livrée (JPEG)', is_file($illustration));
+if (is_file($illustration)) {
+    $octets = (int) filesize($illustration);
+    $entete = (string) file_get_contents($illustration, false, null, 0, 3);
+    // Signature JPEG : FF D8 FF. Un fichier simplement renommé .jpg ne passe pas.
+    $check('illustration : signature JPEG réelle', bin2hex($entete) === 'ffd8ff', bin2hex($entete));
+    $dimensions = getimagesize($illustration);
+    $check('illustration : dimensions lisibles', is_array($dimensions) && $dimensions[0] > 0 && $dimensions[1] > 0);
+    if (is_array($dimensions)) {
+        $check('illustration : au moins 900 px de large', $dimensions[0] >= 900, $dimensions[0] . '×' . $dimensions[1]);
+        $check('illustration : rapport 960/524 respecté',
+            abs(($dimensions[0] / $dimensions[1]) - (960 / 524)) < 0.02,
+            (string) round($dimensions[0] / $dimensions[1], 3));
+    }
+    $check('illustration : poids ≤ 250 Ko', $octets > 5000 && $octets <= 250 * 1024, $octets . ' octets');
+}
+
+$accueil = (string) file_get_contents($racine . '/app/View/home/index.php');
+$check('le hero utilise la vraie image', str_contains($accueil, 'src="/img/illustration-achat.jpg"'));
+$check('le hero ne référence plus le dessin vectoriel', !str_contains($accueil, 'illustration-achat.svg'));
+$check('illustration : width et height déclarés (aucun décalage au chargement)',
+    preg_match('/illustration-achat\.jpg[^>]*width="\d+"[^>]*height="\d+"/s', $accueil) === 1);
+$check('illustration : texte alternatif descriptif',
+    preg_match('/illustration-achat\.jpg[^>]*alt="[^"]{20,}"/s', $accueil) === 1);
+$check('illustration : au-dessus de la ligne de flottaison (loading="eager")',
+    preg_match('/illustration-achat\.jpg[^>]*loading="eager"/s', $accueil) === 1);
+$check('illustration : servie localement, aucune requête distante',
+    preg_match('#<img[^>]*illustration-achat[^>]*src="https?://#s', $accueil) !== 1);
+$check('illustration : feuille de style bornant l’affichage (object-fit)',
+    str_contains((string) file_get_contents($racine . '/public/css/app.css'), 'object-fit: cover'));
 
 // ------------------------------------------------------------------ verdict
 echo "\n" . str_repeat('=', 60) . "\n";

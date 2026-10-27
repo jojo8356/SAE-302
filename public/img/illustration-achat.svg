@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 260" role="img" aria-label="Illustration : panier et colis">
-  <rect x="24" y="60" width="272" height="150" rx="18" fill="#EEF2FF" stroke="#C7D2FE"/>
-  <path d="M70 110h180l-16 78H86z" fill="#fff" stroke="#1D4ED8" stroke-width="3" stroke-linejoin="round"/>
-  <path d="M112 110V92a28 28 0 0 1 56 0v18" fill="none" stroke="#1D4ED8" stroke-width="3" stroke-linecap="round"/>
-  <rect x="150" y="132" width="46" height="34" rx="4" fill="#FFEDD5" stroke="#C2410C" stroke-width="2"/>
-  <path d="M150 144h46M173 132v34" stroke="#C2410C" stroke-width="2"/>
-  <circle cx="252" cy="72" r="12" fill="#C2410C" opacity="0.15"/>
-  <circle cx="56" cy="196" r="18" fill="#1D4ED8" opacity="0.10"/>
-</svg>

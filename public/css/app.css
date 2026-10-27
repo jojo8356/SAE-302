@@ -536,10 +536,17 @@ body > main {
     margin-top: var(--e-4);
 }
 
+/* Illustration du hero : photographie réelle (960×524). Les attributs
+   width/height de la balise réservent la place ; ici on borne seulement
+   l'affichage, sans jamais déformer (object-fit). */
 .hero__illustration {
     justify-self: center;
-    width: min(100%, 320px);
-    opacity: 0.95;
+    width: min(100%, 460px);
+    height: auto;
+    aspect-ratio: 960 / 524;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 0 10px 28px rgb(15 23 42 / 12%);
 }
 
 /* Grilles */
@@ -1586,7 +1593,7 @@ select[data-largeur-courte] {
     }
 
     .hero__illustration {
-        width: min(100%, 280px);
+        width: min(100%, 360px);
     }
 
     .admin__nav {

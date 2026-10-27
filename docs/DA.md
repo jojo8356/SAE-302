@@ -244,8 +244,21 @@ les tokens sont prêts (`[data-theme="dark"]` documenté) si la suite du projet 
   décliné en `logo.svg` (horizontal) et `favicon.svg` (carré).
 - **Images produit** : le jeu de démonstration n'a pas de photos ; la carte affiche un **placeholder
   génératif** (dégradé neutre + initiale du produit) — ce n'est jamais une image cassée.
-- **Pas de photographie de banque d'images** : le projet est pédagogique, on assume une direction
-  « fiche technique » plutôt qu'un e-commerce photographique.
+- **Une photographie, une seule** : l'illustration du hero (`public/img/illustration-achat.jpg`,
+  960 × 524, 63 Ko). Le reste de l'interface reste en direction « fiche technique » (aplats, traits,
+  tokens), ce qui évite l'écueil inverse — un catalogue de vignettes photographiques inégales qui
+  donne une impression de bricolage.
+  - **Pourquoi une photo ici** : le hero est la seule zone où l'on vend une *ambiance* ; ailleurs,
+    on vend des *caractéristiques*. Une illustration vectorielle abstraite n'y racontait rien.
+  - **Provenance** : image générée pour le projet (aucun droit de tiers, aucune banque d'images,
+    aucune requête réseau — ENF-20 tenu). Palette alignée sur `--primaire` (cobalt) et `--accent`
+    (terracotta), fond crème proche de `--papier`.
+  - **Contraintes tenues** : `width`/`height` déclarés (aucun décalage de mise en page au chargement),
+    `loading="eager"` + `fetchpriority="high"` (elle est au-dessus de la ligne de flottaison),
+    `alt` descriptif, `object-fit: cover` pour ne jamais déformer, masquée sous 35 em faute de place
+    utile. Poids ≤ 250 Ko vérifié par `tests/php/css_contract.php`.
+  - **Règle** : toute nouvelle photo de produit devra suivre la même grille (fond neutre, lumière
+    douce, 16/9 ou 4/3, ≤ 250 Ko) sous peine de casser la cohérence du hero.
 
 ---
 
@@ -273,6 +286,7 @@ Ton : **direct, factuel, sans urgence artificielle**. Tutoiement interdit, vouvo
 | `public/js/panier.js` | ajout sans rechargement, badge `aria-live`, plafond serveur, confirmations |
 | `public/js/ui.js` | menu mobile, compteur de caractères, focus après erreur |
 | `public/img/logo.svg`, `logo-mark.svg`, `favicon.svg` | identité |
+| `public/img/illustration-achat.jpg` | photographie du hero (960×524, 63 Ko) |
 | `app/View/layout.php` | gabarit : skip-link, en-tête, nav, `aria-live`, pied de page |
 | `tests/php/css_contract.php` | vérifie que chaque token existe, que les contrastes passent, que les classes utilisées dans les vues sont définies |
 

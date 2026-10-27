@@ -15,7 +15,11 @@ declare(strict_types=1);
             <a class="btn btn--secondaire" href="/categories">Parcourir les catégories</a>
         </div>
     </div>
-    <img class="hero__illustration" src="/img/illustration-achat.svg" alt="" width="320" height="260">
+    <?php // Illustration réelle (JPEG 960×524, 63 Ko) : width/height explicites pour
+          // éviter tout décalage de mise en page pendant le chargement (CLS). ?>
+    <img class="hero__illustration" src="/img/illustration-achat.jpg"
+         alt="Ordinateur portable, casque audio, enceinte connectée et colis prêt à être expédié"
+         width="960" height="524" loading="eager" decoding="async" fetchpriority="high">
 </section>
 
 <section aria-labelledby="titre-categories">

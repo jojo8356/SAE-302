@@ -47,7 +47,7 @@
 - [x] `public/css/app.css` — design system (35 tokens, composants, responsive, `:focus-visible`, `prefers-reduced-motion`, `prefers-contrast`).
 - [x] `public/css/print.css` — feuille d'impression.
 - [x] `public/js/panier.js`, `public/js/ui.js` — panier sans rechargement (`fetch`, `aria-live`, badge), validations et focus.
-- [x] `public/img/{logo,logo-mark,favicon,illustration-achat}.svg`.
+- [x] `public/img/{logo,logo-mark,favicon}.svg` + `illustration-achat.jpg` — l'illustration abstraite du hero a été remplacée par une **vraie photographie** (960 × 524, 63 Ko, générée pour le projet, palette alignée sur `--primaire`/`--accent`). Le contrat de design vérifie désormais la signature JPEG réelle (un fichier renommé ne passe pas), les dimensions, le poids, l'`alt` descriptif, les attributs `width`/`height` (CLS), `loading="eager"` et l'absence de requête distante (12 vérifications, 28 → 40 au total).
 - [x] `app/View/layout.php` — skip-link, nav `aria-current`, badge panier, flashs, pied de page.
 - [x] `app/Controller/ApiController.php` + routes `/api/panier/*` — JSON, CSRF, montants serveur.
 - [x] CSP alignée (`style-src 'self'`, `script-src 'self'`) sans affaiblir le reste.
