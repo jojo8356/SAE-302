@@ -58,6 +58,34 @@ final class Revision
         return self::$cache;
     }
 
+    /**
+     * Révision sur laquelle la copie a été synchronisée (`.git/minishop-synchro`),
+     * écrite par `scripts/maj-depuis-branche.sh` — `null` si aucune synchro n'a
+     * eu lieu.
+     *
+     * Une synchro de fichiers ne déplace NOTRE tête de branche : afficher
+     * seulement `HEAD` laisserait croire que la copie est périmée alors qu'elle
+     * vient d'être mise à jour.
+     */
+    public static function synchroniseSur(): ?string
+    {
+        $racine = dirname(__DIR__, 2);
+        $fichier = $racine . '/.git/minishop-synchro';
+        if (!is_file($fichier)) {
+            return null;
+        }
+        $lignes = file($fichier, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        if (!is_array($lignes) || $lignes === []) {
+            return null;
+        }
+        $sha = trim((string) $lignes[0]);
+        if (preg_match('/^[0-9a-f]{7,40}$/', $sha) !== 1) {
+            return null;
+        }
+
+        return substr($sha, 0, 7);
+    }
+
     /** Le code local est-il modifié par rapport au dernier commit ? */
     public static function modifie(): bool
     {

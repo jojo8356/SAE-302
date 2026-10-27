@@ -133,6 +133,12 @@ REVISION="$(git -C "$RACINE" rev-parse --short HEAD 2>/dev/null || echo 'inconnu
 if [ -n "$(git -C "$RACINE" status --porcelain --untracked-files=no 2>/dev/null)" ]; then
     REVISION="$REVISION + modifications locales"
 fi
+# .git/minishop-synchro : la copie a été synchronisée sur cette révision, qui
+# n'est pas forcément notre HEAD (la synchro ne déplace pas la tête de branche).
+if [ -f "$RACINE/.git/minishop-synchro" ]; then
+    SYNCHRO_SHA="$(head -1 "$RACINE/.git/minishop-synchro" 2>/dev/null | cut -c1-7)"
+    [ -n "$SYNCHRO_SHA" ] && REVISION="$REVISION · synchronisé sur $SYNCHRO_SHA"
+fi
 
 echo "   config     : $SOURCES"
 echo "   code       : $REVISION"

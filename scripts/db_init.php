@@ -206,6 +206,10 @@ $revision = Revision::courante();
 if (Revision::modifie()) {
     $revision .= ' + modifications locales';
 }
+$synchronise = Revision::synchroniseSur();
+if ($synchronise !== null) {
+    $revision .= ' · synchronisé sur ' . $synchronise;
+}
 echo '   code          : ' . $revision . "\n";
 
 $socketDetectee = DbConnexion::socketConfiguree();
