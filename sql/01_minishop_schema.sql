@@ -35,7 +35,13 @@
 DROP DATABASE IF EXISTS minishop;   -- à retirer si la base est partagée
 CREATE DATABASE IF NOT EXISTS minishop CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE minishop;
-SET NAMES utf8mb4;
+
+-- Collation de connexion = collation de la base. Les procédures et les
+-- déclencheurs MÉMORISENT la collation de la connexion qui les a créés :
+-- un chargement en utf8mb4_general_ci (défaut de `SET NAMES utf8mb4` selon
+-- la version du serveur) provoque ensuite l'erreur 1267 « Illegal mix of
+-- collations » quand l'application appelle sp_search_products.
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
 SET FOREIGN_KEY_CHECKS = 0;           -- permet un rejeu idempotent du script
 
 -- ---------------------------------------------------------------------

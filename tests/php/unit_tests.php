@@ -740,6 +740,63 @@ echo "\n18. Découpage des scripts SQL (App\\Tools\\SqlLoader::decouper)\n";
     }
 }
 
+// ============================================================ 19. invariants SQL
+echo "\n19. Invariants des scripts SQL livrés (collations, garde-fous métier)\n";
+{
+    $racine = dirname(__DIR__, 2);
+    $lire = static function (string $fichier) use ($racine): string {
+        $chemin = $racine . '/' . $fichier;
+        if (!is_file($chemin)) {
+            return '';
+        }
+
+        return (string) file_get_contents($chemin);
+    };
+
+    // 1. Collation de connexion : sans elle, les procédures mémorisent la
+    //    collation du moment et sp_search_products lève ensuite l'erreur 1267.
+    foreach (['sql/01_minishop_schema.sql', 'sql/02_minishop_procedures.sql', 'sql/03_minishop_triggers.sql'] as $fichier) {
+        $source = $lire($fichier);
+        $check($fichier . ' — SET NAMES avec collation explicite',
+            str_contains($source, 'SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci'));
+        // `SET NAMES utf8mb4;` seul laisserait la collation au défaut du serveur.
+        $sansCollation = preg_match_all('/^SET NAMES utf8mb4\s*;/mi', $source);
+        $check($fichier . ' — aucun SET NAMES sans collation', $sansCollation === 0, (string) $sansCollation);
+    }
+    $check('la base est créée en utf8mb4_unicode_ci (cohérence avec les routines)',
+        str_contains($lire('sql/01_minishop_schema.sql'), 'COLLATE utf8mb4_unicode_ci'));
+    $check('le chargeur crée la base dans la même collation',
+        str_contains($lire('app/Tools/DbInstaller.php'), 'utf8mb4_unicode_ci'));
+
+    // 2. RB-19 : un produit masqué ne peut pas être commandé.
+    $procedures = $lire('sql/02_minishop_procedures.sql');
+    $check('sp_add_order_line verrouille le stock en filtrant les produits masqués',
+        str_contains($procedures, 'FROM produit WHERE id_produit = p_id_produit AND visible = 1 FOR UPDATE'));
+
+    // 3. Anti-doublon d'historique : le déclencheur écrit, la procédure non.
+    $debut = strpos($procedures, 'CREATE PROCEDURE sp_update_order_status');
+    $check('sp_update_order_status présente', $debut !== false);
+    if ($debut !== false) {
+        $fin = strpos($procedures, 'DELIMITER', $debut);
+        if ($fin === false) {
+            $corps = substr($procedures, $debut);
+        } else {
+            $corps = substr($procedures, $debut, $fin - $debut);
+        }
+        $check('sp_update_order_status n’écrit pas elle-même l’historique (le trigger s’en charge)',
+            !str_contains($corps, 'INSERT INTO order_status_history'));
+        $check('sp_update_order_status écrit bien le statut',
+            str_contains($corps, 'UPDATE commande'));
+    }
+
+    // 4. Les triggers d'historique existent et sont tracés.
+    $triggers = $lire('sql/03_minishop_triggers.sql');
+    $check('le déclencheur d’historique de statut est livré',
+        str_contains($triggers, 'order_status_history'));
+    $check('aucun trigger ne supprime silencieusement l’historique',
+        !str_contains($triggers, 'DELETE FROM order_status_history'));
+}
+
 // ============================================================ synthèse
 echo "\n" . str_repeat('=', 72) . "\n";
 echo sprintf("%d vérifications — %d OK, %d échecs\n", $tests, $tests - $echecs, $echecs);

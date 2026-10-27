@@ -222,7 +222,7 @@ npm run test:all        # ou : node scripts/run-all-tests.mjs
 | Linter strict types | `scripts/strict_types_lint.php` | règle `declare_strict_types` de php-cs-fixer + types natifs « PHPStan level 9 » (params, retours, propriétés) + **règle maison : opérateur ternaire interdit** (`? :` et `?:`, remplacés par `if/else` ; `??` et types nullables `?int` autorisés) sur **tout le livrable PHP** | ✅ 0 violation / 98 fichiers |
 | Moteur JSON | `tests/php/engine_smoke.php` | contraintes, triggers, transactions, journal du moteur | ✅ vert |
 | Règles de gestion | `tests/php/run_tests.php` | T-01…T-29 du document de tests (RB-01…RB-20, vues, frais de port) | ✅ 29/29 |
-| Unitaires | `tests/php/unit_tests.php` | `Text` (fold/slug/collation), échappement, CSRF, **matrice RB-11 complète** (36 couples), `Filter`, `PanierSession`, prix TTC, journal, **`.env`**, versions SGBD, **DSN et repli socket Unix** | ✅ 253/253 |
+| Unitaires | `tests/php/unit_tests.php` | `Text` (fold/slug/collation), échappement, CSRF, **matrice RB-11 complète** (36 couples), `Filter`, `PanierSession`, prix TTC, journal, **`.env`**, versions SGBD, **DSN et repli socket Unix** | ✅ 267/267 |
 | Fonctionnalités | `tests/php/features_test.php` | **UC-01…UC-14** via les repositories (catalogue, compte, panier, commande, annulation, back-office, indicateurs) | ✅ 108/108 |
 | Contrats de design | `tests/php/css_contract.php` | tokens de `docs/DA.md`, contrastes WCAG calculés, classes des vues réellement définies, `prefers-reduced-motion`, feuille d'impression | ✅ 28/28 |
 | Contrat responsive | `tests/php/responsive_contract.php` | 320 px → 1536 px : paliers en `em`, menu repliable, tableaux accessibles, panier en cartes, `dvh`, encoches, `pointer: coarse`, container queries | ✅ 48/48 |
