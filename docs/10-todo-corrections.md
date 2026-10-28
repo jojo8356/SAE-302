@@ -236,6 +236,14 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [!] Recette métier, navigateur réel, charge et MariaDB : **non joués** pour cette livraison ; à effectuer sur une instance isolée et autorisée. Les 150 scénarios et les 36 couples de transition sont initialement non joués dans le suivi.
 
 
+## 6 terdecies. Préparation LineServ et recette collègue
+
+- [x] Analyser le déploiement SFTP/phpMyAdmin et identifier les contraintes réelles du projet.
+- [x] Préparer un guide sûr et un script local non destructif pour l’import initial sur une base dédiée vide.
+- [x] Rédiger un e-mail de recette et expliquer les outils d’accessibilité et de responsive.
+- [x] Vérifier les livrables, indiquer explicitement les blocages et les tests non exécutés.
+- [!] Compatibilité applicative avec l’URL en sous-dossier et séparation de la racine privée : adaptation et validation réelles encore nécessaires avant publication. PHP, réécriture Apache, droits SQL et accès de recette sur LineServ restent à confirmer.
+
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 
 - [!] **Noms, prénoms, numéros étudiants** des 3 membres + emails → README §Membres et CDC §3.3 (aucune identité ne peut être inventée).
