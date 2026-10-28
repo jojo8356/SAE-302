@@ -8,16 +8,17 @@ La pyramide des tests est souvent citée puis contredite par les chiffres. Voici
 
 | Étage | Nature | Suite | Volume | Durée |
 |---|---|---|---|---|
-| 0 | Analyse statique | `scripts/strict_types_lint.php` (règles php-cs-fixer `declare_strict_types`, types natifs niveau PHPStan 9, interdiction du ternaire) + autotest du harnais `scripts/wasm_verdict.mjs` | **100 fichiers**, 0 violation · **7 cas** de verdict | < 1 s |
+| 0 | Analyse statique | `scripts/strict_types_lint.php` (règles php-cs-fixer `declare_strict_types`, types natifs niveau PHPStan 9, interdiction du ternaire) + autotest du harnais `scripts/wasm_verdict.mjs` | **102 fichiers**, 0 violation · **9 cas** de verdict | < 1 s |
 | 1 | Unitaires purs | `tests/php/unit_tests.php` (`Text`, `Csrf`, `Filter`, `PanierSession`, `RB-11`…) + `tests/phpunit/**` | **282** vérifications + **34** tests PHPUnit | ~ 6 s |
-| 2 | Contrats (sans exécution) | `tests/php/contract_http.php`, `tests/php/css_contract.php`, `tests/php/responsive_contract.php` | **26** + **55** + **48** vérifications | ~ 2 s |
+| 2 | Contrats (sans exécution) | `tests/php/contract_http.php`, `tests/php/css_contract.php`, `tests/php/responsive_contract.php` | **26** + **64** + **48** vérifications | ~ 2 s |
 | 3 | Règles de gestion sur le moteur | `tests/php/run_tests.php` (T-01 → T-29 du CDC §6), `tests/php/engine_smoke.php` | **29/29** scénarios, **44** contrôles moteur | ~ 10 s |
 | 4 | Fonctionnalités de bout en bout (application court-circuitée) | `tests/php/features_test.php` (UC-01 → UC-14 via les dépôts) | **131** vérifications | ~ 4 s |
-| 5 | Intégration SQL réelle | `tests/php/sql_integration.php` → `tests/sql/run_tests.sh` | **29** scénarios sur MariaDB | ~ 30 s |
-| 6 | Parcours HTTP complet | `scripts/e2e.mjs` (natif) ; `scripts/wasm-e2e.mjs` (WASM) | **185** natif ; **188** WASM | ~ 90 s |
+| 4 bis | Contrat catalogue / ruptures | `tests/php/catalogue_stock_test.php` sur une fixture JSON isolée | **7 656** scénarios sur le jeu actuel | variable |
+| 5 | Intégration SQL réelle | `tests/php/sql_integration.php` → `tests/sql/run_tests.sh` | **29** scénarios SQL + matrice catalogue ; à rejouer sur MariaDB | ~ 30 s |
+| 6 | Parcours HTTP complet | `scripts/e2e.mjs` (natif) ; `scripts/wasm-e2e.mjs` (WASM) | **260** WASM via `scripts/e2e.mjs` | ~ 90 s |
 | 7 | Performance | `scripts/capture_perf.sh` → `gen_volumes.sh` + `tests/perf/mesurer_sql.sh` | 5 requêtes types + `EXPLAIN` + p95 de la recherche | ~ 60 s |
 
-**Total** : 806 vérifications automatisées sur les étages 1→6, plus 29 scénarios SQL rejoués sur un vrai serveur.
+**Total** : les volumes détaillés figurent ci-dessus ; les scénarios catalogue varient avec le nombre de produits. La matrice catalogue MariaDB reste à jouer.
 
 Pourquoi cette forme, et pas 400 tests unitaires avec des doublures partout : l'essentiel du sujet est une **base de données** (8 entités, 17 procédures, 16 déclencheurs, 1 fonction, 3 vues). Un test unitaire avec un `PDO` simulé prouverait que le PHP appelle bien une chaîne de caractères — c'est-à-dire rien. Les règles de gestion (stock, immutabilité du prix, transitions de statut, total recalculé) sont donc vérifiées **là où elles vivent réellement** : étage 3 sur le moteur, étage 5 sur MariaDB. La pyramide est respectée dans son esprit (beaucoup de tests rapides en bas) mais son sommet est anormalement lourd, et c'est assumé : c'est le sujet.
 
@@ -31,7 +32,7 @@ Pourquoi cette forme, et pas 400 tests unitaires avec des doublures partout : l'
 
 ### 2.2 Tests d'intégration SQL (étage 5) — la seule preuve que le SQL fonctionne
 
-`tests/php/sql_integration.php` est une **enveloppe mince** autour de `tests/sql/run_tests.sh` (qui existait déjà) : il crée une base dédiée `minishop_test`, y charge `sql/01` → `sql/04`, joue les 29 scénarios, puis **supprime la base**.
+`tests/php/sql_integration.php` est une **enveloppe mince** autour de `tests/sql/run_tests.sh` (qui existait déjà) : il crée une base dédiée `minishop_test`, y charge `sql/01` → `sql/04`, teste également le repository sur `SqlStore`, joue les 29 scénarios, puis **supprime la base**.
 
 Le mot « mince » est important : réécrire les 29 cas en PHP aurait produit deux jeux de tests qui divergent au premier changement de schéma. Le harnais shell est la référence ; le PHP n'ajoute que l'isolation.
 
@@ -43,7 +44,7 @@ Dégradation : sans client `mariadb`/`mysql` dans le `PATH`, ou sans serveur joi
 
 ### 2.3 Tests de bout en bout (étage 6) — ce que l'utilisateur voit
 
-`scripts/e2e.mjs` ne simule rien : il envoie des requêtes au front controller, suit les redirections, vérifie les codes HTTP, le contenu des pages, la présence des jetons CSRF, la persistance en base. 185 vérifications couvrant inscription, connexion, recherche, panier, commande, suivi, administration.
+`scripts/e2e.mjs` exécute le parcours WASM : les requêtes passent par le front controller dans le runtime PHP-WASM, sans navigateur ni serveur HTTP réel. Il vérifie les codes HTTP, le contenu des pages, les jetons CSRF et la persistance dans le magasin JSON. 260 vérifications couvrant inscription, connexion, recherche, panier, commande, suivi, administration.
 
 Le point non évident : **le test photographie `data/` avant de le restaurer après**, y compris en cas d'échec. Sans cela, une campagne laisserait des commandes de test dans le jeu de démonstration, et la suivante échouerait sur des stocks que personne n'a modifiés — panne classique, invisible sur une machine neuve, systématique en soutenance.
 

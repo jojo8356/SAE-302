@@ -84,7 +84,7 @@
 - [x] **E2E réellement joué** par `php scripts/run-all-tests.php` : l'étape Node est lancée quand `node` et `@php-wasm/node` sont présents, et annoncée **NON JOUÉE** avec la commande exacte sinon (le message conseillait un `./run.sh --e2e` qui n'existe pas). `intl` et `pdo_mysql` sont signalées comme facultatives, pas comme des échecs.
 - [x] **Bug intl corrigé** : `Text.php` écrivait `Transliterator::create()` et `new Collator()` sans barre oblique initiale — dans l'espace de noms `App\Model\Data`, PHP cherchait donc `App\Model\Data\Transliterator`. Invisible dans la sandbox (intl absente, `class_exists()` renvoie faux), **fatal sur toute machine où intl est chargée** — c'est-à-dire la machine de rendu. Corrigé en `\Transliterator` / `\Collator`, et un contrat statique vérifie désormais que les classes globales d'extension sont référencées en absolu dans `app/` (test de non-régression validé en réintroduisant le bug).
 - [x] **Piège fermé** : `scripts/run-all-tests.php` avait été créé sans balise `<?php` (PHP affichait donc son contenu au lieu de l'exécuter) — le linter ne couvrait pas `scripts/` autrement que par `seed.php`. Cible par défaut étendue aux scripts applicatifs (95 fichiers analysés au lieu de 90) ; `deploy.php` et `gen_volumes*.php`, antérieurs et non applicatifs, restent hors périmètre et c'est documenté.
-- [x] `npm run test:all` exécute **8 suites** + l'autotest du harnais + l'E2E (moteur, règles, unitaires, fonctionnalités, design, responsive, contrats HTTP, PHPUnit) ; le linter strict-types est un contrôle séparé. L'**intégration SQL** est jouée quand un serveur est joignable, annoncée NON JOUÉ sinon.
+- [x] `npm run test:all` exécute **9 suites** + l'autotest du harnais + l'E2E (moteur, règles, unitaires, fonctionnalités, catalogue-stock, design, responsive, contrats HTTP, PHPUnit) ; le linter strict-types est un contrôle séparé. L'**intégration SQL** est jouée quand un serveur est joignable, annoncée NON JOUÉ sinon.
 
 ## 4 bis. Campagne SQL : sept scénarios qui ne testaient pas ce qu'ils annonçaient
 
@@ -176,6 +176,15 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] Les états survol et appui sont réservés aux boutons actifs ; les boutons désactivés gardent leur fond, leur texte et leur bordure, avec le curseur `not-allowed`.
 - [x] Contrats CSS : état désactivé, exclusion des effets interactifs et attribut `disabled` du bouton produit (64 contrôles de design).
 - [ ] Contrôle visuel dans un navigateur : non joué dans la sandbox (aucun navigateur disponible).
+
+## 6 sexies. Tests complets : ruptures en fin de recherche — **fait**
+
+- [x] `tests/php/catalogue_stock_test.php` : fixture JSON temporaire sans modifier les données applicatives ; oracle indépendant de `searchProducts` ; 7 656 scénarios sur le jeu de 36 produits (chaque nom et référence, mots-clés, casse et accents, prix, catégories, stock, les cinq tris et tri invalide ; pages de 1, 3, 5, 12 et 60 éléments, pages hors limites, doublons et métadonnées).
+- [x] Tests de réapprovisionnement, de stock faible, catalogue intégralement disponible et intégralement en rupture ; mêmes scénarios sur chaque état.
+- [x] E2E WASM : 72 nouveaux contrôles sur `/catalogue` et `/recherche` (six tris × six recherches/filtres × deux routes), toutes pages réunies. Total : 260 vérifications.
+- [x] Test de mutation : désactivation temporaire de la priorité des stocks côté contrôleur puis dans le repository ; l'E2E et le contrat JSON échouent respectivement, puis le code est restauré.
+- [x] Suites intégrées aux lanceurs PHP et WASM ; tests catalogue SQL inclus dans `sql_integration.php` sur la base dédiée, en lecture seule.
+- [ ] Scénarios du repository sur MariaDB : **non joués dans la sandbox** (serveur et client SQL absents). Leur nombre dépend du jeu chargé ; la campagne complète SQL continue de réinitialiser puis supprimer la base de test, jamais la base applicative.
 
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 

@@ -32,6 +32,7 @@ const SUITES = [
     ['Règles de gestion', 'tests/php/run_tests.php'],
     ['Unitaires', 'tests/php/unit_tests.php'],
     ['Fonctionnalités', 'tests/php/features_test.php'],
+    ['Catalogue : ruptures en dernier', 'tests/php/catalogue_stock_test.php'],
     ['Contrats de design', 'tests/php/css_contract.php'],
     ['Contrat responsive', 'tests/php/responsive_contract.php'],
     ['Contrats HTTP', 'tests/php/contract_http.php'],

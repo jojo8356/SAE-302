@@ -437,6 +437,71 @@ process.stdout.write(B('T7 · catalogue avancé (F-01…F-05)'));
       && referencesPower.includes('POWER-010') && referencesPower.includes('POWER-030'),
     referencesPower.join(', '));
 
+  // Matrice HTTP sur les deux routes publiques : aucune hypothèse sur le
+  // nombre de pages, et comparaison aux données plutôt qu'au texte du titre.
+  const normaliser = (texte) => String(texte ?? '').normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const requetesStock = [
+    { q: '', cat: null, min: null, max: null, enStock: false },
+    { q: 'POWER', cat: null, min: null, max: null, enStock: false },
+    { q: '65 W', cat: null, min: null, max: null, enStock: false },
+    { q: 'POWER', cat: 3, min: 20, max: 90, enStock: false },
+    { q: 'POWER', cat: 3, min: null, max: null, enStock: true },
+    { q: 'introuvable-999', cat: null, min: null, max: null, enStock: false },
+  ];
+  for (const chemin of ['/catalogue', '/recherche']) {
+    for (const tri of ['nom', 'prix_asc', 'prix_desc', 'nouveaute', 'stock', 'tri-inconnu']) {
+      for (const requete of requetesStock) {
+        const eligibles = produits.filter((p) => {
+          if (!(p.visible === 1 || p.visible === true)) return false;
+          if (requete.cat !== null && Number(p.id_categorie) !== requete.cat) return false;
+          if (requete.min !== null && Number(p.prix_ttc) < requete.min) return false;
+          if (requete.max !== null && Number(p.prix_ttc) > requete.max) return false;
+          if (requete.enStock && Number(p.stock) <= 0) return false;
+          return ['nom', 'description', 'reference'].some((champ) =>
+            normaliser(p[champ]).includes(normaliser(requete.q)));
+        });
+        const parReference = new Map(eligibles.map((p) => [p.reference, p]));
+        const params = new URLSearchParams({ tri, q: requete.q });
+        if (requete.cat !== null) params.set('cat', String(requete.cat));
+        if (requete.min !== null) params.set('prix_min', String(requete.min));
+        if (requete.max !== null) params.set('prix_max', String(requete.max));
+        if (requete.enStock) params.set('stock', '1');
+        const totalPages = Math.max(1, Math.ceil(eligibles.length / 12));
+        const references = [];
+        let correct = true;
+        for (let page = 1; page <= totalPages; page++) {
+          params.set('page', String(page));
+          const reponse = await anon.get(`${chemin}?${params}`);
+          const cartes = [...(reponse.text ?? '').matchAll(/<article class="carte carte-produit">([\s\S]*?)<\/article>/g)];
+          if (reponse.httpStatusCode !== 200 || cartes.length !== Math.min(12, Math.max(0, eligibles.length - (page - 1) * 12))) correct = false;
+          for (const carte of cartes) {
+            const ref = carte[1].match(/Réf\.\s*([^<]+)/);
+            if (!ref) correct = false;
+            else references.push(ref[1].trim());
+          }
+        }
+        if (references.length !== eligibles.length || new Set(references).size !== eligibles.length) correct = false;
+        let ruptureVue = false;
+        let precedent = null;
+        for (const ref of references) {
+          const produit = parReference.get(ref);
+          if (!produit) { correct = false; continue; }
+          if (Number(produit.stock) <= 0) ruptureVue = true;
+          else if (ruptureVue) correct = false;
+          if (precedent && (Number(precedent.stock) > 0) === (Number(produit.stock) > 0)) {
+            if (tri === 'prix_asc' && Number(precedent.prix_ttc) > Number(produit.prix_ttc)) correct = false;
+            if (tri === 'prix_desc' && Number(precedent.prix_ttc) < Number(produit.prix_ttc)) correct = false;
+            if (tri === 'stock' && Number(precedent.stock) < Number(produit.stock)) correct = false;
+          }
+          precedent = produit;
+        }
+        check(`${chemin} : ruptures en dernier, tri ${tri}, recherche ${JSON.stringify(requete)}`,
+          correct, `références rendues : ${references.join(', ')} ; attendu : ${eligibles.length}`);
+      }
+    }
+  }
+
   const injectionTri = await anon.get('/catalogue?tri=prix_desc;DROP%20TABLE%20produit');
   check('tri inconnu → 200 sans erreur (liste blanche)', injectionTri.httpStatusCode === 200, `status ${injectionTri.httpStatusCode}`);
 

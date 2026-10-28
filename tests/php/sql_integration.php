@@ -119,8 +119,27 @@ try {
     exit(1);
 }
 
+// Contrat de pagination du repository, sur la même base dédiée et en lecture seule.
+// Jamais sur la base applicative. Les scénarios sont partagés avec le pilote JSON.
+echo "\n3. Catalogue : ruptures en dernier (pilote SQL)\n";
+$echecsCatalogue = 0;
+try {
+    require_once __DIR__ . '/catalogue_stock_cases.php';
+    $stockSql = new \App\Model\Data\SqlStore(DbConnexion::ouvrir($base, $config));
+    $resultatCatalogue = verifierCatalogueStock($stockSql);
+    $echecsCatalogue = $resultatCatalogue['echecs'];
+    if ($echecsCatalogue === 0) {
+        echo '   ✅ ' . $resultatCatalogue['tests'] . " scénarios de catalogue SQL\n";
+    } else {
+        echo '   ❌ catalogue SQL : ' . $echecsCatalogue . " échec(s)\n";
+    }
+} catch (Throwable $erreur) {
+    $echecsCatalogue = 1;
+    echo '   ❌ catalogue SQL : ' . $erreur->getMessage() . "\n";
+}
+
 // ------------------------------------------------------- campagne SQL
-echo "\n3. Campagne de scénarios SQL (tests/sql/run_tests.sh)\n";
+echo "\n4. Campagne de scénarios SQL (tests/sql/run_tests.sh)\n";
 $harnais = $racine . '/tests/sql/run_tests.sh';
 if (!is_file($harnais)) {
     echo "   ❌ harnais absent : " . $harnais . "\n";
@@ -143,6 +162,9 @@ $sortie = [];
 $code = 0;
 @exec($prefixe . 'bash ' . escapeshellarg($harnais) . ' 2>&1', $sortie, $code);
 echo implode("\n", $sortie) . "\n";
+if ($echecsCatalogue !== 0 && $code === 0) {
+    $code = 1;
+}
 
 // ------------------------------------------------------------ ménage
 if ($garder) {
