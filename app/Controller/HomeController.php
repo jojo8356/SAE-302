@@ -44,6 +44,36 @@ final class HomeController extends Controller
         $this->render('home/cgv', [], 'Conditions générales de vente');
     }
 
+    public function confidentialite(): void
+    {
+        $this->render('home/confidentialite', [], 'Confidentialité');
+    }
+
+    public function cookies(): void
+    {
+        $this->render('home/cookies', [], 'Cookies et traceurs');
+    }
+
+    public function livraison(): void
+    {
+        $this->render('home/livraison', [], 'Livraison');
+    }
+
+    public function retractation(): void
+    {
+        $this->render('home/retractation', [], 'Rétractation');
+    }
+
+    public function garanties(): void
+    {
+        $this->render('home/garanties', [], 'Garanties légales');
+    }
+
+    public function cgu(): void
+    {
+        $this->render('home/cgu', [], 'Conditions d’utilisation');
+    }
+
     /** Page d'aide (raccourcis, FAQ courte, accessibilité) — EF-VIS-08. */
     public function aide(): void
     {
@@ -56,14 +86,7 @@ final class HomeController extends Controller
         $this->render('home/contact', ['erreurs' => [], 'valeurs' => []], 'Nous contacter');
     }
 
-    /**
-     * Traitement du formulaire de contact (EF-GEN-05).
-     *
-     * Le message n'est PAS stocké en base : aucune donnée personnelle n'est
-     * conservée par une maquette pédagogique (minimisation, RGPD). Il est
-     * écrit dans `var/log/contact.jsonl` (hors versionnement, ignoré par
-     * .gitignore) et un accusé de réception est affiché.
-     */
+    /** Traitement de démonstration : stockage local, sans service de courrier. */
     public function envoyerContact(): void
     {
         Csrf::verifier();
@@ -92,27 +115,42 @@ final class HomeController extends Controller
             return;
         }
 
-        $this->journaliserContact($nom, $email, $message);
-        $this->flashSucces('Message reçu. Nous répondons sous 2 jours ouvrés à l\'adresse indiquée.');
+        if (!$this->journaliserContact($nom, $email, $message)) {
+            $this->flashErreur('Impossible d’enregistrer le message de démonstration. Aucun message n’a été transmis.');
+            $this->rediriger('/contact');
+        }
+        $this->flashSucces('Message de démonstration enregistré localement. Aucun e-mail n’a été envoyé et aucune réponse n’est garantie.');
         $this->rediriger('/contact');
     }
 
     /** Trace minimale du message (hors base, sans mot de passe ni IP). */
-    private function journaliserContact(string $nom, string $email, string $message): void
+    private function journaliserContact(string $nom, string $email, string $message): bool
     {
         $dossier = MINISHOP_ROOT . '/var/log';
-        if (!is_dir($dossier) && !@mkdir($dossier, 0o775, true) && !is_dir($dossier)) {
-            return;
+        if (!is_dir($dossier) && !@mkdir($dossier, 0o700, true) && !is_dir($dossier)) {
+            return false;
         }
 
         $ligne = json_encode([
             'date' => date('c'),
             'nom' => $nom,
             'email' => $email,
-            'message' => mb_substr($message, 0, 500),
+            'message' => $message,
         ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
-        @file_put_contents($dossier . '/contact.jsonl', $ligne . "\n", FILE_APPEND | LOCK_EX);
+        if ($ligne === false) {
+            return false;
+        }
+        $fichier = $dossier . '/contact.jsonl';
+        // Un umask restrictif protège aussi la création initiale du fichier.
+        $ancienMasque = umask(0o077);
+        $ecrit = @file_put_contents($fichier, $ligne . "\n", FILE_APPEND | LOCK_EX);
+        umask($ancienMasque);
+        if ($ecrit !== false) {
+            @chmod($fichier, 0o600);
+        }
+
+        return $ecrit === strlen($ligne . "\n");
     }
 
     /** Vue de synthèse du moteur de données (page « à propos » du projet). */

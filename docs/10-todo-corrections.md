@@ -209,6 +209,17 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] La définition de `sp_search_products` suit la même règle ; contrôle statique et scénarios intégrés à `sql_integration.php` sur base de test isolée.
 - [ ] Tests sur MariaDB non joués dans la sandbox. La définition SQL modifiée concerne les nouveaux chargements de scripts : une procédure déjà installée n'est pas modifiée automatiquement. L'accueil utilise le repository PHP et ne nécessite aucune réinitialisation de base.
 
+## 6 decies. Information e-commerce et données — livré pour la maquette
+
+- [x] Recherche française au 28/10/2026 et structures Boulanger/Fnac/Back Market documentées dans `docs/12-information-juridique.md` et `docs/DA.md`.
+- [x] Mentions, CGV et encadré réglementaire des garanties, CGU, livraison, rétractation et modèle, confidentialité et cookies ; liens footer, inscription, contact et commande.
+- [x] Contact : message réel enregistré jusqu’à 2 000 caractères, échec d’écriture signalé, aucun e-mail ni délai de réponse promis ; données et cookies réels expliqués. La fiche commande distingue annulation et rétractation. Champ de confirmation d’inscription aligné avec le contrôleur.
+- [x] Suite complète PHP-WASM : 46 contrats juridiques, 299 vérifications E2E HTTP (dont erreurs de stockage, CSRF, XSS et cookie de session), catalogue 7 656, design 69, responsive 50, HTTP 27 ; zéro échec. Tests sans écrasement des journaux locaux vérifié par empreintes. Auto-évaluation et sources : `docs/12-information-juridique.md` §4.
+- [!] Aucun vendeur, hébergeur, médiateur ou responsable du traitement réel identifié : informations à renseigner, pas de conformité de production revendiquée.
+- [!] La rétractation en ligne avec envoi d'un accusé durable n'est pas opérationnelle : blocage avant commercialisation, explicitement signalé sur la page.
+- [!] Durées, purge, accès aux journaux et sauvegardes et conditions d'hébergement à définir et contrôler avant usage réel. Exclure les outils `mesurer.php` et `gen_volumes.php` de la production.
+- [!] Tests SQL MariaDB et rendu navigateur réel non joués dans cette sandbox (client/serveur SQL et bibliothèques Chromium absents) ; les tests statiques et WASM ne constituent pas un audit juridique ou d’accessibilité.
+
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 
 - [!] **Noms, prénoms, numéros étudiants** des 3 membres + emails → README §Membres et CDC §3.3 (aucune identité ne peut être inventée).

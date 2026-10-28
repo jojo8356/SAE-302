@@ -2201,3 +2201,55 @@ select[data-largeur-courte] {
         font-size: 9pt;
     }
 }
+
+/* Pages d'information : largeur de lecture et signalement clair des limites. */
+.legal {
+    width: min(100%, 76ch);
+    min-width: 0;
+    margin-inline: auto;
+    padding-block: var(--e-4) var(--e-6);
+    overflow-wrap: anywhere;
+}
+
+.legal__sur-titre {
+    margin-bottom: var(--e-2);
+    color: var(--info);
+    font-size: var(--t-sm);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.legal section {
+    margin-top: var(--e-6);
+}
+
+.legal h2 {
+    margin-bottom: var(--e-3);
+}
+
+.legal a {
+    text-decoration: underline;
+    text-underline-offset: 0.16em;
+}
+
+.legal__alerte,
+.legal__encadre,
+.legal__sommaire {
+    margin-block: var(--e-5);
+    padding: clamp(1rem, 3vw, 1.5rem);
+    border: 1px solid #cbd5e1;
+    border-radius: var(--r-md);
+    background: #f8fafc;
+}
+
+.legal__alerte {
+    border-left: 4px solid #1d4ed8;
+    background: #eff6ff;
+    color: #172554;
+}
+
+.legal__encadre p:last-child,
+.legal__sommaire ul:last-child {
+    margin-bottom: 0;
+}

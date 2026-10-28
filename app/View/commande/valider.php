@@ -10,6 +10,7 @@ declare(strict_types=1);
  */
 ?>
 <h1>Valider ma commande</h1>
+<p class="message message--info">Maquette pédagogique : aucun paiement ni livraison réelle. Les coordonnées de commande sont enregistrées.</p>
 
 <?php if ($erreurs !== []): ?>
     <ul role="alert">
@@ -36,7 +37,7 @@ declare(strict_types=1);
     <tfoot>
     <tr><th scope="row" colspan="3">Sous-total TTC</th><td><?= euros($recap['sous_total']) ?></td></tr>
     <tr><th scope="row" colspan="3">Frais de port <small>(<?= e($recap['port_motif']) ?>)</small></th><td><?= euros($recap['frais_port']) ?></td></tr>
-    <tr><th scope="row" colspan="3">Total à payer</th><td><strong><?= euros($recap['total']) ?></strong></td></tr>
+    <tr><th scope="row" colspan="3">Total simulé</th><td><strong><?= euros($recap['total']) ?></strong></td></tr>
     </tfoot>
 </table>
 </div>
@@ -64,5 +65,6 @@ declare(strict_types=1);
 
 <p><small>En validant, vous acceptez les <a href="/cgv">CGV</a>. Le stock est vérifié et
 décrémenté au moment présent (RB-18) ; le prix de chaque ligne est <strong>figé</strong>
-pour toujours (RB-06) et le port gelé avec la commande (RB-20).</small></p>
+dans la commande (RB-06) et le port gelé avec la commande (RB-20).</small></p>
+<p><small>Avant de confirmer : <a href="/livraison">livraison</a>, <a href="/retractation">rétractation</a>, <a href="/garanties">garanties</a> et <a href="/confidentialite">données personnelles</a>.</small></p>
 <p><a href="/panier">← Revenir au panier</a></p>

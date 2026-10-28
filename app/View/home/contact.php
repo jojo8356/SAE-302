@@ -9,7 +9,7 @@ $valeurs = array_merge(['nom' => '', 'email' => '', 'message' => ''], $valeurs ?
     <header class="entete-page">
         <div>
             <h1>Nous contacter</h1>
-            <p class="chapo">Une question sur une commande, un produit ou le projet ? Réponse sous 2 jours ouvrés.</p>
+            <p class="chapo">Formulaire de démonstration : le message est enregistré localement, sans envoi d’e-mail ni réponse garantie.</p>
         </div>
     </header>
 
@@ -47,12 +47,12 @@ $valeurs = array_merge(['nom' => '', 'email' => '', 'message' => ''], $valeurs ?
             </p>
 
             <p class="texte-aide">
-                Les informations transmises servent uniquement à répondre à votre message.
-                Aucune donnée n'est conservée en base par cette maquette pédagogique.
+                Le nom, l’e-mail et le message sont enregistrés dans un journal local. N’envoyez pas de données sensibles.
+                Consultez la <a href="/confidentialite">politique de confidentialité</a> et les limites de conservation.
             </p>
 
             <div class="actions-formulaire">
-                <button type="submit" class="btn--acheter">Envoyer le message</button>
+                <button type="submit" class="btn--acheter">Enregistrer le message de démonstration</button>
                 <a class="btn btn--secondaire" href="/">Retour à l'accueil</a>
             </div>
         </fieldset>

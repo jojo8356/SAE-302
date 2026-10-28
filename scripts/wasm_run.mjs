@@ -45,7 +45,8 @@ const resultat = args.length > 0
   ? await runScriptAvecArguments(php, target, args)
   : await runScript(php, target);
 const { text, errors } = resultat;
-await syncBack(php);
+// Les tests ne doivent jamais remplacer les journaux locaux de l’utilisateur.
+await syncBack(php, process.env.MINISHOP_TESTS === '1' ? ['data'] : undefined);
 
 const sortie = `${text}\n${errors}`;
 process.stdout.write(text + (errors ? `\n[PHP errors]\n${errors}` : '') + '\n');

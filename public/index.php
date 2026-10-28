@@ -62,6 +62,12 @@ $routeur->get('/aide', [HomeController::class, 'aide']);
 $routeur->get('/contact', [HomeController::class, 'formulaireContact']);
 $routeur->post('/contact', [HomeController::class, 'envoyerContact']);
 $routeur->get('/cgv', [HomeController::class, 'cgv']);
+$routeur->get('/confidentialite', [HomeController::class, 'confidentialite']);
+$routeur->get('/cookies', [HomeController::class, 'cookies']);
+$routeur->get('/livraison', [HomeController::class, 'livraison']);
+$routeur->get('/retractation', [HomeController::class, 'retractation']);
+$routeur->get('/garanties', [HomeController::class, 'garanties']);
+$routeur->get('/cgu', [HomeController::class, 'cgu']);
 
 $routeur->get('/catalogue', [CatalogueController::class, 'catalogue']);
 $routeur->get('/recherche', [CatalogueController::class, 'recherche']);

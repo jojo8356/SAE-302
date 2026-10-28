@@ -6,7 +6,7 @@ declare(strict_types=1);
 ?>
 <div class="auth">
     <h1>Créer un compte</h1>
-    <p class="chapo">Un compte permet de commander, de suivre vos livraisons et d'annuler avant expédition.</p>
+    <p class="chapo">Un compte permet de simuler des commandes, de suivre leur statut et de les annuler avant expédition.</p>
 
     <?php if ($erreurs !== []): ?>
         <div class="message message--erreur" role="alert">
@@ -17,6 +17,7 @@ declare(strict_types=1);
         </div>
     <?php endif; ?>
 
+    <p class="texte-aide">Les données saisies sont enregistrées pour le compte de démonstration. Consultez la <a href="/confidentialite">politique de confidentialité</a>.</p>
     <form method="post" action="/inscription">
         <?= csrf_field() ?>
         <fieldset>
@@ -30,7 +31,7 @@ declare(strict_types=1);
                 <input type="password" id="mot_de_passe" name="mot_de_passe" required autocomplete="new-password" minlength="8">
                 <span class="texte-aide">8 caractères minimum, avec au moins une lettre et un chiffre.</span>
             </p>
-            <p><label for="mot_de_passe_confirm">Confirmation du mot de passe</label><input type="password" id="mot_de_passe_confirm" name="mot_de_passe_confirm" required autocomplete="new-password" minlength="8"></p>
+            <p><label for="mot_de_passe_confirm">Confirmation du mot de passe</label><input type="password" id="mot_de_passe_confirm" name="confirmation" required autocomplete="new-password" minlength="8"></p>
             <p>
                 <label for="cgv">
                     <input type="checkbox" id="cgv" name="cgv" value="1" required>

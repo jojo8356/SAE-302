@@ -55,9 +55,9 @@ $annulable = in_array($commande['statut'], ['BROUILLON', 'EN_PREPARATION', 'PAYE
 
 <?php if ($annulable): ?>
     <h2>Annuler ma commande</h2>
-    <p>Conformément au droit de rétractation (CGV art. 4), vous pouvez annuler tant que
-        la commande n'est pas expédiée : le stock sera restitué et le montant (port
-        compris) soldé (RB-18/20).</p>
+    <p>Cette annulation technique de la commande simulée est possible avant expédition :
+        le stock est restitué et le montant simulé soldé. Elle est distincte du
+        <a href="/retractation">droit légal de rétractation</a>, dont la fonction réelle n’est pas disponible sur cette maquette.</p>
     <form method="post" action="/mes-commandes/<?= (int) $commande['id_commande'] ?>/annulation">
         <?= csrf_field() ?>
         <p><button type="submit">Annuler cette commande</button></p>

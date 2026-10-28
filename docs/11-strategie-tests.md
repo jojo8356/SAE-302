@@ -145,3 +145,15 @@ sudo bash scripts/capture_perf.sh
 6. **La campagne SQL dépend de l'environnement.** Elle n'est pas exécutable en sandbox ; elle a été jouée sur la machine de l'équipe, et le rapport `tests/sql/rapport_tests_sql.md` en est la trace.
 
 Un défaut trouvé par ces tests et **non corrigé** est documenté plutôt que masqué : l'agrégation `sp_revenue_report` reste en `ALL` (anomalie A-08, 17 ms mesurées, sous le seuil `ENF-01`) — corriger aurait ajouté un index de couverture non justifié par la volumétrie retenue.
+
+
+## Information juridique et protection des données (28/10/2026)
+
+`tests/php/information_juridique_test.php` vérifie 46 contrats statiques de navigation,
+contenu, cookies, information et design ; ces contrôles ne constituent pas un avis juridique.
+Le parcours `scripts/wasm-e2e.mjs` teste les huit pages, l'encadré de garanties rendu,
+l'avertissement de rétractation, le cookie de session observé et le contact (réussite,
+message de plus de 500 caractères, erreur d'écriture, CSRF et XSS). Les données de test
+restent isolées : le harnais de test ne synchronise pas `var/` vers la machine.
+Résultats de cette passe : 299 contrôles E2E, 46 contrats, 0 échec ; SQL MariaDB et
+rendu navigateur non joués. Détails et réserves dans `docs/12-information-juridique.md`.

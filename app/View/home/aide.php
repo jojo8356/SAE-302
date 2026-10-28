@@ -27,6 +27,7 @@ declare(strict_types=1);
         <p>L'historique et le détail (y compris les changements de statut) sont dans « Mes commandes ».
             L'annulation est possible tant que la commande n'est pas expédiée : le stock est restitué
             et les frais de port annulés.</p>
+        <p>Cette annulation technique est distincte du <a href="/retractation">droit de rétractation</a>.</p>
         <p><a href="/mes-commandes">Voir mes commandes →</a></p>
     </section>
 
@@ -38,7 +39,7 @@ declare(strict_types=1);
 
     <section class="carte">
         <h2>Accessibilité</h2>
-        <p>Navigation clavier complète, lien d'évitement, contrastes conformes WCAG 2.1 AA et
-            animations réduites si votre système le demande. Un problème ? <a href="/contact">Écrivez-nous</a>.</p>
+        <p>Un lien d’évitement, des repères clavier et une réduction des animations sont prévus.
+            Une vérification complète d’accessibilité reste nécessaire. Un problème ? <a href="/contact">Écrivez-nous</a>.</p>
     </section>
 </div>

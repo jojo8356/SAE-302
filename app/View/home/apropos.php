@@ -5,10 +5,9 @@ declare(strict_types=1);
 /** @var array<string,int> $statistiques */
 ?>
 <h1>À propos du moteur de données</h1>
-<p>Cette boutique ne fonctionne <strong>ni avec MySQL, ni avec aucune requête SQL</strong> :
-les données vivent dans des fichiers JSON (<code>data/minishop/*.json</code>) et sont
-manipulées par un moteur maison qui applique, en opérations natives, les mêmes
-garanties qu'un SGBD :</p>
+<p>Cette maquette peut utiliser un moteur JSON ou un magasin SQL selon sa configuration.
+En mode JSON, les données vivent dans des fichiers <code>data/minishop/*.json</code> et
+sont manipulées par un moteur maison. Les règles ci-dessous décrivent ce mode :</p>
 <ul>
     <li><strong>Schéma &amp; contraintes</strong> — NOT NULL, ENUM, UNIQUE, CHECK, clés
         étrangères RESTRICT/CASCADE (portrait exact de <code>sql/01_minishop_schema.sql</code>) ;</li>
@@ -22,9 +21,8 @@ garanties qu'un SGBD :</p>
     <li><strong>Écriture atomique</strong> — fichier temporaire puis renommage : un crash
         ne peut pas corrompre une table.</li>
 </ul>
-<p>Le jour de la migration finale, le pilote <code>StorageDriver::SQL</code> prendra le
-relais avec les scripts <code>sql/01→04</code> déjà livrés — sans changer une ligne des
-contrôleurs ni des vues.</p>
+<p>Le pilote SQL et les scripts <code>sql/01→04</code> sont disponibles selon la configuration.
+La protection, la conservation et la suppression des données doivent être vérifiées pour chaque déploiement.</p>
 
 <h2>Contenu actuel de la base</h2>
 <ul>

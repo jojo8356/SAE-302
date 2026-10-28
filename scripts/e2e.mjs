@@ -20,13 +20,14 @@ const DONNEES = join(RACINE, 'data/minishop');
 const code = await avecDonneesIntactes(DONNEES, () => {
   const seed = spawnSync('node', ['scripts/wasm_run.mjs', 'scripts/seed.php'], {
     cwd: RACINE,
+    env: { ...process.env, MINISHOP_TESTS: '1' },
     stdio: 'inherit',
   });
   if (seed.status !== 0) {
     console.error('✘ seed en échec — E2E interrompu');
     return seed.status ?? 1;
   }
-  const e2e = spawnSync('node', ['scripts/wasm-e2e.mjs'], { cwd: RACINE, stdio: 'inherit' });
+  const e2e = spawnSync('node', ['scripts/wasm-e2e.mjs'], { cwd: RACINE, env: { ...process.env, MINISHOP_TESTS: '1' }, stdio: 'inherit' });
   return e2e.status ?? 1;
 });
 

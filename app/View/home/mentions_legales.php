@@ -1,22 +1,17 @@
 <?php
-
 declare(strict_types=1);
-
-/** Page statique EF-GEN-05. */
 ?>
-<h1>Mentions légales</h1>
-<p><strong>MiniShop</strong> est une maquette pédagogique développée dans le cadre d'une SAE
-(BUT Informatique / Licence 3, Université Côte d'Azur). Aucune transaction réelle
-n'est traitée : le paiement est simulé et aucune donnée bancaire n'est collectée.</p>
-
-<h2>Éditeur</h2>
-<p>Équipe projet MiniShop — projet étudiant à but pédagogique exclusif.</p>
-
-<h2>Données personnelles</h2>
-<p>Les comptes créés sur cette maquette contiennent des données fictives. Les mots de passe
-ne sont jamais stockés en clair (hachage bcrypt, RB-12) et les commandes sont tracées
-à des fins d'audit pédagogique (RB-11).</p>
-
-<h2>Propriété intellectuelle</h2>
-<p>Les descriptions de produits et le jeu de données de démonstration sont originaux,
-produits pour le projet.</p>
+<article class="legal">
+    <header><p class="legal__sur-titre">Informations légales</p><h1>Mentions légales</h1>
+        <p class="chapo">Qui édite et héberge MiniShop ?</p></header>
+    <p class="legal__alerte"><strong>Projet pédagogique, pas une boutique en production.</strong> Les informations ci-dessous ne sont pas connues et doivent être complétées et vérifiées avant toute exploitation réelle. Aucun vendeur n’est identifié dans cette maquette.</p>
+    <section><h2>Éditeur et responsable de publication</h2>
+        <p>Identité ou dénomination, forme juridique et capital le cas échéant : <strong>à renseigner</strong>.<br>
+        Adresse, téléphone et adresse électronique : <strong>à renseigner</strong>.<br>
+        Immatriculation RCS/RNE, numéro d’identification et TVA intracommunautaire si applicable : <strong>à renseigner</strong>.<br>
+        Directeur de publication : <strong>à renseigner</strong>.</p>
+        <p>Les mentions applicables dépendent du statut de l’éditeur et de son activité. Le <a href="/contact">formulaire de démonstration</a> ne remplace pas des coordonnées professionnelles fonctionnelles.</p>
+    </section>
+    <section><h2>Hébergement</h2><p>Nom ou dénomination de l’hébergeur, adresse et téléphone : <strong>à renseigner</strong> pour le déploiement réel.</p></section>
+    <section><h2>Données et cookies</h2><p>Les modalités et limites actuelles sont décrites dans la <a href="/confidentialite">politique de confidentialité</a> et la <a href="/cookies">page cookies</a>.</p></section>
+</article>

@@ -196,6 +196,8 @@ process.stdout.write(B('T2 · inscription et connexion (UC-04/05)'));
   const nouveau = new Navigateur('nouveau');
   const jeton = await nouveau.csrf('/inscription');
   check('formulaire d\'inscription avec CSRF', jeton !== null);
+  const inscriptionPage = await nouveau.get('/inscription');
+  check('inscription : nom du champ de confirmation accepté par le serveur', (inscriptionPage.text ?? '').includes('name="confirmation"'));
   const r = await nouveau.post('/inscription', {
     _csrf: jeton, nom: 'Durand', prenom: 'Zoé', email: 'zoe@example.com',
     mot_de_passe: 'Zoe2026!Mot', confirmation: 'Zoe2026!Mot', cgv: '1',
@@ -240,7 +242,7 @@ let numeroCommande;
   contient('panier : port offert (≥ 80 €)', panier.text.toLowerCase(), 'offert');
 
   const valider = await alice.get('/commande/valider');
-  contient('récapitulatif avant paiement (art. L221-5)', valider.text, 'Total à payer');
+  contient('récapitulatif avant paiement simulé', valider.text, 'Total simulé');
   contient('montant attendu 488,40 € TTC', valider.text, '488,40'); // 154,80×2 + 178,80 (montre 149 HT)
 
   const j3 = await alice.csrf('/commande/valider');
@@ -273,6 +275,8 @@ process.stdout.write(B('T4 · annulation client (UC-09, RB-11/18/20)'));
   check('une commande est listée', !!m);
   if (m) {
     const id = m[1];
+    const detailAnnulation = await alice.get(`/mes-commandes/${id}`);
+    check('détail : annulation distincte de la rétractation', (detailAnnulation.text ?? '').includes('distincte du') && (detailAnnulation.text ?? '').includes('href="/retractation"'));
     const jA = await alice.csrf(`/mes-commandes/${id}`);
     const annulation = await alice.post(`/mes-commandes/${id}/annulation`, { _csrf: jA });
     check('annulation → redirection', annulation.httpStatusCode === 302, `status ${annulation.httpStatusCode}`);
@@ -926,9 +930,53 @@ process.stdout.write(B('T14 · design, contact, API panier, paramètres (ajouts 
   check('contact invalide → messages serveur', invalide.httpStatusCode === 200 && (invalide.text ?? '').includes('adresse email valide'), `status ${invalide.httpStatusCode}`);
   const valide = await visiteur.post('/contact', {
     _csrf: jetonContact, nom: 'Zoé Test', email: 'zoe.contact@example.test',
-    message: 'Bonjour, une question sur les frais de port et la disponibilité.',
+    message: 'Bonjour, une question sur les frais de port et la disponibilité. ' + 'x'.repeat(600),
   });
   check('contact valide → redirection', valide.httpStatusCode === 302, `status ${valide.httpStatusCode}`);
+  const journalContact = await php.readFileAsText(`${WASM_ROOT}/var/log/contact.jsonl`);
+  const entreeContact = JSON.parse(journalContact.trim().split('\n').at(-1));
+  check('contact : données réellement enregistrées', entreeContact.nom === 'Zoé Test' && entreeContact.email === 'zoe.contact@example.test' && entreeContact.message.includes('Bonjour') && entreeContact.message.length > 600);
+  const retourContact = await visiteur.get('/contact');
+  contient('contact : succès honnête sans envoi ni réponse garantie', retourContact.text, 'Aucun e-mail n’a été envoyé');
+  const contactSansCsrf = await visiteur.post('/contact', { nom: 'Test', email: 't@example.test', message: 'Un message suffisamment long.' });
+  const journalApresCsrf = await php.readFileAsText(`${WASM_ROOT}/var/log/contact.jsonl`);
+  check('contact sans CSRF refusé sans écriture', contactSansCsrf.httpStatusCode === 302 && journalApresCsrf === journalContact, `status ${contactSansCsrf.httpStatusCode}`);
+  const retourCsrf = await visiteur.get('/');
+  contient('contact : erreur CSRF annoncée', retourCsrf.text, 'Jeton de sécurité invalide');
+  const contactXss = await visiteur.post('/contact', { _csrf: jetonContact, nom: '<script>alert(1)</script>', email: 'incorrect', message: 'court' });
+  check('contact invalide : saisie échappée', (contactXss.text ?? '').includes('&lt;script&gt;') && !(contactXss.text ?? '').includes('<script>alert(1)</script>'));
+  // Le système de fichiers WASM est isolé : un dossier à la place du fichier
+  // simule un échec d’écriture sans toucher aux journaux de la machine.
+  await php.run({ code: `<?php unlink('${WASM_ROOT}/var/log/contact.jsonl'); mkdir('${WASM_ROOT}/var/log/contact.jsonl');` });
+  const echecContact = await visiteur.post('/contact', { _csrf: jetonContact, nom: 'Test', email: 't@example.test', message: 'Un message suffisamment long.' });
+  check('contact : erreur d’écriture redirigée', echecContact.httpStatusCode === 302, `status ${echecContact.httpStatusCode}`);
+  const retourEchec = await visiteur.get('/contact');
+  contient('contact : échec de stockage signalé', retourEchec.text, 'Impossible d’enregistrer');
+
+  // Les pages sont accessibles à un visiteur sans compte et reliées dans le pied.
+  const legal = new Navigateur('informations-legales');
+  for (const [route, titre] of [
+    ['/mentions-legales', 'Mentions légales'], ['/cgv', 'Conditions générales de vente'],
+    ['/cgu', 'Conditions d’utilisation'], ['/confidentialite', 'Politique de confidentialité'],
+    ['/cookies', 'Cookies et traceurs'], ['/livraison', 'Livraison'],
+    ['/retractation', 'Rétractation et retours'], ['/garanties', 'Garanties et médiation'],
+  ]) {
+    const page = await legal.get(route);
+    check(`${route} : 200 et titre`, page.httpStatusCode === 200 && (page.text ?? '').includes(`<h1>${titre}</h1>`));
+    check(`${route} : liens cookies et rétractation`, (page.text ?? '').includes('href="/cookies"') && (page.text ?? '').includes('href="/retractation"'));
+  }
+  const pageRetrait = await legal.get('/retractation');
+  contient('rétractation : absence de transmission clairement annoncée', pageRetrait.text, 'ne transmettent aucune déclaration');
+  contient('rétractation : modèle disponible', pageRetrait.text, 'Signature du (des) consommateur(s)');
+  const pageCgv = await legal.get('/cgv');
+  contient('CGV : encadré légal effectivement rendu', pageCgv.text, 'délai de trente jours');
+  const pageCookies = await legal.get('/cookies');
+  contient('cookies : durée et usage expliqués', pageCookies.text, 'MINISHOPSESS');
+  const fraiche = new Navigateur('cookie-frais');
+  const premiere = await fraiche.get('/cookies');
+  const cookiesRecus = premiere.headers['set-cookie'] ?? [];
+  check('cookie nécessaire HttpOnly et SameSite=Lax', cookiesRecus.some((c) => /^MINISHOPSESS=/.test(c) && /httponly/i.test(c) && /samesite=lax/i.test(c)), cookiesRecus.join('; '));
+  check('aucun cookie marketing observé sur cette page', cookiesRecus.every((c) => /^MINISHOPSESS=/.test(c)), cookiesRecus.join('; '));
 
   const mentions = await visiteur.get('/mentions');
   check('alias /mentions → 200', mentions.httpStatusCode === 200, `status ${mentions.httpStatusCode}`);
@@ -998,7 +1046,8 @@ process.stdout.write(B('T14 · design, contact, API panier, paramètres (ajouts 
   check('paramètres protégés (visiteur) → refus', [302, 403].includes(gestionnaireRefuse.httpStatusCode), `status ${gestionnaireRefuse.httpStatusCode}`);
 }
 
-await syncBack(php);
+// Les journaux du parcours sont jetables ; ne jamais écraser ceux de l’utilisateur.
+await syncBack(php, ['data']);
 restaurerDonnees(); // data/minishop retrouve son état d'avant le test
 process.stdout.write(`\n${'='.repeat(60)}\n`);
 if (échecs === 0) {

@@ -63,8 +63,8 @@ export async function uploadTree(php, hostDir, wasmDir) {
 }
 
 /** Rapatrie les dossiers mutés (data/, var/) du FS WASM vers l'hôte. */
-export async function syncBack(php) {
-  for (const dir of MUTABLE_DIRS) {
+export async function syncBack(php, dirs = MUTABLE_DIRS) {
+  for (const dir of dirs) {
     await downloadTree(php, `${WASM_ROOT}/${dir}`, join(REPO_ROOT, dir));
   }
 }

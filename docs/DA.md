@@ -433,3 +433,9 @@ d'un palier supplémentaire pour le passage en cartes du panier.
   réels reste à cocher dans le PV de recette (doc `02`).
 - Pas de `:has()` ni de `color-mix()` indispensables : les rares usages de
   `color-mix()` ont un repli par couleur littérale dans la même règle.
+
+## 12. Pages d'information et confiance — étude préalable (28/10/2026)
+
+Les pages juridiques de [Boulanger](https://www.boulanger.com/evenement/conditions-generales-vente-boulanger) séparent l'identification, les conditions de vente et les informations de livraison/retour ; celles de [Fnac](https://www.fnac.com/Help/cgv-fnac-marketplace) et [Back Market](https://www.backmarket.fr/fr-fr/legal/terms-of-use) distinguent en outre les rôles des vendeurs de marketplace. MiniShop est une **maquette de vente directe**, non une marketplace : on reprend la navigation identifiable, les titres explicites et la séparation des sujets, pas leurs clauses ni leurs obligations propres aux plateformes. Les éléments juridiques et les limites sont étudiés dans `docs/12-information-juridique.md`.
+
+**Décisions avant réalisation :** pied de page organisé en rubriques courtes, lien direct vers la rétractation ; pages centrées et de largeur de lecture limitée, hiérarchie H1/H2, encadrés visibles pour le statut de maquette et le texte réglementaire, liens soulignés, retours à la ligne et marges adaptables, pas de tableau à défilement imposé. Aucun bandeau de choix décoratif pour les seuls traceurs nécessaires. La disposition doit fonctionner au clavier et à 320 px sans défilement horizontal ; les principes de [reflow WCAG](https://www.w3.org/WAI/WCAG21/Understanding/reflow.html) et de [mise en page GOV.UK](https://design-system.service.gov.uk/styles/layout/) guident le choix. Les contrôles statiques ne remplacent pas un audit d'accessibilité ni un rendu navigateur réel.

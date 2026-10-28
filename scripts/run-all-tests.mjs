@@ -52,6 +52,7 @@ const suites = [
   ['Contrats de design', 'tests/php/css_contract.php'],
   ['Contrat responsive', 'tests/php/responsive_contract.php'],
   ['Contrats HTTP', 'tests/php/contract_http.php'],
+  ['Information juridique et données', 'tests/php/information_juridique_test.php'],
   ['Unitaires PHPUnit', 'tests/phpunit/run-local.php'],
 ];
 

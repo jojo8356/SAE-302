@@ -181,7 +181,7 @@ $lienNav = static function (string $href, string $libelle) use ($estCourant): st
                 <h2>MiniShop</h2>
                 <p class="texte-aide pied__texte">
                     Matériel informatique et objets connectés.<br>
-                    Prix TTC, stock réel, commande suivie.
+                    Prix TTC et suivi de commandes simulées.
                 </p>
             </section>
             <section>
@@ -198,21 +198,24 @@ $lienNav = static function (string $href, string $libelle) use ($estCourant): st
                 <ul>
                     <li><a href="/a-propos">À propos</a></li>
                     <?= $lienNav('/contact', 'Contact') // HTML-SAFE : échappé par le helper ?>
-                    <li><a href="/cgv">Conditions générales de vente</a></li>
-                    <li><a href="/mentions-legales">Mentions légales</a></li>
+                    <li><a href="/livraison">Livraison</a></li>
+                    <li><a href="/retractation">Rétractation et retours</a></li>
+                    <li><a href="/garanties">Garanties et médiation</a></li>
                 </ul>
             </section>
             <section>
-                <h2>Confiance</h2>
+                <h2>Informations légales</h2>
                 <ul>
-                    <li><?= icone('cadenas', 16) ?> Paiement simulé (projet pédagogique)</li>
-                    <li><?= icone('retour', 16) ?> Annulation avant expédition</li>
-                    <li><?= icone('camion', 16) ?> Frais de port annoncés avant validation</li>
+                    <li><a href="/mentions-legales">Mentions légales</a></li>
+                    <li><a href="/cgv">Conditions générales de vente</a></li>
+                    <li><a href="/cgu">Conditions d’utilisation</a></li>
+                    <li><a href="/confidentialite">Confidentialité</a></li>
+                    <li><a href="/cookies">Cookies et traceurs</a></li>
                 </ul>
             </section>
         </div>
         <p class="pied__bas">
-            MiniShop — maquette pédagogique SAE. Aucun paiement réel, aucune donnée personnelle conservée.
+            MiniShop — maquette pédagogique SAE. Aucun paiement réel. Des données de compte, de commande et de contact peuvent être conservées.
             <br>Projet PHP / MySQL — Université Côte d'Azur.
         </p>
     </div>

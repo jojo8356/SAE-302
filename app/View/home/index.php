@@ -72,7 +72,7 @@ declare(strict_types=1);
 <section class="reassurance" aria-label="Nos engagements">
     <div class="reassurance__item">
         <?= icone('camion', 24) ?>
-        <div><strong>Port annoncé avant paiement</strong><span>4,90 € — offert dès 80 € d'achat.</span></div>
+        <div><strong>Port annoncé avant validation</strong><span>Frais simulés affichés dans le panier.</span></div>
     </div>
     <div class="reassurance__item">
         <?= icone('retour', 24) ?>
