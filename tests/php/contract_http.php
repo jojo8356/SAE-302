@@ -262,8 +262,12 @@ foreach ([403, 404, 500] as $code) {
 $check('404 servi par le routeur', str_contains((string) file_get_contents($racine . '/app/Router.php'), 'page404'));
 $check('500 : code HTTP et vue explicites dans le front controller',
     str_contains($source, 'http_response_code(500)') && str_contains($source, "app/View/errors/500.php"));
-// Le refus SUPER est une redirection 302, testé par l’E2E ; la vue 403
-// existe mais ne doit pas être présentée comme un parcours déjà branché.
+$check('403 : exception dédiée, statut HTTP et vue reliés au front controller',
+    str_contains($source, 'catch (AccesRefuse $e)')
+    && str_contains($source, 'http_response_code(403)')
+    && str_contains($source, '->page403()'));
+// Le comportement réel et les permissions sont également vérifiés par les
+// tests HTTP natifs et E2E ; ce contrat statique seul ne les démontre pas.
 
 // ============================================================ verdict
 echo "\n" . str_repeat('=', 60) . "\n";

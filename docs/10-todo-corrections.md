@@ -292,6 +292,14 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] Produire un rapport précis avec résultats, risques, éléments non vérifiés et inventaire global.
 - [x] Exécuter les vérifications disponibles sans toucher aux données utilisateur, documenter l’auto-évaluation et pousser ; CI `796aada` verte (PHP natif, PHPUnit, MySQL jetable et E2E WASM).
 
+## 6 undevicies. Page 403 pour les accès SUPER refusés
+
+- [x] Distinguer les administrateurs sans rôle SUPER des visiteurs non connectés et rendre la vue 403 avec le statut HTTP approprié.
+- [x] Vérifier GET, POST, sécurité des données, authentification et accès SUPER avec des tests isolés (309 contrôles E2E WASM ; test HTTP natif ajouté à la CI).
+- [x] Actualiser le référentiel de code potentiellement inutilisé, les inventaires et les rapports (6 candidats restants).
+- [x] Lancer les suites disponibles, auto-évaluer et préparer la publication sur la branche Arena.
+- [!] En local, PHP natif, SQL, navigateur réel et hébergement ne sont pas disponibles ; test natif prévu en CI.
+
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 
 - [!] **Noms, prénoms, numéros étudiants** des 3 membres + emails → README §Membres et CDC §3.3 (aucune identité ne peut être inventée).

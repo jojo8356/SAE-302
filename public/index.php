@@ -37,6 +37,7 @@ use App\Controller\HomeController;
 use App\Controller\PanierController;
 use App\Model\Data\BusinessError;
 use App\Router;
+use App\Security\AccesRefuse;
 use App\Security\Auth;
 
 // ----------------------------------------------------------- en-têtes HTTP
@@ -138,6 +139,9 @@ $routeur->post('/admin/equipe/{id}/basculer', [EquipeAdminController::class, 'ba
 // ------------------------------------------------------------- dispatch
 try {
     $routeur->executer($routeur->resoudre($_SERVER['REQUEST_METHOD'] ?? 'GET', $_SERVER['REQUEST_URI'] ?? '/'));
+} catch (AccesRefuse $e) {
+    http_response_code(403);
+    (new HomeController())->page403();
 } catch (BusinessError $e) {
     // erreur métier remontée jusqu'ici : message humain, aucun détail interne
     $_SESSION['flash_erreur'] = $e->messageHumain();

@@ -9,23 +9,23 @@ Les références sont des **indices textuels** et non une preuve d’exécution 
 ## Résultats et décisions
 
 - **0 fichier de zéro octet** dans ce périmètre au moment de l’audit.
-- **93 fichiers PHP** : **45 sans fonction nommée avec corps** ; 37 sont des vues. Les autres sont trois classes d’exception vides héritées, un document PHP, une interface à signatures, un modèle de configuration, le bootstrap et le contrôleur frontal. Ils ont chacun un rôle expliqué ci-dessous.
+- Lors du premier audit : **93 fichiers PHP**, dont **45 sans fonction nommée avec corps** ; 37 sont des vues. Les autres sont trois classes d’exception vides héritées, un document PHP, une interface à signatures, un modèle de configuration, le bootstrap et le contrôleur frontal. Ils ont chacun un rôle expliqué ci-dessous.
 - **Quatre PHP avec une ou deux fonctions nommées** : `DashboardController.php` (une action), `ParametreAdminController.php` et `StockAdminController.php` (deux actions chacun), `BusinessError.php` (constructeur et message). Petites responsabilités ne signifie pas code mort.
 - Les exceptions `QueryError`, `SchemaError`, `ConstraintError` n’ont pas de méthodes propres : leur type et l’héritage servent aux `throw`/`catch` et à l’autoload. `StoreInterface.php` a des signatures, mais leurs corps résident dans les pilotes.
 - `Errors.php` est documentaire, pas une classe ; son commentaire disant que SQL était seulement futur a été corrigé. `env.example.php` est un ancien modèle compatible, non la configuration secrète courante.
 - La méthode privée `JsonStore::maxPk` n’avait aucun appel trouvé et a été retirée. Dans `JsonStore::find`, une variable sans lecture a été retirée **en conservant** `Schema::table($table)` : cet appel valide la table et peut lever une erreur ; un test protège cet effet.
-- `HomeController::page403` n’a pas de référence trouvée ; la vue 403 n’est atteinte que par cette méthode dans les sources examinées. Les gardes actuelles peuvent répondre autrement. À clarifier avec l’équipe avant suppression ou modification du parcours.
+- `HomeController::page403` est désormais appelée lors du refus d’un administrateur connecté sans le rôle SUPER ; le contrôleur frontal émet un véritable statut 403. La redirection des visiteurs vers la connexion est conservée.
 - `logo.svg` et `logo-mark.svg` apparaissent dans la DA et les tests mais aucune inclusion n’a été trouvée dans les vues ; ce sont des variantes d’identité, conservées. Le favicon est utilisé. Une URL directe ou un usage externe n’est pas exclu.
 - Les classes/outils SQL et de volumétrie ne sont pas forcément sur le parcours Web normal : par exemple `VolumetryGenerator` est utilisé par `scripts/gen_volumes_cli.php`. Ne pas confondre « non utilisé sur une page » et « inutile ».
 
 ### Candidats restants à trier
 
-Réexamen des **11 alertes initiales** : le référentiel `scripts/code_mort_reference.json` en contient désormais **7**. Trois disparaissent de l’analyse parce que des tests les citent, sans preuve d’usage applicatif ; `sudoDisponible` est maintenant utilisé par le provisionnement. Ce ne sont pas des preuves de code mort. Un nouvel indice fait échouer le contrôle ; les indices disparus doivent aussi être retirés du référentiel après revue. Les candidats connus restent affichables avec `php scripts/code_mort.php --rapport`.
+Réexamen des **11 alertes initiales** : le référentiel `scripts/code_mort_reference.json` en contient désormais **6**. Trois disparaissent de l’analyse parce que des tests les citent, sans preuve d’usage applicatif ; `sudoDisponible` est maintenant utilisé par le provisionnement et `page403` par le contrôleur frontal. Ce ne sont pas des preuves de code mort. Un nouvel indice fait échouer le contrôle ; les indices disparus doivent aussi être retirés du référentiel après revue. Les candidats connus restent affichables avec `php scripts/code_mort.php --rapport`.
 
 | Candidat | Observation et décision prudente |
 |---|---|
 | `DbConnexion::dsnUtilise` | Accesseur public de diagnostic ; aucune référence détectée. API ou script externe possible : conserver en attendant validation. |
-| `HomeController::page403` | Aucun appel identifié ; vue 403 non branchée. Refus SUPER réellement constaté : redirection 302 avec message. Le faux contrat prétendant prouver 403/500 a été corrigé ; décider avec l’équipe si une page 403 est souhaitée. |
+| `HomeController::page403` | Désormais appelée par le contrôleur frontal après un refus d’accès : statut 403 réel pour un gestionnaire, redirection de connexion conservée pour un visiteur. |
 | `Filter::isNotNull` | Conservé ; test réel côté JSON ajouté. Cette référence de test ne démontre pas un usage en production. |
 | `Journal::tail` | Conservé ; limites zéro/négative corrigées et testées sur un fichier temporaire. La documentation ne prétend plus qu’un écran back-office le consulte. |
 | `JsonTable::isDirty` | Conservé ; transition sale/propre après persistance testée. Référence de test seulement. |
@@ -40,7 +40,7 @@ Le contrôle détecte les paramètres non cités et certaines variables locales 
 
 ## Inventaire fichier par fichier
 
-Tailles en octets historiques mesurées lors du premier audit (`870dda5`) ; les fichiers ont pu être modifiés depuis. `—` : fichier non PHP. Les références listées sont des exemples, pas une liste exhaustive.
+Tailles en octets historiques mesurées lors du premier audit (`870dda5`) ; les fichiers ont pu être modifiés depuis. L’exception d’accès refusé a été ajoutée ensuite. `—` : fichier non PHP. Les références listées sont des exemples, pas une liste exhaustive.
 
 | Fichier | Octets | Fonctions avec corps | Rôle et indice d’utilisation |
 |---|---:|---:|---|
@@ -87,6 +87,7 @@ Tailles en octets historiques mesurées lors du premier audit (`870dda5`) ; les 
 | `app/Repository/ParametreRepository.php` | 3110 | 6 | Paramètres et calcul des frais de port. Références : `app/Controller/Admin/ParametreAdminController.php`, `app/Controller/Admin/ProduitAdminController.php`, `app/Model/PanierSession.php`…. |
 | `app/Repository/ProduitRepository.php` | 11040 | 11 | Recherche, produits et ajustements de stock. Références : `app/Controller/Admin/DashboardController.php`, `app/Controller/Admin/ProduitAdminController.php`, `app/Controller/Admin/StockAdminController.php`…. |
 | `app/Router.php` | 3089 | 4 | Associe routes, paramètres, gardes et contrôleurs ; affiche la 404. Références : `public/index.php`, `docs/01-cahier-des-charges-MiniShop.md`, `docs/07-note-cybersecurite.md`…. |
+| `app/Security/AccesRefuse.php` | 207 | 0 | Exception de contrôle d’accès : levée par la garde SUPER et traitée par le contrôleur frontal en réponse HTTP 403. |
 | `app/Security/Auth.php` | 10330 | 16 | Session, authentification et gardes de rôles. Références : `app/Controller/Admin/CategorieAdminController.php`, `app/Controller/Admin/CommandeAdminController.php`, `app/Controller/Admin/DashboardController.php`…. |
 | `app/Security/Csrf.php` | 1906 | 4 | Génération et vérification des jetons CSRF. Références : `app/Controller/Admin/CategorieAdminController.php`, `app/Controller/Admin/CommandeAdminController.php`, `app/Controller/Admin/EquipeAdminController.php`…. |
 | `app/Security/xss.php` | 9276 | 15 | Helpers d’échappement, formatage, icônes et visuels. Références : `app/bootstrap.php`, `docs/01-cahier-des-charges-MiniShop.md`, `docs/07-note-cybersecurite.md`…. |
@@ -114,7 +115,7 @@ Tailles en octets historiques mesurées lors du premier audit (`870dda5`) ; les 
 | `app/View/commande/mes.php` | 1471 | 0 | Vue HTML : liste des commandes client ; pas de méthode attendue. Références : `app/Controller/CommandeController.php`. |
 | `app/View/commande/valider.php` | 3185 | 0 | Vue HTML : validation de commande ; pas de méthode attendue. Références : `app/Controller/CommandeController.php`, `app/View/panier/index.php`, `public/index.php`…. |
 | `app/View/compte/index.php` | 2475 | 0 | Vue HTML : profil client ; pas de méthode attendue. Références : `app/Controller/CompteController.php`. |
-| `app/View/errors/403.php` | 521 | 0 | Vue HTML : page d’accès refusé, appelée uniquement depuis page403 candidate ; pas de méthode attendue. HomeController::page403 ; méthode non référencée dans les sources inspectées, affichage à vérifier. |
+| `app/View/errors/403.php` | 521 | 0 | Vue HTML : page d’accès refusé, rendue par HomeController::page403 après refus de la garde SUPER ; pas de méthode attendue. |
 | `app/View/errors/404.php` | 585 | 0 | Vue HTML : page introuvable ; pas de méthode attendue. Références : `app/Controller/HomeController.php`. |
 | `app/View/errors/500.php` | 847 | 0 | Vue HTML : page d’erreur serveur ; pas de méthode attendue. Références : `public/index.php`, `docs/07-note-cybersecurite.md`. |
 | `app/View/home/aide.php` | 1936 | 0 | Vue HTML : aide ; pas de méthode attendue. Références : `app/Controller/HomeController.php`. |

@@ -873,20 +873,30 @@ process.stdout.write(B('T13 · rôles administrateurs (RB-13, F-27)'));
   check('gestionnaire → /admin : 200', (await gest.get('/admin')).httpStatusCode === 200);
   check('gestionnaire → /admin/produits : 200', (await gest.get('/admin/produits')).httpStatusCode === 200);
   check('gestionnaire → /admin/commandes : 200', (await gest.get('/admin/commandes')).httpStatusCode === 200);
+  const anonyme = new Navigateur('t13-anonyme');
+  const anonymeGet = await anonyme.get('/admin/equipe');
+  check('visiteur GET équipe → connexion 302', anonymeGet.httpStatusCode === 302 && (anonymeGet.headers.location ?? []).join(' ') === '/admin/connexion', `status ${anonymeGet.httpStatusCode}`);
+  const anonymePost = await anonyme.post('/admin/equipe', { nom: 'X' });
+  check('visiteur POST équipe → connexion 302', anonymePost.httpStatusCode === 302 && (anonymePost.headers.location ?? []).join(' ') === '/admin/connexion', `status ${anonymePost.httpStatusCode}`);
   const equipe = await gest.get('/admin/equipe');
-  check('gestionnaire → /admin/equipe : redirection 302 vers /admin', equipe.httpStatusCode === 302 && (equipe.headers.location ?? []).join(' ') === '/admin', `status ${equipe.httpStatusCode}`);
-  const apres = await gest.get('/admin');
-  contient('message « Réservé au rôle SUPER » affiché', apres.text, 'Réservé au rôle SUPER');
+  check('gestionnaire GET équipe → vrai statut 403 sans redirection', equipe.httpStatusCode === 403 && !(equipe.headers.location ?? []).length, `status ${equipe.httpStatusCode}`);
+  contient('gestionnaire : page Accès refusé', equipe.text, '<h1>Accès refusé</h1>');
+  contient('gestionnaire : lien de retour au back-office', equipe.text, 'href="/admin"');
   const jetonGest = await gest.csrf('/admin/produits');
+  check('gestionnaire : jeton CSRF valide pour les tests POST', typeof jetonGest === 'string' && /^[a-f0-9]{64}$/.test(jetonGest ?? ''));
+  const avantAdmins = JSON.stringify(await lireTable('administrateur'));
   const cree = await gest.post('/admin/equipe', { _csrf: jetonGest, nom: 'X', prenom: 'Y', email: 'x@y.z', mot_de_passe: 'Xy12345678', role: 'SUPER' });
-  check('gestionnaire ne peut pas créer d\'admin même avec CSRF valide', cree.httpStatusCode === 302 && (cree.headers.location ?? []).join(' ') === '/admin'
-    && !(await lireTable('administrateur')).some((a) => a.email === 'x@y.z'), `status ${cree.httpStatusCode}`);
+  check('gestionnaire POST création → 403 même avec CSRF valide', cree.httpStatusCode === 403 && !(cree.headers.location ?? []).length && (cree.text ?? '').includes('<h1>Accès refusé</h1>'), `status ${cree.httpStatusCode}`);
+  const idGest = (await lireTable('administrateur')).find((a) => a.email === 'gestionnaire@minishop.fr')?.id_admin;
+  const basculeRefusee = await gest.post(`/admin/equipe/${idGest}/basculer`, { _csrf: jetonGest });
+  check('gestionnaire POST bascule → 403 et aucune modification', basculeRefusee.httpStatusCode === 403 && JSON.stringify(await lireTable('administrateur')) === avantAdmins, `status ${basculeRefusee.httpStatusCode}`);
 
-  // F-27 : le SUPER désactive le gestionnaire → connexion refusée
+  // F-27 : le SUPER accède à l’équipe et désactive le gestionnaire
   const superAdmin = new Navigateur('t13-super');
   const js = await superAdmin.csrf('/admin/connexion');
   await superAdmin.post('/admin/connexion', { _csrf: js, email: 'admin@minishop.fr', mot_de_passe: 'Admin2026!' });
-  const idGest = (await lireTable('administrateur')).find((a) => a.email === 'gestionnaire@minishop.fr')?.id_admin;
+  const equipeSuper = await superAdmin.get('/admin/equipe');
+  check('SUPER GET équipe → 200', equipeSuper.httpStatusCode === 200 && !(equipeSuper.text ?? '').includes('<h1>Accès refusé</h1>'), `status ${equipeSuper.httpStatusCode}`);
   const jt = await superAdmin.csrf('/admin/equipe');
   const bascule = await superAdmin.post(`/admin/equipe/${idGest}/basculer`, { _csrf: jt });
   check('désactivation → redirection', bascule.httpStatusCode === 302, `status ${bascule.httpStatusCode}`);

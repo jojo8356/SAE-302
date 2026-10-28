@@ -112,6 +112,21 @@ jobs:
           fi
           exit "$etat"
 
+      - name: Contrats HTTP 403 sur serveur PHP temporaire
+        shell: bash
+        run: |
+          set +e
+          python3 tests/python/test_auth_403_http.py -v 2>&1 | tee "$RUNNER_TEMP/auth403.log"
+          etat=${PIPESTATUS[0]}
+          set -e
+          if [ "$etat" -ne 0 ]; then
+            tail -8 "$RUNNER_TEMP/auth403.log" | while IFS= read -r ligne; do
+              ligne=${ligne//%/%25}
+              echo "::error::${ligne}"
+            done
+          fi
+          exit "$etat"
+
   e2e-isolation:
     name: E2E WASM et isolation des données
     runs-on: ubuntu-latest
