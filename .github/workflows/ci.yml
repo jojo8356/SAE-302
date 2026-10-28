@@ -353,19 +353,22 @@ jobs:
       - name: Garde-fous et intégration SQL sur serveur jetable
         shell: bash
         run: |
-          set -euo pipefail
+          set -Eeuo pipefail
+          trap 'etat=$?; echo "::error::Intégration SQL : échec ligne $LINENO (code $etat)"; for f in "$RUNNER_TEMP/refus.log" "$RUNNER_TEMP/refus-app.log" "$RUNNER_TEMP/integration-sql.log"; do if [ -f "$f" ]; then tail -20 "$f" | while IFS= read -r ligne; do ligne=${ligne//%/%25}; echo "::error::${ligne}"; done; fi; done; exit "$etat"' ERR
           mysql -h 127.0.0.1 -u root -e "CREATE DATABASE minishop_safety_ci; CREATE TABLE minishop_safety_ci.temoin (id INT); INSERT INTO minishop_safety_ci.temoin VALUES (42);"
           if MINISHOP_TEST_DB=minishop_safety_ci DB_NAME=minishop php tests/php/sql_integration.php > "$RUNNER_TEMP/refus.log" 2>&1; then
             echo "Une base existante a été acceptée sans consentement"; exit 1
           fi
           grep -q 'création impossible' "$RUNNER_TEMP/refus.log"
+          echo "::notice::Refus de base existante vérifié"
           test "$(mysql -h 127.0.0.1 -u root -N -e 'SELECT id FROM minishop_safety_ci.temoin')" = 42
           if MINISHOP_TEST_DB=minishop_safety_ci DB_NAME=minishop_safety_ci php tests/php/sql_integration.php --reinitialiser-base-existante > "$RUNNER_TEMP/refus-app.log" 2>&1; then
             echo "La base applicative a été acceptée"; exit 1
           fi
           grep -q 'correspond à DB_NAME' "$RUNNER_TEMP/refus-app.log"
+          echo "::notice::Refus de base applicative vérifié"
           test "$(mysql -h 127.0.0.1 -u root -N -e 'SELECT id FROM minishop_safety_ci.temoin')" = 42
-          MINISHOP_TEST_DB=minishop_safety_ci DB_NAME=minishop php tests/php/sql_integration.php --reinitialiser-base-existante
+          MINISHOP_TEST_DB=minishop_safety_ci DB_NAME=minishop php tests/php/sql_integration.php --reinitialiser-base-existante 2>&1 | tee "$RUNNER_TEMP/integration-sql.log"
           if mysql -h 127.0.0.1 -u root -N -e "SHOW DATABASES LIKE 'minishop_safety_ci'" | grep -q .; then
             echo "Base de test non supprimée"; exit 1
           fi
