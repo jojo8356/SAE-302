@@ -97,6 +97,42 @@ function texte(array $tokens, int $debut, int $fin): string
 }
 
 /**
+ * Extrait du code fautif, pour rendre le diagnostic exploitable.
+ *
+ * Sans cela, le linter signalait « PdoStore.php:108 » sans montrer la ligne :
+ * corriger supposait de rouvrir le fichier au bon endroit, et un tiers ne
+ * pouvait pas proposer de réécriture sans le code sous les yeux. Les lignes
+ * sont condensées (espaces réduits) et tronquées : l'objectif est de rendre
+ * l'expression lisible, pas de reproduire le fichier.
+ */
+function extrait(string $fichier, int $ligne, int $nbLignes = 3): string
+{
+    static $cache = [];
+    if (!array_key_exists($fichier, $cache)) {
+        $lu = @file($fichier);
+        if (false === $lu) {
+            $lu = [];
+        }
+        $cache[$fichier] = $lu;
+    }
+    $lignes = $cache[$fichier];
+    if ($lignes === []) {
+        return '';
+    }
+    $morceaux = [];
+    $derniere = min(count($lignes), $ligne - 1 + $nbLignes);
+    for ($k = $ligne - 1; $k < $derniere; ++$k) {
+        $morceaux[] = trim($lignes[$k]);
+    }
+    $texte = preg_replace('/\s+/', ' ', implode(' ', $morceaux));
+    if (false === $texte) {
+        $texte = '';
+    }
+
+    return substr($texte, 0, 160);
+}
+
+/**
  * Règle maison : détecte les opérateurs ternaires (`? … :` et `?:`).
  *
  * Heuristique token-par-token : un `?` est un ternaire si l'on rencontre un
@@ -154,7 +190,15 @@ function detecterTernaires(string $fichier, array $tokens): array
                     break; // fin d'instruction sans « : » : pas un ternaire
                 }
                 if ($id === 0 && $txt === ':') {
-                    $violations[] = sprintf('%s:%d — opérateur ternaire interdit (règle maison : c\'est moche → if/else, match ou variable intermédiaire)', $fichier, (int) $tokens[$i][2]);
+                    $ligne = (int) $tokens[$i][2];
+                    $code = extrait($fichier, $ligne);
+                    $violations[] = sprintf(
+                        '%s:%d — opérateur ternaire interdit (règle maison : c\'est moche → if/else, match ou variable intermédiaire)'
+                        . "\n      code : %s",
+                        $fichier,
+                        $ligne,
+                        $code
+                    );
                     break;
                 }
             }
