@@ -298,7 +298,8 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] Vérifier GET, POST, sécurité des données, authentification et accès SUPER avec des tests isolés (309 contrôles E2E WASM ; test HTTP natif ajouté à la CI).
 - [x] Actualiser le référentiel de code potentiellement inutilisé, les inventaires et les rapports (6 candidats restants).
 - [x] Lancer les suites disponibles, auto-évaluer et préparer la publication sur la branche Arena.
-- [!] En local, PHP natif, SQL, navigateur réel et hébergement ne sont pas disponibles ; test natif prévu en CI.
+- [x] CI du commit `01cc0fa` : tests HTTP natifs PHP 8.2/8.5, E2E WASM, PHPUnit, sécurité et MySQL 8 jetable réussis.
+- [!] En local, PHP natif, SQL, navigateur réel et hébergement ne sont pas disponibles ; navigateur et LineServ restent à vérifier.
 
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 
