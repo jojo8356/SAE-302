@@ -50,6 +50,7 @@ const suites = [
   ['Catalogue : ruptures en dernier', 'tests/php/catalogue_stock_test.php'],
   ['Accueil : derniers ajouts', 'tests/php/nouveautes_test.php'],
   ['Accueil : dates des ajouts', 'tests/php/date_ajout_test.php'],
+  ['Cartes produit : accessibilité', 'tests/php/cartes_accessibilite_test.php'],
   ['Contrats de design', 'tests/php/css_contract.php'],
   ['Contrat responsive', 'tests/php/responsive_contract.php'],
   ['Contrats HTTP', 'tests/php/contract_http.php'],

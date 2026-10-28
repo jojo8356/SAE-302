@@ -147,14 +147,12 @@ $lienSans = static function (string $cle) use ($parametres_url): string {
                             <div class="carte-produit__media carte-produit__media--repli" aria-hidden="true"><?= e(initiale_produit((string) $produit['nom'])) ?></div>
                         <?php endif; ?>
                         <p class="carte-produit__categorie"><?= e($produit['categorie']) ?></p>
-                        <h2 class="carte-produit__nom">
-                            <a href="/produit/<?= e($produit['slug']) ?>"><?= e($produit['nom']) ?></a>
-                        </h2>
+                        <h2 class="carte-produit__nom"><?= e($produit['nom']) ?></h2>
                         <p class="texte-aide">Réf. <?= e($produit['reference']) ?></p>
                         <p class="carte-produit__prix"><?= euros($produit['prix_ttc']) ?> <small>TTC</small></p>
                         <div class="carte-produit__pied">
                             <?= badge_stock((int) $produit['stock']) ?>
-                            <a class="btn btn--secondaire btn--sm" href="/produit/<?= e($produit['slug']) ?>">Voir la fiche</a>
+                            <a class="btn btn--secondaire btn--sm" href="/produit/<?= e($produit['slug']) ?>" aria-label="Voir la fiche de <?= e($produit['nom']) ?>">Voir la fiche</a>
                         </div>
                     </article>
                 <?php endforeach; ?>

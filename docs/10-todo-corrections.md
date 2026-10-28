@@ -252,6 +252,13 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] Ajouter un test de non-régression, vérifier les suites disponibles et documenter les limites.
 - [!] Refaire WAVE sur le site réellement utilisé après application de la correction ; la capture fournie concerne une autre copie et ne démontre pas l'état du correctif.
 
+## 6 quindecies. Alertes WAVE des cartes produit
+
+- [x] Analyser la répétition des liens et la structure des titres sur le catalogue et l’accueil.
+- [x] Conserver une action de fiche identifiable et unique par produit, sans modifier les règles responsive.
+- [x] Tester les rendus HTML isolés et HTTP WASM, l’échappement, les liens et les dates, puis documenter les limites.
+- [!] Confirmer l’élément exact « Possible heading » avec WAVE : un prix en gros caractères n’est pas forcément un titre ; rendu navigateur et WAVE non joués ici.
+
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 
 - [!] **Noms, prénoms, numéros étudiants** des 3 membres + emails → README §Membres et CDC §3.3 (aucune identité ne peut être inventée).

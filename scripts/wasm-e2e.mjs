@@ -121,7 +121,7 @@ const slugsAttendusAccueil = (produits) => produits
   .slice(0, 4).map((p) => p.slug);
 const slugsRendusAccueil = (html) => {
   const bloc = (html ?? '').match(/<section aria-labelledby="titre-nouveautes">([\s\S]*?)<\/section>/);
-  return [...(bloc?.[1] ?? '').matchAll(/<h3 class="carte-produit__nom">\s*<a href="\/produit\/([^"?]+)"/g)]
+  return [...(bloc?.[1] ?? '').matchAll(/<a class="btn btn--secondaire btn--sm" href="\/produit\/([^"?]+)"/g)]
     .map((m) => m[1]);
 };
 const ordreAccueilValide = (html, produits) =>
@@ -134,7 +134,7 @@ const datesAccueilValides = (html, produits) => {
   const cartes = [...(bloc?.[1] ?? '').matchAll(/<article class="carte carte-produit">([\s\S]*?)<\/article>/g)];
   if (cartes.length !== slugsAttendusAccueil(produits).length) return false;
   return cartes.every(([, carte]) => {
-    const slug = carte.match(/<h3 class="carte-produit__nom">\s*<a href="\/produit\/([^"?]+)"/)?.[1];
+    const slug = carte.match(/<a class="btn btn--secondaire btn--sm" href="\/produit\/([^"?]+)"/)?.[1];
     const produit = produits.find((p) => p.slug === slug);
     const d = String(produit?.date_creation ?? '').match(/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/);
     if (!d) return carte.includes('Date d’ajout indisponible') && !carte.includes('<time');
@@ -168,6 +168,15 @@ process.stdout.write(B('T1 · pages publiques'));
       && !(accueil.text ?? '').includes('lucide'),
     'icônes absentes ou chargées depuis un CDN');
   const catalogue = await anonyme.get('/catalogue');
+  for (const [nom, html] of [['accueil', accueil.text], ['catalogue', catalogue.text]]) {
+    const cartes = [...(html ?? '').matchAll(/<article class="carte carte-produit">([\s\S]*?)<\/article>/g)];
+    const correct = cartes.length > 0 && cartes.every(([, contenu]) => {
+      const liens = [...contenu.matchAll(/<a\b[^>]*>/g)];
+      return liens.length === 1 && /href="\/produit\/[^"?]+"/.test(liens[0][0])
+        && /aria-label="Voir la fiche de [^"]+"/.test(liens[0][0]);
+    });
+    check(`${nom} : une action de fiche nommée par produit`, correct, `${cartes.length} carte(s)`);
+  }
   // page 1 = 12 cartes au plus, et jamais le produit masqué (RB-19)
   const visiblesSeed = (await lireTable('produit')).filter((p2) => p2.visible === 1 || p2.visible === true).length;
   const cartesAttendues = Math.min(12, visiblesSeed);

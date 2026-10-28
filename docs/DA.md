@@ -470,3 +470,21 @@ Le calcul des couleurs déclarées donne `#475569` sur `#0f172a` = 2,36:1
 avant correction et `#cbd5e1` sur `#0f172a` = 12,02:1 après correction.
 C’est un contrôle statique, pas une analyse de rendu : confirmer le résultat
 sur le navigateur et la page réellement déployés.
+
+
+## 17. Cartes produit : liens et titres accessibles
+
+L’étude concurrentielle des cartes (§2.3 et §2.4) et les principes de clarté
+de la charte conservent le nom comme véritable titre, le prix distinct et une
+action visible « Voir la fiche ». Lorsqu’un titre et un bouton conduisent tous
+deux à la même fiche, cela répète l’arrêt clavier et déclenche l’alerte WAVE
+« Redundant link » : conserver uniquement le bouton, dont le nom accessible
+comprend le nom du produit, pour différencier les actions entre cartes. Le nom
+reste un titre lisible mais n’est plus un deuxième lien. Aucun changement de
+grille, de couleurs ni de cibles tactiles n’est nécessaire.
+
+Un « Possible heading » est une alerte à examiner, pas la preuve d’un titre
+manquant : un prix en caractères gras est une donnée et ne doit pas devenir un
+titre artificiellement. Selon [WebAIM](https://webaim.org/techniques/headings/),
+il faut vérifier le rôle du texte signalé. L’élément exact signalé dans la
+capture doit être confirmé avant de conclure ; tests de rendu réels à refaire.
