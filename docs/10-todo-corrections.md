@@ -306,7 +306,7 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] Confirmer les usages dans les sources versionnées et retirer `withStore` avec l’accord de l’utilisateur ; préserver `CommandeRepository::for()`.
 - [x] Tester que la fabrique conserve l’isolation des magasins et les paramètres de livraison associés.
 - [x] Actualiser le référentiel de code potentiellement inutilisé et documenter la rupture possible pour les consommateurs externes (5 candidats restants).
-- [x] Suites PHP-WASM isolées : 37 tests unitaires locaux ; E2E WASM : 309 contrôles ; sécurité : 10 contrôles et autotest. Publication sur la branche Arena et validation CI à suivre.
+- [x] Suites PHP-WASM isolées : 37 tests unitaires locaux ; E2E WASM : 309 contrôles ; sécurité : 10 contrôles et autotest. CI du commit `839e311` réussie (PHP natif 8.2/8.5, PHPUnit, E2E WASM et MySQL 8 jetable).
 - [!] La méthode étant publique, les consommateurs externes doivent migrer vers `CommandeRepository::for($store)` ; ils ne peuvent pas être inventoriés depuis ce dépôt. PHP natif, MariaDB et navigateur réel non joués localement.
 
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
