@@ -278,6 +278,16 @@ Un résultat vert indique **« aucune détectée à l’analyse »** pour la ver
 
 L’analyse compile les fichiers PHP dans `app`, `public`, `scripts`, `tests/php` et `tests/phpunit`, sans exécuter leur code ; elle détecte aussi un message `Deprecated` quand `php -l` renvoie quand même 0. Les suites PHP sont lancées avec un détecteur d’`E_DEPRECATED` et `E_USER_DEPRECATED`, même masquées par `@` : une dépréciation observée fait échouer la suite. Les autotests utilisent des fichiers temporaires, y compris une **copie isolée** du schéma SQL, sans serveur SQL. Limites : code non exécuté, gestionnaire d’erreur PHP remplacé par le code testé, dépendances exclues et autres langages ne sont pas couverts ; le PHP CLI local peut différer de celui du serveur Web. Les dépréciations à l’exécution de l’E2E HTTP ne sont pas couvertes par ce garde.
 
+### Audit du code et des fichiers
+
+Le runner ci-dessus vérifie aussi les nouveaux candidats au code inutilisé et l’inventaire des fichiers applicatifs versionnés. Pour consulter **tous** les candidats déjà identifiés, sans modifier les fichiers :
+
+```bash
+php scripts/code_mort.php --rapport
+```
+
+Résultat : des **candidats à examiner**, pas une preuve qu’on peut les supprimer. Les paramètres non cités, certaines variables écrites une seule fois et les fonctions/méthodes sans autre référence textuelle sont contrôlés ; appels dynamiques ou externes, variables globales, code JS/CSS et chemins non joués ne sont pas couverts exhaustivement. Lorsqu’un candidat est résolu ou qu’un nouveau candidat est jugé nécessaire, mettre à jour `scripts/code_mort_reference.json` **après revue**, pas pour masquer une alerte. L’[audit fichier par fichier](docs/16-audit-code-mort.md) explique le rôle des fichiers `app/` et `public/`, y compris les petits fichiers et les vues sans méthodes.
+
 **Attention :** sans les deux options, le runner peut créer puis supprimer `minishop_test`, et l’E2E photographie puis restaure `data/minishop` après l’avoir modifié. Une base préexistante ou des modifications concurrentes peuvent donc être perdues. Ne lancer SQL/E2E que sur une copie et un serveur de test isolés, sans données à conserver. Avec Node et PHP-WASM déjà installés, `node scripts/run-all-tests.mjs --sans-sql --sans-e2e` offre aussi ce mode ; sans PHP natif, il signale l’analyse de compilation **NON JOUÉE** et joue les suites PHP sous WASM 8.2. Ne pas interpréter cela comme une validation des versions PHP plus récentes.
 
 Commandes individuelles existantes : `npm test`, `npm run test:units`, `npm run test:features`, `npm run test:design`, `npm run test:responsive`, `npm run test:http`, `npm run test:phpunit`, `npm run test:e2e`, `npm run test:sql`, `npm run coverage`, `npm run perf`. Les commandes SQL, E2E et performance nécessitent un environnement isolé ; les tests lancés directement hors runner ne bénéficient pas automatiquement du garde des dépréciations.

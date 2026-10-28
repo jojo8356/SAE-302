@@ -54,6 +54,8 @@ const lancer = (fichier) => {
 };
 
 const suites = [
+  ['Autotests code potentiellement inutilisé', 'tests/php/code_mort_test.php'],
+  ['Nouveaux candidats code potentiellement inutilisé', 'scripts/code_mort.php'],
   ['Moteur JSON', 'tests/php/engine_smoke.php'],
   ['Règles de gestion', 'tests/php/run_tests.php'],
   ['Unitaires', 'tests/php/unit_tests.php'],
@@ -81,6 +83,10 @@ console.log('  Les suites WASM contrôlent les dépréciations à l’exécution
 console.log(`\n${'='.repeat(64)}\n▸ Autotests du contrôle des dépréciations\n${'='.repeat(64)}`);
 const autoAnalyse = spawnSync('python3', ['tests/python/test_deprecations.py'], { stdio: 'inherit' });
 if (autoAnalyse.status !== 0) ++échecs;
+for (const test of ['tests/python/test_code_mort_integration.py', 'tests/python/test_inventaire_app.py']) {
+  const result = spawnSync('python3', [test], { stdio: 'inherit' });
+  if (result.status !== 0) ++échecs;
+}
 const autoWasm = spawnSync('node', ['tests/js/deprecations_wasm.mjs'], { stdio: 'inherit' });
 if (autoWasm.status !== 0) ++échecs;
 

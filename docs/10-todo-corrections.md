@@ -273,6 +273,16 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - Auto-évaluation : PHP-WASM 8.2, suites isolées vertes ; PHP-WASM CLI 8.5.10, 127 fichiers analysés sans dépréciation de compilation et 282 contrôles unitaires verts après correction des constantes PDO ; preuve négative via fixture 8.5 ; autotests dédiés et substitution SQL vérifiée sur copie temporaire. CI GitHub sur edb6845 : suites natives PHP 8.2 et 8.5, contrôles sécurité, PHPUnit et SQL MySQL 8 isolé réussis ; MariaDB/LineServ restent à vérifier.
 
 
+## 6 septdecies. Audit des fichiers et code potentiellement inutilisé
+
+- [x] Inventorier chaque fichier applicatif `app/` et `public/`, expliquer son rôle et les références retrouvées, examiner les fichiers vides et courts.
+- [x] Ajouter aux tests un contrôle des paramètres, variables écrites et méthodes potentiellement inutilisés, avec fixtures positives/négatives et protection contre les régressions.
+- [x] Examiner les résultats, corriger uniquement les problèmes confirmés et documenter les incertitudes et les appels dynamiques.
+- [x] Tester les suites isolées sans toucher aux données locales et actualiser l’auto-évaluation.
+- [!] Confirmer la CI native PHP après push ; parcours HTTP E2E, MariaDB et navigateur non joués dans la sandbox.
+- Auto-évaluation : inventaire des 116 fichiers `app/` et `public/`, aucun vide, 45 PHP sans fonction à corps explicités. Deux simplifications confirmées dans le moteur JSON ; 11 candidats conservés comme incertains. Autotest de l’analyseur 12/12, inventaire 2/2, suites PHP-WASM isolées vertes, sécurité 10/10 ; compilation PHP-WASM 8.5 ciblée sur les six PHP modifiés. Analyse lexicale partielle, pas un audit complet des dépendances ni du code mort CSS/JS/SQL.
+
+
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 
 - [!] **Noms, prénoms, numéros étudiants** des 3 membres + emails → README §Membres et CDC §3.3 (aucune identité ne peut être inventée).

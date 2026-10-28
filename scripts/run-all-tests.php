@@ -39,6 +39,8 @@ putenv('MINISHOP_TESTS=1');
 
 const SUITES = [
     ['Linter strict types', 'scripts/strict_types_lint.php'],
+    ['Autotests code potentiellement inutilisé', 'tests/php/code_mort_test.php'],
+    ['Nouveaux candidats code potentiellement inutilisé', 'scripts/code_mort.php'],
     ['Moteur JSON', 'tests/php/engine_smoke.php'],
     ['Règles de gestion', 'tests/php/run_tests.php'],
     ['Unitaires', 'tests/php/unit_tests.php'],
@@ -150,6 +152,14 @@ section('▸ Autotests du contrôle des dépréciations');
 ++$jouees;
 if (lancerAvec('python3', 'tests/python/test_deprecations.py') !== 0) {
     ++$echecs;
+}
+
+section('▸ Autotests d’intégration code mort et inventaire');
+foreach (['tests/python/test_code_mort_integration.py', 'tests/python/test_inventaire_app.py'] as $testPython) {
+    ++$jouees;
+    if (lancerAvec('python3', $testPython) !== 0) {
+        ++$echecs;
+    }
 }
 
 section('▸ Analyse des dépréciations PHP — scripts/verifier_deprecations.py');

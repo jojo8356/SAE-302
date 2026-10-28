@@ -143,7 +143,7 @@ final class JsonStore implements StoreInterface
 
     public function find(string $table, int|string $pk): ?array
     {
-        $def = Schema::table($table);
+        Schema::table($table); // Vérifie la liste blanche, même sans résultat.
         $key = $pk;
         if (!is_int($pk) && ctype_digit((string) $pk)) {
             $key = (int) $pk;
@@ -876,18 +876,6 @@ final class JsonStore implements StoreInterface
         }
 
         return true;
-    }
-
-    private function maxPk(array $rows, string $pk): int
-    {
-        $max = 0;
-        foreach ($rows as $row) {
-            if (is_numeric($row[$pk] ?? null) && (int) $row[$pk] > $max) {
-                $max = (int) $row[$pk];
-            }
-        }
-
-        return $max;
     }
 
     /** Hors transaction : persistance immédiate de chaque écriture. */

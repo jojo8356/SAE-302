@@ -20,6 +20,7 @@ use App\Model\Data\ConstraintError;
 use App\Model\Data\Filter;
 use App\Model\Data\JsonStore;
 use App\Model\Data\Seed;
+use App\Model\Data\SchemaError;
 use App\Model\Data\StorageDriver;
 use App\Model\Data\Views;
 
@@ -149,6 +150,13 @@ $visibles = $store->count('produit', [['visible', '=', 1]]);
 $check('catalogue de démonstration non vide', $totalProduits >= 12, (string) $totalProduits);
 $check('un seul produit masqué (RB-19)', $totalProduits - $visibles === 1, $totalProduits . ' / ' . $visibles);
 $check('find par PK (hash)', ($store->find('produit', 1) ?? [])['reference'] === 'PC-PORT-001');
+$schemaRefuse = false;
+try {
+    $store->find('table_inconnue', 1);
+} catch (SchemaError) {
+    $schemaRefuse = true;
+}
+$check('find refuse une table hors schéma', $schemaRefuse);
 $check('LIKE insensible casse/accents (recherche "ecran")',
     $store->count('produit', [Filter::like('nom', '%ecran%')]) >= 1
     && $store->count('produit', [Filter::like('nom', '%ECRAN%')]) === $store->count('produit', [Filter::like('nom', '%ecran%')]));
