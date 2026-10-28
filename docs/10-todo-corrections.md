@@ -290,7 +290,7 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] Empêcher la campagne E2E et l’intégration SQL d’écraser silencieusement des données existantes ; ajouter des tests isolés.
 - [x] Vérifier la protection des fichiers de configuration et contrôler les fichiers versionnés de l’ensemble du dépôt.
 - [x] Produire un rapport précis avec résultats, risques, éléments non vérifiés et inventaire global.
-- [x] Exécuter les vérifications disponibles sans toucher aux données utilisateur, documenter l’auto-évaluation et préparer le push ; validation CI à suivre dans le rapport.
+- [x] Exécuter les vérifications disponibles sans toucher aux données utilisateur, documenter l’auto-évaluation et pousser ; CI `796aada` verte (PHP natif, PHPUnit, MySQL jetable et E2E WASM).
 
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 
