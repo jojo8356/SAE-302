@@ -179,6 +179,35 @@ echo "\nB. UC-02 — recherche et filtres du catalogue (EF-VIS-02/03, ENF-04)\n"
     sort($nomsVisibles);
     $check('tri inconnu → repli liste blanche (nom)',
         $repo->searchProducts(['tri' => 'DROP TABLE'])['lignes'][0]['nom'] === $nomsVisibles[0]);
+    // Tester l'ordre global, y compris le passage entre deux pages et les
+    // filtres, indépendamment de l'ordre initial des données de démonstration.
+    foreach (ProduitRepository::TRIS as $triCatalogue) {
+        foreach ([[], ['id_categorie' => 3], ['mot_cle' => 'batterie'], ['en_stock' => true]] as $filtreCatalogue) {
+            $criteresCatalogue = array_merge($filtreCatalogue, ['tri' => $triCatalogue, 'par_page' => 5, 'ruptures_fin' => true]);
+            $premiere = $repo->searchProducts($criteresCatalogue);
+            $reunis = [];
+            for ($pageCatalogue = 1; $pageCatalogue <= $premiere['pages']; ++$pageCatalogue) {
+                $pageResultat = $repo->searchProducts(array_merge($criteresCatalogue, ['page' => $pageCatalogue]));
+                $reunis = array_merge($reunis, $pageResultat['lignes']);
+            }
+            // L'ordre sans priorité de stock constitue l'oracle du tri secondaire.
+            $sansPriorite = $repo->searchProducts(array_merge($filtreCatalogue, ['tri' => $triCatalogue, 'par_page' => 60]));
+            $ordreAttendu = array_merge(
+                array_values(array_filter($sansPriorite['lignes'], static fn (array $p): bool => (int) $p['stock'] > 0)),
+                array_values(array_filter($sansPriorite['lignes'], static fn (array $p): bool => (int) $p['stock'] <= 0)),
+            );
+            $check('ruptures en dernier avant pagination : ' . $triCatalogue . ' ' . json_encode($filtreCatalogue),
+                count($reunis) === $premiere['total']
+                && array_column($reunis, 'id_produit') === array_column($ordreAttendu, 'id_produit'));
+        }
+    }
+    $videStock = $repo->searchProducts(['mot_cle' => 'zzzzzz', 'ruptures_fin' => true]);
+    $check('ruptures en dernier : aucun résultat et page hors limites',
+        $videStock['total'] === 0 && $videStock['lignes'] === []
+        && $repo->searchProducts(['ruptures_fin' => true, 'page' => 999])['lignes'] === []);
+    $ruptureSeule = $repo->searchProducts(['mot_cle' => 'POWER-010', 'ruptures_fin' => true]);
+    $check('ruptures en dernier : recherche ne contenant que des ruptures',
+        $ruptureSeule['total'] === 1 && (int) $ruptureSeule['lignes'][0]['stock'] === 0);
     $r = $repo->searchProducts(['par_page' => 500, 'page' => 1]);
     $check('par_page borné à 60 (ENF-04)', $r['par_page'] === 60 && $r['pages'] === 1);
     $r = $repo->searchProducts(['par_page' => 5, 'page' => 999]);

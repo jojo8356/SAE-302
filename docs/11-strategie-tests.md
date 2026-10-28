@@ -12,9 +12,9 @@ La pyramide des tests est souvent citée puis contredite par les chiffres. Voici
 | 1 | Unitaires purs | `tests/php/unit_tests.php` (`Text`, `Csrf`, `Filter`, `PanierSession`, `RB-11`…) + `tests/phpunit/**` | **282** vérifications + **34** tests PHPUnit | ~ 6 s |
 | 2 | Contrats (sans exécution) | `tests/php/contract_http.php`, `tests/php/css_contract.php`, `tests/php/responsive_contract.php` | **26** + **55** + **48** vérifications | ~ 2 s |
 | 3 | Règles de gestion sur le moteur | `tests/php/run_tests.php` (T-01 → T-29 du CDC §6), `tests/php/engine_smoke.php` | **29/29** scénarios, **44** contrôles moteur | ~ 10 s |
-| 4 | Fonctionnalités de bout en bout (application court-circuitée) | `tests/php/features_test.php` (UC-01 → UC-14 via les dépôts) | **108** vérifications | ~ 4 s |
+| 4 | Fonctionnalités de bout en bout (application court-circuitée) | `tests/php/features_test.php` (UC-01 → UC-14 via les dépôts) | **131** vérifications | ~ 4 s |
 | 5 | Intégration SQL réelle | `tests/php/sql_integration.php` → `tests/sql/run_tests.sh` | **29** scénarios sur MariaDB | ~ 30 s |
-| 6 | Parcours HTTP complet | `scripts/e2e.mjs` (seed, requêtes réelles, restauration des données) | **185** vérifications | ~ 90 s |
+| 6 | Parcours HTTP complet | `scripts/e2e.mjs` (natif) ; `scripts/wasm-e2e.mjs` (WASM) | **185** natif ; **188** WASM | ~ 90 s |
 | 7 | Performance | `scripts/capture_perf.sh` → `gen_volumes.sh` + `tests/perf/mesurer_sql.sh` | 5 requêtes types + `EXPLAIN` + p95 de la recherche | ~ 60 s |
 
 **Total** : 806 vérifications automatisées sur les étages 1→6, plus 29 scénarios SQL rejoués sur un vrai serveur.

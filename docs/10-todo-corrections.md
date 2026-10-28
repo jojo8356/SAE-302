@@ -163,6 +163,14 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 | Aucune dépendance réseau, CSP inchangée | [x] | E2E : aucune occurrence `lucide`/CDN dans le HTML ; `img-src 'self' data:` non modifiée ; `contract_http` 26/26 |
 | Licence respectée | [x] | avis ISC complet dans `docs/DA.md` §10 (copyright Lucide/Feather) |
 
+## 6 quater. Produits en rupture en fin de catalogue — **fait**
+
+- [x] Catalogue et recherche : produits en stock d'abord, puis ruptures, **avant pagination**, y compris avec filtres.
+- [x] Tri choisi respecté au sein de chaque groupe ; indication affichée près du choix de tri. Accueil et administration conservent leur ordre précédent.
+- [x] Tests fonctionnels JSON : tous les tris, pages, recherche, catégorie, filtre en stock, résultats vides et uniquement en rupture. E2E WASM : catalogue et catégorie sur toutes les pages, prix croissant et décroissant.
+- [x] Suite WASM verte (fonctionnalités 131, E2E 188), linter strict-types vert.
+- [ ] Vérification sur MariaDB et contrôle visuel du navigateur : non joués dans la sandbox (serveur SQL et navigateur absents).
+
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 
 - [!] **Noms, prénoms, numéros étudiants** des 3 membres + emails → README §Membres et CDC §3.3 (aucune identité ne peut être inventée).

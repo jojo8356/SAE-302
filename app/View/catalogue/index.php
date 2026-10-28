@@ -79,6 +79,7 @@ $lienSans = static function (string $cle) use ($parametres_url): string {
 
                 <p>
                     <label for="tri">Trier par</label>
+                    <span class="texte-aide">Les produits en rupture sont affichés en dernier.</span>
                     <select id="tri" name="tri">
                         <?php foreach ($tris as $cle => $libelle): ?>
                             <option value="<?= e($cle) ?>" <?php if ($criteres['tri'] === $cle) { echo 'selected'; } else { echo ''; } ?>><?= e($libelle) ?></option>

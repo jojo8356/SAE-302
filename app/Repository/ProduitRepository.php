@@ -67,7 +67,7 @@ final class ProduitRepository
      * sp_search_products — recherche + filtres + tri + pagination.
      *
      * @param array{mot_cle?: ?string, id_categorie?: ?int, prix_min?: ?float, prix_max?: ?float,
-     *               en_stock?: bool, tri?: ?string, page?: int, par_page?: int, admin?: bool} $criteres
+     *               en_stock?: bool, tri?: ?string, page?: int, par_page?: int, admin?: bool, ruptures_fin?: bool} $criteres
      * @return array{lignes: list<array<string,mixed>>, total: int, page: int, par_page: int, pages: int}
      */
     public function searchProducts(array $criteres = []): array
@@ -112,10 +112,35 @@ final class ProduitRepository
 
         $total = $this->store->count('produit', $where);
 
+        if (!empty($criteres['ruptures_fin'])) {
+            // Deux groupes consécutifs AVANT pagination. À l'intérieur de chacun,
+            // le tri choisi et sa clé de départage restent inchangés.
+            $disponibles = [...$where, Filter::gt('stock', 0)];
+            $ruptures = [...$where, Filter::lte('stock', 0)];
+            $nombreDisponibles = $this->store->count('produit', $disponibles);
+            $produits = [];
+            if ($offset < $nombreDisponibles) {
+                $produits = $this->store->select('produit', [
+                    'where' => $disponibles, 'order' => $order, 'limit' => $parPage, 'offset' => $offset,
+                ]);
+            }
+            $placesRestantes = $parPage - count($produits);
+            if ($placesRestantes > 0 && $offset + count($produits) < $total) {
+                $produits = array_merge($produits, $this->store->select('produit', [
+                    'where' => $ruptures, 'order' => $order, 'limit' => $placesRestantes,
+                    'offset' => max(0, $offset - $nombreDisponibles),
+                ]));
+            }
+        } else {
+            $produits = $this->store->select('produit', [
+                'where' => $where, 'order' => $order, 'limit' => $parPage, 'offset' => $offset,
+            ]);
+        }
+
         // enrichissement façon v_catalogue : catégorie jointe + état de stock dérivé
         $categories = $this->store->all('categorie');
         $lignes = [];
-        foreach ($this->store->select('produit', ['where' => $where, 'order' => $order, 'limit' => $parPage, 'offset' => $offset]) as $p) {
+        foreach ($produits as $p) {
             $categorie = $categories[(int) $p['id_categorie']] ?? null;
             $p['id_categorie'] = (int) $p['id_categorie'];
             $p['categorie'] = $categorie['nom'] ?? '—';

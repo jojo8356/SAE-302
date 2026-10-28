@@ -396,6 +396,47 @@ process.stdout.write(B('T7 · catalogue avancé (F-01…F-05)'));
     p3.httpStatusCode === 200 && renduesP3 === cartesP3, `${renduesP3} carte(s), status ${p3.httpStatusCode}`);
   contient('pagination : page 3 sur le total', p3.text, `page 3 / ${nbPages}`);
 
+  // Vérifier l'ordre réellement rendu à travers toutes les pages : le tri
+  // secondaire reste actif dans chaque groupe, même en recherche filtrée.
+  for (const [libelle, suffixe, filtre] of [
+    ['catalogue prix croissant', '&tri=prix_asc', (p) => true],
+    ['catégorie accessoires', '&cat=3&tri=prix_desc', (p) => Number(p.id_categorie) === 3],
+  ]) {
+    const attendus = produits.filter((p) => (p.visible === 1 || p.visible === true) && filtre(p));
+    const pages = Math.max(1, Math.ceil(attendus.length / 12));
+    const refs = [];
+    for (let page = 1; page <= pages; page++) {
+      const reponse = await anon.get(`/catalogue?page=${page}${suffixe}`);
+      for (const carte of (reponse.text ?? '').matchAll(/<article class="carte carte-produit">([\s\S]*?)<\/article>/g)) {
+        const ref = carte[1].match(/Réf\.\s*([^<]+)/);
+        if (ref) refs.push(ref[1].trim());
+      }
+    }
+    const parRef = new Map(attendus.map((p) => [p.reference, p]));
+    const lignes = refs.map((ref) => parRef.get(ref));
+    let ruptureVue = false;
+    let ordreValide = lignes.length === attendus.length && new Set(refs).size === attendus.length;
+    for (const [i, produit] of lignes.entries()) {
+      if (!produit) { ordreValide = false; continue; }
+      if (Number(produit.stock) <= 0) ruptureVue = true;
+      else if (ruptureVue) ordreValide = false;
+      const precedent = lignes[i - 1];
+      if (precedent && (Number(precedent.stock) > 0) === (Number(produit.stock) > 0)) {
+        if (suffixe.includes('prix_asc') && Number(precedent.prix_ttc) > Number(produit.prix_ttc)) ordreValide = false;
+        if (suffixe.includes('prix_desc') && Number(precedent.prix_ttc) < Number(produit.prix_ttc)) ordreValide = false;
+      }
+    }
+    check(`${libelle} : ruptures à la fin sur toutes les pages et tri conservé`,
+      ordreValide && attendus.some((p) => Number(p.stock) <= 0), refs.join(', '));
+  }
+
+  const recherchePower = await anon.get('/recherche?q=POWER');
+  const referencesPower = [...(recherchePower.text ?? '').matchAll(/Réf\.\s*(POWER-\d+)/g)].map((m) => m[1]);
+  check('recherche : batterie disponible avant les batteries en rupture',
+    referencesPower.length === 3 && referencesPower[0] === 'POWER-029'
+      && referencesPower.includes('POWER-010') && referencesPower.includes('POWER-030'),
+    referencesPower.join(', '));
+
   const injectionTri = await anon.get('/catalogue?tri=prix_desc;DROP%20TABLE%20produit');
   check('tri inconnu → 200 sans erreur (liste blanche)', injectionTri.httpStatusCode === 200, `status ${injectionTri.httpStatusCode}`);
 
