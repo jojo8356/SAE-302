@@ -17,6 +17,10 @@ var/
 !var/.gitkeep
 *.log
 
+# --- sauvegardes laissées par les outils de correction (jamais versionnées)
+*.bak
+*.orig
+
 # --- artefacts générés (reproductibles par les scripts du dépôt)
 vendor/
 .phpunit.cache/
