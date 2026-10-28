@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace MiniShop\Tests;
 
+use App\Model\Data\Filter;
 use App\Model\Data\JsonStore;
+use App\Repository\CommandeRepository;
 use App\Model\Data\Seed;
 use PHPUnit\Framework\TestCase;
 
@@ -56,8 +58,23 @@ final class PrixTest extends TestCase
 
     public function testLesMontantsDeCommandeSontCoherents(): void
     {
+        // Le seed JSON ne contient aucune commande : construire des cas réels
+        // plutôt que réussir une boucle vide sans aucune assertion.
+        $client = $this->store->findOne('client', [Filter::eq('email', 'alice@example.com')]);
+        $depot = CommandeRepository::for($this->store);
+        foreach (['CABLE-009', 'PC-PORT-001'] as $reference) {
+            $produit = $this->store->findOne('produit', [Filter::eq('reference', $reference)]);
+            self::assertNotNull($produit);
+            $depot->createOrderFromBasket((int) $client['id_client'], 'Fixture, Nice', [
+                ['id_produit' => (int) $produit['id_produit'], 'quantite' => 1],
+            ]);
+        }
+        $lignes = $this->store->all('ligne_commande');
+        $commandes = $this->store->all('commande');
+        self::assertCount(2, $lignes);
+        self::assertCount(2, $commandes);
         $lignesParCommande = [];
-        foreach ($this->store->all('ligne_commande') as $ligne) {
+        foreach ($lignes as $ligne) {
             $id = (int) $ligne['id_commande'];
             $lignesParCommande[$id] = ($lignesParCommande[$id] ?? 0.0) + (float) $ligne['total_ligne'];
             self::assertEqualsWithDelta(
@@ -68,7 +85,7 @@ final class PrixTest extends TestCase
             );
         }
 
-        foreach ($this->store->all('commande') as $commande) {
+        foreach ($commandes as $commande) {
             if ($commande['statut'] === 'BROUILLON') {
                 continue;
             }

@@ -465,7 +465,7 @@ jobs:
           etat=${PIPESTATUS[0]}
           set -e
           if [ "$etat" -ne 0 ]; then
-            tail -30 "$RUNNER_TEMP/phpunit.log" | head -8 | while IFS= read -r ligne; do
+            tail -12 "$RUNNER_TEMP/phpunit.log" | head -8 | while IFS= read -r ligne; do
               ligne=${ligne//%/%25}
               echo "::error::${ligne}"
             done
