@@ -1,57 +1,60 @@
-# E-mail à envoyer à la collègue — recette MiniShop sur LineServ
+# E-mail à envoyer à la collègue — transfert et recette MiniShop sur LineServ
 
-À envoyer **seulement après** avoir déployé et vérifié l'instance de recette LineServ : le site, l'accès et l'URL ne sont pas encore confirmés. Remplacer les éléments entre crochets. Transmettre les accès de recette séparément et de manière confidentielle ; aucun mot de passe dans l'e-mail.
+L'e-mail ci-dessous demande à la collègue de transférer le projet : il ne présuppose pas qu'un site est déjà en ligne. Le lien IUT est celui communiqué par Johan. L'état réel de cette branche, l'accès et le déploiement LineServ n'ont pas été vérifiés ici. Le [guide LineServ](14-guide-lineserv.md) indique notamment les précautions et blocages techniques à examiner avant publication.
 
 ---
 
-**Objet : Test de MiniShop sur LineServ — ton retour sur le site**
+**Objet : Transfert et test complet de MiniShop sur LineServ**
 
 Salut,
 
-Est-ce que tu pourrais tester notre site MiniShop directement sur **LineServ** et me faire un retour sur ce qui fonctionne, ce qui bloque et ce qui te paraît à améliorer ?
+Est-ce que tu pourrais transférer notre site MiniShop sur **LineServ**, puis le tester et me dire ce qui fonctionne, ce qui bloque ou ce qui pourrait être amélioré ?
 
-**Lien du site de recette :** [URL LineServ vérifiée]
+Il n'y a pas encore de lien pour le site : il faut récupérer le projet à partir de ma branche et le transférer sur LineServ :
 
-**Version / date de mise à disposition :** [révision ou date]
+https://iut-git.unice.fr/but2_s302/s302/-/tree/pj509414/dev?ref_type=heads
 
-**Accès :** [indication de connexion ou de réseau si nécessaire]. Je t'enverrai les identifiants de test séparément.
+Utilise tes propres accès LineServ. Si le transfert ou l'initialisation est bloqué, notamment à cause de l'adresse en sous-dossier ou de la séparation des fichiers privés, arrête-toi et dis-moi à quelle étape tu bloques et quel message s'affiche. Ne réinitialise pas de base ou de répertoire existant et ne mets pas de fichiers privés ou de configuration dans un dossier accessible publiquement. Une fois le site installé, envoie-moi son lien.
 
-C'est une **maquette** : le paiement et la livraison sont simulés. Utilise uniquement les comptes et les données fictives prévus pour la recette ; ne saisis pas de vraie carte bancaire ni d'informations personnelles. Ne supprime pas les données des autres et ne réinitialise pas la base.
+C'est une **maquette** : le paiement et la livraison sont simulés. Merci d'utiliser uniquement les comptes et données fictifs, sans saisir de vraie carte bancaire ni de données personnelles.
 
-### Ce que je te propose de tester
+Voici les comptes de démonstration prévus si le jeu de test est initialisé et n'a pas été modifié :
 
-1. **Accueil et catalogue** : ouvre le site, navigue entre les catégories, recherche un produit, utilise les filtres et le tri, puis ouvre une fiche produit. Vérifie les textes, les images et les prix.
-2. **Compte** : inscris-toi avec les données fictives fournies ou connecte-toi au compte de test ; teste aussi la déconnexion et la modification du profil.
-3. **Panier et commande simulée** : ajoute un article, change sa quantité, retire-le, puis fais une commande de test. Vérifie les montants, l'adresse fictive et le message de confirmation.
-4. **Suivi** : ouvre l'historique et le détail de ta commande ; si son statut le permet, essaie de l'annuler. Vérifie qu'elle apparaît avec le bon statut.
-5. **Administration**, seulement si je t'ai donné un accès et des données de test : consulte le tableau de bord et les commandes ; teste les produits, catégories, stocks et statuts uniquement sur les éléments fictifs que je t'aurai indiqués. Ne touche pas aux données des autres.
-6. **Affichage et facilité d'utilisation** : teste sur ordinateur et téléphone si tu peux. Regarde si le menu, les textes, les boutons et les tableaux sont lisibles et accessibles, sans éléments coupés ou superposés. Essaie aussi de naviguer avec la touche Tab et de zoomer.
-7. **Pages d'information** : ouvre les liens du pied de page, notamment aide, contact, livraison, rétractation, CGV et confidentialité. Signale les liens cassés ou les textes peu clairs. La page de rétractation est informative ; ne la confonds pas avec l'annulation de commande.
+| Type | Adresse e-mail | Mot de passe |
+|---|---|---|
+| Client Alice | `alice@example.com` | `Demo2026!` |
+| Client Bruno | `bruno@example.com` | `Demo2026!` |
+| Client Carla | `carla@example.com` | `Demo2026!` |
+| Administrateur **SUPER** | `admin@minishop.fr` | `Admin2026!` |
 
-Tu n'es pas obligée de tout faire d'un coup : commence par les étapes 1 à 4, puis note ce que tu n'as pas pu tester. Aucun test de charge, manipulation technique de requête ou interruption de service n'est demandé.
+Ces comptes sont connus publiquement : le site de recette doit être à accès restreint ; ne laisse pas le compte administrateur de démonstration exposé publiquement.
 
-### Comment me faire ton retour
+Voici les points à tester :
 
-Pour chaque problème, même petit, envoie-moi si possible :
+1. **Catalogue** : naviguer dans les catégories, rechercher un produit, essayer les filtres et le tri, puis ouvrir une fiche produit.
+2. **Compte** : t'inscrire ou te connecter avec les données de test, modifier le profil et te déconnecter.
+3. **Panier et commande** : ajouter un article, changer sa quantité, le retirer, puis passer une commande simulée en vérifiant les montants et la confirmation.
+4. **Historique** : retrouver ta commande, ouvrir son détail et, si son statut le permet, essayer de l'annuler.
+5. **Administration**, si tu as un accès autorisé : consulter le tableau de bord et tester produits, catégories, stocks et statuts uniquement sur les éléments de test que je t'indiquerai.
+6. **Responsive — toutes les pages** : peux-tu ouvrir **chaque page du site**, sur ordinateur et téléphone si possible, pour vérifier que l'affichage s'adapte bien ? Pense notamment à l'accueil, aux catégories, au catalogue, à la recherche, aux fiches produit, à l'inscription, à la connexion, au compte, au panier, à la commande, à l'historique et au détail des commandes, aux pages d'information et à toutes les pages d'administration accessibles. Vérifie aussi les formulaires et messages d'erreur. Signale les pages que tu n'as pas pu tester.
 
-- la **page ou l'adresse** et ce que tu voulais faire ;
-- les **étapes précises** pour reproduire le problème ;
-- ce que tu **attendais** et ce qui s'est **réellement passé** ;
-- le **message affiché**, une capture ou une courte vidéo si utile ;
-- l'**appareil**, le navigateur et, si tu le sais, la largeur de l'écran ;
-- si ça arrive à chaque fois, si ça bloque la suite, et la date du test.
+   Pour chaque page, regarde si le menu, les images, les textes, les tableaux, les champs et les boutons sont lisibles et utilisables, sans élément coupé, superposé ou sorti de l'écran. Vérifie les liens et les boutons, et qu'il n'y a pas de défilement horizontal de toute la page. Pour un tableau large, un défilement limité à son conteneur peut être nécessaire.
 
-Merci de masquer les mots de passe, cookies, adresses ou autres données personnelles dans les captures. N'envoie pas de capture de configuration ou de base de données. Tu peux simplement répondre à cet e-mail avec un problème par paragraphe ; je reporterai les retours dans le suivi. Indique aussi les parcours qui fonctionnent et ceux que tu n'as pas pu faire.
+   Si tu peux, essaie le téléphone en portrait et en paysage et zoome sur les pages. Sur ordinateur, tu peux aussi utiliser le mode responsive du navigateur : dans Chrome ou Chromium, `F12`, puis `Ctrl+Maj+M`, et essayer les largeurs **320, 375, 768 et 1440 pixels**. La simulation complète le test sur téléphone, mais ne le remplace pas.
+7. **Informations** : ouvrir les liens du pied de page, notamment l'aide, la livraison, les CGV, la confidentialité et la rétractation, et me signaler les liens cassés ou textes peu clairs.
 
-**Exemple :** « Sur téléphone, dans le catalogue, j'ai ajouté un produit puis ouvert le panier. J'attendais de voir l'article ; le panier était vide. Cela arrive à chaque essai sur Firefox Android. Capture jointe. »
+Pour chaque problème, peux-tu me préciser :
 
-### Documents utiles
+- la page concernée et les étapes pour reproduire le problème ;
+- ce que tu attendais et ce qui s'est réellement passé ;
+- le message affiché et, si possible, une capture, en masquant les données personnelles et les identifiants ;
+- ton appareil, ton navigateur et, pour un problème d'affichage, la taille ou l'orientation de l'écran ;
+- si le problème arrive à chaque fois et s'il bloque la suite.
 
-- **Fiches des 14 cas d'utilisation** : [joindre ou partager `docs/13-fiches-recette-uc.md`] — parcours détaillés et résultats attendus.
-- **Tableau de suivi** : [joindre ou partager `docs/13-suivi-recette-uc.csv`] — tu peux indiquer `OK`, `KO`, `BLOQUÉ` ou `NON JOUÉ`, avec le résultat observé ; un simple retour par e-mail me convient aussi.
-- **Cahier des charges** : [partager `docs/01-cahier-des-charges-MiniShop.md`] — pour comprendre les fonctionnalités prévues.
-- **Informations et limites de la maquette** : [partager `docs/12-information-juridique.md`] — notamment les fonctions simulées.
+Tu peux me répondre avec un problème par paragraphe. Dis-moi aussi quelles pages sont correctes et lesquelles tu n'as pas pu tester.
+
+Les **fiches des 14 cas d'utilisation**, le **tableau de suivi** et le **cahier des charges** sont dans le GitHub si tu veux davantage de détails.
 
 Merci beaucoup pour ton aide !
 
-[Prénom]
+Johan

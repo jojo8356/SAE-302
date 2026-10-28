@@ -241,6 +241,7 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] Analyser le déploiement SFTP/phpMyAdmin et identifier les contraintes réelles du projet.
 - [x] Préparer un guide sûr et un script local non destructif pour l’import initial sur une base dédiée vide.
 - [x] Rédiger un e-mail de recette et expliquer les outils d’accessibilité et de responsive.
+- [x] Adapter l’e-mail : transfert par la collègue depuis la branche IUT et contrôle responsive de toutes les pages et états accessibles.
 - [x] Vérifier les livrables, indiquer explicitement les blocages et les tests non exécutés.
 - [!] Compatibilité applicative avec l’URL en sous-dossier et séparation de la racine privée : adaptation et validation réelles encore nécessaires avant publication. PHP, réécriture Apache, droits SQL et accès de recette sur LineServ restent à confirmer.
 
