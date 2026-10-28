@@ -234,7 +234,7 @@ Une tâche de cette section **ne peut pas commencer** avant que ses dépendances
 | `D3-L5-01` | DDL : 8 tables, CHECK, InnoDB utf8mb4 | A* | 0 | ✅ | — | — |
 | `D3-L5-02` | FK (CASCADE/RESTRICT) + index (FULLTEXT, filtres) | A* | 0 | ✅ | — | — |
 | `D3-L5-03` | 3 vues (v_etat_stock, v_catalogue, v_commandes_client) | A* | 0 | ✅ | — | — |
-| `D3-L5-04` | Seed : catégories, 12 produits, 3 clients, 1 admin (hashes vérifiés bcrypt) | A* | 0 | ✅ | — | — |
+| `D3-L5-04` | Seed : catégories, 36 produits, 3 clients, 1 admin (hashes vérifiés bcrypt) | A* | 0 | ✅ | — | — |
 | `D3-L5-05` | Écrire scripts/load_db.sh (encapsule DELIMITER, chargement 01→04, comptages de contrôle) | A | 3 | ⬜ `ASYNC` | — | P1 |
 
 > *Tâches D3-L5-01..04 initialement réalisées par le membre B (BD) avant répartition à 2 ; elles restent acquises.*

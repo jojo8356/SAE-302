@@ -208,7 +208,7 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme **remon
 | `D3-L5-01` | DDL : 8 tables, types, CHECK (RB-02/03/05), InnoDB utf8mb4 | B | 6 | sql/01 charge sans erreur sur MySQL 8 et MariaDB 11 | L4 |
 | `D3-L5-02` | Clés étrangères (CASCADE/RESTRICT au bon endroit) + index (FULLTEXT, filtres) | B | 4 | plans d'exécution justifiant chaque index | 01 |
 | `D3-L5-03` | 3 vues : v_etat_stock, v_catalogue, v_commandes_client | B | 4 | vues créées et comptées par load_db.sh | 01 |
-| `D3-L5-04` | Seed : 4 catégories, 12 produits (1 rupture, 1 masqué), 3 clients (password_hash), 1 admin | B | 3 | jeu de démonstration RB-04/RB-19 jouable | 01 |
+| `D3-L5-04` | Seed : 4 catégories, 36 produits (3 ruptures, 1 masqué), 3 clients (password_hash), 1 admin | B | 3 | jeu de démonstration RB-04/RB-19 jouable | 01 |
 | `D3-L5-05` | scripts/load_db.sh : chargement 01→04 + comptages de contrôle | B | 3 | sortie « base chargée, procédures ≥ 5, déclencheurs ≥ 5 » | 02–04 |
 | | **Sous-total L5** | | **20** | répartition : B 20 h | |
 

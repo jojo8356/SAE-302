@@ -4,7 +4,7 @@
 > Légende : `[x]` fait **et vérifié sur disque** · `[ ]` **toujours manquant** · `[~]` fait autrement, justifié · `[!]` bloqué par l'environnement.
 > Chaque ligne indique le fichier concerné et la commande qui permet de le constater.
 >
-> **Dernière vérification :** 2026-10-23 · branche `arena/6e1d3706-sae-302`.
+> **Dernière vérification :** 2026-10-28 · branche `arena/6e1d3706-sae-302`.
 > Cette version remplace la précédente, qui cochait des livrables **absents du dépôt** (voir §8).
 
 ---
@@ -131,15 +131,26 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 | Point | État | Preuve |
 |---|---|---|
 | 29 tests SQL partout | [x] | corrigé le 28/10 : `docs/03` (28/28, 27/27 → 29/29), `docs/08` (« 28 tests » de la CI) ; `.gitlab-ci.yml` vérifié |
-| E2E 180 | [x] | `README.md` corrigé (T1…T14, 180/180) |
+| E2E 182 | [x] | `README.md` corrigé (T1…T14, 182/182) |
 | PHP 8.2 minimum | [x] | prérequis README aligné sur `composer.json` |
 | `ENF-13` dupliqué → `ENF-22` | [x] | la seconde ligne (installation ≤ 15 min) est devenue `ENF-22` dans `annexe-enf.md` |
 | MCD 8 entités | [x] | `docs/03` corrigé (« MCD (8 entités) ») ; `docs/01` et `docs/04` disaient « 7 entités + `parametre` », alors que `PARAMETRE` est une entité du MCD (`mcd_minishop.puml` en compte 8) — formulation corrigée |
 | Noms `01_minishop_schema.sql` | [x] | `docs/07` corrigé, et surtout `scripts/wasm-e2e.mjs` : le test de traversée visait `01-minishop-schema.sql`, nom qui n'existe pas — il aurait donc prouvé un 404 sur un fichier inexistant |
 | CDC §16.1/§16.4 à jour | [x] | marqueurs d'état du §16 corrigés (« livrée et testée », « mesuré : E2E T6/T12/T13 ») ; le paragraphe « le code PHP n'est pas encore écrit » est conservé **barré et daté**, avec l'état réel à sa suite — on ne réécrit pas un CDC, on le date |
-| Doc `02` : 33 `F-xx` exécutés + PV | [x] | PV rempli le 28/10 avec la campagne réelle (11 étapes vertes, SQL 29/29, E2E 180) ; les 5 scénarios non joués sont nommés au lieu d'être cochés. **Total du tableau corrigé : 90, et non 71** — la somme des lignes ne correspondait pas |
+| Doc `02` : 33 `F-xx` exécutés + PV | [x] | PV rempli le 28/10 avec la campagne réelle (11 étapes vertes, SQL 29/29, E2E 182) ; les 5 scénarios non joués sont nommés au lieu d'être cochés. **Total du tableau corrigé : 90, et non 71** — la somme des lignes ne correspondait pas |
 | Doc `03` aligné sur l'application | [x] | le déroulé ne décrit plus de session MySQL manuelle pour les tests : il renvoie à `run_sql_tests.sh` (29/29) et à la sortie de `run-all-tests.php` |
 | README : arborescence, chiffres, badges | [x] | chiffres et « zéro CSS » corrigés ; badge GitLab pointé sur le dépôt réel (`iut-git.unice.fr/but2_s302/s302`) au lieu de `gitlab.example.com` |
+
+## 6 bis. Catalogue étendu à 3 pages (demande du 28/10/2026) — **fait**
+
+| Point | État | Preuve |
+|---|---|---|
+| 36 produits = **3 pages de 12** (`ProduitRepository` : `par_page` 12 par défaut, borné 1..60) | [x] | `app/Model/Data/Seed.php` et `sql/01_minishop_schema.sql` portent 36 lignes d'`INSERT` ; `node scripts/wasm_run.mjs scripts/seed.php` → `produit : 36` ; E2E vérifie `page 2 / 3` |
+| **Aucune nouvelle photo** : un packshot par famille réutilisé (zen14, turbox, qhd27, k87, aura, boom, procast, sac25, usbc, power20, fit2, band) | [x] | 12 fichiers dans `public/img/produits/`, tous versionnés ; `tests/php/css_contract.php` valide chaque JPEG réel (signature `FF D8 FF`, ≥ 400×300, ≤ 120 Ko) — aucune requête distante, CSP `img-src 'self' data:` inchangée |
+| Jeu de démonstration : 3 ruptures (`POWER-010`, `POWER-030`, `MONTRE-032`), `MICRO-007` au seuil (`TRES_BAS`), `BRAC-012` masqué | [x] | `MICRO-007` : seuil passé de 1 à 2 pour que la démo couvre réellement `TRES_BAS` (F-27 le documentait à tort) ; `T-26` 29/29 |
+| Tests **sans effectif figé** (le catalogue doit pouvoir grandir) | [x] | `features_test.php`, `run_tests.php` (T-25/26/27), `engine_smoke.php`, `scripts/wasm-e2e.mjs` (T1, T7, T8) recalculent les attendus depuis le magasin/la table |
+| Compteurs documentaires alignés (36 produits, 3 pages, 3 ruptures) | [x] | `docs/01` (§9, §16, tableau du jeu de démo), `docs/02` (F-03, F-25, F-27, §1), `docs/03`, `docs/04`, `docs/05`, `docs/06`, `docs/12`, `docs/DA.md`, `README.md`, `scripts/seed.php` ; les messages de commit **historiques** (`docs/08`, `scripts/rejeu_gitlab.py`) restent inchangés — on ne réécrit pas un historique |
+| Suite complète au vert dans la sandbox | [x] | unitaires ✅ · features ✅ · `run_tests` 29/29 ✅ · `engine_smoke` ✅ · design 55 ✅ · contrats HTTP 26 ✅ · E2E 182 ✅ · linter 0 violation |
 
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 

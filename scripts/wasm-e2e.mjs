@@ -123,7 +123,12 @@ process.stdout.write(B('T1 · pages publiques'));
   contient('accueil : bienvenue', accueil.text, 'Bienvenue chez MiniShop');
   contient('accueil : 4 catégories', accueil.text, 'Objets connectés');
   const catalogue = await anonyme.get('/catalogue');
-  check('catalogue : 11 produits visibles (RB-19)', (catalogue.text.match(/carte carte-produit/g) ?? []).length >= 11, 'moins de 11 cartes produit');
+  // page 1 = 12 cartes au plus, et jamais le produit masqué (RB-19)
+  const visiblesSeed = (await lireTable('produit')).filter((p2) => p2.visible === 1 || p2.visible === true).length;
+  const cartesAttendues = Math.min(12, visiblesSeed);
+  const nbCartes = (catalogue.text.match(/carte carte-produit/g) ?? []).length;
+  check(`catalogue : ${cartesAttendues} cartes sur la page 1 (RB-19)`, nbCartes === cartesAttendues, `${nbCartes} carte(s) rendue(s)`);
+  check('catalogue : le bracelet masqué absent', !(catalogue.text ?? '').includes('Bracelet connecté Band<'), 'masqué listé');
   const recherche = await anonyme.get('/recherche?q=casque');
   contient('recherche « casque » trouve le Casque', recherche.text, 'Casque sans fil Aura');
   const fiche = await anonyme.get('/produit/casque-sans-fil-aura');
@@ -345,16 +350,40 @@ process.stdout.write(B('T7 · catalogue avancé (F-01…F-05)'));
   contient('filtres actifs : formulaire pré-rempli (prix_max)', f.text, 'value="100"');
   check('filtres actifs : catégorie sélectionnée', /value="3"\s*selected/.test(f.text ?? ''), 'option 3 non sélectionnée');
   contient('filtres actifs : case stock cochée', f.text, 'checked');
-  contient('2 produits (sac 58,80 + câble 15,00)', f.text, '2 produits trouvés');
-  contient('tri prix croissant : câble avant sac', f.text, 'Câble USB-C 2 m renforcé');
+  // attendus DÉRIVÉS de la table : le catalogue peut grandir
+  const cible = produits.filter((p2) => p2.id_categorie === 3
+    && Number(p2.prix_ttc) <= 100 && Number(p2.stock) > 0
+    && (p2.visible === 1 || p2.visible === true));
+  contient('total des filtres cumulés', f.text, `${cible.length} produit`);
+  const parPrix = [...cible].sort((a, b) => Number(a.prix_ttc) - Number(b.prix_ttc));
   check('tri prix croissant respecté',
-    (f.text ?? '').indexOf('Câble USB-C') < (f.text ?? '').indexOf('Sac à dos'), 'ordre incorrect');
-  check('le POWER en rupture est exclu par « en stock »', !(f.text ?? '').includes('Batterie externe'), 'batterie listée');
+    parPrix.length > 1
+      && (f.text ?? '').indexOf(parPrix[0].nom) >= 0
+      && (f.text ?? '').indexOf(parPrix[0].nom) < (f.text ?? '').indexOf(parPrix[parPrix.length - 1].nom),
+    `premier attendu : ${parPrix[0]?.nom}`);
+  const rupturesCat3 = produits.filter((p2) => p2.id_categorie === 3
+    && Number(p2.stock) === 0 && (p2.visible === 1 || p2.visible === true));
+  const intrus = rupturesCat3.filter((p2) => (f.text ?? '').includes(p2.nom));
+  check('les ruptures sont exclues par « en stock »',
+    rupturesCat3.length > 0 && intrus.length === 0, intrus.map((p2) => p2.nom).join(', ') || 'aucune rupture en catégorie 3');
 
   // ENF-04 : pages hors bornes → pas d'erreur, liste vide
   const loin = await anon.get('/catalogue?page=999');
-  check('page 999 → 200, page affichée 999 / 1', loin.httpStatusCode === 200 && (loin.text ?? '').includes('page 999 / 1'), `status ${loin.httpStatusCode}`);
+  const nbPages = Math.max(1, Math.ceil(produits.filter((p2) => p2.visible === 1 || p2.visible === true).length / 12));
+  check(`page 999 → 200, page affichée 999 / ${nbPages}`,
+    loin.httpStatusCode === 200 && (loin.text ?? '').includes(`page 999 / ${nbPages}`),
+    `status ${loin.httpStatusCode} — ${nbPages} page(s) attendue(s)`);
   check('page 999 : aucune fiche produit', !(loin.text ?? '').includes('href="/produit/'), 'des fiches présentes');
+  // dernière page réellement servie (12 par page) : nombre de cartes dérivé
+  // du nombre de produits visibles, jamais écrit en dur
+  const p3 = await anon.get('/catalogue?page=3');
+  const visiblesCatalogue = produits.filter((p2) => p2.visible === 1 || p2.visible === true).length;
+  const cartesP3 = Math.max(0, visiblesCatalogue - 24);
+  const renduesP3 = (p3.text.match(/carte carte-produit/g) ?? []).length;
+  check(`page 3 servie avec ${cartesP3} cartes`,
+    p3.httpStatusCode === 200 && renduesP3 === cartesP3, `${renduesP3} carte(s), status ${p3.httpStatusCode}`);
+  contient('pagination : page 3 sur le total', p3.text, `page 3 / ${nbPages}`);
+
   const injectionTri = await anon.get('/catalogue?tri=prix_desc;DROP%20TABLE%20produit');
   check('tri inconnu → 200 sans erreur (liste blanche)', injectionTri.httpStatusCode === 200, `status ${injectionTri.httpStatusCode}`);
 
@@ -496,7 +525,9 @@ process.stdout.write(B('T10 · back-office CRUD complet (F-22/23/25/26/27)'));
 
   // ENF-04/F-03 : pagination réelle + filtres conservés dans les liens
   const page2 = await admin.get('/catalogue?page=2&tri=prix_desc');
-  contient('page 2 affichée', page2.text, 'page 2 / 2');
+  const apresAjouts = await lireTable('produit');
+  const totalPages = Math.max(1, Math.ceil(apresAjouts.filter((p2) => p2.visible === 1 || p2.visible === true).length / 12));
+  contient('page 2 affichée', page2.text, `page 2 / ${totalPages}`);
   const hrefs = [...(page2.text ?? '').matchAll(/href="([^"]*page=1[^"]*)"/g)].map((m2) => m2[1]);
   check('lien précédent conserve les filtres (tri + page)',
     hrefs.some((h) => h.includes('tri=prix_desc')), JSON.stringify(hrefs));

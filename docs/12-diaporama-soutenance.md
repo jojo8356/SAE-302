@@ -2,7 +2,7 @@
 ## Application de vente en ligne en PHP · 12 diapositives · 20 min + questions
 - Une application **100 % PHP / MySQL**, sans framework ni dépendance runtime
 - Un **cahier des charges** de 16 sections, des règles de gestion numérotées RB-01 → RB-20
-- **Une base de démonstration** livrée : 12 produits, 3 clients, un back-office
+- **Une base de démonstration** livrée : 36 produits (3 pages de 12), 3 clients, un back-office
 > Tout ce qui est annoncé dans ce diaporama est exécutable depuis le dépôt.
 
 ---
@@ -71,7 +71,7 @@
 - **PHPUnit** : 6 classes, 34 tests (texte, filtres, prix, transitions, magasin JSON, contrats de sécurité)
 - **Intégration PHP** : moteur JSON, règles de gestion, unitaires, fonctionnalités UC-01 → UC-14
 - **Contrats** : design system (28 vérifications) et responsive (48 vérifications)
-- **E2E HTTP** : 180 vérifications sur l'application complète (cookies, CSRF, refus)
+- **E2E HTTP** : 182 vérifications sur l'application complète (cookies, CSRF, refus)
 - **CI** : GitHub Actions (6 jobs) et pipeline GitLab équivalent
 > `npm run test:all` ▶ tout doit être vert avant chaque commit.
 

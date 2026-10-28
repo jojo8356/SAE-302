@@ -68,7 +68,7 @@ la démo, et la démo qui mange les questions.
 
 ## 4. Check-list de la dernière demi-heure avant l'entrée en salle
 
-- [ ] `./scripts/load_db.sh` rejoué à froid, compteurs corrects (8 tables, 3 vues, 1 fonction, 17 procédures, 16 triggers, 12 produits, 4 commandes de démo)
+- [ ] `./scripts/load_db.sh` rejoué à froid, compteurs corrects (8 tables, 3 vues, 1 fonction, 17 procédures, 16 triggers, 36 produits, 4 commandes de démo)
 - [ ] `./scripts/run_sql_tests.sh` → **29 / 29**
 - [ ] 1 page de chaque zone ouverte et fonctionnelle (catalogue, fiche, panier, commande, admin produits, admin commandes)
 - [ ] les 4 requêtes de preuve §12.3.5 collées dans le terminal, prêtes à être exécutées

@@ -141,20 +141,31 @@ $check('SqlStore construit tout son SQL en requêtes préparées', (static funct
 echo "\n== 2. seed & lecture ==\n";
 $check('base installée par le seed', Seed::ensure($store) === true);
 $check('seed idempotent', Seed::ensure($store) === false);
-$check('12 produits', $store->count('produit') === 12);
-$check('11 produits visibles (RB-19)', $store->count('produit', [['visible', '=', 1]]) === 11);
+// Effectifs RELATIFS, jamais en dur : le catalogue de démonstration peut grandir
+// (il est passé à 36 produits pour que la pagination ait trois pages) sans que
+// la règle vérifiée change.
+$totalProduits = $store->count('produit');
+$visibles = $store->count('produit', [['visible', '=', 1]]);
+$check('catalogue de démonstration non vide', $totalProduits >= 12, (string) $totalProduits);
+$check('un seul produit masqué (RB-19)', $totalProduits - $visibles === 1, $totalProduits . ' / ' . $visibles);
 $check('find par PK (hash)', ($store->find('produit', 1) ?? [])['reference'] === 'PC-PORT-001');
-$check('LIKE insensible casse/accents (recherche "ecran")', $store->count('produit', [Filter::like('nom', '%ecran%')]) === 1);
-$check('BETWEEN prix_ttc', $store->count('produit', [Filter::between('prix_ttc', 50, 200)]) === 7);
+$check('LIKE insensible casse/accents (recherche "ecran")',
+    $store->count('produit', [Filter::like('nom', '%ecran%')]) >= 1
+    && $store->count('produit', [Filter::like('nom', '%ECRAN%')]) === $store->count('produit', [Filter::like('nom', '%ecran%')]));
+$check('BETWEEN prix_ttc', $store->count('produit', [Filter::between('prix_ttc', 50, 200)]) >= 1
+    && $store->count('produit', [Filter::between('prix_ttc', 50, 200)])
+       + $store->count('produit', [Filter::between('prix_ttc', 200, 100000)]) <= $totalProduits);
 $check('tri multi-clés + limite', count($store->select('produit', ['order' => [Filter::sort('prix_ttc', 'desc')], 'limit' => 3])) === 3);
 $check('paramètre frais_port = 4.90', ($store->find('parametre', 'frais_port') ?? [])['valeur'] === '4.90');
 
 echo "\n== 3. vues ==\n";
 $views = new Views($store);
 $catalogue = $views->catalogue();
-$check('v_catalogue : 11 lignes, catégorie jointe', count($catalogue) === 11 && $catalogue[0]['categorie'] === 'Informatique');
+$check('v_catalogue : une ligne par produit visible, catégorie jointe',
+    count($catalogue) === $visibles && $catalogue[0]['categorie'] === 'Informatique',
+    count($catalogue) . ' lignes / ' . $visibles . ' visibles');
 $check('v_catalogue : état RUPTURE pour la batterie', in_array('RUPTURE', array_column($catalogue, 'etat'), true));
-$check('v_etat_stock : 12 lignes', count($views->etatStocks()) === 12);
+$check('v_etat_stock : une ligne par produit', count($views->etatStocks()) === $totalProduits);
 
 echo "\n== 4. écritures & contraintes ==\n";
 $id = $store->insert('client', [

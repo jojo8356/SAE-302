@@ -242,7 +242,7 @@ les tokens sont prêts (`[data-theme="dark"]` documenté) si la suite du projet 
   `croix`, `chevron`, `camion`, `cadenas`. Aucune bibliothèque externe, aucun sprite réseau.
 - **Logo** : un « M » en boucle ouverte (circuit imprimé) dans un carré arrondi `--primaire`,
   décliné en `logo.svg` (horizontal) et `favicon.svg` (carré).
-- **Images produit** : les 12 produits du jeu de démonstration ont un **packshot réel**
+- **Images produit** : les 36 produits du jeu de démonstration ont un **packshot réel** — 12 visuels distincts, un par famille de produit, réutilisés à l'identique dans la famille (cadre homogène, 36 fiches cohérentes)
   (`public/img/produits/*.jpg`, 800 × 600, 15–49 Ko, tous produits selon la même recette : objet seul,
   fond neutre `--surface-2`, ombre de contact douce, lumière venant du haut à gauche). C'est ce qui
   distingue un site crédible d'une maquette. Le **repli** (dégradé + initiale, cadre en pointillés)

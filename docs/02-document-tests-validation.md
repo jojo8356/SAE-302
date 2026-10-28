@@ -9,7 +9,7 @@ Les tests de base sont **exécutés et rejouables** ; les tests fonctionnels con
 | Élément | Valeur |
 |---|---|
 | Environnement de test | Linux, PHP 8.2, MariaDB 11.8.6 (campagne réellement jouée) / MySQL 8.0.36, Apache 2.4, Chromium |
-| Jeu de données | seed `sql/01` + commandes de démo `sql/04` : 4 catégories, 12 produits, 3 clients, 1 admin, 3 commandes ; base `minishop_test` recréée à chaque campagne |
+| Jeu de données | seed `sql/01` + commandes de démo `sql/04` : 4 catégories, 36 produits, 3 clients, 1 admin, 3 commandes ; base `minishop_test` recréée à chaque campagne |
 | Outillage | `scripts/run_sql_tests.sh` (29 tests), `tests/security/controles.sh` (10 contrôles statiques), `tests/charge/reserver.sh`, PHPUnit (unitaires), `docs/diagrams/render.sh`, `pandoc` |
 | Chaîne CI (recette automatisée) | `.gitlab-ci.yml` (prod) + `.github/workflows/ci.yml` (dev) : les 6 jobs sont joués **sur la MR elle-même** (GitHub : `refs/pull/<n>/merge` ; GitLab : *merge result*) — un pipeline **vert avant le merge dispense de tout re-run** après le merge (règle et exceptions : CDC §14.2) |
 | Entrée en recette | pré-conditions `PRÉ-1`…`PRÉ-6` du CDC §11.3 |
@@ -56,10 +56,10 @@ Commande unique : `./scripts/run_sql_tests.sh` (manifeste `tests/sql/manifest.tx
 
 | ID | Titre | Préconditions | Étapes | Résultats attendus | Règles / ENF | Statut |
 |---|---|---|---|---|---|---|
-| F-00 | Installation de bout en bout | base vierge, `git clone`, `env.php` copié | copier `.env.example` vers `.env`, exécuter `./run.sh --db` (ou `php scripts/db_init.php --switch`) puis `./run.sh` (équivalent manuel : `php -S 127.0.0.1:8000 -t public scripts/dev-router.php`) | sortie : tables 8, vues 3, fonctions 1, procédures 17, triggers ≥ 5, 12 produits, 3 clients ; page d'accueil en HTTP 200 ; le tout en ≤ 15 min | ENF-13 | prêt à rejouer |
+| F-00 | Installation de bout en bout | base vierge, `git clone`, `env.php` copié | copier `.env.example` vers `.env`, exécuter `./run.sh --db` (ou `php scripts/db_init.php --switch`) puis `./run.sh` (équivalent manuel : `php -S 127.0.0.1:8000 -t public scripts/dev-router.php`) | sortie : tables 8, vues 3, fonctions 1, procédures 17, triggers ≥ 5, 36 produits, 3 clients ; page d'accueil en HTTP 200 ; le tout en ≤ 15 min | ENF-13 | prêt à rejouer |
 | F-01 | Liste des catégories | seed chargé | GET /categories | 4 catégories avec leur nombre de produits visibles (Objets connectés = 1 visible, Audio = 3) | RB-08, RB-19 | conçu |
 | F-02 | Recherche simple | seed chargé | GET /recherche?q=casque | 1 résultat : « Casque sans fil Aura » ; le mot-clé est conservé dans l'URL ; aucune trace de SQL dans la page | RB-19, SEC-01 | conçu |
-| F-03 | Filtres cumulés + tri | seed chargé | GET /catalogue?cat=2&prix_max=160&stock=1&tri=prix_asc puis copier l'URL en navigation privée | 3 produits triés 70.80 / 118.80 / 154.80 € ; l'URL collée reproduit exactement la même page | RB-19, ENF-04/05 | conçu |
+| F-03 | Filtres cumulés + tri | seed chargé | GET /catalogue?cat=2&prix_max=160&stock=1&tri=prix_asc puis copier l'URL en navigation privée | 9 produits triés de 46,80 à 154,80 € TTC (le total est recalculé depuis le jeu de données par le test E2E, aucun effectif figé) ; l'URL collée reproduit exactement la même page | RB-19, ENF-04/05 | conçu |
 | F-04 | Pagination et bornes | seed chargé | GET /catalogue?page=2, puis page=999, puis par_page=500 | page 2 vide avec lien « page 1 » ; page 999 sans erreur ; 60 lignes maximum malgré la demande de 500 | ENF-04 | conçu |
 | F-05 | Fiche produit avec prix TTC | produit `CASQ-005` (129,00 € HT, TVA 20 %) | GET /produit/casque-sans-fil-aura | 154,80 € TTC avec la mention TVA incluse ; état « Disponible » ; `max=16` sur le sélecteur de quantité | RB-02, RB-16, ENF-14 | conçu |
 | F-06 | Inscription valide | navigateur vierge | POST /inscription (données conformes + CGV) | compte créé, session ouverte, retour à la page d'origine ; le hash en base fait 60 caractères | RB-01, RB-12 | conçu |
@@ -81,9 +81,9 @@ Commande unique : `./scripts/run_sql_tests.sh` (manifeste `tests/sql/manifest.tx
 | F-22 | Création de produit | session admin | POST /admin/produits (prix HT 10,00 €, TVA 20 %, stock 5, catégorie Audio) | produit créé ; `prix_ttc` = 12,00 € calculé par la base ; visible immédiatement côté client | RB-02, RB-16 | conçu |
 | F-23 | Masquage d'un produit commandé | produit commandé 1 fois | POST /admin/produits/{id}/suppression | disparition du catalogue client (`visible = 0`), produit conservé en base, prix payé toujours lisible dans la commande | RB-09, RB-14, RB-17 | conçu |
 | F-24 | Pages statiques | — | GET /cgv, /mentions, /aide | 3 pages en 200 sans session, liens présents en pied de page | — | conçu |
-| F-25 | Catégorie non vide protégée | `audio` porte 3 produits | supprimer la catégorie, réaffecter les produits, supprimer à nouveau | refus `CATEGORIE_NON_VIDE_REASSIGNER_LES_PRODUITS` avec lien de réaffectation ; suppression réussie une fois vide | RB-14 | conçu |
+| F-25 | Catégorie non vide protégée | `audio` porte 9 produits | supprimer la catégorie, réaffecter les produits, supprimer à nouveau | refus `CATEGORIE_NON_VIDE_REASSIGNER_LES_PRODUITS` avec lien de réaffectation ; suppression réussie une fois vide | RB-14 | conçu |
 | F-26 | Réapprovisionnement | `ENCH-006` stock 30 | DELTA +15 (motif « réception fournisseur »), puis SET 0 (motif « inventaire »), puis -99999 | 30 → 45 → 0 ; le dernier mouvement est refusé et le stock reste à 0 avec message `RB03_…` | RB-03, RB-17 | conçu |
-| F-27 | Alertes de stock | `POWER-010` stock 0 ; `MICRO-007` stock 2, seuil 1 | GET /admin/stocks?etat=alerte | les deux produits remontent : `RUPTURE` et `TRES_BAS` ; la formule est identique à celle de la procédure (aucune divergence) | ENF-13, RB-03 | conçu |
+| F-27 | Alertes de stock | `POWER-010` stock 0 ; `MICRO-007` stock 2, seuil 2 | GET /admin/stocks?etat=alerte | les deux produits remontent : `RUPTURE` et `TRES_BAS` ; la formule est identique à celle de la procédure (aucune divergence) | ENF-13, RB-03 | conçu |
 | F-28 | Recherche de commandes (admin) | 3 commandes de démonstration | GET /admin/commandes?statut=EXPEDIEE&debut=2026-01-01&fin=2026-12-31 | 1 commande + montant cumulé 405,48 € ; `debut > fin` → demande de correction sans erreur serveur | RB-10, RB-15 | conçu |
 | F-29 | Transition de statut interdite | commande `EXPEDIEE` | POST /admin/commandes/{id}/statut avec statut=BROUILLON (hors interface) | refus `RB11_TRANSITION_STATUT_INTERDITE`, statut inchangé, aucune ligne d'historique ajoutée ; l'interface ne proposait que `LIVREE` ou `ANNULEE` | RB-11, RB-09 | conçu |
 | F-30 | Piste d'audit | commande à 3 changements de statut | GET /admin/commandes/{id} | chronologie `NULL → BROUILLON → EN_PREPARATION → PAYEE` avec auteur, rôle et horodatage | RB-11 | conçu |
@@ -166,7 +166,7 @@ Campagne de recette du **27–28/10/2026**, sur la machine de l'équipe (Debian 
 |---|---|---|---|---|---|
 | Base de données (règles de gestion, vues, frais de port, atomicité) | 29 | **29** | 0 | 0 | **validé** — campagne réelle du 27/10/2026 (`tests/php/sql_integration.php`, base `minishop_test`), rapport `tests/sql/rapport_tests_sql.md` |
 | Chargement / installation | 2 (`F-00`, `I-01`) | **2** | 0 | 0 | `F-00` validé (base opérationnelle, 8 tables / 3 vues / 17 procédures / 16 déclencheurs). `I-01` : installation refaite sur machine Debian 13 le 27/10 — **durée non chronométrée**, la limite des 15 min n'est donc pas mesurée |
-| Front-office visiteur | 9 (`F-01`…`F-09`) | **9** | 0 | 0 | couvert par la suite E2E (T1→T5), jouée le 28/10 : 180 vérifications |
+| Front-office visiteur | 9 (`F-01`…`F-09`) | **9** | 0 | 0 | couvert par la suite E2E (T1→T5), jouée le 28/10 : 182 vérifications |
 | Client (compte, panier, commande) | 12 (`F-10`…`F-21`) | **12** | 0 | 0 | idem (T3, T4, T7 : commande, annulation, plafonds, prix falsifié) |
 | Back-office + conformité | 12 (`F-22`…`F-33`) | **12** | 0 | 0 | idem (T8→T11 : CRUD admin, filtres, audit, journal, rôles) |
 | Sécurité | 10 + 10 contrôles | **10 + 10** | 0 | 0 | idem (T6, T12, T13 : injection, XSS stocké, IDOR, fixation de session, traversées, escalade) + `tests/php/contract_http.php` (26 contrôles statiques) |
