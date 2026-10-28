@@ -460,8 +460,17 @@ jobs:
         run: |
           if [ ! -f composer.json ]; then echo "composer.json absent"; exit 1; fi
           if [ ! -f vendor/bin/phpunit ]; then echo "phpunit absent"; exit 1; fi
-          ./vendor/bin/phpunit --testsuite app --log-junit phpunit.xml
-          cat phpunit.xml 2>/dev/null | head -n 80 || true
+          set +e
+          ./vendor/bin/phpunit --testsuite app --log-junit phpunit.xml 2>&1 | tee "$RUNNER_TEMP/phpunit.log"
+          etat=${PIPESTATUS[0]}
+          set -e
+          if [ "$etat" -ne 0 ]; then
+            tail -30 "$RUNNER_TEMP/phpunit.log" | head -8 | while IFS= read -r ligne; do
+              ligne=${ligne//%/%25}
+              echo "::error::${ligne}"
+            done
+            exit "$etat"
+          fi
 
       - name: Upload phpunit report
         if: always()
