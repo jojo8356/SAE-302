@@ -227,6 +227,15 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] `tests/php/date_ajout_test.php` : 13 contrôles (format, valeur machine, date impossible ou absente, injection, ordre dans la carte et CSS). E2E : vérification des quatre dates et d’un produit nouvellement créé ; suite totale 301 vérifications vertes, design 69, responsive statique 50, catalogue 7 656. Les journaux locaux restent inchangés.
 - [!] Auto-évaluation : rendu des dates et responsive contrôlés par tests HTML/CSS et HTTP, pas de contrôle visuel navigateur en sandbox ; test SQL réel non joué. Les données de démonstration ont souvent la même seconde de création, donc la même date/heure affichée.
 
+## 6 duodecies. Fiches de recette des 14 UC — documentation livrée
+
+- [x] Étudier et sourcer des méthodes de conception et de suivi de tests professionnels.
+- [x] Établir les fiches UC-01 à UC-14 et leurs scénarios nominaux, limites, alternatifs et de sécurité, sans prétendre à l’exhaustivité absolue.
+- [x] Ajouter un protocole d'exécution sûr, la traçabilité des résultats et les réserves sur les fonctionnalités non prouvées.
+- [x] Contrôler l'intégrité des identifiants, liens et renvois ; livrer et expliquer les limites.
+- [!] Recette métier, navigateur réel, charge et MariaDB : **non joués** pour cette livraison ; à effectuer sur une instance isolée et autorisée. Les 150 scénarios et les 36 couples de transition sont initialement non joués dans le suivi.
+
+
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 
 - [!] **Noms, prénoms, numéros étudiants** des 3 membres + emails → README §Membres et CDC §3.3 (aucune identité ne peut être inventée).
