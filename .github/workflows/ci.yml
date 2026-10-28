@@ -354,7 +354,7 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          trap 'etat=$?; echo "::error::Intégration SQL : échec ligne $LINENO (code $etat)"; for f in "$RUNNER_TEMP/integration-sql.log" "$RUNNER_TEMP/refus-app.log" "$RUNNER_TEMP/refus.log"; do if [ -f "$f" ]; then { grep -E '❌|ERREUR|ERROR|FAIL|[Éé]chec' "$f" || tail -7 "$f"; } | head -7 | while IFS= read -r ligne; do ligne=${ligne//%/%25}; echo "::error::${ligne}"; done; break; fi; done; exit "$etat"' ERR
+          trap 'etat=$?; echo "::error::Intégration SQL : échec ligne $LINENO (code $etat)"; for f in "$RUNNER_TEMP/integration-sql.log" "$RUNNER_TEMP/refus-app.log" "$RUNNER_TEMP/refus.log"; do if [ -f "$f" ]; then { grep -E "❌|ERREUR|ERROR|FAIL|[Éé]chec" "$f" || tail -7 "$f"; } | head -7 | while IFS= read -r ligne; do ligne=${ligne//%/%25}; echo "::error::${ligne}"; done; break; fi; done; exit "$etat"' ERR
           mysql -h 127.0.0.1 -u root -e "CREATE DATABASE minishop_safety_ci; CREATE TABLE minishop_safety_ci.temoin (id INT); INSERT INTO minishop_safety_ci.temoin VALUES (42);"
           if MINISHOP_TEST_DB=minishop_safety_ci DB_NAME=minishop php tests/php/sql_integration.php > "$RUNNER_TEMP/refus.log" 2>&1; then
             echo "Une base existante a été acceptée sans consentement"; exit 1
