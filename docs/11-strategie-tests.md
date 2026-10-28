@@ -9,7 +9,7 @@ La pyramide des tests est souvent citée puis contredite par les chiffres. Voici
 | Étage | Nature | Suite | Volume | Durée |
 |---|---|---|---|---|
 | 0 | Analyse statique | `scripts/strict_types_lint.php` (règles php-cs-fixer `declare_strict_types`, types natifs niveau PHPStan 9, interdiction du ternaire) + autotest du harnais `scripts/wasm_verdict.mjs` | **100 fichiers**, 0 violation · **7 cas** de verdict | < 1 s |
-| 1 | Unitaires purs | `tests/php/unit_tests.php` (`Text`, `Csrf`, `Filter`, `PanierSession`, `RB-11`…) + `tests/phpunit/**` | **281** vérifications + **34** tests PHPUnit | ~ 6 s |
+| 1 | Unitaires purs | `tests/php/unit_tests.php` (`Text`, `Csrf`, `Filter`, `PanierSession`, `RB-11`…) + `tests/phpunit/**` | **282** vérifications + **34** tests PHPUnit | ~ 6 s |
 | 2 | Contrats (sans exécution) | `tests/php/contract_http.php`, `tests/php/css_contract.php`, `tests/php/responsive_contract.php` | **26** + **55** + **48** vérifications | ~ 2 s |
 | 3 | Règles de gestion sur le moteur | `tests/php/run_tests.php` (T-01 → T-29 du CDC §6), `tests/php/engine_smoke.php` | **29/29** scénarios, **44** contrôles moteur | ~ 10 s |
 | 4 | Fonctionnalités de bout en bout (application court-circuitée) | `tests/php/features_test.php` (UC-01 → UC-14 via les dépôts) | **108** vérifications | ~ 4 s |
@@ -17,7 +17,7 @@ La pyramide des tests est souvent citée puis contredite par les chiffres. Voici
 | 6 | Parcours HTTP complet | `scripts/e2e.mjs` (seed, requêtes réelles, restauration des données) | **180** vérifications | ~ 90 s |
 | 7 | Performance | `scripts/capture_perf.sh` → `gen_volumes.sh` + `tests/perf/mesurer_sql.sh` | 5 requêtes types + `EXPLAIN` + p95 de la recherche | ~ 60 s |
 
-**Total** : 805 vérifications automatisées sur les étages 1→6, plus 29 scénarios SQL rejoués sur un vrai serveur.
+**Total** : 806 vérifications automatisées sur les étages 1→6, plus 29 scénarios SQL rejoués sur un vrai serveur.
 
 Pourquoi cette forme, et pas 400 tests unitaires avec des doublures partout : l'essentiel du sujet est une **base de données** (8 entités, 17 procédures, 16 déclencheurs, 1 fonction, 3 vues). Un test unitaire avec un `PDO` simulé prouverait que le PHP appelle bien une chaîne de caractères — c'est-à-dire rien. Les règles de gestion (stock, immutabilité du prix, transitions de statut, total recalculé) sont donc vérifiées **là où elles vivent réellement** : étage 3 sur le moteur, étage 5 sur MariaDB. La pyramide est respectée dans son esprit (beaucoup de tests rapides en bas) mais son sommet est anormalement lourd, et c'est assumé : c'est le sujet.
 

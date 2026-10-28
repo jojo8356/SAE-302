@@ -53,8 +53,8 @@ fi
 # collations. Une colonne de table (collation implicite) l'emporte sur le
 # littéral, une colonne de vue non — d'où un échec qui ne concerne que les
 # requêtes sur les vues (T-26 sur v_etat_stock).
-COLLATION_SESSION='SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;'
-avec_collation() { printf '%s\n' "$COLLATION_SESSION"; cat "$1"; }
+COLLATION_SESSION_SQL='SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;'
+avec_collation() { printf '%s\n' "$COLLATION_SESSION_SQL"; cat "$1"; }
 
 MYSQL_AUTH=()
 [ -n "$DB_USER" ] && MYSQL_AUTH+=(-u"$DB_USER")
@@ -68,7 +68,18 @@ mysqlq() {
 }
 
 echo "== MiniShop — tests SQL sur la base '$DB' ($DB_HOST) =="
-echo "   Collation de session : $(mysqlq -N -B -e "SELECT CONCAT(@@collation_connection, '  (base : ', @@collation_database, ')')" 2>/dev/null)"
+# Deux valeurs distinctes, et c'est voulu : celle du client TEL QUEL (défaut du
+# serveur, souvent utf8mb4_uca1400_ai_ci sur MariaDB >= 11.4) et celle réellement
+# utilisée par les scénarios, préfixés par SET NAMES. N'afficher que la première
+# laissait croire que la campagne tournait dans la collation qui provoque
+# l'erreur 1267, alors que les 29 tests passaient.
+COLLATION_CLIENT="$(mysqlq -N -B -e "SELECT @@collation_connection" 2>/dev/null)"
+COLLATION_SESSION="$(printf '%s\n' "$COLLATION_SESSION_SQL" | mysqlq -N -B -e "SELECT @@collation_connection" 2>/dev/null)"
+if [ "$COLLATION_CLIENT" = "$COLLATION_SESSION" ]; then
+  echo "   Collation de session : $COLLATION_SESSION (identique au défaut du client)"
+else
+  echo "   Collation de session : $COLLATION_SESSION  (défaut du client : $COLLATION_CLIENT — réaligné sur le schéma)"
+fi
 echo "   Sorties journaux : $OUT_DIR"
 echo ""
 

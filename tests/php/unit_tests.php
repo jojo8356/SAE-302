@@ -502,6 +502,12 @@ echo "\n15. DSN et repli socket Unix (App\\Config\\DbConnexion)\n";
     $harnais = (string) file_get_contents(dirname(__DIR__, 2) . '/tests/sql/run_tests.sh');
     $check('harnais SQL : session alignée (même collation que le schéma)',
         str_contains($harnais, 'SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci'));
+    // L'en-tête doit annoncer la collation RÉELLEMENT utilisée, pas le défaut du
+    // client : afficher uca1400_ai_ci alors que les scénarios tournent en
+    // unicode_ci laissait croire que la campagne était exposée à l'erreur 1267.
+    $check('harnais SQL : la collation affichée est celle des scénarios',
+        str_contains($harnais, 'COLLATION_SESSION=') && str_contains($harnais, 'COLLATION_CLIENT=')
+        && !str_contains($harnais, 'Collation de session : $(mysqlq'));
 
     $check('DSN sans base (administration serveur)',
         DbConnexion::dsnTcp($local) === 'mysql:host=127.0.0.1;port=3306;charset=utf8mb4');
