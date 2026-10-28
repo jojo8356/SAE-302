@@ -201,7 +201,7 @@ L'atténuation est doublée par `SameSite=Lax` sur le cookie (S-05) — un POST 
 | | |
 |---|---|
 | **Risque** | atteindre des fichiers hors périmètre (`.git`, sources SQL, config, logs), être encadré (clickjacking), ou lire des en-têtes bavards |
-| **Attaques testées** | E2E T12 : `/../etc/passwd`, `/produit/../../etc/passwd`, `/%2e%2e/%2e%2e/etc/passwd`, `/.git/config`, `/sql/01-minishop-schema.sql`, `/app/Config/env.php`, `/var/log/application.log`, `/phpinfo.php` → **tous 404** ; vérification des 4 en-têtes défensifs |
+| **Attaques testées** | E2E T12 : `/../etc/passwd`, `/produit/../../etc/passwd`, `/%2e%2e/%2e%2e/etc/passwd`, `/.git/config`, `/sql/01_minishop_schema.sql`, `/app/Config/env.php`, `/var/log/application.log`, `/phpinfo.php` → **tous 404** ; vérification des 4 en-têtes défensifs |
 | **Défense** | |
 
 ```php

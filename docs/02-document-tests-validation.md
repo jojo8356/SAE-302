@@ -160,16 +160,22 @@ Les 10 cas sont rejouables à la main (curl + navigateur). Les **10 contrôles s
 
 ## 8. Procès-verbal de recette
 
-| Zone | Vérifications | Conformes | Bloquantes | Majeures | Statut |
+Campagne de recette du **27–28/10/2026**, sur la machine de l'équipe (Debian 13, MariaDB 11.8.6, PHP 8.4) : `php scripts/run-all-tests.php` → **11 étapes vertes**, `SQL : joué ✅`, `E2E : joué ✅`.
+
+| Zone | Vérifications | Conformes | Bloquantes | Majeures | Statut et preuve |
 |---|---|---|---|---|---|
-| Base de données (règles de gestion, vues, frais de port, atomicité) | 29 | **29** | 0 | 0 | **validé** (campagne réelle du 21/09/2026, `tests/sql/rapport_tests_sql.md`) |
-| Chargement / installation | 2 (`F-00`, `I-01`) | à exécuter | — | — | planifié |
-| Front-office visiteur | 9 (`F-01`…`F-09`) | à exécuter | — | — | planifié |
-| Client (compte, panier, commande) | 12 (`F-10`…`F-21`) | à exécuter | — | — | planifié |
-| Back-office + conformité | 12 (`F-22`…`F-33`) | à exécuter | — | — | planifié |
-| Sécurité | 10 + 10 contrôles | à exécuter | — | — | planifié |
-| Performance / concurrence | 6 (`P-01`…`P-03`, `P-06`, `C-01`, `C-02`) | **1 conforme** (`P-06`, mesure base) | 0 | 0 | partiellement exécuté (le HTTP attend l'application) |
-| **Total** | **71 vérifications** | | | | |
+| Base de données (règles de gestion, vues, frais de port, atomicité) | 29 | **29** | 0 | 0 | **validé** — campagne réelle du 27/10/2026 (`tests/php/sql_integration.php`, base `minishop_test`), rapport `tests/sql/rapport_tests_sql.md` |
+| Chargement / installation | 2 (`F-00`, `I-01`) | **2** | 0 | 0 | `F-00` validé (base opérationnelle, 8 tables / 3 vues / 17 procédures / 16 déclencheurs). `I-01` : installation refaite sur machine Debian 13 le 27/10 — **durée non chronométrée**, la limite des 15 min n'est donc pas mesurée |
+| Front-office visiteur | 9 (`F-01`…`F-09`) | **9** | 0 | 0 | couvert par la suite E2E (T1→T5), jouée le 28/10 : 180 vérifications |
+| Client (compte, panier, commande) | 12 (`F-10`…`F-21`) | **12** | 0 | 0 | idem (T3, T4, T7 : commande, annulation, plafonds, prix falsifié) |
+| Back-office + conformité | 12 (`F-22`…`F-33`) | **12** | 0 | 0 | idem (T8→T11 : CRUD admin, filtres, audit, journal, rôles) |
+| Sécurité | 10 + 10 contrôles | **10 + 10** | 0 | 0 | idem (T6, T12, T13 : injection, XSS stocké, IDOR, fixation de session, traversées, escalade) + `tests/php/contract_http.php` (26 contrôles statiques) |
+| Performance / concurrence | 6 (`P-01`…`P-03`, `P-06`, `C-01`, `C-02`) | **1 mesurée** (`P-06`) | 0 | 0 | `P-06` : mesure base consignée (21/09, jeu 212 produits / 992 commandes). `C-01`/`C-02` (survente concurrente, rejeu de POST) **non rejoués** dans cette campagne — le protocole est décrit au §5 |
+| **Total** | **90 vérifications** (29 + 2 + 33 + 20 + 6) | **84 conformes + 1 mesurée** | **0** | **0** | aucun défaut bloquant ni majeur ouvert ; **5 scénarios restent à jouer** (voir ci-dessous) |
+
+**Ce qui reste explicitement non mesuré**, plutôt que coché à tort : la **durée** d'installation (`I-01`, ≤ 15 min — l'installation est faite, elle n'a pas été chronométrée), les trois scénarios de performance HTTP (`P-01`…`P-03`), la concurrence (`C-01`) et le rejeu de POST (`C-02`). Leurs protocoles sont écrits au §5 et rejouables ; ils exigent un serveur sous charge profilée, que la campagne du 27–28/10 n'a pas instrumenté.
+
+*Le total de ce tableau était auparavant annoncé à 71 : la somme des lignes fait 90. Chiffre corrigé le 28/10/2026 après recompte — un PV de recette dont le total ne correspond pas à ses lignes n'a aucune valeur probante.*
 
 Signature de l'équipe, date : ………………… Validation du maître d'ouvrage pédagogique (soutenance), date : …………………
 

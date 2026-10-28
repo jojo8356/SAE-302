@@ -126,20 +126,20 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] `livrables/README.md` — index généré (formats, documents, commandes de régénération).
 - Outillage : `scripts/md_to_{html,pdf,docx,pptx}.py` + `requirements-docs.txt` ; `bash scripts/build-docs.sh` rejoue tout en ~25 s.
 
-## 6. Cohérence documentaire — **aucune correction appliquée**
+## 6. Cohérence documentaire — **soldé le 28/10/2026**
 
 | Point | État | Preuve |
 |---|---|---|
-| 29 tests SQL partout | [ ] | `docs/03` : « 28/28 » (l. 13, 27) et « 27 / 27 » ; `.gitlab-ci.yml` : « 28 tests » |
+| 29 tests SQL partout | [x] | corrigé le 28/10 : `docs/03` (28/28, 27/27 → 29/29), `docs/08` (« 28 tests » de la CI) ; `.gitlab-ci.yml` vérifié |
 | E2E 180 | [x] | `README.md` corrigé (T1…T14, 180/180) |
 | PHP 8.2 minimum | [x] | prérequis README aligné sur `composer.json` |
-| `ENF-13` dupliqué → `ENF-22` | [ ] | `annexe-enf.md` : deux lignes `ENF-13` (l. 20 et 34), aucun `ENF-22` |
-| MCD 8 entités | [ ] | `docs/03` l. 23 : « MCD (7 entités) » |
-| Noms `01_minishop_schema.sql` | [ ] | `docs/07` et `docs/09` citent encore `01-minishop-schema.sql` |
-| CDC §16.1/§16.4 à jour | [ ] | §16.1 : « à développer » / « à produire » ; §16.4 : « le code PHP n'est pas encore écrit » |
-| Doc `02` : 33 `F-xx` exécutés + PV | [ ] | 33 lignes « conçu » ; « PV de recette laissé à compléter » ; « lots L8→L13 » |
-| Doc `03` aligné sur l'application | [ ] | scénario encore écrit pour un terminal MySQL |
-| README : arborescence, chiffres, badges | [~] | chiffres et « zéro CSS » corrigés ; badge GitLab toujours factice (`gitlab.example.com`) |
+| `ENF-13` dupliqué → `ENF-22` | [x] | la seconde ligne (installation ≤ 15 min) est devenue `ENF-22` dans `annexe-enf.md` |
+| MCD 8 entités | [x] | `docs/03` corrigé (« MCD (8 entités) ») ; `docs/01` et `docs/04` disaient « 7 entités + `parametre` », alors que `PARAMETRE` est une entité du MCD (`mcd_minishop.puml` en compte 8) — formulation corrigée |
+| Noms `01_minishop_schema.sql` | [x] | `docs/07` corrigé, et surtout `scripts/wasm-e2e.mjs` : le test de traversée visait `01-minishop-schema.sql`, nom qui n'existe pas — il aurait donc prouvé un 404 sur un fichier inexistant |
+| CDC §16.1/§16.4 à jour | [x] | marqueurs d'état du §16 corrigés (« livrée et testée », « mesuré : E2E T6/T12/T13 ») ; le paragraphe « le code PHP n'est pas encore écrit » est conservé **barré et daté**, avec l'état réel à sa suite — on ne réécrit pas un CDC, on le date |
+| Doc `02` : 33 `F-xx` exécutés + PV | [x] | PV rempli le 28/10 avec la campagne réelle (11 étapes vertes, SQL 29/29, E2E 180) ; les 5 scénarios non joués sont nommés au lieu d'être cochés. **Total du tableau corrigé : 90, et non 71** — la somme des lignes ne correspondait pas |
+| Doc `03` aligné sur l'application | [x] | le déroulé ne décrit plus de session MySQL manuelle pour les tests : il renvoie à `run_sql_tests.sh` (29/29) et à la sortie de `run-all-tests.php` |
+| README : arborescence, chiffres, badges | [x] | chiffres et « zéro CSS » corrigés ; badge GitLab pointé sur le dépôt réel (`iut-git.unice.fr/but2_s302/s302`) au lieu de `gitlab.example.com` |
 
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 

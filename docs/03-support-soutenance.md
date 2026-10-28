@@ -11,7 +11,7 @@ de sorte qu'aucune affirmation ne soit hors document.
 - poste prêt : `./run.sh` lancé (équivalent : `php -S 127.0.0.1:8000 -t public scripts/dev-router.php`), base **rejouée à froid** (`./scripts/load_db.sh`),
   deux navigateurs ouverts (front-office en navigation privée côté client, back-office à côté) ;
 - terminal ouvert sur `mysql minishop` avec les 4 requêtes de preuve §12.3.5 déjà collées ;
-- capture figée de la sortie de `./scripts/run_sql_tests.sh` (28/28) en secours si le réseau/la machine flanche ;
+- capture figée de la sortie de `./scripts/run_sql_tests.sh` (29/29) en secours si le réseau/la machine flanche ;
 - liens GitLab prêts (dépôt, MR, `git shortlog -sne`, README) ;
 - **filet de sécurité** : 3 minutes de démo enregistrées (vidéo locale) au cas où rien ne se lance.
 
@@ -21,11 +21,11 @@ de sorte qu'aucune affirmation ne soit hors document.
 |---:|---|---|---|---|
 | 0-1 | A | Contexte de l'entreprise, problème du tableur partagé, ce que MiniShop doit changer ; acteurs | 1 slide (état actuel + 3 acteurs) | §1.1, §3 |
 | 1-2 | A | Périmètre strict (in/out), objectifs mesurables, règle anti-dérive | table §13.1 / §2.3 | §2, §11.2 |
-| 2-4 | B | **Modélisation** : MCD (7 entités), 3 cardinalités défendues, MLD, normalisation (3FN, 2 dénormalisations protégées) | `mcd_minishop.png`, tableau §12.1.3 | §12.1-§12.3 |
+| 2-4 | B | **Modélisation** : MCD (8 entités), 3 cardinalités défendues, MLD, normalisation (3FN, 2 dénormalisations protégées) | `mcd_minishop.png`, tableau §12.1.3 | §12.1-§12.3 |
 | 4-6 | B | **SQL** : script rejoué en direct (`load_db.sh` : 8 tables, 3 vues, 1 fonction + 17 procédures, 16 triggers) + les 4 requêtes de preuve qui renvoient 0 ligne | terminal | §12.4, §12.3.5 |
 | 6-8 | B | **Procédures stockées** : `sp_add_order_line` ligne à ligne (verrou, snapshot, décrément, montant) ; réponse à la question pédagogique (centralisation, sécurité, transactions, réutilisabilité, contrôle d'accès) | code + §12.5.1 | §12.5 |
 | 8-9 | B | **Triggers** : les 2 imposés (stock, historique) + les 4 de protection ; montrer qu'un `UPDATE` manuel est refusé | terminal : `UPDATE produit SET stock = -5` → `RB03_STOCK_NE_PEUT_PAS_ETRE_NEGATIF` | §12.6, T-03 |
-| 9-10 | C | **Tests** : `run_sql_tests.sh` rejoué → 28/28, en insistant sur les 15 tests qui contournent l'application + le registre d'anomalies (A-01 à A-08, dont A-08 trouvée **en mesurant** la volumétrie réelle) | terminal + §7 du doc de tests | §15, doc tests |
+| 9-10 | C | **Tests** : `run_sql_tests.sh` rejoué → 29/29, en insistant sur les 15 tests qui contournent l'application + le registre d'anomalies (A-01 à A-08, dont A-08 trouvée **en mesurant** la volumétrie réelle) | terminal + §7 du doc de tests | §15, doc tests |
 | 10-12 | C | **Démo front** : recherche (filtres dans l'URL), fiche produit, panier avec plafond de stock, commande validée → numéro, stock qui baisse | navigateur | §4.2-§4.4 |
 | 12-13 | C | **Sécurité en direct** : (1) payload SQLi sans effet, (2) nom de produit `<script>` affiché en texte, (3) `?id=` d'un autre client → 404, (4) prix falsifié ignoré (snapshot) | navigateur + requêtes | §8 |
 | 13-14 | A | **Back-office** : création d'un produit (TTC calculé en base), ajustement de stock refusé en négatif, changement de statut + historique, et **une transition interdite refusée** | navigateur | §4.5, F-22/F-26/F-29 |
@@ -69,7 +69,7 @@ la démo, et la démo qui mange les questions.
 ## 4. Check-list de la dernière demi-heure avant l'entrée en salle
 
 - [ ] `./scripts/load_db.sh` rejoué à froid, compteurs corrects (8 tables, 3 vues, 1 fonction, 17 procédures, 16 triggers, 12 produits, 4 commandes de démo)
-- [ ] `./scripts/run_sql_tests.sh` → **27 / 27**
+- [ ] `./scripts/run_sql_tests.sh` → **29 / 29**
 - [ ] 1 page de chaque zone ouverte et fonctionnelle (catalogue, fiche, panier, commande, admin produits, admin commandes)
 - [ ] les 4 requêtes de preuve §12.3.5 collées dans le terminal, prêtes à être exécutées
 - [ ] les 3 requêtes « attaques » prêtes : `UPDATE produit SET stock = -5 …`, `CALL sp_confirm_order(...)`, `SELECT COUNT(*) FROM client`
