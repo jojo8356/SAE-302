@@ -7,6 +7,8 @@ declare(strict_types=1);
  *
  *   php tests/php/sql_integration.php            # crée minishop_test, joue, supprime
  *   php tests/php/sql_integration.php --garder   # laisse la base pour inspection
+ *   php tests/php/sql_integration.php --reinitialiser-base-existante
+ *       # DESTRUCTIF : autorise explicitement la suppression d’une base de test existante
  *
  * Les autres suites tournent sur le moteur JSON : elles valident la logique,
  * jamais le SQL. Ce test est le seul qui exécute réellement les 17 procédures,
@@ -17,7 +19,10 @@ declare(strict_types=1);
  * `fixture.sql` avant chaque scénario : le lancer sur la base de développement
  * détruirait les données de démonstration. Cette enveloppe crée donc une base
  * dédiée (`minishop_test` par défaut), y charge `sql/01 → 04`, joue la
- * campagne, puis la supprime. La base applicative n'est jamais touchée.
+ * campagne, puis la supprime. Une base déjà existante est refusée par défaut.
+ * Le nom configuré pour l’application est toujours refusé, même avec l’option
+ * de réinitialisation. Utiliser exclusivement un serveur de test isolé : une
+ * autre application peut utiliser une base dont le nom diffère de DB_NAME.
  *
  * **Dégradation.** Sans serveur joignable (ou sans client `mysql`/`mariadb`),
  * le test annonce NON JOUÉ et sort avec le code 2 : `scripts/run-all-tests.php`
@@ -32,6 +37,7 @@ use App\Tools\DbInstaller;
 
 $racine = dirname(__DIR__, 2);
 $garder = in_array('--garder', $_SERVER['argv'] ?? [], true);
+$reinitialiser = in_array('--reinitialiser-base-existante', $_SERVER['argv'] ?? [], true);
 $config = Database::config();
 $baseDemandee = getenv('MINISHOP_TEST_DB');
 $base = 'minishop_test';
@@ -41,6 +47,15 @@ if (is_string($baseDemandee) && $baseDemandee !== '') {
 
 echo "MiniShop — intégration SQL (base dédiée « " . $base . " »)\n";
 echo str_repeat('-', 60) . "\n";
+
+// Ne jamais supprimer la base de l'application, même en mode explicite.
+// Comparaison insensible à la casse : prudence sur les serveurs où les noms
+// de bases sont eux-mêmes insensibles à la casse.
+$baseApplication = (string) ($config['db_name'] ?? 'minishop');
+if (strcasecmp($base, $baseApplication) === 0) {
+    echo "❌ Refus : la base de test correspond à DB_NAME ; aucune action SQL.\n";
+    exit(1);
+}
 
 // ------------------------------------------------------------- prérequis
 if (!extension_loaded('pdo_mysql')) {
@@ -82,12 +97,20 @@ if (!$installateur->serveurJoignable()) {
 // ------------------------------------------------------- base dédiée
 echo "1. Base de test isolée\n";
 try {
-    $installateur->supprimerBase();
-    $installateur->creerBase();
+    if ($reinitialiser) {
+        echo "   ⚠ Réinitialisation explicitement demandée : suppression de « " . $base . " » si elle existe.\n";
+        $installateur->supprimerBase();
+    }
+    // Sans IF NOT EXISTS : si une base existe ou apparaît entre-temps, le
+    // serveur échoue au lieu de la charger et de la supprimer par accident.
+    $installateur->creerBaseNouvelle();
     echo "   ✓ « " . $base . " » créée (utf8mb4_unicode_ci)\n";
 } catch (Throwable $erreur) {
     $message = $erreur->getMessage();
     echo "   ❌ création impossible : " . $message . "\n";
+    echo "   Si la base existe déjà, elle n'a pas été supprimée par défaut.\n";
+    echo "   Sur un serveur isolé uniquement, après vérification des données,\n";
+    echo "   --reinitialiser-base-existante autorise explicitement sa suppression.\n";
 
     // 1044 : pas le droit de créer la base ; 1142 : pas le droit d'y écrire.
     // Ce n'est pas un bug du test : le compte applicatif n'a volontairement de
@@ -100,7 +123,9 @@ try {
             . " « " . $base . " » — c'est voulu (moindre privilège).\n";
         echo "   Créez la base de test une fois pour toutes, puis relancez :\n\n";
         echo "       php scripts/db_init.php --test-db\n\n";
-        echo "   (crée « " . $base . " » et y accorde les droits ; sudo demandé une fois)\n";
+        echo "   Attention : cette commande crée une base existante ; le test refuse\n";
+        echo "   ensuite de la réinitialiser sans option explicite destructive.\n";
+        echo "   Ne poursuivre que sur un serveur de test jetable, après vérification.\n";
     }
     exit(1);
 }

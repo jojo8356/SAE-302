@@ -260,8 +260,10 @@ foreach ([403, 404, 500] as $code) {
     $check('vue d’erreur ' . $code . ' livrée', is_file($vueErreur));
 }
 $check('404 servi par le routeur', str_contains((string) file_get_contents($racine . '/app/Router.php'), 'page404'));
-$check('403/500 servis par les contrôleurs ou le front controller',
-    str_contains($source, 'page404') || str_contains($source, 'erreur'));
+$check('500 : code HTTP et vue explicites dans le front controller',
+    str_contains($source, 'http_response_code(500)') && str_contains($source, "app/View/errors/500.php"));
+// Le refus SUPER est une redirection 302, testé par l’E2E ; la vue 403
+// existe mais ne doit pas être présentée comme un parcours déjà branché.
 
 // ============================================================ verdict
 echo "\n" . str_repeat('=', 60) . "\n";

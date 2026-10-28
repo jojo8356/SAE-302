@@ -155,7 +155,7 @@ if (lancerAvec('python3', 'tests/python/test_deprecations.py') !== 0) {
 }
 
 section('▸ Autotests d’intégration code mort et inventaire');
-foreach (['tests/python/test_code_mort_integration.py', 'tests/python/test_inventaire_app.py'] as $testPython) {
+foreach (['tests/python/test_code_mort_integration.py', 'tests/python/test_inventaire_app.py', 'tests/python/test_securite_gitignore.py', 'tests/python/test_audit_structurel.py'] as $testPython) {
     ++$jouees;
     if (lancerAvec('python3', $testPython) !== 0) {
         ++$echecs;

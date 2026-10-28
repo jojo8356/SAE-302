@@ -35,11 +35,13 @@ Pourquoi cette forme, et pas 400 tests unitaires avec des doublures partout : l'
 
 `tests/php/sql_integration.php` est une **enveloppe mince** autour de `tests/sql/run_tests.sh` (qui existait déjà) : il crée une base dédiée `minishop_test`, y charge `sql/01` → `sql/04`, teste également le repository sur `SqlStore` et la procédure de recherche, joue les 29 scénarios, puis **supprime la base**.
 
+Depuis l’audit global, cette enveloppe refuse par défaut une base existante et refuse toujours le nom `DB_NAME` configuré. `--reinitialiser-base-existante` autorise explicitement la suppression : serveur de test jetable uniquement. La protection du nom ne détecte pas les bases utilisées par d’autres applications. Le harnais shell appelé directement ne bénéficie pas de ces garde-fous.
+
 Le mot « mince » est important : réécrire les 29 cas en PHP aurait produit deux jeux de tests qui divergent au premier changement de schéma. Le harnais shell est la référence ; le PHP n'ajoute que l'isolation.
 
-L'isolation est le point délicat : `tests/sql/fixture.sql` réinitialise l'état **avant chaque scénario** — lancée sur la base de développement, la campagne effacerait les commandes de démonstration. C'est pourquoi l'enveloppe ne touche jamais la base applicative, et pourquoi `--garder` existe pour inspecter le résultat.
+L'isolation est le point délicat : `tests/sql/fixture.sql` réinitialise l'état **avant chaque scénario** — lancée sur la base de développement, la campagne effacerait les commandes de démonstration. L'enveloppe refuse le nom de base applicative configuré ; cela ne protège pas les bases des autres applications. `--garder` permet d'inspecter le résultat.
 
-Un détail découvert sur la machine de recette : le compte applicatif `minishop` n'a volontairement de droits que sur `minishop.*` (moindre privilège), donc `CREATE DATABASE minishop_test` est refusé — `1044 Access denied`. Ce n'est pas un bug du test, c'est la politique de droits qui fonctionne. La base annexe s'ouvre donc **explicitement**, par `php scripts/db_init.php --test-db` : elle crée `minishop_test` et y accorde les droits, **sans** toucher au mot de passe du compte ni élargir quoi que ce soit sur la base de production. Le test, lui, ne demande jamais `sudo` de lui-même ; en cas de refus, il affiche la commande à lancer.
+Un détail découvert sur la machine de recette : le compte applicatif `minishop` n'a volontairement de droits que sur `minishop.*` (moindre privilège), donc `CREATE DATABASE minishop_test` est refusé — `1044 Access denied`. Ce n'est pas un bug du test, c'est la politique de droits qui fonctionne. La base annexe s'ouvre donc **explicitement**, par `php scripts/db_init.php --test-db` : elle crée `minishop_test` et y accorde les droits, **sans** toucher au mot de passe du compte ni élargir quoi que ce soit sur la base de production. Le test, lui, ne demande jamais `sudo` de lui-même. Puisque cette commande crée une base existante, le test la refuse ensuite par défaut ; sa réinitialisation exige l’option destructive explicitée ci-dessus, après vérification et uniquement sur serveur jetable.
 
 Dégradation : sans client `mariadb`/`mysql` dans le `PATH`, ou sans serveur joignable, le test annonce **NON JOUÉ** et sort en code 2. `scripts/run-all-tests.mjs` distingue ce cas d'un échec — un test qu'on ne peut pas jouer doit le dire, pas mentir en vert ni échouer pour de mauvaises raisons.
 
@@ -47,7 +49,7 @@ Dégradation : sans client `mariadb`/`mysql` dans le `PATH`, ou sans serveur joi
 
 `scripts/e2e.mjs` exécute le parcours WASM : les requêtes passent par le front controller dans le runtime PHP-WASM, sans navigateur ni serveur HTTP réel. Il vérifie les codes HTTP, le contenu des pages, les jetons CSRF et la persistance dans le magasin JSON. 268 vérifications couvrant inscription, connexion, recherche, panier, commande, suivi, administration.
 
-Le point non évident : **le test photographie `data/` avant de le restaurer après**, y compris en cas d'échec. Sans cela, une campagne laisserait des commandes de test dans le jeu de démonstration, et la suivante échouerait sur des stocks que personne n'a modifiés — panne classique, invisible sur une machine neuve, systématique en soutenance.
+Depuis l’audit global, **le test ne charge pas les données de l’hôte** : il initialise et modifie uniquement un système de fichiers PHP-WASM jetable, sans rapatriement ni restauration. Le test `tests/node/e2e_isolation.mjs` vérifie en copie temporaire que les fichiers hôte factices restent inchangés.
 
 ## 3. Les tests de contrat — la partie qui attrape ce que les autres laissent passer
 
@@ -123,12 +125,9 @@ php scripts/run-all-tests.php         # machine avec PHP natif
 node scripts/wasm_run.mjs tests/php/run_tests.php
 php tests/php/run_tests.php
 
-# SQL réel : la base de test doit exister une fois pour toutes
-php scripts/db_init.php --test-db      # crée minishop_test + droits (sudo une fois)
-php tests/php/sql_integration.php      # la remplit, rejoue les 29 scénarios, la supprime
-
-# performance base, sur minishop_perf
-sudo bash scripts/capture_perf.sh
+# SQL et performance : uniquement sur un serveur de test jetable.
+# L'intégration refuse une base déjà existante par défaut ; voir la section 2.2.
+# Les outils SQL et de performance directs peuvent réinitialiser leurs cibles.
 ```
 
 ## 8. Auto-évaluation
@@ -172,7 +171,7 @@ d'accueil et celle d'un produit créé pendant le test. Suite complète en PHP-W
 
 - `python3 scripts/verifier_deprecations.py` lance `php -l` sur les fichiers PHP du code applicatif, des scripts et des suites, avec toutes les erreurs affichées. Il relève aussi un `Deprecated` même si PHP rend le code 0. Syntaxe et dépréciations sont vérifiées avec **le PHP CLI réellement lancé**, pas avec une version théorique. Il n'exécute pas les fichiers ni les dépendances externes.
 - Les runners des suites PHP chargent `tests/php/deprecations_bootstrap.php` : `E_DEPRECATED` et `E_USER_DEPRECATED` sont signalés même sous `@`, et un marqueur fait échouer la suite. Cela ne couvre que le code réellement exécuté et peut être contourné si ce code remplace le gestionnaire d'erreur. Les parcours E2E HTTP et les fichiers exécutés directement hors runner n'y sont pas inclus.
-- Pour éviter la base et les données E2E, utiliser `php scripts/run-all-tests.php --sans-sql --sans-e2e`. Python 3 et PHP CLI 8.2+ avec `mbstring` sont requis ; ni npm ni MariaDB ne sont requis pour ce mode. Sans options, SQL peut supprimer `minishop_test` et l'E2E peut écraser des modifications concurrentes dans `data/minishop` : environnement isolé obligatoire.
+- Pour éviter la base et les données E2E, utiliser `php scripts/run-all-tests.php --sans-sql --sans-e2e`. Python 3 et PHP CLI 8.2+ avec `mbstring` sont requis ; ni npm ni MariaDB ne sont requis pour ce mode. Sans options, SQL crée puis supprime une base de test et refuse les bases déjà existantes par défaut ; serveur isolé obligatoire. L’E2E ne modifie plus `data/` sur l’hôte.
 - En l'absence de PHP CLI natif, le runner Node/WASM annonce l'analyse de compilation NON JOUÉE. Le garde d'exécution y utilise PHP-WASM 8.2 ; cela ne démontre rien sur les dépréciations apparues dans PHP 8.4/8.5. Rejouer avec le PHP de l'hébergeur et celui du serveur web ; les tests n'analysent ni JavaScript/CSS ni bibliothèques externes.
 - Les autotests couvrent notamment un faux compilateur qui renvoie 0 malgré un `Deprecated`, une erreur de syntaxe, PHP absent, un dossier vide, les liens symboliques, une dépréciation utilisateur masquée et la réécriture du schéma de démo dans une **copie temporaire**. Aucun serveur SQL n'est contacté par ces autotests.
 

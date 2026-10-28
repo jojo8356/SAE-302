@@ -19,6 +19,10 @@ testée, et son cahier des charges complet.
 | **Scripts SQL** | [`sql/01_minishop_schema.sql`](sql/01_minishop_schema.sql) (DDL + données) · [`sql/02_minishop_procedures.sql`](sql/02_minishop_procedures.sql) (1 fonction + 17 procédures) · [`sql/03_minishop_triggers.sql`](sql/03_minishop_triggers.sql) (16 déclencheurs) · [`sql/04_minishop_demo.sql`](sql/04_minishop_demo.sql) (démo via `CALL`) — chaîne validée de zéro sur MariaDB 11.8.6 |
 | **État** | base de données + 29 tests SQL **exécutés avec succès** (règles RB-01…RB-20, vues, frais de port) ; application PHP **livrée** (MVC, design system, suite PHPUnit, E2E HTTP 301 vérifications (WASM)) ; écarts restants suivis dans [`docs/10-todo-corrections.md`](docs/10-todo-corrections.md) |
 
+## Audit global
+
+Le [rapport d’audit global](docs/17-audit-global-projet.md) et son [inventaire des fichiers versionnés](docs/17-inventaire-projet.csv) distinguent corrections, vérifications et limites.
+
 ## Informations légales et données (maquette)
 
 Le pied de page donne accès aux mentions légales, CGV pédagogiques, livraison, rétractation,
@@ -39,6 +43,10 @@ le détail des cookies réellement identifiés et la checklist figurent dans
 
 ## Installation (5 commandes)
 
+**Attention :** les commandes de création/réinitialisation de base ci-dessous et
+le harnais SQL direct peuvent détruire des données. Ne les exécuter que sur un
+serveur de développement jetable, après sauvegarde et vérification de la cible.
+
 ```bash
 # 1. cloner et placer le projet
 git clone <URL_DU_DEPOT> minishop && cd minishop
@@ -53,12 +61,9 @@ cp .env.example .env        # puis éditer DB_USER / DB_PASSWORD si vous passez 
 #   sans démo    : php scripts/db_init.php --no-demo
 #   diagnostic   : php scripts/db_init.php --check
 
-# 4. vérifier que la base est saine (29 tests de règles de gestion, vues et frais de port)
-DB_USER=root DB_PASS='...' ./scripts/run_sql_tests.sh   # attendu : « Tests conformes : 29 / 29 »
-
-# 5. (optionnel) rejouer ces 29 scénarios depuis PHP, sur une base jetable
-php scripts/db_init.php --test-db      # crée minishop_test + droits (sudo une fois)
-php tests/php/sql_integration.php      # 29 scénarios, puis la base de test est supprimée
+# 4. Tests SQL : uniquement sur serveur jetable ; voir la section Tests.
+# L’enveloppe refuse une base de test existante par défaut.
+# Ne pas lancer le harnais SQL direct sur une base contenant des données à conserver.
 
 # 5. lancer (développement) — en production : DocumentRoot = public/
 ./run.sh                    # tout-en-un : vérifie PHP, prépare les données, démarre
@@ -254,7 +259,7 @@ npm run test:all        # ou : node scripts/run-all-tests.mjs
 | Contrat responsive | `tests/php/responsive_contract.php` | 320 px → 1536 px : paliers en `em`, menu repliable, tableaux accessibles, panier en cartes, `dvh`, encoches, `pointer: coarse`, container queries | ✅ 50/50 |
 | Contrats HTTP | `tests/php/contract_http.php` | chaque `href`/`action` des vues pointe vers une route déclarée (tous verbes : un `<form action>` vise une route POST), garde sur toutes les routes `/admin/*`, aucune écriture en `GET`, en-têtes CSP / `nosniff` / `Referrer-Policy` / `X-Frame-Options`, vues 403/404/500 | ✅ 27/27 |
 | Unitaires PHPUnit | `tests/phpunit/` | `Text`, `Filter`, moteur JSON (contraintes, transactions), matrice RB-11, prix TTC, contrats de sécurité — exécutés hors ligne par `run-local.php` | ✅ 34/34 |
-| Intégration SQL | `tests/php/sql_integration.php` | crée `minishop_test`, charge `sql/01` → `sql/04`, vérifie aussi le catalogue via `SqlStore`, rejoue les **29 scénarios** de `tests/sql/run_tests.sh`, supprime la base `minishop_test` : **ne pas lancer si elle contient des données à conserver** | ✅ 29/29 (avec serveur) / ⏭ NON JOUÉ sinon |
+| Intégration SQL | `tests/php/sql_integration.php` | crée une base de test absente, charge `sql/01` → `sql/04`, vérifie le catalogue via `SqlStore`, rejoue les **29 scénarios**, puis supprime cette base ; refuse par défaut une base existante et toujours `DB_NAME` | ✅ 29/29 (avec serveur) / ⏭ NON JOUÉ sinon |
 | Autotest du harnais | `scripts/wasm_verdict.mjs` | le verdict d'une suite ne peut pas venir du `exitCode` de PHP-WASM (mesuré : 1 pour un script normal, 0 pour `exit(3)`, 0 sur erreur fatale) : 7 cas vérifient le calcul réel (0 / 1 / 2 / 255) | ✅ 7/7 |
 | E2E HTTP | `scripts/wasm-e2e.mjs` | T1…T14 : requêtes au front controller sous PHP-WASM (cookies + CSRF, sans navigateur) — pages publiques, auth, commande 488,40 €, annulation, back-office, cloisonnement, catalogue avancé, compte, panier (plafond/re-tri/prix falsifié), CRUD admin, filtres + audit + journal, **sécurité offensive** (injection, XSS stocké, IDOR, fixation de session, traversées, escalation), rôles RB-13, contact/API/paramètres, pages juridiques, cookies et dates des derniers ajouts | ✅ 301/301 |
 
@@ -288,9 +293,9 @@ php scripts/code_mort.php --rapport
 
 Résultat : des **candidats à examiner**, pas une preuve qu’on peut les supprimer. Les paramètres non cités, certaines variables écrites une seule fois et les fonctions/méthodes sans autre référence textuelle sont contrôlés ; appels dynamiques ou externes, variables globales, code JS/CSS et chemins non joués ne sont pas couverts exhaustivement. Lorsqu’un candidat est résolu ou qu’un nouveau candidat est jugé nécessaire, mettre à jour `scripts/code_mort_reference.json` **après revue**, pas pour masquer une alerte. L’[audit fichier par fichier](docs/16-audit-code-mort.md) explique le rôle des fichiers `app/` et `public/`, y compris les petits fichiers et les vues sans méthodes.
 
-**Attention :** sans les deux options, le runner peut créer puis supprimer `minishop_test`, et l’E2E photographie puis restaure `data/minishop` après l’avoir modifié. Une base préexistante ou des modifications concurrentes peuvent donc être perdues. Ne lancer SQL/E2E que sur une copie et un serveur de test isolés, sans données à conserver. Avec Node et PHP-WASM déjà installés, `node scripts/run-all-tests.mjs --sans-sql --sans-e2e` offre aussi ce mode ; sans PHP natif, il signale l’analyse de compilation **NON JOUÉE** et joue les suites PHP sous WASM 8.2. Ne pas interpréter cela comme une validation des versions PHP plus récentes.
+**Attention :** sans `--sans-sql`, le runner crée puis supprime une base de test ; il refuse désormais une base existante et refuse la base configurée dans `DB_NAME`. L’option SQL `--reinitialiser-base-existante` est **destructive**, à utiliser uniquement après vérification sur un serveur jetable. Les autres scripts SQL directs peuvent aussi effacer des données. L’E2E, lui, crée ses données dans le système de fichiers PHP-WASM jetable, sans charger ni restaurer le dossier `data/` de l’hôte. Avec Node et PHP-WASM déjà installés, `node scripts/run-all-tests.mjs --sans-sql --sans-e2e` offre aussi ce mode ; sans PHP natif, il signale l’analyse de compilation **NON JOUÉE** et joue les suites PHP sous WASM 8.2. Ne pas interpréter cela comme une validation des versions PHP plus récentes.
 
-Commandes individuelles existantes : `npm test`, `npm run test:units`, `npm run test:features`, `npm run test:design`, `npm run test:responsive`, `npm run test:http`, `npm run test:phpunit`, `npm run test:e2e`, `npm run test:sql`, `npm run coverage`, `npm run perf`. Les commandes SQL, E2E et performance nécessitent un environnement isolé ; les tests lancés directement hors runner ne bénéficient pas automatiquement du garde des dépréciations.
+Commandes individuelles existantes : `npm test`, `npm run test:units`, `npm run test:features`, `npm run test:design`, `npm run test:responsive`, `npm run test:http`, `npm run test:phpunit`, `npm run test:e2e`, `npm run test:sql`, `npm run coverage`, `npm run perf`. Les commandes SQL et performance nécessitent un environnement isolé ; les tests lancés directement hors runner ne bénéficient pas automatiquement du garde des dépréciations.
 
 Les suites PHP sont **autonomes** (aucun SQL, magasins JSON temporaires par section) : elles s'exécutent telles quelles avec `php tests/php/<suite>.php` sur une machine normale, ou via `node scripts/wasm_run.mjs` en sandbox.
 
@@ -334,7 +339,7 @@ docs/{01-cahier-des-charges, 02-document-tests-validation, 03-support-soutenance
 public/{index.php, .htaccess, css, js, img, gen_volumes.php, mesurer.php (dev-only, navigateur)}
 .env.example (configuration versionnée — copier vers .env)  ·  run.sh (lancement local en une commande)
 app/Config/Env.php + app/Tools/{DbInstaller,EnvFile,SqlLoader}.php (configuration et base MySQL)
-scripts/{load_db.sh, load_db.php, dev-router.php, run_sql_tests.sh, deploy.php, build-docs.sh, md_to_{html,pdf,docx,pptx}.py (rendus documentaires), screenshots.mjs (captures responsive), e2e.mjs + data_snapshot.mjs (E2E hermétique), gen_volumes.php (wrapper dev)}
+scripts/{load_db.sh, load_db.php, dev-router.php, run_sql_tests.sh, deploy.php, build-docs.sh, md_to_{html,pdf,docx,pptx}.py (rendus documentaires), screenshots.mjs (captures responsive), e2e.mjs (E2E dans WASM jetable), data_snapshot.mjs (ancien utilitaire à ne pas employer sur des données à conserver), gen_volumes.php (wrapper dev)}
 sql/{01_minishop_schema.sql, 02_minishop_procedures.sql, 03_minishop_triggers.sql, 04_minishop_demo.sql}
 tests/{sql/** (manifest, fixture, tNN_*.sql, rapport), security/controles.sh, charge/reserver.sh, perf/mesurer_sql.sh, perf/mesurer.php→public/mesurer.php, php/**}
 livrables/{html,pdf,docx,minishop-soutenance.pptx} (rendus versionnés)  ·  var/log  ·  .gitignore

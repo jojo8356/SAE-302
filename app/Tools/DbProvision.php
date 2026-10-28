@@ -87,12 +87,16 @@ final class DbProvision
     }
 
     /**
-     * Instructions SQL de création du compte.
+     * Instructions SQL de création du compte. Le mot de passe doit provenir
+     * de motDePasse() : 32 caractères hexadécimaux, sans interpolation SQL dangereuse.
      *
      * @return list<string>
      */
     public function instructions(string $motDePasse): array
     {
+        if (!$this->valide() || preg_match('/^[0-9a-f]{32}$/', $motDePasse) !== 1) {
+            throw new \InvalidArgumentException('Noms invalides ou mot de passe non généré par DbProvision.');
+        }
         $instructions = [
             'CREATE DATABASE IF NOT EXISTS `' . $this->base . '` '
                 . 'CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci',
@@ -137,6 +141,14 @@ final class DbProvision
             ];
         }
 
+        if (preg_match('/^[0-9a-f]{32}$/', $motDePasse) !== 1) {
+            return [
+                'ok' => false,
+                'sortie' => 'mot de passe invalide (utiliser DbProvision::motDePasse)',
+                'methode' => 'aucune',
+            ];
+        }
+
         return $this->executerEnRoot($this->instructions($motDePasse));
     }
 
@@ -157,6 +169,14 @@ final class DbProvision
             return [
                 'ok' => false,
                 'sortie' => "client « mariadb » (ou « mysql ») introuvable dans le PATH",
+                'methode' => 'aucune',
+            ];
+        }
+
+        if (!self::sudoDisponible()) {
+            return [
+                'ok' => false,
+                'sortie' => 'sudo introuvable dans le PATH',
                 'methode' => 'aucune',
             ];
         }
@@ -202,6 +222,9 @@ final class DbProvision
      */
     public function instructionsBaseAnnexe(string $baseAnnexe): array
     {
+        if (!$this->valide() || !self::baseValide($baseAnnexe)) {
+            throw new \InvalidArgumentException('Nom de base ou utilisateur invalide.');
+        }
         $instructions = [
             'CREATE DATABASE IF NOT EXISTS `' . $baseAnnexe . '` '
                 . 'CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci',
@@ -236,7 +259,7 @@ final class DbProvision
             ];
         }
 
-        if (!self::baseValide($baseAnnexe)) {
+        if (!$this->valide() || !self::baseValide($baseAnnexe)) {
             return [
                 'ok' => false,
                 'sortie' => 'nom de base invalide (lettres, chiffres et _ uniquement)',

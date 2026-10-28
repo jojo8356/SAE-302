@@ -1,61 +1,23 @@
 /**
- * MiniShop — parcours E2E de l'application complète sous PHP-WASM.
- * (Outil de développement sandbox : sur machine normale, la même suite
- * s'exécute avec un vrai serveur PHP — le fichier tests/php/run_tests.php
- * couvre les assertions métier de façon autonome.)
- *
- * Prérequis : data/minishop peuplé (node scripts/wasm_run.mjs scripts/seed.php).
- * Usage : node scripts/wasm-e2e.mjs
- *
- * Exécute des scénarios HTTP réels (cookies + CSRF inclus) contre le
- * contrôleur frontal public/index.php : catalogue, compte client, panier,
- * commande, annulation, back-office, guards RB-13, jetons CSRF.
+ * Parcours HTTP PHP-WASM sur un magasin créé dans le système de fichiers WASM.
+ * Le dossier data de l’hôte n’est ni chargé, ni modifié, ni restauré.
+ * Les requêtes sont internes : ce n’est pas un test navigateur réel.
  */
-
-import { createPhp, syncBack, WASM_ROOT } from './wasm_lib.mjs';
-import { existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { createPhp, WASM_ROOT } from './wasm_lib.mjs';
 import { randomUUID } from 'node:crypto';
 
-const REPO = join(import.meta.dirname, '..');
-const DATA = join(REPO, 'data/minishop');
-if (!existsSync(join(DATA, 'produit.json'))) {
-  console.error('[wasm-e2e] base absente — lancez : node scripts/wasm_run.mjs scripts/seed.php');
-  process.exit(2);
-}
-
-// ---------------------------------------------------------------------------
-//  Hermétisme : le parcours E2E écrit (inscriptions, commandes, changements de
-//  mot de passe). Il travaille donc sur une COPIE jetable du jeu de données :
-//  data/minishop est photographié au démarrage, restauré à la sortie (même en
-//  cas d'échec ou de Ctrl-C). Sans cela, lancer les tests abîmait les comptes
-//  de démonstration livrés (mot de passe d'alice remplacé, produits « TEST-… »
-//  visibles au catalogue).
-// ---------------------------------------------------------------------------
-const photographie = new Map(
-  readdirSync(DATA)
-    .filter((nom) => nom.endsWith('.json'))
-    .map((nom) => [nom, readFileSync(join(DATA, nom))]),
-);
-let restaure = false;
-const restaurerDonnees = () => {
-  if (restaure) return;
-  restaure = true;
-  for (const nom of readdirSync(DATA)) {
-    if (nom.endsWith('.json') && !photographie.has(nom)) rmSync(join(DATA, nom), { force: true });
-  }
-  for (const [nom, contenu] of photographie) writeFileSync(join(DATA, nom), contenu);
-};
-process.on('exit', restaurerDonnees);
-for (const signal of ['SIGINT', 'SIGTERM']) {
-  process.on(signal, () => {
-    restaurerDonnees();
-    process.exit(130);
-  });
-}
-
-const php = await createPhp('http://localhost:8080/');
+const php = await createPhp('http://localhost:8080/', { inclureDonnees: false });
+await php.mkdir(`${WASM_ROOT}/data`);
+await php.mkdir(`${WASM_ROOT}/data/minishop`);
 php.setPhpIniEntry('session.save_path', '/tmp');
+const seed = await php.run({ scriptPath: `${WASM_ROOT}/scripts/seed.php` });
+const texteSeed = `${seed.text ?? ''}\n${seed.errors ?? ''}`;
+// Le code de retour du SAPI WASM ne reflète pas celui du script PHP.
+if (!texteSeed.includes('Base JSON peuplée dans') || /(?:PHP )?(?:Fatal error|Parse error)|❌|✘/.test(texteSeed)) {
+  console.error('❌ Initialisation E2E WASM impossible :', texteSeed);
+  process.exit(1);
+}
+console.log('✓ Jeu de démonstration initialisé dans le système de fichiers WASM jetable.');
 
 // ---------------------------------------------------------------- client HTTP
 class Navigateur {
@@ -109,7 +71,7 @@ const contient = (label, page, morceau) =>
   check(label, (page ?? '').includes(morceau), `page sans « ${morceau} »`);
 
 // lecture du magasin JSON DANS le runtime WASM (les mutations n'atteignent
-// l'hôte qu'au syncBack final)
+// l’hôte : aucun rapatriement des données n’est effectué)
 const lireTable = async (table) =>
   JSON.parse(await php.readFileAsText(`${WASM_ROOT}/data/minishop/${table}.json`)).rows;
 
@@ -912,11 +874,12 @@ process.stdout.write(B('T13 · rôles administrateurs (RB-13, F-27)'));
   check('gestionnaire → /admin/produits : 200', (await gest.get('/admin/produits')).httpStatusCode === 200);
   check('gestionnaire → /admin/commandes : 200', (await gest.get('/admin/commandes')).httpStatusCode === 200);
   const equipe = await gest.get('/admin/equipe');
-  check('gestionnaire → /admin/equipe : refusé (403/302)', [403, 302].includes(equipe.httpStatusCode), `status ${equipe.httpStatusCode}`);
+  check('gestionnaire → /admin/equipe : redirection 302 vers /admin', equipe.httpStatusCode === 302 && (equipe.headers.location ?? []).join(' ') === '/admin', `status ${equipe.httpStatusCode}`);
   const apres = await gest.get('/admin');
   contient('message « Réservé au rôle SUPER » affiché', apres.text, 'Réservé au rôle SUPER');
-  const cree = await gest.post('/admin/equipe', { _csrf: 'peu-importe', nom: 'X', prenom: 'Y', email: 'x@y.z', mot_de_passe: 'Xy12345678', role: 'SUPER' });
-  check('gestionnaire ne peut pas créer d\'admin', [403, 302].includes(cree.httpStatusCode)
+  const jetonGest = await gest.csrf('/admin/produits');
+  const cree = await gest.post('/admin/equipe', { _csrf: jetonGest, nom: 'X', prenom: 'Y', email: 'x@y.z', mot_de_passe: 'Xy12345678', role: 'SUPER' });
+  check('gestionnaire ne peut pas créer d\'admin même avec CSRF valide', cree.httpStatusCode === 302 && (cree.headers.location ?? []).join(' ') === '/admin'
     && !(await lireTable('administrateur')).some((a) => a.email === 'x@y.z'), `status ${cree.httpStatusCode}`);
 
   // F-27 : le SUPER désactive le gestionnaire → connexion refusée
@@ -1076,9 +1039,7 @@ process.stdout.write(B('T14 · design, contact, API panier, paramètres (ajouts 
   check('paramètres protégés (visiteur) → refus', [302, 403].includes(gestionnaireRefuse.httpStatusCode), `status ${gestionnaireRefuse.httpStatusCode}`);
 }
 
-// Les journaux du parcours sont jetables ; ne jamais écraser ceux de l’utilisateur.
-await syncBack(php, ['data']);
-restaurerDonnees(); // data/minishop retrouve son état d'avant le test
+// Les données et journaux du runtime WASM sont jetables ; rien n'est rapatrié.
 process.stdout.write(`\n${'='.repeat(60)}\n`);
 if (échecs === 0) {
   console.log(`E2E : TOUT EST VERT ✅  (${tests} vérifications)`);

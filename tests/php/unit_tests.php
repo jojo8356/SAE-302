@@ -664,6 +664,21 @@ echo "\n16. Création du compte MySQL applicatif (App\\Tools\\DbProvision)\n";
     $check('aucune instruction sans point-virgule dans script()', substr_count($provision->script($motDePasse), ";\n") === count($instructions));
     $check('script() copiable en une commande', str_starts_with($provision->script($motDePasse), 'CREATE DATABASE'));
 
+    foreach ([
+        static fn () => $provision->instructions("x'; DROP DATABASE minishop; --"),
+        static fn () => (new DbProvision('minishop', "x'@'%"))->instructions($motDePasse),
+        static fn () => $provision->instructionsBaseAnnexe('x`; DROP DATABASE minishop; --'),
+        static fn () => (new DbProvision('minishop', "x'@'%"))->instructionsBaseAnnexe('minishop_test'),
+    ] as $genererSqlInvalide) {
+        $refuse = false;
+        try {
+            $genererSqlInvalide();
+        } catch (InvalidArgumentException) {
+            $refuse = true;
+        }
+        $check('générateur SQL refuse les entrées dangereuses', $refuse);
+    }
+
     // Une suite de tests ne provisionne JAMAIS le système.
     //
     // Incident réel : cette section appelait `creerCompte()` pour constater

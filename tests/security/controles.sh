@@ -541,7 +541,7 @@ controle_fonctions_interdites() {
 # Autorise uniquement les deux modèles publics et la classe de lecture Env.php.
 # Toute autre variante (.env.example.local, env.php, clés…) reste interdite.
 fichiers_sensibles() {
-    grep -iE '(^|/)(\.env(\..*)?|env\.php|id_rsa|id_ed25519|.*\.pem|.*\.key|.*\.p12)$' \
+    grep -iE '(^|/)(\.env(\..*)?|env\.php|id_rsa|id_ed25519|.*\.pem|.*\.key|.*\.p12|.*\.pfx)$' \
         | grep -vFx -e '.env.example' -e 'app/Config/Env.php' -e 'app/Config/env.example.php'
 }
 
@@ -556,7 +556,7 @@ controle_secrets_depot() {
     titre "Dépôt — configuration locale et clés privées hors versionnement"
 
     local suivis=""
-    if command -v git >/dev/null 2>&1 && [ -d .git ]; then
+    if command -v git >/dev/null 2>&1 && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
         suivis="$(git ls-files 2>/dev/null | fichiers_sensibles)"
 
         if [ -n "$suivis" ]; then
@@ -685,8 +685,8 @@ PHP
     fi
 
     local chemins attendus
-    chemins="$(printf '%s\n' '.env' '.env.production' '.env.example' '.env.example.local' 'app/Config/env.php' 'app/Config/Env.php' 'app/Config/env.example.php' 'cles/id_rsa' | fichiers_sensibles)"
-    attendus="$(printf '%s\n' '.env' '.env.production' '.env.example.local' 'app/Config/env.php' 'cles/id_rsa')"
+    chemins="$(printf '%s\n' '.env' '.env.production' '.env.example' '.env.example.local' 'app/Config/env.php' 'app/Config/Env.php' 'app/Config/env.example.php' 'cles/id_rsa' 'certificat.pfx' | fichiers_sensibles)"
+    attendus="$(printf '%s\n' '.env' '.env.production' '.env.example.local' 'app/Config/env.php' 'cles/id_rsa' 'certificat.pfx')"
     if [ "$chemins" = "$attendus" ]; then
         printf '        %s✓%s seuls les modèles publics et la classe Env sont exclus ; secrets et variantes restent détectés\n' "$C_OK" "$C_RAZ"
     else

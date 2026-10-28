@@ -1,15 +1,9 @@
 /**
- * MiniShop — photographie / restauration du jeu de données.
- *
- * Les parcours E2E et le seed écrivent dans data/minishop (inscriptions,
- * commandes, mots de passe, produits de test). Lancer les tests ne doit
- * JAMAIS abîmer le jeu de démonstration livré : ce module prend une photo
- * des fichiers JSON avant l'exécution et la remet en place ensuite, y
- * compris après un échec ou un Ctrl-C.
- *
- *   import { photographier, restaurer } from './data_snapshot.mjs';
- *   const photo = photographier('data/minishop');
- *   try { ... } finally { restaurer('data/minishop', photo); }
+ * Ancien utilitaire de photographie/restauration, conservé pour compatibilité.
+ * L'E2E ne l'utilise plus : il travaille exclusivement dans le runtime WASM.
+ * Attention : une restauration peut écraser les changements concurrents et
+ * n'est pas garantie après SIGKILL, panne ou arrêt brutal. Ne l'employer que
+ * sur un dossier temporaire isolé, jamais sur les données utilisateur.
  */
 
 import { readdirSync, readFileSync, rmSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
@@ -37,7 +31,8 @@ export function restaurer(dossier, photo) {
 }
 
 /**
- * Exécute une fonction en garantissant la restauration des données.
+ * Exécute une fonction et tente la restauration en fin normale / SIGINT / SIGTERM.
+ * Ne protège pas contre une modification concurrente ou une interruption brutale.
  * @template T
  * @param {string} dossier
  * @param {() => Promise<T>|T} action

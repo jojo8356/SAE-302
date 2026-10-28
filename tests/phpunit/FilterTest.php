@@ -68,6 +68,7 @@ final class FilterTest extends TestCase
     {
         self::assertSame([1, 3], $this->ids([Filter::in('id_produit', [1, 3])]));
         self::assertSame([], $this->ids([Filter::isNull('prix_ht')]));
+        self::assertSame([1, 2, 3, 4, 5], $this->ids([Filter::isNotNull('prix_ht')]));
     }
 
     public function testEtOuEtTri(): void

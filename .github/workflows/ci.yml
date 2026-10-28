@@ -112,6 +112,17 @@ jobs:
           fi
           exit "$etat"
 
+  e2e-isolation:
+    name: E2E WASM et isolation des données
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts
+      - run: node tests/node/e2e_isolation.mjs
+
   # -----------------------------------------------------------------
   # 2. Conventions PSR-12 : signalées, non bloquantes (allow_failure)
   # -----------------------------------------------------------------
@@ -307,7 +318,7 @@ jobs:
           if [ -f scripts/run_sql_tests.sh ]; then
             echo "→ scripts/run_sql_tests.sh présent"
             chmod +x scripts/run_sql_tests.sh
-            DB_HOST=127.0.0.1 DB_USER=root DB_PASS="" DB_TEST=minishop_test ./scripts/run_sql_tests.sh || cat tests/sql/rapport_tests_sql.md || true
+            DB_HOST=127.0.0.1 DB_USER=root DB_PASS="" DB_TEST=minishop_test ./scripts/run_sql_tests.sh || { cat tests/sql/rapport_tests_sql.md; exit 1; }
           else
             echo "→ scripts/run_sql_tests.sh absent — vérif manuelle minimale"
             mysql -h 127.0.0.1 -u root minishop_test -e "SHOW TABLES;" || true
@@ -318,6 +329,34 @@ jobs:
             fi
             # Si le harnais manque, on ne fail pas la CI dev — le vrai harnais sera livré lot L8-13
             echo "ℹ run_sql_tests.sh absent : OK en dev GitHub (bloquant en GitLab prod quand livré)"
+          fi
+
+      - name: Setup PHP pour l'intégration SQL
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo_mysql
+          coverage: none
+          tools: none
+
+      - name: Garde-fous et intégration SQL sur serveur jetable
+        shell: bash
+        run: |
+          set -euo pipefail
+          mysql -h 127.0.0.1 -u root -e "CREATE DATABASE minishop_safety_ci; CREATE TABLE minishop_safety_ci.temoin (id INT); INSERT INTO minishop_safety_ci.temoin VALUES (42);"
+          if MINISHOP_TEST_DB=minishop_safety_ci DB_NAME=minishop php tests/php/sql_integration.php > "$RUNNER_TEMP/refus.log" 2>&1; then
+            echo "Une base existante a été acceptée sans consentement"; exit 1
+          fi
+          grep -q 'création impossible' "$RUNNER_TEMP/refus.log"
+          test "$(mysql -h 127.0.0.1 -u root -N -e 'SELECT id FROM minishop_safety_ci.temoin')" = 42
+          if MINISHOP_TEST_DB=minishop_safety_ci DB_NAME=minishop_safety_ci php tests/php/sql_integration.php --reinitialiser-base-existante > "$RUNNER_TEMP/refus-app.log" 2>&1; then
+            echo "La base applicative a été acceptée"; exit 1
+          fi
+          grep -q 'correspond à DB_NAME' "$RUNNER_TEMP/refus-app.log"
+          test "$(mysql -h 127.0.0.1 -u root -N -e 'SELECT id FROM minishop_safety_ci.temoin')" = 42
+          MINISHOP_TEST_DB=minishop_safety_ci DB_NAME=minishop php tests/php/sql_integration.php --reinitialiser-base-existante
+          if mysql -h 127.0.0.1 -u root -N -e "SHOW DATABASES LIKE 'minishop_safety_ci'" | grep -q .; then
+            echo "Base de test non supprimée"; exit 1
           fi
 
       - name: Upload SQL rapport
@@ -382,7 +421,7 @@ jobs:
         run: |
           set -euxo pipefail
           if [ -f scripts/load_db.sh ]; then
-            DB_HOST=127.0.0.1 DB_USER=root DB_PASS="" ./scripts/load_db.sh || true
+            DB_HOST=127.0.0.1 DB_USER=root DB_PASS="" ./scripts/load_db.sh
           else
             mysql -h 127.0.0.1 -u root -e "CREATE DATABASE IF NOT EXISTS minishop_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" || true
             mysql -h 127.0.0.1 -u root minishop_test < sql/01_minishop_schema.sql || true
@@ -405,9 +444,9 @@ jobs:
       - name: PHPUnit
         shell: bash
         run: |
-          if [ ! -f composer.json ]; then echo "skip phpunit (pas de composer.json)"; exit 0; fi
-          if [ ! -f vendor/bin/phpunit ]; then echo "phpunit absent, skip"; exit 0; fi
-          ./vendor/bin/phpunit --testsuite app --log-junit phpunit.xml || ./vendor/bin/phpunit --log-junit phpunit.xml || true
+          if [ ! -f composer.json ]; then echo "composer.json absent"; exit 1; fi
+          if [ ! -f vendor/bin/phpunit ]; then echo "phpunit absent"; exit 1; fi
+          ./vendor/bin/phpunit --testsuite app --log-junit phpunit.xml
           cat phpunit.xml 2>/dev/null | head -n 80 || true
 
       - name: Upload phpunit report

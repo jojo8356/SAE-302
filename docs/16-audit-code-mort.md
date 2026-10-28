@@ -2,7 +2,7 @@
 
 ## Périmètre et méthode
 
-Inventaire de **tous les fichiers versionnés sous `app/` et `public/`** à la date de l’audit : code PHP, vues, CSS, JS, configuration serveur, police et images. Ce périmètre couvre l’application livrée et ses outils publics ; il ne constitue pas un audit fichier par fichier de `scripts/`, `tests/`, `sql/`, `data/` ou `docs/`. Ces dossiers ont aussi servi à retrouver des références. Aucune donnée de compte n’est affichée ici.
+Inventaire de **tous les fichiers versionnés sous `app/` et `public/`** à la date de l’audit : code PHP, vues, CSS, JS, configuration serveur, police et images. Ce périmètre couvre l’application livrée et ses outils publics ; ce premier inventaire détaillé reste limité à `app/` et `public/` ; le [rapport global](17-audit-global-projet.md) étend ensuite les contrôles à tout le dépôt. Ces dossiers ont aussi servi à retrouver des références. Aucune donnée de compte n’est affichée ici.
 
 Les références sont des **indices textuels** et non une preuve d’exécution : autoload, routes, includes, appels dynamiques, liens directs et données SQL peuvent activer un fichier sans mention littérale. Le nombre `fonctions` compte les fonctions/méthodes nommées **ayant un corps**, détectées avec `token_get_all` ; il ne compte ni les signatures d’interface, ni les fermetures anonymes, ni les méthodes héritées. Un faible nombre ne signifie pas qu’un fichier est inutile. Ta copie locale peut comporter d’autres fichiers ou modifications non présents dans cet audit.
 
@@ -20,27 +20,27 @@ Les références sont des **indices textuels** et non une preuve d’exécution 
 
 ### Candidats restants à trier
 
-Le référentiel `scripts/code_mort_reference.json` contient **11 alertes lexicales**, pas 11 preuves de code mort. Un nouvel indice fait échouer le contrôle ; les indices disparus doivent aussi être retirés du référentiel après revue. Les candidats connus restent affichables avec `php scripts/code_mort.php --rapport`.
+Réexamen des **11 alertes initiales** : le référentiel `scripts/code_mort_reference.json` en contient désormais **7**. Trois disparaissent de l’analyse parce que des tests les citent, sans preuve d’usage applicatif ; `sudoDisponible` est maintenant utilisé par le provisionnement. Ce ne sont pas des preuves de code mort. Un nouvel indice fait échouer le contrôle ; les indices disparus doivent aussi être retirés du référentiel après revue. Les candidats connus restent affichables avec `php scripts/code_mort.php --rapport`.
 
 | Candidat | Observation et décision prudente |
 |---|---|
 | `DbConnexion::dsnUtilise` | Accesseur public de diagnostic ; aucune référence détectée. API ou script externe possible : conserver en attendant validation. |
-| `HomeController::page403` | Aucun appel identifié ; dépendance de la vue 403. Vérifier le parcours d’erreur et la décision fonctionnelle. |
-| `Filter::isNotNull` | Constructeur de filtre public non appelé dans le périmètre ; API potentielle. |
-| `Journal::tail` | Lecture publique du journal non appelée dans le périmètre ; usage d’outil ou futur possible. |
-| `JsonTable::isDirty` | Accesseur public de l’état de table non appelé dans le périmètre ; API potentielle. |
+| `HomeController::page403` | Aucun appel identifié ; vue 403 non branchée. Refus SUPER réellement constaté : redirection 302 avec message. Le faux contrat prétendant prouver 403/500 a été corrigé ; décider avec l’équipe si une page 403 est souhaitée. |
+| `Filter::isNotNull` | Conservé ; test réel côté JSON ajouté. Cette référence de test ne démontre pas un usage en production. |
+| `Journal::tail` | Conservé ; limites zéro/négative corrigées et testées sur un fichier temporaire. La documentation ne prétend plus qu’un écran back-office le consulte. |
+| `JsonTable::isDirty` | Conservé ; transition sale/propre après persistance testée. Référence de test seulement. |
 | `Seed::comptesDemo` | Accesseur public non appelé dans le périmètre ; vérifier usages hors dépôt avant retrait. |
-| `CommandeRepository::withStore` | Méthode publique de changement de store non appelée ; vérifier contrat et scripts externes. |
+| `CommandeRepository::withStore` | Aucun appel trouvé ; doublon fonctionnel de la fabrique `for`, mais méthode publique conservée par compatibilité jusqu’à validation des utilisateurs externes. |
 | `visuel_produit($nom)` | Paramètre non lu depuis que l’image est décorative (`alt=""`) ; les appels et la signature publique l’utilisent encore. Conserver sans changer l’accessibilité ni casser les appels nommés. |
 | `DbInstaller::codeDerniereErreur` | Accesseur public de diagnostic sans appel détecté ; conserver avant revue des outils externes. |
-| `DbProvision::sudoDisponible` | Méthode publique d’aide au provisionnement sans appel détecté ; vérifier les scripts hors dépôt. |
+| `DbProvision::sudoDisponible` | Désormais appelée avant d’écrire le fichier et lancer `sudo` ; diagnostic précoce si sudo manque. |
 | `EnvFile::existe` | Accesseur public sans appel détecté ; vérifier les outils hors dépôt. |
 
 Le contrôle détecte les paramètres non cités et certaines variables locales **écrites une seule fois**, ainsi que les noms de fonctions/méthodes sans autre mention textuelle. Il ne prouve ni l’atteignabilité ni l’absence d’utilisation : références indirectes, portée, héritage, récursion, `include`, `compact`, variables dynamiques, réflexion, dépendances et appels externes limitent le résultat. Il ne détecte pas toutes les écritures répétées sans lecture, les variables au niveau fichier ou le code mort CSS/JS/SQL. Aucune suppression automatique.
 
 ## Inventaire fichier par fichier
 
-Tailles en octets mesurées sur cet état du dépôt. `—` : fichier non PHP. Les références listées sont des exemples, pas une liste exhaustive.
+Tailles en octets historiques mesurées lors du premier audit (`870dda5`) ; les fichiers ont pu être modifiés depuis. `—` : fichier non PHP. Les références listées sont des exemples, pas une liste exhaustive.
 
 | Fichier | Octets | Fonctions avec corps | Rôle et indice d’utilisation |
 |---|---:|---:|---|
@@ -67,7 +67,7 @@ Tailles en octets mesurées sur cet état du dépôt. `—` : fichier non PHP. L
 | `app/Model/Data/ConstraintError.php` | 426 | 0 | Type d’exception d’intégrité ; classe vide héritant de RuntimeException. Références : `app/Model/Data/Errors.php`, `app/Model/Data/JsonStore.php`, `app/Model/Data/SqlStore.php`…. |
 | `app/Model/Data/Errors.php` | 1171 | 0 | Documentation de la taxonomie des exceptions ; ne contient volontairement pas de classe. Documentation citée dans les exceptions ; pas de chargement applicatif trouvé. |
 | `app/Model/Data/Filter.php` | 3459 | 14 | Construction de filtres et tris pour le contrat de stockage. Références : `app/Controller/Admin/CommandeAdminController.php`, `app/Controller/Admin/DashboardController.php`, `app/Controller/Admin/EquipeAdminController.php`…. |
-| `app/Model/Data/Journal.php` | 2769 | 4 | Journal JSONL des opérations, interface de consultation. Références : `app/Model/Data/JsonStore.php`, `app/View/home/apropos.php`, `public/gen_volumes.php`…. |
+| `app/Model/Data/Journal.php` | 2769 | 4 | Journal JSONL des opérations ; méthode de lecture sans écran de consultation branché. Références : `app/Model/Data/JsonStore.php`, `app/View/home/apropos.php`, `public/gen_volumes.php`…. |
 | `app/Model/Data/JsonStore.php` | 30823 | 44 | Stockage JSON, requêtes, contraintes et transactions. Références : `app/Config/Database.php`, `app/Model/Data/Schema.php`, `app/Model/Data/SqlStore.php`…. |
 | `app/Model/Data/JsonTable.php` | 5990 | 16 | Table JSON : données, index, persistance et état de modification. Références : `app/Model/Data/JsonStore.php`, `docs/08-fiche-suivi-commits.md`, `scripts/code_mort_reference.json`. |
 | `app/Model/Data/QueryError.php` | 406 | 0 | Type d’exception de requête incorrecte ; classe vide héritant de RuntimeException. Références : `app/Model/Data/Errors.php`, `app/Model/Data/JsonStore.php`, `docs/07-note-cybersecurite.md`…. |

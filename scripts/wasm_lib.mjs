@@ -28,11 +28,12 @@ export const UPLOAD_DIRS = ['app', 'public', 'data', 'tests/php', 'tests/phpunit
 export const MUTABLE_DIRS = ['data', 'var'];
 
 /** Crée le runtime PHP-WASM prêt à servir l'application. */
-export async function createPhp(absoluteUrl = 'http://localhost:8080/') {
+export async function createPhp(absoluteUrl = 'http://localhost:8080/', { inclureDonnees = true } = {}) {
   const php = await NodePHP.load('8.2', {
     requestHandler: { documentRoot: `${WASM_ROOT}/public`, absoluteUrl },
   });
   for (const dir of UPLOAD_DIRS) {
+    if (dir === 'data' && !inclureDonnees) continue;
     const hostDir = join(REPO_ROOT, dir);
     if (existsSync(hostDir)) {
       await uploadTree(php, hostDir, `${WASM_ROOT}/${dir}`);

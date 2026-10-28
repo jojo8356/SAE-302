@@ -246,6 +246,16 @@ final class DbInstaller
         );
     }
 
+    /** Crée une base uniquement si elle n'existe pas déjà (échec atomique sinon). */
+    public function creerBaseNouvelle(): void
+    {
+        $pdo = $this->connexion(false);
+        $pdo->exec(
+            'CREATE DATABASE `' . $this->base . '` '
+            . 'CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci',
+        );
+    }
+
     /** Supprime la base (mode `--reset`, irréversible). */
     public function supprimerBase(): void
     {

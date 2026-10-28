@@ -252,7 +252,7 @@ final class Auth
     {
         $admin = self::exigeAdmin();
         if ($admin['role'] !== 'SUPER') {
-            \http_response_code(403);
+            // Contrat actuel : redirection 302 et message, pas une réponse 403.
             $_SESSION['flash_erreur'] = 'Réservé au rôle SUPER.';
             self::rediriger('/admin');
         }

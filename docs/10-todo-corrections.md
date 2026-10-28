@@ -284,6 +284,14 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - Auto-évaluation : inventaire des 116 fichiers `app/` et `public/`, aucun vide, 45 PHP sans fonction à corps explicités. Deux simplifications confirmées dans le moteur JSON ; 11 candidats conservés comme incertains. Autotest de l’analyseur 12/12, inventaire 2/2, suites PHP-WASM isolées vertes, sécurité 10/10 ; compilation PHP-WASM 8.5 ciblée sur les six PHP modifiés. Analyse lexicale partielle, pas un audit complet des dépendances ni du code mort CSS/JS/SQL.
 
 
+## 6 duodevicies. Audit global et corrections des candidats
+
+- [x] Réexaminer les 11 candidats : corriger les vrais défauts, retirer les doublons sûrs et protéger les fonctionnalités conservées.
+- [x] Empêcher la campagne E2E et l’intégration SQL d’écraser silencieusement des données existantes ; ajouter des tests isolés.
+- [x] Vérifier la protection des fichiers de configuration et contrôler les fichiers versionnés de l’ensemble du dépôt.
+- [x] Produire un rapport précis avec résultats, risques, éléments non vérifiés et inventaire global.
+- [x] Exécuter les vérifications disponibles sans toucher aux données utilisateur, documenter l’auto-évaluation et préparer le push ; validation CI à suivre dans le rapport.
+
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 
 - [!] **Noms, prénoms, numéros étudiants** des 3 membres + emails → README §Membres et CDC §3.3 (aucune identité ne peut être inventée).
