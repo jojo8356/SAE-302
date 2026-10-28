@@ -239,7 +239,7 @@ livrables/pdf/requetes-sql-a-ecrire.pdf,Livrables,Présence et non-vide uniqueme
 package-lock.json,Configuration et fichiers racine,"Présence, non-vide, structure JSON"
 package.json,Configuration et fichiers racine,"Présence, non-vide, structure JSON"
 phpstan.neon,Configuration et fichiers racine,Présence et non-vide uniquement
-phpunit.xml,Configuration et fichiers racine,Présence et non-vide uniquement
+phpunit.xml,Configuration et fichiers racine,"Présence, non-vide, structure XML"
 public/.htaccess,Ressources et point d’entrée publics,Présence et non-vide uniquement
 public/css/app.css,Ressources et point d’entrée publics,Présence et non-vide uniquement
 public/css/print.css,Ressources et point d’entrée publics,Présence et non-vide uniquement

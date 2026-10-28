@@ -51,9 +51,9 @@ class AuditStructurel(unittest.TestCase):
                 with tokenize.open(path) as source:
                     compile(source.read(), str(path), 'exec')
 
-    def test_json_et_svg_parsables(self):
+    def test_json_xml_et_svg_parsables(self):
         for path in files():
-            if path.suffix.lower() not in {'.json', '.svg'}:
+            if path.suffix.lower() not in {'.json', '.svg', '.xml'}:
                 continue
             with self.subTest(fichier=str(path.relative_to(ROOT))):
                 if path.suffix.lower() == '.json':

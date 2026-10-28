@@ -4,7 +4,7 @@
   - une seule suite « app » : rapide, isolée (magasin temporaire), sans réseau ;
   - la couverture cible app/ (les vues sont couvertes par l'E2E, pas par PHPUnit) ;
   - cacheDirectory hors Git (.gitignore).
-  Exécution : composer test:unit    (ou phpunit --testsuite app)
+  Exécution : composer test:unit (ou phpunit avec la suite app)
 -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
