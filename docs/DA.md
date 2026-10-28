@@ -452,3 +452,21 @@ compréhensible aux outils ; si elle manque ou n'est pas valide, afficher un rep
 explicite sans date inventée. L'alignement reste fluide et le texte peut revenir à
 la ligne sur mobile, conformément aux principes de reflow W3C et de mise en page
 GOV.UK documentés en §14.5. Aucune nouvelle image ni icône n'est nécessaire.
+
+
+## 16. Lisibilité du pied de page — correction de contraste
+
+La comparaison des enseignes et des systèmes de design (§2 et §14) retient une
+hiérarchie discrète mais lisible pour les informations secondaires. La capture
+WAVE fournie pour le catalogue signale un texte du pied de page trop peu contrasté.
+Pour conserver ce design sans modifier sa structure responsive, le texte d'aide
+du pied hérite d'une couleur claire explicitement adaptée au fond sombre ; les
+autres textes d'aide conservent leur couleur sur fond clair. La règle cible le
+contexte du pied pour qu'une classe générique définie plus loin ne l'écrase pas.
+
+La cible pour du texte normal est un rapport d'au moins 4,5:1 selon le
+[critère WCAG 1.4.3](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html).
+Le calcul des couleurs déclarées donne `#475569` sur `#0f172a` = 2,36:1
+avant correction et `#cbd5e1` sur `#0f172a` = 12,02:1 après correction.
+C’est un contrôle statique, pas une analyse de rendu : confirmer le résultat
+sur le navigateur et la page réellement déployés.

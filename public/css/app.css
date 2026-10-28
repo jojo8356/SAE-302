@@ -432,7 +432,8 @@ body > main {
     font-size: var(--t-sm);
 }
 
-.pied__texte {
+/* Plus spécifique que .texte-aide, définie plus loin pour les fonds clairs. */
+.pied .pied__texte {
     color: #cbd5e1;
     font-size: var(--t-sm);
 }

@@ -125,6 +125,35 @@ foreach ($paires as [$nom, $texte, $fond, $seuil]) {
     );
 }
 
+// Le texte combine .texte-aide et .pied__texte. Une règle plus tardive
+// .texte-aide peut écraser .pied__texte à spécificité égale : exiger une
+// règle contextuelle plus spécifique et calculer ses couleurs déclarées.
+$blocPied = '';
+$blocTextePied = '';
+preg_match('/(?:^|\n)\.pied\s*\{([^}]*)\}/', $css, $reglePied);
+preg_match('/(?:^|\n)\.pied\s+\.pied__texte\s*\{([^}]*)\}/', $css, $regleTextePied);
+if (isset($reglePied[1])) {
+    $blocPied = $reglePied[1];
+}
+if (isset($regleTextePied[1])) {
+    $blocTextePied = $regleTextePied[1];
+}
+preg_match('/(?:^|[;\s])background\s*:\s*([^;]+);/', $blocPied, $fondPiedTrouve);
+preg_match('/(?:^|[;\s])color\s*:\s*([^;]+);/', $blocTextePied, $couleurPiedTrouvee);
+$fondPied = trim($fondPiedTrouve[1] ?? '');
+$couleurPied = trim($couleurPiedTrouvee[1] ?? '');
+if (preg_match('/^var\((--[a-z0-9-]+)\)$/i', $fondPied, $variablePied) === 1) {
+    $fondPied = $tokens[$variablePied[1]] ?? '';
+}
+if (preg_match('/^var\((--[a-z0-9-]+)\)$/i', $couleurPied, $variableTextePied) === 1) {
+    $couleurPied = $tokens[$variableTextePied[1]] ?? '';
+}
+$check('texte d’aide du pied : sélecteur contextuel plus spécifique',
+    $blocTextePied !== '' && preg_match('/class="(?:texte-aide pied__texte|pied__texte texte-aide)"/', $layout) === 1);
+$ratioPied = $contraste($couleurPied, $fondPied);
+$check(sprintf('texte d’aide du pied : %.2f:1 (seuil 4.5)', $ratioPied), $ratioPied >= 4.5,
+    'couleurs absentes, invalides ou contraste insuffisant');
+
 // -------------------------------------------------------------- 3. classes
 echo "\n3. Classes utilisées dans les vues et définies dans le CSS\n";
 $vues = [];

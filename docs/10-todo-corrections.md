@@ -245,6 +245,13 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] Vérifier les livrables, indiquer explicitement les blocages et les tests non exécutés.
 - [!] Compatibilité applicative avec l’URL en sous-dossier et séparation de la racine privée : adaptation et validation réelles encore nécessaires avant publication. PHP, réécriture Apache, droits SQL et accès de recette sur LineServ restent à confirmer.
 
+## 6 quaterdecies. Contraste du texte du pied de page signalé par WAVE
+
+- [x] Étudier la cascade CSS et le contraste calculé des couleurs déclarées.
+- [x] Corriger la règle de manière ciblée sans modifier la mise en page responsive.
+- [x] Ajouter un test de non-régression, vérifier les suites disponibles et documenter les limites.
+- [!] Refaire WAVE sur le site réellement utilisé après application de la correction ; la capture fournie concerne une autre copie et ne démontre pas l'état du correctif.
+
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 
 - [!] **Noms, prénoms, numéros étudiants** des 3 membres + emails → README §Membres et CDC §3.3 (aucune identité ne peut être inventée).
