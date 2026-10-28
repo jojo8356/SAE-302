@@ -279,7 +279,8 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] Ajouter aux tests un contrôle des paramètres, variables écrites et méthodes potentiellement inutilisés, avec fixtures positives/négatives et protection contre les régressions.
 - [x] Examiner les résultats, corriger uniquement les problèmes confirmés et documenter les incertitudes et les appels dynamiques.
 - [x] Tester les suites isolées sans toucher aux données locales et actualiser l’auto-évaluation.
-- [!] Confirmer la CI native PHP après push ; parcours HTTP E2E, MariaDB et navigateur non joués dans la sandbox.
+- [x] CI GitHub sur `ce2d7aa` : tests natifs PHP 8.2 et 8.5, inventaire, code mort, sécurité, PHPUnit et SQL MySQL 8 isolé réussis.
+- [!] Dans la sandbox : parcours HTTP E2E, MariaDB et navigateur non joués ; la sortie partagée par l’utilisateur concerne une autre exécution locale.
 - Auto-évaluation : inventaire des 116 fichiers `app/` et `public/`, aucun vide, 45 PHP sans fonction à corps explicités. Deux simplifications confirmées dans le moteur JSON ; 11 candidats conservés comme incertains. Autotest de l’analyseur 12/12, inventaire 2/2, suites PHP-WASM isolées vertes, sécurité 10/10 ; compilation PHP-WASM 8.5 ciblée sur les six PHP modifiés. Analyse lexicale partielle, pas un audit complet des dépendances ni du code mort CSS/JS/SQL.
 
 
