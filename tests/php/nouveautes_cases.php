@@ -46,7 +46,7 @@ function verifierNouveautes(StoreInterface $store): array
     // Chaque écriture ci-dessous est annulée, y compris sur MariaDB.
     $store->beginTransaction();
     try {
-        $store->update('produit', [], ['visible' => false]);
+        $store->update('produit', [Filter::isNotNull('id_produit')], ['visible' => false]);
         $vide = $repo->searchProducts(['tri' => 'nouveaute', 'par_page' => 4]);
         $check('aucun produit visible : liste vide', $vide['lignes'] === [] && $vide['total'] === 0);
 
@@ -96,7 +96,7 @@ function verifierNouveautes(StoreInterface $store): array
             $ids($peu['lignes']) === [$p[6], $p[0]] && $peu['total'] === 2);
 
         // Créations réelles par l'API du repository, dans la même fixture isolée.
-        $store->update('produit', [], ['visible' => false]);
+        $store->update('produit', [Filter::isNotNull('id_produit')], ['visible' => false]);
         $suffixe = bin2hex(random_bytes(4));
         $categorie = (int) $produits[0]['id_categorie'];
         $un = $repo->saveProduct(null, 'NOUV-A-' . $suffixe, 'Nouveauté A ' . $suffixe, null, null, 5.0, 20.0, 1, 1, $categorie, true, null);
