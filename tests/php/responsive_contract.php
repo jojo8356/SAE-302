@@ -129,6 +129,15 @@ $check('aucune largeur fixée en 100vw (source de scroll horizontal)',
 $check('débordement horizontal neutralisé sur html', preg_match('/html \{[^}]*overflow-x: hidden/s', $css) === 1);
 $check('enfants de grille protégés (min-width: 0)', str_contains($css, 'min-width: 0'));
 
+// Les formulaires « auth » partagent la même carte que le contact : +25 %
+// sur grand écran, jamais plus large que son conteneur sur mobile.
+$check('cartes auth/contact : largeur majorée de 25 % et bornée sur mobile',
+    preg_match('/\.auth\s*\{[^}]*width:\s*100%;[^}]*max-width:\s*575px;[^}]*min-width:\s*0;/s', $css) === 1);
+$check('formulaires auth/contact : champs textuels remplissent la carte, cases inchangées',
+    str_contains($css, '.auth input:not([type="checkbox"]):not([type="radio"])')
+    && preg_match('/\.auth textarea\s*\{[^}]*max-width:\s*none;/s', $css) === 1
+    && preg_match('/\.auth fieldset\s*\{[^}]*min-width:\s*0;/s', $css) === 1);
+
 // ------------------------------------------------------------ 7. impression
 echo "\n7. Impression et autres médias\n";
 $impression = (string) file_get_contents($racine . '/public/css/print.css');

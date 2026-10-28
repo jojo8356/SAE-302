@@ -1512,14 +1512,32 @@ select[data-largeur-courte] {
     margin: 0;
 }
 
-/* ------------------------------------------------- 12. Authentification */
+/* ------------------------ 12. Contact et authentification */
 .auth {
-    max-width: 460px;
+    /* 460px × 1,25 : la carte est plus ample sans dépasser le mobile. */
+    width: 100%;
+    max-width: 575px;
+    min-width: 0;
     margin: var(--e-7) auto;
 }
 
 .auth fieldset {
+    min-width: 0;
     padding: var(--e-6);
+}
+
+/* La légende sémantique reste disponible aux lecteurs d'écran ; le titre
+   visible est à l'intérieur de la bordure, comme les autres cartes. */
+.auth__titre {
+    margin: 0 0 var(--e-5);
+    font-size: var(--t-lg);
+    font-weight: 700;
+    text-align: center;
+}
+
+.auth input:not([type="checkbox"]):not([type="radio"]),
+.auth textarea {
+    max-width: none;
 }
 
 .auth h1 {

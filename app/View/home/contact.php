@@ -25,7 +25,8 @@ $valeurs = array_merge(['nom' => '', 'email' => '', 'message' => ''], $valeurs ?
     <form method="post" action="/contact">
         <?= csrf_field() ?>
         <fieldset>
-            <legend>Votre message</legend>
+            <legend class="visuellement-cache">Votre message</legend>
+            <h2 class="auth__titre">Votre message</h2>
 
             <p>
                 <label for="nom">Nom et prénom <span class="texte-aide">(obligatoire)</span></label>

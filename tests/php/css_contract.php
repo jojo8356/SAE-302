@@ -426,6 +426,27 @@ $check('euro : serveur WASM autorise les polices statiques WOFF2',
 $check('euro : montant reste du texte UTF-8, sans image ni balise',
     euros(1234.5) === '1 234,50 €' && !str_contains(euros(1234.5), '<'));
 
+// Formulaires publics : le libellé du groupe reste sémantique et le titre
+// visible est réellement dans la carte, pas incrusté sur sa bordure.
+$check('cartes contact et authentification : titre visible centré et légende accessible',
+    (static function () use ($racine, $css): bool {
+        $vues = [
+            'home/contact.php' => 'Votre message',
+            'auth/connexion.php' => 'Espace client',
+            'auth/inscription.php' => 'Vos informations',
+            'auth/admin_connexion.php' => 'Administrateur',
+        ];
+        foreach ($vues as $vue => $titre) {
+            $contenu = (string) file_get_contents($racine . '/app/View/' . $vue);
+            if (!str_contains($contenu, '<legend class="visuellement-cache">' . $titre . '</legend>')
+                || !str_contains($contenu, '<h2 class="auth__titre">' . $titre . '</h2>')
+                || preg_match('/<fieldset>\s*<legend class="visuellement-cache">.*?<\/legend>\s*<h2 class="auth__titre">.*?<\/h2>/s', $contenu) !== 1) {
+                return false;
+            }
+        }
+        return preg_match('/\.auth__titre\s*\{[^}]*font-weight:\s*700;[^}]*text-align:\s*center;/s', $css) === 1;
+    })());
+
 // ------------------------------------------------------------------ verdict
 echo "\n" . str_repeat('=', 60) . "\n";
 if ($echecs === 0) {

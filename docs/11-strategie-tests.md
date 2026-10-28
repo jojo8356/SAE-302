@@ -10,12 +10,12 @@ La pyramide des tests est souvent citée puis contredite par les chiffres. Voici
 |---|---|---|---|---|
 | 0 | Analyse statique | `scripts/strict_types_lint.php` (règles php-cs-fixer `declare_strict_types`, types natifs niveau PHPStan 9, interdiction du ternaire) + autotest du harnais `scripts/wasm_verdict.mjs` | **102 fichiers**, 0 violation · **9 cas** de verdict | < 1 s |
 | 1 | Unitaires purs | `tests/php/unit_tests.php` (`Text`, `Csrf`, `Filter`, `PanierSession`, `RB-11`…) + `tests/phpunit/**` | **282** vérifications + **34** tests PHPUnit | ~ 6 s |
-| 2 | Contrats (sans exécution) | `tests/php/contract_http.php`, `tests/php/css_contract.php`, `tests/php/responsive_contract.php` | **27** + **68** + **48** vérifications | ~ 2 s |
+| 2 | Contrats (sans exécution) | `tests/php/contract_http.php`, `tests/php/css_contract.php`, `tests/php/responsive_contract.php` | **27** + **69** + **50** vérifications | ~ 2 s |
 | 3 | Règles de gestion sur le moteur | `tests/php/run_tests.php` (T-01 → T-29 du CDC §6), `tests/php/engine_smoke.php` | **29/29** scénarios, **44** contrôles moteur | ~ 10 s |
 | 4 | Fonctionnalités de bout en bout (application court-circuitée) | `tests/php/features_test.php` (UC-01 → UC-14 via les dépôts) | **131** vérifications | ~ 4 s |
 | 4 bis | Contrat catalogue / ruptures | `tests/php/catalogue_stock_test.php` sur une fixture JSON isolée | **7 656** scénarios sur le jeu actuel | variable |
 | 5 | Intégration SQL réelle | `tests/php/sql_integration.php` → `tests/sql/run_tests.sh` | **29** scénarios SQL + matrice catalogue ; à rejouer sur MariaDB | ~ 30 s |
-| 6 | Parcours HTTP complet | `scripts/e2e.mjs` (natif) ; `scripts/wasm-e2e.mjs` (WASM) | **260** WASM via `scripts/e2e.mjs` | ~ 90 s |
+| 6 | Parcours HTTP complet | `scripts/e2e.mjs` (natif) ; `scripts/wasm-e2e.mjs` (WASM) | **264** WASM via `scripts/e2e.mjs` | ~ 90 s |
 | 7 | Performance | `scripts/capture_perf.sh` → `gen_volumes.sh` + `tests/perf/mesurer_sql.sh` | 5 requêtes types + `EXPLAIN` + p95 de la recherche | ~ 60 s |
 
 **Total** : les volumes détaillés figurent ci-dessus ; les scénarios catalogue varient avec le nombre de produits. La matrice catalogue MariaDB reste à jouer.
@@ -44,7 +44,7 @@ Dégradation : sans client `mariadb`/`mysql` dans le `PATH`, ou sans serveur joi
 
 ### 2.3 Tests de bout en bout (étage 6) — ce que l'utilisateur voit
 
-`scripts/e2e.mjs` exécute le parcours WASM : les requêtes passent par le front controller dans le runtime PHP-WASM, sans navigateur ni serveur HTTP réel. Il vérifie les codes HTTP, le contenu des pages, les jetons CSRF et la persistance dans le magasin JSON. 260 vérifications couvrant inscription, connexion, recherche, panier, commande, suivi, administration.
+`scripts/e2e.mjs` exécute le parcours WASM : les requêtes passent par le front controller dans le runtime PHP-WASM, sans navigateur ni serveur HTTP réel. Il vérifie les codes HTTP, le contenu des pages, les jetons CSRF et la persistance dans le magasin JSON. 264 vérifications couvrant inscription, connexion, recherche, panier, commande, suivi, administration.
 
 Le point non évident : **le test photographie `data/` avant de le restaurer après**, y compris en cas d'échec. Sans cela, une campagne laisserait des commandes de test dans le jeu de démonstration, et la suivante échouerait sur des stocks que personne n'a modifiés — panne classique, invisible sur une machine neuve, systématique en soutenance.
 
@@ -55,8 +55,8 @@ Trois suites tournent **sans exécuter l'application**. Elles sont rapides, et e
 | Suite | Ce qu'elle garantit | Exemple de défaut attrapé |
 |---|---|---|
 | `contract_http.php` (27) | Chaque lien et chaque `action=` d'une vue pointe vers une route **déclarée** ; toute route `/admin/*` porte une garde ; aucune écriture en `GET` ; les en-têtes de sécurité sont émis | un `<a href="/commande/suivi">` après renommage de la route ; une route d'administration sans `exigerAdmin()` |
-| `css_contract.php` (68) | Les jetons du design system sont réellement définis et utilisés ; les contrastes calculés passent AA ; la CSP n'autorise pas d'origine externe | une couleur écrite en dur qui contourne le jeton ; un `style=` inline bloqué par la CSP |
-| `responsive_contract.php` (48) | La mise en page tient de 320 px à 1536 px (WCAG 1.4.10) : pas de largeur fixe, tableaux en conteneur défilant, cibles tactiles ≥ 24 px | une grille `min-width: 900px` qui provoque un défilement horizontal sur mobile |
+| `css_contract.php` (69) | Les jetons du design system sont réellement définis et utilisés ; les contrastes calculés passent AA ; la CSP n'autorise pas d'origine externe | une couleur écrite en dur qui contourne le jeton ; un `style=` inline bloqué par la CSP |
+| `responsive_contract.php` (50) | La mise en page tient de 320 px à 1536 px (WCAG 1.4.10) : pas de largeur fixe, tableaux en conteneur défilant, cibles tactiles ≥ 24 px | une grille `min-width: 900px` qui provoque un défilement horizontal sur mobile |
 
 Ces tests sont **statiques** : ils analysent les fichiers. C'est une limite réelle (aucune validation de navigateur), compensée par la vérification manuelle des paliers 320/768/1024/1536 documentée au §5 du document de tests.
 

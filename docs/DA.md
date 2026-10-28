@@ -213,7 +213,7 @@ Contrastes calculés selon WCAG 2.1 (ratio `(L1+0.05)/(L2+0.05)`), vérifiés pa
 | 5 | **Filtres à facettes** | colonne à gauche desktop, accordéon mobile ; pastilles actives retirables ; état dans l'URL |
 | 6 | **Pagination** | Précédent / numéros / Suivant ; page courante `aria-current="page"` |
 | 7 | **Tableau** (back-office) | en-têtes sombres, lignes zébrées, `caption`, chiffres alignés à droite |
-| 8 | **Formulaire** | label au-dessus, aide en 14 px, erreur sous le champ + `aria-describedby`, focus 3 px |
+| 8 | **Formulaire** | label au-dessus, aide en 14 px, erreur sous le champ + `aria-describedby`, focus 3 px ; contact et authentification : carte centrée 575 px maximum (460 px + 25 %), titre intérieur centré, légende sémantique conservée |
 | 9 | **Boutons** | primaire (accent), secondaire (contour), discret (lien) ; 3 tailles ; état `disabled` explicite : fond et texte inchangés au survol, curseur interdit |
 | 10 | **Badges d'état** | `Disponible` / `Bientôt épuisé` / `Rupture` / statuts de commande, toujours avec texte |
 | 11 | **Messages flash** | bandeau `role="status"` (succès) ou `role="alert"` (erreur), refermable, non bloquant |

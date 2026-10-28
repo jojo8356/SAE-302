@@ -193,6 +193,13 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] `/catalogue` et `/recherche` donnent déjà la priorité aux produits en stock **avant la pagination**, avec les filtres et les cinq tris ; matrice dédiée et E2E rejoués.
 - [ ] Rendu dans le navigateur de l'utilisateur et essais MariaDB non vérifiés dans la sandbox ; la synchronisation locale précédente s'est arrêtée avant la copie à cause d'un conflit de travail local.
 
+## 6 octies. Cartes contact et authentification — **fait**
+
+- [x] Cartes contact, connexion, inscription et connexion administrateur : largeur maximale augmentée de 460 à 575 px (+25 %), contenue à 100 % sur mobile, champs textuels à la largeur disponible.
+- [x] Titre visible en gras et centré à l'intérieur de la carte ; le `legend` reste présent et accessible aux lecteurs d'écran. Les formulaires et jetons CSRF sont conservés.
+- [x] Contrats CSS/responsive et E2E des quatre pages ; suite complète rejouée.
+- [ ] Contrôle visuel en navigateur : tentative en sandbox non jouée, Chromium ne démarre pas (bibliothèques système NSS absentes).
+
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 
 - [!] **Noms, prénoms, numéros étudiants** des 3 membres + emails → README §Membres et CDC §3.3 (aucune identité ne peut être inventée).

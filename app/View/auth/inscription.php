@@ -20,7 +20,8 @@ declare(strict_types=1);
     <form method="post" action="/inscription">
         <?= csrf_field() ?>
         <fieldset>
-            <legend>Vos informations</legend>
+            <legend class="visuellement-cache">Vos informations</legend>
+            <h2 class="auth__titre">Vos informations</h2>
             <p><label for="prenom">Prénom</label><input type="text" id="prenom" name="prenom" maxlength="80" required autocomplete="given-name"></p>
             <p><label for="nom">Nom</label><input type="text" id="nom" name="nom" maxlength="80" required autocomplete="family-name"></p>
             <p><label for="email">Email</label><input type="email" id="email" name="email" maxlength="190" required autocomplete="email"></p>

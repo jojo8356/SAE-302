@@ -20,7 +20,8 @@ declare(strict_types=1);
     <form method="post" action="/connexion">
         <?= csrf_field() ?>
         <fieldset>
-            <legend>Espace client</legend>
+            <legend class="visuellement-cache">Espace client</legend>
+            <h2 class="auth__titre">Espace client</h2>
             <p>
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" maxlength="190" required autocomplete="email" value="<?= e($email) ?>">

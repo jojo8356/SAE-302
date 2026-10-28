@@ -20,7 +20,8 @@ declare(strict_types=1);
     <form method="post" action="/admin/connexion">
         <?= csrf_field() ?>
         <fieldset>
-            <legend>Administrateur</legend>
+            <legend class="visuellement-cache">Administrateur</legend>
+            <h2 class="auth__titre">Administrateur</h2>
             <p><label for="email">Email professionnel</label><input type="email" id="email" name="email" maxlength="190" required autocomplete="username"></p>
             <p><label for="mot_de_passe">Mot de passe</label><input type="password" id="mot_de_passe" name="mot_de_passe" required autocomplete="current-password"></p>
             <p><button type="submit" class="btn--acheter">Se connecter au back-office</button></p>

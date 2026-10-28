@@ -151,6 +151,28 @@ process.stdout.write(B('T1 · pages publiques'));
   check('route inconnue → 404 (liste blanche)', routeInconnue.httpStatusCode === 404);
 }
 
+// Cartes des formulaires publics : le titre visuel se trouve à l'intérieur
+// du fieldset, dont la légende reste disponible aux technologies d'assistance.
+{
+  const visiteur = new Navigateur('formulaires-cartes');
+  for (const [url, titre, action] of [
+    ['/contact', 'Votre message', '/contact'],
+    ['/connexion', 'Espace client', '/connexion'],
+    ['/inscription', 'Vos informations', '/inscription'],
+    ['/admin/connexion', 'Administrateur', '/admin/connexion'],
+  ]) {
+    const page = await visiteur.get(url);
+    const extrait = `<legend class="visuellement-cache">${titre}</legend>`;
+    const titreCarte = `<h2 class="auth__titre">${titre}</h2>`;
+    const fieldset = (page.text ?? '').match(/<fieldset>([\s\S]*?)<\/fieldset>/);
+    check(`${url} : titre centré dans la carte et légende accessible`,
+      page.httpStatusCode === 200 && !!fieldset && fieldset[1].includes(extrait)
+        && fieldset[1].includes(titreCarte) && (page.text ?? '').includes(`action="${action}"`)
+        && (page.text ?? '').includes('name="_csrf"'),
+      `status ${page.httpStatusCode}`);
+  }
+}
+
 process.stdout.write(B('T2 · inscription et connexion (UC-04/05)'));
 
 {
