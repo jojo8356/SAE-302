@@ -268,7 +268,7 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] Exécuter les vérifications disponibles et vérifier les sorties sans écraser les données locales.
 - [!] Vérifier aussi avec le PHP réellement utilisé sur LineServ ; une version PHP différente et les parcours non exécutés peuvent produire d’autres dépréciations.
 - [x] Isoler les variables d’environnement du test unitaire et corriger deux faux positifs de sécurité qui bloquaient la CI (requêtes d’inventaire littérales, exclusion précise des seuls modèles publics).
-- [x] Mettre à jour les actions GitHub signalées comme utilisant Node.js 20 déprécié (checkout v5 et upload-artifact v6 : Node.js 24 ; runner 2.327.1 minimum).
+- [x] Mettre à jour les actions GitHub signalées comme utilisant Node.js 20 déprécié (checkout v5, upload-artifact v6 et setup-java v5 : Node.js 24 ; runner 2.327.1 minimum).
 - [!] Dans la sandbox locale : SQL réel, E2E, PHP CLI natif et serveur Web non joués. L’outil de mesure HTTP et les changements de connexion PDO restent à vérifier en environnement isolé avec MariaDB.
 - Auto-évaluation : PHP-WASM 8.2, suites isolées vertes ; PHP-WASM CLI 8.5.10, 127 fichiers analysés sans dépréciation de compilation et 282 contrôles unitaires verts après correction des constantes PDO ; preuve négative via fixture 8.5 ; autotests dédiés et substitution SQL vérifiée sur copie temporaire. CI GitHub sur edb6845 : suites natives PHP 8.2 et 8.5, contrôles sécurité, PHPUnit et SQL MySQL 8 isolé réussis ; MariaDB/LineServ restent à vérifier.
 
