@@ -1,6 +1,7 @@
 """Contrôles de structure du dépôt versionné, sans exécution de code applicatif."""
 import csv
 import json
+import os
 import pathlib
 import shutil
 import subprocess
@@ -23,6 +24,14 @@ class AuditStructurel(unittest.TestCase):
             with self.subTest(fichier=str(path.relative_to(ROOT))):
                 self.assertTrue(path.is_file())
                 self.assertGreater(path.stat().st_size, 0)
+
+    @unittest.skipUnless(shutil.which('php'), 'PHP natif absent : diagnostic CLI non exécuté')
+    def test_diagnostic_chargeur_db_sans_recursion_ni_sql(self):
+        env = dict(os.environ, DB_NAME='nom-invalide', DB='nom-invalide')
+        result = subprocess.run(['php', 'scripts/load_db.php'], cwd=ROOT, env=env,
+                                capture_output=True, text=True, timeout=5)
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn('nom de base invalide', result.stderr)
 
     def test_inventaire_global_a_jour(self):
         inventory = ROOT / 'docs/17-inventaire-projet.csv'

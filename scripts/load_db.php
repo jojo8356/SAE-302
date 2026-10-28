@@ -36,7 +36,7 @@ use App\Tools\DbInstaller;
 function erreur(string $texte): void
 {
     if (defined('STDERR')) {
-        erreur($texte);
+        fwrite(STDERR, $texte);
 
         return;
     }

@@ -280,7 +280,8 @@ jobs:
           if [ -f scripts/load_db.sh ]; then
             echo "→ scripts/load_db.sh présent (GitLab originel)"
             chmod +x scripts/load_db.sh
-            DB_HOST=127.0.0.1 DB_USER=root DB_PASS="" ./scripts/load_db.sh
+            DB=minishop DB_NAME=minishop DB_HOST=127.0.0.1 DB_USER=root DB_PASS="" ./scripts/load_db.sh
+            DB=minishop_test DB_NAME=minishop_test DB_HOST=127.0.0.1 DB_USER=root DB_PASS="" ./scripts/load_db.sh
           else
             echo "→ scripts/load_db.sh absent — fallback chargement direct (GitHub dev)"
             # Crée les deux bases (prod seed + test)
@@ -318,7 +319,17 @@ jobs:
           if [ -f scripts/run_sql_tests.sh ]; then
             echo "→ scripts/run_sql_tests.sh présent"
             chmod +x scripts/run_sql_tests.sh
-            DB_HOST=127.0.0.1 DB_USER=root DB_PASS="" DB_TEST=minishop_test ./scripts/run_sql_tests.sh || { cat tests/sql/rapport_tests_sql.md; exit 1; }
+            set +e
+            DB_HOST=127.0.0.1 DB_USER=root DB_PASS="" DB_TEST=minishop_test ./scripts/run_sql_tests.sh 2>&1 | tee "$RUNNER_TEMP/sql-tests.log"
+            etat=${PIPESTATUS[0]}
+            set -e
+            if [ "$etat" -ne 0 ]; then
+              grep -E 'ERREUR|ERROR|\[FAIL\]|\[FIX\]|attendu |Tests conformes' "$RUNNER_TEMP/sql-tests.log" | head -25 | while IFS= read -r ligne; do
+                ligne=${ligne//%/%25}
+                echo "::error::${ligne}"
+              done || true
+              exit "$etat"
+            fi
           else
             echo "→ scripts/run_sql_tests.sh absent — vérif manuelle minimale"
             mysql -h 127.0.0.1 -u root minishop_test -e "SHOW TABLES;" || true
