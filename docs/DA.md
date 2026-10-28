@@ -484,7 +484,12 @@ reste un titre lisible mais n’est plus un deuxième lien. Aucun changement de
 grille, de couleurs ni de cibles tactiles n’est nécessaire.
 
 Un « Possible heading » est une alerte à examiner, pas la preuve d’un titre
-manquant : un prix en caractères gras est une donnée et ne doit pas devenir un
-titre artificiellement. Selon [WebAIM](https://webaim.org/techniques/headings/),
-il faut vérifier le rôle du texte signalé. L’élément exact signalé dans la
-capture doit être confirmé avant de conclure ; tests de rendu réels à refaire.
+manquant. L’utilisateur a transmis un élément effectivement signalé :
+`<p class="carte-produit__prix">30,00 € <small>TTC</small></p>`. Il s’agit
+d’un prix, non d’un titre de section ; il reste donc un paragraphe, avec une
+hiérarchie de prix lisible. Dans cette version du CSS, sa taille est `1.25rem`
+et son poids `800` ; les grands paragraphes en gras peuvent déclencher la
+[heuristique WAVE](https://wave.webaim.org/api/docs?format=html). Ne pas le
+transformer artificiellement en titre pour supprimer l’alerte. Un élément a été
+identifié, pas nécessairement tous les autres : les vérifier individuellement et
+refaire WAVE après déploiement ; aucun rendu réel n’a été exécuté ici.
