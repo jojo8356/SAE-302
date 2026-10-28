@@ -238,8 +238,29 @@ les tokens sont prêts (`[data-theme="dark"]` documenté) si la suite du projet 
 
 ## 10. Iconographie et imagerie
 
-- **Icônes SVG inline** (course 24 px, trait 1,75 px) : `panier`, `recherche`, `coche`, `alerte`,
-  `croix`, `chevron`, `camion`, `cadenas`. Aucune bibliothèque externe, aucun sprite réseau.
+- **Icônes : jeu Lucide, inliné** (gabarit 24 × 24, `stroke-width` 1,75 px, `currentColor`).
+  Tracés utilisés : `panier`, `recherche`, `coche`, `alerte`, `croix`, `camion`, `cadenas`,
+  `retour`, `user`, `eclair`, `menu`, plus **une icône par famille de produits** :
+  `laptop` → Informatique, `headphones` → Audio, `shopping-bag` → Accessoires,
+  `watch` → Objets connectés, `tag` en repli pour toute catégorie créée après coup
+  (le slug vient de la base : un slug inconnu affiche une étiquette, jamais un trou).
+  Répartition : la pastille de catégorie fait 44 × 44 px (`--primaire-fond`, rayon `--r-sm`),
+  elle passe en `--primaire` plein au survol et au focus — l'icône est **décorative**
+  (`aria-hidden`, `focusable="false"`), le nom de la catégorie reste dans le `<h2>`/`<h3>`.
+  Aucun CDN, aucun sprite réseau : les tracés sont dans `app/Security/xss.php` (`icone()`,
+  `icone_categorie()`), donc servis par la page elle-même et compatibles avec la CSP
+  `img-src 'self' data:`. Un test vérifie qu'aucune icône ne contient d'URL (`css_contract.php`).
+- **Licence des icônes** — Lucide, licence ISC :
+  `Copyright (c) for portions of Lucide are held by Cole Bemis 2013-2022 as part of Feather (MIT).`
+  `All other copyright (c) for Lucide are held by Lucide Contributors 2022.`
+  Permission to use, copy, modify, and/or distribute this software for any purpose with or
+  without fee is hereby granted, provided that the above copyright notice and this permission
+  notice appear in all copies. THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+  WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+  AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR
+  CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+  WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+  CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 - **Logo** : un « M » en boucle ouverte (circuit imprimé) dans un carré arrondi `--primaire`,
   décliné en `logo.svg` (horizontal) et `favicon.svg` (carré).
 - **Images produit** : les 36 produits du jeu de démonstration ont un **packshot réel** — 12 visuels distincts, un par famille de produit, réutilisés à l'identique dans la famille (cadre homogène, 36 fiches cohérentes)

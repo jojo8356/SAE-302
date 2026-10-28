@@ -24,7 +24,7 @@
 | H | Incohérences chiffrées | 🟡 moyen (crédibilité) | i, ii, iv | 🔴 **inchangé** — 28/28, 150/150, PHP 8.1, `ENF-13` dupliqué, 7 entités, noms de fichiers SQL, statuts §16. |
 
 **Vert et vérifié** : `node scripts/run-all-tests.mjs` → linter 0 violation / 86 fichiers, moteur 98/98,
-règles 108/108, fonctionnalités OK, design 28/28, PHPUnit 34/34, E2E 182/182 ;
+règles 108/108, fonctionnalités OK, design 28/28, PHPUnit 34/34, E2E 185/185 ;
 `bash tests/security/controles.sh` → 10/10 + auto-test.
 
 ---

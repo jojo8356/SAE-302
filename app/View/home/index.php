@@ -27,6 +27,9 @@ declare(strict_types=1);
     <div class="grille grille--categories">
         <?php foreach ($categories as $categorie): ?>
             <a class="carte carte--lien carte-categorie" href="/catalogue?cat=<?= (int) $categorie['id_categorie'] ?>">
+                <?php // Icône décorative (Lucide, inlinée) : le nom de la catégorie suit
+                      // dans le titre, elle est donc masquée aux lecteurs d'écran. ?>
+                <span class="carte-categorie__icone"><?= icone_categorie((string) $categorie['slug']) ?></span>
                 <div>
                     <h3><?= e($categorie['nom']) ?></h3>
                     <p class="texte-aide"><?= e($categorie['description']) ?></p>

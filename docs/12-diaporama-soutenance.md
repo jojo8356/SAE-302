@@ -71,7 +71,7 @@
 - **PHPUnit** : 6 classes, 34 tests (texte, filtres, prix, transitions, magasin JSON, contrats de sécurité)
 - **Intégration PHP** : moteur JSON, règles de gestion, unitaires, fonctionnalités UC-01 → UC-14
 - **Contrats** : design system (28 vérifications) et responsive (48 vérifications)
-- **E2E HTTP** : 182 vérifications sur l'application complète (cookies, CSRF, refus)
+- **E2E HTTP** : 185 vérifications sur l'application complète (cookies, CSRF, refus)
 - **CI** : GitHub Actions (6 jobs) et pipeline GitLab équivalent
 > `npm run test:all` ▶ tout doit être vert avant chaque commit.
 

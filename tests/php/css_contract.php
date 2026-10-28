@@ -338,6 +338,55 @@ $check('helpers : initiale accentuée correctement pliée',
         return initiale_produit('Écran 27 pouces') === 'É';
     })());
 
+// ---- Icônes de catégorie (Lucide, inlinées : zéro requête réseau) ----------
+$check('icônes : les 4 familles ont un tracé distinct', (static function () use ($racine): bool {
+    require_once $racine . '/app/Security/xss.php';
+    $slugs = ['informatique', 'audio', 'accessoires', 'objets-connectes'];
+    $traces = [];
+    foreach ($slugs as $slug) {
+        $svg = icone_categorie($slug);
+        if (!str_starts_with($svg, '<svg') || !str_contains($svg, 'viewBox="0 0 24 24"')) {
+            return false;
+        }
+        $traces[] = $svg;
+    }
+
+    return count(array_unique($traces)) === 4;
+})());
+$check('icônes : tracé SVG pur, sans requête ni script', (static function () use ($racine): bool {
+    require_once $racine . '/app/Security/xss.php';
+    $svg = icone_categorie('audio', 28);
+
+    return !str_contains($svg, 'http') && !str_contains($svg, '<script')
+        && !str_contains($svg, 'href') && str_contains($svg, 'stroke="currentColor"')
+        && str_contains($svg, 'width="28"') && str_contains($svg, 'aria-hidden="true"');
+})());
+$check('icônes : un slug inconnu retombe sur une étiquette, jamais une balise vide', (static function () use ($racine): bool {
+    require_once $racine . '/app/Security/xss.php';
+
+    return str_starts_with(icone_categorie('categorie-inventee'), '<svg')
+        && icone_categorie('categorie-inventee') !== icone_categorie('audio');
+})());
+$check('icônes : un slug hostile ne peut pas injecter de balise', (static function () use ($racine): bool {
+    require_once $racine . '/app/Security/xss.php';
+    $svg = icone_categorie('"><script>alert(1)</script>');
+
+    // la slug n'est jamais recopiée dans le balisage : seul le tracé de la table sort
+    return !str_contains($svg, '<script') && !str_contains($svg, 'alert');
+})());
+$check('les deux vues de catégories affichent l icône', str_contains(
+    (string) file_get_contents($racine . '/app/View/home/index.php'), 'icone_categorie('
+) && str_contains(
+    (string) file_get_contents($racine . '/app/View/home/categories.php'), 'icone_categorie('
+));
+$check('CSS : pastille d icône dimensionnée et contrastée', (static function () use ($racine): bool {
+    $css = (string) file_get_contents($racine . '/public/css/app.css');
+
+    return preg_match('/\.carte-categorie__icone\s*\{[^}]*width:\s*2\.75rem/s', $css) === 1
+        && preg_match('/\.carte-categorie__icone\s*\{[^}]*background:\s*var\(--primaire-fond\)/s', $css) === 1
+        && str_contains($css, '.carte-categorie:hover .carte-categorie__icone');
+})());
+
 // ------------------------------------------------------------------ verdict
 echo "\n" . str_repeat('=', 60) . "\n";
 if ($echecs === 0) {

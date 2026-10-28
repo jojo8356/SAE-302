@@ -683,6 +683,25 @@ body > main {
     justify-content: space-between;
 }
 
+.carte-categorie__icone {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--r-sm);
+    background: var(--primaire-fond);
+    color: var(--primaire-fonce);
+    transition: background var(--transition), color var(--transition);
+}
+
+.carte-categorie:hover .carte-categorie__icone,
+.carte-categorie:focus-visible .carte-categorie__icone {
+    background: var(--primaire);
+    color: var(--surface);
+}
+
 .carte-categorie__compte {
     font-size: var(--t-xs);
     color: var(--encre-douce);

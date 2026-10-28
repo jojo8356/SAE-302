@@ -166,7 +166,7 @@ Campagne de recette du **27–28/10/2026**, sur la machine de l'équipe (Debian 
 |---|---|---|---|---|---|
 | Base de données (règles de gestion, vues, frais de port, atomicité) | 29 | **29** | 0 | 0 | **validé** — campagne réelle du 27/10/2026 (`tests/php/sql_integration.php`, base `minishop_test`), rapport `tests/sql/rapport_tests_sql.md` |
 | Chargement / installation | 2 (`F-00`, `I-01`) | **2** | 0 | 0 | `F-00` validé (base opérationnelle, 8 tables / 3 vues / 17 procédures / 16 déclencheurs). `I-01` : installation refaite sur machine Debian 13 le 27/10 — **durée non chronométrée**, la limite des 15 min n'est donc pas mesurée |
-| Front-office visiteur | 9 (`F-01`…`F-09`) | **9** | 0 | 0 | couvert par la suite E2E (T1→T5), jouée le 28/10 : 182 vérifications |
+| Front-office visiteur | 9 (`F-01`…`F-09`) | **9** | 0 | 0 | couvert par la suite E2E (T1→T5), jouée le 28/10 : 185 vérifications |
 | Client (compte, panier, commande) | 12 (`F-10`…`F-21`) | **12** | 0 | 0 | idem (T3, T4, T7 : commande, annulation, plafonds, prix falsifié) |
 | Back-office + conformité | 12 (`F-22`…`F-33`) | **12** | 0 | 0 | idem (T8→T11 : CRUD admin, filtres, audit, journal, rôles) |
 | Sécurité | 10 + 10 contrôles | **10 + 10** | 0 | 0 | idem (T6, T12, T13 : injection, XSS stocké, IDOR, fixation de session, traversées, escalade) + `tests/php/contract_http.php` (26 contrôles statiques) |

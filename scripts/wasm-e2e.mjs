@@ -122,6 +122,15 @@ process.stdout.write(B('T1 · pages publiques'));
   check('GET / → 200', accueil.httpStatusCode === 200, `status ${accueil.httpStatusCode}`);
   contient('accueil : bienvenue', accueil.text, 'Bienvenue chez MiniShop');
   contient('accueil : 4 catégories', accueil.text, 'Objets connectés');
+  // Icônes de catégorie (Lucide, inlinées) : une pastille par catégorie, aucune requête
+  const nbCategories = (await lireTable('categorie')).length;
+  const iconesAccueil = (accueil.text.match(/carte-categorie__icone/g) ?? []).length;
+  check('accueil : une icône SVG par catégorie',
+    iconesAccueil === nbCategories, `${iconesAccueil} icône(s) pour ${nbCategories} catégorie(s)`);
+  check('accueil : icônes inlinées, aucune image distante',
+    (accueil.text.match(/<svg[^>]*viewBox="0 0 24 24"/g) ?? []).length >= nbCategories
+      && !(accueil.text ?? '').includes('lucide'),
+    'icônes absentes ou chargées depuis un CDN');
   const catalogue = await anonyme.get('/catalogue');
   // page 1 = 12 cartes au plus, et jamais le produit masqué (RB-19)
   const visiblesSeed = (await lireTable('produit')).filter((p2) => p2.visible === 1 || p2.visible === true).length;
@@ -344,6 +353,9 @@ process.stdout.write(B('T7 · catalogue avancé (F-01…F-05)'));
   check('compteurs affichés = produits visibles par catégorie', detailCompteurs.length === 0, detailCompteurs.join(', ') || 'incohérent');
   contient('Objets connectés : 1 seul visible (le masqué exclu)', cats.text, '1 produit');
   check('le bracelet masqué n\'apparaît nulle part', !(cats.text ?? '').includes('Bracelet'), 'Bracelet visible');
+  const iconesCats = (cats.text.match(/carte-categorie__icone/g) ?? []).length;
+  check('page catégories : une icône par catégorie',
+    iconesCats === (await lireTable('categorie')).length, `${iconesCats} icône(s)`);
 
   // F-02/03 : filtres cumulables, conservés dans l'URL
   const f = await anon.get('/catalogue?cat=3&prix_max=100&stock=1&tri=prix_asc');

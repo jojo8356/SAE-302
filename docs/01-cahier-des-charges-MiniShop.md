@@ -1643,7 +1643,7 @@ Répartition cible, cohérente avec le RACI §3.3 : B ≈ 45 % des commits de `s
 | Intégration base | procédures, triggers, contraintes, transactions, vues, frais de port | `scripts/run_sql_tests.sh` (29 tests) | **29/29 conformes (obtenu)** |
 | Fonctionnel de bout en bout | les 14 cas d'utilisation, côté navigateur | plan de recette à 33 cas (F-01…F-33), exécuté à la main + captures | 33/33 attendus, aucune anomalie bloquante ou majeure |
 | Conformité légale (prix, port, rétractation) | mentions d'information précontractuelle | recette `F-33` + revue des pages CGV/mentions (`EF-GEN-05`) | port affiché **avant** validation, récapitulatif conforme à `ENF-14` ; **conçu, à exécuter avec l'application** (la partie base est prouvée par `T-28`) |
-| Sécurité | 9 catégories de menaces de la matrice §8.8, couvertes par 10 tests offensifs `S-01…S-10` | `tests/security/controles.sh` (10 contrôles statiques, exécutés) + tests offensifs à dérouler sur l'application (L12) | 10/10 attaques échouent — **mesuré** : rejouées par l'E2E (T6, T12, T13) sur l'application, 182 vérifications vertes le 28/10/2026 |
+| Sécurité | 9 catégories de menaces de la matrice §8.8, couvertes par 10 tests offensifs `S-01…S-10` | `tests/security/controles.sh` (10 contrôles statiques, exécutés) + tests offensifs à dérouler sur l'application (L12) | 10/10 attaques échouent — **mesuré** : rejouées par l'E2E (T6, T12, T13) sur l'application, 185 vérifications vertes le 28/10/2026 |
 | Performance / concurrence | `ENF-01` (base : `tests/perf/mesurer_sql.sh`, mesuré ; HTTP : `tests/perf/mesurer.sh`, à dérouler avec l'application), absence de survente | `tests/charge/reserver.sh` | 20 requêtes simultanées sur 12 unités ⇒ 12 commandes, 8 refus, `stock = 0` |
 | Installation / portabilité | `README.md`, `scripts/*` | machine propre (nouveau compte OS) | installation ≤ 15 min, démo complète ensuite |
 | Validation finale | exigence par exigence | matrice §4.1 ↔ tests (annexe 17.8 → `docs/02-document-tests-validation.md` §6) | 100 % des exigences couvertes, 0 exigence non testée |
@@ -1717,7 +1717,7 @@ Ces sept lignes sont **à montrer en soutenance** : elles prouvent que la base a
 |---|---|---:|---|---|
 | i | Document de **spécification du système** (9 parties) | 20 | `docs/01-cahier-des-charges-MiniShop.md` §1→§9 (+ annexes) | ✅ complet |
 | ii | Document d'**analyse et conception de base de données** | 20 | `docs/04-conception-bd-et-sql.md` (document autonome au plan du sujet : MCD, MLD, normalisation, script SQL, procédures, triggers + annexes `sql/*` verbatim) — même contenu au §12 du présent document + `sql/*` | ✅ complet |
-| iii | **Application Web** PHP/MySQL/PDO fonctionnant selon le CDC + les deux documents | 30 | `app/`, `public/`, `sql/`, `tests/` | ✅ livrée et testée — campagne du 28/10/2026 : 11 suites vertes, SQL 29/29, E2E 182 |
+| iii | **Application Web** PHP/MySQL/PDO fonctionnant selon le CDC + les deux documents | 30 | `app/`, `public/`, `sql/`, `tests/` | ✅ livrée et testée — campagne du 28/10/2026 : 11 suites vertes, SQL 29/29, E2E 185 |
 | iv | **Soutenance** (15 min + questions) | 10 | `docs/03-support-soutenance.md`, §17.11 | ✅ produite (support + diaporama 12 slides) |
 | v | **Contribution régulière sur GitLab** + `README.md` d'installation | 10 (individuel) | dépôt GitLab, §14 | ⚙️ continu (règle : ≥ 1 commit/semaine/personne) |
 
@@ -1751,7 +1751,7 @@ Toute demande nouvelle (fonctionnalité, règle, écran) est traitée en 4 quest
 
 ### 16.4 Limites assumées de ce document
 
-1. ~~**le code PHP n'est pas encore écrit**~~ — **périmé depuis le 28/10/2026**. Ce paragraphe décrivait l'état du CDC au moment de sa rédaction ; l'application est depuis livrée et testée (11 suites vertes : linter 0 violation sur 101 fichiers, 29/29 règles SQL sur base réelle, 282 vérifications unitaires, 182 vérifications E2E). Les mentions d'état du §16 ont été mises à jour en conséquence, et le PV de recette du `docs/02` §8 porte les résultats de la campagne.
+1. ~~**le code PHP n'est pas encore écrit**~~ — **périmé depuis le 28/10/2026**. Ce paragraphe décrivait l'état du CDC au moment de sa rédaction ; l'application est depuis livrée et testée (11 suites vertes : linter 0 violation sur 101 fichiers, 29/29 règles SQL sur base réelle, 282 vérifications unitaires, 185 vérifications E2E). Les mentions d'état du §16 ont été mises à jour en conséquence, et le PV de recette du `docs/02` §8 porte les résultats de la campagne.
 2. Les tests **SQL** (29), le chargement de la base, les procédures, les triggers et les diagrammes **ont** été exécutés/rendus dans un environnement réel (MariaDB 11.8.6) ; les mesures **côté base** `ENF-01/ENF-02` (SQL sans PHP) sont **acquises** (`tests/perf/mesurer_sql.sh`, 15–17 ms sur 200 produits / 1 000 commandes) ; la mesure **HTTP** (`tests/perf/mesurer.sh`, p95) reste un protocole à exécuter une fois le PHP livré (§15.4).
 3. Le langage MySQL visé est **MySQL 8.0.16+** ; l'environnement de développement de l'équipe peut être MariaDB 10.6+/11.x : le script a été écrit pour être valide dans les deux (collation `utf8mb4_unicode_ci`, pas de `GENERATED ALWAYS`, marqueurs `?` dans les requêtes préparées de procédure) et c'est vérifié par le chargement réussi ci-dessus.
 

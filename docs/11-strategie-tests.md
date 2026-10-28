@@ -14,7 +14,7 @@ La pyramide des tests est souvent citée puis contredite par les chiffres. Voici
 | 3 | Règles de gestion sur le moteur | `tests/php/run_tests.php` (T-01 → T-29 du CDC §6), `tests/php/engine_smoke.php` | **29/29** scénarios, **44** contrôles moteur | ~ 10 s |
 | 4 | Fonctionnalités de bout en bout (application court-circuitée) | `tests/php/features_test.php` (UC-01 → UC-14 via les dépôts) | **108** vérifications | ~ 4 s |
 | 5 | Intégration SQL réelle | `tests/php/sql_integration.php` → `tests/sql/run_tests.sh` | **29** scénarios sur MariaDB | ~ 30 s |
-| 6 | Parcours HTTP complet | `scripts/e2e.mjs` (seed, requêtes réelles, restauration des données) | **182** vérifications | ~ 90 s |
+| 6 | Parcours HTTP complet | `scripts/e2e.mjs` (seed, requêtes réelles, restauration des données) | **185** vérifications | ~ 90 s |
 | 7 | Performance | `scripts/capture_perf.sh` → `gen_volumes.sh` + `tests/perf/mesurer_sql.sh` | 5 requêtes types + `EXPLAIN` + p95 de la recherche | ~ 60 s |
 
 **Total** : 806 vérifications automatisées sur les étages 1→6, plus 29 scénarios SQL rejoués sur un vrai serveur.
@@ -43,7 +43,7 @@ Dégradation : sans client `mariadb`/`mysql` dans le `PATH`, ou sans serveur joi
 
 ### 2.3 Tests de bout en bout (étage 6) — ce que l'utilisateur voit
 
-`scripts/e2e.mjs` ne simule rien : il envoie des requêtes au front controller, suit les redirections, vérifie les codes HTTP, le contenu des pages, la présence des jetons CSRF, la persistance en base. 182 vérifications couvrant inscription, connexion, recherche, panier, commande, suivi, administration.
+`scripts/e2e.mjs` ne simule rien : il envoie des requêtes au front controller, suit les redirections, vérifie les codes HTTP, le contenu des pages, la présence des jetons CSRF, la persistance en base. 185 vérifications couvrant inscription, connexion, recherche, panier, commande, suivi, administration.
 
 Le point non évident : **le test photographie `data/` avant de le restaurer après**, y compris en cas d'échec. Sans cela, une campagne laisserait des commandes de test dans le jeu de démonstration, et la suivante échouerait sur des stocks que personne n'a modifiés — panne classique, invisible sur une machine neuve, systématique en soutenance.
 
@@ -54,7 +54,7 @@ Trois suites tournent **sans exécuter l'application**. Elles sont rapides, et e
 | Suite | Ce qu'elle garantit | Exemple de défaut attrapé |
 |---|---|---|
 | `contract_http.php` (26) | Chaque lien et chaque `action=` d'une vue pointe vers une route **déclarée** ; toute route `/admin/*` porte une garde ; aucune écriture en `GET` ; les en-têtes de sécurité sont émis | un `<a href="/commande/suivi">` après renommage de la route ; une route d'administration sans `exigerAdmin()` |
-| `css_contract.php` (55) | Les jetons du design system sont réellement définis et utilisés ; les contrastes calculés passent AA ; la CSP n'autorise pas d'origine externe | une couleur écrite en dur qui contourne le jeton ; un `style=` inline bloqué par la CSP |
+| `css_contract.php` (61) | Les jetons du design system sont réellement définis et utilisés ; les contrastes calculés passent AA ; la CSP n'autorise pas d'origine externe | une couleur écrite en dur qui contourne le jeton ; un `style=` inline bloqué par la CSP |
 | `responsive_contract.php` (48) | La mise en page tient de 320 px à 1536 px (WCAG 1.4.10) : pas de largeur fixe, tableaux en conteneur défilant, cibles tactiles ≥ 24 px | une grille `min-width: 900px` qui provoque un défilement horizontal sur mobile |
 
 Ces tests sont **statiques** : ils analysent les fichiers. C'est une limite réelle (aucune validation de navigateur), compensée par la vérification manuelle des paliers 320/768/1024/1536 documentée au §5 du document de tests.
