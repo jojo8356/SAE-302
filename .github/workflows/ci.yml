@@ -97,7 +97,20 @@ jobs:
           coverage: none
           tools: none
       - name: Analyse et tests sans SQL ni E2E
-        run: php scripts/run-all-tests.php --sans-sql --sans-e2e
+        shell: bash
+        run: |
+          set +e
+          php scripts/run-all-tests.php --sans-sql --sans-e2e 2>&1 | tee "$RUNNER_TEMP/minishop-tests.log"
+          etat=${PIPESTATUS[0]}
+          set -e
+          if [ "$etat" -ne 0 ]; then
+            # Résumé consultable via les annotations même si les logs sont indisponibles.
+            grep -E '❌|ERROR:|FAIL:|AssertionError|Fatal error|Parse error|Deprecated:' "$RUNNER_TEMP/minishop-tests.log" | head -20 | while IFS= read -r ligne; do
+              ligne=${ligne//%/%25}
+              echo "::error::${ligne}"
+            done || true
+          fi
+          exit "$etat"
 
   # -----------------------------------------------------------------
   # 2. Conventions PSR-12 : signalées, non bloquantes (allow_failure)
