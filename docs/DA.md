@@ -209,7 +209,7 @@ Contrastes calculés selon WCAG 2.1 (ratio `(L1+0.05)/(L2+0.05)`), vérifiés pa
 | 6 | **Pagination** | Précédent / numéros / Suivant ; page courante `aria-current="page"` |
 | 7 | **Tableau** (back-office) | en-têtes sombres, lignes zébrées, `caption`, chiffres alignés à droite |
 | 8 | **Formulaire** | label au-dessus, aide en 14 px, erreur sous le champ + `aria-describedby`, focus 3 px |
-| 9 | **Boutons** | primaire (accent), secondaire (contour), discret (lien) ; 3 tailles ; état `disabled` explicite |
+| 9 | **Boutons** | primaire (accent), secondaire (contour), discret (lien) ; 3 tailles ; état `disabled` explicite : fond et texte inchangés au survol, curseur interdit |
 | 10 | **Badges d'état** | `Disponible` / `Bientôt épuisé` / `Rupture` / statuts de commande, toujours avec texte |
 | 11 | **Messages flash** | bandeau `role="status"` (succès) ou `role="alert"` (erreur), refermable, non bloquant |
 | 12 | **État vide** | une phrase qui explique quoi faire + un lien d'action (jamais une page blanche) |

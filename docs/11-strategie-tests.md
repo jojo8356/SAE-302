@@ -54,7 +54,7 @@ Trois suites tournent **sans exécuter l'application**. Elles sont rapides, et e
 | Suite | Ce qu'elle garantit | Exemple de défaut attrapé |
 |---|---|---|
 | `contract_http.php` (26) | Chaque lien et chaque `action=` d'une vue pointe vers une route **déclarée** ; toute route `/admin/*` porte une garde ; aucune écriture en `GET` ; les en-têtes de sécurité sont émis | un `<a href="/commande/suivi">` après renommage de la route ; une route d'administration sans `exigerAdmin()` |
-| `css_contract.php` (61) | Les jetons du design system sont réellement définis et utilisés ; les contrastes calculés passent AA ; la CSP n'autorise pas d'origine externe | une couleur écrite en dur qui contourne le jeton ; un `style=` inline bloqué par la CSP |
+| `css_contract.php` (64) | Les jetons du design system sont réellement définis et utilisés ; les contrastes calculés passent AA ; la CSP n'autorise pas d'origine externe | une couleur écrite en dur qui contourne le jeton ; un `style=` inline bloqué par la CSP |
 | `responsive_contract.php` (48) | La mise en page tient de 320 px à 1536 px (WCAG 1.4.10) : pas de largeur fixe, tableaux en conteneur défilant, cibles tactiles ≥ 24 px | une grille `min-width: 900px` qui provoque un défilement horizontal sur mobile |
 
 Ces tests sont **statiques** : ils analysent les fichiers. C'est une limite réelle (aucune validation de navigateur), compensée par la vérification manuelle des paliers 320/768/1024/1536 documentée au §5 du document de tests.

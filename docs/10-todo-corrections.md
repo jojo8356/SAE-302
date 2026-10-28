@@ -171,6 +171,12 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] Suite WASM verte (fonctionnalités 131, E2E 188), linter strict-types vert.
 - [ ] Vérification sur MariaDB et contrôle visuel du navigateur : non joués dans la sandbox (serveur SQL et navigateur absents).
 
+## 6 quinquies. Bouton indisponible sans effet au survol — **fait**
+
+- [x] Les états survol et appui sont réservés aux boutons actifs ; les boutons désactivés gardent leur fond, leur texte et leur bordure, avec le curseur `not-allowed`.
+- [x] Contrats CSS : état désactivé, exclusion des effets interactifs et attribut `disabled` du bouton produit (64 contrôles de design).
+- [ ] Contrôle visuel dans un navigateur : non joué dans la sandbox (aucun navigateur disponible).
+
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 
 - [!] **Noms, prénoms, numéros étudiants** des 3 membres + emails → README §Membres et CDC §3.3 (aucune identité ne peut être inventée).

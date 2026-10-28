@@ -387,6 +387,30 @@ $check('CSS : pastille d icône dimensionnée et contrastée', (static function 
         && str_contains($css, '.carte-categorie:hover .carte-categorie__icone');
 })());
 
+// Boutons désactivés : aucun style interactif ne doit s'appliquer à leur survol.
+$debutBoutons = strpos($css, '10. Boutons / badges');
+$finBoutons = strpos($css, '.badge {', (int) $debutBoutons);
+$cssBoutons = substr($css, (int) $debutBoutons, (int) $finBoutons - (int) $debutBoutons);
+$check('boutons : survol et appui réservés aux boutons actifs', (static function () use ($cssBoutons): bool {
+    if (preg_match_all('/(?:button|\.btn(?:--[a-z]+)?):(?:hover|active)[^{,]*/', $cssBoutons, $regles) < 6) {
+        return false;
+    }
+    foreach ($regles[0] as $regle) {
+        if (!str_contains($regle, ':not(:disabled)') || !str_contains($regle, ':not([disabled])')
+            || !str_contains($regle, ':not([aria-disabled="true"])')) {
+            return false;
+        }
+    }
+    return true;
+})());
+$check('boutons désactivés : fond, texte, bordure et curseur conservés',
+    str_contains($cssBoutons, 'button:disabled,')
+    && str_contains($cssBoutons, '.btn[aria-disabled="true"]')
+    && preg_match('/button:disabled,.*?\{[^}]*background:\s*var\(--surface-2\);[^}]*color:\s*#64748b;[^}]*border-color:\s*var\(--bordure\);[^}]*cursor:\s*not-allowed;/s', $cssBoutons) === 1);
+$check('fiche produit : le bouton indisponible est nativement désactivé',
+    str_contains((string) file_get_contents($racine . '/app/View/catalogue/produit.php'),
+        '<button type="button" class="btn--acheter" disabled>Indisponible</button>'));
+
 // ------------------------------------------------------------------ verdict
 echo "\n" . str_repeat('=', 60) . "\n";
 if ($echecs === 0) {

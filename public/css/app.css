@@ -1187,20 +1187,24 @@ button,
     transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
 }
 
-button:hover,
-.btn:hover {
+button:hover:not(:disabled):not([disabled]):not([aria-disabled="true"]),
+.btn:hover:not(:disabled):not([disabled]):not([aria-disabled="true"]) {
     background: #1e293b;
     color: #fff;
 }
 
-button:active,
-.btn:active {
+button:active:not(:disabled):not([disabled]):not([aria-disabled="true"]),
+.btn:active:not(:disabled):not([disabled]):not([aria-disabled="true"]) {
     transform: translateY(1px);
 }
 
+/* Aucun effet de survol ou d'appui sur un contrôle désactivé. */
+button:disabled,
 button[disabled],
+.btn:disabled,
 .btn[disabled],
-button[aria-disabled="true"] {
+button[aria-disabled="true"],
+.btn[aria-disabled="true"] {
     background: var(--surface-2);
     color: #64748b;
     border-color: var(--bordure);
@@ -1214,7 +1218,7 @@ button[aria-disabled="true"] {
     width: 100%;
 }
 
-.btn--acheter:hover {
+.btn--acheter:hover:not(:disabled):not([disabled]):not([aria-disabled="true"]) {
     background: var(--accent-fonce);
 }
 
@@ -1224,7 +1228,7 @@ button[aria-disabled="true"] {
     border-color: var(--bordure-forte);
 }
 
-.btn--secondaire:hover {
+.btn--secondaire:hover:not(:disabled):not([disabled]):not([aria-disabled="true"]) {
     background: var(--surface-2);
     color: var(--encre);
 }
@@ -1235,7 +1239,7 @@ button[aria-disabled="true"] {
     border-color: color-mix(in srgb, var(--danger) 40%, white);
 }
 
-.btn--danger:hover {
+.btn--danger:hover:not(:disabled):not([disabled]):not([aria-disabled="true"]) {
     background: var(--danger-fond);
     color: var(--danger);
 }
@@ -1248,7 +1252,7 @@ button[aria-disabled="true"] {
     text-decoration: underline;
 }
 
-.btn--discret:hover {
+.btn--discret:hover:not(:disabled):not([disabled]):not([aria-disabled="true"]) {
     background: var(--primaire-fond);
     color: var(--primaire-fonce);
 }
