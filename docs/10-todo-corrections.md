@@ -301,6 +301,14 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] CI du commit `01cc0fa` : tests HTTP natifs PHP 8.2/8.5, E2E WASM, PHPUnit, sécurité et MySQL 8 jetable réussis.
 - [!] En local, PHP natif, SQL, navigateur réel et hébergement ne sont pas disponibles ; navigateur et LineServ restent à vérifier.
 
+## 6 vicies. Suppression de la méthode `withStore` redondante
+
+- [x] Confirmer les usages dans les sources versionnées et retirer `withStore` avec l’accord de l’utilisateur ; préserver `CommandeRepository::for()`.
+- [x] Tester que la fabrique conserve l’isolation des magasins et les paramètres de livraison associés.
+- [x] Actualiser le référentiel de code potentiellement inutilisé et documenter la rupture possible pour les consommateurs externes (5 candidats restants).
+- [x] Suites PHP-WASM isolées : 37 tests unitaires locaux ; E2E WASM : 309 contrôles ; sécurité : 10 contrôles et autotest. Publication sur la branche Arena et validation CI à suivre.
+- [!] La méthode étant publique, les consommateurs externes doivent migrer vers `CommandeRepository::for($store)` ; ils ne peuvent pas être inventoriés depuis ce dépôt. PHP natif, MariaDB et navigateur réel non joués localement.
+
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 
 - [!] **Noms, prénoms, numéros étudiants** des 3 membres + emails → README §Membres et CDC §3.3 (aucune identité ne peut être inventée).

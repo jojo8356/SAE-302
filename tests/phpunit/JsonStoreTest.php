@@ -6,6 +6,7 @@ namespace MiniShop\Tests;
 
 use App\Model\Data\BusinessError;
 use App\Model\Data\ConstraintError;
+use App\Model\Data\Filter;
 use App\Repository\CommandeRepository;
 use App\Model\Data\JsonStore;
 use App\Model\Data\Seed;
@@ -24,6 +25,44 @@ final class JsonStoreTest extends TestCase
     {
         $this->store = JsonStore::open(MINISHOP_TESTS_TMP . '/store_' . bin2hex(random_bytes(4)));
         Seed::force($this->store);
+    }
+
+    public function testFabriqueCommandeUtiliseLeMagasinEtSesParametres(): void
+    {
+        $dossier = MINISHOP_TESTS_TMP . '/autre_store_' . bin2hex(random_bytes(4));
+        $autreStore = JsonStore::open($dossier);
+        try {
+            Seed::force($autreStore);
+            $this->store->update('parametre', [Filter::eq('cle', 'frais_port')], ['valeur' => '7.20']);
+            $autreStore->update('parametre', [Filter::eq('cle', 'frais_port')], ['valeur' => '12.30']);
+            $depotA = CommandeRepository::for($this->store);
+            $depotB = CommandeRepository::for($autreStore);
+
+            $client = $this->store->findOne('client', [Filter::eq('email', 'alice@example.com')]);
+            $produit = $this->store->findOne('produit', [Filter::eq('reference', 'CABLE-009')]);
+            self::assertNotNull($client);
+            self::assertNotNull($produit);
+            $panier = [['id_produit' => (int) $produit['id_produit'], 'quantite' => 1]];
+            $commandeA = $depotA->createOrderFromBasket((int) $client['id_client'], 'Fixture test', $panier);
+            self::assertNull($depotB->find((int) $commandeA['id_commande']), 'Les magasins doivent rester isolés');
+            $commandeB = $depotB->createOrderFromBasket((int) $client['id_client'], 'Fixture test', $panier);
+
+            $ligneA = $depotA->find((int) $commandeA['id_commande']);
+            $ligneB = $depotB->find((int) $commandeB['id_commande']);
+            self::assertNotNull($ligneA);
+            self::assertNotNull($ligneB);
+            self::assertEqualsWithDelta(7.20, (float) $ligneA['frais_port'], 0.001);
+            self::assertEqualsWithDelta(12.30, (float) $ligneB['frais_port'], 0.001);
+            self::assertEqualsWithDelta(22.20, (float) $ligneA['montant_total'], 0.001);
+            self::assertEqualsWithDelta(27.30, (float) $ligneB['montant_total'], 0.001);
+            self::assertSame(1, $this->store->count('commande'));
+            self::assertSame(1, $autreStore->count('commande'));
+        } finally {
+            foreach (glob($dossier . '/*') ?: [] as $fichier) {
+                @unlink($fichier);
+            }
+            @rmdir($dossier);
+        }
     }
 
     public function testInsertionProduitValide(): void

@@ -46,11 +46,6 @@ final class CommandeRepository
         return new self($store, new ParametreRepository($store));
     }
 
-    public function withStore(StoreInterface $store): self
-    {
-        return new self($store, new ParametreRepository($store));
-    }
-
     // ------------------------------------------------------------ lecture
 
     public function find(int $idCommande): ?array

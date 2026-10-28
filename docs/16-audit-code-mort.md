@@ -20,7 +20,7 @@ Les références sont des **indices textuels** et non une preuve d’exécution 
 
 ### Candidats restants à trier
 
-Réexamen des **11 alertes initiales** : le référentiel `scripts/code_mort_reference.json` en contient désormais **6**. Trois disparaissent de l’analyse parce que des tests les citent, sans preuve d’usage applicatif ; `sudoDisponible` est maintenant utilisé par le provisionnement et `page403` par le contrôleur frontal. Ce ne sont pas des preuves de code mort. Un nouvel indice fait échouer le contrôle ; les indices disparus doivent aussi être retirés du référentiel après revue. Les candidats connus restent affichables avec `php scripts/code_mort.php --rapport`.
+Réexamen des **11 alertes initiales** : le référentiel `scripts/code_mort_reference.json` en contient désormais **5**. Trois disparaissent de l’analyse parce que des tests les citent, sans preuve d’usage applicatif ; `sudoDisponible` est maintenant utilisé par le provisionnement, `page403` par le contrôleur frontal, et `withStore` a été supprimée sur demande. Ce ne sont pas des preuves de code mort. Un nouvel indice fait échouer le contrôle ; les indices disparus doivent aussi être retirés du référentiel après revue. Les candidats connus restent affichables avec `php scripts/code_mort.php --rapport`.
 
 | Candidat | Observation et décision prudente |
 |---|---|
@@ -30,7 +30,7 @@ Réexamen des **11 alertes initiales** : le référentiel `scripts/code_mort_ref
 | `Journal::tail` | Conservé ; limites zéro/négative corrigées et testées sur un fichier temporaire. La documentation ne prétend plus qu’un écran back-office le consulte. |
 | `JsonTable::isDirty` | Conservé ; transition sale/propre après persistance testée. Référence de test seulement. |
 | `Seed::comptesDemo` | Accesseur public non appelé dans le périmètre ; vérifier usages hors dépôt avant retrait. |
-| `CommandeRepository::withStore` | Aucun appel trouvé ; doublon fonctionnel de la fabrique `for`, mais méthode publique conservée par compatibilité jusqu’à validation des utilisateurs externes. |
+| `CommandeRepository::withStore` | Supprimée sur demande : aucun appel trouvé dans les sources versionnées ; la fabrique statique `for` est conservée et testée. **Rupture d’API** : remplacer tout appel externe `$depot->withStore($store)` par `CommandeRepository::for($store)`. |
 | `visuel_produit($nom)` | Paramètre non lu depuis que l’image est décorative (`alt=""`) ; les appels et la signature publique l’utilisent encore. Conserver sans changer l’accessibilité ni casser les appels nommés. |
 | `DbInstaller::codeDerniereErreur` | Accesseur public de diagnostic sans appel détecté ; conserver avant revue des outils externes. |
 | `DbProvision::sudoDisponible` | Désormais appelée avant d’écrire le fichier et lancer `sudo` ; diagnostic précoce si sudo manque. |
