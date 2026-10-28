@@ -52,11 +52,15 @@ const TYPES = {
 function servirStatique(req, res, cheminUrl) {
   if (req.method !== 'GET' && req.method !== 'HEAD') return false;
   if (!cheminUrl.startsWith('/css/') && !cheminUrl.startsWith('/js/') &&
-      !cheminUrl.startsWith('/img/') && cheminUrl !== '/favicon.ico') {
+      !cheminUrl.startsWith('/img/') && !cheminUrl.startsWith('/fonts/') && cheminUrl !== '/favicon.ico') {
     return false;
   }
   // anti-traversée : on normalise et on vérifie que le chemin reste dans public/
   const relatif = normalize(decodeURIComponent(cheminUrl)).replace(/^([/\\])+/, '');
+  // Après décodage/normalisation, rester dans une racine publique statique :
+  // ne pas exposer le PHP source via /fonts/../index.php ou un fichier caché.
+  if (!['css/', 'js/', 'img/', 'fonts/'].some((prefixe) => relatif.startsWith(prefixe)) && relatif !== 'favicon.ico') return false;
+  if (/(^|[/\\])\./.test(relatif) || !Object.hasOwn(TYPES, extname(relatif).toLowerCase())) return false;
   const absolu = join(REPO_ROOT, 'public', relatif);
   if (!absolu.startsWith(join(REPO_ROOT, 'public') + sep)) return false;
   if (!existsSync(absolu) || !statSync(absolu).isFile()) return false;

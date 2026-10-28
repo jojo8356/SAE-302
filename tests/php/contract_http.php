@@ -244,6 +244,7 @@ $check('CSP : default-src \'none\' (rien par défaut)', str_contains($source, "d
 $check('CSP : frame-ancestors \'none\' (anti-clickjacking)', str_contains($source, "frame-ancestors 'none'"));
 $check('CSP : base-uri \'none\' (anti-injection de <base>)', str_contains($source, "base-uri 'none'"));
 $check('CSP : form-action \'self\'', str_contains($source, "form-action 'self'"));
+$check('CSP : polices locales uniquement', str_contains($source, "font-src 'self'"));
 $check('CSP sans unsafe-inline', !str_contains($source, 'unsafe-inline'));
 $check('CSP sans unsafe-eval', !str_contains($source, 'unsafe-eval'));
 $check('CSP : aucune origine distante autorisée',

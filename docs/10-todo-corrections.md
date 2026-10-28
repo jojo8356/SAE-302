@@ -186,6 +186,13 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] Suites intégrées aux lanceurs PHP et WASM ; tests catalogue SQL inclus dans `sql_integration.php` sur la base dédiée, en lecture seule.
 - [ ] Scénarios du repository sur MariaDB : **non joués dans la sandbox** (serveur et client SQL absents). Leur nombre dépend du jeu chargé ; la campagne complète SQL continue de réinitialiser puis supprimer la base de test, jamais la base applicative.
 
+## 6 septies. Symbole euro et ruptures du catalogue — **fait**
+
+- [x] Symbole `€` conservé comme caractère Unicode (aucune image, aucun changement des montants). Glyphe Lato Regular adapté et renommé, limité à U+20AC, servi localement (`public/fonts/minishop-euro.woff2`) avec licence OFL ; le reste utilise la police système.
+- [x] CSP : `font-src 'self'` uniquement ; pas d'origine externe. Contrats de design et HTTP : 68 et 27 vérifications.
+- [x] `/catalogue` et `/recherche` donnent déjà la priorité aux produits en stock **avant la pagination**, avec les filtres et les cinq tris ; matrice dédiée et E2E rejoués.
+- [ ] Rendu dans le navigateur de l'utilisateur et essais MariaDB non vérifiés dans la sandbox ; la synchronisation locale précédente s'est arrêtée avant la copie à cause d'un conflit de travail local.
+
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 
 - [!] **Noms, prénoms, numéros étudiants** des 3 membres + emails → README §Membres et CDC §3.3 (aucune identité ne peut être inventée).

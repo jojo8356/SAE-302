@@ -7,9 +7,20 @@
    4. Structure         9. Formulaires            14. Responsive
    5. Composants       10. Boutons / badges       15. Impression
 
-   Contraintes : aucune police web, aucun framework, aucun !important
+   Contraintes : aucun CDN, aucun framework, aucun !important
    hors utilitaires d'accessibilité. Cibles tactiles ≥ 44 px.
    ===================================================================== */
+
+/* Euro lisible et constant : glyphe Lato adapté (OFL), fichier local limité à
+   U+20AC. Le reste du texte conserve la police système. */
+@font-face {
+    font-family: "MiniShop Euro";
+    src: url("../fonts/minishop-euro.woff2") format("woff2");
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    unicode-range: U+20AC;
+}
 
 /* ------------------------------------------------------------ 1. Tokens */
 :root {
@@ -39,7 +50,7 @@
     --info-fond: #dbeafe;
 
     /* Typographie — échelle 1,25 */
-    --police: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --police: "MiniShop Euro", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --police-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
     --t-xs: 0.75rem;
     --t-sm: 0.875rem;

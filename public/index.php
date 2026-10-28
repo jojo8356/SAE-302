@@ -45,7 +45,7 @@ header('X-Frame-Options: DENY');
 header('Referrer-Policy: same-origin');
 // CSP stricte : tout est servi depuis l'origine, aucune ressource externe.
 // Les styles et scripts vivent dans /css et /js : aucune autorisation en ligne.
-header("Content-Security-Policy: default-src 'none'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'");
+header("Content-Security-Policy: default-src 'none'; img-src 'self' data:; font-src 'self'; style-src 'self'; script-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'");
 header('X-XSS-Protection: 0'); // navigation modernes : on s'appuie sur l'échappement, pas sur ce filtre hérité
 
 Auth::demarrer();

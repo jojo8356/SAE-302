@@ -5,7 +5,7 @@
 > correspond à un token ou un composant du code, et au test `tests/php/css_contract.php`.
 >
 > **Périmètre.** Interface web responsive (360 px → 1440 px), deux contextes (boutique, back-office),
-> 14 écrans, accessibilité **WCAG 2.1 AA** (ENF-08), zéro dépendance externe (polices système, SVG inline,
+> 14 écrans, accessibilité **WCAG 2.1 AA** (ENF-08), zéro dépendance externe (polices système et glyphe euro local, SVG inline,
 > aucune CDN) pour rester conforme à `ENF-20` (« aucune dépendance runtime hors PHP/MySQL/Apache »).
 
 ---
@@ -165,8 +165,13 @@ Contrastes calculés selon WCAG 2.1 (ratio `(L1+0.05)/(L2+0.05)`), vérifiés pa
 
 ## 6. Typographie
 
-- **Une seule famille** : pile système `system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`.
-  Avantages : zéro requête réseau (offline, soutenance sans Wi-Fi), rendu natif, `ENF-20` respecté.
+- **Texte système** : pile `system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`.
+  Le caractère **€** utilise seul le glyphe de Lato Regular, adapté et renommé `MiniShopEuro`,
+  limité à `U+20AC` par `unicode-range` : deux barres lisibles, même avec un prix en gras.
+  Le fichier local `public/fonts/minishop-euro.woff2` est servi par l'application, sans CDN ;
+  la licence SIL OFL 1.1 et le copyright sont dans `public/fonts/OFL.txt` (source : `google/fonts`, `ofl/lato/Lato-Regular.ttf`, blob `0f3d0f837d24834b9b5b0a6b735459c56f5e75c3`).
+  CSP : `font-src 'self'`. En cas d'échec du chargement, le symbole texte et la pile système restent disponibles.
+  Les montants restent du texte Unicode, lisible, sélectionnable et accessible.
 - **Chiffres tabulaires** (`font-variant-numeric: tabular-nums`) sur les prix, montants et stocks :
   les colonnes de tableaux s'alignent.
 - Échelle modulaire 1,25 (base 16 px) :
@@ -343,7 +348,7 @@ node scripts/wasm_run.mjs tests/php/css_contract.php
 - pas d'animations au-delà de 150 ms ;
 - pas de framework CSS (ni Bootstrap ni Tailwind) : le design system est écrit à la main, ~700 lignes,
   lisible et testable — argument de soutenance sur la maîtrise du CSS ;
-- pas de police web : la pile système garantit un rendu identique hors ligne.
+- pas de CDN de polices : la pile système et le glyphe euro local fonctionnent hors ligne.
 
 ---
 

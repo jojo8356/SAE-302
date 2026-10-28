@@ -411,6 +411,21 @@ $check('fiche produit : le bouton indisponible est nativement désactivé',
     str_contains((string) file_get_contents($racine . '/app/View/catalogue/produit.php'),
         '<button type="button" class="btn--acheter" disabled>Indisponible</button>'));
 
+// Le symbole euro conserve le caractère Unicode € ; seule sa police change.
+$check('euro : police locale limitée au seul caractère U+20AC',
+    preg_match('/@font-face\s*\{[^}]*font-family:\s*"MiniShop Euro";[^}]*url\("\.\.\/fonts\/minishop-euro\.woff2"\)[^}]*unicode-range:\s*U\+20AC;/s', $css) === 1
+    && str_contains($css, '--police: "MiniShop Euro", system-ui'));
+$check('euro : fichier WOFF2 local présent et licence livrée',
+    is_file($racine . '/public/fonts/minishop-euro.woff2')
+    && substr((string) file_get_contents($racine . '/public/fonts/minishop-euro.woff2'), 0, 4) === 'wOF2'
+    && is_file($racine . '/public/fonts/OFL.txt')
+    && str_contains((string) file_get_contents($racine . '/public/fonts/OFL.txt'), 'SIL OPEN FONT LICENSE'));
+$check('euro : serveur WASM autorise les polices statiques WOFF2',
+    str_contains((string) file_get_contents($racine . '/scripts/wasm-serve.mjs'), "cheminUrl.startsWith('/fonts/')")
+    && str_contains((string) file_get_contents($racine . '/scripts/wasm-serve.mjs'), "'.woff2': 'font/woff2'"));
+$check('euro : montant reste du texte UTF-8, sans image ni balise',
+    euros(1234.5) === '1 234,50 €' && !str_contains(euros(1234.5), '<'));
+
 // ------------------------------------------------------------------ verdict
 echo "\n" . str_repeat('=', 60) . "\n";
 if ($echecs === 0) {
