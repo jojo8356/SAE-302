@@ -202,7 +202,7 @@ function mesurer_serveur(string $fullUrl, int $n, int $c): array
                     CURLOPT_SSL_VERIFYHOST => 0,
                 ]);
                 curl_multi_add_handle($mh, $ch);
-                $handles[(int)$ch] = ['ch'=>$ch, 'start'=>microtime(true)];
+                $handles[spl_object_id($ch)] = ['ch'=>$ch, 'start'=>microtime(true)];
                 $next++;
             }
             do {
@@ -215,14 +215,14 @@ function mesurer_serveur(string $fullUrl, int $n, int $c): array
                     $ch = $info['handle'];
                     $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
                     $t = (float)curl_getinfo($ch, CURLINFO_TOTAL_TIME);
-                    if ($t === 0.0 && isset($handles[(int)$ch]['start'])) {
-                        $t = microtime(true) - $handles[(int)$ch]['start'];
+                    if ($t === 0.0 && isset($handles[spl_object_id($ch)]['start'])) {
+                        $t = microtime(true) - $handles[spl_object_id($ch)]['start'];
                     }
                     $times[] = $t;
                     if ($code === 200) $ok++; else $fail++;
                     curl_multi_remove_handle($mh, $ch);
-                    curl_close($ch);
-                    unset($handles[(int)$ch]);
+                    unset($handles[spl_object_id($ch)]);
+                    unset($ch);
                     // ajoute le suivant s'il en reste
                     if ($next < $n) {
                         $ch2 = curl_init($fullUrl);
@@ -237,12 +237,12 @@ function mesurer_serveur(string $fullUrl, int $n, int $c): array
                             CURLOPT_SSL_VERIFYHOST => 0,
                         ]);
                         curl_multi_add_handle($mh, $ch2);
-                        $handles[(int)$ch2] = ['ch'=>$ch2, 'start'=>microtime(true)];
+                        $handles[spl_object_id($ch2)] = ['ch'=>$ch2, 'start'=>microtime(true)];
                         $next++;
                     }
                 }
             } while ($active || $next < $n);
-            curl_multi_close($mh);
+            unset($mh);
         } else {
             // séquentiel (c=1 ou pas de multi)
             for ($i = 0; $i < $n; $i++) {
@@ -267,7 +267,7 @@ function mesurer_serveur(string $fullUrl, int $n, int $c): array
                 if ($code === 200) $ok++; else $fail++;
                 $err = curl_error($ch);
                 if ($err !== '' && $code === 0) $fail = $fail; // déjà compté
-                curl_close($ch);
+                unset($ch);
             }
         }
     } else {
@@ -279,7 +279,14 @@ function mesurer_serveur(string $fullUrl, int $n, int $c): array
             $t = microtime(true) - $t0;
             $times[] = $t;
             $code = 0;
-            if (isset($http_response_header[0]) && preg_match('#\s(\d{3})\s#', $http_response_header[0], $m)) $code = (int)$m[1];
+            // PHP 8.5 déprécie la variable locale implicite. En 8.2–8.4,
+            // elle reste disponible parmi les variables du contexte courant.
+            if (function_exists('http_get_last_response_headers')) {
+                $headers = http_get_last_response_headers() ?? [];
+            } else {
+                $headers = get_defined_vars()['http_response_header'] ?? [];
+            }
+            if (isset($headers[0]) && preg_match('#\s(\d{3})\s#', $headers[0], $m)) $code = (int)$m[1];
             if ($code === 200 && $res !== false) $ok++; else $fail++;
         }
     }

@@ -216,11 +216,12 @@ if ($opts['write-sql']) {
     //    colonnes : (nom, prenom, email, mot_de_passe_hash, role) → on remplace
     //    les deux champs littéraux qui suivent le couple (Nguyen, Alice).
     $oldAdminRe = "/(\\('Nguyen','Alice',)'[^']*','[^']*'(,'SUPER'\\);)/u";
-    $newAdmin  = "${1}'{$emails['admin']}','{$adminHash}'${2}";
     if (!preg_match($oldAdminRe, $sql)) {
         fail("pattern INSERT administrateur non trouvé dans le schéma");
     }
-    $sql = preg_replace($oldAdminRe, $newAdmin, $sql, 1, $countAdmin);
+    $sql = preg_replace_callback($oldAdminRe, static function (array $m) use ($emails, $adminHash): string {
+        return $m[1] . "'" . $emails['admin'] . "','" . $adminHash . "'" . $m[2];
+    }, $sql, 1, $countAdmin);
 
     // 2) 3 lignes clients — colonnes : (nom, prenom, email, mot_de_passe_hash,
     //    telephone, adresse_livraison, code_postal, ville). On remplace email
@@ -236,7 +237,9 @@ if ($opts['write-sql']) {
         if (!preg_match($re, $sql)) {
             fail("pattern client $prenom $nom non trouvé dans le schéma");
         }
-        $sql = preg_replace($re, "${1}'{$newEmail}','{$clientHash}'${2}", $sql, 1, $c);
+        $sql = preg_replace_callback($re, static function (array $m) use ($newEmail, $clientHash): string {
+            return $m[1] . "'" . $newEmail . "','" . $clientHash . "'" . $m[2];
+        }, $sql, 1, $c);
         $countClients += $c;
     }
 

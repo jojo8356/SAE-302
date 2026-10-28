@@ -83,7 +83,10 @@ final class DbConnexion
 
         // La constante n'existe que si pdo_mysql est chargée (le repli JSON
         // fonctionne sans elle).
-        if (defined('PDO::MYSQL_ATTR_INIT_COMMAND')) {
+        if (defined('Pdo\\Mysql::ATTR_INIT_COMMAND')) {
+            $options[constant('Pdo\\Mysql::ATTR_INIT_COMMAND')] = 'SET NAMES utf8mb4 COLLATE ' . self::COLLATION;
+        } elseif (defined('PDO::MYSQL_ATTR_INIT_COMMAND')) {
+            // PHP 8.2 et 8.3 : l'ancienne constante n'y est pas dépréciée.
             $options[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET NAMES utf8mb4 COLLATE ' . self::COLLATION;
         }
 

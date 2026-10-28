@@ -41,12 +41,17 @@ if (!target) {
 }
 
 const php = await createPhp();
+if (process.env.MINISHOP_TESTS === '1') {
+  php.setPhpIniEntry('error_reporting', '-1');
+  php.setPhpIniEntry('display_errors', '1');
+  php.setPhpIniEntry('auto_prepend_file', '/repo/tests/php/deprecations_bootstrap.php');
+}
 const resultat = args.length > 0
   ? await runScriptAvecArguments(php, target, args)
   : await runScript(php, target);
 const { text, errors } = resultat;
-// Les tests ne doivent jamais remplacer les journaux locaux de l’utilisateur.
-await syncBack(php, process.env.MINISHOP_TESTS === '1' ? ['data'] : undefined);
+// Les tests isolés ne doivent jamais rapatrier ni données ni journaux locaux.
+await syncBack(php, process.env.MINISHOP_TESTS === '1' ? [] : undefined);
 
 const sortie = `${text}\n${errors}`;
 process.stdout.write(text + (errors ? `\n[PHP errors]\n${errors}` : '') + '\n');

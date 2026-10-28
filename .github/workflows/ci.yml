@@ -80,6 +80,25 @@ jobs:
           find app public -name '*.php' -print0 | xargs -0 -n1 -P4 php -l
           echo "✓ syntaxe OK"
 
+  # Dépréciations : les suites isolées ne créent ni base SQL ni données E2E.
+  deprecations:
+    name: Dépréciations PHP ${{ matrix.php }} et suites isolées
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["8.2", "8.5"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, pdo_mysql
+          coverage: none
+          tools: none
+      - name: Analyse et tests sans SQL ni E2E
+        run: php scripts/run-all-tests.php --sans-sql --sans-e2e
+
   # -----------------------------------------------------------------
   # 2. Conventions PSR-12 : signalées, non bloquantes (allow_failure)
   # -----------------------------------------------------------------

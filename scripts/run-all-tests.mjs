@@ -22,14 +22,25 @@
 import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 
-// Les suites héritent du drapeau : aucune ne peut créer un compte MySQL ni une
-// base sur la machine (cf. DbProvision::contexteDeTest()).
+// Le drapeau bloque la provision applicative (DbProvision::contexteDeTest()).
+// Attention : la suite SQL explicite peut créer et supprimer minishop_test.
 process.env.MINISHOP_TESTS = '1';
+const options = process.argv.slice(2);
+if (options.some(option => !['--sans-sql', '--sans-e2e'].includes(option))) {
+  console.error('Usage : node scripts/run-all-tests.mjs [--sans-sql] [--sans-e2e]');
+  process.exit(2);
+}
+const sansSql = options.includes('--sans-sql');
+const sansE2e = options.includes('--sans-e2e');
 
 // Sur une machine avec PHP natif, AUCUNE dépendance npm n'est nécessaire :
 // on exécute directement `php <script>`. Le runtime WASM (@php-wasm/node) ne
 // sert que dans les environnements sans PHP (sandbox de développement).
 const phpExiste = spawnSync('php', ['-r', 'echo PHP_VERSION;'], { encoding: 'utf8' }).status === 0;
+if (phpExiste) {
+  const natif = spawnSync('php', ['scripts/run-all-tests.php', ...options], { stdio: 'inherit' });
+  process.exit(natif.status ?? 1);
+}
 
 /** Construit la commande d'un script PHP : natif si possible, sinon WASM. */
 const commande = (fichier) => {
@@ -64,6 +75,15 @@ console.log(phpExiste
   ? '\nExécution en PHP natif (aucune dépendance npm requise).'
   : '\nPHP natif absent : exécution via le runtime WASM (@php-wasm/node).');
 
+console.log('⏭ NON JOUÉ : analyse de compilation des dépréciations (PHP CLI natif absent).');
+console.log('  Les suites WASM contrôlent les dépréciations à l’exécution avec PHP 8.2.');
+
+console.log(`\n${'='.repeat(64)}\n▸ Autotests du contrôle des dépréciations\n${'='.repeat(64)}`);
+const autoAnalyse = spawnSync('python3', ['tests/python/test_deprecations.py'], { stdio: 'inherit' });
+if (autoAnalyse.status !== 0) ++échecs;
+const autoWasm = spawnSync('node', ['tests/js/deprecations_wasm.mjs'], { stdio: 'inherit' });
+if (autoWasm.status !== 0) ++échecs;
+
 // Le harnais se vérifie lui-même : sans cela, une régression du calcul du
 // verdict rendrait toutes les suites vertes par construction.
 console.log(`\n${'='.repeat(64)}\n▸ Autotest du verdict WASM — scripts/wasm_verdict.mjs\n${'='.repeat(64)}`);
@@ -84,7 +104,10 @@ for (const [nom, fichier] of suites) {
 // pas un échec. La compter comme telle ferait échouer la sandbox sur une suite
 // qu'elle ne peut structurellement pas exécuter.
 let étatsql = 'NON JOUÉ ⏭ (serveur ou client MySQL absent)';
-if (!existsSync('tests/php/sql_integration.php')) {
+if (sansSql) {
+  étatsql = 'NON JOUÉ ⏭ (--sans-sql)';
+  console.log('⏭ NON JOUÉ : intégration SQL (--sans-sql).');
+} else if (!existsSync('tests/php/sql_integration.php')) {
   console.log('  ❌ fichier absent');
   ++échecs;
   étatsql = 'fichier absent ❌';
@@ -103,11 +126,15 @@ if (échecs > 0) {
   console.log(`SUITES : ${échecs} étape(s) en échec ❌ — E2E non joué`);
   process.exit(1);
 }
-console.log(`SUITES PHP : TOUT EST VERT ✅ — SQL : ${étatsql} — E2E :`);
+console.log(`SUITES PHP EXÉCUTÉES : TOUT EST VERT ✅ — analyse de compilation : NON JOUÉE — SQL : ${étatsql} — E2E :`);
 
 // L'E2E pilote l'application par requêtes HTTP internes : il repose sur le
 // runtime WASM. Sans PHP natif, il tourne partout ; avec PHP natif, il faut
 // le paquet npm — on l'annonce clairement au lieu d'échouer salement.
+if (sansE2e) {
+  console.log('⏭ NON JOUÉ : E2E (--sans-e2e).');
+  process.exit(0);
+}
 const e2eDisponible = !phpExiste || spawnSync('node', ['-e', "require.resolve('@php-wasm/node')"]).status === 0;
 if (!e2eDisponible) {
   console.log('⏭  E2E ignoré : @php-wasm/node absent (npm install).');

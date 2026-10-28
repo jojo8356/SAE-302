@@ -260,6 +260,17 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] Examiner l’élément « Possible heading » transmis : prix en paragraphe, pas titre de section ; conserver sa sémantique.
 - [!] Vérifier les autres éléments signalés individuellement et refaire WAVE après déploiement ; rendu navigateur et WAVE non joués ici.
 
+## 6 sexdecies. Dépréciations PHP et lancement isolé des tests
+
+- [x] Définir les limites du contrôle : version PHP, fichiers et chemins réellement exécutés.
+- [x] Détecter les dépréciations à l’analyse PHP et pendant les suites PHP, avec des tests de non-régression.
+- [x] Ajouter un lancement sans SQL ni E2E pour protéger les données locales et documenter les commandes.
+- [x] Exécuter les vérifications disponibles et vérifier les sorties sans écraser les données locales.
+- [!] Vérifier aussi avec le PHP réellement utilisé sur LineServ ; une version PHP différente et les parcours non exécutés peuvent produire d’autres dépréciations.
+- [!] SQL réel, E2E, PHP CLI natif et serveur Web non joués ici. L’outil de mesure HTTP et les changements de connexion PDO restent à vérifier en environnement isolé avec MariaDB.
+- Auto-évaluation : PHP-WASM 8.2, suites isolées vertes ; PHP-WASM CLI 8.5.10, 127 fichiers analysés sans dépréciation de compilation et 282 contrôles unitaires verts après correction des constantes PDO ; preuve négative via fixture 8.5 ; autotests dédiés et substitution SQL vérifiée sur copie temporaire. La CI native 8.2/8.5 reste à observer après push.
+
+
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 
 - [!] **Noms, prénoms, numéros étudiants** des 3 membres + emails → README §Membres et CDC §3.3 (aucune identité ne peut être inventée).

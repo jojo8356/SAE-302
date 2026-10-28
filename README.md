@@ -254,17 +254,33 @@ npm run test:all        # ou : node scripts/run-all-tests.mjs
 | Contrat responsive | `tests/php/responsive_contract.php` | 320 px → 1536 px : paliers en `em`, menu repliable, tableaux accessibles, panier en cartes, `dvh`, encoches, `pointer: coarse`, container queries | ✅ 50/50 |
 | Contrats HTTP | `tests/php/contract_http.php` | chaque `href`/`action` des vues pointe vers une route déclarée (tous verbes : un `<form action>` vise une route POST), garde sur toutes les routes `/admin/*`, aucune écriture en `GET`, en-têtes CSP / `nosniff` / `Referrer-Policy` / `X-Frame-Options`, vues 403/404/500 | ✅ 27/27 |
 | Unitaires PHPUnit | `tests/phpunit/` | `Text`, `Filter`, moteur JSON (contraintes, transactions), matrice RB-11, prix TTC, contrats de sécurité — exécutés hors ligne par `run-local.php` | ✅ 34/34 |
-| Intégration SQL | `tests/php/sql_integration.php` | crée `minishop_test`, charge `sql/01` → `sql/04`, vérifie aussi le catalogue via `SqlStore`, rejoue les **29 scénarios** de `tests/sql/run_tests.sh`, supprime la base — la base applicative n'est jamais touchée | ✅ 29/29 (avec serveur) / ⏭ NON JOUÉ sinon |
+| Intégration SQL | `tests/php/sql_integration.php` | crée `minishop_test`, charge `sql/01` → `sql/04`, vérifie aussi le catalogue via `SqlStore`, rejoue les **29 scénarios** de `tests/sql/run_tests.sh`, supprime la base `minishop_test` : **ne pas lancer si elle contient des données à conserver** | ✅ 29/29 (avec serveur) / ⏭ NON JOUÉ sinon |
 | Autotest du harnais | `scripts/wasm_verdict.mjs` | le verdict d'une suite ne peut pas venir du `exitCode` de PHP-WASM (mesuré : 1 pour un script normal, 0 pour `exit(3)`, 0 sur erreur fatale) : 7 cas vérifient le calcul réel (0 / 1 / 2 / 255) | ✅ 7/7 |
 | E2E HTTP | `scripts/wasm-e2e.mjs` | T1…T14 : requêtes au front controller sous PHP-WASM (cookies + CSRF, sans navigateur) — pages publiques, auth, commande 488,40 €, annulation, back-office, cloisonnement, catalogue avancé, compte, panier (plafond/re-tri/prix falsifié), CRUD admin, filtres + audit + journal, **sécurité offensive** (injection, XSS stocké, IDOR, fixation de session, traversées, escalation), rôles RB-13, contact/API/paramètres, pages juridiques, cookies et dates des derniers ajouts | ✅ 301/301 |
 
-Avec un PHP local, **aucune dépendance npm n'est nécessaire** : `php scripts/run-all-tests.php`
-(ou `npm run test:all:native`) lance les 11 contrôles directement (linter compris), puis le parcours E2E s'il trouve Node
-et `@php-wasm/node` — sinon l'étape est annoncée **NON JOUÉE** avec la commande exacte, jamais comptée
-comme verte. `npm run test:all` détecte PHP natif et l'utilise ; il ne bascule sur le runtime WASM que
-dans un environnement sans PHP.
+### Lancer les tests sans toucher à SQL ni à l’E2E
 
-Commandes individuelles : `npm test` (règles), `npm run test:units`, `npm run test:features`, `npm run test:design`, `npm run test:responsive`, `npm run test:http`, `npm run test:phpunit`, `npm run test:e2e`, `npm run test:sql` (serveur requis), `npm run coverage`, `npm run perf`. L'E2E est désormais **hermétique** : `scripts/e2e.mjs` photographie `data/minishop`, joue le seed et le parcours HTTP, puis restaure le jeu de démonstration à l'identique — même en cas d'échec (`scripts/data_snapshot.mjs`).
+Prérequis : PHP CLI **8.2 ou plus**, extension `mbstring`, et **Python 3**. Aucun paquet npm n’est nécessaire pour ces commandes. Dans le dossier du projet :
+
+```bash
+php -v
+php -m | grep -i '^mbstring$'
+python3 --version
+
+# Analyse PHP de compilation, sans exécuter les fichiers et sans base :
+python3 scripts/verifier_deprecations.py
+
+# Suites PHP + contrôle des dépréciations, sans SQL ni E2E :
+php scripts/run-all-tests.php --sans-sql --sans-e2e
+```
+
+Un résultat vert indique **« aucune détectée à l’analyse »** pour la version PHP affichée et **« TOUT EST VERT »** pour les suites exécutées. SQL et E2E doivent être indiqués **NON JOUÉ** : ils ne sont pas validés par cette commande. Une dépréciation détectée ou un test en échec fait sortir le runner en code 1. Si PHP est absent, l’analyse seule annonce **NON JOUÉ** et sort en code 2. Vérifier avec chaque version PHP réellement utilisée, notamment celle de l’hébergement.
+
+L’analyse compile les fichiers PHP dans `app`, `public`, `scripts`, `tests/php` et `tests/phpunit`, sans exécuter leur code ; elle détecte aussi un message `Deprecated` quand `php -l` renvoie quand même 0. Les suites PHP sont lancées avec un détecteur d’`E_DEPRECATED` et `E_USER_DEPRECATED`, même masquées par `@` : une dépréciation observée fait échouer la suite. Les autotests utilisent des fichiers temporaires, y compris une **copie isolée** du schéma SQL, sans serveur SQL. Limites : code non exécuté, gestionnaire d’erreur PHP remplacé par le code testé, dépendances exclues et autres langages ne sont pas couverts ; le PHP CLI local peut différer de celui du serveur Web. Les dépréciations à l’exécution de l’E2E HTTP ne sont pas couvertes par ce garde.
+
+**Attention :** sans les deux options, le runner peut créer puis supprimer `minishop_test`, et l’E2E photographie puis restaure `data/minishop` après l’avoir modifié. Une base préexistante ou des modifications concurrentes peuvent donc être perdues. Ne lancer SQL/E2E que sur une copie et un serveur de test isolés, sans données à conserver. Avec Node et PHP-WASM déjà installés, `node scripts/run-all-tests.mjs --sans-sql --sans-e2e` offre aussi ce mode ; sans PHP natif, il signale l’analyse de compilation **NON JOUÉE** et joue les suites PHP sous WASM 8.2. Ne pas interpréter cela comme une validation des versions PHP plus récentes.
+
+Commandes individuelles existantes : `npm test`, `npm run test:units`, `npm run test:features`, `npm run test:design`, `npm run test:responsive`, `npm run test:http`, `npm run test:phpunit`, `npm run test:e2e`, `npm run test:sql`, `npm run coverage`, `npm run perf`. Les commandes SQL, E2E et performance nécessitent un environnement isolé ; les tests lancés directement hors runner ne bénéficient pas automatiquement du garde des dépréciations.
 
 Les suites PHP sont **autonomes** (aucun SQL, magasins JSON temporaires par section) : elles s'exécutent telles quelles avec `php tests/php/<suite>.php` sur une machine normale, ou via `node scripts/wasm_run.mjs` en sandbox.
 

@@ -486,8 +486,12 @@ echo "\n15. DSN et repli socket Unix (App\\Config\\DbConnexion)\n";
         DbConnexion::COLLATION === 'utf8mb4_unicode_ci', DbConnexion::COLLATION);
     $options = DbConnexion::options();
     $init = '';
-    if (defined('PDO::MYSQL_ATTR_INIT_COMMAND')) {
-        $init = (string) ($options[PDO::MYSQL_ATTR_INIT_COMMAND] ?? '');
+    $constanteInit = 'PDO::MYSQL_ATTR_INIT_COMMAND';
+    if (defined('Pdo\\Mysql::ATTR_INIT_COMMAND')) {
+        $constanteInit = 'Pdo\\Mysql::ATTR_INIT_COMMAND';
+    }
+    if (defined($constanteInit)) {
+        $init = (string) ($options[constant($constanteInit)] ?? '');
         $check('PDO : SET NAMES imposé à la connexion',
             str_contains($init, 'SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci'), $init);
     } else {

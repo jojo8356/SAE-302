@@ -6,7 +6,8 @@
  *   php scripts/run-all-tests.php        (machine avec PHP 8.2+)
  *   node scripts/run-all-tests.mjs       (sandbox sans PHP : délègue ici si PHP existe)
  *
- * C'est la version sans dépendance : aucun paquet npm, aucun runtime WASM.
+ * Aucun paquet npm ni runtime WASM requis pour les suites PHP ; Python 3 est
+ * requis pour l'analyse des dépréciations et ses autotests.
  * Chaque suite est lancée dans son propre processus : un échec n'empêche pas
  * les suivantes de s'exécuter, et le code retour final est 1 si une seule a
  * échoué.
@@ -19,11 +20,21 @@
 
 declare(strict_types=1);
 
+$options = array_slice($argv, 1);
+foreach ($options as $option) {
+    if (!in_array($option, ['--sans-sql', '--sans-e2e'], true)) {
+        fwrite(STDERR, "Option inconnue : {$option}\nUsage : php scripts/run-all-tests.php [--sans-sql] [--sans-e2e]\n");
+        exit(2);
+    }
+}
+$sansSql = in_array('--sans-sql', $options, true);
+$sansE2e = in_array('--sans-e2e', $options, true);
+
 $racine = dirname(__DIR__);
 chdir($racine);
 
-// Les suites héritent du drapeau : aucune ne peut créer un compte MySQL ni une
-// base sur la machine (cf. DbProvision::contexteDeTest()).
+// Le drapeau bloque la provision applicative (DbProvision::contexteDeTest()).
+// Attention : la suite SQL explicite peut créer et supprimer minishop_test.
 putenv('MINISHOP_TESTS=1');
 
 const SUITES = [
@@ -53,7 +64,20 @@ function section(string $texte): void
 /** Lance un script PHP enfant et retourne son code de sortie. */
 function lancer(string $fichier): int
 {
-    return lancerAvec(PHP_BINARY, $fichier);
+    $commande = escapeshellarg(PHP_BINARY)
+        . ' -d error_reporting=-1 -d display_errors=1 -d log_errors=0'
+        . ' -d ' . escapeshellarg('auto_prepend_file=' . dirname(__DIR__) . '/tests/php/deprecations_bootstrap.php')
+        . ' ' . escapeshellarg($fichier) . ' 2>&1';
+    $sortie = [];
+    $code = 0;
+    exec($commande, $sortie, $code);
+    $texte = implode("\n", $sortie);
+    echo $texte . "\n";
+    if (str_contains($texte, '❌ DÉPRÉCIATION PHP :') || preg_match('/^\s*(?:PHP )?(?:User )?Deprecated\s*:/mi', $texte)) {
+        return 1;
+    }
+
+    return $code;
 }
 
 /** Lance un script avec un interpréteur donné (`php`, `node`…). */
@@ -122,6 +146,25 @@ foreach ($extensionsOptionnelles as $extension => $role) {
 $echecs = 0;
 $jouees = 0;
 
+section('▸ Autotests du contrôle des dépréciations');
+++$jouees;
+if (lancerAvec('python3', 'tests/python/test_deprecations.py') !== 0) {
+    ++$echecs;
+}
+
+section('▸ Analyse des dépréciations PHP — scripts/verifier_deprecations.py');
+// Utiliser exactement la version PHP qui exécute ce runner.
+$commandeAnalyse = 'python3 ' . escapeshellarg('scripts/verifier_deprecations.py')
+    . ' --php ' . escapeshellarg(PHP_BINARY) . ' 2>&1';
+$sortieAnalyse = [];
+$codeAnalyse = 0;
+exec($commandeAnalyse, $sortieAnalyse, $codeAnalyse);
+echo implode("\n", $sortieAnalyse) . "\n";
+++$jouees;
+if ($codeAnalyse !== 0) {
+    ++$echecs;
+}
+
 foreach (SUITES as [$nom, $fichier]) {
     section('▸ ' . $nom . ' — ' . $fichier);
     if (!is_file($fichier)) {
@@ -142,7 +185,10 @@ foreach (SUITES as [$nom, $fichier]) {
 // prétend avoir testé le SQL.
 section('▸ Intégration SQL — tests/php/sql_integration.php');
 $sqlEtat = 'NON JOUÉ ⏭ (serveur ou client MySQL absent)';
-if (!is_file('tests/php/sql_integration.php')) {
+if ($sansSql) {
+    $sqlEtat = 'NON JOUÉ ⏭ (--sans-sql)';
+    echo "  ⏭ NON JOUÉ : option --sans-sql.\n";
+} elseif (!is_file('tests/php/sql_integration.php')) {
     echo "  ❌ fichier absent\n";
     ++$echecs;
     $sqlEtat = 'fichier absent ❌';
@@ -165,12 +211,14 @@ $e2eJoue = false;
 $noeud = noeud();
 $dependance = $racine . '/node_modules/@php-wasm/node';
 
-if ($noeud === null) {
+if ($sansE2e) {
+    echo "  ⏭ NON JOUÉ : option --sans-e2e.\n";
+} elseif ($noeud === null) {
     echo "  ⏭  NON JOUÉ : Node.js est absent de cette machine.\n";
-    echo "     Installez Node 20+ puis : node scripts/e2e.mjs\n";
+    echo "     Voir README : section tests E2E (données isolées indispensables).\n";
 } elseif (!is_dir($dependance)) {
     echo "  ⏭  NON JOUÉ : la dépendance @php-wasm/node n'est pas installée.\n";
-    echo "     npm install  puis : node scripts/e2e.mjs\n";
+    echo "     Voir README : section tests E2E (données isolées indispensables).\n";
 } elseif (!is_file('scripts/e2e.mjs')) {
     echo "  ❌ fichier absent\n";
     ++$echecs;
@@ -196,6 +244,6 @@ if ($echecs > 0) {
 
 echo 'SUITES : TOUT EST VERT ✅ (' . $jouees . " étapes) — SQL : " . $sqlEtat . ' — E2E : ' . $e2eEtat . "\n";
 if (!$e2eJoue) {
-    echo "nb : la base JSON reste intacte, l'E2E ne modifie rien durablement.\n";
+    echo "nb : SQL et E2E non joués ne sont pas validés.\n";
 }
 exit(0);
