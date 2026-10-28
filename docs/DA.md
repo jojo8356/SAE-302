@@ -439,3 +439,16 @@ d'un palier supplémentaire pour le passage en cartes du panier.
 Les pages juridiques de [Boulanger](https://www.boulanger.com/evenement/conditions-generales-vente-boulanger) séparent l'identification, les conditions de vente et les informations de livraison/retour ; celles de [Fnac](https://www.fnac.com/Help/cgv-fnac-marketplace) et [Back Market](https://www.backmarket.fr/fr-fr/legal/terms-of-use) distinguent en outre les rôles des vendeurs de marketplace. MiniShop est une **maquette de vente directe**, non une marketplace : on reprend la navigation identifiable, les titres explicites et la séparation des sujets, pas leurs clauses ni leurs obligations propres aux plateformes. Les éléments juridiques et les limites sont étudiés dans `docs/12-information-juridique.md`.
 
 **Décisions avant réalisation :** pied de page organisé en rubriques courtes, lien direct vers la rétractation ; pages centrées et de largeur de lecture limitée, hiérarchie H1/H2, encadrés visibles pour le statut de maquette et le texte réglementaire, liens soulignés, retours à la ligne et marges adaptables, pas de tableau à défilement imposé. Aucun bandeau de choix décoratif pour les seuls traceurs nécessaires. La disposition doit fonctionner au clavier et à 320 px sans défilement horizontal ; les principes de [reflow WCAG](https://www.w3.org/WAI/WCAG21/Understanding/reflow.html) et de [mise en page GOV.UK](https://design-system.service.gov.uk/styles/layout/) guident le choix. Les contrôles statiques ne remplacent pas un audit d'accessibilité ni un rendu navigateur réel.
+
+## 15. Date des derniers ajouts — décision préalable
+
+Le benchmark des cartes d'Amazon, Fnac, Boulanger et Back Market (§2–3) privilégie
+la hiérarchie image → nom → prix → disponibilité → action ; il ne démontre pas que
+ces sites affichent une heure de création sur leurs cartes. Pour le besoin propre à
+MiniShop, ajouter cette métadonnée **après l'action**, centrée, en taille secondaire
+lisible et séparée par un trait discret, sans détourner l'attention du produit ni
+modifier les autres cartes du catalogue. Un élément HTML `time` rend la date
+compréhensible aux outils ; si elle manque ou n'est pas valide, afficher un repli
+explicite sans date inventée. L'alignement reste fluide et le texte peut revenir à
+la ligne sur mobile, conformément aux principes de reflow W3C et de mise en page
+GOV.UK documentés en §14.5. Aucune nouvelle image ni icône n'est nécessaire.

@@ -157,3 +157,12 @@ message de plus de 500 caractères, erreur d'écriture, CSRF et XSS). Les donné
 restent isolées : le harnais de test ne synchronise pas `var/` vers la machine.
 Résultats de cette passe : 299 contrôles E2E, 46 contrats, 0 échec ; SQL MariaDB et
 rendu navigateur non joués. Détails et réserves dans `docs/12-information-juridique.md`.
+
+
+## Dates des derniers ajouts (28/10/2026)
+
+`php tests/php/date_ajout_test.php` vérifie 13 cas de rendu et de style : date et heure
+réelles, valeur machine, date bissextile, dates absentes ou invalides, injection et
+position sous le bouton. Le parcours HTTP vérifie également chaque date de la page
+d'accueil et celle d'un produit créé pendant le test. Suite complète en PHP-WASM :
+301 vérifications E2E, sans échec ; SQL et rendu visuel navigateur non joués.

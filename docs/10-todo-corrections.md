@@ -220,6 +220,13 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [!] Durées, purge, accès aux journaux et sauvegardes et conditions d'hébergement à définir et contrôler avant usage réel. Exclure les outils `mesurer.php` et `gen_volumes.php` de la production.
 - [!] Tests SQL MariaDB et rendu navigateur réel non joués dans cette sandbox (client/serveur SQL et bibliothèques Chromium absents) ; les tests statiques et WASM ne constituent pas un audit juridique ou d’accessibilité.
 
+## 6 undecies. Date et heure des derniers ajouts — fait
+
+- [x] Choix de présentation fondé sur le benchmark existant et les règles responsive, `docs/DA.md` §15.
+- [x] Date et heure `date_creation` sur chaque carte d’accueil, après le bouton, dans un élément `time` et un style centré. Valeur de la base affichée sans conversion de fuseau ; repli explicite si date absente ou invalide.
+- [x] `tests/php/date_ajout_test.php` : 13 contrôles (format, valeur machine, date impossible ou absente, injection, ordre dans la carte et CSS). E2E : vérification des quatre dates et d’un produit nouvellement créé ; suite totale 301 vérifications vertes, design 69, responsive statique 50, catalogue 7 656. Les journaux locaux restent inchangés.
+- [!] Auto-évaluation : rendu des dates et responsive contrôlés par tests HTML/CSS et HTTP, pas de contrôle visuel navigateur en sandbox ; test SQL réel non joué. Les données de démonstration ont souvent la même seconde de création, donc la même date/heure affichée.
+
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 
 - [!] **Noms, prénoms, numéros étudiants** des 3 membres + emails → README §Membres et CDC §3.3 (aucune identité ne peut être inventée).

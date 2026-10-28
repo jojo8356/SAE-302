@@ -689,6 +689,20 @@ body > main {
     padding-top: var(--e-3);
 }
 
+/* Date secondaire, placée sous l’action uniquement sur les derniers ajouts. */
+.carte-produit__date {
+    width: 100%;
+    margin: var(--e-3) 0 0;
+    padding-top: var(--e-2);
+    border-top: 1px solid var(--bordure);
+    color: var(--encre-douce);
+    font-size: var(--t-xs);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.4;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
 .carte-categorie {
     min-height: 120px;
     justify-content: space-between;

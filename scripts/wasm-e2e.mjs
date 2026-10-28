@@ -127,6 +127,24 @@ const slugsRendusAccueil = (html) => {
 const ordreAccueilValide = (html, produits) =>
   JSON.stringify(slugsRendusAccueil(html)) === JSON.stringify(slugsAttendusAccueil(produits));
 
+// Oracle indépendant : chaque carte doit afficher la date propre à son produit,
+// sans conversion de fuseau ni réutilisation de la date du dernier élément.
+const datesAccueilValides = (html, produits) => {
+  const bloc = (html ?? '').match(/<section aria-labelledby="titre-nouveautes">([\s\S]*?)<\/section>/);
+  const cartes = [...(bloc?.[1] ?? '').matchAll(/<article class="carte carte-produit">([\s\S]*?)<\/article>/g)];
+  if (cartes.length !== slugsAttendusAccueil(produits).length) return false;
+  return cartes.every(([, carte]) => {
+    const slug = carte.match(/<h3 class="carte-produit__nom">\s*<a href="\/produit\/([^"?]+)"/)?.[1];
+    const produit = produits.find((p) => p.slug === slug);
+    const d = String(produit?.date_creation ?? '').match(/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/);
+    if (!d) return carte.includes('Date d’ajout indisponible') && !carte.includes('<time');
+    const [, an, mois, jour, heure, minute, seconde] = d;
+    return carte.includes(`datetime="${an}-${mois}-${jour}T${heure}:${minute}:${seconde}"`)
+      && carte.includes(`${jour}/${mois}/${an} à ${heure}h${minute}`)
+      && carte.indexOf('Voir la fiche') < carte.indexOf('carte-produit__date');
+  });
+};
+
 const B = (n) => `\n=== ${n} ===\n`;
 process.stdout.write(B('T1 · pages publiques'));
 
@@ -138,6 +156,7 @@ process.stdout.write(B('T1 · pages publiques'));
   const produitsAccueil = await lireTable('produit');
   check('accueil : les quatre derniers ajouts visibles sont rendus dans l’ordre',
     ordreAccueilValide(accueil.text, produitsAccueil), JSON.stringify(slugsRendusAccueil(accueil.text)));
+  check('accueil : date et heure de chaque carte correspondent aux données', datesAccueilValides(accueil.text, produitsAccueil));
   contient('accueil : 4 catégories', accueil.text, 'Objets connectés');
   // Icônes de catégorie (Lucide, inlinées) : une pastille par catégorie, aucune requête
   const nbCategories = (await lireTable('categorie')).length;
@@ -317,6 +336,8 @@ process.stdout.write(B('T5 · back-office (UC-10…14, RB-13)'));
     !!nouvelAjout && ordreAccueilValide(accueilApresAjout.text, await lireTable('produit'))
       && slugsRendusAccueil(accueilApresAjout.text)[0] === nouvelAjout.slug,
     JSON.stringify(slugsRendusAccueil(accueilApresAjout.text)));
+  check('accueil : date réelle du nouveau produit après création',
+    datesAccueilValides(accueilApresAjout.text, await lireTable('produit')));
 
   const jMasque = await admin.csrf('/admin/produit/nouveau');
   const creationMasquee = await admin.post('/admin/produit/nouveau', {
