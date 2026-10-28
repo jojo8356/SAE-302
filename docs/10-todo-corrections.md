@@ -84,7 +84,7 @@
 - [x] **E2E réellement joué** par `php scripts/run-all-tests.php` : l'étape Node est lancée quand `node` et `@php-wasm/node` sont présents, et annoncée **NON JOUÉE** avec la commande exacte sinon (le message conseillait un `./run.sh --e2e` qui n'existe pas). `intl` et `pdo_mysql` sont signalées comme facultatives, pas comme des échecs.
 - [x] **Bug intl corrigé** : `Text.php` écrivait `Transliterator::create()` et `new Collator()` sans barre oblique initiale — dans l'espace de noms `App\Model\Data`, PHP cherchait donc `App\Model\Data\Transliterator`. Invisible dans la sandbox (intl absente, `class_exists()` renvoie faux), **fatal sur toute machine où intl est chargée** — c'est-à-dire la machine de rendu. Corrigé en `\Transliterator` / `\Collator`, et un contrat statique vérifie désormais que les classes globales d'extension sont référencées en absolu dans `app/` (test de non-régression validé en réintroduisant le bug).
 - [x] **Piège fermé** : `scripts/run-all-tests.php` avait été créé sans balise `<?php` (PHP affichait donc son contenu au lieu de l'exécuter) — le linter ne couvrait pas `scripts/` autrement que par `seed.php`. Cible par défaut étendue aux scripts applicatifs (95 fichiers analysés au lieu de 90) ; `deploy.php` et `gen_volumes*.php`, antérieurs et non applicatifs, restent hors périmètre et c'est documenté.
-- [x] `npm run test:all` exécute **9 suites** + l'autotest du harnais + l'E2E (moteur, règles, unitaires, fonctionnalités, catalogue-stock, design, responsive, contrats HTTP, PHPUnit) ; le linter strict-types est un contrôle séparé. L'**intégration SQL** est jouée quand un serveur est joignable, annoncée NON JOUÉ sinon.
+- [x] `npm run test:all` exécute **10 suites** + l'autotest du harnais + l'E2E (moteur, règles, unitaires, fonctionnalités, catalogue-stock, nouveautés, design, responsive, contrats HTTP, PHPUnit) ; le linter strict-types est un contrôle séparé. L'**intégration SQL** est jouée quand un serveur est joignable, annoncée NON JOUÉ sinon.
 
 ## 4 bis. Campagne SQL : sept scénarios qui ne testaient pas ce qu'ils annonçaient
 
@@ -199,6 +199,15 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] Titre visible en gras et centré à l'intérieur de la carte ; le `legend` reste présent et accessible aux lecteurs d'écran. Les formulaires et jetons CSRF sont conservés.
 - [x] Contrats CSS/responsive et E2E des quatre pages ; suite complète rejouée.
 - [ ] Contrôle visuel en navigateur : tentative en sandbox non jouée, Chromium ne démarre pas (bibliothèques système NSS absentes).
+
+## 6 nonies. Vérification des « derniers ajouts » — **fait**
+
+- [x] Défaut reproduit : à dates égales, le tri utilisait l'identifiant croissant, affichant les premiers produits du seed au lieu des derniers. Le seed crée tous les produits à la même seconde.
+- [x] Correctif : `date_creation DESC`, puis `id_produit DESC` en cas d'égalité. L'identifiant auto-incrémenté sert de départage déterministe ; ce n'est pas une preuve d'ordre historique si des identifiants ont été importés manuellement. L'accueil reste limité à quatre produits visibles ; un produit en rupture reste éligible.
+- [x] `tests/php/nouveautes_test.php` : 18 vérifications sur JSON isolé (dates différentes ou égales, création réelle, modification d'un ancien, masqués, rupture, pagination, zéro/deux résultats, catalogue et rollback). Avant correctif : 8 échecs reproduits.
+- [x] E2E WASM : comparaison des quatre cartes aux données puis création visible et création masquée par le back-office ; 268 vérifications au total. Le script conserve les données de la machine.
+- [x] La définition de `sp_search_products` suit la même règle ; contrôle statique et scénarios intégrés à `sql_integration.php` sur base de test isolée.
+- [ ] Tests sur MariaDB non joués dans la sandbox. La définition SQL modifiée concerne les nouveaux chargements de scripts : une procédure déjà installée n'est pas modifiée automatiquement. L'accueil utilise le repository PHP et ne nécessite aucune réinitialisation de base.
 
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 

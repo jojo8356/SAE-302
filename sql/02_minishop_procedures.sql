@@ -221,7 +221,7 @@ BEGIN
     CASE
       WHEN p_trie_par = 'prix_asc'  THEN ' ORDER BY p.prix_ttc ASC, p.id_produit'
       WHEN p_trie_par = 'prix_desc' THEN ' ORDER BY p.prix_ttc DESC, p.id_produit'
-      WHEN p_trie_par = 'nouveaute' THEN ' ORDER BY p.date_creation DESC, p.id_produit'
+      WHEN p_trie_par = 'nouveaute' THEN ' ORDER BY p.date_creation DESC, p.id_produit DESC'
       WHEN p_trie_par = 'stock'     THEN ' ORDER BY p.stock DESC, p.id_produit'
       ELSE ' ORDER BY p.nom ASC'
     END,

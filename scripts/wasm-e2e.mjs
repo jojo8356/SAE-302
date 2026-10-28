@@ -113,6 +113,20 @@ const contient = (label, page, morceau) =>
 const lireTable = async (table) =>
   JSON.parse(await php.readFileAsText(`${WASM_ROOT}/data/minishop/${table}.json`)).rows;
 
+// Oracle indépendant : sélection et tri depuis les données, sans appeler le dépôt.
+const slugsAttendusAccueil = (produits) => produits
+  .filter((p) => p.visible === 1 || p.visible === true)
+  .sort((a, b) => String(b.date_creation).localeCompare(String(a.date_creation))
+    || Number(b.id_produit) - Number(a.id_produit))
+  .slice(0, 4).map((p) => p.slug);
+const slugsRendusAccueil = (html) => {
+  const bloc = (html ?? '').match(/<section aria-labelledby="titre-nouveautes">([\s\S]*?)<\/section>/);
+  return [...(bloc?.[1] ?? '').matchAll(/<h3 class="carte-produit__nom">\s*<a href="\/produit\/([^"?]+)"/g)]
+    .map((m) => m[1]);
+};
+const ordreAccueilValide = (html, produits) =>
+  JSON.stringify(slugsRendusAccueil(html)) === JSON.stringify(slugsAttendusAccueil(produits));
+
 const B = (n) => `\n=== ${n} ===\n`;
 process.stdout.write(B('T1 · pages publiques'));
 
@@ -121,6 +135,9 @@ process.stdout.write(B('T1 · pages publiques'));
   const accueil = await anonyme.get('/');
   check('GET / → 200', accueil.httpStatusCode === 200, `status ${accueil.httpStatusCode}`);
   contient('accueil : bienvenue', accueil.text, 'Bienvenue chez MiniShop');
+  const produitsAccueil = await lireTable('produit');
+  check('accueil : les quatre derniers ajouts visibles sont rendus dans l’ordre',
+    ordreAccueilValide(accueil.text, produitsAccueil), JSON.stringify(slugsRendusAccueil(accueil.text)));
   contient('accueil : 4 catégories', accueil.text, 'Objets connectés');
   // Icônes de catégorie (Lucide, inlinées) : une pastille par catégorie, aucune requête
   const nbCategories = (await lireTable('categorie')).length;
@@ -290,6 +307,35 @@ process.stdout.write(B('T5 · back-office (UC-10…14, RB-13)'));
   });
   check('création produit → redirection', ok.httpStatusCode === 302, `status ${ok.httpStatusCode}`);
   check('produit créé (prix TTC dérivé RB-16)', (await lireTable('produit')).some((p) => p.reference === 'TEST-999' && Math.abs(p.prix_ttc - 12) < 0.001));
+  const nouvelAjout = (await lireTable('produit')).find((p) => p.reference === 'TEST-999');
+  const accueilApresAjout = await admin.get('/');
+  check('accueil : nouvel ajout visible immédiatement et dans l’ordre attendu',
+    !!nouvelAjout && ordreAccueilValide(accueilApresAjout.text, await lireTable('produit'))
+      && slugsRendusAccueil(accueilApresAjout.text)[0] === nouvelAjout.slug,
+    JSON.stringify(slugsRendusAccueil(accueilApresAjout.text)));
+
+  const jMasque = await admin.csrf('/admin/produit/nouveau');
+  const creationMasquee = await admin.post('/admin/produit/nouveau', {
+    _csrf: jMasque, reference: 'TEST-NOUV-MASQUE', nom: 'Dernier produit masqué E2E', slug: '', description: 'Test',
+    prix_ht: '10.00', tva: '20', stock: '5', seuil_alerte: '2', id_categorie: '1',
+  });
+  const masqueNouveau = (await lireTable('produit')).find((p) => p.reference === 'TEST-NOUV-MASQUE');
+  const accueilMasque = await admin.get('/');
+  check('accueil : nouvel ajout masqué exclu, ordre des visibles inchangé',
+    creationMasquee.httpStatusCode === 302 && !!masqueNouveau && Number(masqueNouveau.visible) === 0
+      && !slugsRendusAccueil(accueilMasque.text).includes(masqueNouveau.slug)
+      && ordreAccueilValide(accueilMasque.text, await lireTable('produit'))
+      && JSON.stringify(slugsRendusAccueil(accueilMasque.text)) === JSON.stringify(slugsRendusAccueil(accueilApresAjout.text)),
+    JSON.stringify(slugsRendusAccueil(accueilMasque.text)));
+  if (masqueNouveau) {
+    const jetonSuppression = await admin.csrf('/admin/produits');
+    const supMasque = await admin.post(`/admin/produits/${masqueNouveau.id_produit}/suppression`, { _csrf: jetonSuppression });
+    check('nettoyage du produit masqué de test', supMasque.httpStatusCode === 302
+      && !(await lireTable('produit')).some((p) => p.reference === 'TEST-NOUV-MASQUE'));
+  } else {
+    check('nettoyage du produit masqué de test', false, 'produit non créé');
+  }
+
 
   const jn2 = await admin.csrf('/admin/produit/nouveau');
   const rb02 = await admin.post('/admin/produit/nouveau', {

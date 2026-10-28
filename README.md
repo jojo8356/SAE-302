@@ -17,7 +17,7 @@ testée, et son cahier des charges complet.
 | **Référente** | Thanh-Phuong Nguyen — `thanh-phuong.nguyen@univ-cotedazur.fr` |
 | **Documents** | [`docs/01-cahier-des-charges-MiniShop.md`](docs/01-cahier-des-charges-MiniShop.md) (spécification **et** conception de base de données) · [`docs/02-document-tests-validation.md`](docs/02-document-tests-validation.md) · [`docs/03-support-soutenance.md`](docs/03-support-soutenance.md) · [`docs/04-conception-bd-et-sql.md`](docs/04-conception-bd-et-sql.md) (livrable n°3 autonome : MCD, MLD, normalisation, analyse + **liens vers les scripts SQL livrés en fichiers**) · [`docs/05-wbs-projet.md`](docs/05-wbs-projet.md) (WBS : 6 divisions, 16 lots, 86 tâches individuelles, charges bottom-up, plan de charge, Gantt, chemin critique) · [`docs/08-fiche-suivi-commits.md`](docs/08-fiche-suivi-commits.md) (fiche de suivi des 32 commits + script de rejeu vers un nouveau GitLab) |
 | **Scripts SQL** | [`sql/01_minishop_schema.sql`](sql/01_minishop_schema.sql) (DDL + données) · [`sql/02_minishop_procedures.sql`](sql/02_minishop_procedures.sql) (1 fonction + 17 procédures) · [`sql/03_minishop_triggers.sql`](sql/03_minishop_triggers.sql) (16 déclencheurs) · [`sql/04_minishop_demo.sql`](sql/04_minishop_demo.sql) (démo via `CALL`) — chaîne validée de zéro sur MariaDB 11.8.6 |
-| **État** | base de données + 29 tests SQL **exécutés avec succès** (règles RB-01…RB-20, vues, frais de port) ; application PHP **livrée** (MVC, design system, suite PHPUnit, E2E HTTP 264 vérifications (WASM)) ; écarts restants suivis dans [`docs/10-todo-corrections.md`](docs/10-todo-corrections.md) |
+| **État** | base de données + 29 tests SQL **exécutés avec succès** (règles RB-01…RB-20, vues, frais de port) ; application PHP **livrée** (MVC, design system, suite PHPUnit, E2E HTTP 268 vérifications (WASM)) ; écarts restants suivis dans [`docs/10-todo-corrections.md`](docs/10-todo-corrections.md) |
 
 ## Prérequis
 
@@ -214,7 +214,7 @@ UNION ALL SELECT 'triggers',   COUNT(*) FROM (SELECT DISTINCT TRIGGER_NAME FROM 
 
 | Zone | Statut | Comment le vérifier |
 |---|---|---|
-| `app/**`, `public/**`, `data/`, `scripts/seed.php` | **application livrée et testée** (PHP pur, moteur JSON, **design system CSS/JS + SVG**) | `npm run test:all` → 9 suites PHP vertes + E2E WASM 264 ; contrat catalogue JSON : 7 656 scénarios sur le jeu actuel |
+| `app/**`, `public/**`, `data/`, `scripts/seed.php` | **application livrée et testée** (PHP pur, moteur JSON, **design system CSS/JS + SVG**) | `npm run test:all` → 10 suites PHP vertes + E2E WASM 268 ; contrat catalogue JSON : 7 656 scénarios sur le jeu actuel |
 | `app/Model/Data/` | moteur « JSON-comme-SGBD » : schéma, contraintes (NOT NULL/ENUM/CHECK/UNIQUE/FK), triggers, transactions, vues, journal JSONL — piloté par l'énumération `StorageDriver` (JSON actif ; `SqlStore` = pilote PDO réel, procédures à brancher) | `node scripts/wasm_run.mjs tests/php/engine_smoke.php` |
 | `tests/php/**`, `scripts/wasm-e2e.mjs`, `scripts/run-all-tests.mjs` | **livrés et exécutés** (voir « Tests livrés » ci-dessus) | `npm run test:all` |
 | `sql/`, `tests/sql/`, `docs/` (CDC, tests, soutenance, annexes, diagrammes) | **livrés** ; `sql/` = référence comportementale du moteur JSON | `./scripts/run_sql_tests.sh` → 29/29 |
@@ -239,16 +239,17 @@ npm run test:all        # ou : node scripts/run-all-tests.mjs
 | Unitaires | `tests/php/unit_tests.php` | `Text` (fold/slug/collation), échappement, CSRF, **matrice RB-11 complète** (36 couples), `Filter`, `PanierSession`, prix TTC, journal, **`.env`**, versions SGBD, **DSN et repli socket Unix** | ✅ 282/282 |
 | Fonctionnalités | `tests/php/features_test.php` | **UC-01…UC-14** via les repositories (catalogue, compte, panier, commande, annulation, back-office, indicateurs) | ✅ 131/131 |
 | Catalogue : ruptures en dernier | `tests/php/catalogue_stock_test.php` | noms et références, recherche, filtres, tris et pages ; scénarios en stock, en rupture et réapprovisionnement ; fixture JSON jetable | ✅ 7 656 scénarios sur le jeu actuel |
+| Derniers ajouts | `tests/php/nouveautes_test.php` | dates, égalités, visibilité, pagination, création, modification et rupture ; fixture JSON isolée | ✅ 18/18 |
 | Contrats de design | `tests/php/css_contract.php` | tokens de `docs/DA.md`, contrastes WCAG calculés, classes des vues réellement définies, `prefers-reduced-motion`, feuille d'impression, **illustration du hero** (signature JPEG, dimensions, poids, `alt`, CLS) | ✅ 69/69 |
 | Contrat responsive | `tests/php/responsive_contract.php` | 320 px → 1536 px : paliers en `em`, menu repliable, tableaux accessibles, panier en cartes, `dvh`, encoches, `pointer: coarse`, container queries | ✅ 50/50 |
 | Contrats HTTP | `tests/php/contract_http.php` | chaque `href`/`action` des vues pointe vers une route déclarée (tous verbes : un `<form action>` vise une route POST), garde sur toutes les routes `/admin/*`, aucune écriture en `GET`, en-têtes CSP / `nosniff` / `Referrer-Policy` / `X-Frame-Options`, vues 403/404/500 | ✅ 27/27 |
 | Unitaires PHPUnit | `tests/phpunit/` | `Text`, `Filter`, moteur JSON (contraintes, transactions), matrice RB-11, prix TTC, contrats de sécurité — exécutés hors ligne par `run-local.php` | ✅ 34/34 |
 | Intégration SQL | `tests/php/sql_integration.php` | crée `minishop_test`, charge `sql/01` → `sql/04`, vérifie aussi le catalogue via `SqlStore`, rejoue les **29 scénarios** de `tests/sql/run_tests.sh`, supprime la base — la base applicative n'est jamais touchée | ✅ 29/29 (avec serveur) / ⏭ NON JOUÉ sinon |
 | Autotest du harnais | `scripts/wasm_verdict.mjs` | le verdict d'une suite ne peut pas venir du `exitCode` de PHP-WASM (mesuré : 1 pour un script normal, 0 pour `exit(3)`, 0 sur erreur fatale) : 7 cas vérifient le calcul réel (0 / 1 / 2 / 255) | ✅ 7/7 |
-| E2E HTTP | `scripts/wasm-e2e.mjs` | T1…T14 : requêtes au front controller sous PHP-WASM (cookies + CSRF, sans navigateur) — pages publiques, auth, commande 488,40 €, annulation, back-office, cloisonnement, catalogue avancé, compte, panier (plafond/re-tri/prix falsifié), CRUD admin, filtres + audit + journal, **sécurité offensive** (injection, XSS stocké, IDOR, fixation de session, traversées, escalation), rôles RB-13, contact/API/paramètres | ✅ 264/264 |
+| E2E HTTP | `scripts/wasm-e2e.mjs` | T1…T14 : requêtes au front controller sous PHP-WASM (cookies + CSRF, sans navigateur) — pages publiques, auth, commande 488,40 €, annulation, back-office, cloisonnement, catalogue avancé, compte, panier (plafond/re-tri/prix falsifié), CRUD admin, filtres + audit + journal, **sécurité offensive** (injection, XSS stocké, IDOR, fixation de session, traversées, escalation), rôles RB-13, contact/API/paramètres | ✅ 268/268 |
 
 Avec un PHP local, **aucune dépendance npm n'est nécessaire** : `php scripts/run-all-tests.php`
-(ou `npm run test:all:native`) lance les 10 contrôles directement (linter compris), puis le parcours E2E s'il trouve Node
+(ou `npm run test:all:native`) lance les 11 contrôles directement (linter compris), puis le parcours E2E s'il trouve Node
 et `@php-wasm/node` — sinon l'étape est annoncée **NON JOUÉE** avec la commande exacte, jamais comptée
 comme verte. `npm run test:all` détecte PHP natif et l'utilise ; il ne bascule sur le runtime WASM que
 dans un environnement sans PHP.

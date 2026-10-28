@@ -30,7 +30,8 @@ final class ProduitRepository
         return match ($tri) {
             'prix_asc' => [Filter::sort('prix_ttc'), Filter::sort('id_produit')],
             'prix_desc' => [Filter::sort('prix_ttc', 'desc'), Filter::sort('id_produit')],
-            'nouveaute' => [Filter::sort('date_creation', 'desc'), Filter::sort('id_produit')],
+            // À la même seconde, l'identifiant auto-incrémenté le plus élevé est le dernier inséré.
+            'nouveaute' => [Filter::sort('date_creation', 'desc'), Filter::sort('id_produit', 'desc')],
             'stock' => [Filter::sort('stock', 'desc'), Filter::sort('id_produit')],
             default => [Filter::sort('nom'), Filter::sort('id_produit')],
         };

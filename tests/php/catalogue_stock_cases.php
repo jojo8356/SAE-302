@@ -47,7 +47,7 @@ function verifierCatalogueStock(StoreInterface $store): array
         'nom' => [Filter::sort('nom'), Filter::sort('id_produit')],
         'prix_asc' => [Filter::sort('prix_ttc'), Filter::sort('id_produit')],
         'prix_desc' => [Filter::sort('prix_ttc', 'desc'), Filter::sort('id_produit')],
-        'nouveaute' => [Filter::sort('date_creation', 'desc'), Filter::sort('id_produit')],
+        'nouveaute' => [Filter::sort('date_creation', 'desc'), Filter::sort('id_produit', 'desc')],
         'stock' => [Filter::sort('stock', 'desc'), Filter::sort('id_produit')],
         'inconnu' => [Filter::sort('nom'), Filter::sort('id_produit')],
     ];

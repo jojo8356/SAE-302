@@ -138,8 +138,44 @@ try {
     echo '   ❌ catalogue SQL : ' . $erreur->getMessage() . "\n";
 }
 
+// Même contrat sur MariaDB : transactions annulées et données uniquement sur
+// la base de test déjà créée ; vérifier aussi la procédure SQL indépendante.
+$echecsNouveautes = 0;
+echo "\n4. Derniers ajouts (pilote SQL et procédure)\n";
+try {
+    require_once __DIR__ . '/nouveautes_cases.php';
+    $pdoNouveautes = DbConnexion::ouvrir($base, $config);
+    $resultatNouveautes = verifierNouveautes(new \App\Model\Data\SqlStore($pdoNouveautes));
+    $echecsNouveautes = $resultatNouveautes['echecs'];
+    $attenduNouveautes = $pdoNouveautes->query(
+        'SELECT id_produit FROM produit WHERE visible = 1 ORDER BY date_creation DESC, id_produit DESC LIMIT 4'
+    )->fetchAll(PDO::FETCH_COLUMN);
+    $appel = $pdoNouveautes->query("CALL sp_search_products('', NULL, NULL, NULL, 0, 'nouveaute', 1, 4, 0)");
+    $obtenuNouveautes = array_column($appel->fetchAll(PDO::FETCH_ASSOC), 'id_produit');
+    while ($appel->nextRowset()) {
+        if ($appel->columnCount() > 0) {
+            $appel->fetchAll();
+        }
+    }
+    $appel->closeCursor();
+    if (array_map('intval', $attenduNouveautes) !== array_map('intval', $obtenuNouveautes)) {
+        ++$echecsNouveautes;
+        echo "   ❌ procédure SQL : ordre des nouveautés incorrect\n";
+    } else {
+        echo "   ✅ procédure SQL : ordre des nouveautés\n";
+    }
+    if ($echecsNouveautes === 0) {
+        echo '   ✅ ' . $resultatNouveautes['tests'] . " vérifications du dépôt SQL\n";
+    } else {
+        echo '   ❌ nouveautés SQL : ' . $echecsNouveautes . " échec(s)\n";
+    }
+} catch (Throwable $erreur) {
+    $echecsNouveautes = 1;
+    echo '   ❌ nouveautés SQL : ' . $erreur->getMessage() . "\n";
+}
+
 // ------------------------------------------------------- campagne SQL
-echo "\n4. Campagne de scénarios SQL (tests/sql/run_tests.sh)\n";
+echo "\n5. Campagne de scénarios SQL (tests/sql/run_tests.sh)\n";
 $harnais = $racine . '/tests/sql/run_tests.sh';
 if (!is_file($harnais)) {
     echo "   ❌ harnais absent : " . $harnais . "\n";
@@ -162,7 +198,7 @@ $sortie = [];
 $code = 0;
 @exec($prefixe . 'bash ' . escapeshellarg($harnais) . ' 2>&1', $sortie, $code);
 echo implode("\n", $sortie) . "\n";
-if ($echecsCatalogue !== 0 && $code === 0) {
+if (($echecsCatalogue !== 0 || $echecsNouveautes !== 0) && $code === 0) {
     $code = 1;
 }
 
