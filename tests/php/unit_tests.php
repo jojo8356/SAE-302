@@ -16,6 +16,14 @@ declare(strict_types=1);
  *         node scripts/wasm_run.mjs tests/php/unit_tests.php   (sandbox)
  */
 
+// Cette suite tourne dans un processus enfant : isoler sa configuration des
+// variables du shell/CI. Les fixtures .env doivent rester prioritaires ici ;
+// les tests de priorité ajoutent eux-mêmes les variables nécessaires. Le shell
+// parent et ses secrets ne sont pas modifiés.
+foreach (['APP_ENV', 'APP_DEBUG', 'STORAGE_DRIVER', 'DATA_PATH', 'DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASSWORD', 'DB_PASS', 'DB_SOCKET', 'DB', 'MINISHOP_ENV_FILE'] as $variable) {
+    putenv($variable);
+}
+
 require dirname(__DIR__, 2) . '/app/bootstrap.php';
 
 // Sortie bufferisée : les tests affichent au fur et à mesure, mais la session

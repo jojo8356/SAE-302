@@ -335,8 +335,15 @@ final class DbInstaller
             $inventaire['fonctions'] = (int) $objets['fonctions'];
             $inventaire['triggers'] = (int) $objets['triggers'];
 
-            foreach (['produits' => 'produit', 'clients' => 'client', 'commandes' => 'commande'] as $cle => $table) {
-                $requete = $pdo->query('SELECT COUNT(*) FROM `' . $table . '`');
+            // Les identifiants SQL ne sont pas des paramètres PDO : une liste
+            // fermée de requêtes littérales évite toute concaténation dynamique.
+            $comptages = [
+                'produits' => 'SELECT COUNT(*) FROM `produit`',
+                'clients' => 'SELECT COUNT(*) FROM `client`',
+                'commandes' => 'SELECT COUNT(*) FROM `commande`',
+            ];
+            foreach ($comptages as $cle => $sql) {
+                $requete = $pdo->query($sql);
                 if ($requete !== false) {
                     $inventaire[$cle] = (int) $requete->fetchColumn();
                 }

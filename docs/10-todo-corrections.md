@@ -267,6 +267,7 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] Ajouter un lancement sans SQL ni E2E pour protéger les données locales et documenter les commandes.
 - [x] Exécuter les vérifications disponibles et vérifier les sorties sans écraser les données locales.
 - [!] Vérifier aussi avec le PHP réellement utilisé sur LineServ ; une version PHP différente et les parcours non exécutés peuvent produire d’autres dépréciations.
+- [x] Isoler les variables d’environnement du test unitaire et corriger deux faux positifs de sécurité qui bloquaient la CI (requêtes d’inventaire littérales, exclusion précise des seuls modèles publics).
 - [!] SQL réel, E2E, PHP CLI natif et serveur Web non joués ici. L’outil de mesure HTTP et les changements de connexion PDO restent à vérifier en environnement isolé avec MariaDB.
 - Auto-évaluation : PHP-WASM 8.2, suites isolées vertes ; PHP-WASM CLI 8.5.10, 127 fichiers analysés sans dépréciation de compilation et 282 contrôles unitaires verts après correction des constantes PDO ; preuve négative via fixture 8.5 ; autotests dédiés et substitution SQL vérifiée sur copie temporaire. La CI native 8.2/8.5 reste à observer après push.
 
