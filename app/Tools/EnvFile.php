@@ -26,12 +26,6 @@ final class EnvFile
         return Env::chemin();
     }
 
-    /** Le fichier existe-t-il ? */
-    public static function existe(): bool
-    {
-        return is_file(self::chemin());
-    }
-
     /**
      * Crée le fichier depuis `.env.example` s'il manque.
      *

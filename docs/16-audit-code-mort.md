@@ -20,7 +20,7 @@ Les références sont des **indices textuels** et non une preuve d’exécution 
 
 ### Candidats restants à trier
 
-Réexamen des **11 alertes initiales** : le référentiel `scripts/code_mort_reference.json` en contient désormais **1**. Trois disparaissent de l’analyse parce que des tests les citent, sans preuve d’usage applicatif ; `sudoDisponible` est maintenant utilisé par le provisionnement, `page403` par le contrôleur frontal. `withStore`, `dsnUtilise` et `codeDerniereErreur` ont été supprimées sur demande ; `comptesDemo` est utilisée par la CLI et le paramètre inutilisé de `visuel_produit` remplacé par une alternative explicite. Ce ne sont pas des preuves de code mort. Un nouvel indice fait échouer le contrôle ; les indices disparus doivent aussi être retirés du référentiel après revue. Les candidats connus restent affichables avec `php scripts/code_mort.php --rapport`.
+Réexamen des **11 alertes initiales** : le référentiel `scripts/code_mort_reference.json` en contient désormais **0**. Trois disparaissent de l’analyse parce que des tests les citent, sans preuve d’usage applicatif ; `sudoDisponible` est maintenant utilisé par le provisionnement, `page403` par le contrôleur frontal. `withStore`, `dsnUtilise`, `codeDerniereErreur` et `EnvFile::existe` ont été supprimées sur demande ; `comptesDemo` est utilisée par la CLI et le paramètre inutilisé de `visuel_produit` remplacé par une alternative explicite. Ce ne sont pas des preuves de code mort. Un nouvel indice fait échouer le contrôle ; les indices disparus doivent aussi être retirés du référentiel après revue. Les candidats connus restent affichables avec `php scripts/code_mort.php --rapport`.
 
 | Candidat | Observation et décision prudente |
 |---|---|
@@ -34,7 +34,7 @@ Réexamen des **11 alertes initiales** : le référentiel `scripts/code_mort_ref
 | `visuel_produit($nom)` | Paramètre supprimé ; la vue transmet maintenant une implémentation d’`AlternativeImage`. Cartes décoratives ; fiche avec identification du visuel indicatif. Signature modifiée : tout appel externe doit être adapté. |
 | `DbInstaller::codeDerniereErreur` | Accesseur supprimé sur demande ; le code interne et `refusIdentifiants()` sont conservés et le classement des codes est testé sans SQL. Des appels externes éventuels à cet accesseur doivent être adaptés. |
 | `DbProvision::sudoDisponible` | Désormais appelée avant d’écrire le fichier et lancer `sudo` ; diagnostic précoce si sudo manque. |
-| `EnvFile::existe` | Accesseur public sans appel détecté ; vérifier les outils hors dépôt. |
+| `EnvFile::existe` | Accesseur supprimé sur demande ; `initialiser()` conserve sa propre vérification avant création, testée sur fichiers temporaires. Des appels externes éventuels doivent être adaptés. |
 
 Le contrôle détecte les paramètres non cités et certaines variables locales **écrites une seule fois**, ainsi que les noms de fonctions/méthodes sans autre mention textuelle. Il ne prouve ni l’atteignabilité ni l’absence d’utilisation : références indirectes, portée, héritage, récursion, `include`, `compact`, variables dynamiques, réflexion, dépendances et appels externes limitent le résultat. Il ne détecte pas toutes les écritures répétées sans lecture, les variables au niveau fichier ou le code mort CSS/JS/SQL. Aucune suppression automatique.
 

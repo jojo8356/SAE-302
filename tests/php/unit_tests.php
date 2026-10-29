@@ -430,6 +430,23 @@ echo "\n13. Configuration .env (App\\Config\\Env, EnvFile, Database)\n";
     $check('EnvFile : valeur relue sans guillemets', EnvFile::valeur('NOUVELLE_CLE') === 'valeur avec espaces');
     $check('EnvFile n’écrit rien si la valeur est identique', EnvFile::definir('NOUVELLE_CLE', 'valeur avec espaces') === false);
 
+    // Initialisation dans un second fichier temporaire : ne jamais toucher au .env réel.
+    $nouveauFichier = $dossier . '/initialisation.env';
+    putenv(Env::VARIABLE_FICHIER . '=' . $nouveauFichier);
+    $modeleInitial = Env::racine() . '/.env.example';
+    $contenuInitial = '';
+    if (is_file($modeleInitial)) {
+        $contenuInitial = (string) file_get_contents($modeleInitial);
+    }
+    $cree = EnvFile::initialiser();
+    $check('EnvFile initialise un fichier absent depuis le modèle disponible',
+        $cree && is_file($nouveauFichier) && file_get_contents($nouveauFichier) === $contenuInitial);
+    $sentinelle = "CONTENU_EXISTANT=conserve\n";
+    file_put_contents($nouveauFichier, $sentinelle);
+    $check('EnvFile ne remplace jamais un fichier existant',
+        EnvFile::initialiser() === false && file_get_contents($nouveauFichier) === $sentinelle);
+    @unlink($nouveauFichier);
+
     // nettoyage : on rend l'environnement au reste de la suite
     putenv(Env::VARIABLE_FICHIER);
     Env::reinitialiser();

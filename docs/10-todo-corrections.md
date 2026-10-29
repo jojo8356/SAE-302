@@ -325,6 +325,13 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] Suites PHP-WASM isolées : 291 vérifications unitaires et 43 tests PHPUnit locaux ; E2E isolé : 309 contrôles ; sécurité : 10 contrôles et autotest. CI du commit `4860daa` réussie (PHP natif 8.2/8.5, PHPUnit, E2E WASM et MySQL 8 jetable).
 - [!] Auto-évaluation : le test du classement injecte un état simulé ; il ne prouve pas un refus d’authentification réel. Les appels externes à l’accesseur supprimé seront cassés. PHP natif et MariaDB non disponibles localement.
 
+## 6 tresvicies. Suppression de l’accesseur `.env` inutilisé
+
+- [x] Retirer `EnvFile::existe()` sur demande, sans modifier les autres fonctions de configuration.
+- [x] Tester l’initialisation et la non-modification d’un fichier `.env` temporaire ; actualiser l’audit (0 candidat dans le référentiel lexical).
+- [x] Suites PHP-WASM : 293 vérifications unitaires et 43 tests PHPUnit locaux ; E2E isolé : 309 contrôles ; sécurité : 10 contrôles et autotest. CI native à vérifier après publication.
+- [!] Auto-évaluation : les tests utilisent des fichiers temporaires. Le scanner reste lexical et partiel ; zéro candidat ne garantit pas l’absence de code inutilisé. La suppression casse d’éventuels appels externes à cette méthode publique. PHP natif, MariaDB et navigateur réel non disponibles localement.
+
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 
 - [!] **Noms, prénoms, numéros étudiants** des 3 membres + emails → README §Membres et CDC §3.3 (aucune identité ne peut être inventée).

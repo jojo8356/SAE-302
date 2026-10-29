@@ -21,7 +21,7 @@ Cet audit combine un inventaire automatisé de tout le dépôt et une revue manu
 | PHPUnit natif | Le commentaire du fichier `phpunit.xml` contenait `--`, interdit en XML : PHPUnit arrêtait avant les tests. Commentaire corrigé et contrôle XML structurel ajouté. | Validation PHPUnit natif en CI ; exécuteur local WASM ne lit pas ce XML. |
 | Chargeur SQL CLI | `scripts/load_db.php` appelait récursivement son propre gestionnaire d’erreur quand `STDERR` existe ; il écrit maintenant sur `STDERR`. | Test natif d’un nom de base invalide, sans connexion SQL ni écriture. |
 | CI | Les jobs SQL et PHPUnit pouvaient masquer un échec via `|| true`. Les échecs des campagnes existantes sont maintenant bloquants ; la CI initialise aussi la base `minishop_test` utilisée par la campagne (elle chargeait seulement `minishop` auparavant). un job E2E isolé et des vérifications SQL destructives sur service jetable ont été ajoutés. | CI du commit `796aada` réussie ; le vert des anciens jobs concernés n’était **pas** une preuve suffisante du succès de ces campagnes. Le job style reste explicitement non bloquant. |
-| 11 candidats | Analyse détaillée dans `docs/16-audit-code-mort.md`. `Filter::isNotNull`, `Journal::tail`, `JsonTable::isDirty` ont des tests ; `sudoDisponible` est réellement utilisé. `page403` est appelée ; `withStore`, `dsnUtilise` et `codeDerniereErreur` ont été retirées sur demande ; `comptesDemo` est appelée par la nouvelle aide CLI et `$nom` a été remplacé par une alternative de visuel. Une alerte lexicale reste à examiner. | `for()` est conservée et testée ; tout consommateur externe de `withStore()` doit migrer vers `CommandeRepository::for($store)`. |
+| 11 candidats | Analyse détaillée dans `docs/16-audit-code-mort.md`. `Filter::isNotNull`, `Journal::tail`, `JsonTable::isDirty` ont des tests ; `sudoDisponible` est réellement utilisé. `page403` est appelée ; `withStore`, `dsnUtilise`, `codeDerniereErreur` et `EnvFile::existe` ont été retirées sur demande ; `comptesDemo` est appelée par la nouvelle aide CLI et `$nom` a été remplacé par une alternative de visuel. Aucune des alertes initiales ne reste dans le référentiel ; cela ne prouve pas l’absence de code inutilisé. | `for()` est conservée et testée ; tout consommateur externe de `withStore()` doit migrer vers `CommandeRepository::for($store)`. |
 
 ### Alternatives d’image et aide CLI
 
@@ -32,6 +32,10 @@ Cet audit combine un inventaire automatisé de tout le dépôt et une revue manu
 ### Accesseur de code d’erreur SQL supprimé
 
 `DbInstaller::codeDerniereErreur()` a été retirée sur demande. Le code privé reste exploité par `refusIdentifiants()` et par les diagnostics d’installation. Un test sans serveur injecte les codes 1045, 1698, 2002 et 0 pour vérifier leur classement ; il ne simule pas une connexion PDO réelle. [CI du commit `4860daa` verte](https://github.com/jojo8356/SAE-302/actions/runs/40838583689), y compris PHP natif 8.2/8.5 et MySQL 8 jetable. La méthode était publique : les appels externes éventuels doivent être adaptés.
+
+### Accesseur de vérification `.env` supprimé
+
+`EnvFile::existe()` a été retirée sur demande. `initialiser()` vérifie toujours elle-même l’existence du fichier avant toute écriture. Des tests utilisent un fichier temporaire pour contrôler création et non-écrasement. Les appels externes à la méthode supprimée doivent être adaptés. Le scanner ne relève plus de candidat dans son périmètre, ce qui ne prouve pas l’absence de code inutilisé.
 
 ## Couverture par famille
 
@@ -61,7 +65,7 @@ Cet audit combine un inventaire automatisé de tout le dépôt et une revue manu
 
 ## Risques restants et auto-évaluation
 
-1. La page 403 est branchée pour le refus SUPER ; l’intégration navigateur réelle reste à vérifier. La suppression de `withStore` est une rupture pour les usages externes éventuels : remplacer `$depot->withStore($store)` par `CommandeRepository::for($store)`. `dsnUtilise` et `codeDerniereErreur` ont été supprimées et la signature de `visuel_produit` a changé : les appels externes doivent être adaptés. La fiche identifie le visuel comme indicatif ; ce libellé ne décrit pas ses caractéristiques visuelles et doit être revu avec les contenus réels.
+1. La page 403 est branchée pour le refus SUPER ; l’intégration navigateur réelle reste à vérifier. La suppression de `withStore` est une rupture pour les usages externes éventuels : remplacer `$depot->withStore($store)` par `CommandeRepository::for($store)`. `dsnUtilise`, `codeDerniereErreur` et `EnvFile::existe` ont été supprimées et la signature de `visuel_produit` a changé : les appels externes doivent être adaptés. La fiche identifie le visuel comme indicatif ; ce libellé ne décrit pas ses caractéristiques visuelles et doit être revu avec les contenus réels.
 2. L’option SQL de réinitialisation détruit volontairement sa cible. La comparaison avec `DB_NAME` ne protège pas les autres bases, alias, droits ou concurrents ; le harnais shell SQL direct ne possède pas cette protection. Utiliser exclusivement un serveur jetable et sauvegarder.
 3. Les données de démonstration versionnées, les journaux et les fonctions d’installation imposent une vérification de configuration et de sécurité avant mise en ligne. Aucun examen de l’historique complet ni des secrets hors index n’est revendiqué.
 4. Lors de la préparation des tests facultatifs PHP-WASM, l’audit npm a signalé **9 vulnérabilités** (dont 5 élevées) dans l’outillage Node et ses dépendances, notamment `@php-wasm/node`. Ce n’est pas une analyse de l’application PHP en production ; la mise à niveau majeure n’a pas été entreprise dans cette correction. Ne pas exposer les outils de développement sur Internet ; examiner et mettre à jour ces dépendances dans une tâche dédiée.
