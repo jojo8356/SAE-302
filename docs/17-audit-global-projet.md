@@ -35,7 +35,7 @@ Cet audit combine un inventaire automatisé de tout le dépôt et une revue manu
 
 ### Accesseur de vérification `.env` supprimé
 
-`EnvFile::existe()` a été retirée sur demande. `initialiser()` vérifie toujours elle-même l’existence du fichier avant toute écriture. Des tests utilisent un fichier temporaire pour contrôler création et non-écrasement. Les appels externes à la méthode supprimée doivent être adaptés. Le scanner ne relève plus de candidat dans son périmètre, ce qui ne prouve pas l’absence de code inutilisé.
+`EnvFile::existe()` a été retirée sur demande. `initialiser()` vérifie toujours elle-même l’existence du fichier avant toute écriture. Des tests utilisent un fichier temporaire pour contrôler création et non-écrasement. [CI du commit `690a2fe` verte](https://github.com/jojo8356/SAE-302/actions/runs/40843062586), dont PHP natif 8.2/8.5 et MySQL 8 jetable. Les appels externes à la méthode supprimée doivent être adaptés. Le scanner ne relève plus de candidat dans son périmètre, ce qui ne prouve pas l’absence de code inutilisé.
 
 ## Couverture par famille
 

@@ -329,7 +329,7 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 
 - [x] Retirer `EnvFile::existe()` sur demande, sans modifier les autres fonctions de configuration.
 - [x] Tester l’initialisation et la non-modification d’un fichier `.env` temporaire ; actualiser l’audit (0 candidat dans le référentiel lexical).
-- [x] Suites PHP-WASM : 293 vérifications unitaires et 43 tests PHPUnit locaux ; E2E isolé : 309 contrôles ; sécurité : 10 contrôles et autotest. CI native à vérifier après publication.
+- [x] Suites PHP-WASM : 293 vérifications unitaires et 43 tests PHPUnit locaux ; E2E isolé : 309 contrôles ; sécurité : 10 contrôles et autotest. CI du commit `690a2fe` réussie (PHP natif 8.2/8.5, PHPUnit, E2E WASM et MySQL 8 jetable).
 - [!] Auto-évaluation : les tests utilisent des fichiers temporaires. Le scanner reste lexical et partiel ; zéro candidat ne garantit pas l’absence de code inutilisé. La suppression casse d’éventuels appels externes à cette méthode publique. PHP natif, MariaDB et navigateur réel non disponibles localement.
 
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
