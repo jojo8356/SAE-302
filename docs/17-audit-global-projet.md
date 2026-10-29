@@ -31,7 +31,7 @@ Cet audit combine un inventaire automatisé de tout le dépôt et une revue manu
 
 ### Accesseur de code d’erreur SQL supprimé
 
-`DbInstaller::codeDerniereErreur()` a été retirée sur demande. Le code privé reste exploité par `refusIdentifiants()` et par les diagnostics d’installation. Un test sans serveur injecte les codes 1045, 1698, 2002 et 0 pour vérifier leur classement ; il ne simule pas une connexion PDO réelle. La méthode était publique : les appels externes éventuels doivent être adaptés.
+`DbInstaller::codeDerniereErreur()` a été retirée sur demande. Le code privé reste exploité par `refusIdentifiants()` et par les diagnostics d’installation. Un test sans serveur injecte les codes 1045, 1698, 2002 et 0 pour vérifier leur classement ; il ne simule pas une connexion PDO réelle. [CI du commit `4860daa` verte](https://github.com/jojo8356/SAE-302/actions/runs/40838583689), y compris PHP natif 8.2/8.5 et MySQL 8 jetable. La méthode était publique : les appels externes éventuels doivent être adaptés.
 
 ## Couverture par famille
 

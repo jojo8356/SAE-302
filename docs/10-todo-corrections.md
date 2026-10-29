@@ -322,7 +322,7 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 
 - [x] Retirer `DbInstaller::codeDerniereErreur` sur demande, en conservant le code interne et `refusIdentifiants`.
 - [x] Vérifier le classement des codes 1045, 1698, 2002 et 0 en injectant l’état interne sans connexion SQL ; référentiel actualisé (1 candidat restant).
-- [x] Suites PHP-WASM isolées : 291 vérifications unitaires et 43 tests PHPUnit locaux ; E2E isolé : 309 contrôles ; sécurité : 10 contrôles et autotest. CI native à vérifier après publication.
+- [x] Suites PHP-WASM isolées : 291 vérifications unitaires et 43 tests PHPUnit locaux ; E2E isolé : 309 contrôles ; sécurité : 10 contrôles et autotest. CI du commit `4860daa` réussie (PHP natif 8.2/8.5, PHPUnit, E2E WASM et MySQL 8 jetable).
 - [!] Auto-évaluation : le test du classement injecte un état simulé ; il ne prouve pas un refus d’authentification réel. Les appels externes à l’accesseur supprimé seront cassés. PHP natif et MariaDB non disponibles localement.
 
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
