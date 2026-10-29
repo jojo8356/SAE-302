@@ -1,7 +1,6 @@
 {
   "description": "Candidats existants, à étudier avant toute suppression ; une nouvelle clé fait échouer le contrôle.",
   "candidats": [
-    "app/Tools/DbInstaller.php|codederniereerreur|fonction ou méthode sans référence textuelle|codederniereerreur",
     "app/Tools/EnvFile.php|existe|fonction ou méthode sans référence textuelle|existe"
   ]
 }

@@ -475,6 +475,18 @@ echo "\n14. Versions MySQL / MariaDB acceptées (App\\Tools\\DbInstaller)\n";
     }
 }
 
+// Diagnostic des refus : tester le classement des codes sans serveur ni connexion.
+{
+    $installateur = new DbInstaller('127.0.0.1', '3306', 'test', 'test', '');
+    $check('installateur : aucun refus avant connexion', !$installateur->refusIdentifiants());
+    // Injection ciblée de l'état privé : évite tout essai d'authentification sur une base.
+    $codeInterne = new ReflectionProperty(DbInstaller::class, 'dernierCode');
+    foreach ([1045 => true, 1698 => true, 2002 => false, 0 => false] as $code => $attendu) {
+        $codeInterne->setValue($installateur, $code);
+        $check('installateur : classification du code ' . $code, $installateur->refusIdentifiants() === $attendu);
+    }
+}
+
 // ============================================================ 15. connexion SGBD
 echo "\n15. DSN et repli socket Unix (App\\Config\\DbConnexion)\n";
 {

@@ -20,7 +20,7 @@ Les références sont des **indices textuels** et non une preuve d’exécution 
 
 ### Candidats restants à trier
 
-Réexamen des **11 alertes initiales** : le référentiel `scripts/code_mort_reference.json` en contient désormais **2**. Trois disparaissent de l’analyse parce que des tests les citent, sans preuve d’usage applicatif ; `sudoDisponible` est maintenant utilisé par le provisionnement, `page403` par le contrôleur frontal. `withStore` et `dsnUtilise` ont été supprimées sur demande ; `comptesDemo` est utilisée par la CLI et le paramètre inutilisé de `visuel_produit` remplacé par une alternative explicite. Ce ne sont pas des preuves de code mort. Un nouvel indice fait échouer le contrôle ; les indices disparus doivent aussi être retirés du référentiel après revue. Les candidats connus restent affichables avec `php scripts/code_mort.php --rapport`.
+Réexamen des **11 alertes initiales** : le référentiel `scripts/code_mort_reference.json` en contient désormais **1**. Trois disparaissent de l’analyse parce que des tests les citent, sans preuve d’usage applicatif ; `sudoDisponible` est maintenant utilisé par le provisionnement, `page403` par le contrôleur frontal. `withStore`, `dsnUtilise` et `codeDerniereErreur` ont été supprimées sur demande ; `comptesDemo` est utilisée par la CLI et le paramètre inutilisé de `visuel_produit` remplacé par une alternative explicite. Ce ne sont pas des preuves de code mort. Un nouvel indice fait échouer le contrôle ; les indices disparus doivent aussi être retirés du référentiel après revue. Les candidats connus restent affichables avec `php scripts/code_mort.php --rapport`.
 
 | Candidat | Observation et décision prudente |
 |---|---|
@@ -32,7 +32,7 @@ Réexamen des **11 alertes initiales** : le référentiel `scripts/code_mort_ref
 | `Seed::comptesDemo` | Utilisée par `php scripts/aide.php --comptes-demo` ; accès CLI seulement et lecture seule. Comptes initiaux pouvant avoir été modifiés. |
 | `CommandeRepository::withStore` | Supprimée sur demande : aucun appel trouvé dans les sources versionnées ; la fabrique statique `for` est conservée et testée. **Rupture d’API** : remplacer tout appel externe `$depot->withStore($store)` par `CommandeRepository::for($store)`. |
 | `visuel_produit($nom)` | Paramètre supprimé ; la vue transmet maintenant une implémentation d’`AlternativeImage`. Cartes décoratives ; fiche avec identification du visuel indicatif. Signature modifiée : tout appel externe doit être adapté. |
-| `DbInstaller::codeDerniereErreur` | Accesseur public de diagnostic sans appel détecté ; conserver avant revue des outils externes. |
+| `DbInstaller::codeDerniereErreur` | Accesseur supprimé sur demande ; le code interne et `refusIdentifiants()` sont conservés et le classement des codes est testé sans SQL. Des appels externes éventuels à cet accesseur doivent être adaptés. |
 | `DbProvision::sudoDisponible` | Désormais appelée avant d’écrire le fichier et lancer `sudo` ; diagnostic précoce si sudo manque. |
 | `EnvFile::existe` | Accesseur public sans appel détecté ; vérifier les outils hors dépôt. |
 

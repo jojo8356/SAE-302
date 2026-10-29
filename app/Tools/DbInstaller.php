@@ -202,12 +202,6 @@ final class DbInstaller
         return DbConnexion::socketUtilisee();
     }
 
-    /** Code MySQL du dernier échec de connexion (`0` si aucun). */
-    public function codeDerniereErreur(): int
-    {
-        return $this->dernierCode;
-    }
-
     /** Le dernier échec est-il un refus d'identifiants (root en socket Unix) ? */
     public function refusIdentifiants(): bool
     {
