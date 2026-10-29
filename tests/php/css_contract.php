@@ -339,7 +339,7 @@ $check('vue catalogue : visuel utilisé quand il existe',
 $check('vue catalogue : repli quand il manque',
     str_contains($catalogueVue, 'initiale_produit('));
 $check('visuel : image décorative (alt vide, le nom est déjà dans le titre)',
-    str_contains($catalogueVue, 'visuel_produit(') && preg_match('/visuel_produit\([^)]*\)/', (string) file_get_contents($racine . '/app/Security/xss.php')) !== null);
+    str_contains($catalogueVue, 'AlternativeDecorative') && str_contains((string) visuel_produit('img/produits/zen14.jpg', new \App\View\Image\AlternativeDecorative()), 'alt=""'));
 $check('helpers : une URL distante est refusée',
     (static function () use ($racine): bool {
         require_once $racine . '/app/Security/xss.php';
@@ -352,12 +352,12 @@ $check('helpers : un fichier absent ne produit pas de balise cassée',
     (static function () use ($racine): bool {
         require_once $racine . '/app/Security/xss.php';
         return image_produit('img/produits/inexistant.jpg') === null
-            && visuel_produit('img/produits/inexistant.jpg', 'X') === null;
+            && visuel_produit('img/produits/inexistant.jpg', new \App\View\Image\AlternativeDecorative()) === null;
     })());
 $check('helpers : un visuel existant produit une balise dimensionnée',
     (static function () use ($racine): bool {
         require_once $racine . '/app/Security/xss.php';
-        $balise = visuel_produit('img/produits/zen14.jpg', 'Ordinateur');
+        $balise = visuel_produit('img/produits/zen14.jpg', new \App\View\Image\AlternativeDecorative());
         return is_string($balise) && str_contains($balise, 'width="600"')
             && str_contains($balise, 'height="450"') && str_contains($balise, 'loading="lazy"');
     })());

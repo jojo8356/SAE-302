@@ -18,7 +18,7 @@ $check = static function (string $label, bool $ok) use (&$tests, &$echecs): void
 };
 
 $produits = [
-    ['nom' => 'Bracelet test', 'slug' => 'bracelet-test', 'categorie' => 'Objets', 'reference' => 'BRAC-TEST', 'prix_ttc' => 12, 'stock' => 5, 'date_creation' => '2026-10-28 14:05:32'],
+    ['image_url' => 'img/produits/zen14.jpg', 'nom' => 'Bracelet test', 'slug' => 'bracelet-test', 'categorie' => 'Objets', 'reference' => 'BRAC-TEST', 'prix_ttc' => 12, 'stock' => 5, 'date_creation' => '2026-10-28 14:05:32'],
     ['nom' => 'Écran "test" <script>', 'slug' => 'ecran-test', 'categorie' => 'Informatique', 'reference' => 'ECRA-TEST', 'prix_ttc' => 99, 'stock' => 0, 'date_creation' => '2026-10-27 14:05:32'],
 ];
 $categories = [];
@@ -40,6 +40,7 @@ foreach (['accueil' => $accueil, 'catalogue' => $catalogue] as $page => $html) {
     preg_match_all('/<article class="carte carte-produit">(.*?)<\\/article>/s', $html, $trouves);
     $cartes = $trouves[1];
     $check($page . ' : les deux produits sont rendus', count($cartes) === count($produits));
+    $check($page . ' : visuel de la carte décoratif', str_contains($cartes[0] ?? '', 'alt=""'));
     foreach ($produits as $index => $produit) {
         $carte = $cartes[$index] ?? '';
         preg_match_all('/<a\\b[^>]*>/', $carte, $liens);

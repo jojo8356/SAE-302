@@ -20,18 +20,18 @@ Les références sont des **indices textuels** et non une preuve d’exécution 
 
 ### Candidats restants à trier
 
-Réexamen des **11 alertes initiales** : le référentiel `scripts/code_mort_reference.json` en contient désormais **5**. Trois disparaissent de l’analyse parce que des tests les citent, sans preuve d’usage applicatif ; `sudoDisponible` est maintenant utilisé par le provisionnement, `page403` par le contrôleur frontal, et `withStore` a été supprimée sur demande. Ce ne sont pas des preuves de code mort. Un nouvel indice fait échouer le contrôle ; les indices disparus doivent aussi être retirés du référentiel après revue. Les candidats connus restent affichables avec `php scripts/code_mort.php --rapport`.
+Réexamen des **11 alertes initiales** : le référentiel `scripts/code_mort_reference.json` en contient désormais **2**. Trois disparaissent de l’analyse parce que des tests les citent, sans preuve d’usage applicatif ; `sudoDisponible` est maintenant utilisé par le provisionnement, `page403` par le contrôleur frontal. `withStore` et `dsnUtilise` ont été supprimées sur demande ; `comptesDemo` est utilisée par la CLI et le paramètre inutilisé de `visuel_produit` remplacé par une alternative explicite. Ce ne sont pas des preuves de code mort. Un nouvel indice fait échouer le contrôle ; les indices disparus doivent aussi être retirés du référentiel après revue. Les candidats connus restent affichables avec `php scripts/code_mort.php --rapport`.
 
 | Candidat | Observation et décision prudente |
 |---|---|
-| `DbConnexion::dsnUtilise` | Accesseur public de diagnostic ; aucune référence détectée. API ou script externe possible : conserver en attendant validation. |
+| `DbConnexion::dsnUtilise` | Accesseur et état supprimés sur demande ; construction du DSN et diagnostic de socket conservés. Rupture possible pour des appels externes. |
 | `HomeController::page403` | Désormais appelée par le contrôleur frontal après un refus d’accès : statut 403 réel pour un gestionnaire, redirection de connexion conservée pour un visiteur. |
 | `Filter::isNotNull` | Conservé ; test réel côté JSON ajouté. Cette référence de test ne démontre pas un usage en production. |
 | `Journal::tail` | Conservé ; limites zéro/négative corrigées et testées sur un fichier temporaire. La documentation ne prétend plus qu’un écran back-office le consulte. |
 | `JsonTable::isDirty` | Conservé ; transition sale/propre après persistance testée. Référence de test seulement. |
-| `Seed::comptesDemo` | Accesseur public non appelé dans le périmètre ; vérifier usages hors dépôt avant retrait. |
+| `Seed::comptesDemo` | Utilisée par `php scripts/aide.php --comptes-demo` ; accès CLI seulement et lecture seule. Comptes initiaux pouvant avoir été modifiés. |
 | `CommandeRepository::withStore` | Supprimée sur demande : aucun appel trouvé dans les sources versionnées ; la fabrique statique `for` est conservée et testée. **Rupture d’API** : remplacer tout appel externe `$depot->withStore($store)` par `CommandeRepository::for($store)`. |
-| `visuel_produit($nom)` | Paramètre non lu depuis que l’image est décorative (`alt=""`) ; les appels et la signature publique l’utilisent encore. Conserver sans changer l’accessibilité ni casser les appels nommés. |
+| `visuel_produit($nom)` | Paramètre supprimé ; la vue transmet maintenant une implémentation d’`AlternativeImage`. Cartes décoratives ; fiche avec identification du visuel indicatif. Signature modifiée : tout appel externe doit être adapté. |
 | `DbInstaller::codeDerniereErreur` | Accesseur public de diagnostic sans appel détecté ; conserver avant revue des outils externes. |
 | `DbProvision::sudoDisponible` | Désormais appelée avant d’écrire le fichier et lancer `sudo` ; diagnostic précoce si sudo manque. |
 | `EnvFile::existe` | Accesseur public sans appel détecté ; vérifier les outils hors dépôt. |
@@ -44,6 +44,9 @@ Tailles en octets historiques mesurées lors du premier audit (`870dda5`) ; les 
 
 | Fichier | Octets | Fonctions avec corps | Rôle et indice d’utilisation |
 |---|---:|---:|---|
+| `app/View/Image/AlternativeImage.php` | — | 0 | Contrat de texte alternatif des visuels produit. |
+| `app/View/Image/AlternativeDecorative.php` | — | 1 | Alternative vide pour les images décoratives des cartes. |
+| `app/View/Image/AlternativeInformative.php` | — | 2 | Texte alternatif non vide pour la fiche produit. |
 | `app/Config/Database.php` | 6905 | 10 | Choix du magasin JSON/SQL et lecture de la configuration. Références : `app/Config/DbConnexion.php`, `app/Controller/Admin/CategorieAdminController.php`, `app/Controller/Admin/CommandeAdminController.php`…. |
 | `app/Config/DbConnexion.php` | 14077 | 17 | Connexion PDO, DSN, options et repli socket. Références : `app/Model/Data/SqlStore.php`, `app/Tools/DbInstaller.php`, `docs/10-todo-corrections.md`…. |
 | `app/Config/Env.php` | 6736 | 11 | Lecteur et cache de configuration .env ; la classe Env n’est pas le fichier secret env.php. Références : `app/Config/Database.php`, `app/Config/env.example.php`, `app/Tools/EnvFile.php`…. |

@@ -309,6 +309,15 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] Suites PHP-WASM isolées : 37 tests unitaires locaux ; E2E WASM : 309 contrôles ; sécurité : 10 contrôles et autotest. CI du commit `839e311` réussie (PHP natif 8.2/8.5, PHPUnit, E2E WASM et MySQL 8 jetable).
 - [!] La méthode étant publique, les consommateurs externes doivent migrer vers `CommandeRepository::for($store)` ; ils ne peuvent pas être inventoriés depuis ce dépôt. PHP natif, MariaDB et navigateur réel non joués localement.
 
+## 6 unvicies. DSN, aide CLI et alternatives des visuels
+
+- [x] Retirer l’accesseur DSN et son état inutilisés, sans modifier la connexion SQL.
+- [x] Ajouter une aide CLI qui utilise les comptes de démonstration sans initialiser ni modifier de données.
+- [x] Créer un contrat et deux alternatives d’image : décorative et informative ; retirer le paramètre `$nom` de `visuel_produit` et adapter les vues.
+- [x] Tester les deux alternatives et leur échappement, ajouter les tests CLI natifs isolés et actualiser les inventaires et rapports (2 candidats restants).
+- [x] Suites PHP-WASM : 43 tests PHPUnit locaux ; E2E isolé : 309 contrôles ; sécurité : 10 contrôles et autotest. CI native à vérifier après publication.
+- [!] CLI native, MariaDB, WAVE et navigateur réel non disponibles localement ; identité d’une image indicative ne décrit pas son contenu visuel. Les appels externes à `dsnUtilise` et l’ancienne signature de `visuel_produit` sont cassés.
+
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 
 - [!] **Noms, prénoms, numéros étudiants** des 3 membres + emails → README §Membres et CDC §3.3 (aucune identité ne peut être inventée).

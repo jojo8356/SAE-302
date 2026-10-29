@@ -1,9 +1,6 @@
 {
   "description": "Candidats existants, à étudier avant toute suppression ; une nouvelle clé fait échouer le contrôle.",
   "candidats": [
-    "app/Config/DbConnexion.php|dsnutilise|fonction ou méthode sans référence textuelle|dsnutilise",
-    "app/Model/Data/Seed.php|comptesdemo|fonction ou méthode sans référence textuelle|comptesdemo",
-    "app/Security/xss.php|visuel_produit|paramètre non cité dans le corps|$nom",
     "app/Tools/DbInstaller.php|codederniereerreur|fonction ou méthode sans référence textuelle|codederniereerreur",
     "app/Tools/EnvFile.php|existe|fonction ou méthode sans référence textuelle|existe"
   ]

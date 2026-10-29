@@ -48,7 +48,7 @@ declare(strict_types=1);
     <div class="grille grille--produits">
         <?php foreach ($nouveautes as $produit): ?>
             <article class="carte carte-produit">
-                <?php $visuel = visuel_produit($produit['image_url'] ?? null, (string) $produit['nom']); ?>
+                <?php $visuel = visuel_produit($produit['image_url'] ?? null, new \App\View\Image\AlternativeDecorative()); ?>
                 <?php if ($visuel !== null): ?>
                     <div class="carte-produit__media"><?= $visuel // HTML-SAFE : URL validée et échappée par le helper ?></div>
                 <?php else: ?>

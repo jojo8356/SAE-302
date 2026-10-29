@@ -33,6 +33,15 @@ informations restent à renseigner. La fonction légale de rétractation en lign
 le détail des cookies réellement identifiés et la checklist figurent dans
 [`docs/12-information-juridique.md`](docs/12-information-juridique.md).
 
+## Aide locale en ligne de commande
+
+```bash
+php scripts/aide.php --help
+php scripts/aide.php --comptes-demo
+```
+
+Ces commandes ne se connectent à aucune base et ne modifient pas les données. La seconde affiche les **identifiants initiaux** du jeu de démonstration JSON : ils peuvent avoir été changés ou être absents de l’installation courante. Ne pas laisser ces comptes actifs sur une instance accessible sans protection.
+
 ## Prérequis
 
 - PHP **8.2+** avec les extensions `pdo_mysql`, `mbstring`, `json`, `intl`

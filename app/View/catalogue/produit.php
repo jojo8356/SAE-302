@@ -13,7 +13,7 @@ $stock = (int) $produit['stock'];
 
 <div class="fiche">
     <div>
-        <?php $visuel = visuel_produit($produit['image_url'] ?? null, (string) $produit['nom'], 800, 600); ?>
+        <?php $visuel = visuel_produit($produit['image_url'] ?? null, new \App\View\Image\AlternativeInformative('Visuel indicatif : ' . (string) $produit['nom']), 800, 600); ?>
         <?php if ($visuel !== null): ?>
             <div class="fiche__media"><?= $visuel // HTML-SAFE : URL validée et échappée par le helper ?></div>
         <?php else: ?>

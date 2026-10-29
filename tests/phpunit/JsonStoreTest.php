@@ -65,6 +65,18 @@ final class JsonStoreTest extends TestCase
         }
     }
 
+    public function testComptesDemoCorrespondentAuxDonneesInitiales(): void
+    {
+        $comptes = Seed::comptesDemo();
+        self::assertSame(4, count($comptes));
+        foreach ($comptes as $email => $motDePasse) {
+            $table = str_starts_with($email, 'admin@') ? 'administrateur' : 'client';
+            $compte = $this->store->findOne($table, [Filter::eq('email', $email)]);
+            self::assertNotNull($compte);
+            self::assertTrue(password_verify($motDePasse, (string) $compte['mot_de_passe_hash']));
+        }
+    }
+
     public function testInsertionProduitValide(): void
     {
         $id = $this->store->insert('produit', [

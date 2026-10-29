@@ -51,9 +51,6 @@ final class DbConnexion
     /** Socket réellement utilisée par la dernière connexion réussie. */
     private static ?string $socketUtilisee = null;
 
-    /** DSN effectivement retenu par la dernière connexion réussie. */
-    private static ?string $dsnUtilise = null;
-
     /**
      * Collation de session imposée à chaque connexion.
      *
@@ -114,7 +111,6 @@ final class DbConnexion
             try {
                 $pdo = new PDO($dsn, $utilisateur, $motDePasse, self::options());
                 self::$socketUtilisee = self::socketDuDsn($dsn);
-                self::$dsnUtilise = $dsn;
 
                 return $pdo;
             } catch (PDOException $erreur) {
@@ -220,17 +216,10 @@ final class DbConnexion
         return self::$socketUtilisee;
     }
 
-    /** DSN retenu par la dernière connexion réussie (diagnostic). */
-    public static function dsnUtilise(): ?string
-    {
-        return self::$dsnUtilise;
-    }
-
     /** Réinitialise la trace (tests, bascule de configuration). */
     public static function reinitialiser(): void
     {
         self::$socketUtilisee = null;
-        self::$dsnUtilise = null;
     }
 
     /**

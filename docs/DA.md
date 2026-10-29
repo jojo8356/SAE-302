@@ -289,7 +289,7 @@ les tokens sont prêts (`[data-theme="dark"]` documenté) si la suite du projet 
   - **Contraintes tenues** : `width`/`height` déclarés (aucun décalage de mise en page au chargement),
     `loading="eager"` + `fetchpriority="high"` pour le hero (au-dessus de la ligne de flottaison),
     `loading="lazy"` pour les vignettes (une grille de 12 produits ne doit pas retarder le premier
-    écran), `alt` descriptif pour l'ambiance et **`alt=""` pour les packshots** — le nom du produit
+    écran), `alt` descriptif pour l'ambiance et **`alt=""` pour les packshots des cartes** — le nom du produit
     est déjà le titre de la carte, le répéter ferait bavarder un lecteur d'écran.
     `object-fit: cover` en carte, `contain` sur la fiche (on ne rogne pas le sujet). Poids ≤ 250 Ko
     pour le hero, ≤ 120 Ko par packshot : vérifié par `tests/php/css_contract.php`.
@@ -493,3 +493,7 @@ et son poids `800` ; les grands paragraphes en gras peuvent déclencher la
 transformer artificiellement en titre pour supprimer l’alerte. Un élément a été
 identifié, pas nécessairement tous les autres : les vérifier individuellement et
 refaire WAVE après déploiement ; aucun rendu réel n’a été exécuté ici.
+
+### Alternatives des visuels produit
+
+Les cartes conservent une image décorative (`alt=""`), le nom étant déjà visible. La fiche choisit explicitement une alternative informative qui identifie le visuel comme indicatif. Ce libellé reprend le nom, sans inventer de détail sur la photographie ; une véritable description visuelle doit être fournie et vérifiée si l’image véhicule une information supplémentaire. Le choix entre les deux stratégies se fait à l’exécution, pas par le compilateur PHP.

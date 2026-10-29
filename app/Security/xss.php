@@ -217,7 +217,7 @@ function initiale_produit(string $nom): string
  * page), `loading="lazy"` : une grille de 12 produits ne doit pas retarder
  * l'affichage des premières cartes.
  */
-function visuel_produit(?string $url, string $nom, int $largeur = 600, int $hauteur = 450): ?string
+function visuel_produit(?string $url, \App\View\Image\AlternativeImage $alternative, int $largeur = 600, int $hauteur = 450): ?string
 {
     $source = image_produit($url);
     if ($source === null) {
@@ -225,6 +225,6 @@ function visuel_produit(?string $url, string $nom, int $largeur = 600, int $haut
     }
 
     return '<img class="carte-produit__image" src="' . e($source) . '"'
-        . ' alt="" width="' . $largeur . '" height="' . $hauteur . '"'
+        . ' alt="' . e($alternative->texte()) . '" width="' . $largeur . '" height="' . $hauteur . '"'
         . ' loading="lazy" decoding="async">';
 }
