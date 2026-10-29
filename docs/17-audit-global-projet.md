@@ -45,6 +45,8 @@ Cet audit combine un inventaire automatisé de tout le dépôt et une revue manu
 
 **Suppression de `withStore` — validation du commit `839e311` :** [CI verte](https://github.com/jojo8356/SAE-302/actions/runs/40775475513), dont PHPUnit natif, suites PHP 8.2/8.5, E2E WASM et MySQL 8 jetable. La migration éventuelle des appels extérieurs reste à la charge de leurs utilisateurs.
 
+**Aide CLI et alternatives d’image — validation du commit `30b4c8a` :** [CI verte](https://github.com/jojo8356/SAE-302/actions/runs/40835999534) en PHP natif 8.2/8.5, avec tests CLI en copie jetable et refus HTTP, PHPUnit, sécurité, E2E WASM et MySQL 8 jetable. Le rendu et la pertinence des descriptions restent à valider sur navigateur et contenus réels.
+
 ## Contrôles automatisés disponibles
 
 `tests/python/test_audit_structurel.py` prend la liste `git ls-files` et vérifie présence/non-vide, synchronisation de l’inventaire CSV, compilation Python sans exécution, analyse JSON, XML et SVG, intégrité interne ZIP des formats bureautiques, `bash -n` et `node --check` si présents. Il ne vérifie ni le comportement ni la qualité visuelle, et n’ouvre pas les fichiers ignorés. Les scripts PHP sont analysés séparément par `scripts/verifier_deprecations.py` et la CI.

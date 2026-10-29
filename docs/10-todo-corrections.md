@@ -315,8 +315,8 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] Ajouter une aide CLI qui utilise les comptes de démonstration sans initialiser ni modifier de données.
 - [x] Créer un contrat et deux alternatives d’image : décorative et informative ; retirer le paramètre `$nom` de `visuel_produit` et adapter les vues.
 - [x] Tester les deux alternatives et leur échappement, ajouter les tests CLI natifs isolés et actualiser les inventaires et rapports (2 candidats restants).
-- [x] Suites PHP-WASM : 43 tests PHPUnit locaux ; E2E isolé : 309 contrôles ; sécurité : 10 contrôles et autotest. CI native à vérifier après publication.
-- [!] CLI native, MariaDB, WAVE et navigateur réel non disponibles localement ; identité d’une image indicative ne décrit pas son contenu visuel. Les appels externes à `dsnUtilise` et l’ancienne signature de `visuel_produit` sont cassés.
+- [x] Suites PHP-WASM : 43 tests PHPUnit locaux ; E2E isolé : 309 contrôles ; sécurité : 10 contrôles et autotest. CI du commit `30b4c8a` réussie : PHP natif 8.2/8.5, tests CLI et refus HTTP, PHPUnit, E2E et MySQL 8 jetable.
+- [!] PHP natif, MariaDB, WAVE et navigateur réel non disponibles localement ; identité d’une image indicative ne décrit pas son contenu visuel. Les appels externes à `dsnUtilise` et l’ancienne signature de `visuel_produit` sont cassés.
 
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 
