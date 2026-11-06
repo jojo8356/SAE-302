@@ -198,7 +198,7 @@ jobs:
         env:
           UI_BASE_URL: http://127.0.0.1:8093
         run: node scripts/ui-e2e-catalogue.mjs
-      - name: E2E UI — Fiche produit (tableau Caractéristiques : valeurs affichées, tenu en page)
+      - name: E2E UI — Fiche produit (tableau Caractéristiques, valeurs affichées, tenu en page)
         env:
           UI_BASE_URL: http://127.0.0.1:8093
         run: node scripts/ui-e2e-produit.mjs
