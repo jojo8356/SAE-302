@@ -47,9 +47,8 @@ declare(strict_types=1);
             <td><?= (int) $categorie['nb_produits'] ?></td>
             <td><?= e($categorie['description']) ?></td>
             <td>
-                <form method="post" action="/admin/categories/<?= (int) $categorie['id_categorie'] ?>/suppression">
-                    <?= csrf_field() ?>
-                    <button type="submit">Supprimer</button>
+                <form method="get" action="/admin/categories/<?= (int) $categorie['id_categorie'] ?>/suppression/confirmation">
+                    <button type="submit" class="bouton-danger">Supprimer</button>
                 </form>
                 <small>RB-14 : refusée si des produits y sont rattachés.</small>
             </td>

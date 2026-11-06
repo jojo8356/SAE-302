@@ -14,6 +14,14 @@
  * aucun soulignement, zone cliquable ≥ 44 px de haut, focus clavier
  * visible. Aucune requête externe, aucun style en ligne (CSP :
  * style-src 'self', cf. public/index.php).
+ *
+ * La classe .bouton-danger (ajoutée pour le bug « Annulation sans
+ * confirmation ») donne aux actions DÉFINITIVES — annuler une
+ * commande, supprimer un produit ou une catégorie — un style
+ * visiblement distinct des boutons de validation ordinaires :
+ * fond rouge #b91c1c, texte blanc (contraste 6,5:1, WCAG AA).
+ * Sans elle, ces boutons avaient le même aspect sombre par défaut
+ * que les boutons « Enregistrer » ou « Valider ».
  */
 
 .bouton-principal {
@@ -36,6 +44,32 @@
 }
 
 .bouton-principal:focus-visible {
+    outline: 3px solid #1d4ed8;
+    outline-offset: 2px;
+}
+
+/* Action définitive : annulation de commande, suppressions admin.
+ * Rouge franc, jamais confondu avec un bouton de validation. */
+.bouton-danger {
+    display: inline-block;
+    background-color: #b91c1c;
+    color: #ffffff;
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.4;
+    padding: 0.6rem 1.25rem;
+    border: 2px solid #7f1d1d;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.bouton-danger:hover {
+    background-color: #991b1b;
+}
+
+.bouton-danger:focus-visible {
     outline: 3px solid #1d4ed8;
     outline-offset: 2px;
 }

@@ -189,7 +189,9 @@ process.stdout.write(B('T4 · annulation client (UC-09, RB-11/18/20)'));
   check('une commande est listée', !!m);
   if (m) {
     const id = m[1];
-    const jA = await alice.csrf(`/mes-commandes/${id}`);
+    // le détail n'a plus de formulaire POST (annulation via page de
+    // confirmation) : le jeton de session se récupère sur « Mon compte »
+    const jA = await alice.csrf('/compte');
     const annulation = await alice.post(`/mes-commandes/${id}/annulation`, { _csrf: jA });
     check('annulation → redirection', annulation.httpStatusCode === 302, `status ${annulation.httpStatusCode}`);
     const stocks = await lireTable('produit');
@@ -471,7 +473,7 @@ process.stdout.write(B('T10 · back-office CRUD complet (F-22/23/25/26/27)'));
     hrefs.some((h) => h.includes('tri=prix_desc')), JSON.stringify(hrefs));
 
   // F-23 : suppression d'un produit jamais commandé → disparition réelle
-  const js = await admin.csrf('/admin/produits');
+  const js = await admin.csrf('/admin/produit/nouveau'); // la liste n'a plus de POST direct (confirmation d'abord)
   const sup = await admin.post(`/admin/produits/${id999}/suppression`, { _csrf: js });
   check('suppression produit → redirection', sup.httpStatusCode === 302, `status ${sup.httpStatusCode}`);
   check('produit supprimé de la table', !(await lireTable('produit')).some((p2) => p2.reference === 'TEST-999'), 'TEST-999 encore là');
@@ -566,7 +568,7 @@ process.stdout.write(B('T12 · sécurité offensive (S-01…S-10)'));
   check('le script est affiché littéralement (échappé)', (pageXss.text ?? '').includes('&lt;script&gt;'), 'pas de &lt;script&gt;');
   check('aucune balise script exécutable', !(pageXss.text ?? '').includes('<script>alert'), '<script> brut dans la page');
   const idXss = (await lireTable('produit')).find((p2) => p2.reference === 'XSS-001')?.id_produit;
-  const jx2 = await admin.csrf('/admin/produits');
+  const jx2 = await admin.csrf('/admin/produit/nouveau');
   await admin.post(`/admin/produits/${idXss}/suppression`, { _csrf: jx2 });
 
   // S-03 : IDOR — bruno ne peut lire aucune commande d'autrui

@@ -115,6 +115,35 @@ final class CommandeController extends Controller
         ], 'Commande ' . $commande['numero']);
     }
 
+    /**
+     * Étape de confirmation avant annulation : l'annulation est
+     * définitive, un simple clic ne doit pas y suffire. Cette page
+     * (GET, sans effet de bord) demande « Êtes-vous sûr ? » ; seul le
+     * POST annuler() exécute. Même garde qu'annuler() : appartenance
+     * (SEC-08) et commande encore annulable.
+     */
+    public function confirmerAnnulation(string $id): void
+    {
+        $client = Auth::exigeClient();
+        $repo = CommandeRepository::for(Database::store());
+
+        try {
+            $commande = $this->commandeDuClient($repo, (int) $id, $client['id']);
+        } catch (BusinessError $e) {
+            $this->flashErreur($e->messageHumain());
+            $this->rediriger('/mes-commandes');
+        }
+
+        if (!in_array($commande['statut'], ['BROUILLON', 'EN_PREPARATION', 'PAYEE'], true)) {
+            $this->flashErreur('Cette commande ne peut plus être annulée.');
+            $this->rediriger('/mes-commandes/' . (int) $commande['id_commande']);
+        }
+
+        $this->render('commande/confirmer_annulation', [
+            'commande' => $commande,
+        ], 'Annuler la commande ' . $commande['numero'] . ' ?');
+    }
+
     /** UC-09 — annulation tant que non expédiée (EF-CLI-10, RB-11/18/20). */
     public function annuler(string $id): void
     {

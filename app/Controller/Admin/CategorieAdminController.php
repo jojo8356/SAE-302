@@ -82,6 +82,25 @@ final class CategorieAdminController extends Controller
         $this->rediriger('/admin/categories');
     }
 
+    /**
+     * Étape de confirmation avant suppression : action définitive, un
+     * simple clic ne doit pas suffire (page « Êtes-vous sûr ? », GET
+     * sans effet de bord ; seul le POST supprimer() exécute).
+     */
+    public function confirmerSuppression(string $id): void
+    {
+        Auth::exigeAdmin();
+        $categorie = (new CategorieRepository(Database::store()))->find((int) $id);
+        if ($categorie === null) {
+            $this->flashErreur('Catégorie introuvable.');
+            $this->rediriger('/admin/categories');
+        }
+
+        $this->render('admin/confirmer_suppression_categorie', [
+            'categorie' => $categorie,
+        ], 'Supprimer la catégorie ' . $categorie['nom'] . ' ?');
+    }
+
     /** RB-14 : suppression refusée si la catégorie est occupée. */
     public function supprimer(string $id): void
     {

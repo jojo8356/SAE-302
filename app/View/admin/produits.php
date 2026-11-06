@@ -48,9 +48,8 @@ declare(strict_types=1);
             <td><?php if ((int) $produit['visible'] === 1) { echo '✔ oui'; } else { echo '✘ masqué'; } ?></td>
             <td>
                 <a href="/admin/produit/<?= (int) $produit['id_produit'] ?>/modification">Modifier</a> ·
-                <form method="post" action="/admin/produits/<?= (int) $produit['id_produit'] ?>/suppression" style="display:inline">
-                    <?= csrf_field() ?>
-                    <button type="submit">Supprimer</button>
+                <form method="get" action="/admin/produits/<?= (int) $produit['id_produit'] ?>/suppression/confirmation">
+                    <button type="submit" class="bouton-danger">Supprimer</button>
                 </form>
             </td>
         </tr>
