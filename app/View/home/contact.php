@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 /** Page statique EF-GEN-05 — contact. */
 ?>
+<section class="page-contact">
 <h1>Contact</h1>
 
 <p>MiniShop est une <strong>maquette pédagogique</strong> réalisée par une
@@ -28,3 +29,4 @@ et combien de temps.</p>
 <p><small>Aucun message envoyé à un éventuel canal de contact ne serait
 traité : cette page a valeur d'information dans le cadre du projet
 étudiant.</small></p>
+</section>

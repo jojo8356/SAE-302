@@ -14,6 +14,11 @@ declare(strict_types=1);
         · Référence : <strong><?= e($produit['reference']) ?></strong>
     </p>
 
+    <?php if (!empty($produit['image_url'])): ?>
+        <p><img class="photo-produit" src="/<?= e($produit['image_url']) ?>"
+                alt="Photo de <?= e($produit['nom']) ?>" width="640" height="400"></p>
+    <?php endif; ?>
+
     <h2>Caractéristiques</h2>
     <table class="tableau-caracteristiques">
         <tbody>
@@ -44,7 +49,11 @@ declare(strict_types=1);
     </table>
 
     <h2>Description</h2>
-    <p><?= e($produit['description']) ?></p>
+    <?php if (trim((string) ($produit['description'] ?? '')) !== ''): ?>
+        <p><?= e($produit['description']) ?></p>
+    <?php else: ?>
+        <p>Aucune description n'est disponible pour ce produit pour le moment.</p>
+    <?php endif; ?>
 
     <?php if ((int) $produit['stock'] > 0): ?>
         <h2>Ajouter au panier</h2>

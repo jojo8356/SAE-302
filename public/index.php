@@ -42,7 +42,7 @@ use App\Security\Auth;
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
 header('Referrer-Policy: same-origin');
-header("Content-Security-Policy: default-src 'none'; style-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
+header("Content-Security-Policy: default-src 'none'; style-src 'self'; img-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
 header('X-XSS-Protection: 0'); // navigation modernes : on s'appuie sur l'échappement, pas sur ce filtre hérité
 
 Auth::demarrer();

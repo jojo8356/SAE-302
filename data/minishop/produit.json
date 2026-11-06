@@ -16,7 +16,7 @@
             "seuil_alerte": 3,
             "id_categorie": 1,
             "visible": true,
-            "image_url": "img/zen14.jpg",
+            "image_url": "img/zen14.svg",
             "date_creation": "2026-09-28 13:26:23",
             "date_modification": "2026-09-28 13:26:23"
         },
@@ -34,7 +34,7 @@
             "seuil_alerte": 2,
             "id_categorie": 1,
             "visible": true,
-            "image_url": "img/turbox.jpg",
+            "image_url": "img/turbox.svg",
             "date_creation": "2026-09-28 13:26:23",
             "date_modification": "2026-09-28 13:26:23"
         },
@@ -52,7 +52,7 @@
             "seuil_alerte": 5,
             "id_categorie": 1,
             "visible": true,
-            "image_url": "img/qhd27.jpg",
+            "image_url": "img/qhd27.svg",
             "date_creation": "2026-09-28 13:26:23",
             "date_modification": "2026-09-28 13:26:23"
         },
@@ -70,7 +70,7 @@
             "seuil_alerte": 10,
             "id_categorie": 1,
             "visible": true,
-            "image_url": "img/k87.jpg",
+            "image_url": "img/k87.svg",
             "date_creation": "2026-09-28 13:26:23",
             "date_modification": "2026-09-28 13:26:23"
         },
@@ -88,7 +88,7 @@
             "seuil_alerte": 5,
             "id_categorie": 2,
             "visible": true,
-            "image_url": "img/aura.jpg",
+            "image_url": "img/aura.svg",
             "date_creation": "2026-09-28 13:26:23",
             "date_modification": "2026-09-28 13:26:24"
         },
@@ -106,7 +106,7 @@
             "seuil_alerte": 8,
             "id_categorie": 2,
             "visible": true,
-            "image_url": "img/boom.jpg",
+            "image_url": "img/boom.svg",
             "date_creation": "2026-09-28 13:26:23",
             "date_modification": "2026-09-28 13:26:23"
         },
@@ -124,7 +124,7 @@
             "seuil_alerte": 1,
             "id_categorie": 2,
             "visible": true,
-            "image_url": "img/procast.jpg",
+            "image_url": "img/procast.svg",
             "date_creation": "2026-09-28 13:26:23",
             "date_modification": "2026-09-28 13:26:26"
         },
@@ -142,7 +142,7 @@
             "seuil_alerte": 6,
             "id_categorie": 3,
             "visible": true,
-            "image_url": "img/sac25.jpg",
+            "image_url": "img/sac25.svg",
             "date_creation": "2026-09-28 13:26:23",
             "date_modification": "2026-09-28 13:26:23"
         },
@@ -160,7 +160,7 @@
             "seuil_alerte": 30,
             "id_categorie": 3,
             "visible": true,
-            "image_url": "img/usbc.jpg",
+            "image_url": "img/usbc.svg",
             "date_creation": "2026-09-28 13:26:23",
             "date_modification": "2026-09-28 13:26:23"
         },
@@ -178,7 +178,7 @@
             "seuil_alerte": 5,
             "id_categorie": 3,
             "visible": true,
-            "image_url": "img/power20.jpg",
+            "image_url": "img/power20.svg",
             "date_creation": "2026-09-28 13:26:23",
             "date_modification": "2026-09-28 13:26:23"
         },
@@ -196,7 +196,7 @@
             "seuil_alerte": 3,
             "id_categorie": 4,
             "visible": true,
-            "image_url": "img/fit2.jpg",
+            "image_url": "img/fit2.svg",
             "date_creation": "2026-09-28 13:26:23",
             "date_modification": "2026-09-28 13:26:24"
         },
@@ -214,7 +214,7 @@
             "seuil_alerte": 15,
             "id_categorie": 4,
             "visible": false,
-            "image_url": "img/band.jpg",
+            "image_url": "img/band.svg",
             "date_creation": "2026-09-28 13:26:23",
             "date_modification": "2026-09-28 13:26:23"
         },

@@ -373,6 +373,37 @@
     overflow-wrap: break-word;
 }
 
+/* Divers (fiche produit, tableau de bord, pied de page, contact) :
+ * — la photo du produit (EF-VIS-04) tient dans la page, un visuel
+ *   propre à chaque produit (public/img/, un fichier par produit) ;
+ * — le pied de page reçoit un fond clair et un texte presque noir
+ *   explicites (contraste ≥ 6,5:1, liens compris) : la mention
+ *   « MiniShop » reste lisible quel que soit le thème du
+ *   navigateur, fini le gris sur fond nuit ;
+ * — sur Contact, le titre et les paragraphes partagent le même
+ *   alignement à gauche, écrit noir sur blanc. */
+.photo-produit {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #d6d3d1;
+}
+
+footer {
+    background-color: #f5f5f4;
+    color: #1c1917;
+    margin-top: 2rem;
+    padding: 1rem;
+}
+
+footer a {
+    color: #9a3412;
+}
+
+.page-contact h1,
+.page-contact p {
+    text-align: left;
+}
+
 .formulaire-filtres-produits {
     display: flex;
     flex-wrap: wrap;

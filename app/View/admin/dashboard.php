@@ -56,11 +56,16 @@ declare(strict_types=1);
 </table>
 
 <h2>Top 5 produits</h2>
+<?php if ($rapport['top_produits'] === []): ?>
+    <p>Aucune vente enregistrée pour le moment : le classement des produits
+        les plus vendus apparaîtra dès les premières commandes.</p>
+<?php else: ?>
 <ol>
     <?php foreach ($rapport['top_produits'] as $top): ?>
         <li><?= e($top['nom']) ?> (réf. <?= e($top['reference']) ?>) —
             <?= (int) $top['unites'] ?> unités, <?= euros($top['ca']) ?> de CA</li>
     <?php endforeach; ?>
 </ol>
+<?php endif; ?>
 
 <p><a href="/admin/commandes">Voir les commandes →</a></p>
