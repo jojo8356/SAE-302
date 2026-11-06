@@ -36,6 +36,7 @@ const suites = [
   ['Contact, réponse non promise, données cohérentes (régression)', 'tests/php/contact_coherence_test.php'],
   ['Annulation, historique conservé, montant soldé (régression)', 'tests/php/annulation_historique_test.php'],
   ['Valider ma commande, récapitulatif à 375 px (régression)', 'tests/php/valider_recap_test.php'],
+  ['Inscription, erreurs simultanées, saisie conservée (régression)', 'tests/php/inscription_erreurs_test.php'],
   ['Page À propos (régression)', 'tests/php/apropos_test.php'],
   ['Bouton panier (régression)', 'tests/php/panier_cta_test.php'],
   ['Doublon catégorie (régression)', 'tests/php/categorie_doublon_test.php'],
@@ -197,6 +198,9 @@ const uiAnnulationHistorique = spawnSync('node', ['scripts/ui-e2e-annulation-his
 
 console.log(`\n${'='.repeat(64)}\n▸ E2E UI Valider 375 px — scripts/ui-e2e-valider.mjs\n${'='.repeat(64)}`);
 const uiValider = spawnSync('node', ['scripts/ui-e2e-valider.mjs'], { stdio: 'inherit' });
+
+console.log(`\n${'='.repeat(64)}\n▸ E2E UI Inscription — scripts/ui-e2e-inscription.mjs\n${'='.repeat(64)}`);
+const uiInscription = spawnSync('node', ['scripts/ui-e2e-inscription.mjs'], { stdio: 'inherit' });
 if (uiDivers.status !== 0) {
   console.log('E2E UI Divers : ÉCHEC ❌');
   process.exit(1);
@@ -219,6 +223,10 @@ if (uiContact.status !== 0) {
 }
 if (uiAnnulationHistorique.status !== 0) {
   console.log('E2E UI Annulation historique : ÉCHEC ❌');
+  process.exit(1);
+}
+if (uiInscription.status !== 0) {
+  console.log('E2E UI Inscription : ÉCHEC ❌');
   process.exit(1);
 }
 if (uiValider.status !== 0) {
