@@ -230,3 +230,66 @@
     text-align: right;
     white-space: nowrap;
 }
+
+/* Admin > Catégories : la page tient dans la fenêtre, à toute largeur.
+ * Sans règles dédiées, le tableau s'étalait selon son contenu — le
+ * formulaire d'édition en ligne (trois champs côte à côte et son
+ * bouton « Enregistrer », dans la première colonne) poussait les
+ * colonnes de droite hors de la page : toute la page défilait
+ * horizontalement et le bouton « Supprimer » de la colonne Actions
+ * était coupé à droite. Ici : largeur 100 %, répartition fixe des
+ * colonnes (colgroup), champs d'édition à la largeur de leur
+ * colonne et empilés, boutons toujours en entier dans la page. */
+.tableau-categories {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.tableau-categories .col-edition {
+    width: 32%;
+}
+
+.tableau-categories .col-slug {
+    width: 15%;
+}
+
+.tableau-categories .col-produits {
+    width: 11%;
+}
+
+.tableau-categories .col-description {
+    width: 26%;
+}
+
+.tableau-categories .col-actions {
+    width: 16%;
+}
+
+.tableau-categories th,
+.tableau-categories td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #d6d3d1;
+    text-align: left;
+    vertical-align: top;
+    overflow-wrap: break-word;
+}
+
+.tableau-categories thead th {
+    background-color: #f5f5f4;
+}
+
+.tableau-categories form {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.tableau-categories input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.tableau-categories .bouton-danger {
+    padding: 0.6rem 0.75rem;
+    white-space: nowrap;
+}

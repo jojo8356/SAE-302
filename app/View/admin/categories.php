@@ -29,7 +29,11 @@ declare(strict_types=1);
 </form>
 
 <h2>Catégories existantes</h2>
-<table>
+<table class="tableau-categories">
+    <colgroup>
+        <col class="col-edition"><col class="col-slug"><col class="col-produits">
+        <col class="col-description"><col class="col-actions">
+    </colgroup>
     <thead><tr><th scope="col">Nom</th><th scope="col">Slug</th><th scope="col">Produits visibles</th><th scope="col">Description</th><th scope="col">Actions</th></tr></thead>
     <tbody>
     <?php foreach ($categories as $categorie): ?>
