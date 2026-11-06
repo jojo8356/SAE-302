@@ -154,6 +154,10 @@
     white-space: nowrap;
 }
 
+.tableau-panier .produit {
+    text-align: left;
+}
+
 .tableau-panier tfoot th,
 .tableau-panier tfoot td {
     background-color: #f5f5f4;
@@ -292,4 +296,42 @@
 .tableau-categories .bouton-danger {
     padding: 0.6rem 0.75rem;
     white-space: nowrap;
+}
+
+/* Alignement des colonnes Produit / Référence (panier ci-dessus,
+ * stocks et alertes du tableau de bord ici) : ce sont des libellés,
+ * ils se lisent à gauche — en-têtes ET cellules, explicitement.
+ * Sans règles dédiées, les tableaux des stocks et des alertes
+ * reposaient sur les alignements par défaut du navigateur, et les
+ * colonnes Produit/Référence ne tombaient pas sous leurs titres.
+ * Les nombres suivent la même règle à gauche dans ces deux
+ * tableaux de consultation ; au panier, seuls les montants sont
+ * à droite (cf. .tableau-panier .montant). */
+.tableau-stocks,
+.tableau-alertes {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tableau-stocks th,
+.tableau-stocks td,
+.tableau-alertes th,
+.tableau-alertes td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #d6d3d1;
+    text-align: left;
+    vertical-align: top;
+    overflow-wrap: break-word;
+}
+
+.tableau-stocks thead th,
+.tableau-alertes thead th {
+    background-color: #f5f5f4;
+}
+
+.tableau-stocks .reference,
+.tableau-stocks .produit,
+.tableau-alertes .reference,
+.tableau-alertes .produit {
+    text-align: left;
 }

@@ -28,7 +28,7 @@ foreach ($recap['articles'] as $ligne) {
         <caption>Panier — <?= count($recap['articles']) ?> article(s)</caption>
         <thead>
         <tr>
-            <th scope="col">Produit</th>
+            <th scope="col" class="produit">Produit</th>
             <th scope="col" class="montant">Prix unitaire TTC</th>
             <th scope="col">Quantité</th>
             <th scope="col" class="montant">Total TTC</th>
@@ -38,7 +38,7 @@ foreach ($recap['articles'] as $ligne) {
         <tbody>
         <?php foreach ($recap['articles'] as $ligne): ?>
             <tr<?php if (!empty($ligne['plafonne'])) { echo ' title="Quantité plafonnée au stock disponible (RB-18)"'; } else { echo ''; } ?>>
-                <td><a href="/produit/<?= e($ligne['slug']) ?>"><?= e($ligne['nom']) ?></a><br>
+                <td class="produit"><a href="/produit/<?= e($ligne['slug']) ?>"><?= e($ligne['nom']) ?></a><br>
                     <small>Réf. <?= e($ligne['reference']) ?> — stock : <?= (int) $ligne['stock_disponible'] ?></small></td>
                 <td class="montant"><?= euros($ligne['prix_unitaire']) ?></td>
                 <td>

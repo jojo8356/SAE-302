@@ -122,7 +122,7 @@ $check(
 $check(
     'les autres en-têtes (Produit, Quantité, Actions) restent sans classe montant',
     $tableau !== null
-        && str_contains($tableau, '<th scope="col">Produit</th>')
+        && str_contains($tableau, '<th scope="col" class="produit">Produit</th>')
         && str_contains($tableau, '<th scope="col">Quantité</th>')
         && str_contains($tableau, '<th scope="col">Actions</th>')
 );

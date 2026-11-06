@@ -23,13 +23,13 @@ declare(strict_types=1);
 <?php if ($alertes === []): ?>
     <p>Aucune alerte : tous les stocks sont au-dessus de leur seuil.</p>
 <?php else: ?>
-    <table>
-        <thead><tr><th scope="col">Référence</th><th scope="col">Produit</th><th scope="col">Stock</th><th scope="col">Seuil</th><th scope="col">État</th></tr></thead>
+    <table class="tableau-alertes">
+        <thead><tr><th scope="col" class="reference">Référence</th><th scope="col" class="produit">Produit</th><th scope="col">Stock</th><th scope="col">Seuil</th><th scope="col">État</th></tr></thead>
         <tbody>
         <?php foreach ($alertes as $alerte): ?>
             <tr>
-                <td><?= e($alerte['reference']) ?></td>
-                <td><?= e($alerte['nom']) ?></td>
+                <td class="reference"><?= e($alerte['reference']) ?></td>
+                <td class="produit"><?= e($alerte['nom']) ?></td>
                 <td><?= (int) $alerte['stock'] ?></td>
                 <td><?= (int) $alerte['seuil_alerte'] ?></td>
                 <td><?= e(etat_libelle($alerte['etat'])) ?></td>

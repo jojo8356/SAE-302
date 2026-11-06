@@ -25,6 +25,7 @@
     "test:ui-panier-tableau": "node scripts/wasm_run.mjs scripts/seed.php && node scripts/ui-e2e-panier-tableau.mjs",
     "test:ui-commandes-tableau": "node scripts/wasm_run.mjs scripts/seed.php && node scripts/ui-e2e-commandes-tableau.mjs",
     "test:ui-categories-tableau": "node scripts/wasm_run.mjs scripts/seed.php && node scripts/ui-e2e-categories-tableau.mjs",
+    "test:ui-alignement": "node scripts/wasm_run.mjs scripts/seed.php && node scripts/ui-e2e-alignement.mjs",
     "test:ui-heure": "node scripts/wasm_run.mjs scripts/seed.php && node scripts/ui-e2e-heure.mjs",
     "test:all": "node scripts/run-all-tests.mjs",
     "lint:types": "node scripts/wasm_run.mjs scripts/strict_types_lint.php"
