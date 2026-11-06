@@ -13,10 +13,11 @@ declare(strict_types=1);
 <?php endif; ?>
 
 <h2>Mes informations</h2>
-<form method="post" action="/compte">
+<form method="post" action="/compte" class="formulaire-compte">
     <?= csrf_field() ?>
     <fieldset>
-        <legend>État civil et coordonnées (l'email reste unique)</legend>
+        <legend>État civil et coordonnées</legend>
+        <p class="aide">L'adresse email reste unique pour chaque compte.</p>
         <p><label for="nom">Nom *</label><input id="nom" name="nom" maxlength="100" required value="<?= e($client['nom'] ?? '') ?>"></p>
         <p><label for="prenom">Prénom *</label><input id="prenom" name="prenom" maxlength="100" required value="<?= e($client['prenom'] ?? '') ?>"></p>
         <p><label for="email">Email *</label><input type="email" id="email" name="email" maxlength="190" required value="<?= e($client['email'] ?? '') ?>"></p>
@@ -29,10 +30,11 @@ declare(strict_types=1);
 </form>
 
 <h2>Changer mon mot de passe</h2>
-<form method="post" action="/compte/mot-de-passe">
+<form method="post" action="/compte/mot-de-passe" class="formulaire-compte">
     <?= csrf_field() ?>
     <fieldset>
-        <legend>L'ancien mot de passe est exigé ; le nouveau est re-haché</legend>
+        <legend>Mot de passe</legend>
+        <p class="aide">L'ancien mot de passe est exigé pour valider le changement ; le nouveau est chiffré avant d'être enregistré.</p>
         <p><label for="ancien">Ancien mot de passe *</label><input type="password" id="ancien" name="ancien_mot_de_passe" required></p>
         <p><label for="nouveau">Nouveau mot de passe * (8 min.)</label><input type="password" id="nouveau" name="nouveau_mot_de_passe" minlength="8" required></p>
         <p><label for="confirmation">Confirmation *</label><input type="password" id="confirmation" name="confirmation" minlength="8" required></p>

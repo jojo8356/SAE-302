@@ -500,6 +500,32 @@
     overflow-wrap: break-word;
 }
 
+/* Mon compte : les titres des cadres ne chevauchent plus la bordure.
+ * Les deux cadres partaient avec des légendes longues posées telles
+ * quelles sur la bordure du <fieldset>, sans aucune règle : à
+ * 375 px, « État civil et coordonnées (l'email reste unique) » et
+ * « L'ancien mot de passe est exigé ; le nouveau est re-haché »
+ * débordaient sur la bordure du cadre au lieu de tenir dedans.
+ * Même traitement que les catégories (signalement n° 16) : légende
+ * courte, la précision devient un paragraphe d'aide DANS le cadre ;
+ * et la légende reçoit un peu d'air autour du texte (comme les
+ * filtres du catalogue) sans jamais pouvoir dépasser la largeur
+ * du cadre. */
+.formulaire-compte fieldset {
+    min-width: 0;
+}
+
+.formulaire-compte legend {
+    padding: 0 0.5rem;
+    max-width: 100%;
+    white-space: normal;
+}
+
+.formulaire-compte .aide {
+    margin: 0 0 0.75rem;
+    overflow-wrap: break-word;
+}
+
 /* Divers (fiche produit, tableau de bord, pied de page, contact) :
  * — la photo du produit (EF-VIS-04) tient dans la page, un visuel
  *   propre à chaque produit (public/img/, un fichier par produit) ;
