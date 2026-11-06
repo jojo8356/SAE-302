@@ -188,6 +188,8 @@ jobs:
         run: php tests/php/inscription_erreurs_test.php
       - name: Regression PHP - Mes commandes tableau 375px et legende (echec attendu si le correctif est absent)
         run: php tests/php/mes_commandes_tableau_test.php
+      - name: Regression PHP - Mon compte titres des cadres a 375px (echec attendu si le correctif est absent)
+        run: php tests/php/compte_cadres_test.php
       - name: Données de démonstration d'usine (comptes de démo du seed)
         run: php scripts/seed.php
       - name: Démarrer l'application (php -S + dev-router)
@@ -286,6 +288,10 @@ jobs:
         env:
           UI_BASE_URL: http://127.0.0.1:8093
         run: node scripts/ui-e2e-mes-commandes.mjs --port=8140
+      - name: E2E navigateur - Mon compte titres des cadres en page a 375px
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-compte.mjs --port=8142
       - name: Arrêter le serveur et publier son journal si échec
         if: always()
         run: |
