@@ -8,7 +8,7 @@ declare(strict_types=1);
 <h1>Contact</h1>
 
 <p>MiniShop est une <strong>maquette pédagogique</strong> réalisée par une
-équipe d'étudiants (BUT Informatique / Licence 3, Université Côte d'Azur),
+équipe d'étudiants (BUT Informatique — BUT2, Université Côte d'Azur),
 pour apprendre à construire une boutique en ligne complète : il n'y a ni
 service client, ni entrepôt, ni paiement réel derrière ce site.</p>
 
