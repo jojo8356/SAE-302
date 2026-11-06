@@ -73,3 +73,20 @@
     outline: 3px solid #1d4ed8;
     outline-offset: 2px;
 }
+
+/* Catalogue : recherche/filtres repliés derrière « Filtrer » (<details>
+ * natif, sans JavaScript) — résumé bien tappable au doigt sur mobile. */
+.filtres-catalogue > summary {
+    display: inline-block;
+    font-weight: 700;
+    line-height: 1.4;
+    padding: 0.6rem 1.25rem;
+    border: 2px solid #44403c;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+.filtres-catalogue > summary:focus-visible {
+    outline: 3px solid #1d4ed8;
+    outline-offset: 2px;
+}

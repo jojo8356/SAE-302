@@ -156,6 +156,8 @@ jobs:
         run: php tests/php/stocks_defaut_test.php
       - name: Régression pied de page — pages Aide/Livraison/Confidentialité/Rétractation (PHP natif)
         run: php tests/php/pages_pied_de_page_test.php
+      - name: Régression catalogue — filtres en haut derrière « Filtrer » (PHP natif)
+        run: php tests/php/catalogue_filtres_test.php
       - name: Données de démonstration d'usine (comptes de démo du seed)
         run: php scripts/seed.php
       - name: Démarrer l'application (php -S + dev-router)
@@ -190,6 +192,10 @@ jobs:
         env:
           UI_BASE_URL: http://127.0.0.1:8093
         run: node scripts/ui-e2e-pied-de-page.mjs
+      - name: E2E UI — Catalogue format mobile (filtres en haut, repliés derrière « Filtrer »)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-catalogue.mjs
       - name: Arrêter le serveur et publier son journal si échec
         if: always()
         run: |

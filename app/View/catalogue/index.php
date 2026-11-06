@@ -19,6 +19,21 @@ $qs = static function (int $page) use ($parametres_url): string {
 ?>
 <h1><?php if ($est_recherche) { echo 'Recherche'; } else { echo 'Catalogue'; } ?></h1>
 
+<?php
+// Recherche et filtres EN HAUT de page, repliés derrière « Filtrer »
+// (élément <details> natif, sans JavaScript) : sur mobile, la liste des
+// produits reste visible immédiatement au lieu d'être repoussée sous le
+// formulaire. Si un filtre est déjà actif, le panneau s'ouvre tout seul.
+$filtresActifs = $criteres['mot_cle'] !== ''
+    || $criteres['id_categorie'] !== null
+    || ($criteres['prix_min'] !== null && $criteres['prix_min'] !== '')
+    || ($criteres['prix_max'] !== null && $criteres['prix_max'] !== '')
+    || $criteres['en_stock']
+    || ($criteres['tri'] !== '' && $criteres['tri'] !== 'nom');
+?>
+<details class="filtres-catalogue"<?php if ($filtresActifs) { echo ' open'; } else { echo ''; } ?>>
+    <summary>Filtrer<?php if ($filtresActifs) { echo ' (actifs)'; } else { echo ''; } ?></summary>
+
 <form method="get" action="<?php if ($est_recherche) { echo '/recherche'; } else { echo '/catalogue'; } ?>">
     <fieldset>
         <legend>Filtres (cumulables, conservés dans l'URL — EF-VIS-03)</legend>
@@ -58,6 +73,7 @@ $qs = static function (int $page) use ($parametres_url): string {
         </p>
     </fieldset>
 </form>
+</details>
 
 <p><?= (int) $resultat['total'] ?> produit<?php if ($resultat['total'] > 1) { echo 's'; } else { echo ''; } ?> trouvé<?php if ($resultat['total'] > 1) { echo 's'; } else { echo ''; } ?>
     — page <?= (int) $resultat['page'] ?> / <?= (int) $resultat['pages'] ?></p>
