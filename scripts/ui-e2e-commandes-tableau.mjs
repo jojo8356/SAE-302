@@ -144,7 +144,7 @@ class NavigateurUI {
 }
 
 function bouton(formulaire, libelle) {
-  const b = [...formulaire.querySelectorAll('button')].find((x) => x.textContent.trim() === libelle);
+  const b = [...formulaire.querySelectorAll('button')].find((x) => x.textContent.trim() === libelle || x.textContent.trim().startsWith(libelle));
   if (!b) throw new Error(`bouton « ${libelle} » introuvable`);
   return b;
 }
@@ -188,7 +188,7 @@ try {
   await nav.cliquerBouton(bouton(formAjout, 'Ajouter au panier'));
   await nav.aller('/commande/valider');
   doc().querySelector('#adresse').value = '12 rue de France, 06000 Nice';
-  await nav.cliquerBouton(bouton(doc().querySelector('form[action="/commande/valider"]'), 'Confirmer et payer (simulé)'));
+  await nav.cliquerBouton(bouton(doc().querySelector('form[action="/commande/valider"]'), 'Confirmer et payer'));
   check('commande créée (statut Payée)', /\/mes-commandes\/\d+$/.test(new URL(nav.page.url).pathname) && nav.texte().includes('Statut : Payée'),
     nav.page.url);
   await nav.aller('/deconnexion');
