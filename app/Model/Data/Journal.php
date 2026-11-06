@@ -19,6 +19,8 @@ declare(strict_types=1);
 
 namespace App\Model\Data;
 
+use App\Tools\Heure;
+
 final class Journal
 {
     private function __construct(private readonly string $filePath)
@@ -48,7 +50,7 @@ final class Journal
     public function log(string $op, string $table, int|string $pk, ?array $old, ?array $new, array $actor): void
     {
         $entry = [
-            'at' => date('c'),
+            'at' => Heure::maintenantUtc()->format('c'),
             'op' => $op,
             'table' => $table,
             'pk' => $pk,

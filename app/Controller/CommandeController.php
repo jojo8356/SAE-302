@@ -38,6 +38,9 @@ final class CommandeController extends Controller
         $this->render('commande/valider', [
             'recap' => $recap,
             'client' => $donnees,
+            // Adresse COMPLÈTE du profil (rue, code postal, ville), pas la
+            // seule rue : c'est elle que la commande enregistrera.
+            'adresse_livraison' => ClientRepository::adresseLivraisonComplete($donnees ?? []),
             'erreurs' => [],
         ], 'Valider ma commande');
     }

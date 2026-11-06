@@ -27,6 +27,7 @@ use App\Model\Data\BusinessError;
 use App\Model\Data\Filter;
 use App\Model\Data\StoreInterface;
 use App\Model\Data\Triggers;
+use App\Tools\Heure;
 
 final class CommandeRepository
 {
@@ -122,7 +123,7 @@ final class CommandeRepository
         // numéro lisible CMD2026-000123 : la valeur d'auto-incrément est lue
         // AVANT l'insertion (le store ne consomme pas le compteur)
         $id = $this->store->nextId('commande');
-        $numero = 'CMD' . date('Y') . '-' . str_pad((string) $id, 6, '0', STR_PAD_LEFT);
+        $numero = 'CMD' . Heure::anneeCivile() . '-' . str_pad((string) $id, 6, '0', STR_PAD_LEFT);
         $idCommande = $this->store->insert('commande', [
             'numero' => $numero,
             'id_client' => $idClient,

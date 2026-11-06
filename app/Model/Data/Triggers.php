@@ -43,6 +43,8 @@ declare(strict_types=1);
 
 namespace App\Model\Data;
 
+use App\Tools\Heure;
+
 final class Triggers
 {
     /**
@@ -258,7 +260,7 @@ final class Triggers
                     'changed_by' => $actor['id'],
                     'changed_by_role' => $actor['role'],
                     'commentaire' => 'Création tracée par trg_history_creation',
-                    'changed_at' => date('Y-m-d H:i:s'),
+                    'changed_at' => Heure::horodatageStockage(),
                 ]);
             },
 
@@ -276,7 +278,7 @@ final class Triggers
                 if ($nouveauCommentaire) {
                     $commentaireTrace = trim((string) $new['commentaire']);
                 } else {
-                    $commentaireTrace .= date('Y-m-d H:i:s');
+                    $commentaireTrace .= Heure::horodatageStockage();
                 }
                 $actor = $store->actor();
                 $store->insert('order_status_history', [
@@ -286,7 +288,7 @@ final class Triggers
                     'changed_by' => $actor['id'],
                     'changed_by_role' => $actor['role'],
                     'commentaire' => $commentaireTrace,
-                    'changed_at' => date('Y-m-d H:i:s'),
+                    'changed_at' => Heure::horodatageStockage(),
                 ]);
             },
         ];

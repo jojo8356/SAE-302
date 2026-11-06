@@ -373,8 +373,8 @@ echo "\nK. UC-11 — gestion des catégories (EF-ADM-03, RB-07/14)\n";
     $repo = new CategorieRepository($store);
     $id = $repo->saveCategory(null, 'Stockage', null, 'SSD, disques');
     $check('création avec slug auto', $store->find('categorie', $id)['slug'] === 'stockage');
-    $retour = $repo->saveCategory(null, 'Stockage', null, 'Fusionnée'); // même nom → fusion
-    $check('même nom = mise à jour de l\'existante (UNIQUE)', $retour === $id && $store->find('categorie', $id)['description'] === 'Fusionnée');
+    $attendu('NOM_DEJA_UTILISE', fn () => $repo->saveCategory(null, 'Stockage', null, 'Fusionnée')); // même nom → refus, pas de fusion
+    $check('doublon refusé : existante intacte', $store->find('categorie', $id)['description'] === 'SSD, disques');
     $attendu('CATEGORIE_NON_VIDE', fn () => $repo->deleteCategory(1)); // Informatique occupée
     $repo->deleteCategory($id);
     $check('catégorie vide supprimée', $store->find('categorie', $id) === null);

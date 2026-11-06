@@ -26,6 +26,8 @@ spl_autoload_register(static function (string $class): void {
 // Helpers d'affichage globaux (e(), euros(), date_fr()…) pour toutes les vues
 require_once __DIR__ . '/Security/xss.php';
 
-// Sécurité de base : timezone explicite (évite les avertissements date()) et
-// rapport d'erreurs piloté par la config en environnement Web.
+// Fuseau par défaut UTC : garde-fou du gestionnaire d'heure
+// (App\Tools\Heure) — le stockage est en UTC, l'affichage est converti
+// en Europe/Paris par Heure, jamais par un date() « nu ». Le réglage
+// date.timezone du php.ini est ainsi sans effet sur l'application.
 date_default_timezone_set('UTC');

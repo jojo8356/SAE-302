@@ -1,0 +1,41 @@
+/*
+ * MiniShop — feuille de style minimale.
+ *
+ * L'application est en HTML sémantique sans habillage (choix du lot
+ * courant) ; cette feuille ne contient QUE le style de l'action
+ * principale du parcours d'achat, « Valider ma commande » (panier).
+ * Avant son introduction, ce CTA était un simple lien bleu souligné —
+ * presque illisible et indiscernable d'un lien ordinaire, alors que
+ * c'est le bouton principal du parcours (bug « Panier, bouton Valider
+ * ma commande »). Le balisage est un vrai <button> : même si cette
+ * feuille ne charge pas, le rendu natif du bouton reste lisible.
+ *
+ * Contrastes : texte blanc sur #9a3412 = 7,3:1 (WCAG AA ≥ 4,5:1, AAA ≥ 7:1),
+ * aucun soulignement, zone cliquable ≥ 44 px de haut, focus clavier
+ * visible. Aucune requête externe, aucun style en ligne (CSP :
+ * style-src 'self', cf. public/index.php).
+ */
+
+.bouton-principal {
+    display: inline-block;
+    background-color: #9a3412;
+    color: #ffffff;
+    font: inherit;
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.4;
+    padding: 0.75rem 1.5rem;
+    border: 2px solid #7c2d12;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.bouton-principal:hover {
+    background-color: #7c2d12;
+}
+
+.bouton-principal:focus-visible {
+    outline: 3px solid #1d4ed8;
+    outline-offset: 2px;
+}
