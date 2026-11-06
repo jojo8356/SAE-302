@@ -178,6 +178,8 @@ jobs:
         run: php tests/php/cgv_retractation_test.php
       - name: Régression mentions légales, éditeur, contact, hébergeur, BUT2 (PHP natif)
         run: php tests/php/mentions_legales_test.php
+      - name: Régression contact, réponse non promise, données cohérentes (PHP natif)
+        run: php tests/php/contact_coherence_test.php
       - name: Données de démonstration d'usine (comptes de démo du seed)
         run: php scripts/seed.php
       - name: Démarrer l'application (php -S + dev-router)
@@ -256,6 +258,10 @@ jobs:
         env:
           UI_BASE_URL: http://127.0.0.1:8093
         run: node scripts/ui-e2e-mentions.mjs
+      - name: E2E UI — Contact (réponse non promise, confidentialité, mentions légales, pied de page)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-contact.mjs
       - name: Arrêter le serveur et publier son journal si échec
         if: always()
         run: |
