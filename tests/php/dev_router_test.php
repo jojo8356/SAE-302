@@ -51,6 +51,12 @@ function verdict(bool $ok, string $etiquette): void
     } else {
         ++$nbEchecs;
         echo "  ✗ ÉCHEC — {$etiquette}\n";
+        // En CI GitHub, l'échec est aussi publié en annotation du job :
+        // visible dans l'onglet Checks d'une PR sans ouvrir les logs.
+        if (getenv('GITHUB_ACTIONS') === 'true') {
+            $message = str_replace(['%', "\r", "\n"], ['%25', '%0D', '%0A'], $etiquette);
+            echo "::error title=dev-router::{$message}\n";
+        }
     }
 }
 
