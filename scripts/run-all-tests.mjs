@@ -32,6 +32,7 @@ const suites = [
   ['Divers panier, Top 5, photos, description, pied de page, contact (régression)', 'tests/php/divers_test.php'],
   ['Codes techniques visibles (régression)', 'tests/php/codes_techniques_test.php'],
   ['CGV article 4, annulation avant expédition (régression)', 'tests/php/cgv_retractation_test.php'],
+  ['Mentions légales, éditeur, hébergeur, BUT2 (régression)', 'tests/php/mentions_legales_test.php'],
   ['Page À propos (régression)', 'tests/php/apropos_test.php'],
   ['Bouton panier (régression)', 'tests/php/panier_cta_test.php'],
   ['Doublon catégorie (régression)', 'tests/php/categorie_doublon_test.php'],
@@ -181,6 +182,9 @@ const uiCodes = spawnSync('node', ['scripts/ui-e2e-codes.mjs'], { stdio: 'inheri
 
 console.log(`\n${'='.repeat(64)}\n▸ E2E UI CGV article 4 — scripts/ui-e2e-retractation.mjs\n${'='.repeat(64)}`);
 const uiRetractation = spawnSync('node', ['scripts/ui-e2e-retractation.mjs'], { stdio: 'inherit' });
+
+console.log(`\n${'='.repeat(64)}\n▸ E2E UI Mentions légales — scripts/ui-e2e-mentions.mjs\n${'='.repeat(64)}`);
+const uiMentions = spawnSync('node', ['scripts/ui-e2e-mentions.mjs'], { stdio: 'inherit' });
 if (uiDivers.status !== 0) {
   console.log('E2E UI Divers : ÉCHEC ❌');
   process.exit(1);
@@ -191,6 +195,10 @@ if (uiCodes.status !== 0) {
 }
 if (uiRetractation.status !== 0) {
   console.log('E2E UI CGV article 4 : ÉCHEC ❌');
+  process.exit(1);
+}
+if (uiMentions.status !== 0) {
+  console.log('E2E UI Mentions légales : ÉCHEC ❌');
   process.exit(1);
 }
 console.log('\nTOUTES LES SUITES SONT VERTES ✅ (moteur, règles, unitaires, fonctionnalités, E2E HTTP, E2E UI)');

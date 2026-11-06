@@ -176,6 +176,8 @@ jobs:
         run: php tests/php/codes_techniques_test.php
       - name: Régression CGV article 4, annulation avant expédition et pas rétractation (PHP natif)
         run: php tests/php/cgv_retractation_test.php
+      - name: Régression mentions légales, éditeur, contact, hébergeur, BUT2 (PHP natif)
+        run: php tests/php/mentions_legales_test.php
       - name: Données de démonstration d'usine (comptes de démo du seed)
         run: php scripts/seed.php
       - name: Démarrer l'application (php -S + dev-router)
@@ -250,6 +252,10 @@ jobs:
         env:
           UI_BASE_URL: http://127.0.0.1:8093
         run: node scripts/ui-e2e-retractation.mjs
+      - name: E2E UI — Mentions légales (éditeur, contact, hébergeur, BUT2)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-mentions.mjs
       - name: Arrêter le serveur et publier son journal si échec
         if: always()
         run: |
