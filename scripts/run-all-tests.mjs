@@ -17,6 +17,7 @@
 import { spawnSync } from 'node:child_process';
 
 const suites = [
+  ['Page À propos (régression)', 'tests/php/apropos_test.php'],
   ['Bouton panier (régression)', 'tests/php/panier_cta_test.php'],
   ['Doublon catégorie (régression)', 'tests/php/categorie_doublon_test.php'],
   ['Moteur JSON', 'tests/php/engine_smoke.php'],
@@ -70,6 +71,13 @@ console.log(`\n${'='.repeat(64)}\n▸ E2E UI Panier (clics) — scripts/ui-e2e-p
 const uiPanier = spawnSync('node', ['scripts/ui-e2e-panier.mjs'], { stdio: 'inherit' });
 if (uiPanier.status !== 0) {
   console.log('E2E UI panier : ÉCHEC ❌');
+  process.exit(1);
+}
+
+console.log(`\n${'='.repeat(64)}\n▸ E2E UI À propos — scripts/ui-e2e-apropos.mjs\n${'='.repeat(64)}`);
+const uiApropos = spawnSync('node', ['scripts/ui-e2e-apropos.mjs'], { stdio: 'inherit' });
+if (uiApropos.status !== 0) {
+  console.log('E2E UI À propos : ÉCHEC ❌');
   process.exit(1);
 }
 console.log('\nTOUTES LES SUITES SONT VERTES ✅ (moteur, règles, unitaires, fonctionnalités, E2E HTTP, E2E UI)');
