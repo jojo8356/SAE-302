@@ -162,6 +162,8 @@ jobs:
         run: php tests/php/fiche_produit_test.php
       - name: Régression panier — mise en page du tableau (PHP natif)
         run: php tests/php/panier_tableau_test.php
+      - name: Régression commandes admin — colonne Statut tenue en page (PHP natif)
+        run: php tests/php/commandes_tableau_test.php
       - name: Données de démonstration d'usine (comptes de démo du seed)
         run: php scripts/seed.php
       - name: Démarrer l'application (php -S + dev-router)
@@ -208,6 +210,10 @@ jobs:
         env:
           UI_BASE_URL: http://127.0.0.1:8093
         run: node scripts/ui-e2e-panier-tableau.mjs
+      - name: E2E UI — Commandes admin, colonne Statut tenue en page (pilotage)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-commandes-tableau.mjs
       - name: Arrêter le serveur et publier son journal si échec
         if: always()
         run: |

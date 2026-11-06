@@ -36,11 +36,15 @@ declare(strict_types=1);
 
 <p><?= count($commandes) ?> commande(s) affichée(s) (100 max)</p>
 
-<table>
+<table class="tableau-commandes">
+    <colgroup>
+        <col class="col-numero"><col class="col-date"><col class="col-client">
+        <col class="col-statut"><col class="col-montant"><col class="col-detail">
+    </colgroup>
     <thead>
     <tr>
         <th scope="col">Numéro</th><th scope="col">Date</th><th scope="col">Client</th>
-        <th scope="col">Statut</th><th scope="col">Montant TTC</th><th scope="col">Détail</th>
+        <th scope="col">Statut</th><th scope="col" class="montant">Montant TTC</th><th scope="col">Détail</th>
     </tr>
     </thead>
     <tbody>
@@ -49,8 +53,8 @@ declare(strict_types=1);
             <td><?= e($commande['numero']) ?></td>
             <td><?= e(date_fr($commande['date_commande'], true)) ?></td>
             <td><?= e($commande['client'] ?? ($commande['client_nom'] ?? '—')) ?></td>
-            <td><?= e(statut_libelle($commande['statut'])) ?></td>
-            <td><?= euros($commande['montant_total']) ?></td>
+            <td class="statut"><?= e(statut_libelle($commande['statut'])) ?></td>
+            <td class="montant"><?= euros($commande['montant_total']) ?></td>
             <td><a href="/admin/commandes/<?= (int) $commande['id_commande'] ?>">Ouvrir →</a></td>
         </tr>
     <?php endforeach; ?>

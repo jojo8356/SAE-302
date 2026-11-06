@@ -25,6 +25,7 @@ const suites = [
   ['Catalogue filtres en haut (régression)', 'tests/php/catalogue_filtres_test.php'],
   ['Fiche produit caractéristiques (régression)', 'tests/php/fiche_produit_test.php'],
   ['Panier tableau, mise en page (régression)', 'tests/php/panier_tableau_test.php'],
+  ['Commandes admin, colonne Statut (régression)', 'tests/php/commandes_tableau_test.php'],
   ['Page À propos (régression)', 'tests/php/apropos_test.php'],
   ['Bouton panier (régression)', 'tests/php/panier_cta_test.php'],
   ['Doublon catégorie (régression)', 'tests/php/categorie_doublon_test.php'],
@@ -135,6 +136,13 @@ console.log(`\n${'='.repeat(64)}\n▸ E2E UI Panier tableau — scripts/ui-e2e-p
 const uiPanierTableau = spawnSync('node', ['scripts/ui-e2e-panier-tableau.mjs'], { stdio: 'inherit' });
 if (uiPanierTableau.status !== 0) {
   console.log('E2E UI Panier tableau : ÉCHEC ❌');
+  process.exit(1);
+}
+
+console.log(`\n${'='.repeat(64)}\n▸ E2E UI Commandes admin (colonne Statut) — scripts/ui-e2e-commandes-tableau.mjs\n${'='.repeat(64)}`);
+const uiCommandesTableau = spawnSync('node', ['scripts/ui-e2e-commandes-tableau.mjs'], { stdio: 'inherit' });
+if (uiCommandesTableau.status !== 0) {
+  console.log('E2E UI Commandes admin : ÉCHEC ❌');
   process.exit(1);
 }
 console.log('\nTOUTES LES SUITES SONT VERTES ✅ (moteur, règles, unitaires, fonctionnalités, E2E HTTP, E2E UI)');

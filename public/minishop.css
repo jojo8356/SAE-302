@@ -168,3 +168,65 @@
 .tableau-panier input[type="number"] {
     width: 4rem;
 }
+
+/* Admin > Commandes : le tableau de pilotage tient en page.
+ * Sans règles dédiées, le tableau s'étalait selon son contenu
+ * (dates complètes, noms de clients) et repoussait les colonnes
+ * de droite hors écran : la colonne Statut — la plus consultée
+ * pour piloter les commandes — était coupée, derrière le
+ * défilement horizontal. Ici : largeur 100 %, répartition fixe
+ * des colonnes (colgroup), la colonne Statut a sa largeur propre
+ * et son libellé ne se coupe jamais ; ce sont les contenus longs
+ * (client) qui se replient. Aucun défilement horizontal. */
+.tableau-commandes {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.tableau-commandes .col-numero {
+    width: 15%;
+}
+
+.tableau-commandes .col-date {
+    width: 19%;
+}
+
+.tableau-commandes .col-client {
+    width: 23%;
+}
+
+.tableau-commandes .col-statut {
+    width: 17%;
+}
+
+.tableau-commandes .col-montant {
+    width: 14%;
+}
+
+.tableau-commandes .col-detail {
+    width: 12%;
+}
+
+.tableau-commandes th,
+.tableau-commandes td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #d6d3d1;
+    text-align: left;
+    vertical-align: top;
+    overflow-wrap: break-word;
+}
+
+.tableau-commandes thead th {
+    background-color: #f5f5f4;
+}
+
+.tableau-commandes .statut {
+    white-space: nowrap;
+    font-weight: 700;
+}
+
+.tableau-commandes .montant {
+    text-align: right;
+    white-space: nowrap;
+}
