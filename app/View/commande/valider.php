@@ -46,7 +46,7 @@ declare(strict_types=1);
         <p>
             <label for="adresse">Adresse de livraison complète *</label>
             <input id="adresse" name="adresse" maxlength="255" required
-                   value="<?= e($client['adresse_livraison'] ?? '') ?>"
+                   value="<?= e($adresse_livraison ?? '') ?>"
                    placeholder="12 rue des Lilas, Bât. B">
         </p>
         <p>

@@ -18,6 +18,7 @@ import { spawnSync } from 'node:child_process';
 
 const suites = [
   ['Heure / fuseaux (régression)', 'tests/php/heure_test.php'],
+  ['Adresse de livraison (régression)', 'tests/php/adresse_livraison_test.php'],
   ['Page À propos (régression)', 'tests/php/apropos_test.php'],
   ['Bouton panier (régression)', 'tests/php/panier_cta_test.php'],
   ['Doublon catégorie (régression)', 'tests/php/categorie_doublon_test.php'],

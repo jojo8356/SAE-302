@@ -84,6 +84,37 @@ final class ClientRepository
     }
 
     /**
+     * Adresse de livraison COMPLÈTE du profil, pour le préremplissage du
+     * formulaire de commande. Le profil stocke rue, code postal et ville
+     * dans trois colonnes séparées (EF-CLI-01) alors que la commande
+     * n'enregistre qu'une seule chaîne (commande.adresse_livraison) :
+     * composer « rue, CP Ville » ici évite de préremplir avec la seule
+     * rue — la commande garderait sinon une adresse sans code postal ni
+     * ville. Les parties absentes (profil incomplet) sont omises, sans
+     * virgule ni espace orphelins ; un profil sans adresse donne ''.
+     *
+     * @param array<string,mixed> $client
+     */
+    public static function adresseLivraisonComplete(array $client): string
+    {
+        $rue = trim((string) ($client['adresse_livraison'] ?? ''));
+        $codePostal = trim((string) ($client['code_postal'] ?? ''));
+        $ville = trim((string) ($client['ville'] ?? ''));
+
+        $codePostalVille = trim($codePostal . ' ' . $ville);
+
+        $morceaux = [];
+        if ($rue !== '') {
+            $morceaux[] = $rue;
+        }
+        if ($codePostalVille !== '') {
+            $morceaux[] = $codePostalVille;
+        }
+
+        return implode(', ', $morceaux);
+    }
+
+    /**
      * sp_update_client — modification de ses propres informations (EF-CLI-01).
      * Le changement d'email ré-active la règle RB-01.
      */
