@@ -36,8 +36,8 @@ declare(strict_types=1);
                     <input type="hidden" name="id_produit" value="<?= (int) $etat['id_produit'] ?>">
                     <label>
                         <select name="mode">
+                            <option value="DELTA" selected>Ajouter / retirer</option>
                             <option value="SET">Fixer à</option>
-                            <option value="DELTA">Varier de</option>
                         </select>
                         <input type="number" name="quantite" value="0">
                     </label>

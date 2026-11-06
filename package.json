@@ -17,6 +17,7 @@
     "test:heure": "node scripts/wasm_run.mjs tests/php/heure_test.php",
     "test:adresse": "node scripts/wasm_run.mjs tests/php/adresse_livraison_test.php",
     "test:ui-annulation": "node scripts/wasm_run.mjs scripts/seed.php && node scripts/ui-e2e-annulation.mjs",
+    "test:ui-stocks": "node scripts/wasm_run.mjs scripts/seed.php && node scripts/ui-e2e-stocks.mjs",
     "test:ui-heure": "node scripts/wasm_run.mjs scripts/seed.php && node scripts/ui-e2e-heure.mjs",
     "test:all": "node scripts/run-all-tests.mjs",
     "lint:types": "node scripts/wasm_run.mjs scripts/strict_types_lint.php"

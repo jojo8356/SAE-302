@@ -152,6 +152,8 @@ jobs:
         run: php tests/php/adresse_livraison_test.php
       - name: Régression annulation/suppressions sans confirmation (PHP natif)
         run: php tests/php/actions_destructrices_test.php
+      - name: Régression stocks — mode par défaut écrasant (PHP natif)
+        run: php tests/php/stocks_defaut_test.php
       - name: Données de démonstration d'usine (comptes de démo du seed)
         run: php scripts/seed.php
       - name: Démarrer l'application (php -S + dev-router)
@@ -178,6 +180,10 @@ jobs:
         env:
           UI_BASE_URL: http://127.0.0.1:8093
         run: node scripts/ui-e2e-annulation.mjs
+      - name: E2E UI — Stocks, « Ajouter / retirer » par défaut (+3 sans toucher au mode)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-stocks.mjs
       - name: Arrêter le serveur et publier son journal si échec
         if: always()
         run: |
