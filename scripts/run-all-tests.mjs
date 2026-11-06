@@ -34,6 +34,7 @@ const suites = [
   ['CGV article 4, annulation avant expédition (régression)', 'tests/php/cgv_retractation_test.php'],
   ['Mentions légales, éditeur, hébergeur, BUT2 (régression)', 'tests/php/mentions_legales_test.php'],
   ['Contact, réponse non promise, données cohérentes (régression)', 'tests/php/contact_coherence_test.php'],
+  ['Annulation, historique conservé, montant soldé (régression)', 'tests/php/annulation_historique_test.php'],
   ['Page À propos (régression)', 'tests/php/apropos_test.php'],
   ['Bouton panier (régression)', 'tests/php/panier_cta_test.php'],
   ['Doublon catégorie (régression)', 'tests/php/categorie_doublon_test.php'],
@@ -189,6 +190,9 @@ const uiMentions = spawnSync('node', ['scripts/ui-e2e-mentions.mjs'], { stdio: '
 
 console.log(`\n${'='.repeat(64)}\n▸ E2E UI Contact cohérence — scripts/ui-e2e-contact.mjs\n${'='.repeat(64)}`);
 const uiContact = spawnSync('node', ['scripts/ui-e2e-contact.mjs'], { stdio: 'inherit' });
+
+console.log(`\n${'='.repeat(64)}\n▸ E2E UI Annulation historique — scripts/ui-e2e-annulation-historique.mjs\n${'='.repeat(64)}`);
+const uiAnnulationHistorique = spawnSync('node', ['scripts/ui-e2e-annulation-historique.mjs'], { stdio: 'inherit' });
 if (uiDivers.status !== 0) {
   console.log('E2E UI Divers : ÉCHEC ❌');
   process.exit(1);
@@ -207,6 +211,10 @@ if (uiMentions.status !== 0) {
 }
 if (uiContact.status !== 0) {
   console.log('E2E UI Contact cohérence : ÉCHEC ❌');
+  process.exit(1);
+}
+if (uiAnnulationHistorique.status !== 0) {
+  console.log('E2E UI Annulation historique : ÉCHEC ❌');
   process.exit(1);
 }
 console.log('\nTOUTES LES SUITES SONT VERTES ✅ (moteur, règles, unitaires, fonctionnalités, E2E HTTP, E2E UI)');
