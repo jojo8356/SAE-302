@@ -63,6 +63,12 @@ try {
 <footer>
     <hr>
     <p>
+        <a href="/aide">Aide</a> ·
+        <a href="/livraison">Livraison</a> ·
+        <a href="/retractation">Rétractation</a> ·
+        <a href="/confidentialite">Confidentialité</a> ·
+        <a href="/contact">Contact</a> ·
+        <a href="/a-propos">À propos</a> ·
         <a href="/mentions-legales">Mentions légales</a> ·
         <a href="/cgv">Conditions générales de vente</a> ·
         MiniShop (maquette pédagogique — aucun paiement réel)

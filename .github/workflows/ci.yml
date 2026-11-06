@@ -154,6 +154,8 @@ jobs:
         run: php tests/php/actions_destructrices_test.php
       - name: Régression stocks — mode par défaut écrasant (PHP natif)
         run: php tests/php/stocks_defaut_test.php
+      - name: Régression pied de page — pages Aide/Livraison/Confidentialité/Rétractation (PHP natif)
+        run: php tests/php/pages_pied_de_page_test.php
       - name: Données de démonstration d'usine (comptes de démo du seed)
         run: php scripts/seed.php
       - name: Démarrer l'application (php -S + dev-router)
@@ -184,6 +186,10 @@ jobs:
         env:
           UI_BASE_URL: http://127.0.0.1:8093
         run: node scripts/ui-e2e-stocks.mjs
+      - name: E2E UI — Pied de page (Aide, Livraison, Confidentialité, Rétractation liées et en 200)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-pied-de-page.mjs
       - name: Arrêter le serveur et publier son journal si échec
         if: always()
         run: |

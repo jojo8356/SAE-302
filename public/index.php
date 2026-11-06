@@ -55,6 +55,11 @@ $routeur->get('/categories', [HomeController::class, 'categories']);
 $routeur->get('/a-propos', [HomeController::class, 'aPropos']);
 $routeur->get('/mentions-legales', [HomeController::class, 'mentionsLegales']);
 $routeur->get('/cgv', [HomeController::class, 'cgv']);
+$routeur->get('/aide', [HomeController::class, 'aide']);
+$routeur->get('/livraison', [HomeController::class, 'livraison']);
+$routeur->get('/confidentialite', [HomeController::class, 'confidentialite']);
+$routeur->get('/retractation', [HomeController::class, 'retractation']);
+$routeur->get('/contact', [HomeController::class, 'contact']);
 
 $routeur->get('/catalogue', [CatalogueController::class, 'catalogue']);
 $routeur->get('/recherche', [CatalogueController::class, 'recherche']);
