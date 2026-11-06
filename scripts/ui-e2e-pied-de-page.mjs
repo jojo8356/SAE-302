@@ -106,7 +106,7 @@ const ENTREES = {
   '/contact': ['Contact', 'Contact', 'maquette pédagogique'],
   '/a-propos': ['À propos', 'À propos', 'MiniShop'],
   '/mentions-legales': ['Mentions légales', 'Mentions légales', 'maquette pédagogique'],
-  '/cgv': ['Conditions générales de vente', 'Conditions générales de vente', 'Droit de rétractation'],
+  '/cgv': ['Conditions générales de vente', 'Conditions générales de vente', 'Annulation avant expédition'],
 };
 
 try {
@@ -149,7 +149,7 @@ try {
   const lienCgv = [...doc().querySelectorAll('a')].find((a) => a.getAttribute('href') === '/cgv');
   await aller(lienCgv.getAttribute('href'));
   check('depuis Rétractation, le renvoi aux CGV s\'ouvre (200)',
-    page.statut === 200 && texte().includes('Droit de rétractation'));
+    page.statut === 200 && texte().includes('Annulation avant expédition'));
 
   console.log(`\n${'='.repeat(64)}`);
   if (échecs > 0) {
