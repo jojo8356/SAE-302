@@ -298,6 +298,70 @@
     white-space: nowrap;
 }
 
+/* Client > Mes commandes : montant et lien « Détail » en page à 375 px.
+ * Ce tableau était le dernier du parcours sans aucune règle dédiée :
+ * dimensionné à son contenu (numéro, date complète avec l'heure), il
+ * repoussait les colonnes Montant TTC et « Détail » hors écran à
+ * 375 px, et sa légende — aussi large que le tableau — filait hors
+ * champ au lieu de passer à la ligne. Ici : largeur 100 %, répartition
+ * fixe des colonnes (colgroup), montant à droite sur une ligne, et
+ * légende alignée à gauche libre de se replier dans la page. Aucun
+ * défilement horizontal : les six colonnes tiennent dans la page. */
+.tableau-mes-commandes {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.tableau-mes-commandes caption {
+    text-align: left;
+    font-weight: 700;
+    font-size: 1.15rem;
+    padding: 0.5rem 0;
+}
+
+.tableau-mes-commandes .col-numero {
+    width: 20%;
+}
+
+.tableau-mes-commandes .col-date {
+    width: 22%;
+}
+
+.tableau-mes-commandes .col-statut {
+    width: 21%;
+}
+
+.tableau-mes-commandes .col-articles {
+    width: 10%;
+}
+
+.tableau-mes-commandes .col-montant {
+    width: 16%;
+}
+
+.tableau-mes-commandes .col-detail {
+    width: 11%;
+}
+
+.tableau-mes-commandes th,
+.tableau-mes-commandes td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #d6d3d1;
+    text-align: left;
+    vertical-align: top;
+    overflow-wrap: break-word;
+}
+
+.tableau-mes-commandes thead th {
+    background-color: #f5f5f4;
+}
+
+.tableau-mes-commandes .montant {
+    text-align: right;
+    white-space: nowrap;
+}
+
 /* Admin > Catégories : la page tient dans la fenêtre, à toute largeur.
  * Sans règles dédiées, le tableau s'étalait selon son contenu — le
  * formulaire d'édition en ligne (trois champs côte à côte et son

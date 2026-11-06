@@ -10,12 +10,15 @@ declare(strict_types=1);
     <p>Vous n'avez pas encore de commande.</p>
     <p><a href="/catalogue">Parcourir le catalogue →</a></p>
 <?php else: ?>
-    <table>
+    <table class="tableau-mes-commandes">
         <caption>Historique de vos commandes (prix figés à l'achat)</caption>
+        <colgroup>
+            <col class="col-numero"><col class="col-date"><col class="col-statut"><col class="col-articles"><col class="col-montant"><col class="col-detail">
+        </colgroup>
         <thead>
         <tr>
             <th scope="col">Numéro</th><th scope="col">Date</th><th scope="col">Statut</th>
-            <th scope="col">Articles</th><th scope="col">Montant TTC</th><th scope="col"></th>
+            <th scope="col">Articles</th><th scope="col" class="montant">Montant TTC</th><th scope="col"></th>
         </tr>
         </thead>
         <tbody>
@@ -25,7 +28,7 @@ declare(strict_types=1);
                 <td><?= e(date_fr($commande['date_commande'], true)) ?></td>
                 <td><?= e(statut_libelle($commande['statut'])) ?></td>
                 <td><?= (int) ($commande['nb_lignes'] ?? 0) ?></td>
-                <td><?= euros($commande['montant_total']) ?></td>
+                <td class="montant"><?= euros($commande['montant_total']) ?></td>
                 <td><a href="/mes-commandes/<?= (int) $commande['id_commande'] ?>">Détail →</a></td>
             </tr>
         <?php endforeach; ?>
