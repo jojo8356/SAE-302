@@ -60,6 +60,36 @@ function verdict(bool $ok, string $etiquette): void
     }
 }
 
+/** Extrait texte court d'un corps HTML, pour diagnostic en annotation CI. */
+function extraitTexte(string $html): string
+{
+    $texte = strip_tags($html);
+    $texte = html_entity_decode($texte, ENT_QUOTES, 'UTF-8');
+    $propre = preg_replace('/\s+/', ' ', $texte);
+    if (!is_string($propre)) {
+        $propre = $texte;
+    }
+
+    return trim(substr(trim($propre), 0, 700));
+}
+
+/** Publie le corps d'une réponse 5xx en annotation CI (le 500 y est bavard en dev). */
+function diagnostiquer(string $etiquette, array $reponse): void
+{
+    if ($reponse['statut'] < 500) {
+        return;
+    }
+    if (getenv('GITHUB_ACTIONS') !== 'true') {
+        return;
+    }
+    $message = str_replace(
+        ['%', "\r", "\n"],
+        ['%25', '%0D', '%0A'],
+        $etiquette . ' → ' . extraitTexte($reponse['corps'])
+    );
+    echo "::error title=dev-router-diag::{$message}\n";
+}
+
 /** Déclare la suite inapplicable ici (SKIP) et termine proprement. */
 function sauter(string $raison): never
 {
@@ -319,6 +349,7 @@ try {
     if ($serveur !== null) {
         try {
             $accueil = requeteHttp($port, '/');
+            diagnostiquer('GET /', $accueil);
             verdict(
                 $accueil['statut'] === 200 && str_contains($accueil['corps'], 'Bienvenue chez MiniShop'),
                 "GET / → 200 via le frontal (obtenu : {$accueil['statut']})"
