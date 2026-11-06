@@ -72,6 +72,7 @@ final class BusinessError extends \RuntimeException
         'REFERENCE_DEJA_UTILISEE'                      => 'Cette référence produit existe déjà.',
         'SLUG_DEJA_UTILISE'                            => 'Ce slug produit existe déjà.',
         'NOM_DEJA_UTILISE'                             => 'Ce nom de catégorie existe déjà.',
+        'SLUG_CATEGORIE_DEJA_UTILISE'                  => 'Ce slug de catégorie existe déjà.',
         'AUCUNE_MODIFICATION'                          => 'Aucune modification à appliquer.',
     ];
 }

@@ -114,6 +114,48 @@ jobs:
         run: php tests/php/dev_router_test.php
 
   # -----------------------------------------------------------------
+  # 1c. E2E UI (clics réels sur les pages) : Admin > Catégories —
+  #     doublon de nom refusé, catégorie existante intacte.
+  #     scripts/ui-e2e-categories.mjs pilote le DOM (jsdom) contre le
+  #     vrai serveur php -S ; la régression métier est aussi verrouillée
+  #     au niveau Repository par tests/php/categorie_doublon_test.php,
+  #     jouée ici en PHP natif avant le parcours UI.
+  # -----------------------------------------------------------------
+  ui-e2e:
+    name: ui-e2e (clics Admin > Catégories)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, intl
+          coverage: none
+          tools: none
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install dépendances dev (jsdom, php-wasm)
+        run: npm ci --ignore-scripts
+      - name: Régression doublon de catégorie (Repository, PHP natif)
+        run: php tests/php/categorie_doublon_test.php
+      - name: Démarrer l'application (php -S + dev-router)
+        run: |
+          php -S 127.0.0.1:8093 -t public scripts/dev-router.php > ui-server.log 2>&1 &
+          echo $! > ui-server.pid
+      - name: E2E UI — Admin > Catégories (clics)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-categories.mjs
+      - name: Arrêter le serveur et publier son journal si échec
+        if: always()
+        run: |
+          kill "$(cat ui-server.pid)" 2>/dev/null || true
+          cat ui-server.log || true
+
+  # -----------------------------------------------------------------
   # 2. Conventions PSR-12 : signalées, non bloquantes (allow_failure)
   # -----------------------------------------------------------------
   style:

@@ -17,6 +17,7 @@
 import { spawnSync } from 'node:child_process';
 
 const suites = [
+  ['Doublon catégorie (régression)', 'tests/php/categorie_doublon_test.php'],
   ['Moteur JSON', 'tests/php/engine_smoke.php'],
   ['Règles de gestion', 'tests/php/run_tests.php'],
   ['Unitaires', 'tests/php/unit_tests.php'],
@@ -51,4 +52,16 @@ if (e2e.status !== 0) {
   console.log('E2E : ÉCHEC ❌');
   process.exit(1);
 }
-console.log('\nTOUTES LES SUITES SONT VERTES ✅ (moteur, règles, unitaires, fonctionnalités, E2E)');
+
+// E2E UI (clics réels sur les pages, jsdom) : il faut un magasin propre,
+// l'E2E HTTP vient de le polluer — re-seed avant de le lancer.
+console.log(`\n${'='.repeat(64)}\n▸ E2E UI Catégories (clics) — scripts/ui-e2e-categories.mjs\n${'='.repeat(64)}`);
+const reseed = spawnSync('node', ['scripts/wasm_run.mjs', 'scripts/seed.php'], { stdio: 'inherit' });
+const ui = reseed.status === 0
+  ? spawnSync('node', ['scripts/ui-e2e-categories.mjs'], { stdio: 'inherit' })
+  : { status: 1 };
+if (ui.status !== 0) {
+  console.log('E2E UI : ÉCHEC ❌');
+  process.exit(1);
+}
+console.log('\nTOUTES LES SUITES SONT VERTES ✅ (moteur, règles, unitaires, fonctionnalités, E2E HTTP, E2E UI)');

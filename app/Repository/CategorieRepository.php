@@ -55,6 +55,16 @@ final class CategorieRepository
      * sp_save_category — création / renommage (EF-ADM-03).
      * p_id_categorie null => création. Le slug vide est normalisé
      * (portage du trigger trg_categorie_slug, ici en amont pour l'app).
+     *
+     * Unicité (uk_categorie_nom / uk_categorie_slug) : un nom — ou un
+     * slug — déjà porté par une AUTRE catégorie est REFUSÉ avant toute
+     * écriture (NOM_DEJA_UTILISE / SLUG_CATEGORIE_DEJA_UTILISE), en
+     * création comme en renommage. La comparaison passe par le magasin
+     * (Filter::eq = insensible casse/accents, comme la collation SQL).
+     * Divergence assumée avec l'ancien portage « ON DUPLICATE KEY
+     * UPDATE » : fusionner en silence écrasait la description de la
+     * catégorie existante (bug « Admin > Catégories : un doublon écrase
+     * la catégorie existante »), alors que l'attendu métier est un refus.
      */
     public function saveCategory(?int $idCategorie, string $nom, ?string $slug, ?string $description): int
     {
@@ -68,23 +78,21 @@ final class CategorieRepository
             $slug = Text::slug($nom);
         }
 
-        if ($idCategorie === null) {
-            $existant = $this->store->findOne('categorie', [Filter::eq('nom', $nom)]);
-            if ($existant !== null) {
-                // équivalent du ON DUPLICATE KEY : on met à jour au lieu d'insérer
-                $this->store->update('categorie', [Filter::eq('id_categorie', $existant['id_categorie'])], [
-                    'slug' => $slug,
-                    'description' => $description,
-                ]);
-
-                return (int) $existant['id_categorie'];
-            }
-
-            return $this->store->insert('categorie', ['nom' => $nom, 'slug' => $slug, 'description' => $description]);
+        if ($idCategorie !== null && $this->store->find('categorie', $idCategorie) === null) {
+            throw new BusinessError('CATEGORIE_INTROUVABLE');
         }
 
-        if ($this->store->find('categorie', $idCategorie) === null) {
-            throw new BusinessError('CATEGORIE_INTROUVABLE');
+        $doublonNom = $this->store->findOne('categorie', [Filter::eq('nom', $nom)]);
+        if ($doublonNom !== null && (int) $doublonNom['id_categorie'] !== $idCategorie) {
+            throw new BusinessError('NOM_DEJA_UTILISE');
+        }
+        $doublonSlug = $this->store->findOne('categorie', [Filter::eq('slug', $slug)]);
+        if ($doublonSlug !== null && (int) $doublonSlug['id_categorie'] !== $idCategorie) {
+            throw new BusinessError('SLUG_CATEGORIE_DEJA_UTILISE');
+        }
+
+        if ($idCategorie === null) {
+            return $this->store->insert('categorie', ['nom' => $nom, 'slug' => $slug, 'description' => $description]);
         }
 
         $modifiees = (int) $this->store->update('categorie', [Filter::eq('id_categorie', $idCategorie)], [

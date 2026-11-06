@@ -17,7 +17,7 @@ declare(strict_types=1);
     <?= csrf_field() ?>
     <fieldset>
         <legend>Le slug est généré automatiquement si laissé vide (RB-07) ;
-            deux catégories de même nom sont fusionnées (UNIQUE)</legend>
+            un nom (ou un slug) déjà utilisé est refusé, sans toucher à la catégorie existante</legend>
         <p><label for="nom">Nom *</label>
             <input id="nom" name="nom" maxlength="100" required></p>
         <p><label for="slug">Slug (optionnel)</label>
