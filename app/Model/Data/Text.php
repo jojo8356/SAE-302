@@ -56,10 +56,10 @@ final class Text
         'œ' => 'oe', 'Œ' => 'OE', 'æ' => 'ae', 'Æ' => 'AE', 'ß' => 'ss',
     ];
 
-    /** @var Transliterator|false|null instance ICU mise en cache (false = absente) */
+    /** @var \Transliterator|false|null instance ICU mise en cache (false = absente) */
     private static mixed $transliterator = null;
 
-    /** @var Collator|false|null collateur ICU PRIMARY mis en cache (false = absent) */
+    /** @var \Collator|false|null collateur ICU PRIMARY mis en cache (false = absent) */
     private static mixed $collator = null;
 
     /** Pliage insensible casse + accents (clé de comparaison « collation »). */
@@ -130,13 +130,13 @@ final class Text
         return strcmp(self::fold($a), self::fold($b));
     }
 
-    /** @return Transliterator|false l'instance « Any-Latin; Latin-ASCII », ou false si intl est absent */
+    /** @return \Transliterator|false l'instance « Any-Latin; Latin-ASCII », ou false si intl est absent */
     private static function transliterator(): mixed
     {
         if (self::$transliterator === null) {
             self::$transliterator = false;
-            if (class_exists('Transliterator')) {
-                $instance = Transliterator::create('Any-Latin; Latin-ASCII');
+            if (class_exists(\Transliterator::class)) {
+                $instance = \Transliterator::create('Any-Latin; Latin-ASCII');
                 if ($instance !== null) {
                     self::$transliterator = $instance;
                 }
@@ -146,13 +146,13 @@ final class Text
         return self::$transliterator;
     }
 
-    /** @return Collator|false un collateur français PRIMARY, ou false si intl est absent */
+    /** @return \Collator|false un collateur français PRIMARY, ou false si intl est absent */
     private static function collator(): mixed
     {
         if (self::$collator === null) {
-            if (class_exists('Collator')) {
-                $collator = new Collator('fr_FR');
-                $collator->setStrength(Collator::PRIMARY); // insensible casse ET accents
+            if (class_exists(\Collator::class)) {
+                $collator = new \Collator('fr_FR');
+                $collator->setStrength(\Collator::PRIMARY); // insensible casse ET accents
                 self::$collator = $collator;
             } else {
                 self::$collator = false;

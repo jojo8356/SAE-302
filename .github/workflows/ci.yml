@@ -108,6 +108,8 @@ jobs:
           extensions: mbstring, intl
           coverage: none
           tools: none
+      - name: Tests unitaires en PHP natif (ext-intl présente)
+        run: php tests/php/unit_tests.php
       - name: Tests du routeur de développement
         run: php tests/php/dev_router_test.php
 
