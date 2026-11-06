@@ -173,6 +173,69 @@
     width: 4rem;
 }
 
+/* Validation : le récapitulatif tient en page, même à 375 px.
+ * Sans règles dédiées, ce tableau se dimensionnait à son contenu :
+ * à 375 px, les libellés du pied (Sous-total, Frais de port,
+ * Total à payer) restaient visibles à gauche pendant que les
+ * montants partaient hors écran à droite — jamais ensemble sans
+ * défilement horizontal, alors que c'est le montant que le client
+ * s'apprête à payer. Ici : largeur 100 %, répartition fixe des
+ * colonnes (colgroup), montants à droite et sur une ligne, libellés
+ * du pied libres de passer à la ligne dans leur zone. */
+.tableau-recapitulatif {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.tableau-recapitulatif caption {
+    text-align: left;
+    font-weight: 700;
+    font-size: 1.15rem;
+    padding: 0.5rem 0;
+}
+
+.tableau-recapitulatif .col-produit {
+    width: 38%;
+}
+
+.tableau-recapitulatif .col-prix {
+    width: 22%;
+}
+
+.tableau-recapitulatif .col-qte {
+    width: 13%;
+}
+
+.tableau-recapitulatif .col-total {
+    width: 27%;
+}
+
+.tableau-recapitulatif th,
+.tableau-recapitulatif td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #d6d3d1;
+    text-align: left;
+    vertical-align: top;
+    overflow-wrap: break-word;
+}
+
+.tableau-recapitulatif thead th {
+    background-color: #f5f5f4;
+}
+
+.tableau-recapitulatif .montant {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.tableau-recapitulatif tfoot th,
+.tableau-recapitulatif tfoot td {
+    background-color: #f5f5f4;
+    border-top: 2px solid #a8a29e;
+    border-bottom: none;
+}
+
 /* Admin > Commandes : le tableau de pilotage tient en page.
  * Sans règles dédiées, le tableau s'étalait selon son contenu
  * (dates complètes, noms de clients) et repoussait les colonnes

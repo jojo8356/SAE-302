@@ -17,25 +17,26 @@ declare(strict_types=1);
     </ul>
 <?php endif; ?>
 
-<table>
+<table class="tableau-recapitulatif">
     <caption>Récapitulatif de votre panier</caption>
+    <colgroup><col class="col-produit"><col class="col-prix"><col class="col-qte"><col class="col-total"></colgroup>
     <thead>
-    <tr><th scope="col">Produit</th><th scope="col">Prix TTC</th><th scope="col">Qté</th><th scope="col">Total TTC</th></tr>
+    <tr><th scope="col">Produit</th><th scope="col" class="montant">Prix TTC</th><th scope="col">Qté</th><th scope="col" class="montant">Total TTC</th></tr>
     </thead>
     <tbody>
     <?php foreach ($recap['articles'] as $ligne): ?>
         <tr>
             <td><?= e($ligne['nom']) ?> <small>(réf. <?= e($ligne['reference']) ?>)</small></td>
-            <td><?= euros($ligne['prix_unitaire']) ?></td>
+            <td class="montant"><?= euros($ligne['prix_unitaire']) ?></td>
             <td><?= (int) $ligne['quantite'] ?></td>
-            <td><?= euros($ligne['total_ligne']) ?></td>
+            <td class="montant"><?= euros($ligne['total_ligne']) ?></td>
         </tr>
     <?php endforeach; ?>
     </tbody>
     <tfoot>
-    <tr><th scope="row" colspan="3">Sous-total TTC</th><td><?= euros($recap['sous_total']) ?></td></tr>
-    <tr><th scope="row" colspan="3">Frais de port <small>(<?= e($recap['port_motif']) ?>)</small></th><td><?= euros($recap['frais_port']) ?></td></tr>
-    <tr><th scope="row" colspan="3">Total à payer</th><td><strong><?= euros($recap['total']) ?></strong></td></tr>
+    <tr><th scope="row" colspan="3">Sous-total TTC</th><td class="montant"><?= euros($recap['sous_total']) ?></td></tr>
+    <tr><th scope="row" colspan="3">Frais de port <small>(<?= e($recap['port_motif']) ?>)</small></th><td class="montant"><?= euros($recap['frais_port']) ?></td></tr>
+    <tr><th scope="row" colspan="3">Total à payer</th><td class="montant"><strong><?= euros($recap['total']) ?></strong></td></tr>
     </tfoot>
 </table>
 
@@ -55,7 +56,7 @@ declare(strict_types=1);
                 directement au statut « Payée »)</label>
         </p>
         <p>
-            <button type="submit">Confirmer et payer (simulé)</button>
+            <button type="submit">Confirmer et payer : <?= euros($recap['total']) ?> (simulé)</button>
         </p>
     </fieldset>
 </form>
