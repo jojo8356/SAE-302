@@ -186,6 +186,8 @@ jobs:
         run: php tests/php/valider_recap_test.php
       - name: Regression PHP - Inscription erreurs simultanees et saisie conservee (echec attendu si le correctif est absent)
         run: php tests/php/inscription_erreurs_test.php
+      - name: Regression PHP - Mes commandes tableau 375px et legende (echec attendu si le correctif est absent)
+        run: php tests/php/mes_commandes_tableau_test.php
       - name: Données de démonstration d'usine (comptes de démo du seed)
         run: php scripts/seed.php
       - name: Démarrer l'application (php -S + dev-router)
@@ -280,6 +282,10 @@ jobs:
         env:
           UI_BASE_URL: http://127.0.0.1:8093
         run: node scripts/ui-e2e-inscription.mjs --port=8138
+      - name: E2E navigateur - Mes commandes montant et detail en page a 375px
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-mes-commandes.mjs --port=8140
       - name: Arrêter le serveur et publier son journal si échec
         if: always()
         run: |
