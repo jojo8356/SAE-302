@@ -152,7 +152,7 @@ class NavigateurUI {
 }
 
 function bouton(formulaire, libelle) {
-  const b = [...formulaire.querySelectorAll('button')].find((x) => x.textContent.trim() === libelle);
+  const b = [...formulaire.querySelectorAll('button')].find((x) => x.textContent.trim() === libelle || x.textContent.trim().startsWith(libelle));
   if (!b) throw new Error(`bouton « ${libelle} » introuvable`);
   return b;
 }
@@ -210,7 +210,7 @@ try {
 
   // L'instant de la commande est borné par [avant, après] autour du clic.
   const avant = new Date();
-  await nav.cliquerBouton(bouton(doc().querySelector('form[action="/commande/valider"]'), 'Confirmer et payer (simulé)'));
+  await nav.cliquerBouton(bouton(doc().querySelector('form[action="/commande/valider"]'), 'Confirmer et payer'));
   const apres = new Date();
   const attenduesParis = new Set([paris(avant), paris(apres)]);
   const fautivesUtc = new Set([utc(avant), utc(apres)]);

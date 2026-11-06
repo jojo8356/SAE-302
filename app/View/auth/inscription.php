@@ -21,7 +21,7 @@ declare(strict_types=1);
         <p><label for="email">Email *</label><input type="email" id="email" name="email" maxlength="190" required value="<?= e($valeurs['email'] ?? '') ?>"></p>
         <p><label for="mot_de_passe">Mot de passe * (8 caractères min.)</label><input type="password" id="mot_de_passe" name="mot_de_passe" minlength="8" required></p>
         <p><label for="confirmation">Confirmation *</label><input type="password" id="confirmation" name="confirmation" minlength="8" required></p>
-        <p><label><input type="checkbox" name="cgv" value="1" required> J'accepte les <a href="/cgv">conditions générales de vente</a></label></p>
+        <p><label><input type="checkbox" name="cgv" value="1" required<?php if (!empty($valeurs['cgv'])) { echo ' checked'; } ?>> J'accepte les <a href="/cgv">conditions générales de vente</a> *</label></p>
         <p><button type="submit">Créer mon compte</button></p>
     </fieldset>
 </form>

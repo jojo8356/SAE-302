@@ -37,12 +37,18 @@ final class AuthController extends Controller
         $confirmation = (string) ($_POST['confirmation'] ?? '');
         $cgv = $this->bool('cgv');
 
+        // Toutes les erreurs sont signalées EN UNE FOIS (y compris
+        // l'email déjà utilisé, contrôlé dès la validation) : le client
+        // ne doit pas découvrir les problèmes un par un, à chaque envoi.
         $erreurs = [];
         if ($nom === '' || $prenom === '') {
             $erreurs[] = 'Nom et prénom sont obligatoires.';
         }
+        $repo = new ClientRepository(Database::store());
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $erreurs[] = 'Adresse email invalide.';
+        } elseif ($repo->emailExiste($email)) {
+            $erreurs[] = BusinessError::MESSAGES['EMAIL_DEJA_UTILISE'];
         }
         if (strlen($motDePasse) < 8) {
             $erreurs[] = 'Le mot de passe doit contenir au moins 8 caractères.';
@@ -56,7 +62,6 @@ final class AuthController extends Controller
 
         if ($erreurs === []) {
             try {
-                $repo = new ClientRepository(Database::store());
                 $id = $repo->createAccount($nom, $prenom, $email, password_hash($motDePasse, PASSWORD_BCRYPT));
                 Auth::connecterClient($id);
                 $this->flashSucces('Bienvenue ' . $prenom . ' ! Votre compte est créé.');
@@ -66,9 +71,11 @@ final class AuthController extends Controller
             }
         }
 
+        // Le formulaire repart avec ce qui a été saisi (nom, prénom,
+        // email, case CGV) ; seuls les mots de passe sont vidés.
         $this->render('auth/inscription', [
             'erreurs' => $erreurs,
-            'valeurs' => ['nom' => $nom, 'prenom' => $prenom, 'email' => $email],
+            'valeurs' => ['nom' => $nom, 'prenom' => $prenom, 'email' => $email, 'cgv' => $cgv],
         ], 'Créer un compte');
     }
 
