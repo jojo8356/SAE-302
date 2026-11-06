@@ -38,6 +38,7 @@ const suites = [
   ['Valider ma commande, récapitulatif à 375 px (régression)', 'tests/php/valider_recap_test.php'],
   ['Inscription, erreurs simultanées, saisie conservée (régression)', 'tests/php/inscription_erreurs_test.php'],
   ['Mes commandes, tableau à 375 px, légende (régression)', 'tests/php/mes_commandes_tableau_test.php'],
+  ['Mon compte, titres des cadres à 375 px (régression)', 'tests/php/compte_cadres_test.php'],
   ['Page À propos (régression)', 'tests/php/apropos_test.php'],
   ['Bouton panier (régression)', 'tests/php/panier_cta_test.php'],
   ['Doublon catégorie (régression)', 'tests/php/categorie_doublon_test.php'],
@@ -205,6 +206,9 @@ const uiInscription = spawnSync('node', ['scripts/ui-e2e-inscription.mjs'], { st
 
 console.log(`\n${'='.repeat(64)}\n▸ E2E UI Mes commandes — scripts/ui-e2e-mes-commandes.mjs\n${'='.repeat(64)}`);
 const uiMesCommandes = spawnSync('node', ['scripts/ui-e2e-mes-commandes.mjs'], { stdio: 'inherit' });
+
+console.log(`\n${'='.repeat(64)}\n▸ E2E UI Mon compte — scripts/ui-e2e-compte.mjs\n${'='.repeat(64)}`);
+const uiCompte = spawnSync('node', ['scripts/ui-e2e-compte.mjs'], { stdio: 'inherit' });
 if (uiDivers.status !== 0) {
   console.log('E2E UI Divers : ÉCHEC ❌');
   process.exit(1);
@@ -227,6 +231,10 @@ if (uiContact.status !== 0) {
 }
 if (uiAnnulationHistorique.status !== 0) {
   console.log('E2E UI Annulation historique : ÉCHEC ❌');
+  process.exit(1);
+}
+if (uiCompte.status !== 0) {
+  console.log('E2E UI Mon compte : ÉCHEC ❌');
   process.exit(1);
 }
 if (uiMesCommandes.status !== 0) {
