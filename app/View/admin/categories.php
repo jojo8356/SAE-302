@@ -13,11 +13,12 @@ declare(strict_types=1);
 <?php endif; ?>
 
 <h2>Créer une catégorie</h2>
-<form method="post" action="/admin/categories">
+<form method="post" class="formulaire-creation-categorie" action="/admin/categories">
     <?= csrf_field() ?>
     <fieldset>
-        <legend>Le slug est généré automatiquement si laissé vide (RB-07) ;
-            un nom (ou un slug) déjà utilisé est refusé, sans toucher à la catégorie existante</legend>
+        <legend>Nouvelle catégorie</legend>
+        <p class="aide">Le slug est généré automatiquement si laissé vide (RB-07) ;
+            un nom (ou un slug) déjà utilisé est refusé, sans toucher à la catégorie existante.</p>
         <p><label for="nom">Nom *</label>
             <input id="nom" name="nom" maxlength="100" required></p>
         <p><label for="slug">Slug (optionnel)</label>
@@ -41,9 +42,9 @@ declare(strict_types=1);
             <td>
                 <form method="post" action="/admin/categories/<?= (int) $categorie['id_categorie'] ?>/modification">
                     <?= csrf_field() ?>
-                    <input name="nom" maxlength="100" required value="<?= e($categorie['nom']) ?>">
-                    <input name="slug" maxlength="120" value="<?= e($categorie['slug']) ?>" placeholder="slug (auto si vide)">
-                    <input name="description" maxlength="500" value="<?= e($categorie['description']) ?>">
+                    <input name="nom" aria-label="Nom de la catégorie" maxlength="100" required value="<?= e($categorie['nom']) ?>">
+                    <input name="slug" aria-label="Slug de la catégorie" maxlength="120" value="<?= e($categorie['slug']) ?>" placeholder="slug (auto si vide)">
+                    <input name="description" aria-label="Description de la catégorie" maxlength="500" value="<?= e($categorie['description']) ?>">
                     <button type="submit">Enregistrer</button>
                 </form>
             </td>

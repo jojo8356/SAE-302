@@ -335,3 +335,78 @@
 .tableau-alertes .produit {
     text-align: left;
 }
+
+/* Formulaires d'administration et filtres : libellés et champs
+ * ordonnés, jamais séparés.
+ * — Formulaire produit : chaque champ est une rangée à deux
+ *   colonnes (libellé / champ) : tous les champs commencent au
+ *   même endroit, et le libellé « Description » est en haut de sa
+ *   zone de texte (alignement au départ), pas en bas.
+ * — Catégories : l'aide du formulaire de création est un
+ *   paragraphe dans le cadre (une légende longue débordait du
+ *   fieldset) ; les trois champs de modification portent des
+ *   étiquettes accessibles (aria-label).
+ * — Produits (filtre) et catalogue (filtres) : chaque couple
+ *   libellé + champ forme un bloc inséparable (.champ : libellé
+ *   au-dessus du champ), rangé dans une grille régulière — au
+ *   catalogue, « Prix TTC minimum » et « Prix TTC maximum » ont
+ *   chacun leur champ complet, côte à côte, à toute largeur. */
+.formulaire-produit .champ {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr);
+    align-items: start;
+    gap: 0.4rem 1rem;
+}
+
+.formulaire-produit .champ label {
+    padding-top: 0.3rem;
+}
+
+.formulaire-produit .champ input,
+.formulaire-produit .champ select,
+.formulaire-produit .champ textarea {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.formulaire-creation-categorie .aide {
+    overflow-wrap: break-word;
+}
+
+.formulaire-filtres-produits {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 0.75rem 1.25rem;
+}
+
+.formulaire-filtres-produits .champ,
+.formulaire-filtres-catalogue .champ {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin: 0;
+}
+
+.formulaire-filtres-produits .champ-envoi,
+.formulaire-filtres-catalogue .champ-envoi {
+    margin: 0;
+}
+
+.formulaire-filtres-catalogue fieldset {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.formulaire-filtres-catalogue legend {
+    padding: 0 0.5rem;
+}
+
+.formulaire-filtres-catalogue .champ input,
+.formulaire-filtres-catalogue .champ select,
+.formulaire-filtres-produits .champ input,
+.formulaire-filtres-produits .champ select {
+    width: 100%;
+    box-sizing: border-box;
+}

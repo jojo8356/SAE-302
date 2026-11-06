@@ -28,6 +28,7 @@ const suites = [
   ['Commandes admin, colonne Statut (régression)', 'tests/php/commandes_tableau_test.php'],
   ['Catégories admin, page tenue en page (régression)', 'tests/php/categories_tableau_test.php'],
   ['Alignement Produit/Référence panier, stocks, alertes (régression)', 'tests/php/alignement_colonnes_test.php'],
+  ['Formulaires produit, catégories, produits, catalogue (régression)', 'tests/php/formulaires_admin_test.php'],
   ['Page À propos (régression)', 'tests/php/apropos_test.php'],
   ['Bouton panier (régression)', 'tests/php/panier_cta_test.php'],
   ['Doublon catégorie (régression)', 'tests/php/categorie_doublon_test.php'],
@@ -159,6 +160,13 @@ console.log(`\n${'='.repeat(64)}\n▸ E2E UI Alignement Produit/Référence — 
 const uiAlignement = spawnSync('node', ['scripts/ui-e2e-alignement.mjs'], { stdio: 'inherit' });
 if (uiAlignement.status !== 0) {
   console.log('E2E UI Alignement : ÉCHEC ❌');
+  process.exit(1);
+}
+
+console.log(`\n${'='.repeat(64)}\n▸ E2E UI Formulaires (produit, catégories, produits, catalogue) — scripts/ui-e2e-formulaires.mjs\n${'='.repeat(64)}`);
+const uiFormulaires = spawnSync('node', ['scripts/ui-e2e-formulaires.mjs'], { stdio: 'inherit' });
+if (uiFormulaires.status !== 0) {
+  console.log('E2E UI Formulaires : ÉCHEC ❌');
   process.exit(1);
 }
 console.log('\nTOUTES LES SUITES SONT VERTES ✅ (moteur, règles, unitaires, fonctionnalités, E2E HTTP, E2E UI)');

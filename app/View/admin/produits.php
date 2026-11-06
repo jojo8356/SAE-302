@@ -7,10 +7,12 @@ declare(strict_types=1);
 <h1>Produits</h1>
 <p><a href="/admin/produit/nouveau">+ Nouveau produit</a></p>
 
-<form method="get" action="/admin/produits">
-    <p>
+<form method="get" class="formulaire-filtres-produits" action="/admin/produits">
+    <p class="champ">
         <label for="q">Recherche :</label>
         <input type="search" id="q" name="q" maxlength="120" value="<?= e($q) ?>">
+    </p>
+    <p class="champ">
         <label for="cat">Catégorie :</label>
         <select id="cat" name="cat">
             <option value="">Toutes</option>
@@ -20,6 +22,8 @@ declare(strict_types=1);
                 </option>
             <?php endforeach; ?>
         </select>
+    </p>
+    <p class="champ-envoi">
         <button type="submit">Filtrer</button>
     </p>
 </form>

@@ -146,7 +146,7 @@ $check(
 );
 $check(
     'non-régression : le formulaire de création est intact (nom, slug, description, « Créer »)',
-    str_contains($html, '<form method="post" action="/admin/categories">')
+    str_contains($html, '<form method="post" class="formulaire-creation-categorie" action="/admin/categories">')
         && str_contains($html, '<input id="nom" name="nom"')
         && str_contains($html, '>Créer</button>')
 );

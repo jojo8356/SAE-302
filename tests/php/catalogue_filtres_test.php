@@ -117,7 +117,7 @@ $check(
         && str_contains($html, 'id="prix_min"') && str_contains($html, 'id="tri"')
         && str_contains($html, '>Appliquer</button>')
 );
-$check('le formulaire part toujours en GET sur /catalogue', str_contains($html, '<form method="get" action="/catalogue">'));
+$check('le formulaire part toujours en GET sur /catalogue', str_contains($html, '<form method="get" class="formulaire-filtres-catalogue" action="/catalogue">'));
 
 /* ── 2. Avec filtre : panneau ouvert, état visible, champs remplis ── */
 echo "\n== 2 · Filtre actif : le panneau s'ouvre, les critères restent affichés ==\n";
@@ -155,7 +155,7 @@ $check(
 /* ── 3. Recherche (page /recherche) : même comportement ───────────── */
 echo "\n== 3 · Page Recherche : même panneau, formulaire vers /recherche ==\n";
 $htmlRecherche = rendreCatalogue(criteresVides(), true);
-$check('le formulaire de /recherche vise /recherche', str_contains($htmlRecherche, '<form method="get" action="/recherche">'));
+$check('le formulaire de /recherche vise /recherche', str_contains($htmlRecherche, '<form method="get" class="formulaire-filtres-catalogue" action="/recherche">'));
 $check('panneau fermé par défaut aussi en recherche', !str_contains((string) baliseDetails($htmlRecherche), ' open'));
 $check('titre « Recherche » conservé', str_contains($htmlRecherche, '<h1>Recherche</h1>'));
 

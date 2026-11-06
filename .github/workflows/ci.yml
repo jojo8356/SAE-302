@@ -168,6 +168,8 @@ jobs:
         run: php tests/php/categories_tableau_test.php
       - name: Régression alignement Produit et Référence, panier stocks alertes (PHP natif)
         run: php tests/php/alignement_colonnes_test.php
+      - name: Régression formulaires produit, catégories, produits, catalogue (PHP natif)
+        run: php tests/php/formulaires_admin_test.php
       - name: Données de démonstration d'usine (comptes de démo du seed)
         run: php scripts/seed.php
       - name: Démarrer l'application (php -S + dev-router)
@@ -226,6 +228,10 @@ jobs:
         env:
           UI_BASE_URL: http://127.0.0.1:8093
         run: node scripts/ui-e2e-alignement.mjs
+      - name: E2E UI — Formulaires alignés (produit, catégories, produits, catalogue)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-formulaires.mjs
       - name: Arrêter le serveur et publier son journal si échec
         if: always()
         run: |

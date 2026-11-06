@@ -29,18 +29,18 @@ if ($valeurs !== []) {
     </ul>
 <?php endif; ?>
 
-<form method="post" action="<?php if ($estCreation) { echo '/admin/produit/nouveau'; } else { echo '/admin/produit/' . (int) $produit['id_produit'] . '/modification'; } ?>">
+<form method="post" class="formulaire-produit" action="<?php if ($estCreation) { echo '/admin/produit/nouveau'; } else { echo '/admin/produit/' . (int) $produit['id_produit'] . '/modification'; } ?>">
     <?= csrf_field() ?>
     <fieldset>
         <legend>Fiche produit (contraintes appliquées par le moteur : référence et slug uniques,
             prix HT &gt; 0 — RB-02 — stock ≥ 0, prix TTC dérivé automatiquement — RB-16)</legend>
-        <p><label for="reference">Référence *</label>
+        <p class="champ"><label for="reference">Référence *</label>
             <input id="reference" name="reference" maxlength="30" required value="<?= $v('reference') ?>"></p>
-        <p><label for="nom">Nom *</label>
+        <p class="champ"><label for="nom">Nom *</label>
             <input id="nom" name="nom" maxlength="150" required value="<?= $v('nom') ?>"></p>
-        <p><label for="slug">Slug (URL) — vide = généré depuis le nom</label>
+        <p class="champ"><label for="slug">Slug (URL) — vide = généré depuis le nom</label>
             <input id="slug" name="slug" maxlength="180" value="<?= $v('slug') ?>"></p>
-        <p><label for="id_categorie">Catégorie *</label>
+        <p class="champ"><label for="id_categorie">Catégorie *</label>
             <select id="id_categorie" name="id_categorie" required>
                 <?php foreach ($categories as $categorie): ?>
                     <option value="<?= (int) $categorie['id_categorie'] ?>"
@@ -49,24 +49,24 @@ if ($valeurs !== []) {
                     </option>
                 <?php endforeach; ?>
             </select></p>
-        <p><label for="description">Description</label>
+        <p class="champ"><label for="description">Description</label>
             <textarea id="description" name="description" rows="4" cols="60"><?= $v('description') ?></textarea></p>
-        <p><label for="prix_ht">Prix HT (€) *</label>
+        <p class="champ"><label for="prix_ht">Prix HT (€) *</label>
             <input type="number" id="prix_ht" name="prix_ht" min="0.01" step="0.01" required
                    value="<?= $v('prix_ht', '') ?>"></p>
-        <p><label for="tva">TVA (%) *</label>
+        <p class="champ"><label for="tva">TVA (%) *</label>
             <input type="number" id="tva" name="tva" min="0" max="100" step="0.01" required
                    value="<?= $v('tva', $tvaDefautFormatee) ?>"></p>
-        <p><label for="stock">Stock *</label>
+        <p class="champ"><label for="stock">Stock *</label>
             <input type="number" id="stock" name="stock" min="0" required value="<?= $v('stock', '0') ?>"></p>
-        <p><label for="seuil_alerte">Seuil d'alerte (RB-03) *</label>
+        <p class="champ"><label for="seuil_alerte">Seuil d'alerte (RB-03) *</label>
             <input type="number" id="seuil_alerte" name="seuil_alerte" min="0" required value="<?= $v('seuil_alerte', '3') ?>"></p>
-        <p><label for="image_url">Image (URL)</label>
+        <p class="champ"><label for="image_url">Image (URL)</label>
             <input id="image_url" name="image_url" maxlength="255" value="<?= $v('image_url') ?>"></p>
-        <p><label><input type="checkbox" name="visible" value="1"
+        <p class="champ-case"><label><input type="checkbox" name="visible" value="1"
                 <?php if ($visibleDefaut) { echo 'checked'; } else { echo ''; } ?>>
             Visible au catalogue (RB-19)</label></p>
-        <p><button type="submit"><?php if ($estCreation) { echo 'Créer le produit'; } else { echo 'Enregistrer'; } ?></button></p>
+        <p class="champ-envoi"><button type="submit"><?php if ($estCreation) { echo 'Créer le produit'; } else { echo 'Enregistrer'; } ?></button></p>
     </fieldset>
 </form>
 
