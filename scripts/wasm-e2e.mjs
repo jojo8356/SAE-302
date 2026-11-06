@@ -331,7 +331,7 @@ process.stdout.write(B('T7 · catalogue avancé (F-01…F-05)'));
 
   // F-05 : transparence des prix
   const fiche = await anon.get('/produit/casque-sans-fil-aura');
-  contient('fiche : décomposition HT + TVA', fiche.text, 'HT + TVA');
+  contient('fiche : décomposition HT + TVA (tableau Caractéristiques)', fiche.text, 'Prix HT');
   contient('fiche : taux 20,00 %', fiche.text, '20,00');
   contient('fiche : prix TTC', fiche.text, 'TTC');
 }
