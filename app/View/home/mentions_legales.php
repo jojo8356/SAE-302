@@ -19,7 +19,10 @@ exclusif. Pour joindre l'équipe : page <a href="/contact">Contact</a> du site.<
 plateforme LineServ, dans le cadre de ce projet pédagogique.</p>
 
 <h2>Données personnelles</h2>
-<p>Les comptes créés sur cette maquette contiennent des données fictives. Les mots de passe
+<p>Utilisez des informations fictives : ce que vous saisissez sur cette
+maquette (nom, e-mail, adresse de livraison) est enregistré pour faire
+fonctionner la boutique, comme le détaille la page
+<a href="/confidentialite">Confidentialité</a>. Les mots de passe
 ne sont jamais stockés en clair (hachage bcrypt) et les commandes sont tracées
 à des fins d'audit pédagogique.</p>
 

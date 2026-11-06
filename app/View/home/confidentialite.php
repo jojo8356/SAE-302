@@ -24,9 +24,10 @@ commandes est tracé à des fins de suivi (qui a fait quoi, et quand).</p>
 
 <h2>Vos droits</h2>
 <p>Vous pouvez consulter et corriger vos informations à tout moment depuis
-<a href="/compte">Mon compte</a>, et y changer votre mot de passe. Pour toute
-demande concernant vos données, passez par la page
-<a href="/contact">Contact</a>.</p>
+<a href="/compte">Mon compte</a>, et y changer votre mot de passe. Sur cette
+maquette pédagogique, c'est la seule voie de demande : il n'y a ni
+formulaire de contact ni service client derrière le site (voir la page
+<a href="/contact">Contact</a>) — utilisez donc des informations fictives.</p>
 
 <p><small>MiniShop est une maquette pédagogique réalisée par des étudiants :
 utilisez des informations fictives, comme les comptes de démonstration

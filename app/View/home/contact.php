@@ -26,7 +26,10 @@ démonstration fourni avec le projet.</p>
 <a href="/confidentialite">Confidentialité</a> explique ce qui est enregistré
 et combien de temps.</p>
 
-<p><small>Aucun message envoyé à un éventuel canal de contact ne serait
-traité : cette page a valeur d'information dans le cadre du projet
-étudiant.</small></p>
+<h2>Nous écrire ?</h2>
+<p>Il n'y a ni formulaire de contact ni service client derrière cette
+maquette : aucun message ne peut être envoyé depuis ce site, et aucune
+réponse ne sera donc apportée. Cette page a valeur d'information dans
+le cadre du projet étudiant ; pour savoir qui édite et héberge le
+site, voir les <a href="/mentions-legales">Mentions légales</a>.</p>
 </section>
