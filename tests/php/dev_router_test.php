@@ -336,10 +336,13 @@ try {
                 "GET /recherche?q=clavier → 200, query string préservée (obtenu : {$recherche['statut']})"
             );
 
+            // /index.php est un fichier réel : il s'exécute, puis le routeur
+            // à liste blanche rejette cette URL (aucune route « /index.php »)
+            // — exactement comme sous Apache + .htaccess.
             $indexDirect = requeteHttp($port, '/index.php');
             verdict(
-                $indexDirect['statut'] === 200 && str_contains($indexDirect['corps'], 'Bienvenue chez MiniShop'),
-                "GET /index.php → 200 (obtenu : {$indexDirect['statut']})"
+                $indexDirect['statut'] === 404 && str_contains($indexDirect['corps'], 'Page introuvable'),
+                "GET /index.php → 404 du frontal, parité Apache (obtenu : {$indexDirect['statut']})"
             );
 
             $statique = requeteHttp($port, '/__dev_router_probe.txt');
