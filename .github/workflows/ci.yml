@@ -1,6 +1,7 @@
 # MiniShop — CI GitHub Actions (dev) — adaptation de .gitlab-ci.yml pour GitHub
 # Contexte : GitLab reste la cible de prod (barème CT-09, §14.2), mais le dev
-# avant la prod se fait sur GitHub. Ce workflow reproduit 1:1 les 6 jobs GitLab
+# avant la prod se fait sur GitHub. Ce workflow reproduit 1:1 les 6 jobs GitLab,
+# plus un 7e propre à GitHub (dev-router, matrice Linux+Windows — tests/php/dev_router_test.php)
 # en syntaxe GitHub Actions, avec les mêmes garanties : syntaxe PHP bloquante,
 # 29 tests SQL, contrôles sécurité, PlantUML.
 #
@@ -75,10 +76,42 @@ jobs:
           tools: none
       - name: Lint app + public
         run: |
-          echo "== php -l sur app/ public/ =="
+          echo "== php -l sur app/ public/ scripts/ tests/php/ =="
           if [ ! -d app ] && [ ! -d public ]; then echo "aucun dossier app/public, skip"; exit 0; fi
-          find app public -name '*.php' -print0 | xargs -0 -n1 -P4 php -l
+          find app public scripts tests/php -name '*.php' -print0 | xargs -0 -n1 -P4 php -l
           echo "✓ syntaxe OK"
+
+  # -----------------------------------------------------------------
+  # 1b. Routeur de développement `php -S` (scripts/dev-router.php) :
+  #     suite noire tests/php/dev_router_test.php — vrai serveur intégré
+  #     lancé en sous-processus (démarrage, fichiers réels de public/,
+  #     404 du frontal, traversées). Matrice ubuntu + windows : c'est le
+  #     seul endroit où le lancement Windows/XAMPP (chemins, séparateurs
+  #     %5c, cwd étranger) est testé pour de vrai, PHP natif oblige.
+  #     MINISHOP_ROUTER_TEST_STRICT=1 : un SKIP y est un échec.
+  # -----------------------------------------------------------------
+  dev-router:
+    name: dev-router (php -S ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    env:
+      MINISHOP_ROUTER_TEST_STRICT: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, intl
+          coverage: none
+          tools: none
+      - name: Tests unitaires en PHP natif (ext-intl présente)
+        run: php tests/php/unit_tests.php
+      - name: Tests du routeur de développement
+        run: php tests/php/dev_router_test.php
 
   # -----------------------------------------------------------------
   # 2. Conventions PSR-12 : signalées, non bloquantes (allow_failure)

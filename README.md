@@ -48,6 +48,44 @@ php -S localhost:8000 -t public
 #   http://localhost:8000/admin        (back-office, compte admin requis)
 ```
 
+### Lancement : Linux d'abord, Windows/XAMPP en appoint
+
+Le serveur cible (démo et production) est **sous Linux** : Apache 2.4,
+`DocumentRoot = public/`, et `public/.htaccess` fait foi pour le routage.
+Windows/XAMPP n'est **pas** une cible de déploiement — le lancement
+ci-dessous n'est qu'une commodité de développement, supportée au même
+titre que `php -S` sous Linux, sans MySQL/Apache à configurer (le moteur
+livré est le moteur JSON, cf. « État réel du dépôt »).
+
+```bash
+# Routeur optionnel (émule le .htaccess sous php -S : fichiers réels de
+# public/ servis directement, le reste passe par public/index.php).
+# scripts/dev-router.php résout ses chemins depuis son propre dossier :
+# aucun réglage XAMPP/Apache n'est nécessaire.
+php -S localhost:8000 -t public scripts/dev-router.php
+```
+
+> ⚠️ Les deux échecs Windows signalés venaient de la commande, pas du
+> code : (1) « `Fatal error: Failed opening required
+> scripts/dev-router.php` » = le fichier n'existait pas dans le dépôt
+> (il est livré désormais) **ou** la commande n'était pas lancée depuis
+> la racine du projet — `scripts/…` et `-t public` sont relatifs au
+> dossier courant ; (2) « le serveur démarre puis s'arrête sans
+> message » = même cause côté `-t public`. Depuis PowerShell, se placer
+> d'abord à la racine, et si `php` n'est pas dans le `PATH` (cas XAMPP),
+> l'appeler par son chemin complet :
+>
+> ```powershell
+> cd C:\xampp\htdocs\minishop
+> C:\xampp\php\php.exe -S localhost:8000 -t public scripts\dev-router.php
+> ```
+>
+> Variante valable depuis n'importe quel dossier : `-t` et routeur en
+> chemins absolus
+> (`-t C:\xampp\htdocs\minishop\public C:\xampp\htdocs\minishop\scripts\dev-router.php`).
+> Exécuter `php scripts\dev-router.php` seul ne lance aucun serveur :
+> le fichier affiche désormais l'aide au lieu de s'arrêter en silence.
+
 Le script `load_db.sh` encapsule les fichiers contenant des procédures/triggers avec un
 `DELIMITER $$` (le client `mysql` n'accepte pas `DELIMITER` en mode batch). Sous MySQL Workbench ou
 phpMyAdmin, ouvrir et exécuter `sql/01 → 02 → 03 → 04` dans cet ordre fonctionne aussi.
@@ -110,6 +148,8 @@ npm run test:all        # ou : node scripts/run-all-tests.mjs
 
 Commandes individuelles : `npm test` (règles), `npm run test:units`, `npm run test:features`, `npm run test:e2e` (re-seed puis parcours HTTP ; l'E2E **pollue** `data/minishop` par construction — re-seeder ensuite : `node scripts/wasm_run.mjs scripts/seed.php`).
 
+**Suite routeur de développement** (`tests/php/dev_router_test.php`, hors WASM) : lance le vrai `php -S … scripts/dev-router.php` en sous-processus — démarrage depuis un dossier étranger en chemins absolus (cas XAMPP) et depuis la racine en chemins relatifs (commande ci-dessus), fichiers réels de `public/` servis/exécutés directement, 404 du frontal, 7 traversées sans fuite, aide en exécution directe. PHP natif requis (`php tests/php/dev_router_test.php`, ou `npm run test:router`) ; en sandbox PHP-WASM elle se déclare SKIP. Elle est bloquante en CI GitHub, sur **Linux et Windows** (job `dev-router`, `MINISHOP_ROUTER_TEST_STRICT=1`).
+
 Les suites PHP sont **autonomes** (aucun SQL, magasins JSON temporaires par section) : elles s'exécutent telles quelles avec `php tests/php/<suite>.php` sur une machine normale, ou via `node scripts/wasm_run.mjs` en sandbox.
 
 **Qualité de code type « Packagist »** : sur machine normale (avec Composer), `composer cs:check` (php-cs-fixer, config `.php-cs-fixer.php`) et `composer lint:types` (PHPStan level 9 + strict-rules, config `phpstan.neon`) — tous deux en `require-dev`, **aucune dépendance runtime**. Dans la sandbox (Packagist injoignable), `npm run lint:types` rejoue les mêmes vérifications via le tokenizer PHP. Passages du 28/09 : 4 fermetures non typées corrigées, puis **éradication des 156 opérateurs ternaires du livrable** (vues, contrôleurs, dépôts, moteur, tests) remplacés par des `if/else` — règle maison ajoutée au linter.
@@ -124,10 +164,10 @@ Compléments livrés par ailleurs : `bash tests/security/controles.sh` (contrôl
 app/Config, app/Controller, app/Model, app/Repository, app/Security, app/View
 docs/{01-cahier-des-charges, 02-document-tests-validation, 03-support-soutenance, 04-conception-bd-et-sql, 05-wbs-projet, 06-todolist}, docs/annexes, docs/diagrams/{src/*.puml, *.png}
 public/{index.php, .htaccess, css, js, img, gen_volumes.php, mesurer.php (dev-only, navigateur)}
-scripts/{load_db.sh, run_sql_tests.sh, deploy.php, build-docs.sh, gen_volumes.php (wrapper dev)}
+scripts/{load_db.sh, run_sql_tests.sh, deploy.php, build-docs.sh, dev-router.php (routeur php -S, dev), gen_volumes.php (wrapper dev)}
 sql/{01_minishop_schema.sql, 02_minishop_procedures.sql, 03_minishop_triggers.sql, 04_minishop_demo.sql}
 tests/{sql/** (manifest, fixture, tNN_*.sql, rapport), security/controles.sh, charge/reserver.sh, perf/mesurer_sql.sh, perf/mesurer.php→public/mesurer.php, php/**}
-var/log  ·  .gitignore  ·  .gitlab-ci.yml (6 jobs, prod)  ·  .github/workflows/ci.yml (6 jobs, dev/GitHub)
+var/log  ·  .gitignore  ·  .gitlab-ci.yml (6 jobs, prod)  ·  .github/workflows/ci.yml (6 jobs + dev-router, dev/GitHub)
 ```
 
 ## Documents et rendus (les diagrammes ne s'affichent PAS dans un aperçu sans réseau)
