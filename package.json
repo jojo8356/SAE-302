@@ -22,6 +22,7 @@
     "test:ui-pied-de-page": "node scripts/wasm_run.mjs scripts/seed.php && node scripts/ui-e2e-pied-de-page.mjs",
     "test:ui-catalogue": "node scripts/wasm_run.mjs scripts/seed.php && node scripts/ui-e2e-catalogue.mjs",
     "test:ui-produit": "node scripts/wasm_run.mjs scripts/seed.php && node scripts/ui-e2e-produit.mjs",
+    "test:ui-panier-tableau": "node scripts/wasm_run.mjs scripts/seed.php && node scripts/ui-e2e-panier-tableau.mjs",
     "test:ui-heure": "node scripts/wasm_run.mjs scripts/seed.php && node scripts/ui-e2e-heure.mjs",
     "test:all": "node scripts/run-all-tests.mjs",
     "lint:types": "node scripts/wasm_run.mjs scripts/strict_types_lint.php"

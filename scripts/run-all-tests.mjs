@@ -24,6 +24,7 @@ const suites = [
   ['Pages du pied de page (régression)', 'tests/php/pages_pied_de_page_test.php'],
   ['Catalogue filtres en haut (régression)', 'tests/php/catalogue_filtres_test.php'],
   ['Fiche produit caractéristiques (régression)', 'tests/php/fiche_produit_test.php'],
+  ['Panier tableau, mise en page (régression)', 'tests/php/panier_tableau_test.php'],
   ['Page À propos (régression)', 'tests/php/apropos_test.php'],
   ['Bouton panier (régression)', 'tests/php/panier_cta_test.php'],
   ['Doublon catégorie (régression)', 'tests/php/categorie_doublon_test.php'],
@@ -127,6 +128,13 @@ console.log(`\n${'='.repeat(64)}\n▸ E2E UI Fiche produit — scripts/ui-e2e-pr
 const uiProduit = spawnSync('node', ['scripts/ui-e2e-produit.mjs'], { stdio: 'inherit' });
 if (uiProduit.status !== 0) {
   console.log('E2E UI Produit : ÉCHEC ❌');
+  process.exit(1);
+}
+
+console.log(`\n${'='.repeat(64)}\n▸ E2E UI Panier tableau — scripts/ui-e2e-panier-tableau.mjs\n${'='.repeat(64)}`);
+const uiPanierTableau = spawnSync('node', ['scripts/ui-e2e-panier-tableau.mjs'], { stdio: 'inherit' });
+if (uiPanierTableau.status !== 0) {
+  console.log('E2E UI Panier tableau : ÉCHEC ❌');
   process.exit(1);
 }
 console.log('\nTOUTES LES SUITES SONT VERTES ✅ (moteur, règles, unitaires, fonctionnalités, E2E HTTP, E2E UI)');

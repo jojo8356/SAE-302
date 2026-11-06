@@ -24,14 +24,14 @@ foreach ($recap['articles'] as $ligne) {
             la quantité maximale a été ajustée côté serveur.</p>
     <?php endif; ?>
 
-    <table>
+    <table class="tableau-panier">
         <caption>Panier — <?= count($recap['articles']) ?> article(s)</caption>
         <thead>
         <tr>
             <th scope="col">Produit</th>
-            <th scope="col">Prix unitaire TTC</th>
+            <th scope="col" class="montant">Prix unitaire TTC</th>
             <th scope="col">Quantité</th>
-            <th scope="col">Total TTC</th>
+            <th scope="col" class="montant">Total TTC</th>
             <th scope="col">Actions</th>
         </tr>
         </thead>
@@ -40,7 +40,7 @@ foreach ($recap['articles'] as $ligne) {
             <tr<?php if (!empty($ligne['plafonne'])) { echo ' title="Quantité plafonnée au stock disponible (RB-18)"'; } else { echo ''; } ?>>
                 <td><a href="/produit/<?= e($ligne['slug']) ?>"><?= e($ligne['nom']) ?></a><br>
                     <small>Réf. <?= e($ligne['reference']) ?> — stock : <?= (int) $ligne['stock_disponible'] ?></small></td>
-                <td><?= euros($ligne['prix_unitaire']) ?></td>
+                <td class="montant"><?= euros($ligne['prix_unitaire']) ?></td>
                 <td>
                     <form method="post" action="/panier/quantite">
                         <?= csrf_field() ?>
@@ -52,7 +52,7 @@ foreach ($recap['articles'] as $ligne) {
                         <button type="submit">Mettre à jour</button>
                     </form>
                 </td>
-                <td><?= euros($ligne['total_ligne']) ?></td>
+                <td class="montant"><?= euros($ligne['total_ligne']) ?></td>
                 <td>
                     <form method="post" action="/panier/retirer">
                         <?= csrf_field() ?>
@@ -66,15 +66,15 @@ foreach ($recap['articles'] as $ligne) {
         <tfoot>
         <tr>
             <th scope="row" colspan="3">Sous-total (marchandises TTC)</th>
-            <td colspan="2"><?= euros($recap['sous_total']) ?></td>
+            <td colspan="2" class="montant"><?= euros($recap['sous_total']) ?></td>
         </tr>
         <tr>
             <th scope="row" colspan="3">Frais de port<br><small><?= e($recap['port_motif']) ?></small></th>
-            <td colspan="2"><?= euros($recap['frais_port']) ?></td>
+            <td colspan="2" class="montant"><?= euros($recap['frais_port']) ?></td>
         </tr>
         <tr>
             <th scope="row" colspan="3">Total TTC</th>
-            <td colspan="2"><strong><?= euros($recap['total']) ?></strong></td>
+            <td colspan="2" class="montant"><strong><?= euros($recap['total']) ?></strong></td>
         </tr>
         </tfoot>
     </table>

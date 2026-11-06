@@ -114,3 +114,57 @@
     width: 40%;
     background-color: #f5f5f4;
 }
+
+/* Panier : mise en page du tableau récapitulatif.
+ * Sans règles dédiées, tout reposait sur les alignements par défaut
+ * du navigateur : légende « Panier — N article(s) » écrasée sur
+ * plusieurs lignes par les cinq colonnes, libellés et montants
+ * alignés autrement que la quantité et les boutons, et fonds du
+ * pied de tableau décalés d'une ligne à l'autre. Ici : légende sur
+ * une ligne, tout est aligné à gauche, sauf les montants (en-têtes
+ * et valeurs ensemble) alignés à droite, et le pied (sous-total,
+ * port, total) reçoit un fond uniforme sur toute la largeur. */
+.tableau-panier {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tableau-panier caption {
+    text-align: left;
+    font-weight: 700;
+    font-size: 1.15rem;
+    padding: 0.5rem 0;
+    white-space: nowrap;
+}
+
+.tableau-panier th,
+.tableau-panier td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #d6d3d1;
+    text-align: left;
+    vertical-align: top;
+}
+
+.tableau-panier thead th {
+    background-color: #f5f5f4;
+}
+
+.tableau-panier .montant {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.tableau-panier tfoot th,
+.tableau-panier tfoot td {
+    background-color: #f5f5f4;
+    border-top: 2px solid #a8a29e;
+    border-bottom: none;
+}
+
+.tableau-panier tfoot th {
+    white-space: nowrap;
+}
+
+.tableau-panier input[type="number"] {
+    width: 4rem;
+}
