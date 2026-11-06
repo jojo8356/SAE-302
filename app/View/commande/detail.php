@@ -29,8 +29,13 @@ $annulable = in_array($commande['statut'], ['BROUILLON', 'EN_PREPARATION', 'PAYE
     <?php endforeach; ?>
     </tbody>
     <tfoot>
+    <?php if ($commande['statut'] === 'ANNULEE' && ($commande['montant_avant_annulation'] ?? null) !== null): ?>
+    <tr><th scope="row" colspan="3">Total de la commande avant annulation</th><td><?= euros($commande['montant_avant_annulation']) ?></td></tr>
+    <tr><th scope="row" colspan="3">Montant soldé (annulée — rien à payer)</th><td><strong><?= euros($commande['montant_total']) ?></strong></td></tr>
+    <?php else: ?>
     <tr><th scope="row" colspan="3">Frais de port</th><td><?= euros($commande['frais_port']) ?></td></tr>
     <tr><th scope="row" colspan="3">Montant total TTC</th><td><strong><?= euros($commande['montant_total']) ?></strong></td></tr>
+    <?php endif; ?>
     </tfoot>
 </table>
 

@@ -198,23 +198,9 @@ BEGIN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'RB10_COMMANDE_SANS_CLIENT';
   END IF;
 
-  -- RB-15 / ENF-14 : une fois la commande validee, `montant_total` DOIT rester egal a
-  -- (somme des lignes + port) : le controle n'est plus conditionne a un changement du
-  -- montant, sinon un UPDATE qui ne touche QUE `frais_port` laisserait la facture
-  -- incoherente sans jamais etre refuse. Les brouillons restent tolerants (RB-04
-  -- n'exige une ligne qu'a la validation).
-  IF (NEW.statut = 'BROUILLON'
-        AND NEW.montant_total <> OLD.montant_total
-        AND NEW.montant_total <> (SELECT IFNULL(SUM(total_ligne), 0)
-                                    FROM ligne_commande
-                                   WHERE id_commande = NEW.id_commande) + NEW.frais_port)
-     OR (NEW.statut <> 'BROUILLON'
-        AND NEW.montant_total <> (SELECT IFNULL(SUM(total_ligne), 0)
-                                    FROM ligne_commande
-                                   WHERE id_commande = NEW.id_commande) + NEW.frais_port) THEN
-    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'RB15_MONTANT_CALCULE_INTERDIT';
-  END IF;
-
+  -- RB-11 : matrice des transitions — controlee EN PREMIER, pour qu'une
+  -- transition illegale soit refusee pour son vrai motif (y compris au
+  -- depart d'une commande annulee et soldee).
   IF NEW.statut <> OLD.statut THEN
     IF (OLD.statut = 'BROUILLON'      AND NEW.statut NOT IN ('EN_PREPARATION','PAYEE','ANNULEE'))
     OR (OLD.statut = 'EN_PREPARATION' AND NEW.statut NOT IN ('PAYEE','EXPEDIEE','ANNULEE'))
@@ -223,6 +209,26 @@ BEGIN
     OR (OLD.statut IN ('LIVREE','ANNULEE')) THEN
       SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'RB11_TRANSITION_STATUT_INTERDITE';
     END IF;
+  END IF;
+
+  -- RB-15 / ENF-14 : une fois la commande validee, `montant_total` DOIT rester egal a
+  -- (somme des lignes + port) : le controle n'est plus conditionne a un changement du
+  -- montant, sinon un UPDATE qui ne touche QUE `frais_port` laisserait la facture
+  -- incoherente sans jamais etre refuse. Les brouillons restent tolerants (RB-04
+  -- n'exige une ligne qu'a la validation). Seul ecart admis (RB-20) : l'etat
+  -- solde d'une commande ANNULEE — montant a 0 pendant que les lignes sont
+  -- conservees comme historique (montant_avant_annulation garde la memoire).
+  IF (NEW.statut = 'BROUILLON'
+        AND NEW.montant_total <> OLD.montant_total
+        AND NEW.montant_total <> (SELECT IFNULL(SUM(total_ligne), 0)
+                                    FROM ligne_commande
+                                   WHERE id_commande = NEW.id_commande) + NEW.frais_port)
+     OR (NEW.statut <> 'BROUILLON'
+        AND NOT (NEW.statut = 'ANNULEE' AND NEW.montant_total = 0.00)
+        AND NEW.montant_total <> (SELECT IFNULL(SUM(total_ligne), 0)
+                                    FROM ligne_commande
+                                   WHERE id_commande = NEW.id_commande) + NEW.frais_port) THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'RB15_MONTANT_CALCULE_INTERDIT';
   END IF;
 END $$
 

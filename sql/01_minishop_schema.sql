@@ -176,6 +176,7 @@ CREATE TABLE commande (
                    NOT NULL DEFAULT 'BROUILLON',
   montant_total    DECIMAL(10,2) NOT NULL DEFAULT 0.00,
   frais_port       DECIMAL(10,2) NOT NULL DEFAULT 0.00 COMMENT 'somme figee au snapshot, pas une saisie (RB-15)',
+  montant_avant_annulation DECIMAL(10,2) NULL COMMENT 'total (port compris) avant annulation soldee (RB-20) : memoire de ce qui avait ete commande',
   commentaire      VARCHAR(500) NULL,
   date_commande    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   date_modification DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

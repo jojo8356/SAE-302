@@ -9,8 +9,13 @@ declare(strict_types=1);
 <p>
     Statut actuel : <strong><?= e(statut_libelle($commande['statut'])) ?></strong> ·
     Passée le <?= e(date_fr($commande['date_commande'], true)) ?> ·
+    <?php if ($commande['statut'] === 'ANNULEE' && ($commande['montant_avant_annulation'] ?? null) !== null): ?>
+    Montant soldé : <strong><?= euros($commande['montant_total']) ?></strong> (annulée — rien à payer) ·
+    Total avant annulation : <?= euros($commande['montant_avant_annulation']) ?>
+    <?php else: ?>
     Montant : <strong><?= euros($commande['montant_total']) ?></strong>
     (dont port <?= euros($commande['frais_port']) ?>)
+    <?php endif; ?>
 </p>
 <?php if ($client !== null): ?>
     <p>Client : <?= e($client['prenom'] . ' ' . $client['nom']) ?> &lt;<?= e($client['email']) ?>&gt; ·
