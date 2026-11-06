@@ -19,17 +19,17 @@ declare(strict_types=1);
     <li>Chiffre d'affaires cumulé (hors annulées) : <strong><?= euros($indicateurs['ca_total']) ?></strong></li>
 </ul>
 
-<h2>Alertes de stock (EF-ADM-05, RB-03)</h2>
+<h2>Alertes de stock</h2>
 <?php if ($alertes === []): ?>
     <p>Aucune alerte : tous les stocks sont au-dessus de leur seuil.</p>
 <?php else: ?>
-    <table>
-        <thead><tr><th scope="col">Référence</th><th scope="col">Produit</th><th scope="col">Stock</th><th scope="col">Seuil</th><th scope="col">État</th></tr></thead>
+    <table class="tableau-alertes">
+        <thead><tr><th scope="col" class="reference">Référence</th><th scope="col" class="produit">Produit</th><th scope="col">Stock</th><th scope="col">Seuil</th><th scope="col">État</th></tr></thead>
         <tbody>
         <?php foreach ($alertes as $alerte): ?>
             <tr>
-                <td><?= e($alerte['reference']) ?></td>
-                <td><?= e($alerte['nom']) ?></td>
+                <td class="reference"><?= e($alerte['reference']) ?></td>
+                <td class="produit"><?= e($alerte['nom']) ?></td>
                 <td><?= (int) $alerte['stock'] ?></td>
                 <td><?= (int) $alerte['seuil_alerte'] ?></td>
                 <td><?= e(etat_libelle($alerte['etat'])) ?></td>
@@ -40,7 +40,7 @@ declare(strict_types=1);
     <p><a href="/admin/stocks">Gérer les stocks →</a></p>
 <?php endif; ?>
 
-<h2>Chiffre d'affaires par statut (sp_revenue_report)</h2>
+<h2>Chiffre d'affaires par statut</h2>
 <table>
     <thead><tr><th scope="col">Statut</th><th scope="col">Nb commandes</th><th scope="col">Montant total</th><th scope="col">Montant moyen</th></tr></thead>
     <tbody>
@@ -56,11 +56,16 @@ declare(strict_types=1);
 </table>
 
 <h2>Top 5 produits</h2>
+<?php if ($rapport['top_produits'] === []): ?>
+    <p>Aucune vente enregistrée pour le moment : le classement des produits
+        les plus vendus apparaîtra dès les premières commandes.</p>
+<?php else: ?>
 <ol>
     <?php foreach ($rapport['top_produits'] as $top): ?>
         <li><?= e($top['nom']) ?> (réf. <?= e($top['reference']) ?>) —
             <?= (int) $top['unites'] ?> unités, <?= euros($top['ca']) ?> de CA</li>
     <?php endforeach; ?>
 </ol>
+<?php endif; ?>
 
 <p><a href="/admin/commandes">Voir les commandes →</a></p>

@@ -19,14 +19,29 @@ $qs = static function (int $page) use ($parametres_url): string {
 ?>
 <h1><?php if ($est_recherche) { echo 'Recherche'; } else { echo 'Catalogue'; } ?></h1>
 
-<form method="get" action="<?php if ($est_recherche) { echo '/recherche'; } else { echo '/catalogue'; } ?>">
+<?php
+// Recherche et filtres EN HAUT de page, repliés derrière « Filtrer »
+// (élément <details> natif, sans JavaScript) : sur mobile, la liste des
+// produits reste visible immédiatement au lieu d'être repoussée sous le
+// formulaire. Si un filtre est déjà actif, le panneau s'ouvre tout seul.
+$filtresActifs = $criteres['mot_cle'] !== ''
+    || $criteres['id_categorie'] !== null
+    || ($criteres['prix_min'] !== null && $criteres['prix_min'] !== '')
+    || ($criteres['prix_max'] !== null && $criteres['prix_max'] !== '')
+    || $criteres['en_stock']
+    || ($criteres['tri'] !== '' && $criteres['tri'] !== 'nom');
+?>
+<details class="filtres-catalogue"<?php if ($filtresActifs) { echo ' open'; } else { echo ''; } ?>>
+    <summary>Filtrer<?php if ($filtresActifs) { echo ' (actifs)'; } else { echo ''; } ?></summary>
+
+<form method="get" class="formulaire-filtres-catalogue" action="<?php if ($est_recherche) { echo '/recherche'; } else { echo '/catalogue'; } ?>">
     <fieldset>
-        <legend>Filtres (cumulables, conservés dans l'URL — EF-VIS-03)</legend>
-        <p>
+        <legend>Filtres (cumulables, conservés dans l'URL)</legend>
+        <p class="champ">
             <label for="q">Recherche (nom, description, référence) :</label>
             <input type="search" id="q" name="q" maxlength="120" value="<?= e($criteres['mot_cle']) ?>">
         </p>
-        <p>
+        <p class="champ">
             <label for="cat">Catégorie :</label>
             <select id="cat" name="cat">
                 <option value="">Toutes</option>
@@ -38,26 +53,31 @@ $qs = static function (int $page) use ($parametres_url): string {
                 <?php endforeach; ?>
             </select>
         </p>
-        <p>
-            <label for="prix_min">Prix TTC min (€) :</label>
+        <p class="champ">
+            <label for="prix_min">Prix TTC minimum (€) :</label>
             <input type="number" id="prix_min" name="prix_min" min="0" step="0.01" value="<?= e($criteres['prix_min']) ?>">
-            <label for="prix_max">max :</label>
+        </p>
+        <p class="champ">
+            <label for="prix_max">Prix TTC maximum (€) :</label>
             <input type="number" id="prix_max" name="prix_max" min="0" step="0.01" value="<?= e($criteres['prix_max']) ?>">
         </p>
-        <p>
+        <p class="champ-case">
             <label><input type="checkbox" name="stock" value="1" <?php if ($criteres['en_stock']) { echo 'checked'; } else { echo ''; } ?>> Uniquement en stock</label>
         </p>
-        <p>
+        <p class="champ">
             <label for="tri">Trier par :</label>
             <select id="tri" name="tri">
                 <?php foreach ($tris as $cle => $libelle): ?>
                     <option value="<?= e($cle) ?>" <?php if ($criteres['tri'] === $cle) { echo 'selected'; } else { echo ''; } ?>><?= e($libelle) ?></option>
                 <?php endforeach; ?>
             </select>
+        </p>
+        <p class="champ-envoi">
             <button type="submit">Appliquer</button>
         </p>
     </fieldset>
 </form>
+</details>
 
 <p><?= (int) $resultat['total'] ?> produit<?php if ($resultat['total'] > 1) { echo 's'; } else { echo ''; } ?> trouvé<?php if ($resultat['total'] > 1) { echo 's'; } else { echo ''; } ?>
     — page <?= (int) $resultat['page'] ?> / <?= (int) $resultat['pages'] ?></p>

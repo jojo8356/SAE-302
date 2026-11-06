@@ -15,7 +15,7 @@ declare(strict_types=1);
 <form method="post" action="/admin/connexion">
     <?= csrf_field() ?>
     <fieldset>
-        <legend>Compte administrateur (RB-13 : espace strictement séparé de l'espace client)</legend>
+        <legend>Compte administrateur (espace strictement séparé de l'espace client)</legend>
         <p><label for="email">Email</label><input type="email" id="email" name="email" maxlength="190" required value="<?= e($email) ?>"></p>
         <p><label for="mot_de_passe">Mot de passe</label><input type="password" id="mot_de_passe" name="mot_de_passe" required></p>
         <p><button type="submit">Accéder au back-office</button></p>

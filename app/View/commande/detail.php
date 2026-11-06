@@ -13,7 +13,7 @@ $annulable = in_array($commande['statut'], ['BROUILLON', 'EN_PREPARATION', 'PAYE
     Livraison : <?= e($commande['adresse_livraison']) ?>
 </p>
 
-<h2>Articles (prix TTC figés à l'achat — RB-06)</h2>
+<h2>Articles (prix TTC figés à l'achat)</h2>
 <table>
     <thead>
     <tr><th scope="col">Produit</th><th scope="col">Prix unitaire TTC</th><th scope="col">Qté</th><th scope="col">Total TTC</th></tr>
@@ -29,12 +29,17 @@ $annulable = in_array($commande['statut'], ['BROUILLON', 'EN_PREPARATION', 'PAYE
     <?php endforeach; ?>
     </tbody>
     <tfoot>
+    <?php if ($commande['statut'] === 'ANNULEE' && ($commande['montant_avant_annulation'] ?? null) !== null): ?>
+    <tr><th scope="row" colspan="3">Total de la commande avant annulation</th><td><?= euros($commande['montant_avant_annulation']) ?></td></tr>
+    <tr><th scope="row" colspan="3">Montant soldé (annulée — rien à payer)</th><td><strong><?= euros($commande['montant_total']) ?></strong></td></tr>
+    <?php else: ?>
     <tr><th scope="row" colspan="3">Frais de port</th><td><?= euros($commande['frais_port']) ?></td></tr>
     <tr><th scope="row" colspan="3">Montant total TTC</th><td><strong><?= euros($commande['montant_total']) ?></strong></td></tr>
+    <?php endif; ?>
     </tfoot>
 </table>
 
-<h2>Piste des statuts (RB-11 — alimentée automatiquement par le moteur)</h2>
+<h2>Historique des statuts</h2>
 <table>
     <thead><tr><th scope="col">Quand</th><th scope="col">Statut</th><th scope="col">Par</th><th scope="col">Commentaire</th></tr></thead>
     <tbody>
@@ -51,12 +56,11 @@ $annulable = in_array($commande['statut'], ['BROUILLON', 'EN_PREPARATION', 'PAYE
 
 <?php if ($annulable): ?>
     <h2>Annuler ma commande</h2>
-    <p>Conformément au droit de rétractation (CGV art. 4), vous pouvez annuler tant que
-        la commande n'est pas expédiée : le stock sera restitué et le montant (port
-        compris) soldé (RB-18/20).</p>
-    <form method="post" action="/mes-commandes/<?= (int) $commande['id_commande'] ?>/annulation">
-        <?= csrf_field() ?>
-        <p><button type="submit">Annuler cette commande</button></p>
+    <p>Vous pouvez annuler tant que la commande n'est pas expédiée (annulation avant
+        expédition, CGV art. 4) : le stock sera restitué et le montant (port
+        compris) soldé.</p>
+    <form method="get" action="/mes-commandes/<?= (int) $commande['id_commande'] ?>/annulation/confirmation">
+        <p><button type="submit" class="bouton-danger">Annuler cette commande</button></p>
     </form>
 <?php endif; ?>
 

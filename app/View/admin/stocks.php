@@ -14,19 +14,19 @@ declare(strict_types=1);
 
 <p>Valeur d'inventaire (prix HT × stock) : <strong><?= euros($valeur_inventaire) ?></strong></p>
 
-<table>
-    <caption>v_etat_stock — le moteur refuse tout stock négatif (RB-03) et journalise chaque mouvement avec son auteur</caption>
+<table class="tableau-stocks">
+    <caption>Le stock ne peut jamais devenir négatif ; chaque mouvement est journalisé avec son auteur</caption>
     <thead>
     <tr>
-        <th scope="col">Réf.</th><th scope="col">Produit</th><th scope="col">Stock</th>
-        <th scope="col">Seuil</th><th scope="col">État</th><th scope="col">Ajustement (EF-ADM-04)</th>
+        <th scope="col" class="reference">Réf.</th><th scope="col" class="produit">Produit</th><th scope="col">Stock</th>
+        <th scope="col">Seuil</th><th scope="col">État</th><th scope="col">Ajustement</th>
     </tr>
     </thead>
     <tbody>
     <?php foreach ($etats as $etat): ?>
         <tr>
-            <td><?= e($etat['reference']) ?></td>
-            <td><?= e($etat['nom']) ?></td>
+            <td class="reference"><?= e($etat['reference']) ?></td>
+            <td class="produit"><?= e($etat['nom']) ?></td>
             <td><?= (int) $etat['stock'] ?></td>
             <td><?= (int) $etat['seuil_alerte'] ?></td>
             <td><?= e(etat_libelle($etat['etat'])) ?></td>
@@ -36,8 +36,8 @@ declare(strict_types=1);
                     <input type="hidden" name="id_produit" value="<?= (int) $etat['id_produit'] ?>">
                     <label>
                         <select name="mode">
+                            <option value="DELTA" selected>Ajouter / retirer</option>
                             <option value="SET">Fixer à</option>
-                            <option value="DELTA">Varier de</option>
                         </select>
                         <input type="number" name="quantite" value="0">
                     </label>

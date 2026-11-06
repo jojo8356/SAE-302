@@ -44,6 +44,31 @@ final class HomeController extends Controller
         $this->render('home/cgv', [], 'Conditions générales de vente');
     }
 
+    public function aide(): void
+    {
+        $this->render('home/aide', [], 'Aide');
+    }
+
+    public function livraison(): void
+    {
+        $this->render('home/livraison', [], 'Livraison');
+    }
+
+    public function confidentialite(): void
+    {
+        $this->render('home/confidentialite', [], 'Confidentialité');
+    }
+
+    public function retractation(): void
+    {
+        $this->render('home/retractation', [], 'Rétractation');
+    }
+
+    public function contact(): void
+    {
+        $this->render('home/contact', [], 'Contact');
+    }
+
     /** Vue de synthèse du moteur de données (page « à propos » du projet). */
     public function aPropos(): void
     {

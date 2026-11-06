@@ -14,6 +14,14 @@
  * aucun soulignement, zone cliquable ≥ 44 px de haut, focus clavier
  * visible. Aucune requête externe, aucun style en ligne (CSP :
  * style-src 'self', cf. public/index.php).
+ *
+ * La classe .bouton-danger (ajoutée pour le bug « Annulation sans
+ * confirmation ») donne aux actions DÉFINITIVES — annuler une
+ * commande, supprimer un produit ou une catégorie — un style
+ * visiblement distinct des boutons de validation ordinaires :
+ * fond rouge #b91c1c, texte blanc (contraste 6,5:1, WCAG AA).
+ * Sans elle, ces boutons avaient le même aspect sombre par défaut
+ * que les boutons « Enregistrer » ou « Valider ».
  */
 
 .bouton-principal {
@@ -38,4 +46,398 @@
 .bouton-principal:focus-visible {
     outline: 3px solid #1d4ed8;
     outline-offset: 2px;
+}
+
+/* Action définitive : annulation de commande, suppressions admin.
+ * Rouge franc, jamais confondu avec un bouton de validation. */
+.bouton-danger {
+    display: inline-block;
+    background-color: #b91c1c;
+    color: #ffffff;
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.4;
+    padding: 0.6rem 1.25rem;
+    border: 2px solid #7f1d1d;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.bouton-danger:hover {
+    background-color: #991b1b;
+}
+
+.bouton-danger:focus-visible {
+    outline: 3px solid #1d4ed8;
+    outline-offset: 2px;
+}
+
+/* Catalogue : recherche/filtres repliés derrière « Filtrer » (<details>
+ * natif, sans JavaScript) — résumé bien tappable au doigt sur mobile. */
+.filtres-catalogue > summary {
+    display: inline-block;
+    font-weight: 700;
+    line-height: 1.4;
+    padding: 0.6rem 1.25rem;
+    border: 2px solid #44403c;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+.filtres-catalogue > summary:focus-visible {
+    outline: 3px solid #1d4ed8;
+    outline-offset: 2px;
+}
+
+/* Fiche produit : tableau « Caractéristiques » à 2 colonnes.
+ * Largeur 100 % et colonnes à répartition fixe : libellés ET valeurs
+ * tiennent toujours en entier, sans barre de défilement horizontale,
+ * même sur un écran de téléphone (les valeurs longues se replient). */
+.tableau-caracteristiques {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.tableau-caracteristiques th,
+.tableau-caracteristiques td {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d6d3d1;
+    text-align: left;
+    vertical-align: top;
+    overflow-wrap: break-word;
+}
+
+.tableau-caracteristiques th {
+    width: 40%;
+    background-color: #f5f5f4;
+}
+
+/* Panier : mise en page du tableau récapitulatif.
+ * Sans règles dédiées, tout reposait sur les alignements par défaut
+ * du navigateur : légende « Panier — N article(s) » écrasée sur
+ * plusieurs lignes par les cinq colonnes, libellés et montants
+ * alignés autrement que la quantité et les boutons, et fonds du
+ * pied de tableau décalés d'une ligne à l'autre. Ici : légende sur
+ * une ligne, tout est aligné à gauche, sauf les montants (en-têtes
+ * et valeurs ensemble) alignés à droite, et le pied (sous-total,
+ * port, total) reçoit un fond uniforme sur toute la largeur. */
+.tableau-panier {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tableau-panier caption {
+    text-align: left;
+    font-weight: 700;
+    font-size: 1.15rem;
+    padding: 0.5rem 0;
+    white-space: nowrap;
+}
+
+.tableau-panier th,
+.tableau-panier td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #d6d3d1;
+    text-align: left;
+    vertical-align: top;
+}
+
+.tableau-panier thead th {
+    background-color: #f5f5f4;
+}
+
+.tableau-panier .montant {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.tableau-panier .produit {
+    text-align: left;
+}
+
+.tableau-panier tfoot th,
+.tableau-panier tfoot td {
+    background-color: #f5f5f4;
+    border-top: 2px solid #a8a29e;
+    border-bottom: none;
+}
+
+.tableau-panier tfoot th {
+    white-space: nowrap;
+}
+
+.tableau-panier input[type="number"] {
+    width: 4rem;
+}
+
+/* Admin > Commandes : le tableau de pilotage tient en page.
+ * Sans règles dédiées, le tableau s'étalait selon son contenu
+ * (dates complètes, noms de clients) et repoussait les colonnes
+ * de droite hors écran : la colonne Statut — la plus consultée
+ * pour piloter les commandes — était coupée, derrière le
+ * défilement horizontal. Ici : largeur 100 %, répartition fixe
+ * des colonnes (colgroup), la colonne Statut a sa largeur propre
+ * et son libellé ne se coupe jamais ; ce sont les contenus longs
+ * (client) qui se replient. Aucun défilement horizontal. */
+.tableau-commandes {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.tableau-commandes .col-numero {
+    width: 15%;
+}
+
+.tableau-commandes .col-date {
+    width: 19%;
+}
+
+.tableau-commandes .col-client {
+    width: 23%;
+}
+
+.tableau-commandes .col-statut {
+    width: 17%;
+}
+
+.tableau-commandes .col-montant {
+    width: 14%;
+}
+
+.tableau-commandes .col-detail {
+    width: 12%;
+}
+
+.tableau-commandes th,
+.tableau-commandes td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #d6d3d1;
+    text-align: left;
+    vertical-align: top;
+    overflow-wrap: break-word;
+}
+
+.tableau-commandes thead th {
+    background-color: #f5f5f4;
+}
+
+.tableau-commandes .statut {
+    white-space: nowrap;
+    font-weight: 700;
+}
+
+.tableau-commandes .montant {
+    text-align: right;
+    white-space: nowrap;
+}
+
+/* Admin > Catégories : la page tient dans la fenêtre, à toute largeur.
+ * Sans règles dédiées, le tableau s'étalait selon son contenu — le
+ * formulaire d'édition en ligne (trois champs côte à côte et son
+ * bouton « Enregistrer », dans la première colonne) poussait les
+ * colonnes de droite hors de la page : toute la page défilait
+ * horizontalement et le bouton « Supprimer » de la colonne Actions
+ * était coupé à droite. Ici : largeur 100 %, répartition fixe des
+ * colonnes (colgroup), champs d'édition à la largeur de leur
+ * colonne et empilés, boutons toujours en entier dans la page. */
+.tableau-categories {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.tableau-categories .col-edition {
+    width: 32%;
+}
+
+.tableau-categories .col-slug {
+    width: 15%;
+}
+
+.tableau-categories .col-produits {
+    width: 11%;
+}
+
+.tableau-categories .col-description {
+    width: 26%;
+}
+
+.tableau-categories .col-actions {
+    width: 16%;
+}
+
+.tableau-categories th,
+.tableau-categories td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #d6d3d1;
+    text-align: left;
+    vertical-align: top;
+    overflow-wrap: break-word;
+}
+
+.tableau-categories thead th {
+    background-color: #f5f5f4;
+}
+
+.tableau-categories form {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.tableau-categories input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.tableau-categories .bouton-danger {
+    padding: 0.6rem 0.75rem;
+    white-space: nowrap;
+}
+
+/* Alignement des colonnes Produit / Référence (panier ci-dessus,
+ * stocks et alertes du tableau de bord ici) : ce sont des libellés,
+ * ils se lisent à gauche — en-têtes ET cellules, explicitement.
+ * Sans règles dédiées, les tableaux des stocks et des alertes
+ * reposaient sur les alignements par défaut du navigateur, et les
+ * colonnes Produit/Référence ne tombaient pas sous leurs titres.
+ * Les nombres suivent la même règle à gauche dans ces deux
+ * tableaux de consultation ; au panier, seuls les montants sont
+ * à droite (cf. .tableau-panier .montant). */
+.tableau-stocks,
+.tableau-alertes {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tableau-stocks th,
+.tableau-stocks td,
+.tableau-alertes th,
+.tableau-alertes td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #d6d3d1;
+    text-align: left;
+    vertical-align: top;
+    overflow-wrap: break-word;
+}
+
+.tableau-stocks thead th,
+.tableau-alertes thead th {
+    background-color: #f5f5f4;
+}
+
+.tableau-stocks .reference,
+.tableau-stocks .produit,
+.tableau-alertes .reference,
+.tableau-alertes .produit {
+    text-align: left;
+}
+
+/* Formulaires d'administration et filtres : libellés et champs
+ * ordonnés, jamais séparés.
+ * — Formulaire produit : chaque champ est une rangée à deux
+ *   colonnes (libellé / champ) : tous les champs commencent au
+ *   même endroit, et le libellé « Description » est en haut de sa
+ *   zone de texte (alignement au départ), pas en bas.
+ * — Catégories : l'aide du formulaire de création est un
+ *   paragraphe dans le cadre (une légende longue débordait du
+ *   fieldset) ; les trois champs de modification portent des
+ *   étiquettes accessibles (aria-label).
+ * — Produits (filtre) et catalogue (filtres) : chaque couple
+ *   libellé + champ forme un bloc inséparable (.champ : libellé
+ *   au-dessus du champ), rangé dans une grille régulière — au
+ *   catalogue, « Prix TTC minimum » et « Prix TTC maximum » ont
+ *   chacun leur champ complet, côte à côte, à toute largeur. */
+.formulaire-produit .champ {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr);
+    align-items: start;
+    gap: 0.4rem 1rem;
+}
+
+.formulaire-produit .champ label {
+    padding-top: 0.3rem;
+}
+
+.formulaire-produit .champ input,
+.formulaire-produit .champ select,
+.formulaire-produit .champ textarea {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.formulaire-creation-categorie .aide {
+    overflow-wrap: break-word;
+}
+
+/* Divers (fiche produit, tableau de bord, pied de page, contact) :
+ * — la photo du produit (EF-VIS-04) tient dans la page, un visuel
+ *   propre à chaque produit (public/img/, un fichier par produit) ;
+ * — le pied de page reçoit un fond clair et un texte presque noir
+ *   explicites (contraste ≥ 6,5:1, liens compris) : la mention
+ *   « MiniShop » reste lisible quel que soit le thème du
+ *   navigateur, fini le gris sur fond nuit ;
+ * — sur Contact, le titre et les paragraphes partagent le même
+ *   alignement à gauche, écrit noir sur blanc. */
+.photo-produit {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #d6d3d1;
+}
+
+footer {
+    background-color: #f5f5f4;
+    color: #1c1917;
+    margin-top: 2rem;
+    padding: 1rem;
+}
+
+footer a {
+    color: #9a3412;
+}
+
+.page-contact h1,
+.page-contact p {
+    text-align: left;
+}
+
+.formulaire-filtres-produits {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 0.75rem 1.25rem;
+}
+
+.formulaire-filtres-produits .champ,
+.formulaire-filtres-catalogue .champ {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin: 0;
+}
+
+.formulaire-filtres-produits .champ-envoi,
+.formulaire-filtres-catalogue .champ-envoi {
+    margin: 0;
+}
+
+.formulaire-filtres-catalogue fieldset {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.formulaire-filtres-catalogue legend {
+    padding: 0 0.5rem;
+}
+
+.formulaire-filtres-catalogue .champ input,
+.formulaire-filtres-catalogue .champ select,
+.formulaire-filtres-produits .champ input,
+.formulaire-filtres-produits .champ select {
+    width: 100%;
+    box-sizing: border-box;
 }

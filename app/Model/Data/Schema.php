@@ -145,6 +145,7 @@ final class Schema
                         'enum' => ['BROUILLON', 'EN_PREPARATION', 'PAYEE', 'EXPEDIEE', 'LIVREE', 'ANNULEE']],
                     'montant_total' => ['type' => 'decimal', 'default' => 0.0],
                     'frais_port' => ['type' => 'decimal', 'default' => 0.0],
+                    'montant_avant_annulation' => ['type' => 'decimal'],
                     'commentaire' => ['type' => 'string', 'max' => 500],
                     'date_commande' => ['type' => 'datetime'],
                     'date_modification' => ['type' => 'datetime'],

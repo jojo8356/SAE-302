@@ -135,6 +135,25 @@ final class ProduitAdminController extends Controller
      * EF-ADM-02 — suppression protégée : masquage si déjà commandé
      * (RB-14/RB-17), suppression réelle sinon.
      */
+    /**
+     * Étape de confirmation avant suppression : action définitive, un
+     * simple clic ne doit pas suffire (page « Êtes-vous sûr ? », GET
+     * sans effet de bord ; seul le POST supprimer() exécute).
+     */
+    public function confirmerSuppression(string $id): void
+    {
+        Auth::exigeAdmin();
+        $produit = (new ProduitRepository(Database::store()))->find((int) $id);
+        if ($produit === null) {
+            $this->flashErreur('Produit introuvable.');
+            $this->rediriger('/admin/produits');
+        }
+
+        $this->render('admin/confirmer_suppression_produit', [
+            'produit' => $produit,
+        ], 'Supprimer le produit ' . $produit['reference'] . ' ?');
+    }
+
     public function supprimer(string $id): void
     {
         $this->verifierCsrf();

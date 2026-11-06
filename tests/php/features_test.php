@@ -315,9 +315,10 @@ echo "\nI. UC-09 — annulation client (EF-CLI-10, RB-11/18/20)\n";
     $check('stocks restitués exactement (RB-18)', (int) $store->find('produit', pid($store, 'SAC-008'))['stock'] === 22
         && (int) $store->find('produit', pid($store, 'ENCH-006'))['stock'] === 30);
     $commande = $store->find('commande', $ok['id_commande']);
-    $check('ANNULEE, lignes purgées, soldes à zéro (RB-20)', $commande['statut'] === 'ANNULEE'
-        && $store->count('ligne_commande', [Filter::eq('id_commande', (int) $ok['id_commande'])]) === 0
-        && (float) $commande['montant_total'] === 0.0 && (float) $commande['frais_port'] === 0.0);
+    $check('ANNULEE, lignes conservées comme historique, soldes à zéro (RB-20)', $commande['statut'] === 'ANNULEE'
+        && $store->count('ligne_commande', [Filter::eq('id_commande', (int) $ok['id_commande'])]) === 2
+        && (float) $commande['montant_total'] === 0.0 && (float) $commande['frais_port'] === 0.0
+        && (float) ($commande['montant_avant_annulation'] ?? 0.0) > 0.0);
     $attendu('COMMANDE_NON_ANNULABLE', fn () => $repo->cancelOrder((int) $ok['id_commande'], cid($store, 'carla@example.com')));
 
     // trop tardive : commande expédiée (règle UC-09 côté repository)

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-/** Page statique EF-GEN-05 — droit de rétractation matérialisé par l'annulation (UC-09). */
+/** Page statique EF-GEN-05 — CGV ; l'article 4 décrit l'annulation avant expédition (UC-09), distincte du droit de rétractation légal. */
 ?>
 <h1>Conditions générales de vente</h1>
 
@@ -20,12 +20,19 @@ des tarifs de transport ne retouche jamais une commande passée.</p>
 <h2>Article 3 — Commande et disponibilité</h2>
 <p>La commande est enregistrée avec le prix du produit <strong>au moment de l'achat</strong>.
 La quantité commandée ne peut jamais excéder le stock disponible au moment de la
-validation : le serveur est la seule source de vérité (RB-18).</p>
+validation : le serveur est la seule source de vérité.</p>
 
-<h2>Article 4 — Droit de rétractation</h2>
-<p>Conformément au droit de rétractation, le client peut <strong>annuler</strong> sa
-commande tant qu'elle n'a pas été <strong>expédiée</strong> : le stock est restitué
+<h2>Article 4 — Annulation avant expédition</h2>
+<p>Tant que sa commande n'a pas été <strong>expédiée</strong>, le client peut
+l'<strong>annuler</strong> depuis « Mes commandes » : le stock est restitué
 automatiquement et le montant total (port compris) est soldé.</p>
+<p>Cette annulation avant expédition, proposée par MiniShop, est distincte du
+<strong>droit de rétractation</strong> prévu aux articles L221-18 et suivants du
+code de la consommation : pour un achat à distance, ce droit s'exerce dans un
+délai de <strong>14 jours à compter de la réception</strong> des biens (voir la
+page <a href="/retractation">Rétractation</a>). MiniShop étant une maquette
+pédagogique sans vente réelle, aucune procédure de rétractation ni de retour
+de marchandise n'est mise en œuvre.</p>
 
 <h2>Article 5 — Paiement</h2>
 <p>Aucun paiement réel n'est intégré : le passage au statut « Payée » est une simulation

@@ -42,7 +42,7 @@ use App\Security\Auth;
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
 header('Referrer-Policy: same-origin');
-header("Content-Security-Policy: default-src 'none'; style-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
+header("Content-Security-Policy: default-src 'none'; style-src 'self'; img-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
 header('X-XSS-Protection: 0'); // navigation modernes : on s'appuie sur l'échappement, pas sur ce filtre hérité
 
 Auth::demarrer();
@@ -55,6 +55,11 @@ $routeur->get('/categories', [HomeController::class, 'categories']);
 $routeur->get('/a-propos', [HomeController::class, 'aPropos']);
 $routeur->get('/mentions-legales', [HomeController::class, 'mentionsLegales']);
 $routeur->get('/cgv', [HomeController::class, 'cgv']);
+$routeur->get('/aide', [HomeController::class, 'aide']);
+$routeur->get('/livraison', [HomeController::class, 'livraison']);
+$routeur->get('/confidentialite', [HomeController::class, 'confidentialite']);
+$routeur->get('/retractation', [HomeController::class, 'retractation']);
+$routeur->get('/contact', [HomeController::class, 'contact']);
 
 $routeur->get('/catalogue', [CatalogueController::class, 'catalogue']);
 $routeur->get('/recherche', [CatalogueController::class, 'recherche']);
@@ -79,6 +84,7 @@ $routeur->get('/commande/valider', [CommandeController::class, 'formulaire'], 'c
 $routeur->post('/commande/valider', [CommandeController::class, 'valider'], 'client');
 $routeur->get('/mes-commandes', [CommandeController::class, 'mes'], 'client');
 $routeur->get('/mes-commandes/{id}', [CommandeController::class, 'detail'], 'client');
+$routeur->get('/mes-commandes/{id}/annulation/confirmation', [CommandeController::class, 'confirmerAnnulation'], 'client');
 $routeur->post('/mes-commandes/{id}/annulation', [CommandeController::class, 'annuler'], 'client');
 
 // ------------------------------------------------------------ back-office
@@ -93,11 +99,13 @@ $routeur->get('/admin/produit/nouveau', [ProduitAdminController::class, 'formula
 $routeur->post('/admin/produit/nouveau', [ProduitAdminController::class, 'creer'], 'admin');
 $routeur->get('/admin/produit/{id}/modification', [ProduitAdminController::class, 'formulaireModifier'], 'admin');
 $routeur->post('/admin/produit/{id}/modification', [ProduitAdminController::class, 'enregistrerModification'], 'admin');
+$routeur->get('/admin/produits/{id}/suppression/confirmation', [ProduitAdminController::class, 'confirmerSuppression'], 'admin');
 $routeur->post('/admin/produits/{id}/suppression', [ProduitAdminController::class, 'supprimer'], 'admin');
 
 $routeur->get('/admin/categories', [CategorieAdminController::class, 'index'], 'admin');
 $routeur->post('/admin/categories', [CategorieAdminController::class, 'creer'], 'admin');
 $routeur->post('/admin/categories/{id}/modification', [CategorieAdminController::class, 'modifier'], 'admin');
+$routeur->get('/admin/categories/{id}/suppression/confirmation', [CategorieAdminController::class, 'confirmerSuppression'], 'admin');
 $routeur->post('/admin/categories/{id}/suppression', [CategorieAdminController::class, 'supprimer'], 'admin');
 
 $routeur->get('/admin/stocks', [StockAdminController::class, 'index'], 'admin');

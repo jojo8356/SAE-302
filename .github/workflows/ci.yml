@@ -150,6 +150,38 @@ jobs:
         run: php tests/php/heure_test.php
       - name: Régression adresse de livraison incomplète (préremplissage, PHP natif)
         run: php tests/php/adresse_livraison_test.php
+      - name: Régression annulation/suppressions sans confirmation (PHP natif)
+        run: php tests/php/actions_destructrices_test.php
+      - name: Régression stocks — mode par défaut écrasant (PHP natif)
+        run: php tests/php/stocks_defaut_test.php
+      - name: Régression pied de page — pages Aide/Livraison/Confidentialité/Rétractation (PHP natif)
+        run: php tests/php/pages_pied_de_page_test.php
+      - name: Régression catalogue — filtres en haut derrière « Filtrer » (PHP natif)
+        run: php tests/php/catalogue_filtres_test.php
+      - name: Régression fiche produit — tableau Caractéristiques tenu en page (PHP natif)
+        run: php tests/php/fiche_produit_test.php
+      - name: Régression panier — mise en page du tableau (PHP natif)
+        run: php tests/php/panier_tableau_test.php
+      - name: Régression commandes admin — colonne Statut tenue en page (PHP natif)
+        run: php tests/php/commandes_tableau_test.php
+      - name: Régression catégories admin — page tenue en page (PHP natif)
+        run: php tests/php/categories_tableau_test.php
+      - name: Régression alignement Produit et Référence, panier stocks alertes (PHP natif)
+        run: php tests/php/alignement_colonnes_test.php
+      - name: Régression formulaires produit, catégories, produits, catalogue (PHP natif)
+        run: php tests/php/formulaires_admin_test.php
+      - name: Régression divers panier, Top 5, photos, description, pied de page, contact (PHP natif)
+        run: php tests/php/divers_test.php
+      - name: Régression codes techniques visibles, vues, messages, motifs, historique (PHP natif)
+        run: php tests/php/codes_techniques_test.php
+      - name: Régression CGV article 4, annulation avant expédition et pas rétractation (PHP natif)
+        run: php tests/php/cgv_retractation_test.php
+      - name: Régression mentions légales, éditeur, contact, hébergeur, BUT2 (PHP natif)
+        run: php tests/php/mentions_legales_test.php
+      - name: Régression contact, réponse non promise, données cohérentes (PHP natif)
+        run: php tests/php/contact_coherence_test.php
+      - name: Régression annulation, historique conservé, montant soldé (PHP natif)
+        run: php tests/php/annulation_historique_test.php
       - name: Données de démonstration d'usine (comptes de démo du seed)
         run: php scripts/seed.php
       - name: Démarrer l'application (php -S + dev-router)
@@ -172,6 +204,70 @@ jobs:
         env:
           UI_BASE_URL: http://127.0.0.1:8093
         run: node scripts/ui-e2e-heure.mjs
+      - name: E2E UI — Annulation et suppressions confirmées (pas d'action définitive en un clic)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-annulation.mjs
+      - name: E2E UI — Stocks, « Ajouter / retirer » par défaut (+3 sans toucher au mode)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-stocks.mjs
+      - name: E2E UI — Pied de page (Aide, Livraison, Confidentialité, Rétractation liées et en 200)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-pied-de-page.mjs
+      - name: E2E UI — Catalogue format mobile (filtres en haut, repliés derrière « Filtrer »)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-catalogue.mjs
+      - name: E2E UI — Fiche produit (tableau Caractéristiques, valeurs affichées, tenu en page)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-produit.mjs
+      - name: E2E UI — Panier, mise en page du tableau (légende, alignements, totaux)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-panier-tableau.mjs
+      - name: E2E UI — Commandes admin, colonne Statut tenue en page (pilotage)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-commandes-tableau.mjs
+      - name: E2E UI — Catégories admin, page tenue en page (boutons entiers)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-categories-tableau.mjs
+      - name: E2E UI — Alignement Produit et Référence (panier, stocks, alertes)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-alignement.mjs
+      - name: E2E UI — Formulaires alignés (produit, catégories, produits, catalogue)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-formulaires.mjs
+      - name: E2E UI — Divers (panier, Top 5, photos, description, pied de page, contact)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-divers.mjs
+      - name: E2E UI — Codes techniques (panier, validation, historique, pages légales, back-office)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-codes.mjs
+      - name: E2E UI — CGV article 4 (annulation avant expédition, page Rétractation, détail commande)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-retractation.mjs
+      - name: E2E UI — Mentions légales (éditeur, contact, hébergeur, BUT2)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-mentions.mjs
+      - name: E2E UI — Contact (réponse non promise, confidentialité, mentions légales, pied de page)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-contact.mjs
+      - name: E2E UI — Annulation (articles conservés, total avant annulation, montant soldé)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-annulation-historique.mjs
       - name: Arrêter le serveur et publier son journal si échec
         if: always()
         run: |

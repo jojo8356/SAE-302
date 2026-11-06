@@ -14,25 +14,46 @@ declare(strict_types=1);
         · Référence : <strong><?= e($produit['reference']) ?></strong>
     </p>
 
-    <h2>Prix</h2>
-    <p>
-        <strong><?= euros($produit['prix_ttc']) ?> TTC</strong>
-        (soit <?= euros($produit['prix_ht']) ?> HT + TVA <?= e(number_format((float) $produit['tva'], 2, ',', '')) ?> %,
-        prix TTC calculé par le moteur — RB-16)
-    </p>
+    <?php if (!empty($produit['image_url'])): ?>
+        <p><img class="photo-produit" src="/<?= e($produit['image_url']) ?>"
+                alt="Photo de <?= e($produit['nom']) ?>" width="640" height="400"></p>
+    <?php endif; ?>
 
-    <h2>Disponibilité</h2>
-    <p>
-        <?php if ((int) $produit['stock'] > 0): ?>
-            En stock : <strong><?= (int) $produit['stock'] ?> unité<?php if ((int) $produit['stock'] > 1) { echo 's'; } else { echo ''; } ?></strong>
-            [<?= e(etat_libelle($etat_stock)) ?>]
-        <?php else: ?>
-            <strong>Rupture de stock</strong> — revenez bientôt.
-        <?php endif; ?>
-    </p>
+    <h2>Caractéristiques</h2>
+    <table class="tableau-caracteristiques">
+        <tbody>
+        <tr>
+            <th scope="row">Prix HT</th>
+            <td><?= euros($produit['prix_ht']) ?></td>
+        </tr>
+        <tr>
+            <th scope="row">TVA</th>
+            <td><?= e(number_format((float) $produit['tva'], 2, ',', '')) ?> %</td>
+        </tr>
+        <tr>
+            <th scope="row">Prix TTC</th>
+            <td><strong><?= euros($produit['prix_ttc']) ?></strong></td>
+        </tr>
+        <tr>
+            <th scope="row">Disponibilité</th>
+            <td>
+                <?php if ((int) $produit['stock'] > 0): ?>
+                    En stock : <strong><?= (int) $produit['stock'] ?> unité<?php if ((int) $produit['stock'] > 1) { echo 's'; } else { echo ''; } ?></strong>
+                    [<?= e(etat_libelle($etat_stock)) ?>]
+                <?php else: ?>
+                    <strong>Rupture de stock</strong> — revenez bientôt.
+                <?php endif; ?>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
     <h2>Description</h2>
-    <p><?= e($produit['description']) ?></p>
+    <?php if (trim((string) ($produit['description'] ?? '')) !== ''): ?>
+        <p><?= e($produit['description']) ?></p>
+    <?php else: ?>
+        <p>Aucune description n'est disponible pour ce produit pour le moment.</p>
+    <?php endif; ?>
 
     <?php if ((int) $produit['stock'] > 0): ?>
         <h2>Ajouter au panier</h2>
@@ -44,7 +65,7 @@ declare(strict_types=1);
                 <input type="number" id="quantite" name="quantite" min="1" max="<?= (int) $produit['stock'] ?>" value="1" required>
                 <button type="submit">Ajouter au panier</button>
             </p>
-            <p><small>La quantité est plafonnée côté serveur au stock disponible (RB-18) :
+            <p><small>La quantité est plafonnée côté serveur au stock disponible :
                 <?= (int) $produit['stock'] ?> unité<?php if ((int) $produit['stock'] > 1) { echo 's'; } else { echo ''; } ?> maximum.</small></p>
         </form>
     <?php endif; ?>

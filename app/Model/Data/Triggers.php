@@ -218,23 +218,29 @@ final class Triggers
                     throw new BusinessError('RB10_COMMANDE_SANS_CLIENT');
                 }
 
+                // RB-11 : matrice des transitions — contrôlée EN PREMIER, pour
+                // qu'une transition illégale soit refusée pour son vrai motif
+                // (y compris au départ d'une commande annulée et soldée).
+                if ($new['statut'] !== $old['statut']
+                    && !in_array($new['statut'], self::TRANSITIONS[$old['statut']] ?? [], true)) {
+                    throw new BusinessError('RB11_TRANSITION_STATUT_INTERDITE');
+                }
+
                 // RB-15 / RB-20 : une fois la commande validée, le montant DOIT
-                // rester égal à (somme des lignes + port) — contrôle inconditionnel.
+                // rester égal à (somme des lignes + port) — contrôle inconditionnel,
+                // SAUF l'état soldé d'une commande annulée : montant à 0 (rien à
+                // facturer) pendant que les lignes sont conservées comme
+                // historique de ce qui avait été commandé.
                 $sommeLignes = $store->sum('ligne_commande', 'total_ligne', [['id_commande', '=', (int) $new['id_commande']]]);
                 $attendu = round($sommeLignes + (float) $new['frais_port'], 2);
+                $estSoldee = $new['statut'] === 'ANNULEE' && (float) $new['montant_total'] === 0.0;
                 if ($new['statut'] === 'BROUILLON') {
                     $montantBouge = (float) $new['montant_total'] !== (float) $old['montant_total'];
                     if ($montantBouge && (float) $new['montant_total'] !== $attendu) {
                         throw new BusinessError('RB15_MONTANT_CALCULE_INTERDIT');
                     }
-                } elseif ((float) $new['montant_total'] !== $attendu) {
+                } elseif (!$estSoldee && (float) $new['montant_total'] !== $attendu) {
                     throw new BusinessError('RB15_MONTANT_CALCULE_INTERDIT');
-                }
-
-                // RB-11 : matrice des transitions
-                if ($new['statut'] !== $old['statut']
-                    && !in_array($new['statut'], self::TRANSITIONS[$old['statut']] ?? [], true)) {
-                    throw new BusinessError('RB11_TRANSITION_STATUT_INTERDITE');
                 }
 
                 return $new;
@@ -259,7 +265,7 @@ final class Triggers
                     'new_status' => (string) $new['statut'],
                     'changed_by' => $actor['id'],
                     'changed_by_role' => $actor['role'],
-                    'commentaire' => 'Création tracée par trg_history_creation',
+                    'commentaire' => 'Création de la commande',
                     'changed_at' => Heure::horodatageStockage(),
                 ]);
             },
@@ -274,7 +280,7 @@ final class Triggers
                 $nouveauCommentaire = ($new['commentaire'] ?? null) !== null
                     && ($new['commentaire'] ?? '') !== ($old['commentaire'] ?? '')
                     && trim((string) $new['commentaire']) !== '';
-                $commentaireTrace = 'Tracé par trg_history_statut le ';
+                $commentaireTrace = 'Changement de statut le ';
                 if ($nouveauCommentaire) {
                     $commentaireTrace = trim((string) $new['commentaire']);
                 } else {

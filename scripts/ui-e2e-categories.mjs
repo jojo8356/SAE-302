@@ -258,6 +258,12 @@ try {
   const ligneMultimedia = ligneCategorie(doc(), 'Multimédia');
   const formSuppression = [...ligneMultimedia.querySelectorAll('form')].find((f) => (f.getAttribute('action') ?? '').includes('suppression'));
   await nav.cliquerBouton(bouton(nav.page, formSuppression, 'Supprimer'));
+  // Action définitive : la suppression exige désormais une confirmation.
+  check('page de confirmation « Êtes-vous sûr ? » (plus de suppression en un clic)',
+    nav.texte().includes('Êtes-vous sûr de vouloir supprimer la catégorie'),
+    nav.page.url);
+  const formConfirmation = [...doc().querySelectorAll('form')].find((f) => (f.getAttribute('action') ?? '').endsWith('/suppression'));
+  await nav.cliquerBouton(bouton(nav.page, formConfirmation, 'Oui, supprimer définitivement'));
   check('« Catégorie supprimée. » après nettoyage', nav.doc().querySelector('[role="status"]')?.textContent.includes('Catégorie supprimée.') ?? false);
   check('retour à 4 catégories, Audio intacte', lignesCategories(doc()).length === 4
     && descriptionAffichee(doc(), 'Audio') === 'Casques, enceintes et microphones');
