@@ -273,7 +273,7 @@ if (!function_exists('proc_open')) {
     sauter('proc_open indisponible (disable_functions ?) : impossible de lancer le serveur de test.');
 }
 
-$racine = dirname(__DIR__);
+$racine = dirname(__DIR__, 2);
 $routeur = $racine . '/scripts/dev-router.php';
 $public = $racine . '/public';
 
