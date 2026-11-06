@@ -18,6 +18,8 @@ declare(strict_types=1);
 
 namespace App\Model\Data;
 
+use App\Tools\Heure;
+
 final class Seed
 {
     /** @return array<string,string> comptes de démonstration (email => mot de passe clair, doc uniquement) */
@@ -106,7 +108,7 @@ final class Seed
             ['BRAC-012', 'Bracelet connecté Band', 'bracelet-connecte-band', 'Suivi du sommeil et des notifications, 10 jours.', 35.00, 20.00, 60, 15, 4, 0, 'img/band.jpg'],
         ];
         $rows = [];
-        $now = date('Y-m-d H:i:s');
+        $now = Heure::horodatageStockage();
         foreach ($produits as [$ref, $nom, $slug, $desc, $ht, $tva, $stock, $seuil, $cat, $visible, $img]) {
             $rows[] = [
                 'reference' => $ref, 'nom' => $nom, 'slug' => $slug, 'description' => $desc,

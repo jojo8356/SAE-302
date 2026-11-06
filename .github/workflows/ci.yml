@@ -146,6 +146,8 @@ jobs:
         run: php tests/php/panier_cta_test.php
       - name: Régression page À propos (contenu visiteur, PHP natif)
         run: php tests/php/apropos_test.php
+      - name: Régression heures décalées (UTC→Europe/Paris, PHP natif)
+        run: php tests/php/heure_test.php
       - name: Données de démonstration d'usine (comptes de démo du seed)
         run: php scripts/seed.php
       - name: Démarrer l'application (php -S + dev-router)
@@ -164,6 +166,10 @@ jobs:
         env:
           UI_BASE_URL: http://127.0.0.1:8093
         run: node scripts/ui-e2e-apropos.mjs
+      - name: E2E UI — Heures des commandes (Paris à l'écran, pas UTC)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-heure.mjs
       - name: Arrêter le serveur et publier son journal si échec
         if: always()
         run: |

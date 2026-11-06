@@ -16,6 +16,7 @@ namespace App\Repository;
 use App\Model\Data\BusinessError;
 use App\Model\Data\Filter;
 use App\Model\Data\StoreInterface;
+use App\Tools\Heure;
 
 final class ClientRepository
 {
@@ -136,7 +137,7 @@ final class ClientRepository
     /** Horodate la dernière connexion (traçabilité, sans bloquer le flux). */
     public function noteConnexion(int $idClient): void
     {
-        $this->store->update('client', [Filter::eq('id_client', $idClient)], ['derniere_connexion' => date('Y-m-d H:i:s')]);
+        $this->store->update('client', [Filter::eq('id_client', $idClient)], ['derniere_connexion' => Heure::horodatageStockage()]);
     }
 
     /** Admin : liste des clients (EF-ADM, lecture seule — RB-13 : l'admin ne GÈRE pas les comptes). */

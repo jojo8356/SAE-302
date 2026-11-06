@@ -36,6 +36,8 @@ declare(strict_types=1);
 
 namespace App\Model\Data;
 
+use App\Tools\Heure;
+
 final class JsonStore implements StoreInterface
 {
     /** @var array<string, JsonTable> tables chargées (paresseusement) */
@@ -248,7 +250,7 @@ final class JsonStore implements StoreInterface
 
             // horodatage automatique date_modification (ON UPDATE CURRENT_TIMESTAMP)
             if (isset($def['columns']['date_modification']) && !array_key_exists('date_modification', $changes)) {
-                $new['date_modification'] = date('Y-m-d H:i:s');
+                $new['date_modification'] = Heure::horodatageStockage();
             }
 
             $this->assertConstraints($table, $new, $old, $def);
@@ -471,7 +473,7 @@ final class JsonStore implements StoreInterface
                 continue;
             }
             if ($meta['type'] === 'datetime') {
-                $prepared[$col] = date('Y-m-d H:i:s'); // CURRENT_TIMESTAMP
+                $prepared[$col] = Heure::horodatageStockage(); // CURRENT_TIMESTAMP (UTC)
                 continue;
             }
             $prepared[$col] = null; // nullable sans valeur
