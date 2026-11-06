@@ -52,6 +52,16 @@ final class ClientRepository
     }
 
     /**
+     * Cette adresse est-elle déjà prise ? (RB-01 — même normalisation
+     * que getCredentials, pour signaler le doublon dès la validation,
+     * en même temps que les autres erreurs du formulaire.)
+     */
+    public function emailExiste(string $email): bool
+    {
+        return $this->store->exists('client', [Filter::eq('email', trim(strtolower($email)))]);
+    }
+
+    /**
      * sp_get_credentials — identifiants pour la connexion.
      * Le compte bloqué est refusé en couche modèle, pas seulement en PHP.
      *
