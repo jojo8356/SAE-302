@@ -13,8 +13,38 @@
 import http from 'node:http';
 import { randomUUID } from 'node:crypto';
 import { createPhp, syncBack, REPO_ROOT } from './wasm_lib.mjs';
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, readFileSync, statSync } from 'node:fs';
+import { extname, join, resolve, sep } from 'node:path';
+
+/** Types MIME des assets statiques servis directement (comme php -S). */
+const TYPES_STATIQUES = {
+  '.css': 'text/css; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.svg': 'image/svg+xml',
+  '.ico': 'image/x-icon',
+  '.txt': 'text/plain; charset=utf-8',
+};
+
+/**
+ * Fichier statique réel de public/ pour ce chemin, ou null.
+ * Le runtime PHP-WASM ne sert que du PHP : sans ce court-circuit,
+ * /minishop.css (l'unique feuille du site) répondrait 404 en sandbox
+ * alors que php -S la sert. Confiné à public/, jamais de .php ici
+ * (les .php continuent vers le runtime, qui les exécute).
+ */
+function fichierStatique(chemin) {
+  const type = TYPES_STATIQUES[extname(chemin).toLowerCase()];
+  if (!type) return null;
+  const publicDir = resolve(join(REPO_ROOT, 'public'));
+  const candidat = resolve(join(publicDir, `.${chemin}`));
+  if (!candidat.startsWith(publicDir + sep)) return null;
+  if (!existsSync(candidat) || !statSync(candidat).isFile()) return null;
+  return { candidat, type };
+}
 
 const PORT = Number(process.argv[2] ?? process.env.PORT ?? 8080);
 const BASE_URL = `http://localhost:${PORT}/`;
@@ -33,6 +63,21 @@ let file = Promise.resolve();
 const enqueue = (task) => (file = file.then(task, task));
 
 const serveur = http.createServer((req, res) => {
+  // Assets statiques réels de public/ : servis tels quels, hors file PHP.
+  if (req.method === 'GET' || req.method === 'HEAD') {
+    let chemin = '';
+    try {
+      chemin = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
+    } catch {
+      chemin = '';
+    }
+    const statique = chemin ? fichierStatique(chemin) : null;
+    if (statique) {
+      res.writeHead(200, { 'content-type': statique.type });
+      res.end(req.method === 'HEAD' ? undefined : readFileSync(statique.candidat));
+      return;
+    }
+  }
   enqueue(async () => {
     try {
       const morceaux = [];

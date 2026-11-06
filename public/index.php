@@ -6,7 +6,8 @@ declare(strict_types=1);
  * MiniShop — contrôleur frontal (§9.3) : TOUTE requête HTTP passe ici.
  *
  * Sécurité (SEC-01…) :
- *   - en-têtes durcis (X-Frame-Options, CSP sans style inline, session cookie
+ *   - en-têtes durcis (X-Frame-Options, CSP sans style inline — style-src
+ *     limité à 'self' pour l'unique feuille public/minishop.css —, session cookie
  *     HttpOnly/SameSite) ;
  *   - routeur à liste blanche : aucune URL dynamique, aucune inclusion de
  *     fichier pilotée par la requête (anti-LFI/RFI) ;
@@ -41,7 +42,7 @@ use App\Security\Auth;
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
 header('Referrer-Policy: same-origin');
-header("Content-Security-Policy: default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
+header("Content-Security-Policy: default-src 'none'; style-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
 header('X-XSS-Protection: 0'); // navigation modernes : on s'appuie sur l'échappement, pas sur ce filtre hérité
 
 Auth::demarrer();

@@ -3,7 +3,8 @@
 declare(strict_types=1);
 
 /**
- * MiniShop — gabarit commun (HTML sémantique, volontairement SANS CSS).
+ * MiniShop — gabarit commun (HTML sémantique ; seule feuille : public/minishop.css,
+ * limitée au bouton d'action principal du panier, cf. son en-tête).
  * Variables attendues : $contenu, $titrePage, $client, $admin,
  * $flashSucces, $flashErreur.
  */
@@ -20,6 +21,7 @@ try {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/minishop.css">
     <title><?= e($titrePage ?? 'MiniShop') ?></title>
 </head>
 <body>

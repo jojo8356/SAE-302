@@ -115,11 +115,12 @@ jobs:
 
   # -----------------------------------------------------------------
   # 1c. E2E UI (clics réels sur les pages) : Admin > Catégories —
-  #     doublon de nom refusé, catégorie existante intacte.
-  #     scripts/ui-e2e-categories.mjs pilote le DOM (jsdom) contre le
-  #     vrai serveur php -S ; la régression métier est aussi verrouillée
-  #     au niveau Repository par tests/php/categorie_doublon_test.php,
-  #     jouée ici en PHP natif avant le parcours UI.
+  #     doublon de nom refusé, catégorie existante intacte ; et Panier —
+  #     bouton « Valider ma commande » (vrai <button>, feuille servie).
+  #     scripts/ui-e2e-*.mjs pilotent le DOM (jsdom) contre le vrai
+  #     serveur php -S ; les régressions sont aussi verrouillées en PHP
+  #     natif avant les parcours UI (categorie_doublon_test.php,
+  #     panier_cta_test.php).
   # -----------------------------------------------------------------
   ui-e2e:
     name: ui-e2e (clics Admin > Catégories)
@@ -141,6 +142,10 @@ jobs:
         run: npm ci --ignore-scripts
       - name: Régression doublon de catégorie (Repository, PHP natif)
         run: php tests/php/categorie_doublon_test.php
+      - name: Régression bouton panier (vue + CSS + CSP, PHP natif)
+        run: php tests/php/panier_cta_test.php
+      - name: Données de démonstration d'usine (comptes de démo du seed)
+        run: php scripts/seed.php
       - name: Démarrer l'application (php -S + dev-router)
         run: |
           php -S 127.0.0.1:8093 -t public scripts/dev-router.php > ui-server.log 2>&1 &
@@ -149,6 +154,10 @@ jobs:
         env:
           UI_BASE_URL: http://127.0.0.1:8093
         run: node scripts/ui-e2e-categories.mjs
+      - name: E2E UI — Panier, bouton « Valider ma commande » (clics)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-panier.mjs
       - name: Arrêter le serveur et publier son journal si échec
         if: always()
         run: |

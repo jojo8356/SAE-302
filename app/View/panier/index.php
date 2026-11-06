@@ -80,5 +80,7 @@ foreach ($recap['articles'] as $ligne) {
     </table>
 
     <p><a href="/catalogue">← Continuer mes achats</a></p>
-    <p><a href="/commande/valider"><strong>Valider ma commande →</strong></a></p>
+    <form method="get" action="/commande/valider">
+        <p><button type="submit" class="bouton-principal">Valider ma commande →</button></p>
+    </form>
 <?php endif; ?>
