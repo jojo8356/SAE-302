@@ -19,7 +19,7 @@ declare(strict_types=1);
     <li>Chiffre d'affaires cumulé (hors annulées) : <strong><?= euros($indicateurs['ca_total']) ?></strong></li>
 </ul>
 
-<h2>Alertes de stock (EF-ADM-05, RB-03)</h2>
+<h2>Alertes de stock</h2>
 <?php if ($alertes === []): ?>
     <p>Aucune alerte : tous les stocks sont au-dessus de leur seuil.</p>
 <?php else: ?>
@@ -40,7 +40,7 @@ declare(strict_types=1);
     <p><a href="/admin/stocks">Gérer les stocks →</a></p>
 <?php endif; ?>
 
-<h2>Chiffre d'affaires par statut (sp_revenue_report)</h2>
+<h2>Chiffre d'affaires par statut</h2>
 <table>
     <thead><tr><th scope="col">Statut</th><th scope="col">Nb commandes</th><th scope="col">Montant total</th><th scope="col">Montant moyen</th></tr></thead>
     <tbody>

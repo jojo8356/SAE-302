@@ -65,7 +65,7 @@ declare(strict_types=1);
                 <input type="number" id="quantite" name="quantite" min="1" max="<?= (int) $produit['stock'] ?>" value="1" required>
                 <button type="submit">Ajouter au panier</button>
             </p>
-            <p><small>La quantité est plafonnée côté serveur au stock disponible (RB-18) :
+            <p><small>La quantité est plafonnée côté serveur au stock disponible :
                 <?= (int) $produit['stock'] ?> unité<?php if ((int) $produit['stock'] > 1) { echo 's'; } else { echo ''; } ?> maximum.</small></p>
         </form>
     <?php endif; ?>

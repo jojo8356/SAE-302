@@ -172,6 +172,8 @@ jobs:
         run: php tests/php/formulaires_admin_test.php
       - name: Régression divers panier, Top 5, photos, description, pied de page, contact (PHP natif)
         run: php tests/php/divers_test.php
+      - name: Régression codes techniques visibles, vues, messages, motifs, historique (PHP natif)
+        run: php tests/php/codes_techniques_test.php
       - name: Données de démonstration d'usine (comptes de démo du seed)
         run: php scripts/seed.php
       - name: Démarrer l'application (php -S + dev-router)
@@ -238,6 +240,10 @@ jobs:
         env:
           UI_BASE_URL: http://127.0.0.1:8093
         run: node scripts/ui-e2e-divers.mjs
+      - name: E2E UI — Codes techniques (panier, validation, historique, pages légales, back-office)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-codes.mjs
       - name: Arrêter le serveur et publier son journal si échec
         if: always()
         run: |

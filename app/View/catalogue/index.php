@@ -36,7 +36,7 @@ $filtresActifs = $criteres['mot_cle'] !== ''
 
 <form method="get" class="formulaire-filtres-catalogue" action="<?php if ($est_recherche) { echo '/recherche'; } else { echo '/catalogue'; } ?>">
     <fieldset>
-        <legend>Filtres (cumulables, conservés dans l'URL — EF-VIS-03)</legend>
+        <legend>Filtres (cumulables, conservés dans l'URL)</legend>
         <p class="champ">
             <label for="q">Recherche (nom, description, référence) :</label>
             <input type="search" id="q" name="q" maxlength="120" value="<?= e($criteres['mot_cle']) ?>">

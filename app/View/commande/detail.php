@@ -13,7 +13,7 @@ $annulable = in_array($commande['statut'], ['BROUILLON', 'EN_PREPARATION', 'PAYE
     Livraison : <?= e($commande['adresse_livraison']) ?>
 </p>
 
-<h2>Articles (prix TTC figés à l'achat — RB-06)</h2>
+<h2>Articles (prix TTC figés à l'achat)</h2>
 <table>
     <thead>
     <tr><th scope="col">Produit</th><th scope="col">Prix unitaire TTC</th><th scope="col">Qté</th><th scope="col">Total TTC</th></tr>
@@ -34,7 +34,7 @@ $annulable = in_array($commande['statut'], ['BROUILLON', 'EN_PREPARATION', 'PAYE
     </tfoot>
 </table>
 
-<h2>Piste des statuts (RB-11 — alimentée automatiquement par le moteur)</h2>
+<h2>Historique des statuts</h2>
 <table>
     <thead><tr><th scope="col">Quand</th><th scope="col">Statut</th><th scope="col">Par</th><th scope="col">Commentaire</th></tr></thead>
     <tbody>
@@ -53,7 +53,7 @@ $annulable = in_array($commande['statut'], ['BROUILLON', 'EN_PREPARATION', 'PAYE
     <h2>Annuler ma commande</h2>
     <p>Conformément au droit de rétractation (CGV art. 4), vous pouvez annuler tant que
         la commande n'est pas expédiée : le stock sera restitué et le montant (port
-        compris) soldé (RB-18/20).</p>
+        compris) soldé.</p>
     <form method="get" action="/mes-commandes/<?= (int) $commande['id_commande'] ?>/annulation/confirmation">
         <p><button type="submit" class="bouton-danger">Annuler cette commande</button></p>
     </form>

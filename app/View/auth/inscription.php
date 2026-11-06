@@ -15,7 +15,7 @@ declare(strict_types=1);
 <form method="post" action="/inscription">
     <?= csrf_field() ?>
     <fieldset>
-        <legend>Vos informations (RB-01 : l'email est unique)</legend>
+        <legend>Vos informations (l'email est unique)</legend>
         <p><label for="nom">Nom *</label><input id="nom" name="nom" maxlength="100" required value="<?= e($valeurs['nom'] ?? '') ?>"></p>
         <p><label for="prenom">Prénom *</label><input id="prenom" name="prenom" maxlength="100" required value="<?= e($valeurs['prenom'] ?? '') ?>"></p>
         <p><label for="email">Email *</label><input type="email" id="email" name="email" maxlength="190" required value="<?= e($valeurs['email'] ?? '') ?>"></p>

@@ -17,7 +17,7 @@ declare(strict_types=1);
     <?= csrf_field() ?>
     <fieldset>
         <legend>Nouvelle catégorie</legend>
-        <p class="aide">Le slug est généré automatiquement si laissé vide (RB-07) ;
+        <p class="aide">Le slug est généré automatiquement si laissé vide ;
             un nom (ou un slug) déjà utilisé est refusé, sans toucher à la catégorie existante.</p>
         <p><label for="nom">Nom *</label>
             <input id="nom" name="nom" maxlength="100" required></p>
@@ -55,7 +55,7 @@ declare(strict_types=1);
                 <form method="get" action="/admin/categories/<?= (int) $categorie['id_categorie'] ?>/suppression/confirmation">
                     <button type="submit" class="bouton-danger">Supprimer</button>
                 </form>
-                <small>RB-14 : refusée si des produits y sont rattachés.</small>
+                <small>Suppression refusée si des produits y sont rattachés.</small>
             </td>
         </tr>
     <?php endforeach; ?>

@@ -20,7 +20,7 @@ des tarifs de transport ne retouche jamais une commande passée.</p>
 <h2>Article 3 — Commande et disponibilité</h2>
 <p>La commande est enregistrée avec le prix du produit <strong>au moment de l'achat</strong>.
 La quantité commandée ne peut jamais excéder le stock disponible au moment de la
-validation : le serveur est la seule source de vérité (RB-18).</p>
+validation : le serveur est la seule source de vérité.</p>
 
 <h2>Article 4 — Droit de rétractation</h2>
 <p>Conformément au droit de rétractation, le client peut <strong>annuler</strong> sa

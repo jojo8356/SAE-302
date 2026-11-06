@@ -61,6 +61,6 @@ declare(strict_types=1);
 </form>
 
 <p><small>En validant, vous acceptez les <a href="/cgv">CGV</a>. Le stock est vérifié et
-décrémenté au moment présent (RB-18) ; le prix de chaque ligne est <strong>figé</strong>
-pour toujours (RB-06) et le port gelé avec la commande (RB-20).</small></p>
+décrémenté au moment présent ; le prix de chaque ligne est <strong>figé</strong>
+pour toujours et le port gelé avec la commande.</small></p>
 <p><a href="/panier">← Revenir au panier</a></p>

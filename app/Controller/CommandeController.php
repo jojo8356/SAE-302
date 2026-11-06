@@ -30,7 +30,7 @@ final class CommandeController extends Controller
         $recap = $panier->recapitulatif();
 
         if ($panier->estVide()) {
-            $this->flashErreur('Votre panier est vide (RB-19).');
+            $this->flashErreur('Votre panier est vide.');
             $this->rediriger('/catalogue');
         }
 

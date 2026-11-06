@@ -7,7 +7,7 @@ declare(strict_types=1);
 <h1>Équipe d'administration</h1>
 <p>Seul le rôle <strong>SUPER</strong> accède à cette page. Les comptes administrateurs ne
 sont jamais supprimés (piste conservée), seulement bloqués. Le back-office ne crée
-jamais de compte client (RB-13).</p>
+jamais de compte client.</p>
 
 <?php if ($erreurs !== []): ?>
     <ul role="alert">
@@ -19,7 +19,7 @@ jamais de compte client (RB-13).</p>
 <form method="post" action="/admin/equipe">
     <?= csrf_field() ?>
     <fieldset>
-        <legend>Mot de passe haché bcrypt à la création (RB-12)</legend>
+        <legend>Mot de passe haché (bcrypt) à la création</legend>
         <p><label for="nom">Nom *</label><input id="nom" name="nom" maxlength="100" required></p>
         <p><label for="prenom">Prénom *</label><input id="prenom" name="prenom" maxlength="100" required></p>
         <p><label for="email">Email *</label><input type="email" id="email" name="email" maxlength="190" required></p>

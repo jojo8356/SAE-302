@@ -20,7 +20,7 @@ foreach ($recap['articles'] as $ligne) {
     <p><a href="/catalogue">Parcourir le catalogue →</a></p>
 <?php else: ?>
     <?php if ($plafonne): ?>
-        <p role="alert">Certains articles ont été ramenés au stock disponible (RB-18) :
+        <p role="alert">Certains articles ont été ramenés au stock disponible :
             la quantité maximale a été ajustée côté serveur.</p>
     <?php endif; ?>
 
@@ -37,7 +37,7 @@ foreach ($recap['articles'] as $ligne) {
         </thead>
         <tbody>
         <?php foreach ($recap['articles'] as $ligne): ?>
-            <tr<?php if (!empty($ligne['plafonne'])) { echo ' title="Quantité plafonnée au stock disponible (RB-18)"'; } else { echo ''; } ?>>
+            <tr<?php if (!empty($ligne['plafonne'])) { echo ' title="Quantité plafonnée au stock disponible"'; } else { echo ''; } ?>>
                 <td class="produit"><a href="/produit/<?= e($ligne['slug']) ?>"><?= e($ligne['nom']) ?></a><br>
                     <small>Réf. <?= e($ligne['reference']) ?> — stock : <?= (int) $ligne['stock_disponible'] ?></small></td>
                 <td class="montant"><?= euros($ligne['prix_unitaire']) ?></td>

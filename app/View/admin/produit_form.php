@@ -32,8 +32,8 @@ if ($valeurs !== []) {
 <form method="post" class="formulaire-produit" action="<?php if ($estCreation) { echo '/admin/produit/nouveau'; } else { echo '/admin/produit/' . (int) $produit['id_produit'] . '/modification'; } ?>">
     <?= csrf_field() ?>
     <fieldset>
-        <legend>Fiche produit (contraintes appliquées par le moteur : référence et slug uniques,
-            prix HT &gt; 0 — RB-02 — stock ≥ 0, prix TTC dérivé automatiquement — RB-16)</legend>
+        <legend>Fiche produit (référence et slug uniques,
+            prix HT &gt; 0, stock ≥ 0, prix TTC dérivé automatiquement)</legend>
         <p class="champ"><label for="reference">Référence *</label>
             <input id="reference" name="reference" maxlength="30" required value="<?= $v('reference') ?>"></p>
         <p class="champ"><label for="nom">Nom *</label>
@@ -59,13 +59,13 @@ if ($valeurs !== []) {
                    value="<?= $v('tva', $tvaDefautFormatee) ?>"></p>
         <p class="champ"><label for="stock">Stock *</label>
             <input type="number" id="stock" name="stock" min="0" required value="<?= $v('stock', '0') ?>"></p>
-        <p class="champ"><label for="seuil_alerte">Seuil d'alerte (RB-03) *</label>
+        <p class="champ"><label for="seuil_alerte">Seuil d'alerte *</label>
             <input type="number" id="seuil_alerte" name="seuil_alerte" min="0" required value="<?= $v('seuil_alerte', '3') ?>"></p>
         <p class="champ"><label for="image_url">Image (URL)</label>
             <input id="image_url" name="image_url" maxlength="255" value="<?= $v('image_url') ?>"></p>
         <p class="champ-case"><label><input type="checkbox" name="visible" value="1"
                 <?php if ($visibleDefaut) { echo 'checked'; } else { echo ''; } ?>>
-            Visible au catalogue (RB-19)</label></p>
+            Visible au catalogue</label></p>
         <p class="champ-envoi"><button type="submit"><?php if ($estCreation) { echo 'Créer le produit'; } else { echo 'Enregistrer'; } ?></button></p>
     </fieldset>
 </form>
@@ -73,7 +73,7 @@ if ($valeurs !== []) {
 <?php if (!$estCreation): ?>
     <h2>Stock de ce produit</h2>
     <p>Le stock se pilote depuis <a href="/admin/stocks">la page de gestion des stocks</a>
-        (écriture tracée avec motif obligatoire — EF-ADM-04).</p>
+        (écriture tracée avec motif obligatoire).</p>
 <?php endif; ?>
 
 <p><a href="/admin/produits">← Retour à la liste</a></p>

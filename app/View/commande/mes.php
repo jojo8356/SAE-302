@@ -11,7 +11,7 @@ declare(strict_types=1);
     <p><a href="/catalogue">Parcourir le catalogue →</a></p>
 <?php else: ?>
     <table>
-        <caption>Historique de vos commandes (prix figés à l'achat — RB-06)</caption>
+        <caption>Historique de vos commandes (prix figés à l'achat)</caption>
         <thead>
         <tr>
             <th scope="col">Numéro</th><th scope="col">Date</th><th scope="col">Statut</th>

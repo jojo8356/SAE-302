@@ -15,11 +15,11 @@ declare(strict_types=1);
 <p>Valeur d'inventaire (prix HT × stock) : <strong><?= euros($valeur_inventaire) ?></strong></p>
 
 <table class="tableau-stocks">
-    <caption>v_etat_stock — le moteur refuse tout stock négatif (RB-03) et journalise chaque mouvement avec son auteur</caption>
+    <caption>Le stock ne peut jamais devenir négatif ; chaque mouvement est journalisé avec son auteur</caption>
     <thead>
     <tr>
         <th scope="col" class="reference">Réf.</th><th scope="col" class="produit">Produit</th><th scope="col">Stock</th>
-        <th scope="col">Seuil</th><th scope="col">État</th><th scope="col">Ajustement (EF-ADM-04)</th>
+        <th scope="col">Seuil</th><th scope="col">État</th><th scope="col">Ajustement</th>
     </tr>
     </thead>
     <tbody>

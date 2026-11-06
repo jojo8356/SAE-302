@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 <p><strong>Cette action est définitive.</strong> Un produit jamais commandé
     disparaît du catalogue ; un produit déjà commandé est masqué, pour
-    préserver l'historique des commandes (RB-09/17).</p>
+    préserver l'historique des commandes.</p>
 
 <form method="post" action="/admin/produits/<?= (int) $produit['id_produit'] ?>/suppression">
     <?= csrf_field() ?>

@@ -10,7 +10,7 @@ declare(strict_types=1);
     <strong><?= e($categorie['nom']) ?></strong> ?</p>
 
 <p><strong>Cette action est définitive.</strong> Si des produits sont encore
-    rattachés à cette catégorie, la suppression sera refusée (RB-14).</p>
+    rattachés à cette catégorie, la suppression sera refusée.</p>
 
 <form method="post" action="/admin/categories/<?= (int) $categorie['id_categorie'] ?>/suppression">
     <?= csrf_field() ?>

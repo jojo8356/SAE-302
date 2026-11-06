@@ -14,8 +14,8 @@ n'est traitée : le paiement est simulé et aucune donnée bancaire n'est collec
 
 <h2>Données personnelles</h2>
 <p>Les comptes créés sur cette maquette contiennent des données fictives. Les mots de passe
-ne sont jamais stockés en clair (hachage bcrypt, RB-12) et les commandes sont tracées
-à des fins d'audit pédagogique (RB-11).</p>
+ne sont jamais stockés en clair (hachage bcrypt) et les commandes sont tracées
+à des fins d'audit pédagogique.</p>
 
 <h2>Propriété intellectuelle</h2>
 <p>Les descriptions de produits et le jeu de données de démonstration sont originaux,

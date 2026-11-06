@@ -31,11 +31,11 @@ declare(strict_types=1);
 <p><?= (int) $resultat['total'] ?> produit(s) — page <?= (int) $resultat['page'] ?> / <?= (int) $resultat['pages'] ?></p>
 
 <table>
-    <caption>Le back-office voit aussi les produits masqués (RB-19)</caption>
+    <caption>Le back-office voit aussi les produits masqués</caption>
     <thead>
     <tr>
         <th scope="col">Réf.</th><th scope="col">Nom</th><th scope="col">Catégorie</th>
-        <th scope="col">Prix HT</th><th scope="col">TVA</th><th scope="col">Prix TTC (RB-16)</th>
+        <th scope="col">Prix HT</th><th scope="col">TVA</th><th scope="col">Prix TTC</th>
         <th scope="col">Stock</th><th scope="col">Visible</th><th scope="col">Actions</th>
     </tr>
     </thead>

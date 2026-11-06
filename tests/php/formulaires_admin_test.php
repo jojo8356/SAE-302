@@ -174,7 +174,7 @@ if (preg_match('/<legend>(.*?)<\/legend>/s', $categoriesHtml, $m) === 1) {
 $check('la légende du cadre est courte (« Nouvelle catégorie »)', $legende === 'Nouvelle catégorie', (string) $legende);
 $check(
     'l\'aide « Le slug est généré automatiquement… » est un paragraphe DANS le cadre, pas la légende',
-    str_contains($categoriesHtml, '<p class="aide">Le slug est généré automatiquement si laissé vide (RB-07)')
+    str_contains($categoriesHtml, '<p class="aide">Le slug est généré automatiquement si laissé vide')
         && !str_contains((string) $legende, 'slug est généré')
 );
 $check(

@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 <p><strong>Cette action est définitive.</strong> La commande passera au statut
     « Annulée », le stock des articles sera restitué et le montant (port
-    compris) soldé (RB-18/20). Vous ne pourrez pas revenir en arrière.</p>
+    compris) soldé. Vous ne pourrez pas revenir en arrière.</p>
 
 <form method="post" action="/mes-commandes/<?= (int) $commande['id_commande'] ?>/annulation">
     <?= csrf_field() ?>

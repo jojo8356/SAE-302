@@ -17,7 +17,7 @@ declare(strict_types=1);
         Livraison : <?= e($commande['adresse_livraison']) ?></p>
 <?php endif; ?>
 
-<h2>Lignes (prix TTC figés — RB-06)</h2>
+<h2>Lignes (prix TTC figés)</h2>
 <table>
     <thead><tr><th scope="col">Produit</th><th scope="col">Réf.</th><th scope="col">Prix unitaire TTC</th><th scope="col">Qté</th><th scope="col">Total TTC</th></tr></thead>
     <tbody>
@@ -33,7 +33,7 @@ declare(strict_types=1);
     </tbody>
 </table>
 
-<h2>Changer le statut (matrice RB-11 appliquée par le moteur)</h2>
+<h2>Changer le statut</h2>
 <?php if ($transitions === []): ?>
     <p>Statut terminal : aucune transition possible.</p>
 <?php else: ?>
@@ -48,14 +48,14 @@ declare(strict_types=1);
             </select>
         </p>
         <p>
-            <label for="commentaire">Commentaire (obligatoire pour une annulation, tracé dans la piste RB-11) :</label>
+            <label for="commentaire">Commentaire (obligatoire pour une annulation) :</label>
             <input id="commentaire" name="commentaire" maxlength="500">
         </p>
         <p><button type="submit">Appliquer</button></p>
     </form>
 <?php endif; ?>
 
-<h2>Piste d'audit des statuts (RB-11)</h2>
+<h2>Piste d'audit des statuts</h2>
 <table>
     <thead><tr><th scope="col">Quand</th><th scope="col">Statut</th><th scope="col">Par</th><th scope="col">Commentaire</th></tr></thead>
     <tbody>

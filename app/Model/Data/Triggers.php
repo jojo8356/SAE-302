@@ -259,7 +259,7 @@ final class Triggers
                     'new_status' => (string) $new['statut'],
                     'changed_by' => $actor['id'],
                     'changed_by_role' => $actor['role'],
-                    'commentaire' => 'Création tracée par trg_history_creation',
+                    'commentaire' => 'Création de la commande',
                     'changed_at' => Heure::horodatageStockage(),
                 ]);
             },
@@ -274,7 +274,7 @@ final class Triggers
                 $nouveauCommentaire = ($new['commentaire'] ?? null) !== null
                     && ($new['commentaire'] ?? '') !== ($old['commentaire'] ?? '')
                     && trim((string) $new['commentaire']) !== '';
-                $commentaireTrace = 'Tracé par trg_history_statut le ';
+                $commentaireTrace = 'Changement de statut le ';
                 if ($nouveauCommentaire) {
                     $commentaireTrace = trim((string) $new['commentaire']);
                 } else {
