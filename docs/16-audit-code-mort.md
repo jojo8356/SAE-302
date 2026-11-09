@@ -164,3 +164,23 @@ Tailles en octets historiques mesurées lors du premier audit (`870dda5`) ; les 
 | `public/js/panier.js` | 5740 | — | Amélioration progressive du panier via l’API. Références : `app/View/layout.php`, `docs/02-document-tests-validation.md`, `docs/09-audit-ecarts.md`…. |
 | `public/js/ui.js` | 4134 | — | Interactions d’interface et navigation. Références : `app/View/layout.php`, `docs/10-todo-corrections.md`, `docs/DA.md`…. |
 | `public/mesurer.php` | 34558 | 3 | Outil HTTP de mesure des temps réservé au développement. Références : `app/View/home/cookies.php`, `docs/07-note-cybersecurite.md`, `docs/08-fiche-suivi-commits.md`…. |
+
+## Ajouts de `main` à examiner lors de l’intégration
+
+| `app/Tools/Heure.php` | 8492 | 12 | Conversion et formatage des dates UTC et Europe/Paris. |
+| `app/View/admin/confirmer_suppression_categorie.php` | 740 | 0 | Vue de confirmation avant action définitive. |
+| `app/View/admin/confirmer_suppression_produit.php` | 813 | 0 | Vue de confirmation avant action définitive. |
+| `app/View/commande/confirmer_annulation.php` | 925 | 0 | Vue de confirmation avant action définitive. |
+| `public/img/aura.svg` | 684 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
+| `public/img/band.svg` | 688 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
+| `public/img/boom.svg` | 688 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
+| `public/img/fit2.svg` | 690 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
+| `public/img/k87.svg` | 686 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
+| `public/img/power20.svg` | 699 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
+| `public/img/procast.svg` | 685 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
+| `public/img/qhd27.svg` | 682 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
+| `public/img/sac25.svg` | 685 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
+| `public/img/turbox.svg` | 699 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
+| `public/img/usbc.svg` | 693 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
+| `public/img/zen14.svg` | 699 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
+| `public/minishop.css` | 15182 | — | Feuille de style issue de main ; non chargée par le layout actuel, intégration à examiner. |

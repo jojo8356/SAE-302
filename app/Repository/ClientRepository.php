@@ -16,6 +16,7 @@ namespace App\Repository;
 use App\Model\Data\BusinessError;
 use App\Model\Data\Filter;
 use App\Model\Data\StoreInterface;
+use App\Tools\Heure;
 
 final class ClientRepository
 {
@@ -51,6 +52,16 @@ final class ClientRepository
     }
 
     /**
+     * Cette adresse est-elle déjà prise ? (RB-01 — même normalisation
+     * que getCredentials, pour signaler le doublon dès la validation,
+     * en même temps que les autres erreurs du formulaire.)
+     */
+    public function emailExiste(string $email): bool
+    {
+        return $this->store->exists('client', [Filter::eq('email', trim(strtolower($email)))]);
+    }
+
+    /**
      * sp_get_credentials — identifiants pour la connexion.
      * Le compte bloqué est refusé en couche modèle, pas seulement en PHP.
      *
@@ -80,6 +91,37 @@ final class ClientRepository
     public function find(int $idClient): ?array
     {
         return $this->store->find('client', $idClient);
+    }
+
+    /**
+     * Adresse de livraison COMPLÈTE du profil, pour le préremplissage du
+     * formulaire de commande. Le profil stocke rue, code postal et ville
+     * dans trois colonnes séparées (EF-CLI-01) alors que la commande
+     * n'enregistre qu'une seule chaîne (commande.adresse_livraison) :
+     * composer « rue, CP Ville » ici évite de préremplir avec la seule
+     * rue — la commande garderait sinon une adresse sans code postal ni
+     * ville. Les parties absentes (profil incomplet) sont omises, sans
+     * virgule ni espace orphelins ; un profil sans adresse donne ''.
+     *
+     * @param array<string,mixed> $client
+     */
+    public static function adresseLivraisonComplete(array $client): string
+    {
+        $rue = trim((string) ($client['adresse_livraison'] ?? ''));
+        $codePostal = trim((string) ($client['code_postal'] ?? ''));
+        $ville = trim((string) ($client['ville'] ?? ''));
+
+        $codePostalVille = trim($codePostal . ' ' . $ville);
+
+        $morceaux = [];
+        if ($rue !== '') {
+            $morceaux[] = $rue;
+        }
+        if ($codePostalVille !== '') {
+            $morceaux[] = $codePostalVille;
+        }
+
+        return implode(', ', $morceaux);
     }
 
     /**
@@ -136,7 +178,7 @@ final class ClientRepository
     /** Horodate la dernière connexion (traçabilité, sans bloquer le flux). */
     public function noteConnexion(int $idClient): void
     {
-        $this->store->update('client', [Filter::eq('id_client', $idClient)], ['derniere_connexion' => date('Y-m-d H:i:s')]);
+        $this->store->update('client', [Filter::eq('id_client', $idClient)], ['derniere_connexion' => Heure::horodatageStockage()]);
     }
 
     /** Admin : liste des clients (EF-ADM, lecture seule — RB-13 : l'admin ne GÈRE pas les comptes). */

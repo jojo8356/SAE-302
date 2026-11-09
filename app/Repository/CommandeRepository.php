@@ -27,6 +27,7 @@ use App\Model\Data\BusinessError;
 use App\Model\Data\Filter;
 use App\Model\Data\StoreInterface;
 use App\Model\Data\Triggers;
+use App\Tools\Heure;
 
 final class CommandeRepository
 {
@@ -117,7 +118,7 @@ final class CommandeRepository
         // numéro lisible CMD2026-000123 : la valeur d'auto-incrément est lue
         // AVANT l'insertion (le store ne consomme pas le compteur)
         $id = $this->store->nextId('commande');
-        $numero = 'CMD' . date('Y') . '-' . str_pad((string) $id, 6, '0', STR_PAD_LEFT);
+        $numero = 'CMD' . Heure::anneeCivile() . '-' . str_pad((string) $id, 6, '0', STR_PAD_LEFT);
         $idCommande = $this->store->insert('commande', [
             'numero' => $numero,
             'id_client' => $idClient,
@@ -318,9 +319,12 @@ final class CommandeRepository
 
     /**
      * sp_cancel_order — annulation par le client (UC-09, EF-CLI-10) :
-     * restitution du stock LIGNE À LIGNE par le déclencheur trg_ligne_restore_stock,
-     * puis statut ANNULEE ; le port est ANNULÉ avec les lignes (RB-20 : une
-     * commande annulée n'a plus rien à facturer) et le montant soldé (RB-15).
+     * restitution du stock LIGNE À LIGNE, puis statut ANNULEE. RB-20 : une
+     * commande annulée n'a plus rien à facturer — frais de port et montant
+     * total sont soldés à 0. En revanche les LIGNES SONT CONSERVÉES comme
+     * historique de ce qui avait été commandé (le client continue de voir
+     * ses articles et leurs prix figés), et le total d'origine (port
+     * compris) est mémorisé dans montant_avant_annulation pour l'affichage.
      *
      * @return array{unites_rendues: int, montant_rembourse: float}
      */
@@ -339,15 +343,24 @@ final class CommandeRepository
 
         return $this->store->transactional(function () use ($idCommande, $idClient, $commande): array {
             $this->store->setActor(['id' => $idClient, 'role' => 'CLIENT']);
+            // Le stock est restitué explicitement, ligne à ligne (RB-18) :
+            // les lignes ne sont plus supprimées, elles restent l'historique
+            // de la commande annulée.
             $unitesRendues = 0;
             foreach ($this->lignes($idCommande) as $ligne) {
                 $unitesRendues += (int) $ligne['quantite'];
-                $this->store->delete('ligne_commande', [Filter::eq('id_ligne', $ligne['id_ligne'])]);
+                $produit = $this->store->find('produit', (int) $ligne['id_produit']);
+                if ($produit !== null) {
+                    $this->store->update('produit', [Filter::eq('id_produit', (int) $ligne['id_produit'])], [
+                        'stock' => (int) $produit['stock'] + (int) $ligne['quantite'],
+                    ]);
+                }
             }
             $this->store->update('commande', [Filter::eq('id_commande', $idCommande)], [
                 'statut' => 'ANNULEE',
                 'frais_port' => 0.0,
                 'montant_total' => 0.0,
+                'montant_avant_annulation' => (float) $commande['montant_total'],
                 'commentaire' => $commande['commentaire'] ?? 'Annulation demandée par le client',
             ]);
             $this->store->setActor(['id' => null, 'role' => 'SYSTEME']);

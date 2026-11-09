@@ -47,6 +47,13 @@ plantuml.jar
 tests/sql/out/*
 !tests/sql/rapport_tests_sql.md
 
+# --- correspondances locales : les brouillons de mails en Markdown
+#     ne sont pas des livrables et ne doivent jamais être envoyés au dépôt
+mail*.md
+courriel*.md
+*.mail.md
+mails/*.md
+
 # --- éditeurs / OS
 .idea/
 .vscode/

@@ -1001,6 +1001,10 @@ body > main {
 }
 
 .recap .total {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
     border-top: 1px solid var(--bordure);
     padding-top: var(--e-3);
     font-size: var(--t-lg);
@@ -1755,7 +1759,7 @@ select[data-largeur-courte] {
 /* 14.3 Mobile large : les résultats passent AVANT les filtres ------- */
 @media (max-width: 45em) {
     .catalogue > .panneau-filtres {
-        order: 2;
+        order: 0;
     }
 
     .catalogue > :not(.panneau-filtres) {
@@ -2268,3 +2272,111 @@ select[data-largeur-courte] {
 .legal__sommaire ul:last-child {
     margin-bottom: 0;
 }
+
+/* Filtres repliables : accessibles au clavier et placés avant les résultats. */
+.filtres-catalogue > summary { cursor: pointer; font-weight: 700; padding: var(--e-2); }
+.filtres-catalogue > summary:focus-visible { outline: var(--contour); }
+.filtres-catalogue[open] > form { margin-top: var(--e-3); }
+
+/* Compatibilité des formulaires et tableaux intégrés depuis main. */
+.bouton-principal { display: inline-block; background: var(--accent-fonce); color: #fff; font: inherit; font-weight: 700; padding: .75rem 1.5rem; border: 0; border-radius: var(--r-md); cursor: pointer; }
+.bouton-principal:focus-visible, .bouton-danger:focus-visible { outline: var(--contour); outline-offset: 2px; }
+.bouton-danger { display: inline-flex; align-items: center; min-height: 44px; background: #a52626; color: #fff; border: 0; border-radius: var(--r-sm); padding: .6rem 1rem; font: inherit; font-weight: 700; cursor: pointer; }
+.bouton-danger:hover { background: #7f1d1d; }
+.formulaire-creation-categorie, .formulaire-produit, .formulaire-filtres-produits { max-width: 100%; }
+.champ, .champ-case, .champ-envoi, .aide { min-width: 0; }
+.montant { text-align: right; font-variant-numeric: tabular-nums; }
+.statut, .col-produit, .col-prix, .col-qte, .col-total { min-width: 0; }
+
+/* Parcours client : cartes lisibles et libellées à largeur mobile.
+   Les en-têtes restent dans le DOM pour la lecture du tableau. */
+@media (max-width: 35em) {
+    .tableau-defilant--client { overflow: visible; background: none; }
+    .tableau-defilant--client table { min-width: 0; width: 100%; }
+    .tableau-defilant--client colgroup { display: none; }
+    .tableau-defilant--client thead {
+        position: absolute; width: 1px; height: 1px; overflow: hidden;
+        clip: rect(0 0 0 0); white-space: nowrap;
+    }
+    .tableau-defilant--client table,
+    .tableau-defilant--client tbody,
+    .tableau-defilant--client tfoot,
+    .tableau-defilant--client tr,
+    .tableau-defilant--client td { display: block; width: 100%; }
+    .tableau-defilant--client tbody tr {
+        border: 1px solid var(--bordure); border-radius: var(--r-md);
+        background: var(--surface); padding: var(--e-3); margin-bottom: var(--e-3);
+    }
+    .tableau-defilant--client tbody td {
+        display: grid; grid-template-columns: minmax(6.5rem, 38%) minmax(0, 1fr);
+        gap: var(--e-2); padding: var(--e-1) 0; border: 0;
+        text-align: left; overflow-wrap: anywhere;
+    }
+    .tableau-defilant--client tbody td::before {
+        content: attr(data-label); font-weight: 700; color: var(--encre-douce);
+    }
+    .tableau-recapitulatif tfoot tr {
+        display: flex; justify-content: space-between; gap: var(--e-2);
+        align-items: baseline; border-bottom: 1px solid var(--bordure);
+    }
+    .tableau-recapitulatif tfoot th { flex: 1 1 auto; min-width: 0; text-align: left; }
+    .tableau-recapitulatif tfoot td { flex: 0 0 auto; width: auto; text-align: right; }
+}
+
+/* Champs administrateur : alignement lisible, puis empilement au zoom/mobile. */
+.formulaire-produit .champ {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr);
+    align-items: start;
+    gap: var(--e-2) var(--e-3);
+}
+.formulaire-produit .champ input,
+.formulaire-produit .champ select,
+.formulaire-produit .champ textarea { width: 100%; max-width: 100%; min-width: 0; }
+.formulaire-creation-categorie .aide { overflow-wrap: anywhere; }
+.formulaire-filtres-produits { display: flex; flex-wrap: wrap; align-items: end; gap: var(--e-3); }
+@media (max-width: 35em) {
+    .formulaire-produit .champ { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Fiche produit : deux colonnes lisibles sans défilement horizontal. */
+.tableau-defilant .tableau-caracteristiques { min-width: 0; width: 100%; table-layout: fixed; border-collapse: collapse; }
+.tableau-caracteristiques th, .tableau-caracteristiques td { overflow-wrap: break-word; vertical-align: top; }
+.tableau-caracteristiques th { width: 40%; }
+
+.tableau-commandes-client { width: 100%; }
+
+/* Administration : répartition contrôlée, cartes lisibles sur petit écran. */
+.tableau-defilant--admin table { min-width: 0; }
+.tableau-commandes, .tableau-categories { width: 100%; table-layout: fixed; border-collapse: collapse; }
+.tableau-commandes .col-numero { width: 15%; }
+.tableau-commandes .col-date { width: 19%; }
+.tableau-commandes .col-client { width: 23%; }
+.tableau-commandes .col-statut { width: 17%; }
+.tableau-commandes .col-montant { width: 14%; }
+.tableau-commandes .col-detail { width: 12%; }
+.tableau-categories .col-edition { width: 32%; }
+.tableau-categories .col-slug { width: 15%; }
+.tableau-categories .col-produits { width: 11%; }
+.tableau-categories .col-description { width: 26%; }
+.tableau-categories .col-actions { width: 16%; }
+.tableau-commandes th, .tableau-commandes td, .tableau-categories th, .tableau-categories td { overflow-wrap: anywhere; }
+.tableau-commandes .statut { font-weight: 700; }
+.tableau-commandes .montant { text-align: right; white-space: nowrap; }
+.tableau-categories form { display: grid; gap: var(--e-2); }
+.tableau-categories input { width: 100%; min-width: 0; box-sizing: border-box; }
+.tableau-categories .bouton-danger { white-space: normal; }
+@media (max-width: 45em) {
+    .tableau-defilant--admin { overflow: visible; background: none; }
+    .tableau-defilant--admin colgroup { display: none; }
+    .tableau-defilant--admin thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .tableau-defilant--admin table, .tableau-defilant--admin tbody, .tableau-defilant--admin tr, .tableau-defilant--admin td { display: block; width: 100%; }
+    .tableau-defilant--admin tbody tr { border: 1px solid var(--bordure); border-radius: var(--r-md); background: var(--surface); padding: var(--e-3); margin-bottom: var(--e-3); }
+    .tableau-defilant--admin tbody td { display: grid; grid-template-columns: minmax(6rem, 35%) minmax(0, 1fr); gap: var(--e-2); padding: var(--e-1) 0; border: 0; text-align: left; overflow-wrap: anywhere; }
+    .tableau-defilant--admin tbody td::before { content: attr(data-label); font-weight: 700; color: var(--encre-douce); }
+}
+
+/* Libellés à gauche, montants à droite : mêmes alignements que leurs titres. */
+.tableau-panier .produit, .tableau-stocks .reference, .tableau-stocks .produit,
+.tableau-alertes .reference, .tableau-alertes .produit { text-align: left; }
+.tableau-panier .montant { text-align: right; }

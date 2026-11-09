@@ -22,6 +22,7 @@ $valeurs = array_merge(['nom' => '', 'email' => '', 'message' => ''], $valeurs ?
         </div>
     <?php endif; ?>
 
+    <p>Consultez notre <a href="/aide">aide</a> ou gérez vos informations dans <a href="/compte">Mon compte</a>.</p>
     <form method="post" action="/contact">
         <?= csrf_field() ?>
         <fieldset>

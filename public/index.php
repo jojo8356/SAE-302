@@ -6,7 +6,8 @@ declare(strict_types=1);
  * MiniShop — contrôleur frontal (§9.3) : TOUTE requête HTTP passe ici.
  *
  * Sécurité (SEC-01…) :
- *   - en-têtes durcis (X-Frame-Options, CSP sans style inline, session cookie
+ *   - en-têtes durcis (X-Frame-Options, CSP sans style inline — style-src
+ *     limité à 'self' pour l'unique feuille public/minishop.css —, session cookie
  *     HttpOnly/SameSite) ;
  *   - routeur à liste blanche : aucune URL dynamique, aucune inclusion de
  *     fichier pilotée par la requête (anti-LFI/RFI) ;
@@ -101,6 +102,7 @@ $routeur->get('/commande/valider', [CommandeController::class, 'formulaire'], 'c
 $routeur->post('/commande/valider', [CommandeController::class, 'valider'], 'client');
 $routeur->get('/mes-commandes', [CommandeController::class, 'mes'], 'client');
 $routeur->get('/mes-commandes/{id}', [CommandeController::class, 'detail'], 'client');
+$routeur->get('/mes-commandes/{id}/annulation/confirmation', [CommandeController::class, 'confirmerAnnulation'], 'client');
 $routeur->post('/mes-commandes/{id}/annulation', [CommandeController::class, 'annuler'], 'client');
 
 // ------------------------------------------------------------ back-office
@@ -115,11 +117,13 @@ $routeur->get('/admin/produit/nouveau', [ProduitAdminController::class, 'formula
 $routeur->post('/admin/produit/nouveau', [ProduitAdminController::class, 'creer'], 'admin');
 $routeur->get('/admin/produit/{id}/modification', [ProduitAdminController::class, 'formulaireModifier'], 'admin');
 $routeur->post('/admin/produit/{id}/modification', [ProduitAdminController::class, 'enregistrerModification'], 'admin');
+$routeur->get('/admin/produits/{id}/suppression/confirmation', [ProduitAdminController::class, 'confirmerSuppression'], 'admin');
 $routeur->post('/admin/produits/{id}/suppression', [ProduitAdminController::class, 'supprimer'], 'admin');
 
 $routeur->get('/admin/categories', [CategorieAdminController::class, 'index'], 'admin');
 $routeur->post('/admin/categories', [CategorieAdminController::class, 'creer'], 'admin');
 $routeur->post('/admin/categories/{id}/modification', [CategorieAdminController::class, 'modifier'], 'admin');
+$routeur->get('/admin/categories/{id}/suppression/confirmation', [CategorieAdminController::class, 'confirmerSuppression'], 'admin');
 $routeur->post('/admin/categories/{id}/suppression', [CategorieAdminController::class, 'supprimer'], 'admin');
 
 $routeur->get('/admin/stocks', [StockAdminController::class, 'index'], 'admin');

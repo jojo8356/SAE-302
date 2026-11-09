@@ -36,8 +36,16 @@ $lienSans = static function (string $cle) use ($parametres_url): string {
     </div>
 </header>
 
+<?php
+$filtresActifs = $criteres['mot_cle'] !== '' || $criteres['id_categorie'] !== null
+    || ($criteres['prix_min'] !== null && $criteres['prix_min'] !== '')
+    || ($criteres['prix_max'] !== null && $criteres['prix_max'] !== '')
+    || $criteres['en_stock'] || ($criteres['tri'] !== '' && $criteres['tri'] !== 'nom');
+?>
 <div class="catalogue">
     <aside class="panneau-filtres" aria-label="Filtres du catalogue">
+        <details class="filtres-catalogue"<?php if ($filtresActifs) { echo ' open'; } ?>>
+        <summary>Filtrer<?php if ($filtresActifs) { echo ' (actifs)'; } ?></summary>
         <form method="get" action="<?php if ($est_recherche) { echo '/recherche'; } else { echo '/catalogue'; } ?>" data-filtres>
             <fieldset>
                 <legend>Filtres</legend>
@@ -93,6 +101,7 @@ $lienSans = static function (string $cle) use ($parametres_url): string {
                 <p class="texte-aide">Les filtres se conservent dans l'URL : l'adresse est partageable.</p>
             </fieldset>
         </form>
+        </details>
     </aside>
 
     <div>

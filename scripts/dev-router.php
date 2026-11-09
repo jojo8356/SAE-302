@@ -19,6 +19,17 @@ declare(strict_types=1);
  * conserve les bons types MIME (CSS, JS, SVG, images) et le cache.
  */
 
+if (PHP_SAPI !== 'cli-server') {
+    $message = "MiniShop — routeur du serveur PHP intégré, pas un serveur.\n"
+        . "Lancer depuis la racine : php -S localhost:8000 -t public scripts/dev-router.php\n";
+    if (defined('STDERR')) {
+        fwrite(STDERR, $message);
+    } else {
+        echo $message;
+    }
+    exit(1);
+}
+
 $racine = realpath(dirname(__DIR__) . '/public');
 if ($racine === false) {
     http_response_code(500);
@@ -32,7 +43,7 @@ $chemin = parse_url($uri, PHP_URL_PATH);
 if (!is_string($chemin)) {
     $chemin = '/';
 }
-$chemin = rawurldecode($chemin);
+$chemin = str_replace('\\', '/', rawurldecode($chemin));
 if ($chemin === '') {
     $chemin = '/';
 }

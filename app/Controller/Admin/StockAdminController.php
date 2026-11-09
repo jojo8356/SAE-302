@@ -79,9 +79,12 @@ final class StockAdminController extends Controller
         $store = Database::store();
         $admin = Auth::admin();
 
-        $mode = 'SET';
-        if (strtoupper($this->str('mode', 5)) === 'DELTA') {
-            $mode = 'DELTA';
+        // Défaut sûr : « Ajouter / retirer » (DELTA), comme le propose le
+        // formulaire — un mode absent ne doit jamais écraser le stock
+        // d'une valeur absolue par accident (SET seulement si explicite).
+        $mode = 'DELTA';
+        if (strtoupper($this->str('mode', 5)) === 'SET') {
+            $mode = 'SET';
         }
         $quantite = $this->int('quantite') ?? 0;
         $motif = $this->str('motif', 200);

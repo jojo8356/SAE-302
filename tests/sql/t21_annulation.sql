@@ -18,6 +18,8 @@ CALL sp_add_order_line(
 
 -- Verif intermediaire : le stock doit etre 3
 SET @stock_avant_annulation = (SELECT stock FROM produit WHERE reference='TST-900');
+SET @montant_avant_annulation = (SELECT montant_total FROM commande WHERE id_commande = @cid);
+SET @lignes_avant_annulation = (SELECT COUNT(*) FROM ligne_commande WHERE id_commande = @cid);
 
 CALL sp_cancel_order(@cid,
   (SELECT id_client FROM client WHERE email = 'carla@example.com' LIMIT 1),
@@ -30,6 +32,10 @@ SELECT CASE
          AND (SELECT frais_port FROM commande WHERE id_commande = @cid) = 0.00
          AND (SELECT montant_total FROM commande WHERE id_commande = @cid) = 0.00
          AND @stock_avant_annulation = 3
+         AND @montant_avant_annulation > 0
+         AND (SELECT montant_avant_annulation FROM commande WHERE id_commande = @cid) = @montant_avant_annulation
+         AND @lignes_avant_annulation > 0
+         AND (SELECT COUNT(*) FROM ligne_commande WHERE id_commande = @cid) = @lignes_avant_annulation
         THEN 'PASS_stock_restitue_et_commande_annulee'
         ELSE CONCAT('FAIL : code=', IFNULL(@code_c,'NULL'),
                     ' stock=', (SELECT stock FROM produit WHERE reference='TST-900'),

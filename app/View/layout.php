@@ -107,6 +107,7 @@ $lienNav = static function (string $href, string $libelle) use ($estCourant): st
                 <ul class="nav-principal__liste">
                     <?= $lienNav('/catalogue', 'Catalogue') // HTML-SAFE : échappé par le helper ?>
                 <?= $lienNav('/categories', 'Catégories') // HTML-SAFE : échappé par le helper ?>
+                <?= $lienNav('/a-propos', 'À propos') // HTML-SAFE : échappé par le helper ?>
                 <?= $lienNav('/contact', 'Contact') // HTML-SAFE : échappé par le helper ?>
                 <li aria-hidden="true" class="nav-separateur"></li>
                 <li>
@@ -197,7 +198,8 @@ $lienNav = static function (string $href, string $libelle) use ($estCourant): st
                 <h2>Informations</h2>
                 <ul>
                     <li><a href="/a-propos">À propos</a></li>
-                    <?= $lienNav('/contact', 'Contact') // HTML-SAFE : échappé par le helper ?>
+                    <li><a href="/aide">Aide</a></li>
+                    <li><a href="/contact">Contact</a></li>
                     <li><a href="/livraison">Livraison</a></li>
                     <li><a href="/retractation">Rétractation et retours</a></li>
                     <li><a href="/garanties">Garanties et médiation</a></li>

@@ -165,7 +165,7 @@ echo "\n4. Helpers d'affichage (SEC-02/S-02)\n";
     $check('euros() virgule + espace milliers', euros(154.8) === '154,80 €' && euros(1234.5) === '1 234,50 €' && euros(0) === '0,00 €');
     $check('date_fr null → —', date_fr(null) === '—');
     $check('date_fr format court', preg_match('#^\d{2}/\d{2}/\d{4}$#', date_fr('2026-09-21 12:19:03')) === 1);
-    $check('date_fr avec heure', date_fr('2026-09-21 12:19:03', true) === '21/09/2026 12h19');
+    $check('date_fr avec heure (UTC stocké → Paris CEST)', date_fr('2026-09-21 12:19:03', true) === '21/09/2026 14h19');
     foreach (['BROUILLON' => 'Brouillon', 'EN_PREPARATION' => 'En préparation', 'PAYEE' => 'Payée', 'EXPEDIEE' => 'Expédiée', 'LIVREE' => 'Livrée', 'ANNULEE' => 'Annulée'] as $statut => $libelle) {
         $check("statut_libelle({$statut})", statut_libelle($statut) === $libelle);
     }

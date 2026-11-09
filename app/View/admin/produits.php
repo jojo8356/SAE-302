@@ -7,10 +7,12 @@ declare(strict_types=1);
 <h1>Produits</h1>
 <p><a href="/admin/produit/nouveau">+ Nouveau produit</a></p>
 
-<form method="get" action="/admin/produits">
-    <p>
+<form method="get" class="formulaire-filtres-produits" action="/admin/produits">
+    <p class="champ">
         <label for="q">Recherche :</label>
         <input type="search" id="q" name="q" maxlength="120" value="<?= e($q) ?>">
+    </p>
+    <p class="champ">
         <label for="cat">Catégorie :</label>
         <select id="cat" name="cat">
             <option value="">Toutes</option>
@@ -20,6 +22,8 @@ declare(strict_types=1);
                 </option>
             <?php endforeach; ?>
         </select>
+    </p>
+    <p class="champ-envoi">
         <button type="submit">Filtrer</button>
     </p>
 </form>
@@ -28,11 +32,11 @@ declare(strict_types=1);
 
 <div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
 <table>
-    <caption>Le back-office voit aussi les produits masqués (RB-19)</caption>
+    <caption>Le back-office voit aussi les produits masqués</caption>
     <thead>
     <tr>
         <th scope="col">Réf.</th><th scope="col">Nom</th><th scope="col">Catégorie</th>
-        <th scope="col">Prix HT</th><th scope="col">TVA</th><th scope="col">Prix TTC (RB-16)</th>
+        <th scope="col">Prix HT</th><th scope="col">TVA</th><th scope="col">Prix TTC</th>
         <th scope="col">Stock</th><th scope="col">Visible</th><th scope="col">Actions</th>
     </tr>
     </thead>
@@ -49,9 +53,8 @@ declare(strict_types=1);
             <td><?php if ((int) $produit['visible'] === 1) { echo '✔ oui'; } else { echo '✘ masqué'; } ?></td>
             <td>
                 <a href="/admin/produit/<?= (int) $produit['id_produit'] ?>/modification">Modifier</a> ·
-                <form method="post" action="/admin/produits/<?= (int) $produit['id_produit'] ?>/suppression" style="display:inline">
-                    <?= csrf_field() ?>
-                    <button type="submit">Supprimer</button>
+                <form method="get" action="/admin/produits/<?= (int) $produit['id_produit'] ?>/suppression/confirmation">
+                    <button type="submit" class="bouton-danger">Supprimer</button>
                 </form>
             </td>
         </tr>

@@ -26,6 +26,6 @@ declare(strict_types=1);
     </section>
     <section><h2>Vos droits</h2>
         <p>Dans les conditions prévues par le RGPD, vous disposez notamment des droits d’accès, de rectification, d’effacement, de limitation, d’opposition et, lorsque applicable, de portabilité. Lorsque le traitement repose sur un consentement, celui-ci peut être retiré à tout moment. Vous pouvez aussi introduire une réclamation auprès de la <a href="https://www.cnil.fr/fr/plaintes">CNIL</a>.</p>
-        <p>Responsable du traitement et coordonnées effectives pour les demandes : <strong>à renseigner</strong>. Le <a href="/contact">formulaire de démonstration</a> ne garantit pas le traitement d’une demande de droits. Des procédures d’identification, de réponse et d’effacement restent à mettre en place.</p>
+        <p>Responsable du traitement et coordonnées effectives pour les demandes : <strong>à renseigner</strong>. Le <a href="/contact">formulaire de démonstration</a> ne garantit pas le traitement d’une demande de droits. Vous pouvez consulter certaines informations dans <a href="/compte">Mon compte</a>. Des procédures d’identification, de réponse et d’effacement restent à mettre en place.</p>
     </section>
 </article>

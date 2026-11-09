@@ -13,13 +13,14 @@ declare(strict_types=1);
 
 <div class="grille grille--categories">
     <section class="carte">
-        <h2>Commander</h2>
+        <h2>Comment commander ?</h2>
         <ol>
             <li>Ajoutez des produits au panier (la quantité est plafonnée au stock réel).</li>
             <li>Vérifiez le récapitulatif : sous-total, TVA, frais de port, total TTC.</li>
             <li>Créez un compte ou connectez-vous, puis validez : vous recevez un numéro de commande.</li>
         </ol>
-        <p><a href="/catalogue">Commencer par le catalogue →</a></p>
+        <p>Le paiement est simulé : aucune donnée bancaire n’est demandée.</p>
+        <p><a href="/catalogue">Commencer par le catalogue →</a> · <a href="/livraison">Livraison</a></p>
     </section>
 
     <section class="carte">
@@ -40,6 +41,6 @@ declare(strict_types=1);
     <section class="carte">
         <h2>Accessibilité</h2>
         <p>Un lien d’évitement, des repères clavier et une réduction des animations sont prévus.
-            Une vérification complète d’accessibilité reste nécessaire. Un problème ? <a href="/contact">Écrivez-nous</a>.</p>
+            Une vérification complète d’accessibilité reste nécessaire. <a href="/contact">Formulaire de démonstration</a> : aucun e-mail n’est envoyé et aucune réponse n’est garantie.</p>
     </section>
 </div>

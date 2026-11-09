@@ -24,7 +24,7 @@ declare(strict_types=1);
             <h2 class="auth__titre">Administrateur</h2>
             <p><label for="email">Email professionnel</label><input type="email" id="email" name="email" maxlength="190" required autocomplete="username"></p>
             <p><label for="mot_de_passe">Mot de passe</label><input type="password" id="mot_de_passe" name="mot_de_passe" required autocomplete="current-password"></p>
-            <p><button type="submit" class="btn--acheter">Se connecter au back-office</button></p>
+            <p><button type="submit" class="btn--acheter">Accéder au back-office</button></p>
         </fieldset>
     </form>
     <p class="texte-aide"><?= icone('cadenas', 16) ?> Toute tentative échouée est journalisée.</p>

@@ -22,23 +22,10 @@ function euros(mixed $montant): string
     return number_format((float) $montant, 2, ',', ' ') . ' €';
 }
 
-/** Date/heure française lisible depuis « Y-m-d H:i:s ». */
+/** Date/heure française lisible depuis « Y-m-d H:i:s » (stocké UTC, affiché Europe/Paris — App\Tools\Heure). */
 function date_fr(?string $datetime, bool $avecHeure = false): string
 {
-    if ($datetime === null || $datetime === '') {
-        return '—';
-    }
-    $ts = strtotime($datetime);
-
-    if ($ts === false) {
-        return '—';
-    }
-    $format = 'd/m/Y';
-    if ($avecHeure) {
-        $format = 'd/m/Y H\hi';
-    }
-
-    return date($format, $ts);
+    return \App\Tools\Heure::formater($datetime, $avecHeure);
 }
 
 /** Libellé humain d'un statut de commande (RB-11). */

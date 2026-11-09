@@ -18,26 +18,27 @@ declare(strict_types=1);
     </ul>
 <?php endif; ?>
 
-<div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
-<table>
+<div class="tableau-defilant tableau-defilant--client" role="region" tabindex="0" aria-label="Récapitulatif de la commande">
+<table class="tableau-recapitulatif">
     <caption>Récapitulatif de votre panier</caption>
+    <colgroup><col class="col-produit"><col class="col-prix"><col class="col-qte"><col class="col-total"></colgroup>
     <thead>
-    <tr><th scope="col">Produit</th><th scope="col">Prix TTC</th><th scope="col">Qté</th><th scope="col">Total TTC</th></tr>
+    <tr><th scope="col">Produit</th><th scope="col" class="montant">Prix TTC</th><th scope="col">Qté</th><th scope="col" class="montant">Total TTC</th></tr>
     </thead>
     <tbody>
     <?php foreach ($recap['articles'] as $ligne): ?>
         <tr>
-            <td><?= e($ligne['nom']) ?> <small>(réf. <?= e($ligne['reference']) ?>)</small></td>
-            <td><?= euros($ligne['prix_unitaire']) ?></td>
-            <td><?= (int) $ligne['quantite'] ?></td>
-            <td><?= euros($ligne['total_ligne']) ?></td>
+            <td data-label="Produit"><?= e($ligne['nom']) ?> <small>(réf. <?= e($ligne['reference']) ?>)</small></td>
+            <td class="montant" data-label="Prix TTC"><?= euros($ligne['prix_unitaire']) ?></td>
+            <td data-label="Quantité"><?= (int) $ligne['quantite'] ?></td>
+            <td class="montant" data-label="Total TTC"><?= euros($ligne['total_ligne']) ?></td>
         </tr>
     <?php endforeach; ?>
     </tbody>
     <tfoot>
-    <tr><th scope="row" colspan="3">Sous-total TTC</th><td><?= euros($recap['sous_total']) ?></td></tr>
-    <tr><th scope="row" colspan="3">Frais de port <small>(<?= e($recap['port_motif']) ?>)</small></th><td><?= euros($recap['frais_port']) ?></td></tr>
-    <tr><th scope="row" colspan="3">Total simulé</th><td><strong><?= euros($recap['total']) ?></strong></td></tr>
+    <tr><th scope="row" colspan="3">Sous-total TTC</th><td class="montant"><?= euros($recap['sous_total']) ?></td></tr>
+    <tr><th scope="row" colspan="3">Frais de port <small>(<?= e($recap['port_motif']) ?>)</small></th><td class="montant"><?= euros($recap['frais_port']) ?></td></tr>
+    <tr><th scope="row" colspan="3">Total simulé</th><td class="montant"><strong><?= euros($recap['total']) ?></strong></td></tr>
     </tfoot>
 </table>
 </div>
@@ -49,7 +50,7 @@ declare(strict_types=1);
         <p>
             <label for="adresse">Adresse de livraison complète *</label>
             <input id="adresse" name="adresse" maxlength="255" required
-                   value="<?= e($client['adresse_livraison'] ?? '') ?>"
+                   value="<?= e($adresse_livraison ?? '') ?>"
                    placeholder="12 rue des Lilas, Bât. B">
         </p>
         <p>
@@ -58,13 +59,12 @@ declare(strict_types=1);
                 directement au statut « Payée »)</label>
         </p>
         <p>
-            <button type="submit">Confirmer et payer (simulé)</button>
+            <button type="submit">Confirmer et payer : <?= euros($recap['total']) ?> (simulé)</button>
         </p>
     </fieldset>
 </form>
 
 <p><small>En validant, vous acceptez les <a href="/cgv">CGV</a>. Le stock est vérifié et
-décrémenté au moment présent (RB-18) ; le prix de chaque ligne est <strong>figé</strong>
-dans la commande (RB-06) et le port gelé avec la commande (RB-20).</small></p>
+décrémenté lors de la confirmation ; le prix de chaque ligne et les frais de port sont <strong>figés</strong> dans la commande.</small></p>
 <p><small>Avant de confirmer : <a href="/livraison">livraison</a>, <a href="/retractation">rétractation</a>, <a href="/garanties">garanties</a> et <a href="/confidentialite">données personnelles</a>.</small></p>
 <p><a href="/panier">← Revenir au panier</a></p>

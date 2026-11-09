@@ -267,7 +267,7 @@ process.stdout.write(B('T4 · annulation client (UC-09, RB-11/18/20)'));
     const id = m[1];
     const detailAnnulation = await alice.get(`/mes-commandes/${id}`);
     check('détail : annulation distincte de la rétractation', (detailAnnulation.text ?? '').includes('distincte du') && (detailAnnulation.text ?? '').includes('href="/retractation"'));
-    const jA = await alice.csrf(`/mes-commandes/${id}`);
+    const jA = await alice.csrf(`/mes-commandes/${id}/annulation/confirmation`);
     const annulation = await alice.post(`/mes-commandes/${id}/annulation`, { _csrf: jA });
     check('annulation → redirection', annulation.httpStatusCode === 302, `status ${annulation.httpStatusCode}`);
     const stocks = await lireTable('produit');
@@ -324,7 +324,7 @@ process.stdout.write(B('T5 · back-office (UC-10…14, RB-13)'));
       && JSON.stringify(slugsRendusAccueil(accueilMasque.text)) === JSON.stringify(slugsRendusAccueil(accueilApresAjout.text)),
     JSON.stringify(slugsRendusAccueil(accueilMasque.text)));
   if (masqueNouveau) {
-    const jetonSuppression = await admin.csrf('/admin/produits');
+    const jetonSuppression = await admin.csrf('/admin/produit/nouveau');
     const supMasque = await admin.post(`/admin/produits/${masqueNouveau.id_produit}/suppression`, { _csrf: jetonSuppression });
     check('nettoyage du produit masqué de test', supMasque.httpStatusCode === 302
       && !(await lireTable('produit')).some((p) => p.reference === 'TEST-NOUV-MASQUE'));
@@ -571,7 +571,7 @@ process.stdout.write(B('T7 · catalogue avancé (F-01…F-05)'));
 
   // F-05 : transparence des prix
   const fiche = await anon.get('/produit/casque-sans-fil-aura');
-  contient('fiche : décomposition HT + TVA', fiche.text, 'HT + TVA');
+  contient('fiche : décomposition HT + TVA (tableau Caractéristiques)', fiche.text, 'Prix HT');
   contient('fiche : taux 20,00 %', fiche.text, '20,00');
   contient('fiche : prix TTC', fiche.text, 'TTC');
 }
@@ -715,7 +715,7 @@ process.stdout.write(B('T10 · back-office CRUD complet (F-22/23/25/26/27)'));
     hrefs.some((h) => h.includes('tri=prix_desc')), JSON.stringify(hrefs));
 
   // F-23 : suppression d'un produit jamais commandé → disparition réelle
-  const js = await admin.csrf('/admin/produits');
+  const js = await admin.csrf('/admin/produit/nouveau'); // la liste n'a plus de POST direct (confirmation d'abord)
   const sup = await admin.post(`/admin/produits/${id999}/suppression`, { _csrf: js });
   check('suppression produit → redirection', sup.httpStatusCode === 302, `status ${sup.httpStatusCode}`);
   check('produit supprimé de la table', !(await lireTable('produit')).some((p2) => p2.reference === 'TEST-999'), 'TEST-999 encore là');
@@ -810,7 +810,7 @@ process.stdout.write(B('T12 · sécurité offensive (S-01…S-10)'));
   check('le script est affiché littéralement (échappé)', (pageXss.text ?? '').includes('&lt;script&gt;'), 'pas de &lt;script&gt;');
   check('aucune balise script exécutable', !(pageXss.text ?? '').includes('<script>alert'), '<script> brut dans la page');
   const idXss = (await lireTable('produit')).find((p2) => p2.reference === 'XSS-001')?.id_produit;
-  const jx2 = await admin.csrf('/admin/produits');
+  const jx2 = await admin.csrf('/admin/produit/nouveau');
   await admin.post(`/admin/produits/${idXss}/suppression`, { _csrf: jx2 });
 
   // S-03 : IDOR — bruno ne peut lire aucune commande d'autrui
@@ -882,7 +882,7 @@ process.stdout.write(B('T13 · rôles administrateurs (RB-13, F-27)'));
   check('gestionnaire GET équipe → vrai statut 403 sans redirection', equipe.httpStatusCode === 403 && !(equipe.headers.location ?? []).length, `status ${equipe.httpStatusCode}`);
   contient('gestionnaire : page Accès refusé', equipe.text, '<h1>Accès refusé</h1>');
   contient('gestionnaire : lien de retour au back-office', equipe.text, 'href="/admin"');
-  const jetonGest = await gest.csrf('/admin/produits');
+  const jetonGest = await gest.csrf('/admin/produit/nouveau');
   check('gestionnaire : jeton CSRF valide pour les tests POST', typeof jetonGest === 'string' && /^[a-f0-9]{64}$/.test(jetonGest ?? ''));
   const avantAdmins = JSON.stringify(await lireTable('administrateur'));
   const cree = await gest.post('/admin/equipe', { _csrf: jetonGest, nom: 'X', prenom: 'Y', email: 'x@y.z', mot_de_passe: 'Xy12345678', role: 'SUPER' });

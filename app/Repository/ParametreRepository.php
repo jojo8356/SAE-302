@@ -47,10 +47,10 @@ final class ParametreRepository
         $franchise = round((float) $this->fnParam('franchise_port', '80.00'), 2);
 
         if ($marchandises >= $franchise) {
-            return ['port' => 0.0, 'motif' => 'PORT_OFFERT_A_PARTIR_DE_' . number_format($franchise, 2, '.', '')];
+            return ['port' => 0.0, 'motif' => 'frais de port offerts dès ' . number_format($franchise, 2, ',', ' ') . ' € de marchandises'];
         }
 
-        return ['port' => $portStandard, 'motif' => 'LIVRAISON_STANDARD'];
+        return ['port' => $portStandard, 'motif' => 'livraison standard (' . number_format($portStandard, 2, ',', ' ') . ' €)'];
     }
 
     /** TVA proposée par défaut à la création d'un produit (EF-ADM-01). */

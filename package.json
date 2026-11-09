@@ -24,5 +24,8 @@
   },
   "dependencies": {
     "@php-wasm/node": "0.1.28"
+  },
+  "devDependencies": {
+    "jsdom": "^31.0.0"
   }
 }

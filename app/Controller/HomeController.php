@@ -12,6 +12,7 @@ namespace App\Controller;
 use App\Config\Database;
 use App\Model\Data\Views;
 use App\Repository\CategorieRepository;
+use App\Repository\ParametreRepository;
 use App\Repository\ProduitRepository;
 use App\Security\Csrf;
 
@@ -160,12 +161,13 @@ final class HomeController extends Controller
         $statistiques = [
             'produits' => $store->count('produit'),
             'visibles' => $store->count('produit', [['visible', '=', 1]]),
-            'clients' => $store->count('client'),
-            'commandes' => $store->count('commande'),
-            'parametres' => $store->count('parametre'),
+            'categories' => $store->count('categorie'),
         ];
 
-        $this->render('home/apropos', ['statistiques' => $statistiques], 'À propos du moteur de données');
+        $this->render('home/apropos', [
+            'statistiques' => $statistiques,
+            'parametres' => (new ParametreRepository($store))->tous(),
+        ], 'À propos de MiniShop');
     }
 
     public function page404(): void

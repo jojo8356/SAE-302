@@ -11,9 +11,12 @@ declare(strict_types=1);
         <p>Le catalogue présente des produits de démonstration et leurs prix TTC. Le panier récapitule les articles, le total et les frais de port simulés avant confirmation ; la disponibilité est vérifiée au moment de la commande. La commande est enregistrée dans la maquette et consultable dans le compte.</p>
         <p>Aucune carte bancaire n’est demandée et aucun paiement n’est encaissé. Le statut « payée » peut résulter d’une simulation. Pour une vente réelle, le vendeur devra notamment préciser les moyens de paiement, les caractéristiques, le coût total, les modalités contractuelles et une confirmation sur support durable ; le bouton final devra exprimer sans ambiguïté l’obligation de paiement.</p>
     </section>
+    <section id="cgv-annulation"><h2>Annulation avant expédition</h2>
+        <p>Dans la maquette, une commande simulée peut être annulée avant son expédition simulée depuis <a href="/mes-commandes">Mes commandes</a>. Le stock est restitué et le montant total simulé, port compris, est soldé. Cette opération est distincte du droit légal de rétractation et aucun retour réel n’est traité.</p>
+    </section>
     <section id="cgv-livraison"><h2>Livraison et rétractation</h2>
         <p>La <a href="/livraison">livraison</a> n’est pas opérée dans la maquette. Les zones, les modes, les délais, les coûts et les modalités de retour réels restent à définir avant commercialisation.</p>
-        <p>Pour une vente à distance de biens, le consommateur dispose en principe de 14 jours à compter de la réception pour se rétracter, sous réserve des exceptions légales. L’annulation technique d’une commande avant expédition n’est pas la rétractation légale. Voir <a href="/retractation">rétractation et modèle de formulaire</a> pour les délais, les retours et les limites actuelles.</p>
+        <p>Pour une vente à distance de biens, le consommateur dispose en principe de 14 jours à compter de la réception pour se rétracter, sous réserve des exceptions légales (<a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000032226842">article L. 221-18 du code de la consommation</a>). L’annulation technique d’une commande avant expédition n’est pas la rétractation légale. Voir <a href="/retractation">rétractation et modèle de formulaire</a> pour les délais, les retours et les limites actuelles.</p>
     </section>
     <section id="cgv-garanties"><h2>Garanties légales</h2>
         <p>Coordonnées du professionnel répondant des garanties : <strong>à renseigner</strong>. Pour une vente réelle, les garanties légales s’appliquent indépendamment d’une éventuelle garantie commerciale. Le texte ci-dessous reproduit l’encadré réglementaire pour les biens hors animaux domestiques.</p>

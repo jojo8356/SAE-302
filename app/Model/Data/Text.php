@@ -144,7 +144,7 @@ final class Text
     {
         if (self::$transliterator === null) {
             self::$transliterator = false;
-            if (class_exists('Transliterator')) {
+            if (class_exists(\Transliterator::class)) {
                 $instance = \Transliterator::create('Any-Latin; Latin-ASCII');
                 if ($instance !== null) {
                     self::$transliterator = $instance;
@@ -159,7 +159,7 @@ final class Text
     private static function collator(): mixed
     {
         if (self::$collator === null) {
-            if (class_exists('Collator')) {
+            if (class_exists(\Collator::class)) {
                 $collator = new \Collator('fr_FR');
                 $collator->setStrength(\Collator::PRIMARY); // insensible casse ET accents
                 self::$collator = $collator;

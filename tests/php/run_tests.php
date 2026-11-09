@@ -462,8 +462,7 @@ jouer('T-27', ['regle' => 'EF-VIS-01', 'attendu' => 'OK', 'travail' => static fu
 jouer('T-28', ['regle' => 'ENF-14', 'attendu' => 'ERREUR:RB15_MONTANT_CALCULE_INTERDIT', 'travail' => static function (StoreInterface $store): void {
     // frais de port calculés avant validation, figés ensuite, non saisissables
     $ports = new ParametreRepository($store);
-    passe('port standard 4,90', $ports->computeShipping(63.70) === ['port' => 4.90, 'motif' => 'Livraison standard (4,90 €)']
-        || $ports->computeShipping(63.70)['port'] === 4.90);
+    passe('port standard 4,90, motif affiché en français', $ports->computeShipping(63.70) === ['port' => 4.90, 'motif' => 'livraison standard (4,90 €)']);
     passe('franchise à 80,00 €', $ports->computeShipping(80.00)['port'] === 0.0);
     $commande = commandeAvec($store, 'alice@example.com', ['TST-900' => 1]); // 12 € → port 4,90
     (CommandeRepository::for($store))->confirmOrder((int) $commande['id_commande'], null, false);

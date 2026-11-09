@@ -16,7 +16,7 @@ declare(strict_types=1);
 <form method="post" action="/compte">
     <?= csrf_field() ?>
     <fieldset>
-        <legend>État civil et coordonnées (l'email reste unique — RB-01)</legend>
+        <legend>État civil et coordonnées (l'email reste unique)</legend>
         <p><label for="nom">Nom *</label><input id="nom" name="nom" maxlength="100" required value="<?= e($client['nom'] ?? '') ?>"></p>
         <p><label for="prenom">Prénom *</label><input id="prenom" name="prenom" maxlength="100" required value="<?= e($client['prenom'] ?? '') ?>"></p>
         <p><label for="email">Email *</label><input type="email" id="email" name="email" maxlength="190" required value="<?= e($client['email'] ?? '') ?>"></p>
@@ -32,7 +32,7 @@ declare(strict_types=1);
 <form method="post" action="/compte/mot-de-passe">
     <?= csrf_field() ?>
     <fieldset>
-        <legend>L'ancien mot de passe est exigé ; le nouveau est re-haché (RB-12)</legend>
+        <legend>L'ancien mot de passe est exigé ; le nouveau est re-haché</legend>
         <p><label for="ancien">Ancien mot de passe *</label><input type="password" id="ancien" name="ancien_mot_de_passe" required></p>
         <p><label for="nouveau">Nouveau mot de passe * (8 min.)</label><input type="password" id="nouveau" name="nouveau_mot_de_passe" minlength="8" required></p>
         <p><label for="confirmation">Confirmation *</label><input type="password" id="confirmation" name="confirmation" minlength="8" required></p>

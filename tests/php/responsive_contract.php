@@ -87,6 +87,27 @@ $check('largeur minimale du tableau bornée', preg_match('/\.tableau-defilant ta
 $check('taille de police des tableaux ≥ 14 px sur mobile', preg_match('/@media \(max-width: 40em\)[\s\S]*?table \{[^}]*font-size: var\(--t-sm\)/', $css) === 1);
 $check('panier en cartes sous 560 px (reflow 1.4.10)', str_contains($css, '.tableau-defilant--carte') && str_contains($css, 'attr(data-label)'));
 $check('cellules du panier étiquetées (data-label)', substr_count($htmlVues, 'data-label=') >= 5);
+$commandeMes = (string) file_get_contents($racine . '/app/View/commande/mes.php');
+$commandeValider = (string) file_get_contents($racine . '/app/View/commande/valider.php');
+$check('historique et récapitulatif deviennent des cartes étiquetées sur mobile',
+    str_contains($commandeMes, 'tableau-defilant--client')
+    && str_contains($commandeValider, 'tableau-defilant--client')
+    && str_contains($css, '.tableau-defilant--client tbody td::before')
+    && str_contains($css, 'content: attr(data-label)'));
+$check('montant, statut et détail de l’historique restent identifiés',
+    str_contains($commandeMes, 'data-label="Montant TTC"')
+    && str_contains($commandeMes, 'data-label="Statut"')
+    && str_contains($commandeMes, 'data-label="Détail"'));
+$check('récapitulatif mobile : produit, quantité, prix et total identifiés',
+    str_contains($commandeValider, 'data-label="Produit"')
+    && str_contains($commandeValider, 'data-label="Quantité"')
+    && str_contains($commandeValider, 'data-label="Prix TTC"')
+    && str_contains($commandeValider, 'data-label="Total TTC"'));
+$check('totaux du récapitulatif restent ensemble sur mobile',
+    str_contains($css, '.tableau-recapitulatif tfoot tr')
+    && str_contains($css, '.tableau-recapitulatif tfoot td')
+    && str_contains($commandeValider, 'Confirmer et payer : <?= euros($recap[\'total\']) ?>'));
+
 
 // ------------------------------------------------------------ 4. typographie
 echo "\n4. Typographie fluide et lisibilité\n";
@@ -113,7 +134,7 @@ $check('paysage mobile traité (orientation: landscape)', str_contains($css, '(o
 $check('cibles tactiles élargies (pointer: coarse)', str_contains($css, '(pointer: coarse)'));
 $check('grilles à deux colonnes empilées à 64em', preg_match('/@media \(max-width: 64em\)[\s\S]*?\.catalogue[\s\S]*?grid-template-columns: minmax\(0, 1fr\)/', $css) === 1);
 $check('paliers en em, pas en px (zoom du texte respecté)', preg_match('/@media \((max|min)-width: \d+px\)/', $css) !== 1);
-$check('filtres placés après les résultats sous 45em', str_contains($css, 'order: 2'));
+$check('filtres placés avant les résultats sous 45em', preg_match('/\.catalogue > \.panneau-filtres\s*\{[^}]*order:\s*0/s', $css) === 1);
 $check('grille de produits sans débordement (minmax(0, 1fr))', substr_count($css, 'minmax(0, 1fr)') >= 3);
 
 // ------------------------------------------------------ 6. adaptation continue

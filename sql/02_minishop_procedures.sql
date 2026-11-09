@@ -763,7 +763,10 @@ END $$
 -- ---------------------------------------------------------------------
 -- 15. sp_cancel_order — annulation par le client (EF-CLI-05, RB-18) :
 --     restauration ligne à ligne du stock PUIS changement de statut,
---     le tout dans une transaction unique (aucune ligne « orpheline »).
+--     le tout dans une transaction unique. Les lignes sont CONSERVEES
+--     comme historique de ce qui avait ete commande ; seuls les
+--     montants sont soldes (RB-20) et le total d'origine est memorise
+--     dans montant_avant_annulation.
 -- ---------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS sp_cancel_order $$
 CREATE PROCEDURE sp_cancel_order (
@@ -780,7 +783,14 @@ BEGIN
   DECLARE cur CURSOR FOR
       SELECT id_produit, quantite FROM ligne_commande WHERE id_commande = p_id_commande;
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_done = 1;
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION
+  BEGIN
+    ROLLBACK;
+    RESIGNAL;
+  END;
 
+  -- Verrou maintenu jusqu’au COMMIT pour éviter une double restitution.
+  START TRANSACTION;
   SELECT id_client, statut INTO v_id_client, v_statut
     FROM commande WHERE id_commande = p_id_commande FOR UPDATE;
   IF v_statut IS NULL THEN
@@ -793,25 +803,26 @@ BEGIN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'COMMANDE_NON_ANNULABLE';
   END IF;
 
-  START TRANSACTION;
-    -- La restitution du stock n'est PAS faite ici : DELETE sur ligne_commande
-    -- declenche trg_ligne_restore_stock, qui rend les unites ligne par ligne.
-    -- Le cursor sert uniquement a memoriser les quantites restituees pour le
-    -- message renvoye a l'IHM (et a prouver qu'on sait lire OLD/NEW... depuis
-    -- une procedure). Le trigger reste la source de verite (RB-18).
+    -- La restitution du stock est faite ici, ligne a ligne (RB-18) : les
+    -- lignes ne sont PLUS supprimees (elles restent l'historique de la
+    -- commande annulee), donc trg_ligne_restore_stock n'est plus le
+    -- mecanisme de restitution pour ce parcours ; il continue de couvrir
+    -- toute suppression reelle de ligne.
     OPEN cur;
     SET @qte_restauree = 0;
     lp: LOOP
       FETCH cur INTO v_id_produit, v_quantite;
       IF v_done = 1 THEN LEAVE lp; END IF;
+      UPDATE produit SET stock = stock + v_quantite WHERE id_produit = v_id_produit;
       SET @qte_restauree = @qte_restauree + v_quantite;
     END LOOP;
     CLOSE cur;
-    DELETE FROM ligne_commande WHERE id_commande = p_id_commande;
-    -- Le port est annule avec les lignes : une commande annulee n'a plus rien a
-    -- facturer, et la formule RB-15 (montant = lignes + port) doit rester vraie a
-    -- chaque ecriture, y compris pour ANNULEE (le trigger la verifie sans condition).
+    -- RB-20 : une commande annulee n'a plus rien a facturer — port et montant
+    -- sont soldes a 0, et le total d'origine est memorise pour l'affichage.
+    -- Le trigger RB-15 admet cet etat solde (ANNULEE et montant 0) comme seul
+    -- ecart a la formule (montant = lignes + port).
     UPDATE commande SET statut = 'ANNULEE',
+                        montant_avant_annulation = montant_total,
                         frais_port = 0.00,
                         montant_total = 0.00,
                         commentaire = IFNULL(commentaire, 'Annulation demandée par le client')

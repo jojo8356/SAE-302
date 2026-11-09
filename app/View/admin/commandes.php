@@ -36,23 +36,24 @@ declare(strict_types=1);
 
 <p><?= count($commandes) ?> commande(s) affichée(s) (100 max)</p>
 
-<div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
-<table>
+<div class="tableau-defilant tableau-defilant--admin" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
+<table class="tableau-commandes">
+    <colgroup><col class="col-numero"><col class="col-date"><col class="col-client"><col class="col-statut"><col class="col-montant"><col class="col-detail"></colgroup>
     <thead>
     <tr>
         <th scope="col">Numéro</th><th scope="col">Date</th><th scope="col">Client</th>
-        <th scope="col">Statut</th><th scope="col">Montant TTC</th><th scope="col">Détail</th>
+        <th scope="col">Statut</th><th scope="col" class="montant">Montant TTC</th><th scope="col">Détail</th>
     </tr>
     </thead>
     <tbody>
     <?php foreach ($commandes as $commande): ?>
         <tr>
-            <td><?= e($commande['numero']) ?></td>
-            <td><?= e(date_fr($commande['date_commande'], true)) ?></td>
-            <td><?= e($commande['client'] ?? ($commande['client_nom'] ?? '—')) ?></td>
-            <td><?= e(statut_libelle($commande['statut'])) ?></td>
-            <td><?= euros($commande['montant_total']) ?></td>
-            <td><a href="/admin/commandes/<?= (int) $commande['id_commande'] ?>">Ouvrir →</a></td>
+            <td data-label="Numéro"><?= e($commande['numero']) ?></td>
+            <td data-label="Date"><?= e(date_fr($commande['date_commande'], true)) ?></td>
+            <td data-label="Client"><?= e($commande['client'] ?? ($commande['client_nom'] ?? '—')) ?></td>
+            <td class="statut" data-label="Statut"><?= e(statut_libelle($commande['statut'])) ?></td>
+            <td class="montant" data-label="Montant TTC"><?= euros($commande['montant_total']) ?></td>
+            <td data-label="Détail"><a href="/admin/commandes/<?= (int) $commande['id_commande'] ?>">Ouvrir →</a></td>
         </tr>
     <?php endforeach; ?>
     </tbody>

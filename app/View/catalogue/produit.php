@@ -28,21 +28,26 @@ $stock = (int) $produit['stock'];
             Référence : <strong><?= e($produit['reference']) ?></strong>
         </p>
 
-        <h2>Description</h2>
-        <p><?= e($produit['description']) ?></p>
 
         <h2>Caractéristiques</h2>
         <div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
-<table class="tableau-nombres">
+<table class="tableau-caracteristiques">
             <caption>Informations produit</caption>
             <tbody>
             <tr><th scope="row">Prix HT</th><td><?= euros($produit['prix_ht']) ?></td></tr>
-            <tr><th scope="row">Taux de TVA</th><td><?= e(number_format((float) $produit['tva'], 2, ',', '')) ?> %</td></tr>
+            <tr><th scope="row">TVA</th><td><?= e(number_format((float) $produit['tva'], 2, ',', '')) ?> %</td></tr>
             <tr><th scope="row">Prix TTC</th><td><?= euros($produit['prix_ttc']) ?></td></tr>
-            <tr><th scope="row">Disponibilité</th><td><?= badge_etat((string) $etat_stock) ?></td></tr>
+            <tr><th scope="row">Disponibilité</th><td><?php if ($stock > 0): ?><?= badge_stock($stock) ?> · <?= badge_etat((string) $etat_stock) ?><?php else: ?>Rupture de stock<?php endif; ?></td></tr>
             </tbody>
         </table>
 </div>
+        <h2>Description</h2>
+        <?php if (trim((string) ($produit['description'] ?? '')) !== ''): ?>
+            <p><?= e($produit['description']) ?></p>
+        <?php else: ?>
+            <p>Aucune description n'est disponible pour ce produit pour le moment.</p>
+        <?php endif; ?>
+
     </div>
 
     <aside class="achat carte" aria-label="Acheter ce produit">

@@ -1,6 +1,7 @@
 # MiniShop — CI GitHub Actions (dev) — adaptation de .gitlab-ci.yml pour GitHub
 # Contexte : GitLab reste la cible de prod (barème CT-09, §14.2), mais le dev
-# avant la prod se fait sur GitHub. Ce workflow reproduit 1:1 les 6 jobs GitLab
+# avant la prod se fait sur GitHub. Ce workflow reproduit 1:1 les 6 jobs GitLab,
+# plus un 7e propre à GitHub (dev-router, matrice Linux+Windows — tests/php/dev_router_test.php)
 # en syntaxe GitHub Actions, avec les mêmes garanties : syntaxe PHP bloquante,
 # 29 tests SQL, contrôles sécurité, PlantUML.
 #
@@ -75,9 +76,9 @@ jobs:
           tools: none
       - name: Lint app + public
         run: |
-          echo "== php -l sur app/ public/ =="
+          echo "== php -l sur app/ public/ scripts/ tests/php/ =="
           if [ ! -d app ] && [ ! -d public ]; then echo "aucun dossier app/public, skip"; exit 0; fi
-          find app public -name '*.php' -print0 | xargs -0 -n1 -P4 php -l
+          find app public scripts tests/php -name '*.php' -print0 | xargs -0 -n1 -P4 php -l
           echo "✓ syntaxe OK"
 
   # Dépréciations : les suites isolées ne créent ni base SQL ni données E2E.
@@ -137,6 +138,219 @@ jobs:
           node-version: '22'
       - run: npm ci --ignore-scripts
       - run: node tests/node/e2e_isolation.mjs
+
+  # -----------------------------------------------------------------
+  # 1b. Routeur de développement `php -S` (scripts/dev-router.php) :
+  #     suite noire tests/php/dev_router_test.php — vrai serveur intégré
+  #     lancé en sous-processus (démarrage, fichiers réels de public/,
+  #     404 du frontal, traversées). Matrice ubuntu + windows : c'est le
+  #     seul endroit où le lancement Windows/XAMPP (chemins, séparateurs
+  #     %5c, cwd étranger) est testé pour de vrai, PHP natif oblige.
+  #     MINISHOP_ROUTER_TEST_STRICT=1 : un SKIP y est un échec.
+  # -----------------------------------------------------------------
+  dev-router:
+    name: dev-router (php -S ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    env:
+      MINISHOP_ROUTER_TEST_STRICT: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, intl
+          coverage: none
+          tools: none
+      - name: Tests unitaires en PHP natif (ext-intl présente)
+        run: php tests/php/unit_tests.php
+      - name: Tests du routeur de développement
+        run: php tests/php/dev_router_test.php
+
+  # -----------------------------------------------------------------
+  # 1c. E2E UI (clics réels sur les pages) : Admin > Catégories —
+  #     doublon de nom refusé, catégorie existante intacte ; et Panier —
+  #     bouton « Valider ma commande » (vrai <button>, feuille servie).
+  #     scripts/ui-e2e-*.mjs pilotent le DOM (jsdom) contre le vrai
+  #     serveur php -S ; les régressions sont aussi verrouillées en PHP
+  #     natif avant les parcours UI (categorie_doublon_test.php,
+  #     panier_cta_test.php).
+  # -----------------------------------------------------------------
+  ui-e2e:
+    name: ui-e2e (clics Admin > Catégories)
+    runs-on: ubuntu-latest
+    env:
+      UI_TEST_INSTANCE_JETABLE: "1" # runner GitHub Actions jetable
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, intl
+          coverage: none
+          tools: none
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install dépendances dev (jsdom, php-wasm)
+        run: npm ci --ignore-scripts
+      - name: Régression doublon de catégorie (Repository, PHP natif)
+        run: php tests/php/categorie_doublon_test.php
+      - name: Régression bouton panier (vue + CSS + CSP, PHP natif)
+        run: php tests/php/panier_cta_test.php
+      - name: Régression page À propos (contenu visiteur, PHP natif)
+        run: php tests/php/apropos_test.php
+      - name: Régression heures décalées (UTC→Europe/Paris, PHP natif)
+        run: php tests/php/heure_test.php
+      - name: Régression adresse de livraison incomplète (préremplissage, PHP natif)
+        run: php tests/php/adresse_livraison_test.php
+      - name: Régression annulation/suppressions sans confirmation (PHP natif)
+        run: php tests/php/actions_destructrices_test.php
+      - name: Régression stocks — mode par défaut écrasant (PHP natif)
+        run: php tests/php/stocks_defaut_test.php
+      - name: Régression pied de page — pages Aide/Livraison/Confidentialité/Rétractation (PHP natif)
+        run: php tests/php/pages_pied_de_page_test.php
+      - name: Régression catalogue — filtres en haut derrière « Filtrer » (PHP natif)
+        run: php tests/php/catalogue_filtres_test.php
+      - name: Régression fiche produit — tableau Caractéristiques tenu en page (PHP natif)
+        run: php tests/php/fiche_produit_test.php
+      - name: Régression panier — mise en page du tableau (PHP natif)
+        run: php tests/php/panier_tableau_test.php
+      - name: Régression commandes admin — colonne Statut tenue en page (PHP natif)
+        run: php tests/php/commandes_tableau_test.php
+      - name: Régression catégories admin — page tenue en page (PHP natif)
+        run: php tests/php/categories_tableau_test.php
+      - name: Régression alignement Produit et Référence, panier stocks alertes (PHP natif)
+        run: php tests/php/alignement_colonnes_test.php
+      - name: Régression formulaires produit, catégories, produits, catalogue (PHP natif)
+        run: php tests/php/formulaires_admin_test.php
+      - name: Régression divers panier, Top 5, photos, description, pied de page, contact (PHP natif)
+        run: php tests/php/divers_test.php
+      - name: Régression codes techniques visibles, vues, messages, motifs, historique (PHP natif)
+        run: php tests/php/codes_techniques_test.php
+      - name: Régression CGV article 4, annulation avant expédition et pas rétractation (PHP natif)
+        run: php tests/php/cgv_retractation_test.php
+      - name: Régression mentions légales, éditeur, contact, hébergeur, BUT2 (PHP natif)
+        run: php tests/php/mentions_legales_test.php
+      - name: Régression contact, réponse non promise, données cohérentes (PHP natif)
+        run: php tests/php/contact_coherence_test.php
+      - name: Régression annulation, historique conservé, montant soldé (PHP natif)
+        run: php tests/php/annulation_historique_test.php
+      - name: Régression valider ma commande, récapitulatif tenu en page à 375 px (PHP natif)
+        run: php tests/php/valider_recap_test.php
+      - name: Regression PHP - Inscription erreurs simultanees et saisie conservee (echec attendu si le correctif est absent)
+        run: php tests/php/inscription_erreurs_test.php
+      - name: Regression PHP - Mes commandes tableau 375px et legende (echec attendu si le correctif est absent)
+        run: php tests/php/mes_commandes_tableau_test.php
+      - name: Données de démonstration d'usine (comptes de démo du seed)
+        run: php scripts/seed.php
+      - name: Démarrer l'application (php -S + dev-router)
+        run: |
+          php -S 127.0.0.1:8093 -t public scripts/dev-router.php > ui-server.log 2>&1 &
+          echo $! > ui-server.pid
+      - name: E2E UI — Admin > Catégories (clics)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-categories.mjs
+      - name: E2E UI — Panier, bouton « Valider ma commande » (clics)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-panier.mjs
+      - name: E2E UI — Page À propos (navigation + contenu visiteur)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-apropos.mjs
+      - name: E2E UI — Heures des commandes (Paris à l'écran, pas UTC)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-heure.mjs
+      - name: E2E UI — Annulation et suppressions confirmées (pas d'action définitive en un clic)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-annulation.mjs
+      - name: E2E UI — Stocks, « Ajouter / retirer » par défaut (+3 sans toucher au mode)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-stocks.mjs
+      - name: E2E UI — Pied de page (Aide, Livraison, Confidentialité, Rétractation liées et en 200)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-pied-de-page.mjs
+      - name: E2E UI — Catalogue format mobile (filtres en haut, repliés derrière « Filtrer »)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-catalogue.mjs
+      - name: E2E UI — Fiche produit (tableau Caractéristiques, valeurs affichées, tenu en page)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-produit.mjs
+      - name: E2E UI — Panier, mise en page du tableau (légende, alignements, totaux)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-panier-tableau.mjs
+      - name: E2E UI — Commandes admin, colonne Statut tenue en page (pilotage)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-commandes-tableau.mjs
+      - name: E2E UI — Catégories admin, page tenue en page (boutons entiers)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-categories-tableau.mjs
+      - name: E2E UI — Alignement Produit et Référence (panier, stocks, alertes)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-alignement.mjs
+      - name: E2E UI — Formulaires alignés (produit, catégories, produits, catalogue)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-formulaires.mjs
+      - name: E2E UI — Divers (panier, Top 5, photos, description, pied de page, contact)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-divers.mjs
+      - name: E2E UI — Codes techniques (panier, validation, historique, pages légales, back-office)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-codes.mjs
+      - name: E2E UI — CGV article 4 (annulation avant expédition, page Rétractation, détail commande)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-retractation.mjs
+      - name: E2E UI — Mentions légales (éditeur, contact, hébergeur, BUT2)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-mentions.mjs
+      - name: E2E UI — Contact (réponse non promise, confidentialité, mentions légales, pied de page)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-contact.mjs
+      - name: E2E UI — Annulation (articles conservés, total avant annulation, montant soldé)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-annulation-historique.mjs
+      - name: E2E UI — Valider à 375 px (récapitulatif, libellés et montants ensemble, total au bouton)
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-valider.mjs
+      - name: E2E navigateur - erreurs d inscription simultanees et saisie conservee
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-inscription.mjs --port=8138
+      - name: E2E navigateur - Mes commandes montant et detail en page a 375px
+        env:
+          UI_BASE_URL: http://127.0.0.1:8093
+        run: node scripts/ui-e2e-mes-commandes.mjs --port=8140
+      - name: Arrêter le serveur et publier son journal si échec
+        if: always()
+        run: |
+          kill "$(cat ui-server.pid)" 2>/dev/null || true
+          cat ui-server.log || true
 
   # -----------------------------------------------------------------
   # 2. Conventions PSR-12 : signalées, non bloquantes (allow_failure)

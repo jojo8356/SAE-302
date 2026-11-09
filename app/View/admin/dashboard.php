@@ -47,18 +47,18 @@ declare(strict_types=1);
     <?php if ($alertes === []): ?>
         <p class="message message--succes"><?= icone('coche', 20) ?><span>Aucune alerte : tous les stocks sont au-dessus de leur seuil.</span></p>
     <?php else: ?>
-        <div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
-            <table class="tableau-nombres">
-                <caption>Produits sous le seuil — le stock ne peut jamais devenir négatif (RB-03)</caption>
-                <thead><tr><th scope="col">Référence</th><th scope="col">Produit</th><th scope="col">Stock</th><th scope="col">Seuil</th><th scope="col">État</th></tr></thead>
+        <div class="tableau-defilant tableau-defilant--admin" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
+            <table class="tableau-alertes tableau-nombres">
+                <caption>Produits sous le seuil — le stock ne peut jamais devenir négatif</caption>
+                <thead><tr><th scope="col" class="reference">Référence</th><th scope="col" class="produit">Produit</th><th scope="col">Stock</th><th scope="col">Seuil</th><th scope="col">État</th></tr></thead>
                 <tbody>
                 <?php foreach ($alertes as $alerte): ?>
                     <tr>
-                        <td><?= e($alerte['reference']) ?></td>
-                        <td><?= e($alerte['nom']) ?></td>
-                        <td><?= (int) $alerte['stock'] ?></td>
-                        <td><?= (int) $alerte['seuil_alerte'] ?></td>
-                        <td><?= badge_etat((string) $alerte['etat']) ?></td>
+                        <td class="reference" data-label="Référence"><?= e($alerte['reference']) ?></td>
+                        <td class="produit" data-label="Produit"><?= e($alerte['nom']) ?></td>
+                        <td data-label="Stock"><?= (int) $alerte['stock'] ?></td>
+                        <td data-label="Seuil"><?= (int) $alerte['seuil_alerte'] ?></td>
+                        <td data-label="État"><?= badge_etat((string) $alerte['etat']) ?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
@@ -89,6 +89,9 @@ declare(strict_types=1);
 
 <section>
     <h2>Top 5 produits</h2>
+    <?php if ($rapport['top_produits'] === []): ?>
+        <p>Aucun produit vendu pour le moment.</p>
+    <?php else: ?>
     <div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
         <table class="tableau-nombres">
             <thead><tr><th scope="col">#</th><th scope="col">Produit</th><th scope="col">Unités</th><th scope="col">CA</th></tr></thead>
@@ -104,5 +107,6 @@ declare(strict_types=1);
             </tbody>
         </table>
     </div>
+    <?php endif; ?>
     <p><a class="btn btn--secondaire btn--sm" href="/admin/commandes">Voir les commandes →</a></p>
 </section>

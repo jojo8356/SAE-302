@@ -332,6 +332,18 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] Suites PHP-WASM : 293 vérifications unitaires et 43 tests PHPUnit locaux ; E2E isolé : 309 contrôles ; sécurité : 10 contrôles et autotest. CI du commit `690a2fe` réussie (PHP natif 8.2/8.5, PHPUnit, E2E WASM et MySQL 8 jetable).
 - [!] Auto-évaluation : les tests utilisent des fichiers temporaires. Le scanner reste lexical et partiel ; zéro candidat ne garantit pas l’absence de code inutilisé. La suppression casse d’éventuels appels externes à cette méthode publique. PHP natif, MariaDB et navigateur réel non disponibles localement.
 
+## 6 quatervicies. Intégration de `main` et résolution des conflits de la PR
+
+- [x] Conserver le formulaire Contact selon le choix de l’utilisateur : journal local, aucun e-mail, aucune réponse garantie ; contrôler la cohérence de la politique de confidentialité.
+- [x] Exiger `UI_BASE_URL` et `UI_TEST_INSTANCE_JETABLE=1` pour les 23 parcours UI introduits par `main` ; ne plus réinitialiser ni restaurer automatiquement les données locales. Ces parcours modifient toujours le serveur choisi : il doit être jetable.
+- [x] Actualiser les inventaires structurels après l’ajout des fichiers de `main` ; ils n’attestent pas que les fonctionnalités associées sont validées.
+- [x] Exécuter les suites PHP-WASM et le parcours E2E isolé : suites PHP historiques vertes, 43 tests PHPUnit locaux et 309 vérifications E2E ; données hôte inchangées.
+- [x] Réconcilier les assertions de régression avec les parcours et la feuille CSS réellement chargée : suites PHP `*_test.php` vertes en WASM après correction des deux derniers tests ; 23 parcours UI verts en jsdom contre une copie jetable, dans l’ordre de la CI. Les images sont réutilisées par type conformément au choix de l’utilisateur ; le formulaire Contact est conservé.
+- [ ] Rejouer les suites en PHP natif et vérifier réellement tableaux, formulaires et contrastes sur navigateur à 375 px ; les contrats CSS et jsdom ne prouvent pas le rendu visuel.
+- [ ] Revoir les changements d’annulation SQL et JSON, notamment les accès concurrents : le JSON ne verrouille pas les transactions entre processus et la lecture précède la transaction, donc une double annulation concurrente reste possible ; ne pas utiliser ce stockage pour des opérations concurrentes réelles. La colonne `commande.montant_avant_annulation` et les procédures/déclencheurs modifiés nécessitent une migration non destructive des bases existantes, à concevoir et tester sur une base jetable sauvegardée. Le scénario SQL T21 étendu, le verrou et le rollback de `sp_cancel_order` n’ont pas été exécutés sur MariaDB ici. Ne pas lancer les scripts de création/seed sur une base existante.
+- [!] Non joués dans cette sandbox : PHP natif, MariaDB, navigateur réel/WAVE, compilation des dépréciations. Ne pas déduire la validité SQL ou responsive réelle des seuls contrôles WASM.
+- [ ] Revoir le résultat de la CI native après mise à jour de la branche de la PR, sans fusionner la PR ni modifier `dev`. Ne pas considérer l’intégration totalement validée tant que SQL, concurrence JSON et responsive réel restent non vérifiés.
+
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 
 - [!] **Noms, prénoms, numéros étudiants** des 3 membres + emails → README §Membres et CDC §3.3 (aucune identité ne peut être inventée).

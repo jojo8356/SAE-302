@@ -3,6 +3,7 @@
 Deuxième document du rendu (barème iii : l'application **et** les deux documents ; pénalité « manque le document de test et de validation » : **-3 points**).
 Complément du §15 du cahier des charges : dispositif, cas détaillés, exécution, registre d'anomalies, PV de recette et traçabilité.
 Les tests de base sont **exécutés et rejouables** ; les tests fonctionnels constituent la recette à dérouler sur l'application (lots L8→L13).
+**Mise à jour (fin de campagne corrective, signalements n° 1 à 26)** : l'application est livrée ; le plan de recette ci-dessous a été **aligné sur le comportement réel actuel** (messages en français sans codes techniques, confirmations avant toute action définitive, pages publiques complétées, tenue en page à 375 px des tableaux et des cadres) et **complété** des cas issus des signalements (F-34 à F-48). La plupart des cas sont désormais **exécutés par la campagne automatisée** (`npm run test:all` : suites PHP + E2E ; CI GitHub 9 jobs, verte) — la colonne « Statut » dit pour chacun s'il est automatisé (avec la suite qui le prouve) ou s'il reste à rejouer à la main, étapes à jour à l'appui.
 
 ## 1. Dispositif
 
@@ -54,6 +55,8 @@ Commande unique : `./scripts/run_sql_tests.sh` (manifeste `tests/sql/manifest.tx
 
 ## 3. Tests fonctionnels (recette de l'application)
 
+Lecture : **« exécuté (automatisé) »** = les étapes et résultats attendus sont assertés par la suite indiquée, rejouée par `npm run test:all` et par la CI (9 jobs) ; **« retest manuel »** = la structure est prouvée automatiquement, la copie d'écran à 375 px se contrôle à l'œil avec les étapes ci-dessous ; **« prêt à rejouer (manuel) »** = pas encore d'automatisation, étapes à jour fournies. Viewport des cas « 375 px » : **375 × 667**. Comptes : voir §1.
+
 | ID | Titre | Préconditions | Étapes | Résultats attendus | Règles / ENF | Statut |
 |---|---|---|---|---|---|---|
 | F-00 | Installation de bout en bout | base vierge, `git clone`, `env.php` copié | copier `.env.example` vers `.env`, exécuter `./run.sh --db` (ou `php scripts/db_init.php --switch`) puis `./run.sh` (équivalent manuel : `php -S 127.0.0.1:8000 -t public scripts/dev-router.php`) | sortie : tables 8, vues 3, fonctions 1, procédures 17, triggers ≥ 5, 36 produits, 3 clients ; page d'accueil en HTTP 200 ; le tout en ≤ 15 min | ENF-13 | prêt à rejouer |
@@ -95,13 +98,13 @@ Commande unique : `./scripts/run_sql_tests.sh` (manifeste `tests/sql/manifest.tx
 
 | Champ | F-16 — Validation complète d'une commande | F-18 — Stock insuffisant sur la 2ᵉ ligne | F-21 — Annulation et restitution |
 |---|---|---|---|
-| Préconditions | seed chargé ; `alice@example.com` connecté ; panier = {`CASQ-005` × 2} | panier = {`CASQ-005` × 1, `MICRO-007` × 3} avec `MICRO-007` en stock 2 | commande `EN_PREPARATION` contenant `SAC-008` × 2 ; stock `SAC-008` = 20 |
-| Données en entrée | `id_client` (session), adresse « 12 rue de France, 06000 Nice », jeton CSRF | idem, lignes du panier en session | `id_commande`, motif de la commande annulée |
-| Étapes | 1. `/panier` → « Passer la commande » ; 2. sélectionner l'adresse ; 3. confirmer | 1. idem ; 2. confirmer | 1. `/mes-commandes/{id}` ; 2. « Annuler » ; 3. saisir le motif et confirmer |
-| Résultats attendus | HTTP 200 ; commande `CMD2026-NNNNNN` en `EN_PREPARATION` ; montant 309,60 € ; 1 ligne 2 × 154,80 € ; stock 16 → 14 ; traces `NULL → BROUILLON → EN_PREPARATION` ; panier vidé | HTTP 409 ; message traduit ; `COUNT(commande)` inchangé ; stock `CASQ-005` inchangé (rollback complet) ; panier conservé pour correction | statut `ANNULEE` ; lignes purgées ; stock 20 → 22 **exactement** (un seul crédit) ; trace `EN_PREPARATION → ANNULEE` ; plus aucune action possible |
-| Preuves | captures + les 3 requêtes `SELECT` de contrôle (`commande`, `ligne_commande`, `produit`, `order_status_history`) | requêtes avant/après + ligne de journal | requête de stock + historique |
+| Préconditions | seed chargé ; `alice@example.com` connectée, adresse au profil ; panier = {`CASQ-005` × 2} | panier = {`CASQ-005` × 1, `MICRO-007` × 3} avec `MICRO-007` en stock 2 (panier constitué avant épuisement ou POST forcé) | commande « En préparation » contenant `SAC-008` × 2 ; stock `SAC-008` = 22 |
+| Données en entrée | `id_client` (session), adresse du profil « 12 rue de France, 06000 Nice » (pré-remplie), jeton CSRF | idem, lignes du panier en session | `id_commande`, confirmation explicite sur la page dédiée |
+| Étapes | 1. `/panier` → bouton « Valider ma commande » ; 2. page Valider : récapitulatif tenu en page (F-40) ; 3. bouton « Confirmer et payer : 309,60 € (simulé) » | 1. idem ; 2. confirmer | 1. `/mes-commandes/{id}` ; 2. « Annuler la commande » → **page de confirmation** (la recharger ne fait rien) ; 3. confirmer en POST |
+| Résultats attendus | HTTP 200 ; commande `CMD2026-NNNNNN` « En préparation » ; montant 309,60 € (port offert dès 80 €) ; 1 ligne 2 × 154,80 € ; stock 18 → 16 ; historique de création présent ; panier vidé | message « Stock insuffisant pour cette quantité. » en français ; aucune commande créée ; stock `CASQ-005` inchangé (rollback complet) ; panier conservé pour correction | statut « Annulée » ; **lignes conservées en historique** (quantités d'origine, restitution dite ligne par ligne) ; stock 22 → 24 **exactement** (un seul crédit) ; montant soldé 0,00 € avec « Total de la commande avant annulation » conservé ; plus aucune action possible |
+| Preuves | captures + contrôles affichés (détail commande, ligne, stock, historique) ; côté base : les 3 requêtes `SELECT` de contrôle (`commande`, `ligne_commande`, `produit`, `order_status_history`) | pages avant/après + compteurs (commandes, stocks) inchangés | détail de la commande annulée (lignes et montants soldés) + historique + stock relu |
 | Règles vérifiées | RB-04, RB-06, RB-11, RB-15, RB-18 | RB-04, RB-18, ENF-16 | RB-09, RB-11, RB-18 |
-| Statut | planifié (S10) | planifié (S10) | planifié (S10) |
+| Statut | exécuté (automatisé : `wasm-e2e`, `ui-e2e-valider`, `ui-e2e-mes-commandes`) | exécuté (automatisé : `features_test`, `wasm-e2e`) | exécuté (automatisé : `ui-e2e-annulation`, `ui-e2e-annulation-historique`, `annulation_historique_test`) |
 
 ## 4. Tests de sécurité (offensifs)
 
@@ -110,9 +113,9 @@ Commande unique : `./scripts/run_sql_tests.sh` (manifeste `tests/sql/manifest.tx
 | S-01 | Injection SQL dans la recherche | 12 payloads : apostrophe fermante suivie de OR 1=1 -- , UNION SELECT email,mot_de_passe_hash FROM client, point-virgule suivi de DROP TABLE client, guillemet double forçé, etc. | réponses 200 avec 0 résultat ou message de validation ; `SELECT COUNT(*) FROM client` vaut 3 avant et après ; aucune erreur SQL affichée ; ligne de journal `SECURITY_REJECTED` | SEC-01, SEC-02 |
 | S-02 | Script stocké puis affiché | créer en admin un produit nommé `<script>alert(document.cookie)</script>`, ouvrir la fiche client puis la liste admin | le texte est affiché littéralement (source : `&lt;script&gt;`) ; aucun cookie lu ; la CSP bloque toute exécution même via un attribut | SEC-03 |
 | S-03 | IDOR sur les commandes | itérer `?id=1..20` avec un compte client, puis appeler `sp_confirm_order(id_d_autrui, id_client = 2, 0)` | 404 systématique sur les commandes d'autrui ; la procédure renvoie `ACCES_NON_AUTORISE` (test `T-18`) ; aucune donnée renvoyée | SEC-08 |
-| S-04 | Falsification du prix depuis le navigateur | POST /commande/valider avec un champ `prix_unitaire: 0.01` ajouté à la main | la ligne est enregistrée au vrai prix (snapshot) ; tout UPDATE ultérieur du prix d'une ligne est refusé (`RB06_…`) | SEC-10, RB-06 |
+| S-04 | Falsification du prix depuis le navigateur | POST /commande/valider avec un champ `prix_unitaire: 0.01` ajouté à la main | la ligne est enregistrée au vrai prix (snapshot) ; tout UPDATE ultérieur du prix d'une ligne est refusé par la base ; côté interface, aucun code technique n'est affiché (message en français) | SEC-10, RB-06 |
 | S-05 | Vol / fixation de session | capturer le cookie avant login et le rejouer depuis un autre agent ou une autre IP | session non réutilisable telle quelle (revalidation) ; l'identifiant pré-authentification est invalidé (`session_regenerate_id`) | SEC-05 |
-| S-06 | CSRF sur une action mutative | poster le formulaire depuis un autre site, sans jeton, avec `SameSite=Lax` | refus 419, aucune écriture ; panier et commande protégés ; les GET sans effet de bord restent possibles | SEC-06 |
+| S-06 | CSRF sur une action mutative | poster le formulaire depuis un autre site, sans jeton, avec `SameSite=Lax` | refus **403** « Jeton de sécurité invalide ou expiré (CSRF). Rechargez la page et réessayez. », aucune écriture ; panier et commande protégés ; les GET de confirmation (F-38) restent possibles car sans effet de bord | SEC-06 |
 | S-07 | Énumération et exposition | tenter `/.git/config`, `/sql/01_minishop_schema.sql`, `/var/log/application.log`, `/app/Config/env.php` ; vérifier les en-têtes | 403/404 sur tous ces chemins ; `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, CSP présente, aucune signature de serveur détaillée, aucun `phpinfo()` | SEC-11, SEC-12 |
 | S-08 | Fuite d'information dans les messages | provoquer une violation de contrainte, une coupure de connexion DB, une exception PHP non gérée | pages d'erreur génériques : aucun SQL, aucun chemin, aucun nom de table ; les détails vont uniquement dans `var/log/` ; le journal ne contient jamais de mot de passe ni de hash | SEC-12, SEC-13 |
 | S-09 | Force brute | 20 tentatives de connexion sur `admin@minishop.fr` avec des mots de passe de dictionnaire | temporisation après 5 échecs, message neutre, aucune différence de temps de réponse exploitable entre compte existant et inexistant | SEC-04, SEC-06 |
@@ -186,12 +189,12 @@ Signature de l'équipe, date : ………………… Validation du maître d'ouv
 | EF-VIS-01/03/05 | `Categorie`, `Produit` | `sp_search_products`, index `idx_produit_visible`, vue `v_catalogue` | CatalogueController + `app/View/catalogue/{index,produit}.php` | F-01, F-03, F-04, T-25 |
 | EF-VIS-02 | `Produit` | `sp_search_products` (marqueurs `?`) | recherche + liste blanche de tri | F-02, S-01, T-25 |
 | EF-VIS-04 | `Produit` | `trg_produit_ttc` | ProduitController + fiche | F-05, séquence §5.3.5 |
-| EF-VIS-06/07 | `Client` | `sp_create_account`, `sp_get_credentials` | AuthController, `Auth`, `Hasher` | F-06, F-07, F-08, T-04, T-05 |
-| EF-CLI-01/02 | `Client` | `sp_update_client` | CompteController | F-10, F-11 |
-| EF-CLI-03…06 | `PanierSession` | `sp_search_products` (plafond de disponibilité) | PanierController + `public/js/panier.js` | F-12, F-13, F-14, F-15 |
-| EF-CLI-07 | `Commande`, `LigneCommande` | `sp_create_order_from_basket`, `sp_add_order_line`, triggers A1/A2/B2/D1/D4 | CommandeController + `CommandeRepository` | F-16, F-17, F-18, T-06…T-11, T-16 |
-| EF-CLI-08/09 | `Commande` | `trg_history_statut` (détail et audit) | CommandeController (filtre `id_client`) | F-19, F-20, S-03, T-18 |
-| EF-CLI-10 | `Commande` | `sp_cancel_order` + `TRG-A3` (restitution) | bouton d'annulation + confirmation | F-21, T-21 |
+| EF-VIS-06/07 | `Client` | `sp_create_account`, `sp_get_credentials` | AuthController, `Auth`, `Hasher` | F-06, F-07, F-08, F-42, T-04, T-05 |
+| EF-CLI-01/02 | `Client` | `sp_update_client` | CompteController | F-10, F-11, F-39 |
+| EF-CLI-03…06 | `PanierSession` | `sp_search_products` (plafond de disponibilité) | PanierController (aucun JavaScript livré, CSP `default-src 'none'`) | F-12, F-13, F-14, F-15, F-47 |
+| EF-CLI-07 | `Commande`, `LigneCommande` | `sp_create_order_from_basket`, `sp_add_order_line`, triggers A1/A2/B2/D1/D4 | CommandeController + `CommandeRepository` | F-16, F-17, F-18, F-40, T-06…T-11, T-16 |
+| EF-CLI-08/09 | `Commande` | `trg_history_statut` (détail et audit) | CommandeController (filtre `id_client`) | F-19, F-20, F-41, S-03, T-18 |
+| EF-CLI-10 | `Commande` | `sp_cancel_order` + `TRG-A3` (restitution) | page de confirmation (GET sans effet) + POST d'annulation, lignes conservées en historique | F-21, F-38, T-21 |
 | EF-ADM-01/02 | `Produit` | `sp_save_product`, `sp_delete_product`, triggers B3–B6 | AdminController (produits) | F-22, F-23, T-15, T-20 |
 | EF-ADM-03 | `Categorie` | `sp_save_category`, `sp_delete_category`, triggers C1/C2 | AdminController (catégories) | F-25, T-14 |
 | EF-ADM-04/05 | `Produit.stock` | `sp_adjust_stock`, `v_etat_stock` | AdminController (stocks) | F-26, F-27, T-19, T-26, T-27 |
@@ -204,8 +207,9 @@ Signature de l'équipe, date : ………………… Validation du maître d'ouv
 
 Couverture : **100 %** des exigences du §4 (les 22 libellés du sujet repris à l'identique) disposent d'un élément de modèle, d'un mécanisme côté SGBD, d'un point d'application et d'au moins un test ; aucune règle `RB-*` n'est dépourvue de mécanisme côté base (cf. §6.2 du CDC).
 
-## 10. Conclusion provisoire (à valider en fin de lot L14)
+## 10. Conclusion (campagne corrective close, signalements n° 1 à 26)
 
 - la partie **base de données** est testée, rejouable et sans anomalie connue : les règles `RB-01` à `RB-18` tiennent même quand l'application est court-circuitée ;
-- la partie **application** doit être reçue avec les 34 tests fonctionnels, les 10 tests de sécurité, les 5 tests de performance/concurrence et les 2 tests d'installation ;
-- le document est tenu à jour à chaque lot (le PV de recette est la seule partie laissée à compléter, volontairement, tant que les lots L8→L13 ne sont pas exécutés).
+- la partie **application** est livrée et reçue par la campagne automatisée : les 49 tests fonctionnels du §3 (34 d'origine, alignés sur le comportement actuel, + 15 issus des signalements n° 1 à 26) sont couverts par les suites PHP et E2E (`npm run test:all`, CI GitHub 9 jobs verte sur `main`) à l'exception du solde manuel listé au PV (installation vierge F-00/I-01, cinq cas visiteur, rôles d'équipe F-32) — chacun prêt à rejouer avec les étapes à jour du présent document ; les cas d'affichage à 375 px (F-39, F-40, F-41, F-46, F-47) sont en outre à retester à l'œil, la structure étant prouvée automatiquement ;
+- restent à dérouler à la main : les 10 cas de sécurité offensifs (§4, rejouables par copier-coller), les mesures HTTP de performance (§5) et la sauvegarde/restauration (B-01) ;
+- le document reste tenu à jour à chaque lot ; l'artefact HTML (`artefacts/02-document-tests-validation.html`) se régénère depuis ce Markdown avec la chaîne documentaire habituelle.
