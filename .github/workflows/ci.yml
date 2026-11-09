@@ -717,7 +717,7 @@ jobs:
         run: |
           set -o pipefail
           node tests/node/responsive_navigateur.mjs 2>&1 | tee "$RUNNER_TEMP/chromium.log" || {
-            grep -E '❌|Error|Assertion|NON JOUÉ' "$RUNNER_TEMP/chromium.log" | tail -15 | while IFS= read -r ligne; do
+            tail -22 "$RUNNER_TEMP/chromium.log" | while IFS= read -r ligne; do
               ligne=${ligne//%/%25}; echo "::error::$ligne"
             done
             exit 1

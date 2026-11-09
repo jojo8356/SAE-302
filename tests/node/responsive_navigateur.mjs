@@ -95,8 +95,12 @@ try {
     const href = await page.locator('a[href^="/produit/"]').first().getAttribute('href');
     await aller(page, href);
     await pageVerifiee(page, 'produit', largeur, '.tableau-caracteristiques');
-    await page.locator('form[action="/panier/ajouter"] button').click();
-    await page.waitForURL('**/panier');
+    const [ajout] = await Promise.all([
+      page.waitForResponse((reponse) => reponse.url().includes('/api/panier/ajouter') && reponse.request().method() === 'POST'),
+      page.locator('form[action="/panier/ajouter"] button').click(),
+    ]);
+    assert.ok(ajout.ok(), `Ajout AJAX : HTTP ${ajout.status()}`);
+    await aller(page, '/panier');
     await pageVerifiee(page, 'panier', largeur, '.tableau-panier tbody tr');
     await aller(page, '/connexion');
     await page.fill('#email', 'alice@example.com');
