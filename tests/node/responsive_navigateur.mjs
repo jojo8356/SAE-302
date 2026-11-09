@@ -76,11 +76,22 @@ try {
           return s.display !== 'none' && s.visibility !== 'hidden' && r.width > 1 && r.height > 1
             && (r.left < -1 || r.right > largeurViewport + 1);
         }).map((el) => `${el.tagName}#${el.id || ''} ${Math.round(el.getBoundingClientRect().width)}px`);
-      return { viewport: largeurViewport, page: document.documentElement.scrollWidth, fautifs };
+      const cellules = [...document.querySelectorAll(
+        '.tableau-panier tbody td, .tableau-recapitulatif tbody td, .tableau-commandes-client tbody td, .tableau-categories tbody td, .tableau-commandes tbody td, .tableau-stocks tbody td',
+      )];
+      const cellulesProbleme = largeurViewport <= 560 ? cellules.filter((el) => {
+        const r = el.getBoundingClientRect();
+        const libelle = el.getAttribute('data-label');
+        const avant = getComputedStyle(el, '::before');
+        return !libelle || avant.content === 'none' || avant.display === 'none'
+          || r.left < -1 || r.right > largeurViewport + 1 || el.scrollWidth > el.clientWidth + 1;
+      }).map((el) => `${el.closest('table')?.className || 'table'}:${el.dataset.label || '(sans libellé)'}`) : [];
+      return { viewport: largeurViewport, page: document.documentElement.scrollWidth, fautifs, cellulesProbleme };
     });
     if (out) await page.screenshot({ path: path.join(out, `${largeur}-${nom}.png`), fullPage: true });
     assert.ok(mesures.page <= mesures.viewport + 1, `${largeur}px ${nom} : débordement horizontal ${JSON.stringify(mesures)}`);
     assert.deepEqual(mesures.fautifs, [], `${largeur}px ${nom} : champs ou boutons hors écran`);
+    assert.deepEqual(mesures.cellulesProbleme, [], `${largeur}px ${nom} : cellules mobiles coupées ou non étiquetées`);
     console.log(`✅ Chromium ${largeur}px — ${nom}`);
   }
   async function aller(page, route) {
