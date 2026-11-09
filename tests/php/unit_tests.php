@@ -419,10 +419,15 @@ echo "\n13. Configuration .env (App\\Config\\Env, EnvFile, Database)\n";
     $config = Database::config();
     $sourcePhp = Database::fichierConfig();
     $classeEnv = realpath(dirname(__DIR__, 2) . '/app/Config/Env.php');
-    $sourceReelle = $sourcePhp === null ? false : realpath($sourcePhp);
-    $check('le fichier de classe Env.php ne sert jamais de configuration PHP',
-        $sourceReelle === false || (PHP_OS_FAMILY === 'Windows'
-            ? strcasecmp($sourceReelle, (string) $classeEnv) !== 0 : $sourceReelle !== $classeEnv));
+    $sourceReelle = false;
+    if ($sourcePhp !== null) {
+        $sourceReelle = realpath($sourcePhp);
+    }
+    $distincte = $sourceReelle === false || $sourceReelle !== $classeEnv;
+    if ($sourceReelle !== false && PHP_OS_FAMILY === 'Windows') {
+        $distincte = strcasecmp($sourceReelle, (string) $classeEnv) !== 0;
+    }
+    $check('le fichier de classe Env.php ne sert jamais de configuration PHP', $distincte);
     $check('Database lit le .env', ($config['db_name'] ?? null) === 'minishop locale');
     $check('db_port converti en entier', ($config['db_port'] ?? null) === 3307);
     $check('debug converti en booléen', ($config['debug'] ?? null) === true);

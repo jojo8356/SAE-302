@@ -141,9 +141,11 @@ final class Database
             return false;
         }
 
-        return PHP_OS_FAMILY === 'Windows'
-            ? strcasecmp($candidat, $classe) === 0
-            : $candidat === $classe;
+        if (PHP_OS_FAMILY === 'Windows') {
+            return strcasecmp($candidat, $classe) === 0;
+        }
+
+        return $candidat === $classe;
     }
 
     /** Sources lues par la dernière configuration (diagnostic, `db_init.php --check`). */
