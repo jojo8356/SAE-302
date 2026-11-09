@@ -21,7 +21,8 @@ declare(strict_types=1);
 
 if (PHP_SAPI !== 'cli-server') {
     $message = "MiniShop — routeur du serveur PHP intégré, pas un serveur.\n"
-        . "Lancer depuis la racine : php -S localhost:8000 -t public scripts/dev-router.php\n";
+        . "Lancer depuis la racine : php -S localhost:8000 -t public scripts/dev-router.php\n"
+        . "Sous Windows (PowerShell ou cmd), lancer la même commande depuis la racine du projet.\n";
     if (defined('STDERR')) {
         fwrite(STDERR, $message);
     } else {

@@ -78,6 +78,10 @@ $check = static function (string $label, bool $ok, string $detail = '') use (&$e
     echo $icone . $label . $suffixe . "\n";
     if (!$ok) {
         ++$echecs;
+        if (getenv('GITHUB_ACTIONS') === 'true') {
+            $message = str_replace(['%', "\r", "\n"], ['%25', '%0D', '%0A'], $label . $suffixe);
+            echo "::error title=Test unitaire::{$message}\n";
+        }
     }
 };
 $attenduCode = static function (string $code, callable $travail) use (&$echecs, &$tests): bool {

@@ -119,6 +119,10 @@ $store->insert('administrateur', ['nom' => 'Test', 'prenom' => 'Gestionnaire',
         self.assertIn('href="/admin"', page)
         status, _, page = self.requete(gestionnaire, '/admin/produits')
         self.assertEqual(status, 200)
+        # La liste des produits peut ne contenir aucun formulaire POST.
+        # Les catégories exposent des formulaires de modification authentifiés.
+        status, _, page = self.requete(gestionnaire, '/admin/categories')
+        self.assertEqual(status, 200)
         jeton = re.search(r'name="_csrf" value="([a-f0-9]{64})"', page)
         self.assertIsNotNone(jeton)
         fichier = self.root / 'data/minishop/administrateur.json'
