@@ -417,6 +417,12 @@ echo "\n13. Configuration .env (App\\Config\\Env, EnvFile, Database)\n";
     // Database::config() reflète le fichier (et convertit les types)
     Database::reset();
     $config = Database::config();
+    $sourcePhp = Database::fichierConfig();
+    $classeEnv = realpath(dirname(__DIR__, 2) . '/app/Config/Env.php');
+    $sourceReelle = $sourcePhp === null ? false : realpath($sourcePhp);
+    $check('le fichier de classe Env.php ne sert jamais de configuration PHP',
+        $sourceReelle === false || (PHP_OS_FAMILY === 'Windows'
+            ? strcasecmp($sourceReelle, (string) $classeEnv) !== 0 : $sourceReelle !== $classeEnv));
     $check('Database lit le .env', ($config['db_name'] ?? null) === 'minishop locale');
     $check('db_port converti en entier', ($config['db_port'] ?? null) === 3307);
     $check('debug converti en booléen', ($config['debug'] ?? null) === true);

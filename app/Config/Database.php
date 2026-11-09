@@ -124,12 +124,26 @@ final class Database
     public static function fichierConfig(): ?string
     {
         foreach (self::fichiersConfig() as $fichier) {
-            if (is_file($fichier)) {
+            if (is_file($fichier) && !self::estClasseEnv($fichier)) {
                 return $fichier;
             }
         }
 
         return null;
+    }
+
+    /** Sous Windows, env.php peut désigner le fichier de classe Env.php. */
+    private static function estClasseEnv(string $fichier): bool
+    {
+        $candidat = realpath($fichier);
+        $classe = realpath(__DIR__ . '/Env.php');
+        if ($candidat === false || $classe === false) {
+            return false;
+        }
+
+        return PHP_OS_FAMILY === 'Windows'
+            ? strcasecmp($candidat, $classe) === 0
+            : $candidat === $classe;
     }
 
     /** Sources lues par la dernière configuration (diagnostic, `db_init.php --check`). */
@@ -172,15 +186,12 @@ final class Database
         $config = self::DEFAUTS;
 
         // 2. ancien fichier PHP (s'il existe encore)
-        foreach (self::fichiersConfig() as $fichier) {
-            if (!is_file($fichier)) {
-                continue;
-            }
+        $fichier = self::fichierConfig();
+        if ($fichier !== null) {
             $contenu = include $fichier;
             if (is_array($contenu)) {
                 $config = array_merge($config, $contenu);
             }
-            break;
         }
 
         // 3 et 4. `.env` puis variables d'environnement réelles (prioritaires)
