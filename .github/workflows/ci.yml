@@ -686,7 +686,8 @@ jobs:
 
   responsive-chromium:
     name: Responsive Chromium réel
-    runs-on: ubuntu-latest
+    # Playwright 1.56 prend en charge 24.04 ; ubuntu-latest migre vers 26.04.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
       - uses: shivammathur/setup-php@v2
