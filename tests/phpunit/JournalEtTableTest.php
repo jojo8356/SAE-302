@@ -47,6 +47,12 @@ final class JournalEtTableTest extends TestCase
             $table->flush();
             self::assertFalse($table->isDirty());
             self::assertSame([['id' => 1]], (new JsonTable('test', $fichier, true))->rows());
+            $snapshot = $table->snapshot();
+            $table->append(['id' => 2]);
+            $table->restore($snapshot);
+            self::assertSame([['id' => 1]], $table->rows());
+            $table->flush();
+            self::assertSame([['id' => 1]], (new JsonTable('test', $fichier, true))->rows());
         } finally {
             @unlink($fichier);
             @rmdir($dossier);

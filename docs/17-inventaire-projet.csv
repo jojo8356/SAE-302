@@ -289,10 +289,10 @@ public/mesurer.php,Ressources et point d’entrée publics,"Présence, non-vide 
 public/minishop.css,Ressources publiques,Présence et non-vide uniquement
 requirements-docs.txt,Configuration et fichiers racine,Présence et non-vide uniquement
 run.sh,Configuration et fichiers racine,"Présence, non-vide, syntaxe Bash si disponible"
-scripts/ci_php_diagnostic.py,Scripts et outillage,"Présence, non-vide, compilation Python"
 scripts/aide.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 scripts/build-docs.sh,Scripts et outillage,"Présence, non-vide, syntaxe Bash si disponible"
 scripts/capture_perf.sh,Scripts et outillage,"Présence, non-vide, syntaxe Bash si disponible"
+scripts/ci_php_diagnostic.py,Scripts et outillage,"Présence, non-vide, compilation Python"
 scripts/code_mort.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 scripts/code_mort_lib.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 scripts/code_mort_reference.json,Scripts et outillage,"Présence, non-vide, structure JSON"
@@ -354,14 +354,17 @@ sql/01_minishop_schema.sql,SQL source,Présence et non-vide uniquement
 sql/02_minishop_procedures.sql,SQL source,Présence et non-vide uniquement
 sql/03_minishop_triggers.sql,SQL source,Présence et non-vide uniquement
 sql/04_minishop_demo.sql,SQL source,Présence et non-vide uniquement
+sql/migrations/001_montant_avant_annulation_mariadb.sql,SQL source,Présence et non-vide uniquement
 tests/charge/reserver.sh,Tests et fixtures,"Présence, non-vide, syntaxe Bash si disponible"
 tests/js/deprecations_wasm.mjs,Tests et fixtures,"Présence, non-vide, syntaxe Node si disponible"
 tests/node/e2e_isolation.mjs,Tests et fixtures,"Présence, non-vide, syntaxe Node si disponible"
+tests/node/responsive_navigateur.mjs,Tests,"Présence, non-vide, syntaxe Node si disponible"
 tests/perf/mesurer.sh,Tests et fixtures,"Présence, non-vide, syntaxe Bash si disponible"
 tests/perf/mesurer_sql.sh,Tests et fixtures,"Présence, non-vide, syntaxe Bash si disponible"
 tests/php/actions_destructrices_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/php/adresse_livraison_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/php/alignement_colonnes_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/annulation_concurrente_worker.php,Tests,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/php/annulation_historique_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/php/apropos_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/php/cartes_accessibilite_test.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
@@ -390,6 +393,7 @@ tests/php/information_juridique_test.php,Tests et fixtures,"Présence, non-vide 
 tests/php/inscription_erreurs_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/php/mentions_legales_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/php/mes_commandes_tableau_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/migration_mariadb_test.php,Tests,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/php/nouveautes_cases.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/php/nouveautes_test.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/php/pages_pied_de_page_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
@@ -412,6 +416,7 @@ tests/phpunit/TriggersTest.php,Tests et fixtures,"Présence, non-vide ; syntaxe 
 tests/phpunit/bootstrap.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/phpunit/run-local.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/python/test_aide_cli.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
+tests/python/test_annulation_concurrente.py,Tests,"Présence, non-vide, syntaxe Python"
 tests/python/test_audit_structurel.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
 tests/python/test_auth_403_http.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
 tests/python/test_code_mort_integration.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"

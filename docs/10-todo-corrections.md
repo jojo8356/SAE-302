@@ -346,6 +346,15 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] Rejouer la CI de la PR après correction de la collision Windows entre `env.php` et la classe `Env.php` : campagne GitHub `42652644960` verte sur le commit `7054ce7`, dont PHP natif Linux/Windows, UI jsdom, E2E isolé et SQL MySQL 8. Une tentative antérieure de téléchargement Composer (code 6) a réussi au rejeu.
 - [ ] Ne pas considérer l’intégration totalement validée tant que MariaDB, concurrence JSON, migration existante et responsive réel restent non vérifiés. La PR reste ouverte ; `dev` ne doit pas être modifiée.
 
+## 6 quinquavicies. Renforcement des tests après intégration
+
+- [x] Ajouter quatre scénarios à deux processus PHP sur magasin JSON temporaire : double annulation, commandes distinctes sur le même stock, refus d’accès et libération du verrou après interruption. Le verrou coopératif couvre les écritures du store et les transactions ; le contrôle d’annulation se fait après son acquisition.
+- [!] Limites JSON : les écritures directes, le seed et les opérations dont la lecture précède la transaction ne sont pas protégées de bout en bout ; le commit multi-fichiers n’est pas atomique en cas de panne ou d’échec d’écriture. Le test ne prouve pas une sécurité générale de concurrence.
+- [x] Ajouter une migration MariaDB limitée à la colonne nullable et un test de conservation/rejeu sur une base temporaire générée ; aucun total historique inconnu n’est inventé. DDL non transactionnel, contrôle du type, maintenance, sauvegarde et installation des routines sont des étapes distinctes.
+- [x] Ajouter un job CI MariaDB 11.8 (migration, annulation et campagne SQL) et un job Chromium réel 375/1440 px sur copie jetable, avec captures et contrôles de débordement des parcours principaux.
+- [ ] Exécuter et analyser ces nouveaux jobs CI ; ils ne sont pas considérés validés avant leurs résultats. PHP natif, MariaDB et Chromium ne sont pas disponibles dans la sandbox locale.
+- [ ] Vérifier les autres navigateurs et appareils réels, ainsi que la migration adaptée à la base existante sauvegardée ; ne jamais utiliser la fixture ou un seed sur une base réelle.
+
 ## 7. Reste à faire hors dépôt (ne peut pas être fait par un agent)
 
 - [!] **Noms, prénoms, numéros étudiants** des 3 membres + emails → README §Membres et CDC §3.3 (aucune identité ne peut être inventée).

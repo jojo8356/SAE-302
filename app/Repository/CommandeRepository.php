@@ -330,18 +330,18 @@ final class CommandeRepository
      */
     public function cancelOrder(int $idCommande, ?int $idClient): array
     {
-        $commande = $this->store->find('commande', $idCommande);
-        if ($commande === null) {
-            throw new BusinessError('COMMANDE_INTROUVABLE');
-        }
-        if ($idClient !== null && (int) $commande['id_client'] !== $idClient) {
-            throw new BusinessError('ACCES_NON_AUTORISE');
-        }
-        if (!in_array($commande['statut'], ['BROUILLON', 'EN_PREPARATION', 'PAYEE'], true)) {
-            throw new BusinessError('COMMANDE_NON_ANNULABLE');
-        }
+        return $this->store->transactional(function () use ($idCommande, $idClient): array {
+            $commande = $this->store->find('commande', $idCommande);
+            if ($commande === null) {
+                throw new BusinessError('COMMANDE_INTROUVABLE');
+            }
+            if ($idClient !== null && (int) $commande['id_client'] !== $idClient) {
+                throw new BusinessError('ACCES_NON_AUTORISE');
+            }
+            if (!in_array($commande['statut'], ['BROUILLON', 'EN_PREPARATION', 'PAYEE'], true)) {
+                throw new BusinessError('COMMANDE_NON_ANNULABLE');
+            }
 
-        return $this->store->transactional(function () use ($idCommande, $idClient, $commande): array {
             $this->store->setActor(['id' => $idClient, 'role' => 'CLIENT']);
             // Le stock est restitué explicitement, ligne à ligne (RB-18) :
             // les lignes ne sont plus supprimées, elles restent l'historique

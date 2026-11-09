@@ -15,7 +15,7 @@ declare(strict_types=1);
  * - Chargement paresseux (le fichier n'est lu qu'à la première utilisation).
  * - Écriture ATOMIQUE : sérialisation dans un fichier temporaire puis
  *   rename() — un crash ne peut jamais laisser une table à moitié écrite
- *   (équivalent du journal InnoDB, adapté au stockage fichier).
+ *   (garantie par fichier seulement, sans journal transactionnel multi-tables).
  * - Écriture différée : la table marquée « dirty » n'est écrite qu'au
  *   commit()/flush() du store — une transaction multi-tables coûte une seule
  *   écriture par table réellement modifiée.

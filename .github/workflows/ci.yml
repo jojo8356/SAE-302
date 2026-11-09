@@ -613,6 +613,114 @@ jobs:
             tests/sql/rapport_tests_sql.md
             tests/sql/out/
 
+  # Tests de concurrence sur un répertoire temporaire distinct du dépôt.
+  json-concurrence:
+    name: Annulations JSON concurrentes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+          tools: none
+      - name: Deux processus PHP et magasin jetable
+        shell: bash
+        run: |
+          set -o pipefail
+          python3 -m unittest discover -s tests/python -p test_annulation_concurrente.py -v 2>&1 | tee "$RUNNER_TEMP/concurrence.log" || {
+            grep -E 'FAIL|ERROR|AssertionError|Traceback|Exception|Error:' "$RUNNER_TEMP/concurrence.log" | tail -12 | while IFS= read -r ligne; do
+              ligne=${ligne//%/%25}; echo "::error::$ligne"
+            done
+            exit 1
+          }
+
+  # Serveur MariaDB dédié au job : les tests créent des bases temporaires.
+  mariadb-regressions:
+    name: MariaDB 11.8 et migration
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:11.8
+        env:
+          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: '1'
+          MARIADB_ROOT_HOST: '%'
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=12
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: ''
+      DB_NAME: minishop
+      MINISHOP_MARIADB_INSTANCE_JETABLE: '1'
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo_mysql
+          coverage: none
+          tools: none
+      - name: Installer le client MariaDB
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends mariadb-client
+      - name: Migration depuis une ancienne base peuplée
+        run: python3 scripts/ci_php_diagnostic.py tests/php/migration_mariadb_test.php
+      - name: Campagne SQL et intégration sur une base neuve
+        shell: bash
+        run: |
+          set -o pipefail
+          MINISHOP_TEST_DB=minishop_mariadb_ci php tests/php/sql_integration.php 2>&1 | tee "$RUNNER_TEMP/mariadb.log" || {
+            grep -E '❌|FAIL|ERROR|ERREUR|échec|Fatal' "$RUNNER_TEMP/mariadb.log" | tail -15 | while IFS= read -r ligne; do
+              ligne=${ligne//%/%25}; echo "::error::$ligne"
+            done
+            exit 1
+          }
+
+  responsive-chromium:
+    name: Responsive Chromium réel
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, intl
+          coverage: none
+          tools: none
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts
+      - run: npx playwright install --with-deps chromium
+      - name: Parcours 375 et 1440 pixels sur copie jetable
+        env:
+          MINISHOP_BROWSER_ARTIFACTS: ${{ runner.temp }}/captures-responsive
+        shell: bash
+        run: |
+          set -o pipefail
+          node tests/node/responsive_navigateur.mjs 2>&1 | tee "$RUNNER_TEMP/chromium.log" || {
+            grep -E '❌|Error|Assertion|NON JOUÉ' "$RUNNER_TEMP/chromium.log" | tail -15 | while IFS= read -r ligne; do
+              ligne=${ligne//%/%25}; echo "::error::$ligne"
+            done
+            exit 1
+          }
+      - name: Captures de diagnostic
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: responsive-chromium
+          path: ${{ runner.temp }}/captures-responsive
+          if-no-files-found: ignore
+          retention-days: 7
+
   # -----------------------------------------------------------------
   # 5. Tests unitaires PHP (modèles, repositories, sécurité) sur base test
   #    Skip gracieux si pas de composer.json (lots L8-13)
