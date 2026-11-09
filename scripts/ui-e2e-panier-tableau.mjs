@@ -34,6 +34,12 @@ import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
+// Ces parcours modifient le serveur ciblé : jamais les lancer implicitement sur les données locales.
+if (!process.env.UI_BASE_URL || process.env.UI_TEST_INSTANCE_JETABLE !== '1') {
+  console.error('UI_BASE_URL et UI_TEST_INSTANCE_JETABLE=1 requis : utiliser uniquement une instance de test jetable. Ces tests modifient ses données.');
+  process.exit(2);
+}
+
 const REPO = join(import.meta.dirname, '..');
 const PORT = Number(process.env.UI_PORT ?? 8110);
 let base = (process.env.UI_BASE_URL ?? `http://127.0.0.1:${PORT}`).replace(/\/$/, '');
@@ -208,26 +214,22 @@ try {
     !!ligne.querySelector('form[action="/panier/quantite"] input[name="quantite"]')
       && !!ligne.querySelector('form[action="/panier/retirer"]'));
 
-  const pied = [...tableau.querySelectorAll('tfoot tr')];
-  check('le pied affiche ses trois lignes : Sous-total, Frais de port, Total TTC',
-    pied.length === 3 && pied.map((tr) => tr.querySelector('th')?.textContent.replace(/\s+/g, ' ').trim() ?? '').join('|')
-      .startsWith('Sous-total (marchandises TTC)|Frais de port'),
-    pied.map((tr) => tr.textContent.replace(/\s+/g, ' ').trim()).join(' | '));
-  check('chaque montant du pied est en cellule montant, alignée comme les autres',
-    pied.every((tr) => tr.querySelector('td')?.classList.contains('montant') ?? false));
-  check('le libellé « Sous-total (marchandises TTC) » est intact, en une cellule',
-    pied[0]?.querySelector('th')?.textContent.trim() === 'Sous-total (marchandises TTC)');
+  const recap = doc().querySelector('.recap');
+  const totalAvant = recap?.querySelector('[data-total-panier]')?.textContent.replace(/\s+/g, ' ').trim() ?? '';
+  check('récapitulatif unique : sous-total, frais de port et total TTC',
+    !!recap && ['Sous-total', 'Frais de port', 'Total TTC'].every((libelle) => recap.textContent.includes(libelle)));
+  check('les trois montants du récapitulatif sont présents', recap?.querySelectorAll('dd').length === 3);
+  check('le total figure dans une zone identifiable', totalAvant.endsWith('€'));
 
   // ---------------------------------------------------------- 3. la feuille qui garantit la tenue
   console.log('\n== 3 · Feuille servie : les règles de tenue sont là ==');
-  const resCss = await fetch(`${base}/minishop.css`, { headers: nav.enTetes() });
+  const resCss = await fetch(`${base}/css/app.css`, { headers: nav.enTetes() });
   const css = await resCss.text();
   check('la feuille est servie (200) et définit .tableau-panier', resCss.status === 200 && css.includes('.tableau-panier'),
     `HTTP ${resCss.status}`);
-  check('légende sur une ligne, montants à droite, pied au fond uniforme',
-    css.includes('.tableau-panier caption') && css.includes('white-space: nowrap')
-      && css.includes('.tableau-panier .montant') && css.includes('text-align: right')
-      && css.includes('.tableau-panier tfoot th,') && css.includes('.tableau-panier tfoot td'));
+  check('montants à droite, récapitulatif en grille et cartes mobiles étiquetées',
+    css.includes('.tableau-panier .montant') && css.includes('text-align: right')
+      && css.includes('.recap dl') && css.includes('.tableau-panier td::before') && css.includes('content: attr(data-label)'));
   check('le CTA « Valider ma commande » reste le bouton principal du parcours',
     !!doc().querySelector('button.bouton-principal')
       && doc().querySelector('button.bouton-principal')?.textContent.trim() === 'Valider ma commande →');
@@ -241,9 +243,7 @@ try {
   const tableauApres = doc().querySelector('table.tableau-panier');
   check('la légende suit : « Panier — 1 article(s) » (une ligne, deux unités)',
     (tableauApres?.querySelector('caption')?.textContent.replace(/\s+/g, ' ').trim() ?? '') === 'Panier — 1 article(s)');
-  const piedApres = [...tableauApres.querySelectorAll('tfoot tr')];
-  const totalApres = piedApres[2]?.querySelector('td')?.textContent.replace(/\s+/g, ' ').trim() ?? '';
-  const totalAvant = pied[2]?.querySelector('td')?.textContent.replace(/\s+/g, ' ').trim() ?? '';
+  const totalApres = doc().querySelector('[data-total-panier]')?.textContent.replace(/\s+/g, ' ').trim() ?? '';
   check('le Total TTC a été recalculé après le changement de quantité',
     totalApres !== '' && totalApres !== totalAvant, `avant=${totalAvant} après=${totalApres}`);
 
@@ -252,7 +252,7 @@ try {
     console.log(`E2E UI panier (tableau) : ${échecs}/${tests} vérification(s) en échec ❌`);
     process.exitCode = 1;
   } else {
-    console.log(`E2E UI panier (tableau) : TOUT EST VERT ✅ (${tests} vérifications, clics réels sur l'UI)`);
+    console.log(`E2E UI panier (tableau) : TOUT EST VERT ✅ (${tests} vérifications, interactions DOM simulées avec jsdom)`);
   }
 } catch (e) {
   console.error('\nE2E UI panier (tableau) : ERREUR fatale —', e);

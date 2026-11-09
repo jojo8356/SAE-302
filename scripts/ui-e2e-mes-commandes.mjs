@@ -26,6 +26,12 @@
 import { spawn, spawnSync } from 'node:child_process';
 import { JSDOM } from 'jsdom';
 
+// Ces parcours modifient le serveur ciblé : jamais les lancer implicitement sur les données locales.
+if (!process.env.UI_BASE_URL || process.env.UI_TEST_INSTANCE_JETABLE !== '1') {
+  console.error('UI_BASE_URL et UI_TEST_INSTANCE_JETABLE=1 requis : utiliser uniquement une instance de test jetable. Ces tests modifient ses données.');
+  process.exit(2);
+}
+
 const HOTE = process.env.UI_HOTE ?? '127.0.0.1';
 const PORT = 8140;
 const BASE_EXTERNE = process.env.UI_BASE_URL;
@@ -129,7 +135,6 @@ class NavigateurUI {
 }
 
 async function demarrer() {
-  spawnSync('node', ['scripts/wasm_run.mjs', 'scripts/seed.php'], { stdio: 'inherit' });
   if (!BASE_EXTERNE) {
     serveur = spawn('node', ['scripts/wasm-serve.mjs'], {
       env: { ...process.env, PORT: String(PORT) }, stdio: 'ignore',
@@ -179,16 +184,16 @@ async function principal() {
 
   console.log('\n== Le tableau tient en page : montant et Détail visibles ==');
   await client.aller('/mes-commandes');
-  const tableau = client.doc.querySelector('table.tableau-mes-commandes');
-  verifier('« Mes commandes » utilise le tableau dédié (.tableau-mes-commandes)', tableau !== null);
+  const tableau = client.doc.querySelector('table.tableau-commandes-client');
+  verifier('« Mes commandes » utilise le tableau dédié (.tableau-commandes-client)', tableau !== null);
   verifier('la légende est là en entier, sans code technique',
     tableau?.querySelector('caption')?.textContent.trim() === "Historique de vos commandes (prix figés à l'achat)"
       && !/RB-\d/.test(client.doc.body.textContent),
     tableau?.querySelector('caption')?.textContent.trim());
-  const cols = tableau ? [...tableau.querySelectorAll('colgroup col')].map((c) => c.className) : [];
-  verifier('le colgroup fige les 6 colonnes (numero, date, statut, articles, montant, detail)',
-    cols.join(',') === 'col-numero,col-date,col-statut,col-articles,col-montant,col-detail',
-    cols.join(','));
+  const premiereLigne = tableau?.querySelector('tbody tr');
+  verifier('les six champs sont étiquetés pour les cartes mobiles',
+    ['Numéro', 'Date', 'Statut', 'Articles', 'Montant TTC', 'Détail']
+      .every((label) => premiereLigne?.querySelector(`td[data-label="${label}"]`)));
   const enteteMontant = [...(tableau?.querySelectorAll('th') ?? [])].find((th) => th.textContent.includes('Montant'));
   verifier('l\u2019en-tête « Montant TTC » est aligné avec ses montants (classe montant)',
     enteteMontant?.classList.contains('montant') === true);
@@ -210,28 +215,16 @@ async function principal() {
     cellules[5]?.textContent.trim());
 
   console.log('\n== La feuille servie tient le tableau en page ==');
-  const css = await (await fetch(base + '/minishop.css')).text();
-  const bloc = (selecteur) => {
-    const i = css.indexOf(selecteur + ' {');
-    return i === -1 ? '' : css.slice(i, css.indexOf('}', i));
-  };
-  verifier('CSS servie : largeur 100 % et répartition fixe des colonnes',
-    bloc('.tableau-mes-commandes').includes('width: 100%')
-      && bloc('.tableau-mes-commandes').includes('table-layout: fixed'));
-  const somme = ['col-numero', 'col-date', 'col-statut', 'col-articles', 'col-montant', 'col-detail']
-    .map((c) => {
-      const m = /width:\s*(\d+)%/.exec(bloc(`.tableau-mes-commandes .${c}`));
-      return m ? Number.parseInt(m[1], 10) : 0;
-    })
-    .reduce((a, b) => a + b, 0);
-  verifier('CSS servie : les largeurs de colonnes totalisent 100 % (rien hors écran)',
-    somme === 100, String(somme));
-  verifier('CSS servie : la légende peut passer à la ligne (aucun nowrap forcé)',
-    bloc('.tableau-mes-commandes caption').includes('text-align: left')
-      && !bloc('.tableau-mes-commandes caption').includes('nowrap'));
-  verifier('CSS servie : montants à droite, sur une ligne',
-    bloc('.tableau-mes-commandes .montant').includes('text-align: right')
-      && bloc('.tableau-mes-commandes .montant').includes('white-space: nowrap'));
+  const cssResponse = await fetch(base + '/css/app.css');
+  const css = await cssResponse.text();
+  verifier('feuille réellement utilisée chargée', cssResponse.ok
+    && client.doc.querySelector('link[rel="stylesheet"][href="/css/app.css"]') !== null);
+  verifier('tableau mobile borné à sa largeur et sans minimum fixe',
+    css.includes('.tableau-defilant--client table') && css.includes('min-width: 0') && css.includes('width: 100%'));
+  verifier('les champs sont disposés en grille et peuvent se replier',
+    css.includes('.tableau-defilant--client tbody td') && css.includes('grid-template-columns')
+      && css.includes('overflow-wrap: anywhere'));
+  verifier('chaque champ de carte conserve son libellé', css.includes('content: attr(data-label)'));
 
   console.log(`\nTOTAL UI MES COMMANDES : ${total - echecs}/${total} OK`);
   if (echecs > 0) process.exitCode = 1;
@@ -241,5 +234,4 @@ principal()
   .catch((erreur) => { console.error(erreur); process.exitCode = 1; })
   .finally(() => {
     if (serveur) serveur.kill();
-    if (!BASE_EXTERNE) spawnSync('git', ['checkout', '--', 'data']);
   });

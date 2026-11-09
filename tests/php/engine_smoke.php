@@ -20,6 +20,7 @@ use App\Model\Data\ConstraintError;
 use App\Model\Data\Filter;
 use App\Model\Data\JsonStore;
 use App\Model\Data\Seed;
+use App\Model\Data\SchemaError;
 use App\Model\Data\StorageDriver;
 use App\Model\Data\Views;
 
@@ -74,33 +75,105 @@ $driver = StorageDriver::fromConfig('json');
 $check('StorageDriver::JSON actif par défaut', $driver === StorageDriver::JSON);
 $store = JsonStore::open($dataDir); // bac à sable isolé pour ce test
 $check('le pilote JSON est un JsonStore', $store instanceof JsonStore);
-$check('SqlStore refuse poliment (migration future)', (static function (): bool {
-    try {
-        \App\Model\Data\StorageDriver::SQL->createStore()->select('produit');
+$check('StorageDriver::SQL fournit un vrai pilote PDO', (static function (): bool {
+    $sql = \App\Model\Data\StorageDriver::SQL->createStore();
 
-        return false;
-    } catch (\RuntimeException $e) {
-        return str_contains($e->getMessage(), 'StorageDriver::JSON');
+    return $sql instanceof \App\Model\Data\SqlStore
+        && $sql instanceof \App\Model\Data\StoreInterface;
+})());
+$check('SqlStore expose callProcedure (API attendue par les dépôts)', (static function (): bool {
+    $reflexion = new \ReflectionClass(\App\Model\Data\SqlStore::class);
+
+    return $reflexion->hasMethod('callProcedure')
+        && $reflexion->hasMethod('callFunction')
+        && $reflexion->hasMethod('sessionVariable')
+        && $reflexion->hasMethod('appeler')
+        && $reflexion->getMethod('callProcedure')->isPublic();
+})());
+$check('SqlStore s’instancie sans PDO (connexion paresseuse)', (static function (): bool {
+    // StorageDriver fait `new SqlStore()` : le constructeur doit accepter zéro
+    // argument, sinon le pilote SQL est inutilisable côté application.
+    $constructeur = (new \ReflectionClass(\App\Model\Data\SqlStore::class))->getConstructor();
+
+    return $constructeur !== null
+        && $constructeur->getNumberOfRequiredParameters() === 0;
+})());
+$check('classes globales (intl, PDO…) référencées en absolu dans app/', (static function (): bool {
+    // Dans un espace de noms, `new Collator()` cherche App\Model\Data\Collator.
+    // L'erreur ne se voit QUE sur une machine où l'extension est chargée : la
+    // sandbox sans intl la masquait. On vérifie donc la déclaration, pas le
+    // comportement.
+    $globales = ['Collator', 'Transliterator', 'Normalizer', 'IntlDateFormatter', 'IntlCalendar'];
+    $motif = '/(?<![\\\\\w$])(' . implode('|', $globales) . ')\s*(::|\()/';
+    $coupables = [];
+    $iterateur = new \RecursiveIteratorIterator(
+        new \RecursiveDirectoryIterator(dirname(__DIR__, 2) . '/app', \FilesystemIterator::SKIP_DOTS),
+    );
+    foreach ($iterateur as $fichier) {
+        if (!$fichier->isFile() || $fichier->getExtension() !== 'php') {
+            continue;
+        }
+        $source = (string) file_get_contents($fichier->getPathname());
+        // on ignore les docblocks (lignes de commentaire)
+        $lignes = preg_split('/\R/', $source);
+        if ($lignes === false) {
+            continue;
+        }
+        foreach ($lignes as $numero => $ligne) {
+            if (str_starts_with(ltrim($ligne), '*') || str_starts_with(ltrim($ligne), '//')) {
+                continue;
+            }
+            if (preg_match($motif, $ligne) === 1) {
+                $coupables[] = basename($fichier->getPathname()) . ':' . ($numero + 1);
+            }
+        }
     }
+
+    return $coupables === [];
+})());
+$check('SqlStore construit tout son SQL en requêtes préparées', (static function (): bool {
+    $source = (string) file_get_contents(dirname(__DIR__, 2) . '/app/Model/Data/SqlStore.php');
+
+    return str_contains($source, 'prepare($sql)')
+        && str_contains($source, 'PDO::ATTR_EMULATE_PREPARES')
+        && !preg_match('/query\([\'"][^\'"]*\$/', $source);
 })());
 
 echo "\n== 2. seed & lecture ==\n";
 $check('base installée par le seed', Seed::ensure($store) === true);
 $check('seed idempotent', Seed::ensure($store) === false);
-$check('12 produits', $store->count('produit') === 12);
-$check('11 produits visibles (RB-19)', $store->count('produit', [['visible', '=', 1]]) === 11);
+// Effectifs RELATIFS, jamais en dur : le catalogue de démonstration peut grandir
+// (il est passé à 36 produits pour que la pagination ait trois pages) sans que
+// la règle vérifiée change.
+$totalProduits = $store->count('produit');
+$visibles = $store->count('produit', [['visible', '=', 1]]);
+$check('catalogue de démonstration non vide', $totalProduits >= 12, (string) $totalProduits);
+$check('un seul produit masqué (RB-19)', $totalProduits - $visibles === 1, $totalProduits . ' / ' . $visibles);
 $check('find par PK (hash)', ($store->find('produit', 1) ?? [])['reference'] === 'PC-PORT-001');
-$check('LIKE insensible casse/accents (recherche "ecran")', $store->count('produit', [Filter::like('nom', '%ecran%')]) === 1);
-$check('BETWEEN prix_ttc', $store->count('produit', [Filter::between('prix_ttc', 50, 200)]) === 7);
+$schemaRefuse = false;
+try {
+    $store->find('table_inconnue', 1);
+} catch (SchemaError) {
+    $schemaRefuse = true;
+}
+$check('find refuse une table hors schéma', $schemaRefuse);
+$check('LIKE insensible casse/accents (recherche "ecran")',
+    $store->count('produit', [Filter::like('nom', '%ecran%')]) >= 1
+    && $store->count('produit', [Filter::like('nom', '%ECRAN%')]) === $store->count('produit', [Filter::like('nom', '%ecran%')]));
+$check('BETWEEN prix_ttc', $store->count('produit', [Filter::between('prix_ttc', 50, 200)]) >= 1
+    && $store->count('produit', [Filter::between('prix_ttc', 50, 200)])
+       + $store->count('produit', [Filter::between('prix_ttc', 200, 100000)]) <= $totalProduits);
 $check('tri multi-clés + limite', count($store->select('produit', ['order' => [Filter::sort('prix_ttc', 'desc')], 'limit' => 3])) === 3);
 $check('paramètre frais_port = 4.90', ($store->find('parametre', 'frais_port') ?? [])['valeur'] === '4.90');
 
 echo "\n== 3. vues ==\n";
 $views = new Views($store);
 $catalogue = $views->catalogue();
-$check('v_catalogue : 11 lignes, catégorie jointe', count($catalogue) === 11 && $catalogue[0]['categorie'] === 'Informatique');
+$check('v_catalogue : une ligne par produit visible, catégorie jointe',
+    count($catalogue) === $visibles && $catalogue[0]['categorie'] === 'Informatique',
+    count($catalogue) . ' lignes / ' . $visibles . ' visibles');
 $check('v_catalogue : état RUPTURE pour la batterie', in_array('RUPTURE', array_column($catalogue, 'etat'), true));
-$check('v_etat_stock : 12 lignes', count($views->etatStocks()) === 12);
+$check('v_etat_stock : une ligne par produit', count($views->etatStocks()) === $totalProduits);
 
 echo "\n== 4. écritures & contraintes ==\n";
 $id = $store->insert('client', [

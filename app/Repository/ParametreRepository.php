@@ -59,6 +59,30 @@ final class ParametreRepository
         return round((float) $this->fnParam('tva_defaut', '20.00'), 2);
     }
 
+    /**
+     * Met à jour un paramètre existant (écran back-office, EF-ADM-11).
+     *
+     * Les paramètres sont des données de pilotage commercial : frais de port,
+     * franchise, TVA par défaut, durée de conservation. Aucune constante n'est
+     * recopiée dans le code (voir l'en-tête de cette classe).
+     *
+     * @throws \App\Model\Data\BusinessError si le paramètre est inconnu ou la valeur invalide
+     */
+    public function enregistrer(string $cle, string $valeur): void
+    {
+        $row = $this->store->find('parametre', $cle);
+        if ($row === null) {
+            throw new \App\Model\Data\BusinessError('PARAMETRE_INTROUVABLE');
+        }
+
+        $valeur = trim($valeur);
+        if ($valeur === '' || preg_match('/^-?\d+([.,]\d+)?$/', $valeur) !== 1) {
+            throw new \App\Model\Data\BusinessError('PARAMETRE_VALEUR_INVALIDE');
+        }
+
+        $this->store->update('parametre', [['cle', '=', $cle]], ['valeur' => str_replace(',', '.', $valeur)]);
+    }
+
     /** Tous les paramètres (page d'affichage back-office). */
     public function tous(): array
     {

@@ -27,7 +27,7 @@ declare(strict_types=1);
  *
  * Usage :
  *   php scripts/strict_types_lint.php [chemin1 chemin2…]
- *     (défaut : app public scripts/seed.php tests/php — tout le livrable PHP)
+ *     (défaut : app public tests/php + les scripts applicatifs — cf. $racines)
  *   node scripts/wasm_run.mjs scripts/strict_types_lint.php
  *
  * Sortie : une ligne par violation (fichier:ligne — problème), code 1 si
@@ -97,6 +97,42 @@ function texte(array $tokens, int $debut, int $fin): string
 }
 
 /**
+ * Extrait du code fautif, pour rendre le diagnostic exploitable.
+ *
+ * Sans cela, le linter signalait « PdoStore.php:108 » sans montrer la ligne :
+ * corriger supposait de rouvrir le fichier au bon endroit, et un tiers ne
+ * pouvait pas proposer de réécriture sans le code sous les yeux. Les lignes
+ * sont condensées (espaces réduits) et tronquées : l'objectif est de rendre
+ * l'expression lisible, pas de reproduire le fichier.
+ */
+function extrait(string $fichier, int $ligne, int $nbLignes = 3): string
+{
+    static $cache = [];
+    if (!array_key_exists($fichier, $cache)) {
+        $lu = @file($fichier);
+        if (false === $lu) {
+            $lu = [];
+        }
+        $cache[$fichier] = $lu;
+    }
+    $lignes = $cache[$fichier];
+    if ($lignes === []) {
+        return '';
+    }
+    $morceaux = [];
+    $derniere = min(count($lignes), $ligne - 1 + $nbLignes);
+    for ($k = $ligne - 1; $k < $derniere; ++$k) {
+        $morceaux[] = trim($lignes[$k]);
+    }
+    $texte = preg_replace('/\s+/', ' ', implode(' ', $morceaux));
+    if (false === $texte) {
+        $texte = '';
+    }
+
+    return substr($texte, 0, 160);
+}
+
+/**
  * Règle maison : détecte les opérateurs ternaires (`? … :` et `?:`).
  *
  * Heuristique token-par-token : un `?` est un ternaire si l'on rencontre un
@@ -154,7 +190,15 @@ function detecterTernaires(string $fichier, array $tokens): array
                     break; // fin d'instruction sans « : » : pas un ternaire
                 }
                 if ($id === 0 && $txt === ':') {
-                    $violations[] = sprintf('%s:%d — opérateur ternaire interdit (règle maison : c\'est moche → if/else, match ou variable intermédiaire)', $fichier, (int) $tokens[$i][2]);
+                    $ligne = (int) $tokens[$i][2];
+                    $code = extrait($fichier, $ligne);
+                    $violations[] = sprintf(
+                        '%s:%d — opérateur ternaire interdit (règle maison : c\'est moche → if/else, match ou variable intermédiaire)'
+                        . "\n      code : %s",
+                        $fichier,
+                        $ligne,
+                        $code
+                    );
                     break;
                 }
             }
@@ -423,8 +467,22 @@ function completerLignes(array $tokens): array
 // ------------------------------------------------------------------ exécution
 $racines = array_slice($_SERVER['argv'] ?? [], 1);
 if ($racines === []) {
-    // tout le livrable PHP du dépôt
-    $racines = ['app', 'public', 'scripts/seed.php', 'tests/php'];
+    // Tout le livrable PHP du dépôt. Les scripts d'exploitation sont énumérés
+    // un par un (et non via le dossier `scripts` entier) pour être couverts :
+    // ils ne l'étaient pas, et un fichier sans `<?php` avait pu passer.
+    // Restent volontairement hors périmètre, car antérieurs et non applicatifs :
+    // scripts/deploy.php et scripts/gen_volumes*.php (outils d'exploitation).
+    $racines = [
+        'app',
+        'public',
+        'tests/php',
+        'scripts/seed.php',
+        'scripts/db_init.php',
+        'scripts/load_db.php',
+        'scripts/run-all-tests.php',
+        'scripts/dev-router.php',
+        'scripts/strict_types_lint.php',
+    ];
 }
 $racineDepot = dirname(__DIR__); // fiable sur les deux runtimes (wasm : /repo)
 $resolues = [];

@@ -34,6 +34,7 @@ jamais de compte client.</p>
 </form>
 
 <h2>Comptes existants</h2>
+<div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
 <table>
     <thead><tr><th scope="col">Nom</th><th scope="col">Email</th><th scope="col">Rôle</th><th scope="col">Actif</th><th scope="col">Dernière connexion</th><th scope="col">Action</th></tr></thead>
     <tbody>
@@ -54,3 +55,4 @@ jamais de compte client.</p>
     <?php endforeach; ?>
     </tbody>
 </table>
+</div>

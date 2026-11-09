@@ -103,13 +103,14 @@ echo "MiniShop — Mes commandes à 375 px : montant et Détail en page, légend
 echo "== 1 · Vue « Mes commandes » : les six colonnes, montant et Détail présents ==\n";
 $html = rendreMesCommandes(commandesFixture());
 $check(
-    "le tableau porte la classe tableau-mes-commandes (et non un tableau nu)",
-    str_contains($html, '<table class="tableau-mes-commandes">')
+    "le tableau porte la classe dédiée au parcours client",
+    str_contains($html, '<table class="tableau-commandes-client">')
 );
 $check(
-    "le colgroup fige les six colonnes dans l'ordre (numero, date, statut, articles, montant, detail)",
-    str_contains($html, '<col class="col-numero"><col class="col-date"><col class="col-statut">')
-        && str_contains($html, '<col class="col-articles"><col class="col-montant"><col class="col-detail">')
+    "les six colonnes sont présentes et étiquetées sur mobile",
+    str_contains($html, 'data-label="Numéro"') && str_contains($html, 'data-label="Date"')
+        && str_contains($html, 'data-label="Statut"') && str_contains($html, 'data-label="Articles"')
+        && str_contains($html, 'data-label="Montant TTC"') && str_contains($html, 'data-label="Détail"')
 );
 $check(
     "la légende est là, en entier et sans code technique",
@@ -122,8 +123,8 @@ $check(
 );
 $check(
     "chaque montant est en cellule montant, formaté (1 234,50 € et 19,90 €)",
-    str_contains($html, '<td class="montant">1 234,50 €</td>')
-        && str_contains($html, '<td class="montant">19,90 €</td>')
+    str_contains($html, '<td class="montant" data-label="Montant TTC">1 234,50 €</td>')
+        && str_contains($html, '<td class="montant" data-label="Montant TTC">19,90 €</td>')
 );
 $check(
     "le lien « Détail → » de chaque commande est présent (dernière colonne)",
@@ -135,7 +136,7 @@ $check(
     str_contains($html, 'CMD2026-000007')
         && str_contains($html, '15/01/2026')
         && str_contains($html, 'En préparation')
-        && str_contains($html, '<td>3</td>')
+        && str_contains($html, '<td data-label="Articles">3</td>')
 );
 $htmlVide = rendreMesCommandes([]);
 $check(
@@ -144,51 +145,21 @@ $check(
         && !str_contains($htmlVide, '<table')
 );
 
-/* ── 2. CSS : les règles qui tiennent la page ──────────────────────── */
-echo "\n== 2 · Feuille du site : 100 % fixe, légende qui passe à la ligne ==\n";
-$css = (string) file_get_contents(dirname(__DIR__, 2) . '/public/minishop.css');
-$blocTableau = blocCss($css, '.tableau-mes-commandes');
-$check(
-    "le tableau fait 100 % de large, en répartition fixe des colonnes",
-    $blocTableau !== null
-        && str_contains($blocTableau, 'width: 100%')
-        && str_contains($blocTableau, 'table-layout: fixed')
-);
-$somme = 0;
-foreach (['col-numero', 'col-date', 'col-statut', 'col-articles', 'col-montant', 'col-detail'] as $colonne) {
-    $blocColonne = blocCss($css, '.tableau-mes-commandes .' . $colonne);
-    if ($blocColonne !== null && preg_match('/width:\s*(\d+)%/', $blocColonne, $m) === 1) {
-        $somme += (int) $m[1];
-    }
-}
-$check(
-    "les six largeurs de colonnes totalisent 100 % (aucune colonne hors écran)",
-    $somme === 100,
-    'somme=' . $somme
-);
-$blocLegende = blocCss($css, '.tableau-mes-commandes caption');
-$check(
-    "la légende est alignée à gauche et peut passer à la ligne (jamais de texte sur une seule ligne forcée)",
-    $blocLegende !== null
-        && str_contains($blocLegende, 'text-align: left')
-        && !str_contains($blocLegende, 'nowrap')
-);
-$blocMontant = blocCss($css, '.tableau-mes-commandes .montant');
-$check(
-    "les montants sont à droite, sur une ligne (jamais coupés au milieu)",
-    $blocMontant !== null
-        && str_contains($blocMontant, 'text-align: right')
-        && str_contains($blocMontant, 'white-space: nowrap')
-);
-$check(
-    "les cellules peuvent replier leur contenu long dans leur colonne (overflow-wrap)",
-    str_contains($css, '.tableau-mes-commandes th,')
-        && str_contains($css, 'overflow-wrap: break-word;')
-);
-$check(
-    "aucune règle générique « table » n'a été introduite (les autres tableaux gardent leurs classes)",
-    preg_match('/(^|[}\n])\s*table\s*\{/', $css) === 0
-);
+/* ── 2. CSS réellement chargée : cartes sur mobile ─────────────────── */
+echo "\n== 2 · Feuille chargée : cartes mobiles identifiées ==\n";
+$racine = dirname(__DIR__, 2);
+$css = (string) file_get_contents($racine . '/public/css/app.css');
+$layout = (string) file_get_contents($racine . '/app/View/layout.php');
+$check('le gabarit charge la feuille vérifiée', str_contains($layout, 'href="/css/app.css"'));
+$check('les règles mobiles sont ciblées sous 35em', str_contains($css, '@media (max-width: 35em)') && str_contains($css, '.tableau-defilant--client'));
+$blocTableau = blocCss($css, '.tableau-defilant--client table');
+$check('tableau limité à 100 % sans largeur minimale', $blocTableau !== null && str_contains($blocTableau, 'width: 100%') && str_contains($blocTableau, 'min-width: 0'));
+$blocLigne = blocCss($css, '.tableau-defilant--client tbody tr');
+$check('une carte distincte par commande', $blocLigne !== null && str_contains($blocLigne, 'border:') && str_contains($blocLigne, 'margin-bottom:'));
+$blocCellule = blocCss($css, '.tableau-defilant--client tbody td');
+$check('valeur et libellé sont affichés ensemble et les mots longs se replient', $blocCellule !== null && str_contains($blocCellule, 'grid-template-columns') && str_contains($blocCellule, 'overflow-wrap: anywhere'));
+$blocLabel = blocCss($css, '.tableau-defilant--client tbody td::before');
+$check('les libellés des colonnes sont repris dans les cartes', $blocLabel !== null && str_contains($blocLabel, 'content: attr(data-label)'));
 
 ob_end_clean();
 

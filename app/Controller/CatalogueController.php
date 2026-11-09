@@ -56,6 +56,7 @@ final class CatalogueController extends Controller
             'tri' => $this->str('tri', 20),
             'page' => max(1, $this->int('page') ?? 1),
             'par_page' => 12,
+            'ruptures_fin' => true,
         ];
 
         $resultat = $produits->searchProducts($criteres);

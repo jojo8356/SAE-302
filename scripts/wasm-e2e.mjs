@@ -1,30 +1,23 @@
 /**
- * MiniShop — parcours E2E de l'application complète sous PHP-WASM.
- * (Outil de développement sandbox : sur machine normale, la même suite
- * s'exécute avec un vrai serveur PHP — le fichier tests/php/run_tests.php
- * couvre les assertions métier de façon autonome.)
- *
- * Prérequis : data/minishop peuplé (node scripts/wasm_run.mjs scripts/seed.php).
- * Usage : node scripts/wasm-e2e.mjs
- *
- * Exécute des scénarios HTTP réels (cookies + CSRF inclus) contre le
- * contrôleur frontal public/index.php : catalogue, compte client, panier,
- * commande, annulation, back-office, guards RB-13, jetons CSRF.
+ * Parcours HTTP PHP-WASM sur un magasin créé dans le système de fichiers WASM.
+ * Le dossier data de l’hôte n’est ni chargé, ni modifié, ni restauré.
+ * Les requêtes sont internes : ce n’est pas un test navigateur réel.
  */
-
-import { createPhp, syncBack, WASM_ROOT } from './wasm_lib.mjs';
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { createPhp, WASM_ROOT } from './wasm_lib.mjs';
 import { randomUUID } from 'node:crypto';
 
-const REPO = join(import.meta.dirname, '..');
-if (!existsSync(join(REPO, 'data/minishop/produit.json'))) {
-  console.error('[wasm-e2e] base absente — lancez : node scripts/wasm_run.mjs scripts/seed.php');
-  process.exit(2);
-}
-
-const php = await createPhp('http://localhost:8080/');
+const php = await createPhp('http://localhost:8080/', { inclureDonnees: false });
+await php.mkdir(`${WASM_ROOT}/data`);
+await php.mkdir(`${WASM_ROOT}/data/minishop`);
 php.setPhpIniEntry('session.save_path', '/tmp');
+const seed = await php.run({ scriptPath: `${WASM_ROOT}/scripts/seed.php` });
+const texteSeed = `${seed.text ?? ''}\n${seed.errors ?? ''}`;
+// Le code de retour du SAPI WASM ne reflète pas celui du script PHP.
+if (!texteSeed.includes('Base JSON peuplée dans') || /(?:PHP )?(?:Fatal error|Parse error)|❌|✘/.test(texteSeed)) {
+  console.error('❌ Initialisation E2E WASM impossible :', texteSeed);
+  process.exit(1);
+}
+console.log('✓ Jeu de démonstration initialisé dans le système de fichiers WASM jetable.');
 
 // ---------------------------------------------------------------- client HTTP
 class Navigateur {
@@ -78,9 +71,41 @@ const contient = (label, page, morceau) =>
   check(label, (page ?? '').includes(morceau), `page sans « ${morceau} »`);
 
 // lecture du magasin JSON DANS le runtime WASM (les mutations n'atteignent
-// l'hôte qu'au syncBack final)
+// l’hôte : aucun rapatriement des données n’est effectué)
 const lireTable = async (table) =>
   JSON.parse(await php.readFileAsText(`${WASM_ROOT}/data/minishop/${table}.json`)).rows;
+
+// Oracle indépendant : sélection et tri depuis les données, sans appeler le dépôt.
+const slugsAttendusAccueil = (produits) => produits
+  .filter((p) => p.visible === 1 || p.visible === true)
+  .sort((a, b) => String(b.date_creation).localeCompare(String(a.date_creation))
+    || Number(b.id_produit) - Number(a.id_produit))
+  .slice(0, 4).map((p) => p.slug);
+const slugsRendusAccueil = (html) => {
+  const bloc = (html ?? '').match(/<section aria-labelledby="titre-nouveautes">([\s\S]*?)<\/section>/);
+  return [...(bloc?.[1] ?? '').matchAll(/<a class="btn btn--secondaire btn--sm" href="\/produit\/([^"?]+)"/g)]
+    .map((m) => m[1]);
+};
+const ordreAccueilValide = (html, produits) =>
+  JSON.stringify(slugsRendusAccueil(html)) === JSON.stringify(slugsAttendusAccueil(produits));
+
+// Oracle indépendant : chaque carte doit afficher la date propre à son produit,
+// sans conversion de fuseau ni réutilisation de la date du dernier élément.
+const datesAccueilValides = (html, produits) => {
+  const bloc = (html ?? '').match(/<section aria-labelledby="titre-nouveautes">([\s\S]*?)<\/section>/);
+  const cartes = [...(bloc?.[1] ?? '').matchAll(/<article class="carte carte-produit">([\s\S]*?)<\/article>/g)];
+  if (cartes.length !== slugsAttendusAccueil(produits).length) return false;
+  return cartes.every(([, carte]) => {
+    const slug = carte.match(/<a class="btn btn--secondaire btn--sm" href="\/produit\/([^"?]+)"/)?.[1];
+    const produit = produits.find((p) => p.slug === slug);
+    const d = String(produit?.date_creation ?? '').match(/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/);
+    if (!d) return carte.includes('Date d’ajout indisponible') && !carte.includes('<time');
+    const [, an, mois, jour, heure, minute, seconde] = d;
+    return carte.includes(`datetime="${an}-${mois}-${jour}T${heure}:${minute}:${seconde}"`)
+      && carte.includes(`${jour}/${mois}/${an} à ${heure}h${minute}`)
+      && carte.indexOf('Voir la fiche') < carte.indexOf('carte-produit__date');
+  });
+};
 
 const B = (n) => `\n=== ${n} ===\n`;
 process.stdout.write(B('T1 · pages publiques'));
@@ -90,9 +115,36 @@ process.stdout.write(B('T1 · pages publiques'));
   const accueil = await anonyme.get('/');
   check('GET / → 200', accueil.httpStatusCode === 200, `status ${accueil.httpStatusCode}`);
   contient('accueil : bienvenue', accueil.text, 'Bienvenue chez MiniShop');
+  const produitsAccueil = await lireTable('produit');
+  check('accueil : les quatre derniers ajouts visibles sont rendus dans l’ordre',
+    ordreAccueilValide(accueil.text, produitsAccueil), JSON.stringify(slugsRendusAccueil(accueil.text)));
+  check('accueil : date et heure de chaque carte correspondent aux données', datesAccueilValides(accueil.text, produitsAccueil));
   contient('accueil : 4 catégories', accueil.text, 'Objets connectés');
+  // Icônes de catégorie (Lucide, inlinées) : une pastille par catégorie, aucune requête
+  const nbCategories = (await lireTable('categorie')).length;
+  const iconesAccueil = (accueil.text.match(/carte-categorie__icone/g) ?? []).length;
+  check('accueil : une icône SVG par catégorie',
+    iconesAccueil === nbCategories, `${iconesAccueil} icône(s) pour ${nbCategories} catégorie(s)`);
+  check('accueil : icônes inlinées, aucune image distante',
+    (accueil.text.match(/<svg[^>]*viewBox="0 0 24 24"/g) ?? []).length >= nbCategories
+      && !(accueil.text ?? '').includes('lucide'),
+    'icônes absentes ou chargées depuis un CDN');
   const catalogue = await anonyme.get('/catalogue');
-  check('catalogue : 11 produits visibles (RB-19)', (catalogue.text.match(/<li>/g) ?? []).length >= 11, 'moins de 11 <li>');
+  for (const [nom, html] of [['accueil', accueil.text], ['catalogue', catalogue.text]]) {
+    const cartes = [...(html ?? '').matchAll(/<article class="carte carte-produit">([\s\S]*?)<\/article>/g)];
+    const correct = cartes.length > 0 && cartes.every(([, contenu]) => {
+      const liens = [...contenu.matchAll(/<a\b[^>]*>/g)];
+      return liens.length === 1 && /href="\/produit\/[^"?]+"/.test(liens[0][0])
+        && /aria-label="Voir la fiche de [^"]+"/.test(liens[0][0]);
+    });
+    check(`${nom} : une action de fiche nommée par produit`, correct, `${cartes.length} carte(s)`);
+  }
+  // page 1 = 12 cartes au plus, et jamais le produit masqué (RB-19)
+  const visiblesSeed = (await lireTable('produit')).filter((p2) => p2.visible === 1 || p2.visible === true).length;
+  const cartesAttendues = Math.min(12, visiblesSeed);
+  const nbCartes = (catalogue.text.match(/carte carte-produit/g) ?? []).length;
+  check(`catalogue : ${cartesAttendues} cartes sur la page 1 (RB-19)`, nbCartes === cartesAttendues, `${nbCartes} carte(s) rendue(s)`);
+  check('catalogue : le bracelet masqué absent', !(catalogue.text ?? '').includes('Bracelet connecté Band<'), 'masqué listé');
   const recherche = await anonyme.get('/recherche?q=casque');
   contient('recherche « casque » trouve le Casque', recherche.text, 'Casque sans fil Aura');
   const fiche = await anonyme.get('/produit/casque-sans-fil-aura');
@@ -106,12 +158,36 @@ process.stdout.write(B('T1 · pages publiques'));
   check('route inconnue → 404 (liste blanche)', routeInconnue.httpStatusCode === 404);
 }
 
+// Cartes des formulaires publics : le titre visuel se trouve à l'intérieur
+// du fieldset, dont la légende reste disponible aux technologies d'assistance.
+{
+  const visiteur = new Navigateur('formulaires-cartes');
+  for (const [url, titre, action] of [
+    ['/contact', 'Votre message', '/contact'],
+    ['/connexion', 'Espace client', '/connexion'],
+    ['/inscription', 'Vos informations', '/inscription'],
+    ['/admin/connexion', 'Administrateur', '/admin/connexion'],
+  ]) {
+    const page = await visiteur.get(url);
+    const extrait = `<legend class="visuellement-cache">${titre}</legend>`;
+    const titreCarte = `<h2 class="auth__titre">${titre}</h2>`;
+    const fieldset = (page.text ?? '').match(/<fieldset>([\s\S]*?)<\/fieldset>/);
+    check(`${url} : titre centré dans la carte et légende accessible`,
+      page.httpStatusCode === 200 && !!fieldset && fieldset[1].includes(extrait)
+        && fieldset[1].includes(titreCarte) && (page.text ?? '').includes(`action="${action}"`)
+        && (page.text ?? '').includes('name="_csrf"'),
+      `status ${page.httpStatusCode}`);
+  }
+}
+
 process.stdout.write(B('T2 · inscription et connexion (UC-04/05)'));
 
 {
   const nouveau = new Navigateur('nouveau');
   const jeton = await nouveau.csrf('/inscription');
   check('formulaire d\'inscription avec CSRF', jeton !== null);
+  const inscriptionPage = await nouveau.get('/inscription');
+  check('inscription : nom du champ de confirmation accepté par le serveur', (inscriptionPage.text ?? '').includes('name="confirmation"'));
   const r = await nouveau.post('/inscription', {
     _csrf: jeton, nom: 'Durand', prenom: 'Zoé', email: 'zoe@example.com',
     mot_de_passe: 'Zoe2026!Mot', confirmation: 'Zoe2026!Mot', cgv: '1',
@@ -156,7 +232,7 @@ let numeroCommande;
   contient('panier : port offert (≥ 80 €)', panier.text.toLowerCase(), 'offert');
 
   const valider = await alice.get('/commande/valider');
-  contient('récapitulatif avant paiement (art. L221-5)', valider.text, 'Total à payer');
+  contient('récapitulatif avant paiement simulé', valider.text, 'Total simulé');
   contient('montant attendu 488,40 € TTC', valider.text, '488,40'); // 154,80×2 + 178,80 (montre 149 HT)
 
   const j3 = await alice.csrf('/commande/valider');
@@ -189,9 +265,9 @@ process.stdout.write(B('T4 · annulation client (UC-09, RB-11/18/20)'));
   check('une commande est listée', !!m);
   if (m) {
     const id = m[1];
-    // le détail n'a plus de formulaire POST (annulation via page de
-    // confirmation) : le jeton de session se récupère sur « Mon compte »
-    const jA = await alice.csrf('/compte');
+    const detailAnnulation = await alice.get(`/mes-commandes/${id}`);
+    check('détail : annulation distincte de la rétractation', (detailAnnulation.text ?? '').includes('distincte du') && (detailAnnulation.text ?? '').includes('href="/retractation"'));
+    const jA = await alice.csrf(`/mes-commandes/${id}/annulation/confirmation`);
     const annulation = await alice.post(`/mes-commandes/${id}/annulation`, { _csrf: jA });
     check('annulation → redirection', annulation.httpStatusCode === 302, `status ${annulation.httpStatusCode}`);
     const stocks = await lireTable('produit');
@@ -225,6 +301,37 @@ process.stdout.write(B('T5 · back-office (UC-10…14, RB-13)'));
   });
   check('création produit → redirection', ok.httpStatusCode === 302, `status ${ok.httpStatusCode}`);
   check('produit créé (prix TTC dérivé RB-16)', (await lireTable('produit')).some((p) => p.reference === 'TEST-999' && Math.abs(p.prix_ttc - 12) < 0.001));
+  const nouvelAjout = (await lireTable('produit')).find((p) => p.reference === 'TEST-999');
+  const accueilApresAjout = await admin.get('/');
+  check('accueil : nouvel ajout visible immédiatement et dans l’ordre attendu',
+    !!nouvelAjout && ordreAccueilValide(accueilApresAjout.text, await lireTable('produit'))
+      && slugsRendusAccueil(accueilApresAjout.text)[0] === nouvelAjout.slug,
+    JSON.stringify(slugsRendusAccueil(accueilApresAjout.text)));
+  check('accueil : date réelle du nouveau produit après création',
+    datesAccueilValides(accueilApresAjout.text, await lireTable('produit')));
+
+  const jMasque = await admin.csrf('/admin/produit/nouveau');
+  const creationMasquee = await admin.post('/admin/produit/nouveau', {
+    _csrf: jMasque, reference: 'TEST-NOUV-MASQUE', nom: 'Dernier produit masqué E2E', slug: '', description: 'Test',
+    prix_ht: '10.00', tva: '20', stock: '5', seuil_alerte: '2', id_categorie: '1',
+  });
+  const masqueNouveau = (await lireTable('produit')).find((p) => p.reference === 'TEST-NOUV-MASQUE');
+  const accueilMasque = await admin.get('/');
+  check('accueil : nouvel ajout masqué exclu, ordre des visibles inchangé',
+    creationMasquee.httpStatusCode === 302 && !!masqueNouveau && Number(masqueNouveau.visible) === 0
+      && !slugsRendusAccueil(accueilMasque.text).includes(masqueNouveau.slug)
+      && ordreAccueilValide(accueilMasque.text, await lireTable('produit'))
+      && JSON.stringify(slugsRendusAccueil(accueilMasque.text)) === JSON.stringify(slugsRendusAccueil(accueilApresAjout.text)),
+    JSON.stringify(slugsRendusAccueil(accueilMasque.text)));
+  if (masqueNouveau) {
+    const jetonSuppression = await admin.csrf('/admin/produit/nouveau');
+    const supMasque = await admin.post(`/admin/produits/${masqueNouveau.id_produit}/suppression`, { _csrf: jetonSuppression });
+    check('nettoyage du produit masqué de test', supMasque.httpStatusCode === 302
+      && !(await lireTable('produit')).some((p) => p.reference === 'TEST-NOUV-MASQUE'));
+  } else {
+    check('nettoyage du produit masqué de test', false, 'produit non créé');
+  }
+
 
   const jn2 = await admin.csrf('/admin/produit/nouveau');
   const rb02 = await admin.post('/admin/produit/nouveau', {
@@ -310,22 +417,155 @@ process.stdout.write(B('T7 · catalogue avancé (F-01…F-05)'));
   check('compteurs affichés = produits visibles par catégorie', detailCompteurs.length === 0, detailCompteurs.join(', ') || 'incohérent');
   contient('Objets connectés : 1 seul visible (le masqué exclu)', cats.text, '1 produit');
   check('le bracelet masqué n\'apparaît nulle part', !(cats.text ?? '').includes('Bracelet'), 'Bracelet visible');
+  const iconesCats = (cats.text.match(/carte-categorie__icone/g) ?? []).length;
+  check('page catégories : une icône par catégorie',
+    iconesCats === (await lireTable('categorie')).length, `${iconesCats} icône(s)`);
 
   // F-02/03 : filtres cumulables, conservés dans l'URL
   const f = await anon.get('/catalogue?cat=3&prix_max=100&stock=1&tri=prix_asc');
   contient('filtres actifs : formulaire pré-rempli (prix_max)', f.text, 'value="100"');
   check('filtres actifs : catégorie sélectionnée', /value="3"\s*selected/.test(f.text ?? ''), 'option 3 non sélectionnée');
   contient('filtres actifs : case stock cochée', f.text, 'checked');
-  contient('2 produits (sac 58,80 + câble 15,00)', f.text, '2 produits trouvés');
-  contient('tri prix croissant : câble avant sac', f.text, 'Câble USB-C 2 m renforcé');
+  // attendus DÉRIVÉS de la table : le catalogue peut grandir
+  const cible = produits.filter((p2) => p2.id_categorie === 3
+    && Number(p2.prix_ttc) <= 100 && Number(p2.stock) > 0
+    && (p2.visible === 1 || p2.visible === true));
+  contient('total des filtres cumulés', f.text, `${cible.length} produit`);
+  const parPrix = [...cible].sort((a, b) => Number(a.prix_ttc) - Number(b.prix_ttc));
   check('tri prix croissant respecté',
-    (f.text ?? '').indexOf('Câble USB-C') < (f.text ?? '').indexOf('Sac à dos'), 'ordre incorrect');
-  check('le POWER en rupture est exclu par « en stock »', !(f.text ?? '').includes('Batterie externe'), 'batterie listée');
+    parPrix.length > 1
+      && (f.text ?? '').indexOf(parPrix[0].nom) >= 0
+      && (f.text ?? '').indexOf(parPrix[0].nom) < (f.text ?? '').indexOf(parPrix[parPrix.length - 1].nom),
+    `premier attendu : ${parPrix[0]?.nom}`);
+  const rupturesCat3 = produits.filter((p2) => p2.id_categorie === 3
+    && Number(p2.stock) === 0 && (p2.visible === 1 || p2.visible === true));
+  const intrus = rupturesCat3.filter((p2) => (f.text ?? '').includes(p2.nom));
+  check('les ruptures sont exclues par « en stock »',
+    rupturesCat3.length > 0 && intrus.length === 0, intrus.map((p2) => p2.nom).join(', ') || 'aucune rupture en catégorie 3');
 
   // ENF-04 : pages hors bornes → pas d'erreur, liste vide
   const loin = await anon.get('/catalogue?page=999');
-  check('page 999 → 200, page affichée 999 / 1', loin.httpStatusCode === 200 && (loin.text ?? '').includes('page 999 / 1'), `status ${loin.httpStatusCode}`);
+  const nbPages = Math.max(1, Math.ceil(produits.filter((p2) => p2.visible === 1 || p2.visible === true).length / 12));
+  check(`page 999 → 200, page affichée 999 / ${nbPages}`,
+    loin.httpStatusCode === 200 && (loin.text ?? '').includes(`page 999 / ${nbPages}`),
+    `status ${loin.httpStatusCode} — ${nbPages} page(s) attendue(s)`);
   check('page 999 : aucune fiche produit', !(loin.text ?? '').includes('href="/produit/'), 'des fiches présentes');
+  // dernière page réellement servie (12 par page) : nombre de cartes dérivé
+  // du nombre de produits visibles, jamais écrit en dur
+  const p3 = await anon.get('/catalogue?page=3');
+  const visiblesCatalogue = produits.filter((p2) => p2.visible === 1 || p2.visible === true).length;
+  const cartesP3 = Math.max(0, visiblesCatalogue - 24);
+  const renduesP3 = (p3.text.match(/carte carte-produit/g) ?? []).length;
+  check(`page 3 servie avec ${cartesP3} cartes`,
+    p3.httpStatusCode === 200 && renduesP3 === cartesP3, `${renduesP3} carte(s), status ${p3.httpStatusCode}`);
+  contient('pagination : page 3 sur le total', p3.text, `page 3 / ${nbPages}`);
+
+  // Vérifier l'ordre réellement rendu à travers toutes les pages : le tri
+  // secondaire reste actif dans chaque groupe, même en recherche filtrée.
+  for (const [libelle, suffixe, filtre] of [
+    ['catalogue prix croissant', '&tri=prix_asc', (p) => true],
+    ['catégorie accessoires', '&cat=3&tri=prix_desc', (p) => Number(p.id_categorie) === 3],
+  ]) {
+    const attendus = produits.filter((p) => (p.visible === 1 || p.visible === true) && filtre(p));
+    const pages = Math.max(1, Math.ceil(attendus.length / 12));
+    const refs = [];
+    for (let page = 1; page <= pages; page++) {
+      const reponse = await anon.get(`/catalogue?page=${page}${suffixe}`);
+      for (const carte of (reponse.text ?? '').matchAll(/<article class="carte carte-produit">([\s\S]*?)<\/article>/g)) {
+        const ref = carte[1].match(/Réf\.\s*([^<]+)/);
+        if (ref) refs.push(ref[1].trim());
+      }
+    }
+    const parRef = new Map(attendus.map((p) => [p.reference, p]));
+    const lignes = refs.map((ref) => parRef.get(ref));
+    let ruptureVue = false;
+    let ordreValide = lignes.length === attendus.length && new Set(refs).size === attendus.length;
+    for (const [i, produit] of lignes.entries()) {
+      if (!produit) { ordreValide = false; continue; }
+      if (Number(produit.stock) <= 0) ruptureVue = true;
+      else if (ruptureVue) ordreValide = false;
+      const precedent = lignes[i - 1];
+      if (precedent && (Number(precedent.stock) > 0) === (Number(produit.stock) > 0)) {
+        if (suffixe.includes('prix_asc') && Number(precedent.prix_ttc) > Number(produit.prix_ttc)) ordreValide = false;
+        if (suffixe.includes('prix_desc') && Number(precedent.prix_ttc) < Number(produit.prix_ttc)) ordreValide = false;
+      }
+    }
+    check(`${libelle} : ruptures à la fin sur toutes les pages et tri conservé`,
+      ordreValide && attendus.some((p) => Number(p.stock) <= 0), refs.join(', '));
+  }
+
+  const recherchePower = await anon.get('/recherche?q=POWER');
+  const referencesPower = [...(recherchePower.text ?? '').matchAll(/Réf\.\s*(POWER-\d+)/g)].map((m) => m[1]);
+  check('recherche : batterie disponible avant les batteries en rupture',
+    referencesPower.length === 3 && referencesPower[0] === 'POWER-029'
+      && referencesPower.includes('POWER-010') && referencesPower.includes('POWER-030'),
+    referencesPower.join(', '));
+
+  // Matrice HTTP sur les deux routes publiques : aucune hypothèse sur le
+  // nombre de pages, et comparaison aux données plutôt qu'au texte du titre.
+  const normaliser = (texte) => String(texte ?? '').normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const requetesStock = [
+    { q: '', cat: null, min: null, max: null, enStock: false },
+    { q: 'POWER', cat: null, min: null, max: null, enStock: false },
+    { q: '65 W', cat: null, min: null, max: null, enStock: false },
+    { q: 'POWER', cat: 3, min: 20, max: 90, enStock: false },
+    { q: 'POWER', cat: 3, min: null, max: null, enStock: true },
+    { q: 'introuvable-999', cat: null, min: null, max: null, enStock: false },
+  ];
+  for (const chemin of ['/catalogue', '/recherche']) {
+    for (const tri of ['nom', 'prix_asc', 'prix_desc', 'nouveaute', 'stock', 'tri-inconnu']) {
+      for (const requete of requetesStock) {
+        const eligibles = produits.filter((p) => {
+          if (!(p.visible === 1 || p.visible === true)) return false;
+          if (requete.cat !== null && Number(p.id_categorie) !== requete.cat) return false;
+          if (requete.min !== null && Number(p.prix_ttc) < requete.min) return false;
+          if (requete.max !== null && Number(p.prix_ttc) > requete.max) return false;
+          if (requete.enStock && Number(p.stock) <= 0) return false;
+          return ['nom', 'description', 'reference'].some((champ) =>
+            normaliser(p[champ]).includes(normaliser(requete.q)));
+        });
+        const parReference = new Map(eligibles.map((p) => [p.reference, p]));
+        const params = new URLSearchParams({ tri, q: requete.q });
+        if (requete.cat !== null) params.set('cat', String(requete.cat));
+        if (requete.min !== null) params.set('prix_min', String(requete.min));
+        if (requete.max !== null) params.set('prix_max', String(requete.max));
+        if (requete.enStock) params.set('stock', '1');
+        const totalPages = Math.max(1, Math.ceil(eligibles.length / 12));
+        const references = [];
+        let correct = true;
+        for (let page = 1; page <= totalPages; page++) {
+          params.set('page', String(page));
+          const reponse = await anon.get(`${chemin}?${params}`);
+          const cartes = [...(reponse.text ?? '').matchAll(/<article class="carte carte-produit">([\s\S]*?)<\/article>/g)];
+          if (reponse.httpStatusCode !== 200 || cartes.length !== Math.min(12, Math.max(0, eligibles.length - (page - 1) * 12))) correct = false;
+          for (const carte of cartes) {
+            const ref = carte[1].match(/Réf\.\s*([^<]+)/);
+            if (!ref) correct = false;
+            else references.push(ref[1].trim());
+          }
+        }
+        if (references.length !== eligibles.length || new Set(references).size !== eligibles.length) correct = false;
+        let ruptureVue = false;
+        let precedent = null;
+        for (const ref of references) {
+          const produit = parReference.get(ref);
+          if (!produit) { correct = false; continue; }
+          if (Number(produit.stock) <= 0) ruptureVue = true;
+          else if (ruptureVue) correct = false;
+          if (precedent && (Number(precedent.stock) > 0) === (Number(produit.stock) > 0)) {
+            if (tri === 'prix_asc' && Number(precedent.prix_ttc) > Number(produit.prix_ttc)) correct = false;
+            if (tri === 'prix_desc' && Number(precedent.prix_ttc) < Number(produit.prix_ttc)) correct = false;
+            if (tri === 'stock' && Number(precedent.stock) < Number(produit.stock)) correct = false;
+          }
+          precedent = produit;
+        }
+        check(`${chemin} : ruptures en dernier, tri ${tri}, recherche ${JSON.stringify(requete)}`,
+          correct, `références rendues : ${references.join(', ')} ; attendu : ${eligibles.length}`);
+      }
+    }
+  }
+
   const injectionTri = await anon.get('/catalogue?tri=prix_desc;DROP%20TABLE%20produit');
   check('tri inconnu → 200 sans erreur (liste blanche)', injectionTri.httpStatusCode === 200, `status ${injectionTri.httpStatusCode}`);
 
@@ -467,7 +707,9 @@ process.stdout.write(B('T10 · back-office CRUD complet (F-22/23/25/26/27)'));
 
   // ENF-04/F-03 : pagination réelle + filtres conservés dans les liens
   const page2 = await admin.get('/catalogue?page=2&tri=prix_desc');
-  contient('page 2 affichée', page2.text, 'page 2 / 2');
+  const apresAjouts = await lireTable('produit');
+  const totalPages = Math.max(1, Math.ceil(apresAjouts.filter((p2) => p2.visible === 1 || p2.visible === true).length / 12));
+  contient('page 2 affichée', page2.text, `page 2 / ${totalPages}`);
   const hrefs = [...(page2.text ?? '').matchAll(/href="([^"]*page=1[^"]*)"/g)].map((m2) => m2[1]);
   check('lien précédent conserve les filtres (tri + page)',
     hrefs.some((h) => h.includes('tri=prix_desc')), JSON.stringify(hrefs));
@@ -593,7 +835,7 @@ process.stdout.write(B('T12 · sécurité offensive (S-01…S-10)'));
 
   // S-06/S-07 : traversées de chemin et fichiers sensibles → 404 ; en-têtes présents
   for (const chemin of ['/../etc/passwd', '/produit/../../etc/passwd', '/%2e%2e/%2e%2e/etc/passwd',
-    '/.git/config', '/sql/01-minishop-schema.sql', '/app/Config/env.php', '/var/log/application.log', '/phpinfo.php']) {
+    '/.git/config', '/sql/01_minishop_schema.sql', '/app/Config/env.php', '/var/log/application.log', '/phpinfo.php']) {
     const r = await anon.get(chemin);
     check(`GET ${chemin} → 404`, r.httpStatusCode === 404, `status ${r.httpStatusCode}`);
   }
@@ -631,19 +873,30 @@ process.stdout.write(B('T13 · rôles administrateurs (RB-13, F-27)'));
   check('gestionnaire → /admin : 200', (await gest.get('/admin')).httpStatusCode === 200);
   check('gestionnaire → /admin/produits : 200', (await gest.get('/admin/produits')).httpStatusCode === 200);
   check('gestionnaire → /admin/commandes : 200', (await gest.get('/admin/commandes')).httpStatusCode === 200);
+  const anonyme = new Navigateur('t13-anonyme');
+  const anonymeGet = await anonyme.get('/admin/equipe');
+  check('visiteur GET équipe → connexion 302', anonymeGet.httpStatusCode === 302 && (anonymeGet.headers.location ?? []).join(' ') === '/admin/connexion', `status ${anonymeGet.httpStatusCode}`);
+  const anonymePost = await anonyme.post('/admin/equipe', { nom: 'X' });
+  check('visiteur POST équipe → connexion 302', anonymePost.httpStatusCode === 302 && (anonymePost.headers.location ?? []).join(' ') === '/admin/connexion', `status ${anonymePost.httpStatusCode}`);
   const equipe = await gest.get('/admin/equipe');
-  check('gestionnaire → /admin/equipe : refusé (403/302)', [403, 302].includes(equipe.httpStatusCode), `status ${equipe.httpStatusCode}`);
-  const apres = await gest.get('/admin');
-  contient('message « Réservé au rôle SUPER » affiché', apres.text, 'Réservé au rôle SUPER');
-  const cree = await gest.post('/admin/equipe', { _csrf: 'peu-importe', nom: 'X', prenom: 'Y', email: 'x@y.z', mot_de_passe: 'Xy12345678', role: 'SUPER' });
-  check('gestionnaire ne peut pas créer d\'admin', [403, 302].includes(cree.httpStatusCode)
-    && !(await lireTable('administrateur')).some((a) => a.email === 'x@y.z'), `status ${cree.httpStatusCode}`);
+  check('gestionnaire GET équipe → vrai statut 403 sans redirection', equipe.httpStatusCode === 403 && !(equipe.headers.location ?? []).length, `status ${equipe.httpStatusCode}`);
+  contient('gestionnaire : page Accès refusé', equipe.text, '<h1>Accès refusé</h1>');
+  contient('gestionnaire : lien de retour au back-office', equipe.text, 'href="/admin"');
+  const jetonGest = await gest.csrf('/admin/produit/nouveau');
+  check('gestionnaire : jeton CSRF valide pour les tests POST', typeof jetonGest === 'string' && /^[a-f0-9]{64}$/.test(jetonGest ?? ''));
+  const avantAdmins = JSON.stringify(await lireTable('administrateur'));
+  const cree = await gest.post('/admin/equipe', { _csrf: jetonGest, nom: 'X', prenom: 'Y', email: 'x@y.z', mot_de_passe: 'Xy12345678', role: 'SUPER' });
+  check('gestionnaire POST création → 403 même avec CSRF valide', cree.httpStatusCode === 403 && !(cree.headers.location ?? []).length && (cree.text ?? '').includes('<h1>Accès refusé</h1>'), `status ${cree.httpStatusCode}`);
+  const idGest = (await lireTable('administrateur')).find((a) => a.email === 'gestionnaire@minishop.fr')?.id_admin;
+  const basculeRefusee = await gest.post(`/admin/equipe/${idGest}/basculer`, { _csrf: jetonGest });
+  check('gestionnaire POST bascule → 403 et aucune modification', basculeRefusee.httpStatusCode === 403 && JSON.stringify(await lireTable('administrateur')) === avantAdmins, `status ${basculeRefusee.httpStatusCode}`);
 
-  // F-27 : le SUPER désactive le gestionnaire → connexion refusée
+  // F-27 : le SUPER accède à l’équipe et désactive le gestionnaire
   const superAdmin = new Navigateur('t13-super');
   const js = await superAdmin.csrf('/admin/connexion');
   await superAdmin.post('/admin/connexion', { _csrf: js, email: 'admin@minishop.fr', mot_de_passe: 'Admin2026!' });
-  const idGest = (await lireTable('administrateur')).find((a) => a.email === 'gestionnaire@minishop.fr')?.id_admin;
+  const equipeSuper = await superAdmin.get('/admin/equipe');
+  check('SUPER GET équipe → 200', equipeSuper.httpStatusCode === 200 && !(equipeSuper.text ?? '').includes('<h1>Accès refusé</h1>'), `status ${equipeSuper.httpStatusCode}`);
   const jt = await superAdmin.csrf('/admin/equipe');
   const bascule = await superAdmin.post(`/admin/equipe/${idGest}/basculer`, { _csrf: jt });
   check('désactivation → redirection', bascule.httpStatusCode === 302, `status ${bascule.httpStatusCode}`);
@@ -653,7 +906,150 @@ process.stdout.write(B('T13 · rôles administrateurs (RB-13, F-27)'));
   check('compte désactivé : connexion refusée', reConnexion.httpStatusCode === 200 && !(reConnexion.headers.location ?? []).some((l) => String(l).includes('/admin')), `status ${reConnexion.httpStatusCode}`);
 }
 
-await syncBack(php);
+
+process.stdout.write(B('T14 · design, contact, API panier, paramètres (ajouts DA/tests)'));
+
+{
+  const visiteur = new Navigateur('t14-visiteur');
+
+  // --- design system servi et intégré --------------------------------
+  const accueilDA = await visiteur.get('/');
+  contient('gabarit : feuille de style du design system', accueilDA.text, '/css/app.css');
+  contient('gabarit : lien d\'évitement (2.4.1)', accueilDA.text, 'lien-evitement');
+  contient('gabarit : zone aria-live du panier', accueilDA.text, 'aria-live="polite"');
+  contient('gabarit : logo SVG inline', accueilDA.text, '<svg');
+
+  // --- pages nouvelles ------------------------------------------------
+  const aide = await visiteur.get('/aide');
+  check('GET /aide → 200', aide.httpStatusCode === 200, `status ${aide.httpStatusCode}`);
+  contient('aide : section accessibilité', aide.text, 'Accessibilité');
+
+  const contact = await visiteur.get('/contact');
+  check('GET /contact → 200', contact.httpStatusCode === 200, `status ${contact.httpStatusCode}`);
+  contient('contact : formulaire avec CSRF', contact.text, 'name="_csrf"');
+
+  const jetonContact = await visiteur.csrf('/contact');
+  const invalide = await visiteur.post('/contact', { _csrf: jetonContact, nom: '', email: 'pas-un-email', message: 'court' });
+  check('contact invalide → messages serveur', invalide.httpStatusCode === 200 && (invalide.text ?? '').includes('adresse email valide'), `status ${invalide.httpStatusCode}`);
+  const valide = await visiteur.post('/contact', {
+    _csrf: jetonContact, nom: 'Zoé Test', email: 'zoe.contact@example.test',
+    message: 'Bonjour, une question sur les frais de port et la disponibilité. ' + 'x'.repeat(600),
+  });
+  check('contact valide → redirection', valide.httpStatusCode === 302, `status ${valide.httpStatusCode}`);
+  const journalContact = await php.readFileAsText(`${WASM_ROOT}/var/log/contact.jsonl`);
+  const entreeContact = JSON.parse(journalContact.trim().split('\n').at(-1));
+  check('contact : données réellement enregistrées', entreeContact.nom === 'Zoé Test' && entreeContact.email === 'zoe.contact@example.test' && entreeContact.message.includes('Bonjour') && entreeContact.message.length > 600);
+  const retourContact = await visiteur.get('/contact');
+  contient('contact : succès honnête sans envoi ni réponse garantie', retourContact.text, 'Aucun e-mail n’a été envoyé');
+  const contactSansCsrf = await visiteur.post('/contact', { nom: 'Test', email: 't@example.test', message: 'Un message suffisamment long.' });
+  const journalApresCsrf = await php.readFileAsText(`${WASM_ROOT}/var/log/contact.jsonl`);
+  check('contact sans CSRF refusé sans écriture', contactSansCsrf.httpStatusCode === 302 && journalApresCsrf === journalContact, `status ${contactSansCsrf.httpStatusCode}`);
+  const retourCsrf = await visiteur.get('/');
+  contient('contact : erreur CSRF annoncée', retourCsrf.text, 'Jeton de sécurité invalide');
+  const contactXss = await visiteur.post('/contact', { _csrf: jetonContact, nom: '<script>alert(1)</script>', email: 'incorrect', message: 'court' });
+  check('contact invalide : saisie échappée', (contactXss.text ?? '').includes('&lt;script&gt;') && !(contactXss.text ?? '').includes('<script>alert(1)</script>'));
+  // Le système de fichiers WASM est isolé : un dossier à la place du fichier
+  // simule un échec d’écriture sans toucher aux journaux de la machine.
+  await php.run({ code: `<?php unlink('${WASM_ROOT}/var/log/contact.jsonl'); mkdir('${WASM_ROOT}/var/log/contact.jsonl');` });
+  const echecContact = await visiteur.post('/contact', { _csrf: jetonContact, nom: 'Test', email: 't@example.test', message: 'Un message suffisamment long.' });
+  check('contact : erreur d’écriture redirigée', echecContact.httpStatusCode === 302, `status ${echecContact.httpStatusCode}`);
+  const retourEchec = await visiteur.get('/contact');
+  contient('contact : échec de stockage signalé', retourEchec.text, 'Impossible d’enregistrer');
+
+  // Les pages sont accessibles à un visiteur sans compte et reliées dans le pied.
+  const legal = new Navigateur('informations-legales');
+  for (const [route, titre] of [
+    ['/mentions-legales', 'Mentions légales'], ['/cgv', 'Conditions générales de vente'],
+    ['/cgu', 'Conditions d’utilisation'], ['/confidentialite', 'Politique de confidentialité'],
+    ['/cookies', 'Cookies et traceurs'], ['/livraison', 'Livraison'],
+    ['/retractation', 'Rétractation et retours'], ['/garanties', 'Garanties et médiation'],
+  ]) {
+    const page = await legal.get(route);
+    check(`${route} : 200 et titre`, page.httpStatusCode === 200 && (page.text ?? '').includes(`<h1>${titre}</h1>`));
+    check(`${route} : liens cookies et rétractation`, (page.text ?? '').includes('href="/cookies"') && (page.text ?? '').includes('href="/retractation"'));
+  }
+  const pageRetrait = await legal.get('/retractation');
+  contient('rétractation : absence de transmission clairement annoncée', pageRetrait.text, 'ne transmettent aucune déclaration');
+  contient('rétractation : modèle disponible', pageRetrait.text, 'Signature du (des) consommateur(s)');
+  const pageCgv = await legal.get('/cgv');
+  contient('CGV : encadré légal effectivement rendu', pageCgv.text, 'délai de trente jours');
+  const pageCookies = await legal.get('/cookies');
+  contient('cookies : durée et usage expliqués', pageCookies.text, 'MINISHOPSESS');
+  const fraiche = new Navigateur('cookie-frais');
+  const premiere = await fraiche.get('/cookies');
+  const cookiesRecus = premiere.headers['set-cookie'] ?? [];
+  check('cookie nécessaire HttpOnly et SameSite=Lax', cookiesRecus.some((c) => /^MINISHOPSESS=/.test(c) && /httponly/i.test(c) && /samesite=lax/i.test(c)), cookiesRecus.join('; '));
+  check('aucun cookie marketing observé sur cette page', cookiesRecus.every((c) => /^MINISHOPSESS=/.test(c)), cookiesRecus.join('; '));
+
+  const mentions = await visiteur.get('/mentions');
+  check('alias /mentions → 200', mentions.httpStatusCode === 200, `status ${mentions.httpStatusCode}`);
+
+  // --- API panier (progressive enhancement) ---------------------------
+  const etat = await visiteur.get('/api/panier');
+  const typeEtat = (etat.headers['content-type'] ?? []).join(' ');
+  check('GET /api/panier → 200 JSON', etat.httpStatusCode === 200 && typeEtat.includes('application/json'), `status ${etat.httpStatusCode} / ${typeEtat}`);
+  let jsonEtat = {};
+  try { jsonEtat = JSON.parse(etat.text ?? '{}'); } catch { jsonEtat = {}; }
+  check('API : nombre_articles exposé', typeof jsonEtat.nombre_articles === 'number');
+
+  const sansJeton = await visiteur.post('/api/panier/ajouter', { id_produit: 1, quantite: 1 });
+  check('API sans jeton CSRF → 403', sansJeton.httpStatusCode === 403, `status ${sansJeton.httpStatusCode}`);
+
+  const jetonPanier = await visiteur.csrf('/contact'); // jeton de session (le panier vide n'a pas de formulaire)
+  const ajout = await visiteur.post('/api/panier/ajouter', { _csrf: jetonPanier, id_produit: 1, quantite: 1 });
+  let jsonAjout = {};
+  try { jsonAjout = JSON.parse(ajout.text ?? '{}'); } catch { jsonAjout = {}; }
+  check('API ajout → 200 ok', ajout.httpStatusCode === 200 && jsonAjout.ok === true, `status ${ajout.httpStatusCode}`);
+  check('API ajout → total renvoyé par le serveur', typeof jsonAjout.total_ttc === 'number');
+
+  const plafond = await visiteur.post('/api/panier/ajouter', { _csrf: jetonPanier, id_produit: 1, quantite: 9999 });
+  let jsonPlafond = {};
+  try { jsonPlafond = JSON.parse(plafond.text ?? '{}'); } catch { jsonPlafond = {}; }
+  const produit1 = (await lireTable('produit')).find((p) => p.id_produit === 1);
+  check('API : quantité plafonnée au stock (RB-18)',
+    plafond.httpStatusCode === 200 && (jsonPlafond.nombre_articles ?? 0) <= Number(produit1?.stock ?? 0),
+    `articles ${jsonPlafond.nombre_articles} / stock ${produit1?.stock}`);
+
+  // --- back-office : paramètres et filtre de stock ---------------------
+  const admin = new Navigateur('t14-admin');
+  const ja = await admin.csrf('/admin/connexion');
+  await admin.post('/admin/connexion', { _csrf: ja, email: 'admin@minishop.fr', mot_de_passe: 'Admin2026!' });
+
+  const parametres = await admin.get('/admin/parametres');
+  check('GET /admin/parametres → 200', parametres.httpStatusCode === 200, `status ${parametres.httpStatusCode}`);
+  contient('paramètres : frais de port éditables', parametres.text, 'Frais de port standard');
+
+  const jp = await admin.csrf('/admin/parametres');
+  const maj = await admin.post('/admin/parametres', {
+    _csrf: jp,
+    param_frais_port: '5.90',
+    param_franchise_port: '80.00',
+    param_tva_defaut: '20.00',
+    param_conservation_compte: '36',
+  });
+  check('paramètres enregistrés → redirection', maj.httpStatusCode === 302, `status ${maj.httpStatusCode}`);
+  const lignePort = (await lireTable('parametre')).find((p) => p.cle === 'frais_port');
+  check('frais de port persistés (5.90)', String(lignePort?.valeur) === '5.90', `valeur ${lignePort?.valeur}`);
+
+  // valeur refusée : non numérique
+  const jpInvalide = await admin.csrf('/admin/parametres');
+  await admin.post('/admin/parametres', { _csrf: jpInvalide, param_frais_port: 'gratuit' });
+  const apresInvalide = (await lireTable('parametre')).find((p) => p.cle === 'frais_port');
+  check('valeur non numérique refusée', String(apresInvalide?.valeur) === '5.90', `valeur ${apresInvalide?.valeur}`);
+
+  // on remet la valeur du jeu de démonstration
+  const jpRemise = await admin.csrf('/admin/parametres');
+  await admin.post('/admin/parametres', { _csrf: jpRemise, param_frais_port: '4.90' });
+
+  const rupture = await admin.get('/admin/stocks?etat=RUPTURE');
+  check('filtre stocks ?etat=RUPTURE → 200', rupture.httpStatusCode === 200, `status ${rupture.httpStatusCode}`);
+  contient('filtre stocks : compteurs affichés', rupture.text, 'Ruptures (');
+
+  const gestionnaireRefuse = await visiteur.get('/admin/parametres');
+  check('paramètres protégés (visiteur) → refus', [302, 403].includes(gestionnaireRefuse.httpStatusCode), `status ${gestionnaireRefuse.httpStatusCode}`);
+}
+
+// Les données et journaux du runtime WASM sont jetables ; rien n'est rapatrié.
 process.stdout.write(`\n${'='.repeat(60)}\n`);
 if (échecs === 0) {
   console.log(`E2E : TOUT EST VERT ✅  (${tests} vérifications)`);

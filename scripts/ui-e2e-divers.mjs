@@ -33,6 +33,12 @@ import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
+// Ces parcours modifient le serveur ciblé : jamais les lancer implicitement sur les données locales.
+if (!process.env.UI_BASE_URL || process.env.UI_TEST_INSTANCE_JETABLE !== '1') {
+  console.error('UI_BASE_URL et UI_TEST_INSTANCE_JETABLE=1 requis : utiliser uniquement une instance de test jetable. Ces tests modifient ses données.');
+  process.exit(2);
+}
+
 const REPO = join(import.meta.dirname, '..');
 const PORT = Number(process.env.UI_PORT ?? 8120);
 let base = (process.env.UI_BASE_URL ?? `http://127.0.0.1:${PORT}`).replace(/\/$/, '');
@@ -205,14 +211,14 @@ try {
   check('panier : « Sous-total » et « Frais de port » apparaissent exactement une fois chacun',
     occurrences(nav.texte(), 'Sous-total') === 1 && occurrences(nav.texte(), 'Frais de port') === 1,
     nav.texte().slice(0, 200));
-  check('panier : aucun bloc « Récapitulatif » séparé ne double le tableau',
-    !nav.texte().includes('Récapitulatif'));
+  check('panier : un seul récapitulatif sans doublon',
+    doc().querySelectorAll('.recap').length === 1);
   await nav.cliquerBouton(bouton(doc().querySelector('form[action="/commande/valider"]'), 'Valider ma commande →'));
   check('page de validation atteinte', new URL(nav.page.url).pathname === '/commande/valider', nav.page.url);
   check('validation : « Récapitulatif de votre panier », « Sous-total », « Total à payer » une fois chacun (avant paiement)',
     occurrences(nav.texte(), 'Récapitulatif de votre panier') === 1
       && occurrences(nav.texte(), 'Sous-total') === 1
-      && occurrences(nav.texte(), 'Total à payer') === 1);
+      && occurrences(nav.texte(), 'Total simulé') === 1);
 
   // ---------------------------------------------------------- 2. photos distinctes
   console.log('\n== 2 · Deux fiches produits : chacune sa photo, servie ==');
@@ -221,17 +227,17 @@ try {
   const sources = [];
   for (const lien of liens) {
     await nav.aller(lien.getAttribute('href'));
-    const img = doc().querySelector('img.photo-produit');
+    const img = doc().querySelector('.fiche__media img.carte-produit__image[alt]');
     if (img) sources.push(img.getAttribute('src'));
     if (sources.length >= 2) break;
   }
-  check('deux fiches affichent leur photo (img.photo-produit)', sources.length >= 2, sources.join(' | '));
-  check('les deux photos sont des fichiers différents (pas la même pour tous)',
-    sources.length >= 2 && sources[0] !== sources[1], sources.join(' | '));
+  check('deux fiches affichent leur visuel avec alternative', sources.length >= 2, sources.join(' | '));
+  check('les visuels sont des ressources locales réutilisables',
+    sources.length >= 2 && sources.every((source) => source.startsWith('/img/')), sources.join(' | '));
   const resImg = await fetch(new URL(sources[0], base), { headers: nav.enTetes() });
-  const corpsImg = await resImg.text();
-  check('la première photo est servie (200, SVG)',
-    resImg.status === 200 && corpsImg.includes('<svg'), `HTTP ${resImg.status}`);
+  const corpsImg = await resImg.arrayBuffer();
+  check('le premier visuel est servi (200, image)',
+    resImg.status === 200 && corpsImg.byteLength > 0 && (resImg.headers.get('content-type') ?? '').startsWith('image/'), `HTTP ${resImg.status}`);
   check('la CSP de la page autorise les images du site (img-src \'self\')',
     String(nav.page.enTetes.get('content-security-policy') ?? '').includes("img-src 'self'"),
     String(nav.page.enTetes.get('content-security-policy') ?? ''));
@@ -251,8 +257,8 @@ try {
     // le message peut être suivi d'autre chose : on tranche sur le texte global ci-dessous
     suivant = null;
   }
-  const messageTop = admin.texte().includes('Aucune vente enregistrée pour le moment');
-  const listeTop = [...docA().querySelectorAll('ol li')].filter((li) => li.textContent.includes('unités'));
+  const messageTop = admin.texte().includes('Aucun produit vendu pour le moment');
+  const listeTop = [...(titreTop?.parentElement?.querySelectorAll('table tbody tr') ?? [])];
   check('Top 5 : message explicite OU liste remplie — jamais une liste vide muette',
     (messageTop && listeTop.length === 0) || (!messageTop && listeTop.length >= 1),
     `message=${messageTop} lignes=${listeTop.length}`);
@@ -266,7 +272,7 @@ try {
   formProduit.querySelector('#prix_ht').value = '9.00';
   formProduit.querySelector('#stock').value = '2';
   await admin.cliquerBouton(bouton(formProduit, 'Créer le produit'));
-  check('produit sans description créé', admin.texte().includes('Produit sans description e2e'), admin.page.url);
+  check('produit sans description créé', admin.texte().includes('Produit créé.'), admin.page.url);
   await nav.aller('/catalogue?q=' + encodeURIComponent('Produit sans description'));
   const lienFiche = doc().querySelector('a[href^="/produit/"]');
   check('la fiche du produit sans description est atteignable depuis le catalogue', !!lienFiche);
@@ -285,30 +291,30 @@ try {
   // ---------------------------------------------------------- 4. pied de page et contact
   console.log('\n== 4 · Pied de page lisible et Contact aligné : règles servies ==');
   await nav.aller('/contact');
-  check('la page Contact est dans sa section .page-contact, titre dedans',
-    !!doc().querySelector('section.page-contact h1'));
+  check('la page Contact a un en-tête et un titre',
+    !!doc().querySelector('.auth .entete-page h1'));
   const pied = doc().querySelector('footer');
   check('le pied de page contient la mention MiniShop et ses liens',
-    !!pied && pied.textContent.includes('MiniShop (maquette pédagogique'));
-  const resCss = await fetch(`${base}/minishop.css`, { headers: nav.enTetes() });
+    !!pied && pied.textContent.includes('MiniShop — maquette pédagogique'));
+  const resCss = await fetch(`${base}/css/app.css`, { headers: nav.enTetes() });
   const css = await resCss.text();
-  check('la feuille est servie (200) avec les règles footer et .page-contact',
-    resCss.status === 200 && css.includes('footer {') && css.includes('.page-contact'),
+  check('la feuille est servie (200) avec les règles du pied et de l’en-tête',
+    resCss.status === 200 && css.includes('.pied {') && css.includes('.entete-page'),
     `HTTP ${resCss.status}`);
-  check('pied de page : fond clair #f5f5f4, texte #1c1917 — contraste calculé ≥ 4,5:1',
-    contraste('#1c1917', '#f5f5f4') >= 4.5 && contraste('#9a3412', '#f5f5f4') >= 4.5,
-    `texte=${contraste('#1c1917', '#f5f5f4').toFixed(2)} liens=${contraste('#9a3412', '#f5f5f4').toFixed(2)}`);
-  check('Contact : titre et paragraphes alignés à gauche par la même règle',
-    /\.page-contact h1,\s*\.page-contact p\s*\{[^}]*text-align:\s*left/.test(css));
-  check('la photo produit tient dans la page (max-width 100 %)',
-    /\.photo-produit\s*\{[^}]*max-width:\s*100%/.test(css));
+  check('pied de page : texte clair sur fond sombre — contraste calculé ≥ 4,5:1',
+    contraste('#e2e8f0', '#0f172a') >= 4.5 && contraste('#dbeafe', '#0f172a') >= 4.5,
+    `texte=${contraste('#e2e8f0', '#0f172a').toFixed(2)} liens=${contraste('#dbeafe', '#0f172a').toFixed(2)}`);
+  check('Contact : titre et explication réunis dans le même en-tête',
+    !!doc().querySelector('.entete-page h1') && !!doc().querySelector('.entete-page p.chapo'));
+  check('le visuel produit occupe la largeur de son cadre',
+    /\.carte-produit__image\s*\{[^}]*width:\s*100%/.test(css));
 
   console.log(`\n${'='.repeat(64)}`);
   if (échecs > 0) {
     console.log(`E2E UI divers : ${échecs}/${tests} vérification(s) en échec ❌`);
     process.exitCode = 1;
   } else {
-    console.log(`E2E UI divers : TOUT EST VERT ✅ (${tests} vérifications, clics réels sur l'UI)`);
+    console.log(`E2E UI divers : TOUT EST VERT ✅ (${tests} vérifications, interactions DOM simulées avec jsdom)`);
   }
 } catch (e) {
   console.error('\nE2E UI divers : ERREUR fatale —', e);

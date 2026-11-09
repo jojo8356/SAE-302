@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="SAÉ 302 — MiniShop : Annexe 17.3 — Exigences non fonctionnelles (ENF)#">
+<title>Annexe 17.3 — Exigences non fonctionnelles (ENF)# — MiniShop</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --papier: #fbfaf7;
+  --carte: #ffffff;
+  --trait: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-clair: #dbeafe;
+  --code: #f1f5f9;
+  --mesure: 72ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
+    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
+    --accent-clair: #1e3a8a; --code: #16223a;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  max-width: calc(var(--mesure) + 6rem);
+  background: var(--papier);
+  color: var(--encre);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
+h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
+p, li { max-width: var(--mesure); }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+}
+pre {
+  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
+  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.35rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+thead th { background: var(--accent-clair); }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
+img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li input[type="checkbox"] { margin-right: 0.4rem; }
+.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
+.toc > ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1rem; }
+footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+@media print {
+  :root { --papier: #fff; --carte: #fff; }
+  @page { size: A4; margin: 18mm 16mm; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<h1 id="annexe-173-exigences-non-fonctionnelles-enf">Annexe 17.3 — Exigences non fonctionnelles (ENF)<a class="headerlink" href="#annexe-173-exigences-non-fonctionnelles-enf" title="Permanent link">#</a></h1>
+<p>Chaque exigence est <strong>vérifiable</strong> : la colonne « moyen de vérification » donne la commande, la requête ou
+la manipulation qui prouve la conformité. Une exigence sans moyen de vérification a été supprimée du document.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Famille</th>
+<th>Exigence</th>
+<th>Valeur cible / règle</th>
+<th>Moyen de vérification</th>
+<th>Statut</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ENF-01</code></td>
+<td>Performance</td>
+<td>Pages de liste en &lt; 500 ms (p95) <strong>sur la volumétrie retenue avec le client : 200 produits et 1 000 commandes/an</strong> (jeu généré par <code>scripts/gen_volumes.sh</code>), mesuré sur le poste de soutenance et en base seule (<code>tests/perf/mesurer.sh --sql-only</code>)</td>
+<td>p95 &lt; 500 ms, moy &lt; 300 ms</td>
+<td><code>bash tests/perf/mesurer.sh</code> (200 requêtes HTTP, <code>curl -w '%{time_total}'</code>) <strong>et</strong> <code>DB=minishop_perf ./tests/perf/mesurer_sql.sh 50</code> (base seule, mesuré : 15–17 ms de moyenne sur 212 produits / 992 commandes) ; nombre de requêtes via <code>general_log</code> ≤ 5</td>
+<td>protocole livré, mesure à exécuter</td>
+</tr>
+<tr>
+<td><code>ENF-02</code></td>
+<td>Volumétrie</td>
+<td><strong>cible client 2026 : 200 produits / 1 000 commandes sur 12 mois / 10 clients actifs</strong> ; le dimensionnement est gardé sûr jusqu'à 1 000 produits / 50 000 commandes (aucune partition, aucun cache) ; pas de dégradation de la recherche</td>
+<td>modèle dimensionné, index adaptés, <code>scripts/gen_volumes.sh</code> pour reproduire le jeu de mesure</td>
+<td><code>EXPLAIN</code> sur les 4 requêtes types (catalogue, recherche, mes commandes, admin) → index utilisés, 0 <code>filesort</code> sur les filtres</td>
+<td>plan d'exécution commenté en annexe du doc de tests</td>
+</tr>
+<tr>
+<td><code>ENF-03</code></td>
+<td>Disponibilité</td>
+<td>application mono-nœud ; pas de haute disponibilité exigée, mais arrêt/reprise propre</td>
+<td>redémarrage Apache sans perte de session fonctionnelle (sessions en fichiers)</td>
+<td>arrêt/relance + rechargement d'une page privée</td>
+<td>conforme par conception</td>
+</tr>
+<tr>
+<td><code>ENF-04</code></td>
+<td>Ergonomie</td>
+<td>pagination 12 par défaut, borne haute 60, page demandée toujours honorée</td>
+<td>1 ≤ <code>par_page</code> ≤ 60</td>
+<td><code>CALL sp_search_products(…, 500, …)</code> renvoie 60 lignes maximum (test <code>T-25</code>)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>ENF-05</code></td>
+<td>Ergonomie</td>
+<td>état des filtres conservé dans l'URL (partageable, rechargeable, retournable)</td>
+<td>query string complet</td>
+<td>test F-03 (copier l'URL, l'ouvrir en navigation privée)</td>
+<td>✅ attendu</td>
+</tr>
+<tr>
+<td><code>ENF-06</code></td>
+<td>Ergonomie</td>
+<td>aucun formulaire ne perd la saisie en cas de refus serveur</td>
+<td>100 % des erreurs de règle re-rendent le formulaire</td>
+<td>tests F-07, F-10, F-22</td>
+<td>✅ attendu</td>
+</tr>
+<tr>
+<td><code>ENF-07</code></td>
+<td>Robustesse / accessibilité</td>
+<td><strong>tout</strong> le parcours d'achat fonctionne JavaScript désactivé</td>
+<td>JS = confort uniquement</td>
+<td>test F-13 (JS désactivé dans devtools : panier + commande OK)</td>
+<td>✅ attendu</td>
+</tr>
+<tr>
+<td><code>ENF-08</code></td>
+<td>Accessibilité</td>
+<td>WCAG 2.1 AA sur les parcours clés : labels, focus visible, contrastes, annonces <code>aria-live</code> sur le panier</td>
+<td>0 erreur bloquante</td>
+<td>audit manuel + <code>axe</code> (optionnel), check-list §7.4</td>
+<td>protocole livré</td>
+</tr>
+<tr>
+<td><code>ENF-09</code></td>
+<td>Maintenabilité</td>
+<td>PHP 8 <code>strict_types</code>, PSR-12, PSR-4, aucune classe de plus de 250 lignes, aucune fonction de plus de 40 lignes</td>
+<td>seuils vérifiables</td>
+<td><code>php -l</code> + <code>phpcs --standard=PSR12</code> + <code>wc -l</code></td>
+<td>à exécuter par l'équipe</td>
+</tr>
+<tr>
+<td><code>ENF-10</code></td>
+<td>Portabilité</td>
+<td>fonctionne sur MySQL 8.0.16+ <strong>et</strong> MariaDB 10.6+ ; fonctionne sous Apache avec <code>mod_rewrite</code></td>
+<td>double chargement réussi</td>
+<td><code>scripts/load_db.sh</code> joué sur les deux SGBD (fait : MariaDB 11.8.6)</td>
+<td>✅ MySQL à re-vérifier par l'équipe</td>
+</tr>
+<tr>
+<td><code>ENF-11</code></td>
+<td>Sécurité des données</td>
+<td>aucun mot de passe en clair, aucun jeton de session dans une URL</td>
+<td><code>SELECT COUNT(*) … WHERE CHAR_LENGTH(mot_de_passe_hash) &lt; 60</code> → 0</td>
+<td>requête + <code>grep -R "password" app/</code> revue</td>
+<td>✅ (test <code>T-05</code> côté écriture)</td>
+</tr>
+<tr>
+<td><code>ENF-12</code></td>
+<td>Sécurité</td>
+<td>aucune information sur l'existence d'une ressource appartenant à autrui</td>
+<td>404 (et non 403) pour un <code>id</code> étranger</td>
+<td>test S-03</td>
+<td>✅ attendu</td>
+</tr>
+<tr>
+<td><code>ENF-13</code></td>
+<td>Exploitation</td>
+<td>alertes de stock calculées côté base (formule unique)</td>
+<td><code>RUPTURE</code> / <code>TRES_BAS</code> / <code>DISPONIBLE</code></td>
+<td>vue <code>v_etat_stock</code> + test <code>T-26</code></td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>ENF-14</code></td>
+<td>Conformité commerciale</td>
+<td>prix affichés <strong>TTC</strong>, taux de TVA, <strong>frais de livraison</strong> et <strong>montant total (marchandises + port)</strong> indiqués <strong>avant</strong> la validation — directive 2011/83/UE art. 5 §1 e), code de la consommation art. L221-5 4° (sources : §8.9 du CDC)</td>
+<td>mention obligatoire présente sur le récapitulatif <strong>et</strong> valeur <code>commande.frais_port</code> soldée à la validation (<code>RB-20</code>)</td>
+<td>test F-16 (récapitulatif), <code>T-28</code> (port calculé puis figé, non saisissable)</td>
+<td>✅ <strong>obtenu</strong> côté base (T-28 conforme)</td>
+</tr>
+<tr>
+<td><code>ENF-15</code></td>
+<td>Exploitation</td>
+<td>sauvegarde/restauration complète incluant procédures et triggers</td>
+<td><code>mysqldump --routines --triggers</code></td>
+<td>restauration sur base vide + <code>load_db.sh</code> non rejoué → tests SQL toujours 29/29</td>
+<td>à exécuter en S11</td>
+</tr>
+<tr>
+<td><code>ENF-16</code></td>
+<td>Cohérence</td>
+<td>aucune écriture multi-tables non transactionnelle ; un rejet ne laisse jamais d'état intermédiaire</td>
+<td><code>beginTransaction</code>/<code>commit</code>/<code>rollBack</code> systématiques</td>
+<td>revue des 3 repositories + tests <code>F-18</code>, <code>T-09</code></td>
+<td>✅ (prouvé au niveau base par <code>T-09</code>)</td>
+</tr>
+<tr>
+<td><code>ENF-17</code></td>
+<td>Observabilité</td>
+<td>chaque rejet de règle est journalisé avec code, acteur et route, sans donnée sensible</td>
+<td>JSON lines, 6 types d'évènements</td>
+<td>test S-08 (recherche de mot de passe dans les logs → 0 occurrence)</td>
+<td>✅ attendu</td>
+</tr>
+<tr>
+<td><code>ENF-18</code></td>
+<td>Compatibilité</td>
+<td>dernières versions majeures de Chrome, Firefox, Safari, Edge ; pas de support IE</td>
+<td>pas de syntaxe non standard (modules ES2022, <code>fetch</code>)</td>
+<td>tests visuels + <code>npm run lint</code> optionnel</td>
+<td>protocole livré</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1731-exigences-de-qualite-logicielle-complementaires">17.3.1 Exigences de qualité logicielle complémentaires<a class="headerlink" href="#1731-exigences-de-qualite-logicielle-complementaires" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Exigence</th>
+<th>Justification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ENF-19</code></td>
+<td>toute règle <code>RB-*</code> est appliquée au <strong>minimum</strong> à deux niveaux (PHP + base)</td>
+<td>défendu par le tableau §6.2 et prouvé par les tests de contournement</td>
+</tr>
+<tr>
+<td><code>ENF-20</code></td>
+<td>aucune dépendance runtime hors PHP/MySQL/Apache</td>
+<td>réductibilité et auditabilité ; <code>composer</code> réservé au <code>require-dev</code></td>
+</tr>
+<tr>
+<td><code>ENF-21</code></td>
+<td>chaque fichier livré a un auteur identifiable dans GitLab (pas de commit « fourre-tout » de plus de 400 lignes)</td>
+<td>condition d'équité de la note de contribution</td>
+</tr>
+<tr>
+<td><code>ENF-13</code></td>
+<td>le <code>README.md</code> permet une installation complète en ≤ 15 min sur une machine propre</td>
+<td>critère de recette n° 6 (§11.3)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Rétention des données</strong> (issue du même examen légal que <code>ENF-14</code>) : les durées de conservation ne sont pas
+écrites dans le code mais dans la table <code>parametre</code> (<code>conservation_compte</code> = 36 mois après le dernier contact,
+valeur indicative à valider par le client) — voyant §8.9 et §8.10 du cahier des charges.</p>
+</blockquote>
+<footer class="doc">
+  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/annexes/annexe-enf.md</code>
+  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+</footer>
+</main>
+</body>
+</html>

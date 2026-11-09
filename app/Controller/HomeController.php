@@ -14,6 +14,7 @@ use App\Model\Data\Views;
 use App\Repository\CategorieRepository;
 use App\Repository\ParametreRepository;
 use App\Repository\ProduitRepository;
+use App\Security\Csrf;
 
 final class HomeController extends Controller
 {
@@ -44,9 +45,14 @@ final class HomeController extends Controller
         $this->render('home/cgv', [], 'Conditions générales de vente');
     }
 
-    public function aide(): void
+    public function confidentialite(): void
     {
-        $this->render('home/aide', [], 'Aide');
+        $this->render('home/confidentialite', [], 'Confidentialité');
+    }
+
+    public function cookies(): void
+    {
+        $this->render('home/cookies', [], 'Cookies et traceurs');
     }
 
     public function livraison(): void
@@ -54,19 +60,98 @@ final class HomeController extends Controller
         $this->render('home/livraison', [], 'Livraison');
     }
 
-    public function confidentialite(): void
-    {
-        $this->render('home/confidentialite', [], 'Confidentialité');
-    }
-
     public function retractation(): void
     {
         $this->render('home/retractation', [], 'Rétractation');
     }
 
-    public function contact(): void
+    public function garanties(): void
     {
-        $this->render('home/contact', [], 'Contact');
+        $this->render('home/garanties', [], 'Garanties légales');
+    }
+
+    public function cgu(): void
+    {
+        $this->render('home/cgu', [], 'Conditions d’utilisation');
+    }
+
+    /** Page d'aide (raccourcis, FAQ courte, accessibilité) — EF-VIS-08. */
+    public function aide(): void
+    {
+        $this->render('home/aide', [], 'Aide');
+    }
+
+    /** Formulaire de contact (EF-GEN-05) — affichage. */
+    public function formulaireContact(): void
+    {
+        $this->render('home/contact', ['erreurs' => [], 'valeurs' => []], 'Nous contacter');
+    }
+
+    /** Traitement de démonstration : stockage local, sans service de courrier. */
+    public function envoyerContact(): void
+    {
+        Csrf::verifier();
+
+        $nom = $this->str('nom', 120);
+        $email = $this->str('email', 190);
+        $message = $this->str('message', 2000);
+        $erreurs = [];
+
+        if ($nom === '') {
+            $erreurs[] = 'Le nom est obligatoire.';
+        }
+        if ($email === '' || filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+            $erreurs[] = 'Une adresse email valide est obligatoire.';
+        }
+        if (mb_strlen($message) < 10) {
+            $erreurs[] = 'Le message doit contenir au moins 10 caractères.';
+        }
+
+        if ($erreurs !== []) {
+            $this->render('home/contact', [
+                'erreurs' => $erreurs,
+                'valeurs' => ['nom' => $nom, 'email' => $email, 'message' => $message],
+            ], 'Nous contacter');
+
+            return;
+        }
+
+        if (!$this->journaliserContact($nom, $email, $message)) {
+            $this->flashErreur('Impossible d’enregistrer le message de démonstration. Aucun message n’a été transmis.');
+            $this->rediriger('/contact');
+        }
+        $this->flashSucces('Message de démonstration enregistré localement. Aucun e-mail n’a été envoyé et aucune réponse n’est garantie.');
+        $this->rediriger('/contact');
+    }
+
+    /** Trace minimale du message (hors base, sans mot de passe ni IP). */
+    private function journaliserContact(string $nom, string $email, string $message): bool
+    {
+        $dossier = MINISHOP_ROOT . '/var/log';
+        if (!is_dir($dossier) && !@mkdir($dossier, 0o700, true) && !is_dir($dossier)) {
+            return false;
+        }
+
+        $ligne = json_encode([
+            'date' => date('c'),
+            'nom' => $nom,
+            'email' => $email,
+            'message' => $message,
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        if ($ligne === false) {
+            return false;
+        }
+        $fichier = $dossier . '/contact.jsonl';
+        // Un umask restrictif protège aussi la création initiale du fichier.
+        $ancienMasque = umask(0o077);
+        $ecrit = @file_put_contents($fichier, $ligne . "\n", FILE_APPEND | LOCK_EX);
+        umask($ancienMasque);
+        if ($ecrit !== false) {
+            @chmod($fichier, 0o600);
+        }
+
+        return $ecrit === strlen($ligne . "\n");
     }
 
     /** Vue de synthèse du moteur de données (page « à propos » du projet). */

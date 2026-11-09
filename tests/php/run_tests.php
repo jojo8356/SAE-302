@@ -381,11 +381,30 @@ jouer('T-25', ['regle' => 'EF-VIS-02', 'attendu' => 'OK', 'travail' => static fu
     foreach ($repo->searchProducts(['mot_cle' => 'bracelet'])['lignes'] as $p) {
         passe('BRAC-012 masqué jamais retourné', $p['reference'] !== 'BRAC-012');
     }
-    $filtres = $repo->searchProducts(['id_categorie' => 2, 'prix_max' => 160, 'en_stock' => true, 'tri' => 'prix_asc']);
-    passe('filtres cumulés (Audio ≤ 160 €, en stock)', $filtres['total'] === 3);
-    passe('tri prix croissant', $filtres['lignes'][0]['reference'] === 'ENCH-006');
-    $admin = $repo->searchProducts(['mot_cle' => 'bracelet', 'admin' => true]);
-    passe('le back-office voit le produit masqué (RB-19 inverse)', $admin['total'] === 1);
+    // Attendus DÉRIVÉS du magasin : le catalogue peut grandir sans casser le test.
+    $audioEligibles = count(array_filter(
+        $store->select('produit'),
+        static fn (array $p): bool => (int) $p['visible'] === 1
+            && (int) $p['id_categorie'] === 2
+            && (float) $p['prix_ttc'] <= 160.0
+            && (int) $p['stock'] > 0
+    ));
+    $filtres = $repo->searchProducts(['id_categorie' => 2, 'prix_max' => 160, 'en_stock' => true, 'tri' => 'prix_asc', 'par_page' => 60]);
+    passe('filtres cumulés (Audio ≤ 160 €, en stock)', $filtres['total'] === $audioEligibles && $audioEligibles > 0);
+    $prixAffiches = array_map(static fn (array $p): float => (float) $p['prix_ttc'], $filtres['lignes']);
+    $prixTries = $prixAffiches;
+    sort($prixTries);
+    passe('tri prix croissant', $prixAffiches !== [] && $prixAffiches === $prixTries);
+    // RB-19 inverse : le back-office voit les masqués, le front non.
+    $masquesBracelet = count(array_filter(
+        $store->select('produit'),
+        static fn (array $p): bool => (int) $p['visible'] === 0
+            && mb_stripos((string) $p['nom'], 'bracelet') !== false
+    ));
+    $front = $repo->searchProducts(['mot_cle' => 'bracelet', 'par_page' => 60]);
+    $admin = $repo->searchProducts(['mot_cle' => 'bracelet', 'admin' => true, 'par_page' => 60]);
+    passe('le back-office voit les produits masqués (RB-19 inverse)',
+        $masquesBracelet > 0 && $admin['total'] === $front['total'] + $masquesBracelet);
 }]);
 
 jouer('T-26', ['regle' => 'EF-ADM-05', 'attendu' => 'OK', 'travail' => static function (StoreInterface $store): void {
@@ -403,7 +422,7 @@ jouer('T-26', ['regle' => 'EF-ADM-05', 'attendu' => 'OK', 'travail' => static fu
     ));
     // cohérence exhaustive vue ↔ formule
     $etats = (new Views($store))->etatStocks();
-    passe('la vue couvre les 13 produits', count($etats) === 13);
+    passe('la vue couvre tous les produits', count($etats) === $store->count('produit'));
     foreach ($etats as $etat) {
         if ($etat['stock'] === 0) {
             $attendu = 'RUPTURE';
@@ -420,7 +439,11 @@ jouer('T-27', ['regle' => 'EF-VIS-01', 'attendu' => 'OK', 'travail' => static fu
     // les 3 « vues » existent et sont cohérentes avec les tables
     $views = new Views($store);
     $catalogue = $views->catalogue();
-    passe('v_catalogue : 12 produits visibles (seed 11 + TST-900, BRAC-012 masqué exclu)', count($catalogue) === 12);
+    $visibles = count(array_filter(
+        $store->select('produit'),
+        static fn (array $p): bool => (int) $p['visible'] === 1
+    ));
+    passe('v_catalogue : autant de lignes que de produits visibles', count($catalogue) === $visibles && $visibles > 0);
     passe('v_catalogue ne contient jamais BRAC-012', !in_array('BRAC-012', array_column($catalogue, 'reference'), true));
     $etats = array_column($views->etatStocks(), 'etat', 'reference');
     foreach ($catalogue as $ligne) {

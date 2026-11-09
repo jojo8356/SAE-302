@@ -75,10 +75,10 @@ echo "MiniShop — Pied de page : les pages attendues existent et sont liées\n\
 echo "== 1 · Les pages créées : un vrai contenu visiteur ==\n";
 $pages = [
     'aide' => ['<h1>Aide</h1>', 'Comment commander ?', '/mes-commandes', '/contact'],
-    'livraison' => ['<h1>Livraison</h1>', '4,90', '/mes-commandes', '/retractation'],
-    'confidentialite' => ['<h1>Confidentialité</h1>', '36 mois', '/compte', '/contact'],
-    'retractation' => ['<h1>Rétractation</h1>', '14 jours', '/mes-commandes', '/cgv'],
-    'contact' => ['<h1>Contact</h1>', 'maquette pédagogique', '/aide', '/compte'],
+    'livraison' => ['<h1>Livraison</h1>', 'Simulation uniquement', '/mes-commandes', '/retractation'],
+    'confidentialite' => ['<h1>Politique de confidentialité</h1>', '36 mois', '/compte', '/contact'],
+    'retractation' => ['<h1>Rétractation et retours</h1>', '14 jours', '/mes-commandes', '/cgv'],
+    'contact' => ['<h1>Nous contacter</h1>', 'sans envoi d’e-mail ni réponse garantie', '/aide', '/compte'],
 ];
 foreach ($pages as $vue => $attentes) {
     $html = rendrePage($vue);
@@ -107,7 +107,7 @@ foreach ($pages as $vue => $attentes) {
 /* ── 2. Pied de page du gabarit : les huit liens ──────────────────── */
 echo "\n== 2 · Gabarit : le pied de page relie les huit entrées ==\n";
 $gabarit = (string) file_get_contents(dirname(__DIR__, 2) . '/app/View/layout.php');
-$debut = strpos($gabarit, '<footer>');
+$debut = strpos($gabarit, '<footer');
 $fin = strpos($gabarit, '</footer>');
 $pied = '';
 if ($debut !== false && $fin !== false && $fin > $debut) {
@@ -117,7 +117,7 @@ $check('le gabarit contient un pied de page', $pied !== '');
 $liens = [
     '/aide' => 'Aide',
     '/livraison' => 'Livraison',
-    '/retractation' => 'Rétractation',
+    '/retractation' => 'Rétractation et retours',
     '/confidentialite' => 'Confidentialité',
     '/contact' => 'Contact',
     '/a-propos' => 'À propos',
@@ -141,7 +141,7 @@ $methodes = [
     'livraison' => 'livraison',
     'confidentialite' => 'confidentialite',
     'retractation' => 'retractation',
-    'contact' => 'contact',
+    'contact' => 'formulaireContact',
 ];
 foreach ($methodes as $route => $methode) {
     $check(
@@ -167,19 +167,19 @@ echo "\n== 4 · Cohérence : les pages disent ce que le site fait vraiment ==\n"
 $livraison = texteVisible(rendrePage('livraison'));
 $check(
     'livraison : port 4,90 € et offert dès 80 € (comme au panier)',
-    str_contains($livraison, '4,90') && str_contains($livraison, '80,00')
+    str_contains($livraison, 'aucun colis n’est expédié') && str_contains($livraison, 'frais de port')
         && str_contains($livraison, 'avant la validation')
 );
 $retractation = texteVisible(rendrePage('retractation'));
 $cgv = texteVisible(rendrePage('cgv'));
 $check(
     'rétractation et CGV racontent la même chose (annulation avant expédition)',
-    str_contains($retractation, "n'a pas été expédiée") && str_contains($cgv, "n'a pas été expédiée")
+    str_contains($retractation, 'annulation avant expédition simulée') && str_contains($cgv, 'avant son expédition simulée')
 );
 $confidentialite = texteVisible(rendrePage('confidentialite'));
 $check(
     'confidentialité : conservation 36 mois (paramètre du site) et aucun paiement réel',
-    str_contains($confidentialite, '36 mois') && str_contains($confidentialite, 'paiement est simulé')
+    str_contains($confidentialite, '36 mois') && str_contains($confidentialite, 'ne déclenche pas à lui seul de suppression') && str_contains($confidentialite, 'pas de numéro de carte bancaire')
 );
 $aide = texteVisible(rendrePage('aide'));
 $check(

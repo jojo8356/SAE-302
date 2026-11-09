@@ -1,0 +1,931 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="SAÉ 302 — MiniShop : 08 — Fiche de suivi des commits (rejeu vers un nouveau GitLab)#">
+<title>08 — Fiche de suivi des commits (rejeu vers un nouveau GitLab)# — MiniShop</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --papier: #fbfaf7;
+  --carte: #ffffff;
+  --trait: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-clair: #dbeafe;
+  --code: #f1f5f9;
+  --mesure: 72ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
+    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
+    --accent-clair: #1e3a8a; --code: #16223a;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  max-width: calc(var(--mesure) + 6rem);
+  background: var(--papier);
+  color: var(--encre);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
+h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
+p, li { max-width: var(--mesure); }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+}
+pre {
+  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
+  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.35rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+thead th { background: var(--accent-clair); }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
+img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li input[type="checkbox"] { margin-right: 0.4rem; }
+.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
+.toc > ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1rem; }
+footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+@media print {
+  :root { --papier: #fff; --carte: #fff; }
+  @page { size: A4; margin: 18mm 16mm; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#1-mode-demploi-express">1. Mode d'emploi express</a></li>
+<li><a href="#2-tableau-de-synthese-les-32-commits">2. Tableau de synthèse — les 32 commits</a></li>
+<li><a href="#3-detail-des-commits-a-rejouer-dans-lordre">3. Détail des commits (à rejouer dans l'ordre)</a><ul>
+<li><a href="#e0-choredepot-socle-gitlab-gitignore-et-charte-de-collaboration-annexe-179">É0 — chore(depôt): socle GitLab — .gitignore et charte de collaboration (annexe 17.9)</a></li>
+<li><a href="#e1-docscadrage-cahier-des-charges-minishop-et-cas-dutilisation">É1 — docs(cadrage): cahier des charges MiniShop et cas d'utilisation</a></li>
+<li><a href="#e2-docsbd-conception-de-la-base-mcd-mld-normalisation-requetes-a-ecrire">É2 — docs(bd): conception de la base — MCD, MLD, normalisation, requêtes à écrire</a></li>
+<li><a href="#e3-docsconception-uml-applicatif-architecture-mvc-classes-etats-sequences">É3 — docs(conception): UML applicatif — architecture MVC, classes, états, séquences</a></li>
+<li><a href="#e4-docstests-plan-de-validation-t-01t-29-et-exigences-non-fonctionnelles">É4 — docs(tests): plan de validation T-01…T-29 et exigences non fonctionnelles</a></li>
+<li><a href="#e5-docsorganisation-wbs-6-divisions-16-lots-86-taches-todolist-et-chaine-tools">É5 — docs(organisation): WBS (6 divisions, 16 lots, 86 tâches), todolist et chaîne .tools</a></li>
+<li><a href="#e6-featsql-schema-mysql-8-8-tables-innodb-contraintes-cles-etrangeres-index">É6 — feat(sql): schéma MySQL 8 — 8 tables InnoDB, contraintes, clés étrangères, index</a></li>
+<li><a href="#e7-featsql-17-procedures-stockees-1-fonction-regles-metier-cote-serveur">É7 — feat(sql): 17 procédures stockées + 1 fonction (règles métier côté serveur)</a></li>
+<li><a href="#e8-featsql-16-declencheurs-transitions-rb-11-coherence-stock-historique">É8 — feat(sql): 16 déclencheurs — transitions RB-11, cohérence stock, historique</a></li>
+<li><a href="#e9-featsql-jeu-de-demonstration-commandes-creees-via-les-procedures-triggers-actifs">É9 — feat(sql): jeu de démonstration — commandes créées via les procédures (triggers actifs)</a></li>
+<li><a href="#e10-testsql-harnais-de-tests-t-01t-29-protocole-de-mesure-enf-01">É10 — test(sql): harnais de tests T-01…T-29 + protocole de mesure ENF-01</a></li>
+<li><a href="#e11-docspreuves-requetes-soumises-et-captures-dexecution-sql-uploads">É11 — docs(preuves): requêtes soumises et captures d'exécution SQL (uploads/)</a></li>
+<li><a href="#e12-featmoteur-socle-du-moteur-json-contrat-de-magasin-filtres-schema-erreurs">É12 — feat(moteur): socle du moteur JSON — contrat de magasin, filtres, schéma, erreurs</a></li>
+<li><a href="#e13-featmoteur-magasin-json-transactions-triggers-contraintes-vues-journal">É13 — feat(moteur): magasin JSON — transactions, triggers, contraintes, vues, journal</a></li>
+<li><a href="#e14-featseed-jeu-de-donnees-reproductible-admin-clients-12-produits-parametres">É14 — feat(seed): jeu de données reproductible (admin, clients, 12 produits, paramètres)</a></li>
+<li><a href="#e15-featapp-socle-mvc-bootstrap-routeur-config-gabarit-securite">É15 — feat(app): socle MVC — bootstrap, routeur, config, gabarit, sécurité</a></li>
+<li><a href="#e16-featboutique-accueil-catalogue-pagine-et-filtrable-fiche-produit">É16 — feat(boutique): accueil, catalogue paginé et filtrable, fiche produit</a></li>
+<li><a href="#e17-featclient-panier-serveur-commandes-compte-connexioninscription">É17 — feat(client): panier serveur, commandes, compte, connexion/inscription</a></li>
+<li><a href="#e18-featapp-couche-depots-produits-categories-clients-commandes-parametres">É18 — feat(app): couche dépôts — produits, catégories, clients, commandes, paramètres</a></li>
+<li><a href="#e19-featadmin-back-office-complet-produits-categories-commandes-stocks-equipe">É19 — feat(admin): back-office complet — produits, catégories, commandes, stocks, équipe</a></li>
+<li><a href="#e20-featweb-front-controleur-reecriture-durl-et-script-de-deploiement">É20 — feat(web): front contrôleur, réécriture d'URL et script de déploiement</a></li>
+<li><a href="#e21-buildsandbox-runtime-php-82-wasm-serveur-http-et-chaine-de-tests-npm">É21 — build(sandbox): runtime PHP 8.2-WASM, serveur HTTP et chaîne de tests npm</a></li>
+<li><a href="#e22-buildperf-volumetrie-et-mesure-enf-01-gen_volumes-mesurer">É22 — build(perf): volumétrie et mesure ENF-01 (gen_volumes, mesurer)</a></li>
+<li><a href="#e23-testphp-moteur-engine_smoke-et-regles-de-gestion-t-01t-29-en-php">É23 — test(php): moteur (engine_smoke) et règles de gestion T-01…T-29 en PHP</a></li>
+<li><a href="#e24-testphp-98-tests-unitaires-108-fonctionnels-et-e2e-155-verifications">É24 — test(php): 98 tests unitaires, 108 fonctionnels et E2E 155 vérifications</a></li>
+<li><a href="#e25-buildqualite-linter-strict-types-declare_strict_types-phpstan-l9-zero-ternaire">É25 — build(qualité): linter strict types — declare_strict_types, PHPStan L9, zéro ternaire</a></li>
+<li><a href="#e26-buildqualite-configuration-composer-php-cs-fixer-et-phpstan-strict-require-dev">É26 — build(qualité): configuration Composer — php-cs-fixer et PHPStan strict (require-dev)</a></li>
+<li><a href="#e27-ci-chaine-gitlab-ci-6-jobs-miroir-github-actions-ct-09">É27 — ci: chaîne GitLab CI (6 jobs) + miroir GitHub Actions (CT-09)</a></li>
+<li><a href="#e28-docssecurite-note-cybersecurite-s-01s-10-sec-01sec-13">É28 — docs(sécurité): note cybersécurité — S-01…S-10 / SEC-01…SEC-13</a></li>
+<li><a href="#e29-docssoutenance-support-de-presentation-et-artefacts-html-du-rendu">É29 — docs(soutenance): support de présentation et artefacts HTML du rendu</a></li>
+<li><a href="#e30-docs-readme-vue-densemble-installation-tests-qualite-securite">É30 — docs: README — vue d'ensemble, installation, tests, qualité, sécurité</a></li>
+<li><a href="#e31-docsgit-fiche-de-suivi-des-commits-et-script-de-rejeu-vers-un-nouveau-gitlab">É31 — docs(git): fiche de suivi des commits et script de rejeu vers un nouveau GitLab</a></li>
+</ul>
+</li>
+<li><a href="#4-jalons-tags-cf-charte-annexe-179">4. Jalons (tags) — cf. charte annexe 17.9</a></li>
+<li><a href="#5-historique-dorigine-tracabilite">5. Historique d'origine (traçabilité)</a></li>
+<li><a href="#6-fichiers-exclus-du-rejeu">6. Fichiers exclus du rejeu</a></li>
+<li><a href="#7-apres-le-push-la-charte-annexe-179-en-5-reglages">7. Après le push : la charte annexe 17.9 en 5 réglages</a></li>
+<li><a href="#8-verification-finale-du-depot-reconstitue">8. Vérification finale du dépôt reconstitué</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="08-fiche-de-suivi-des-commits-rejeu-vers-un-nouveau-gitlab">08 — Fiche de suivi des commits (rejeu vers un nouveau GitLab)<a class="headerlink" href="#08-fiche-de-suivi-des-commits-rejeu-vers-un-nouveau-gitlab" title="Permanent link">#</a></h1>
+<blockquote>
+<p><strong>Objet.</strong> Reconstituer ce projet sur un <strong>nouveau dépôt GitLab</strong> avec un historique
+propre et complet : 32 commits racontant le projet dans l'ordre réel de construction,
+chacun avec un message de commit prêt à copier-coller et un périmètre de fichiers exact.
+Cette fiche et le script <code>scripts/rejeu_gitlab.py</code> sont générés du <strong>même plan</strong> :
+ils ne peuvent pas diverger. Le script vérifie en fin de parcours que la couverture
+des fichiers est exacte (aucun oublié, aucun doublon).</p>
+</blockquote>
+<h2 id="1-mode-demploi-express">1. Mode d'emploi express<a class="headerlink" href="#1-mode-demploi-express" title="Permanent link">#</a></h2>
+<pre><code class="language-bash"># 1) Créer sur GitLab le projet vide « minishop-sae » (NE PAS cocher « Initialize with a README »)
+# 2) Depuis ce dépôt, reconstruire l'historique dans une copie isolée :
+python3 scripts/rejeu_gitlab.py --dest ../minishop-sae \
+    --nom &quot;Prénom Nom&quot; --email prenom.nom@etu.univ-cotedazur.fr
+# 3) Vérifier, puis pousser :
+cd ../minishop-sae &amp;&amp; git log --oneline
+git remote add origin https://gitlab.example.fr/&lt;groupe&gt;/minishop-sae.git
+git push -u origin main --tags
+</code></pre>
+<p>Le script n'écrit <strong>jamais</strong> dans le dépôt courant : il extrait une copie propre
+(« git archive ») dans <code>--dest</code>, y rejoue les 32 commits + les 6 tags de jalons, puis
+contrôle que l'arbre final est identique, fichier pour fichier.</p>
+<p>Le rejeu manuel (copier-coller des <code>git add</code> + messages ci-dessous) est bien sûr
+possible : c'est le §3.</p>
+<h2 id="2-tableau-de-synthese-les-32-commits">2. Tableau de synthèse — les 32 commits<a class="headerlink" href="#2-tableau-de-synthese-les-32-commits" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Commit</th>
+<th>Périmètre</th>
+<th>Ce que ça apporte</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>É0</td>
+<td><code>chore(depôt): socle GitLab — .gitignore et charte de collaboration (annexe 17.9)</code></td>
+<td>2 fichiers</td>
+<td>Le dépôt démarre avec ses règles du jeu</td>
+</tr>
+<tr>
+<td>É1</td>
+<td><code>docs(cadrage): cahier des charges MiniShop et cas d'utilisation</code></td>
+<td>5 fichiers</td>
+<td>Le document fondateur du projet  — <strong>v0-cadrage</strong></td>
+</tr>
+<tr>
+<td>É2</td>
+<td><code>docs(bd): conception de la base — MCD, MLD, normalisation, requêtes à écrire</code></td>
+<td>6 fichiers</td>
+<td>La base de données est conçue avant d'être écrite</td>
+</tr>
+<tr>
+<td>É3</td>
+<td><code>docs(conception): UML applicatif — architecture MVC, classes, états, séquences</code></td>
+<td>9 fichiers</td>
+<td>La conception applicative reprend la structure MVC et le cycle de vie des commandes qui seront implémentés à l'identique en PHP. — <strong>v1-mcd</strong></td>
+</tr>
+<tr>
+<td>É4</td>
+<td><code>docs(tests): plan de validation T-01…T-29 et exigences non fonctionnelles</code></td>
+<td>2 fichiers</td>
+<td>Le plan de validation précède le code</td>
+</tr>
+<tr>
+<td>É5</td>
+<td><code>docs(organisation): WBS (6 divisions, 16 lots, 86 tâches), todolist et chaîne .tools</code></td>
+<td>7 fichiers</td>
+<td>L'organisation du projet</td>
+</tr>
+<tr>
+<td>É6</td>
+<td><code>feat(sql): schéma MySQL 8 — 8 tables InnoDB, contraintes, clés étrangères, index</code></td>
+<td>1 script SQL</td>
+<td>Le premier script SQL</td>
+</tr>
+<tr>
+<td>É7</td>
+<td><code>feat(sql): 17 procédures stockées + 1 fonction (règles métier côté serveur)</code></td>
+<td>1 script SQL</td>
+<td>Les procédures stockées concentrent les règles métier côté serveur</td>
+</tr>
+<tr>
+<td>É8</td>
+<td><code>feat(sql): 16 déclencheurs — transitions RB-11, cohérence stock, historique</code></td>
+<td>1 script SQL</td>
+<td>Les déclencheurs verrouillent les invariants</td>
+</tr>
+<tr>
+<td>É9</td>
+<td><code>feat(sql): jeu de démonstration — commandes créées via les procédures (triggers actifs)</code></td>
+<td>1 script SQL</td>
+<td>Le jeu de démo MySQL</td>
+</tr>
+<tr>
+<td>É10</td>
+<td><code>test(sql): harnais de tests T-01…T-29 + protocole de mesure ENF-01</code></td>
+<td>35 fichiers</td>
+<td>Le harnais SQL exécute le plan de validation</td>
+</tr>
+<tr>
+<td>É11</td>
+<td><code>docs(preuves): requêtes soumises et captures d'exécution SQL (uploads/)</code></td>
+<td>14 fichiers</td>
+<td>Les preuves d'exécution  — <strong>v2-base</strong></td>
+</tr>
+<tr>
+<td>É12</td>
+<td><code>feat(moteur): socle du moteur JSON — contrat de magasin, filtres, schéma, erreurs</code></td>
+<td>11 fichiers</td>
+<td>Le contrat du « moteur intelligent de données JSON utilisé comme du SQL »</td>
+</tr>
+<tr>
+<td>É13</td>
+<td><code>feat(moteur): magasin JSON — transactions, triggers, contraintes, vues, journal</code></td>
+<td>6 fichiers</td>
+<td>Le cœur du projet</td>
+</tr>
+<tr>
+<td>É14</td>
+<td><code>feat(seed): jeu de données reproductible (admin, clients, 12 produits, paramètres)</code></td>
+<td>10 fichiers</td>
+<td>Les données de démonstration, toujours créées à travers le moteur</td>
+</tr>
+<tr>
+<td>É15</td>
+<td><code>feat(app): socle MVC — bootstrap, routeur, config, gabarit, sécurité</code></td>
+<td>12 fichiers</td>
+<td>Le socle de l'application</td>
+</tr>
+<tr>
+<td>É16</td>
+<td><code>feat(boutique): accueil, catalogue paginé et filtrable, fiche produit</code></td>
+<td>9 fichiers</td>
+<td>La vitrine</td>
+</tr>
+<tr>
+<td>É17</td>
+<td><code>feat(client): panier serveur, commandes, compte, connexion/inscription</code></td>
+<td>13 fichiers</td>
+<td>Le parcours client complet  — <strong>v3-front</strong></td>
+</tr>
+<tr>
+<td>É18</td>
+<td><code>feat(app): couche dépôts — produits, catégories, clients, commandes, paramètres</code></td>
+<td>5 fichiers</td>
+<td>La couche dépôts isole l'accès aux données</td>
+</tr>
+<tr>
+<td>É19</td>
+<td><code>feat(admin): back-office complet — produits, catégories, commandes, stocks, équipe</code></td>
+<td>14 fichiers</td>
+<td>Le back-office  — <strong>v4-back</strong></td>
+</tr>
+<tr>
+<td>É20</td>
+<td><code>feat(web): front contrôleur, réécriture d'URL et script de déploiement</code></td>
+<td>3 fichiers</td>
+<td>Le point d'entrée unique du Web</td>
+</tr>
+<tr>
+<td>É21</td>
+<td><code>build(sandbox): runtime PHP 8.2-WASM, serveur HTTP et chaîne de tests npm</code></td>
+<td>6 fichiers</td>
+<td>L'outillage de développement</td>
+</tr>
+<tr>
+<td>É22</td>
+<td><code>build(perf): volumétrie et mesure ENF-01 (gen_volumes, mesurer)</code></td>
+<td>5 fichiers</td>
+<td>Les outils de mesure de performance exigés par ENF-01</td>
+</tr>
+<tr>
+<td>É23</td>
+<td><code>test(php): moteur (engine_smoke) et règles de gestion T-01…T-29 en PHP</code></td>
+<td>2 fichiers</td>
+<td>La première suite PHP vérifie le moteur seul, puis rejoue les 29 tests du plan de validation directement contre le moteur JSON.</td>
+</tr>
+<tr>
+<td>É24</td>
+<td><code>test(php): 98 tests unitaires, 108 fonctionnels et E2E 155 vérifications</code></td>
+<td>3 fichiers</td>
+<td>Les suites qui couvrent l'application entière</td>
+</tr>
+<tr>
+<td>É25</td>
+<td><code>build(qualité): linter strict types — declare_strict_types, PHPStan L9, zéro ternaire</code></td>
+<td>1 fichier</td>
+<td>Le linter maison garantit dans la sandbox les mêmes exigences que php-cs-fixer + PHPStan level 9, plus la règle de style « pas de ternaire ».</td>
+</tr>
+<tr>
+<td>É26</td>
+<td><code>build(qualité): configuration Composer — php-cs-fixer et PHPStan strict (require-dev)</code></td>
+<td>3 fichiers</td>
+<td>L'équivalent « machine normale » du linter sandbox</td>
+</tr>
+<tr>
+<td>É27</td>
+<td><code>ci: chaîne GitLab CI (6 jobs) + miroir GitHub Actions (CT-09)</code></td>
+<td>2 fichiers</td>
+<td>L'intégration continue exigée par la contrainte CT-09</td>
+</tr>
+<tr>
+<td>É28</td>
+<td><code>docs(sécurité): note cybersécurité — S-01…S-10 / SEC-01…SEC-13</code></td>
+<td>1 fichier</td>
+<td>La source de vérité sécurité</td>
+</tr>
+<tr>
+<td>É29</td>
+<td><code>docs(soutenance): support de présentation et artefacts HTML du rendu</code></td>
+<td>8 fichiers</td>
+<td>Le support de soutenance et les rendus HTML « imprimables » des 6 documents officiels.</td>
+</tr>
+<tr>
+<td>É30</td>
+<td><code>docs: README — vue d'ensemble, installation, tests, qualité, sécurité</code></td>
+<td>1 fichier</td>
+<td>La porte d'entrée du dépôt</td>
+</tr>
+<tr>
+<td>É31</td>
+<td><code>docs(git): fiche de suivi des commits et script de rejeu vers un nouveau GitLab</code></td>
+<td>2 fichiers</td>
+<td>La fiche de suivi elle-même + son automate  — <strong>v5-rendu</strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-detail-des-commits-a-rejouer-dans-lordre">3. Détail des commits (à rejouer dans l'ordre)<a class="headerlink" href="#3-detail-des-commits-a-rejouer-dans-lordre" title="Permanent link">#</a></h2>
+<h3 id="e0-choredepot-socle-gitlab-gitignore-et-charte-de-collaboration-annexe-179">É0 — chore(depôt): socle GitLab — .gitignore et charte de collaboration (annexe 17.9)<a class="headerlink" href="#e0-choredepot-socle-gitlab-gitignore-et-charte-de-collaboration-annexe-179" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> Le dépôt démarre avec ses règles du jeu : ce qui est versionné, ce qui ne le sera jamais (secrets, journaux, sorties régénérables), et la charte de collaboration GitLab (MR, branches protégées, jalons).</p>
+<pre><code class="language-bash">git add .gitignore \
+        docs/annexes/annexe-gitlab.md
+git commit -F- &lt;&lt;'MESSAGE'
+chore(depôt): socle GitLab — .gitignore et charte de collaboration (annexe 17.9)
+
+Règles d'exclusion du dépôt (§14.1 du cahier des charges) : secrets (env.php, .env, *.pem, *.key), journaux (var/), artefacts régénérables (vendor/, node_modules/, sorties brutes tests/sql/out).
+
+La charte GitLab fixe le cadre : dépôt privé, composition par courriel, main protégée sans push direct, MR obligatoires avec squash désactivé (les commits individuels font partie de la note), tags de jalons v0-cadrage → v5-rendu.
+MESSAGE
+</code></pre>
+<h3 id="e1-docscadrage-cahier-des-charges-minishop-et-cas-dutilisation">É1 — docs(cadrage): cahier des charges MiniShop et cas d'utilisation<a class="headerlink" href="#e1-docscadrage-cahier-des-charges-minishop-et-cas-dutilisation" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> Le document fondateur du projet : périmètre, exigences, règles de gestion numérotées (RB-xx) et contraintes qui serviront de fil rouge à tout le reste (SQL, moteur, application, tests).</p>
+<pre><code class="language-bash">git add docs/01-cahier-des-charges-MiniShop.md \
+        docs/annexes/annexe-cas-usage.md \
+        docs/diagrams/cas_utilisation_*.png
+git commit -F- &lt;&lt;'MESSAGE'
+docs(cadrage): cahier des charges MiniShop et cas d'utilisation
+
+Spécification fonctionnelle complète : périmètre boutique (catalogue, panier, commandes), espace client, back-office, exigences fonctionnelles EF-* et non fonctionnelles ENF-*, règles de gestion RB-01…RB-20, contraintes CT-01…CT-10, RACI et critères de notation.
+
+Diagrammes de cas d'utilisation : vue globale, détail commande, scénarios commande (acteurs client, admin, système).
+MESSAGE
+</code></pre>
+<p><strong>Jalon.</strong> <code>git tag -a v0-cadrage -m "Cadrage fonctionnel (cahier des charges, cas d'utilisation)"</code></p>
+<h3 id="e2-docsbd-conception-de-la-base-mcd-mld-normalisation-requetes-a-ecrire">É2 — docs(bd): conception de la base — MCD, MLD, normalisation, requêtes à écrire<a class="headerlink" href="#e2-docsbd-conception-de-la-base-mcd-mld-normalisation-requetes-a-ecrire" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> La base de données est conçue avant d'être écrite : MCD, MLD, dictionnaire, normalisation. Les requêtes « à écrire » préparent les livrables d'exécution SQL.</p>
+<pre><code class="language-bash">git add docs/04-conception-bd-et-sql.md \
+        docs/annexes/annexe-sql.md \
+        docs/diagrams/mcd_minishop.png \
+        docs/diagrams/mld_minishop.png \
+        docs/sql-a-ecrire/*
+git commit -F- &lt;&lt;'MESSAGE'
+docs(bd): conception de la base — MCD, MLD, normalisation, requêtes à écrire
+
+Livrable n°3 autonome : dictionnaire de données, MCD et MLD (8 tables), normalisation 3NF justifiée, choix MySQL 8.
+
+Requêtes SQL « à écrire » (exercices du rendu) et annexe 17.4/17.5/17.6 décrivant les 4 scripts SQL livrés, le harnais de tests et le protocole de mesure.
+MESSAGE
+</code></pre>
+<h3 id="e3-docsconception-uml-applicatif-architecture-mvc-classes-etats-sequences">É3 — docs(conception): UML applicatif — architecture MVC, classes, états, séquences<a class="headerlink" href="#e3-docsconception-uml-applicatif-architecture-mvc-classes-etats-sequences" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> La conception applicative reprend la structure MVC et le cycle de vie des commandes qui seront implémentés à l'identique en PHP.</p>
+<pre><code class="language-bash">git add docs/diagrams/architecture_mvc.png \
+        docs/diagrams/diagramme_classes.png \
+        docs/diagrams/etats_commande.png \
+        docs/diagrams/activite_passer_commande.png \
+        docs/diagrams/seq_*.png
+git commit -F- &lt;&lt;'MESSAGE'
+docs(conception): UML applicatif — architecture MVC, classes, états, séquences
+
+Architecture MVC en couches (contrôleurs → dépôts → moteur de données), diagramme de classes, cycle de vie d'une commande (états et transitions RB-11), activité « passer commande ».
+
+5 diagrammes de séquence : consultation du catalogue, recherche, ajout au panier, commande, authentification.
+MESSAGE
+</code></pre>
+<p><strong>Jalon.</strong> <code>git tag -a v1-mcd -m "Conception complète (MCD, MLD, UML, plan de validation, organisation)"</code></p>
+<h3 id="e4-docstests-plan-de-validation-t-01t-29-et-exigences-non-fonctionnelles">É4 — docs(tests): plan de validation T-01…T-29 et exigences non fonctionnelles<a class="headerlink" href="#e4-docstests-plan-de-validation-t-01t-29-et-exigences-non-fonctionnelles" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> Le plan de validation précède le code : chaque test T-xx sera rejoué en SQL puis en PHP, avec le même oracle.</p>
+<pre><code class="language-bash">git add docs/02-document-tests-validation.md \
+        docs/annexes/annexe-enf.md
+git commit -F- &lt;&lt;'MESSAGE'
+docs(tests): plan de validation T-01…T-29 et exigences non fonctionnelles
+
+Document de tests et de validation : 29 tests boîte noire mappés aux règles RB/EF/SEC, avec procédure, oracle et données de chaque test.
+
+Annexe ENF : exigences non fonctionnelles (ENF-01 p95 &lt; 500 ms, volumétrie, sécurité, ergonomie) et protocoles de vérification associés.
+MESSAGE
+</code></pre>
+<h3 id="e5-docsorganisation-wbs-6-divisions-16-lots-86-taches-todolist-et-chaine-tools">É5 — docs(organisation): WBS (6 divisions, 16 lots, 86 tâches), todolist et chaîne .tools<a class="headerlink" href="#e5-docsorganisation-wbs-6-divisions-16-lots-86-taches-todolist-et-chaine-tools" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> L'organisation du projet : découpage WBS, suivi de todolist et la chaîne de génération des documents (une seule source de données).</p>
+<pre><code class="language-bash">git add docs/05-wbs-projet.md \
+        docs/06-todolist.md \
+        .tools/*
+git commit -F- &lt;&lt;'MESSAGE'
+docs(organisation): WBS (6 divisions, 16 lots, 86 tâches), todolist et chaîne .tools
+
+WBS complet : charges bottom-up, plan de charge, Gantt et chemin critique ; todolist de suivi des 86 tâches (86/86 couvertes).
+
+Chaîne .tools : les documents officiels et les artefacts HTML du rendu sont générés depuis une source de données unique (scripts Python internes, hors périmètre du barème, d'où le dossier caché).
+MESSAGE
+</code></pre>
+<h3 id="e6-featsql-schema-mysql-8-8-tables-innodb-contraintes-cles-etrangeres-index">É6 — feat(sql): schéma MySQL 8 — 8 tables InnoDB, contraintes, clés étrangères, index<a class="headerlink" href="#e6-featsql-schema-mysql-8-8-tables-innodb-contraintes-cles-etrangeres-index" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> Le premier script SQL : la structure — 8 tables, contraintes CHECK, clés étrangères et index. Les règles RB-01 à RB-06 sont garanties par le schéma lui-même.</p>
+<pre><code class="language-bash">git add sql/01_minishop_schema.sql
+git commit -F- &lt;&lt;'MESSAGE'
+feat(sql): schéma MySQL 8 — 8 tables InnoDB, contraintes, clés étrangères, index
+
+DDL complet : produit, categorie, client, administrateur, commande, ligne_commande, order_status_history, parametre.
+
+Règles de gestion portées par le schéma : prix &gt; 0, quantité &gt; 0, hash obligatoire (RB-01…RB-06), clés étrangères avec règles de suppression, index de recherche et d'unicité (référence et slug produit, email client).
+MESSAGE
+</code></pre>
+<h3 id="e7-featsql-17-procedures-stockees-1-fonction-regles-metier-cote-serveur">É7 — feat(sql): 17 procédures stockées + 1 fonction (règles métier côté serveur)<a class="headerlink" href="#e7-featsql-17-procedures-stockees-1-fonction-regles-metier-cote-serveur" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> Les procédures stockées concentrent les règles métier côté serveur : impossible de contourner le contrôle de stock, les transitions d'état ou le calcul du montant.</p>
+<pre><code class="language-bash">git add sql/02_minishop_procedures.sql
+git commit -F- &lt;&lt;'MESSAGE'
+feat(sql): 17 procédures stockées + 1 fonction (règles métier côté serveur)
+
+Commander_produit, ajuster_stock, annuler_commande, changer_statut, purger, rechercher… : tout le cycle de vie des commandes passe par des procédures, jamais par du DML direct.
+
+Gestion des erreurs par SIGNAL SQLSTATE avec codes métier (même vocabulaire que le futur moteur PHP : STOCK_INSUFFISANT, TRANSITION_INTERDITE, …).
+MESSAGE
+</code></pre>
+<h3 id="e8-featsql-16-declencheurs-transitions-rb-11-coherence-stock-historique">É8 — feat(sql): 16 déclencheurs — transitions RB-11, cohérence stock, historique<a class="headerlink" href="#e8-featsql-16-declencheurs-transitions-rb-11-coherence-stock-historique" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> Les déclencheurs verrouillent les invariants : même un UPDATE sauvage ne peut pas casser une règle de gestion, et tout changement d'état est historisé.</p>
+<pre><code class="language-bash">git add sql/03_minishop_triggers.sql
+git commit -F- &lt;&lt;'MESSAGE'
+feat(sql): 16 déclencheurs — transitions RB-11, cohérence stock, historique
+
+BEFORE/AFTER INSERT/UPDATE/DELETE : garde-fous anti-contournement des procédures (prix modifié, stock négatif), matrice des transitions autorisées (RB-11), seuil d'alerte (RB-03).
+
+trg_history_statut et trg_history_creation : chaque changement de statut est tracé dans order_status_history (EF-ADM-08).
+MESSAGE
+</code></pre>
+<h3 id="e9-featsql-jeu-de-demonstration-commandes-creees-via-les-procedures-triggers-actifs">É9 — feat(sql): jeu de démonstration — commandes créées via les procédures (triggers actifs)<a class="headerlink" href="#e9-featsql-jeu-de-demonstration-commandes-creees-via-les-procedures-triggers-actifs" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> Le jeu de démo MySQL : il prouve que les procédures et triggers coopèrent — les données sont créées « pour de vrai », pas insérées en contournant les règles.</p>
+<pre><code class="language-bash">git add sql/04_minishop_demo.sql
+git commit -F- &lt;&lt;'MESSAGE'
+feat(sql): jeu de démonstration — commandes créées via les procédures (triggers actifs)
+
+Données de démonstration réalistes : les commandes sont insérées par les procédures stockées, donc tous les déclencheurs s'exécutent (décrément de stock, historique, cohérence des montants).
+MESSAGE
+</code></pre>
+<h3 id="e10-testsql-harnais-de-tests-t-01t-29-protocole-de-mesure-enf-01">É10 — test(sql): harnais de tests T-01…T-29 + protocole de mesure ENF-01<a class="headerlink" href="#e10-testsql-harnais-de-tests-t-01t-29-protocole-de-mesure-enf-01" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> Le harnais SQL exécute le plan de validation : 29 tests rejouables en une commande, plus le protocole de performance.</p>
+<pre><code class="language-bash">git add tests/sql/* \
+        tests/perf/* \
+        scripts/run_sql_tests.sh
+git commit -F- &lt;&lt;'MESSAGE'
+test(sql): harnais de tests T-01…T-29 + protocole de mesure ENF-01
+
+33 fichiers : 29 cas de test SQL (t01…t29), fixture reproductible, manifeste, lanceur run_sql_tests.sh et rapport consigné.
+
+Chaque test rejoue une règle de gestion du document de validation ; tests/perf/mesurer_sql.sh mesure le p95 des requêtes (ENF-01, p95 &lt; 500 ms).
+MESSAGE
+</code></pre>
+<p><strong>Contrôle après ce commit.</strong> Sur une machine MySQL locale : <code>bash scripts/run_sql_tests.sh</code> → 29/29 conformes.</p>
+<h3 id="e11-docspreuves-requetes-soumises-et-captures-dexecution-sql-uploads">É11 — docs(preuves): requêtes soumises et captures d'exécution SQL (uploads/)<a class="headerlink" href="#e11-docspreuves-requetes-soumises-et-captures-dexecution-sql-uploads" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> Les preuves d'exécution : scripts soumis au serveur et captures du harnais vert. C'est la pièce à conviction du livrable SQL.</p>
+<pre><code class="language-bash">git add uploads/*
+git commit -F- &lt;&lt;'MESSAGE'
+docs(preuves): requêtes soumises et captures d'exécution SQL (uploads/)
+
+Les 4 scripts SQL tels qu'exécutés et les captures du harnais complet (29/29 conformes) : preuves demandées par le rendu.
+MESSAGE
+</code></pre>
+<p><strong>Jalon.</strong> <code>git tag -a v2-base -m "Base MySQL livrée (schéma, procédures, triggers, tests, preuves)"</code></p>
+<h3 id="e12-featmoteur-socle-du-moteur-json-contrat-de-magasin-filtres-schema-erreurs">É12 — feat(moteur): socle du moteur JSON — contrat de magasin, filtres, schéma, erreurs<a class="headerlink" href="#e12-featmoteur-socle-du-moteur-json-contrat-de-magasin-filtres-schema-erreurs" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> Le contrat du « moteur intelligent de données JSON utilisé comme du SQL » : l'interface de magasin, le langage de filtres, le schéma des tables et les erreurs métier — sans dépendance runtime.</p>
+<pre><code class="language-bash">git add app/Model/Data/StoreInterface.php \
+        app/Model/Data/Errors.php \
+        app/Model/Data/BusinessError.php \
+        app/Model/Data/ConstraintError.php \
+        app/Model/Data/QueryError.php \
+        app/Model/Data/SchemaError.php \
+        app/Model/Data/Filter.php \
+        app/Model/Data/Schema.php \
+        app/Model/Data/StorageDriver.php \
+        app/Model/Data/Text.php \
+        docs/annexes/annexe-php-patterns.md
+git commit -F- &lt;&lt;'MESSAGE'
+feat(moteur): socle du moteur JSON — contrat de magasin, filtres, schéma, erreurs
+
+StoreInterface : un CRUD typé (select/insert/update/delete/count/sum/transaction) utilisable comme du SQL.
+
+Filter (eq, neq, like, between, in, sort, and/or…), Schema (tables, colonnes, types, contraintes, clés étrangères), StorageDriver, Text (slug, fold, comparaison intl) et la hiérarchie d'erreurs métier (BusinessError, ConstraintError, QueryError, SchemaError).
+
+Annexe 17.7 : patterns PHP/PDO/sécurité de référence repris par l'application.
+MESSAGE
+</code></pre>
+<h3 id="e13-featmoteur-magasin-json-transactions-triggers-contraintes-vues-journal">É13 — feat(moteur): magasin JSON — transactions, triggers, contraintes, vues, journal<a class="headerlink" href="#e13-featmoteur-magasin-json-transactions-triggers-contraintes-vues-journal" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> Le cœur du projet : un magasin JSON qui se comporte comme une base — transactions, déclencheurs, contraintes, journal d'audit — pilotable par la même API que le SQL.</p>
+<pre><code class="language-bash">git add app/Model/Data/JsonTable.php \
+        app/Model/Data/JsonStore.php \
+        app/Model/Data/Journal.php \
+        app/Model/Data/Triggers.php \
+        app/Model/Data/Views.php \
+        app/Model/Data/SqlStore.php
+git commit -F- &lt;&lt;'MESSAGE'
+feat(moteur): magasin JSON — transactions, triggers, contraintes, vues, journal
+
+JsonStore/JsonTable : persistance des tables en fichiers JSON {table, auto_increment, rows}, index de clé primaire, transactions avec rollback.
+
+Sémantiques SQL reproduites : 16 triggers BEFORE/AFTER équivalents (matrice de transitions RB-11), contraintes et clés étrangères refusées côté moteur, comparaison « loose » MySQL.
+
+Journal d'audit JSONL (EF-GEN-04), vues calculées (état des stocks, chiffre d'affaires) et SqlStore : la bascule PDO/MySQL garde la même interface pour la production.
+MESSAGE
+</code></pre>
+<h3 id="e14-featseed-jeu-de-donnees-reproductible-admin-clients-12-produits-parametres">É14 — feat(seed): jeu de données reproductible (admin, clients, 12 produits, paramètres)<a class="headerlink" href="#e14-featseed-jeu-de-donnees-reproductible-admin-clients-12-produits-parametres" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> Les données de démonstration, toujours créées à travers le moteur : le seed est la première preuve que le moteur applique les règles.</p>
+<pre><code class="language-bash">git add app/Model/Data/Seed.php \
+        scripts/seed.php \
+        data/*/*
+git commit -F- &lt;&lt;'MESSAGE'
+feat(seed): jeu de données reproductible (admin, clients, 12 produits, paramètres)
+
+Seed::force reconstruit les 8 tables PAR le moteur (donc avec triggers et journal) : admin SUPER + gestionnaire, 3 clients, 4 catégories, 12 produits (dont stock 0, seuil bas, invisible), TVA 20 %, port 4,90 € / franchise 80 €.
+
+scripts/seed.php : re-seed en une commande (reset explicite, équivalent TRUNCATE des scripts SQL).
+MESSAGE
+</code></pre>
+<h3 id="e15-featapp-socle-mvc-bootstrap-routeur-config-gabarit-securite">É15 — feat(app): socle MVC — bootstrap, routeur, config, gabarit, sécurité<a class="headerlink" href="#e15-featapp-socle-mvc-bootstrap-routeur-config-gabarit-securite" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> Le socle de l'application : routage, configuration, gabarit commun et la couche sécurité (sessions, CSRF, échappement) présente dès la première page.</p>
+<pre><code class="language-bash">git add app/bootstrap.php \
+        app/Router.php \
+        app/Config/* \
+        app/Controller/Controller.php \
+        app/Security/* \
+        app/View/layout.php \
+        app/View/errors/*
+git commit -F- &lt;&lt;'MESSAGE'
+feat(app): socle MVC — bootstrap, routeur, config, gabarit, sécurité
+
+bootstrap + Router (routes GET/POST, contrôleurs en tableau [classe, méthode], normalisation des URI), Config\Database (choix du magasin JSON/SQL par environnement), env.example.php.
+
+Sécurité transversale : Auth (sessions régénérées, anti-fixation), Csrf (jetons par formulaire), xss.php (échappement systématique, dates françaises).
+
+layout.php et pages d'erreur 403/404/500.
+MESSAGE
+</code></pre>
+<h3 id="e16-featboutique-accueil-catalogue-pagine-et-filtrable-fiche-produit">É16 — feat(boutique): accueil, catalogue paginé et filtrable, fiche produit<a class="headerlink" href="#e16-featboutique-accueil-catalogue-pagine-et-filtrable-fiche-produit" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> La vitrine : pages statiques de présentation et le catalogue complet (recherche, filtres, tris, pagination) avec la règle RB-19 garantie côté serveur.</p>
+<pre><code class="language-bash">git add app/Controller/HomeController.php \
+        app/Controller/CatalogueController.php \
+        app/View/home/* \
+        app/View/catalogue/*
+git commit -F- &lt;&lt;'MESSAGE'
+feat(boutique): accueil, catalogue paginé et filtrable, fiche produit
+
+HomeController (accueil, catégories, à propos, CGV, mentions légales) et CatalogueController : recherche plein texte, filtres catégorie/prix/stock, tris, pagination 12/page.
+
+RB-19 : les produits invisibles n'apparaissent jamais au catalogue ; les filtres actifs se conservent dans l'URL.
+MESSAGE
+</code></pre>
+<h3 id="e17-featclient-panier-serveur-commandes-compte-connexioninscription">É17 — feat(client): panier serveur, commandes, compte, connexion/inscription<a class="headerlink" href="#e17-featclient-panier-serveur-commandes-compte-connexioninscription" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> Le parcours client complet : panier contrôlé côté serveur, commande avec fraix de port figés, compte, inscription et connexion sécurisées.</p>
+<pre><code class="language-bash">git add app/Model/PanierSession.php \
+        app/Controller/PanierController.php \
+        app/Controller/CommandeController.php \
+        app/Controller/CompteController.php \
+        app/Controller/AuthController.php \
+        app/View/panier/* \
+        app/View/commande/* \
+        app/View/compte/* \
+        app/View/auth/*
+git commit -F- &lt;&lt;'MESSAGE'
+feat(client): panier serveur, commandes, compte, connexion/inscription
+
+PanierSession (quantité plafonnée au stock), validation de commande avec snapshot du port au jour J (RB-20), suivi et annulation côté client (RB-11 : annulation trop tardive refusée).
+
+AuthController : inscription (password_hash), connexion, message d'erreur identique quel que soit le motif (SEC-05) ; espace compte (coordonnées, historique des commandes).
+MESSAGE
+</code></pre>
+<p><strong>Jalon.</strong> <code>git tag -a v3-front -m "Application client (moteur, boutique, panier, commandes, compte)"</code></p>
+<h3 id="e18-featapp-couche-depots-produits-categories-clients-commandes-parametres">É18 — feat(app): couche dépôts — produits, catégories, clients, commandes, paramètres<a class="headerlink" href="#e18-featapp-couche-depots-produits-categories-clients-commandes-parametres" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> La couche dépôts isole l'accès aux données : c'est elle qui encode les règles d'accès (visibilité, suppression logique, numérotation des commandes).</p>
+<pre><code class="language-bash">git add app/Repository/*
+git commit -F- &lt;&lt;'MESSAGE'
+feat(app): couche dépôts — produits, catégories, clients, commandes, paramètres
+
+Les contrôleurs ne touchent jamais le moteur directement : ProduitRepository (recherche TTC, stock, suppression logique), CategorieRepository, ClientRepository (statut du compte), CommandeRepository (numéro CMD-{AAAA}-{id:6}, statuts, rapport de chiffre d'affaires), ParametreRepository (port, TVA).
+MESSAGE
+</code></pre>
+<h3 id="e19-featadmin-back-office-complet-produits-categories-commandes-stocks-equipe">É19 — feat(admin): back-office complet — produits, catégories, commandes, stocks, équipe<a class="headerlink" href="#e19-featadmin-back-office-complet-produits-categories-commandes-stocks-equipe" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> Le back-office : toutes les opérations d'administration, avec la séparation des rôles SUPER/gestionnaire et les mêmes règles métier que le SQL.</p>
+<pre><code class="language-bash">git add app/Controller/Admin/* \
+        app/View/admin/*
+git commit -F- &lt;&lt;'MESSAGE'
+feat(admin): back-office complet — produits, catégories, commandes, stocks, équipe
+
+Tableau de bord (indicateurs), CRUD produits (référence et slug uniques, TVA, seuil RB-03, visibilité RB-19), catégories, commandes (statuts avec commentaire obligatoire pour annulation, historique), ajustement de stock (SET/DELTA), gestion de l'équipe.
+
+RB-13 : seul un admin SUPER gère les comptes ; un compte client ne peut jamais devenir admin ; impossible de bloquer son propre compte.
+MESSAGE
+</code></pre>
+<p><strong>Jalon.</strong> <code>git tag -a v4-back -m "Back-office complet (produits, catégories, commandes, stocks, équipe)"</code></p>
+<h3 id="e20-featweb-front-controleur-reecriture-durl-et-script-de-deploiement">É20 — feat(web): front contrôleur, réécriture d'URL et script de déploiement<a class="headerlink" href="#e20-featweb-front-controleur-reecriture-durl-et-script-de-deploiement" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> Le point d'entrée unique du Web : toutes les URL passent par le routeur, et le script de déploiement installe la base MySQL de production.</p>
+<pre><code class="language-bash">git add public/index.php \
+        public/.htaccess \
+        scripts/deploy.php
+git commit -F- &lt;&lt;'MESSAGE'
+feat(web): front contrôleur, réécriture d'URL et script de déploiement
+
+public/index.php : déclaration de toutes les routes et boot de l'application ; .htaccess : toute requête passe par index.php, les fichiers statiques sont servis directement.
+
+scripts/deploy.php : déploiement MySQL (schéma + données initiales).
+MESSAGE
+</code></pre>
+<h3 id="e21-buildsandbox-runtime-php-82-wasm-serveur-http-et-chaine-de-tests-npm">É21 — build(sandbox): runtime PHP 8.2-WASM, serveur HTTP et chaîne de tests npm<a class="headerlink" href="#e21-buildsandbox-runtime-php-82-wasm-serveur-http-et-chaine-de-tests-npm" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> L'outillage de développement : exécuter et servir le PHP dans une sandbox Node, et lancer toutes les suites en une commande. Aucune dépendance runtime pour l'application.</p>
+<pre><code class="language-bash">git add scripts/wasm_lib.mjs \
+        scripts/wasm_run.mjs \
+        scripts/wasm-serve.mjs \
+        scripts/run-all-tests.mjs \
+        package.json \
+        package-lock.json
+git commit -F- &lt;&lt;'MESSAGE'
+build(sandbox): runtime PHP 8.2-WASM, serveur HTTP et chaîne de tests npm
+
+Environnement de développement sandbox sans installation PHP : exécution CLI (wasm_run), serveur HTTP (wasm-serve) et bibliothèque commune.
+
+run-all-tests.mjs + package.json : npm run serve / test / test:units / test:features / test:e2e / test:all / lint:types — l'application reste 100 % PHP sans dépendance runtime (l'outillage Node est dev-only).
+MESSAGE
+</code></pre>
+<p><strong>Contrôle après ce commit.</strong> Après <code>npm install</code> : <code>npm run serve</code> puis http://localhost:8080/ (le re-seed se fait par <code>node scripts/wasm_run.mjs scripts/seed.php</code>).</p>
+<h3 id="e22-buildperf-volumetrie-et-mesure-enf-01-gen_volumes-mesurer">É22 — build(perf): volumétrie et mesure ENF-01 (gen_volumes, mesurer)<a class="headerlink" href="#e22-buildperf-volumetrie-et-mesure-enf-01-gen_volumes-mesurer" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> Les outils de mesure de performance exigés par ENF-01 : générer du volume, mesurer, obtenir un verdict automatique (p95 &lt; 500 ms).</p>
+<pre><code class="language-bash">git add app/Tools/* \
+        scripts/gen_volumes.php \
+        public/gen_volumes.php \
+        public/mesurer.php \
+        scripts/md_to_pdf.py
+git commit -F- &lt;&lt;'MESSAGE'
+build(perf): volumétrie et mesure ENF-01 (gen_volumes, mesurer)
+
+Générateur de jeux volumétriques (100 k+ lignes) pour MySQL et pour le moteur JSON, page de mesure p50/p95/max avec verdict ENF-01 automatique, et utilitaires (rendu PDF des documents).
+MESSAGE
+</code></pre>
+<h3 id="e23-testphp-moteur-engine_smoke-et-regles-de-gestion-t-01t-29-en-php">É23 — test(php): moteur (engine_smoke) et règles de gestion T-01…T-29 en PHP<a class="headerlink" href="#e23-testphp-moteur-engine_smoke-et-regles-de-gestion-t-01t-29-en-php" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> La première suite PHP vérifie le moteur seul, puis rejoue les 29 tests du plan de validation directement contre le moteur JSON.</p>
+<pre><code class="language-bash">git add tests/php/engine_smoke.php \
+        tests/php/run_tests.php
+git commit -F- &lt;&lt;'MESSAGE'
+test(php): moteur (engine_smoke) et règles de gestion T-01…T-29 en PHP
+
+engine_smoke : contraintes, triggers, transactions, rollback et journal du moteur JSON sur un bac à sable hermétique.
+
+run_tests : les 29 règles de gestion rejouées sur le moteur (application court-circuitée) — 29/29 conformes, même oracle que le harnais SQL.
+MESSAGE
+</code></pre>
+<p><strong>Contrôle après ce commit.</strong> <code>npm run test</code> → 29/29 conformes.</p>
+<h3 id="e24-testphp-98-tests-unitaires-108-fonctionnels-et-e2e-155-verifications">É24 — test(php): 98 tests unitaires, 108 fonctionnels et E2E 155 vérifications<a class="headerlink" href="#e24-testphp-98-tests-unitaires-108-fonctionnels-et-e2e-155-verifications" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> Les suites qui couvrent l'application entière : unitaires, fonctionnels et un E2E qui rejoue aussi les attaques de la note cybersécurité.</p>
+<pre><code class="language-bash">git add tests/php/unit_tests.php \
+        tests/php/features_test.php \
+        scripts/wasm-e2e.mjs
+git commit -F- &lt;&lt;'MESSAGE'
+test(php): 98 tests unitaires, 108 fonctionnels et E2E 155 vérifications
+
+unit_tests : moteur, Text, filtres, matrice de transitions, vues, journal. features_test : parcours complets (catalogue, panier, commande, admin) sur les dépôts.
+
+wasm-e2e : navigateur simulé — inscription, connexion, panier, commande payée, expédition, sécurité offensive (injections XSS/SQL, IDOR, traversée de chemin, en-têtes, CSRF), rôles admin.
+MESSAGE
+</code></pre>
+<p><strong>Contrôle après ce commit.</strong> <code>npm run test:units</code>, <code>npm run test:features</code>, <code>npm run test:e2e</code> (le re-seed est automatique).</p>
+<h3 id="e25-buildqualite-linter-strict-types-declare_strict_types-phpstan-l9-zero-ternaire">É25 — build(qualité): linter strict types — declare_strict_types, PHPStan L9, zéro ternaire<a class="headerlink" href="#e25-buildqualite-linter-strict-types-declare_strict_types-phpstan-l9-zero-ternaire" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> Le linter maison garantit dans la sandbox les mêmes exigences que php-cs-fixer + PHPStan level 9, plus la règle de style « pas de ternaire ».</p>
+<pre><code class="language-bash">git add scripts/strict_types_lint.php
+git commit -F- &lt;&lt;'MESSAGE'
+build(qualité): linter strict types — declare_strict_types, PHPStan L9, zéro ternaire
+
+scripts/strict_types_lint.php : reproduit la règle declare_strict_types de php-cs-fixer et les types natifs « PHPStan level 9 » via le tokenizer PHP (79 fichiers, sorties fichier:ligne).
+
+Règle maison : opérateur ternaire interdit (y compris la forme courte ?:) — remplacé par if/else, match ou une variable intermédiaire ; la coalescence ?? et les types nullables ?int restent autorisés.
+
+Branché en tête de npm run test:all : 0 violation sur les 79 fichiers PHP du livrable.
+MESSAGE
+</code></pre>
+<p><strong>Contrôle après ce commit.</strong> <code>npm run lint:types</code> → 0 violation / 79 fichiers.</p>
+<h3 id="e26-buildqualite-configuration-composer-php-cs-fixer-et-phpstan-strict-require-dev">É26 — build(qualité): configuration Composer — php-cs-fixer et PHPStan strict (require-dev)<a class="headerlink" href="#e26-buildqualite-configuration-composer-php-cs-fixer-et-phpstan-strict-require-dev" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> L'équivalent « machine normale » du linter sandbox : Composer installe php-cs-fixer et PHPStan, les mêmes règles s'appliquent au vrai environnement.</p>
+<pre><code class="language-bash">git add composer.json \
+        phpstan.neon \
+        .php-cs-fixer.php
+git commit -F- &lt;&lt;'MESSAGE'
+build(qualité): configuration Composer — php-cs-fixer et PHPStan strict (require-dev)
+
+composer.json (cs:check, cs:fix, lint:types), .php-cs-fixer.php (declare_strict_types) et phpstan.neon (level 9 + strict-rules, treatPhpDocTypesAsCertain: false).
+
+Outils en require-dev uniquement : l'application n'a aucune dépendance runtime.
+MESSAGE
+</code></pre>
+<p><strong>Contrôle après ce commit.</strong> Sur une machine avec Composer : <code>composer cs:check</code> et <code>composer lint:types</code>.</p>
+<h3 id="e27-ci-chaine-gitlab-ci-6-jobs-miroir-github-actions-ct-09">É27 — ci: chaîne GitLab CI (6 jobs) + miroir GitHub Actions (CT-09)<a class="headerlink" href="#e27-ci-chaine-gitlab-ci-6-jobs-miroir-github-actions-ct-09" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> L'intégration continue exigée par la contrainte CT-09 : chaque push rejoue syntaxe, SQL, tests PHP et génération des documents — côté GitLab pour la notation.</p>
+<pre><code class="language-bash">git add .gitlab-ci.yml \
+        .github/*
+git commit -F- &lt;&lt;'MESSAGE'
+ci: chaîne GitLab CI (6 jobs) + miroir GitHub Actions (CT-09)
+
+Jobs : syntaxe PHP, schéma rejouable, 28 tests SQL, tests PHP (moteur + règles), génération des documents. Un pipeline vert prouve que les critères du barème sont tenus ; un job rouge bloque le merge.
+
+Cible de notation : GitLab CI (ce fichier). Le workflow GitHub Actions est le miroir de développement, maintenu synchrone.
+MESSAGE
+</code></pre>
+<h3 id="e28-docssecurite-note-cybersecurite-s-01s-10-sec-01sec-13">É28 — docs(sécurité): note cybersécurité — S-01…S-10 / SEC-01…SEC-13<a class="headerlink" href="#e28-docssecurite-note-cybersecurite-s-01s-10-sec-01sec-13" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> La source de vérité sécurité : chaque attaque, sa correction dans le code, et ce qui reste hors périmètre — assumé explicitement.</p>
+<pre><code class="language-bash">git add docs/07-note-cybersecurite.md
+git commit -F- &lt;&lt;'MESSAGE'
+docs(sécurité): note cybersécurité — S-01…S-10 / SEC-01…SEC-13
+
+Pour chaque faille testée : attaque rejouée par la suite E2E, correction apportée (échappement, équivalent requêtes préparées, CSRF, sessions, IDOR, en-têtes de sécurité) et limites assumées (S-09 force brute : throttle esquissé, non livré).
+MESSAGE
+</code></pre>
+<h3 id="e29-docssoutenance-support-de-presentation-et-artefacts-html-du-rendu">É29 — docs(soutenance): support de présentation et artefacts HTML du rendu<a class="headerlink" href="#e29-docssoutenance-support-de-presentation-et-artefacts-html-du-rendu" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> Le support de soutenance et les rendus HTML « imprimables » des 6 documents officiels.</p>
+<pre><code class="language-bash">git add docs/03-support-soutenance.md \
+        artefacts/*
+git commit -F- &lt;&lt;'MESSAGE'
+docs(soutenance): support de présentation et artefacts HTML du rendu
+
+Support de soutenance (démo guidée, pièges rencontrés, bilan) et rendus HTML des documents officiels (générés depuis docs/, sources de vérité).
+MESSAGE
+</code></pre>
+<h3 id="e30-docs-readme-vue-densemble-installation-tests-qualite-securite">É30 — docs: README — vue d'ensemble, installation, tests, qualité, sécurité<a class="headerlink" href="#e30-docs-readme-vue-densemble-installation-tests-qualite-securite" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> La porte d'entrée du dépôt : quoi installer, quoi lancer, où trouver chaque livrable.</p>
+<pre><code class="language-bash">git add README.md
+git commit -F- &lt;&lt;'MESSAGE'
+docs: README — vue d'ensemble, installation, tests, qualité, sécurité
+
+Prise en main en 5 commandes, tableau des suites de tests (toutes vertes), politique de qualité (linter strict types, zéro ternaire), comptes de démonstration et correspondance documents ↔ exigences.
+MESSAGE
+</code></pre>
+<h3 id="e31-docsgit-fiche-de-suivi-des-commits-et-script-de-rejeu-vers-un-nouveau-gitlab">É31 — docs(git): fiche de suivi des commits et script de rejeu vers un nouveau GitLab<a class="headerlink" href="#e31-docsgit-fiche-de-suivi-des-commits-et-script-de-rejeu-vers-un-nouveau-gitlab" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> La fiche de suivi elle-même + son automate : reconstituer ce dépôt, commit par commit, sur un nouveau GitLab.</p>
+<pre><code class="language-bash">git add docs/08-fiche-suivi-commits.md \
+        scripts/rejeu_gitlab.py
+git commit -F- &lt;&lt;'MESSAGE'
+docs(git): fiche de suivi des commits et script de rejeu vers un nouveau GitLab
+
+docs/08-fiche-suivi-commits.md : cette fiche — découpage en 32 commits commentés, jalons, correspondance avec l'historique d'origine, fichiers exclus.
+
+scripts/rejeu_gitlab.py : rejoue automatiquement tout le plan dans une copie isolée (le dépôt courant n'est jamais modifié), vérifie la couverture exacte des fichiers puis pousse sur option.
+MESSAGE
+</code></pre>
+<p><strong>Jalon.</strong> <code>git tag -a v5-rendu -m "Rendu final (outillage, tests complets, qualité, CI, documents)"</code></p>
+<h2 id="4-jalons-tags-cf-charte-annexe-179">4. Jalons (tags) — cf. charte annexe 17.9<a class="headerlink" href="#4-jalons-tags-cf-charte-annexe-179" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Tag</th>
+<th>Après le commit</th>
+<th>Signification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>v0-cadrage</code></td>
+<td>É1</td>
+<td>Cadrage fonctionnel (cahier des charges, cas d'utilisation)</td>
+</tr>
+<tr>
+<td><code>v1-mcd</code></td>
+<td>É3</td>
+<td>Conception complète (MCD, MLD, UML, plan de validation, organisation)</td>
+</tr>
+<tr>
+<td><code>v2-base</code></td>
+<td>É11</td>
+<td>Base MySQL livrée (schéma, procédures, triggers, tests, preuves)</td>
+</tr>
+<tr>
+<td><code>v3-front</code></td>
+<td>É17</td>
+<td>Application client (moteur, boutique, panier, commandes, compte)</td>
+</tr>
+<tr>
+<td><code>v4-back</code></td>
+<td>É19</td>
+<td>Back-office complet (produits, catégories, commandes, stocks, équipe)</td>
+</tr>
+<tr>
+<td><code>v5-rendu</code></td>
+<td>É31</td>
+<td>Rendu final (outillage, tests complets, qualité, CI, documents)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-historique-dorigine-tracabilite">5. Historique d'origine (traçabilité)<a class="headerlink" href="#5-historique-dorigine-tracabilite" title="Permanent link">#</a></h2>
+<p>Le dépôt d'origine (<code>github.com/jojo8356/SAE-302</code>, branche principale) contient un
+historique condensé par fusion de demandes de tirage. Correspondance :</p>
+<table>
+<thead>
+<tr>
+<th>Commit d'origine</th>
+<th>Contenu</th>
+<th>Étapes du rejeu qui le couvrent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>453c7aa</code> (fusion PR n°3)</td>
+<td>application complète : documents, SQL, moteur, MVC, outillage, tests</td>
+<td>É0 → É24</td>
+</tr>
+<tr>
+<td><code>aab2582</code></td>
+<td>tests exhaustifs (5 suites vertes, 4 bugs corrigés)</td>
+<td>É23, É24</td>
+</tr>
+<tr>
+<td><code>bfaf2ed</code></td>
+<td>note de cybersécurité + durcissement S-07 du harnais E2E</td>
+<td>É28</td>
+</tr>
+<tr>
+<td><code>69619af</code></td>
+<td>linter strict types (0 violation / 79 fichiers)</td>
+<td>É25, É26</td>
+</tr>
+<tr>
+<td><code>30fd73d</code></td>
+<td>éradication des 156 ternaires + règle maison au linter</td>
+<td>É25 (état final du code)</td>
+</tr>
+<tr>
+<td><code>0babe74</code></td>
+<td>retrait d'un artefact de sandbox</td>
+<td>— (fichier exclu du rejeu)</td>
+</tr>
+</tbody>
+</table>
+<p>Les étapes É25/É26 livrent le code <strong>dans son état final</strong> (déjà sans ternaire) :
+l'historique du nouveau dépôt est propre, sans aller-retour de refactoring.</p>
+<h2 id="6-fichiers-exclus-du-rejeu">6. Fichiers exclus du rejeu<a class="headerlink" href="#6-fichiers-exclus-du-rejeu" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Fichier / dossier</th>
+<th>Raison</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.sudo_as_admin_successful</code></td>
+<td>artefact de sandbox (retiré du dépôt, commit <code>0babe74</code>)</td>
+</tr>
+<tr>
+<td><code>var/</code></td>
+<td>journaux applicatifs, ignorés par <code>.gitignore</code></td>
+</tr>
+<tr>
+<td><code>node_modules/</code>, <code>vendor/</code></td>
+<td>dépendances régénérables (<code>npm install</code> / <code>composer install</code>)</td>
+</tr>
+<tr>
+<td><code>tests/sql/out/</code></td>
+<td>sorties brutes du harnais SQL, seul le rapport consigné est versionné</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-apres-le-push-la-charte-annexe-179-en-5-reglages">7. Après le push : la charte annexe 17.9 en 5 réglages<a class="headerlink" href="#7-apres-le-push-la-charte-annexe-179-en-5-reglages" title="Permanent link">#</a></h2>
+<ol>
+<li>Dépôt <strong>privé</strong> ; inviter l'équipe (Developer) et l'enseignante (Reporter).</li>
+<li>Protéger <code>main</code> : <strong>pas de push direct</strong>, MR obligatoires.</li>
+<li>Désactiver le squash de MR (les commits individuels font partie de la note).</li>
+<li>Activer « Delete source branch » et les pipelines (<code>.gitlab-ci.yml</code> est déjà dans É27).</li>
+<li>Vérifier que les 6 tags de jalons sont bien poussés (<code>git push --tags</code>).</li>
+</ol>
+<h2 id="8-verification-finale-du-depot-reconstitue">8. Vérification finale du dépôt reconstitué<a class="headerlink" href="#8-verification-finale-du-depot-reconstitue" title="Permanent link">#</a></h2>
+<pre><code class="language-bash">npm install            # outillage sandbox (aucune dépendance runtime pour l'app)
+node scripts/wasm_run.mjs scripts/seed.php   # re-seed des données de démo
+npm run test:all       # lint 0/79 · moteur · 29/29 · 98/98 · 108/108 · E2E 155/155
+</code></pre>
+<p>Tout doit être vert : le nouveau dépôt est fonctionnellement identique à l'original.</p>
+<footer class="doc">
+  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/08-fiche-suivi-commits.md</code>
+  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+</footer>
+</main>
+</body>
+</html>

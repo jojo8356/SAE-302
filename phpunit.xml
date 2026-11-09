@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  MiniShop — configuration PHPUnit (standard « grande entreprise »).
+  - une seule suite « app » : rapide, isolée (magasin temporaire), sans réseau ;
+  - la couverture cible app/ (les vues sont couvertes par l'E2E, pas par PHPUnit) ;
+  - cacheDirectory hors Git (.gitignore).
+  Exécution : composer test:unit (ou phpunit avec la suite app)
+-->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="tests/phpunit/bootstrap.php"
+         colors="true"
+         cacheDirectory=".phpunit.cache"
+         failOnWarning="true"
+         failOnRisky="true"
+         beStrictAboutOutputDuringTests="false"
+         beStrictAboutTodoAnnotatedTests="true">
+    <testsuites>
+        <testsuite name="app">
+            <directory>tests/phpunit</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory>app</directory>
+        </include>
+        <exclude>
+            <directory>app/View</directory>
+        </exclude>
+    </source>
+</phpunit>

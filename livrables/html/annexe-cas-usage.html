@@ -1,0 +1,1002 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="SAÉ 302 — MiniShop : Annexe 17.1 — Catalogue détaillé des 14 cas d&#x27;utilisation minimum#">
+<title>Annexe 17.1 — Catalogue détaillé des 14 cas d&#x27;utilisation minimum# — MiniShop</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --papier: #fbfaf7;
+  --carte: #ffffff;
+  --trait: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-clair: #dbeafe;
+  --code: #f1f5f9;
+  --mesure: 72ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
+    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
+    --accent-clair: #1e3a8a; --code: #16223a;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  max-width: calc(var(--mesure) + 6rem);
+  background: var(--papier);
+  color: var(--encre);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
+h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
+p, li { max-width: var(--mesure); }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+}
+pre {
+  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
+  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.35rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+thead th { background: var(--accent-clair); }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
+img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li input[type="checkbox"] { margin-right: 0.4rem; }
+.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
+.toc > ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1rem; }
+footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+@media print {
+  :root { --papier: #fff; --carte: #fff; }
+  @page { size: A4; margin: 18mm 16mm; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#uc-01-consulter-le-catalogue">UC-01 — Consulter le catalogue</a></li>
+<li><a href="#uc-02-rechercher-un-produit">UC-02 — Rechercher un produit</a></li>
+<li><a href="#uc-03-consulter-la-fiche-produit">UC-03 — Consulter la fiche produit</a></li>
+<li><a href="#uc-04-creer-un-compte">UC-04 — Créer un compte</a></li>
+<li><a href="#uc-05-se-connecter-se-deconnecter-gerer-son-compte">UC-05 — Se connecter / se déconnecter, gérer son compte</a></li>
+<li><a href="#uc-06-gerer-le-panier">UC-06 — Gérer le panier</a></li>
+<li><a href="#uc-07-passer-une-commande">UC-07 — Passer une commande</a></li>
+<li><a href="#uc-08-consulter-lhistorique-des-commandes">UC-08 — Consulter l'historique des commandes</a></li>
+<li><a href="#uc-09-annuler-une-commande">UC-09 — Annuler une commande</a></li>
+<li><a href="#uc-10-gerer-les-produits">UC-10 — Gérer les produits</a></li>
+<li><a href="#uc-11-gerer-les-categories">UC-11 — Gérer les catégories</a></li>
+<li><a href="#uc-12-gerer-les-stocks">UC-12 — Gérer les stocks</a></li>
+<li><a href="#uc-13-gerer-les-commandes-back-office">UC-13 — Gérer les commandes (back-office)</a></li>
+<li><a href="#uc-14-modifier-le-statut-dune-commande">UC-14 — Modifier le statut d'une commande</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="annexe-171-catalogue-detaille-des-14-cas-dutilisation-minimum">Annexe 17.1 — Catalogue détaillé des 14 cas d'utilisation minimum<a class="headerlink" href="#annexe-171-catalogue-detaille-des-14-cas-dutilisation-minimum" title="Permanent link">#</a></h1>
+<p>Complément du §5.1 du cahier des charges. Les trois cas détaillés par <strong>description textuelle</strong>
+(exigence du sujet) sont UC-07, UC-02 et UC-14, développés au §5.1.5 du CDC ; les 11 autres sont
+formalisés ici en fiche pour que la couverture des 14 cas demandés soit vérifiable ligne à ligne.</p>
+<h2 id="uc-01-consulter-le-catalogue">UC-01 — Consulter le catalogue<a class="headerlink" href="#uc-01-consulter-le-catalogue" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>But</td>
+<td>Parcourir les produits du front-office, catégorie par catégorie ou page par page.</td>
+</tr>
+<tr>
+<td>Acteur principal</td>
+<td>Visiteur</td>
+</tr>
+<tr>
+<td>Acteurs secondaires</td>
+<td>MySQL (<code>sp_search_products</code>)</td>
+</tr>
+<tr>
+<td>Données en entrée</td>
+<td><code>page</code>, <code>cat</code>, <code>tri</code> (optionnels)</td>
+</tr>
+<tr>
+<td>Préconditions</td>
+<td>aucune (navigation publique, aucune session requise)</td>
+</tr>
+<tr>
+<td>Scénario nominal</td>
+<td>1. le visiteur ouvre <code>/catalogue</code> ; 2. le contrôleur normalise les filtres ; 3. <code>CALL sp_search_products(NULL, …, p_admin = 0)</code> ; 4. la page de 12 produits s'affiche (prix TTC, disponibilité, catégorie) ; 5. le visiteur change de page ou de catégorie.</td>
+</tr>
+<tr>
+<td>Scénarios alternatifs</td>
+<td>A1 pas de page suivante → lien « première page » ; A2 catégorie vide → « Aucun produit dans cette catégorie » (jamais masquée) ; A3 produit masqué → jamais listé (<code>RB-19</code>).</td>
+</tr>
+<tr>
+<td>Scénarios d'exception</td>
+<td>E1 base indisponible → page 503 générique, aucune trace technique affichée.</td>
+</tr>
+<tr>
+<td>Postconditions</td>
+<td>consultation possible et reproductible (URL partageable)</td>
+</tr>
+<tr>
+<td>Effets sur le système</td>
+<td>aucune écriture</td>
+</tr>
+<tr>
+<td>Règles métier appliquées</td>
+<td><code>RB-19</code></td>
+</tr>
+<tr>
+<td>Exigences couvertes</td>
+<td><code>EF-VIS-01/03/05</code></td>
+</tr>
+<tr>
+<td>Tests de recette</td>
+<td>F-01, F-03, F-04</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-02-rechercher-un-produit">UC-02 — Rechercher un produit<a class="headerlink" href="#uc-02-rechercher-un-produit" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>But</td>
+<td>Trouver des produits par mot(s)-clé(s) sur le nom, la description et la référence.</td>
+</tr>
+<tr>
+<td>Acteur principal</td>
+<td>Visiteur</td>
+</tr>
+<tr>
+<td>Acteurs secondaires</td>
+<td>MySQL (<code>sp_search_products</code>)</td>
+</tr>
+<tr>
+<td>Données en entrée</td>
+<td><code>q</code> (1 à 120 caractères) + filtres cumulables</td>
+</tr>
+<tr>
+<td>Préconditions</td>
+<td>texte non vide après trim (sinon équivaut à UC-01)</td>
+</tr>
+<tr>
+<td>Scénario nominal</td>
+<td>1. saisie ; 2. validation serveur du contenu de la requête (longueur, type) ; 3. <code>CALL sp_search_products(q, …)</code> en paramètres liés ; 4. liste paginée + <code>total_trouves</code> (2ᵉ jeu de résultats du même appel) ; 5. filtres reportés dans l'URL.</td>
+</tr>
+<tr>
+<td>Scénarios alternatifs</td>
+<td>A1 aucun résultat → message neutre + suggestions de catégories ; A2 tri inconnu → repli sur <code>nom</code> + journalisation ; A3 filtres incohérents (<code>prix_min &gt; prix_max</code>) ; A4 recherche vide → UC-01 ; A5 page hors bornes → page vide + lien utile.</td>
+</tr>
+<tr>
+<td>Scénarios d'exception</td>
+<td>E1 base indisponible → 503 ; E2 sur-charge évitée par la borne de page (60 max).</td>
+</tr>
+<tr>
+<td>Postconditions</td>
+<td>aucun effet de bord (GET idempotent)</td>
+</tr>
+<tr>
+<td>Effets sur le système</td>
+<td>aucune écriture</td>
+</tr>
+<tr>
+<td>Règles métier appliquées</td>
+<td><code>RB-19</code>, <code>SEC-01</code>, <code>SEC-02</code>, <code>ENF-04/05</code></td>
+</tr>
+<tr>
+<td>Exigences couvertes</td>
+<td><code>EF-VIS-02</code></td>
+</tr>
+<tr>
+<td>Tests de recette</td>
+<td>F-02, S-01, T-25</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-03-consulter-la-fiche-produit">UC-03 — Consulter la fiche produit<a class="headerlink" href="#uc-03-consulter-la-fiche-produit" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>But</td>
+<td>Afficher le détail complet d'un produit : prix TTC, TVA, disponibilité, catégorie, description.</td>
+</tr>
+<tr>
+<td>Acteur principal</td>
+<td>Visiteur</td>
+</tr>
+<tr>
+<td>Acteurs secondaires</td>
+<td>MySQL</td>
+</tr>
+<tr>
+<td>Données en entrée</td>
+<td><code>slug</code> (ou <code>id_produit</code>)</td>
+</tr>
+<tr>
+<td>Préconditions</td>
+<td>produit existant et <code>visible = 1</code></td>
+</tr>
+<tr>
+<td>Scénario nominal</td>
+<td>1. clic sur un produit ; 2. <code>SELECT</code> avec <code>WHERE slug = ? AND visible = 1</code> ; 3. calcul de l'état de stock ; 4. rendu de la fiche ; 5. sélecteur de quantité borné (<code>max = stock</code>).</td>
+</tr>
+<tr>
+<td>Scénarios alternatifs</td>
+<td>A1 produit masqué → 404 générique (pas de liste des produits retirés) ; A2 rupture → bouton désactivé + message ; A3 prix modifié après affichage du catalogue → le prix de la fiche fait foi.</td>
+</tr>
+<tr>
+<td>Scénarios d'exception</td>
+<td>E1 produit supprimé entre-temps → 404 au rechargement.</td>
+</tr>
+<tr>
+<td>Postconditions</td>
+<td>information de prix opposable (<code>ENF-14</code>)</td>
+</tr>
+<tr>
+<td>Effets sur le système</td>
+<td>aucune écriture</td>
+</tr>
+<tr>
+<td>Règles métier appliquées</td>
+<td><code>RB-02</code>, <code>RB-16</code>, <code>RB-19</code></td>
+</tr>
+<tr>
+<td>Exigences couvertes</td>
+<td><code>EF-VIS-04</code></td>
+</tr>
+<tr>
+<td>Tests de recette</td>
+<td>F-05</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-04-creer-un-compte">UC-04 — Créer un compte<a class="headerlink" href="#uc-04-creer-un-compte" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>But</td>
+<td>Ouvrir un compte client pour pouvoir commander.</td>
+</tr>
+<tr>
+<td>Acteur principal</td>
+<td>Visiteur</td>
+</tr>
+<tr>
+<td>Acteurs secondaires</td>
+<td>MySQL (<code>sp_create_account</code>)</td>
+</tr>
+<tr>
+<td>Données en entrée</td>
+<td>nom, prénom, email, mot de passe × 2, acceptation des CGV</td>
+</tr>
+<tr>
+<td>Préconditions</td>
+<td>email valide et inédit ; mot de passe conforme à la politique ; CGV acceptées</td>
+</tr>
+<tr>
+<td>Scénario nominal</td>
+<td>1. saisie et validation live (JS) ; 2. revalidation serveur complète ; 3. <code>password_hash()</code> (bcrypt cost 12) ; 4. <code>CALL sp_create_account(…)</code> ; 5. ouverture de session + retour à la page d'origine ; 6. panier éventuellement créé avant l'inscription conservé.</td>
+</tr>
+<tr>
+<td>Scénarios alternatifs</td>
+<td>A1 <code>EMAIL_DEJA_UTILISE</code> → message et champs conservés ; A2 mot de passe trop faible → politique affichée ; A3 CGV non acceptées → refus.</td>
+</tr>
+<tr>
+<td>Scénarios d'exception</td>
+<td>E1 doublon arrivé entre le contrôle et l'insertion → la contrainte <code>UNIQUE</code> refuse, message identique, aucune donnée partielle ; E2 rejeu du formulaire → même chemin (idempotence par unicité de l'email).</td>
+</tr>
+<tr>
+<td>Postconditions</td>
+<td>compte créé et connecté</td>
+</tr>
+<tr>
+<td>Effets sur le système</td>
+<td>une ligne dans <code>CLIENT</code> (hash ≥ 60 caractères), session ouverte</td>
+</tr>
+<tr>
+<td>Règles métier appliquées</td>
+<td><code>RB-01</code>, <code>RB-12</code>, <code>RB-13</code></td>
+</tr>
+<tr>
+<td>Exigences couvertes</td>
+<td><code>EF-VIS-06</code></td>
+</tr>
+<tr>
+<td>Tests de recette</td>
+<td>F-06, F-07, T-04, T-05</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-05-se-connecter-se-deconnecter-gerer-son-compte">UC-05 — Se connecter / se déconnecter, gérer son compte<a class="headerlink" href="#uc-05-se-connecter-se-deconnecter-gerer-son-compte" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>But</td>
+<td>Ouvrir une session fiable, modifier ses informations et son mot de passe, fermer proprement la session.</td>
+</tr>
+<tr>
+<td>Acteur principal</td>
+<td>Visiteur, Client</td>
+</tr>
+<tr>
+<td>Acteurs secondaires</td>
+<td>MySQL (<code>sp_get_credentials</code>, <code>sp_update_client</code>)</td>
+</tr>
+<tr>
+<td>Données en entrée</td>
+<td>email + mot de passe ; puis champs du profil</td>
+</tr>
+<tr>
+<td>Préconditions</td>
+<td>compte existant et actif</td>
+</tr>
+<tr>
+<td>Scénario nominal</td>
+<td>1. <code>POST /connexion</code> avec jeton CSRF ; 2. <code>CALL sp_get_credentials(?)</code> ; 3. <code>password_verify()</code> ; 4. <code>session_regenerate_id(true)</code> + <code>$_SESSION['user_id']</code> ; 5. redirection vers la page demandée avant la connexion.</td>
+</tr>
+<tr>
+<td>Scénarios alternatifs</td>
+<td>A1 compte bloqué (<code>COMPTE_BLOQUE</code>) ; A2 email inconnu <strong>ou</strong> mot de passe erroné → message strictement identique ; A3 changement d'email en conflit → refus ; A4 session expirée → reconnexion puis reprise.</td>
+</tr>
+<tr>
+<td>Scénarios d'exception</td>
+<td>E1 5 échecs en 15 min → temporisation du formulaire ; E2 vol de cookie (IP/agent différents) → revalidation.</td>
+</tr>
+<tr>
+<td>Postconditions</td>
+<td>session authentifiée et durcie</td>
+</tr>
+<tr>
+<td>Effets sur le système</td>
+<td><code>derniere_connexion</code>, champs du profil, destruction de session à la déconnexion</td>
+</tr>
+<tr>
+<td>Règles métier appliquées</td>
+<td><code>RB-01</code>, <code>RB-12</code>, <code>SEC-04/05/06</code></td>
+</tr>
+<tr>
+<td>Exigences couvertes</td>
+<td><code>EF-VIS-07</code>, <code>EF-CLI-01/02</code></td>
+</tr>
+<tr>
+<td>Tests de recette</td>
+<td>F-08, F-10, F-11, S-05, S-06</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-06-gerer-le-panier">UC-06 — Gérer le panier<a class="headerlink" href="#uc-06-gerer-le-panier" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>But</td>
+<td>Ajouter, modifier les quantités, retirer des produits et consulter un récapitulatif calculé par le serveur.</td>
+</tr>
+<tr>
+<td>Acteur principal</td>
+<td>Client (ou Visiteur hors session)</td>
+</tr>
+<tr>
+<td>Acteurs secondaires</td>
+<td>MySQL (<code>sp_search_products</code> pour le plafond de disponibilité)</td>
+</tr>
+<tr>
+<td>Données en entrée</td>
+<td><code>id_produit</code>, <code>quantite</code></td>
+</tr>
+<tr>
+<td>Préconditions</td>
+<td>produit visible ; au moins un article pour valider</td>
+</tr>
+<tr>
+<td>Scénario nominal</td>
+<td>1. action <code>POST /panier/ajouter</code>, <code>POST /panier/quantite</code>, <code>POST /panier/retirer</code> ; 2. contrôle serveur (entier, produit visible, disponibilité) ; 3. écriture dans <code>PanierSession</code> ; 4. récapitulatif HT/TVA/TTC rendu par le serveur ; 5. mise à jour du badge en AJAX.</td>
+</tr>
+<tr>
+<td>Scénarios alternatifs</td>
+<td>A1 <code>STOCK_INSUFFISANT</code> → message « il reste N exemplaire(s) », bouton grisé ; A2 produit devenu invisible → retrait signalé ; A3 quantité 0 → retrait explicite (jamais implicite).</td>
+</tr>
+<tr>
+<td>Scénarios d'exception</td>
+<td>E1 panier corrompu en session → régénération depuis la base ; E2 désactivation de JavaScript → le formulaire classique fonctionne toujours (<code>ENF-07</code>).</td>
+</tr>
+<tr>
+<td>Postconditions</td>
+<td>panier cohérent avec la base</td>
+</tr>
+<tr>
+<td>Effets sur le système</td>
+<td>état de session uniquement (aucune écriture en base dans l'option par défaut)</td>
+</tr>
+<tr>
+<td>Règles métier appliquées</td>
+<td><code>RB-05</code>, <code>RB-15</code>, <code>RB-18</code>, <code>RB-19</code></td>
+</tr>
+<tr>
+<td>Exigences couvertes</td>
+<td><code>EF-CLI-03…06</code>, <code>EF-VIS-09</code></td>
+</tr>
+<tr>
+<td>Tests de recette</td>
+<td>F-09, F-12, F-13, F-14, F-15</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-07-passer-une-commande">UC-07 — Passer une commande<a class="headerlink" href="#uc-07-passer-une-commande" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>But</td>
+<td>Transformer le panier en commande enregistrée, numérotée, à prix figés, avec réservation du stock.</td>
+</tr>
+<tr>
+<td>Acteur principal</td>
+<td>Client</td>
+</tr>
+<tr>
+<td>Acteurs secondaires</td>
+<td>MySQL (<code>sp_create_order_from_basket</code>, triggers de stock, snapshot et historique)</td>
+</tr>
+<tr>
+<td>Données en entrée</td>
+<td>adresse de livraison sélectionnée ou saisie, jeton CSRF</td>
+</tr>
+<tr>
+<td>Préconditions</td>
+<td>authentifié ; panier ≥ 1 article ; stock suffisant ; jeton CSRF valide</td>
+</tr>
+<tr>
+<td>Scénario nominal</td>
+<td>11 étapes, <strong>détaillées au §5.1.5.1 du CDC</strong> (scénario nominal complet, avec les 11 étapes attendues par le sujet).</td>
+</tr>
+<tr>
+<td>Scénarios alternatifs</td>
+<td>A1 stock insuffisant → rollback intégral, panier conservé ; A2 produit supprimé entre l'ajout au panier et la validation ; A3 panier vide ; A4 client non authentifié ; A5 adresse manquante.</td>
+</tr>
+<tr>
+<td>Scénarios d'exception</td>
+<td>E1 erreur de création → rollback, journal, aucun débit de stock ; E2 double clic → jeton consommé / <code>COMMANDE_DEJA_VALIDÉE</code> ; E3 concurrence sur la dernière unité → verrou <code>FOR UPDATE</code>.</td>
+</tr>
+<tr>
+<td>Postconditions</td>
+<td>commande enregistrée et consultable par son propriétaire et l'administration</td>
+</tr>
+<tr>
+<td>Effets sur le système</td>
+<td><code>COMMANDE</code> + <code>LIGNE_COMMANDE</code>, <code>PRODUIT.stock</code> décrémenté, <code>ORDER_STATUS_HISTORY</code>, panier vidé</td>
+</tr>
+<tr>
+<td>Règles métier appliquées</td>
+<td><code>RB-04</code>, <code>RB-05</code>, <code>RB-06</code>, <code>RB-10</code>, <code>RB-11</code>, <code>RB-15</code>, <code>RB-16</code>, <code>RB-18</code></td>
+</tr>
+<tr>
+<td>Exigences couvertes</td>
+<td><code>EF-CLI-07</code></td>
+</tr>
+<tr>
+<td>Tests de recette</td>
+<td>F-16, F-17, F-18, séquence 5.3.4</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-08-consulter-lhistorique-des-commandes">UC-08 — Consulter l'historique des commandes<a class="headerlink" href="#uc-08-consulter-lhistorique-des-commandes" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>But</td>
+<td>Relancer une commande, consulter les prix payés et le suivi.</td>
+</tr>
+<tr>
+<td>Acteur principal</td>
+<td>Client</td>
+</tr>
+<tr>
+<td>Acteurs secondaires</td>
+<td>MySQL</td>
+</tr>
+<tr>
+<td>Données en entrée</td>
+<td>aucune (liste) ; <code>id_commande</code> (détail)</td>
+</tr>
+<tr>
+<td>Préconditions</td>
+<td>authentifié</td>
+</tr>
+<tr>
+<td>Scénario nominal</td>
+<td>1. <code>GET /mes-commandes</code> ; 2. <code>SELECT … WHERE id_client = ?</code> (id de session) ; 3. liste (date, statut, montant, nombre de lignes) ; 4. clic → détail : lignes avec prix figés + chronologie des statuts.</td>
+</tr>
+<tr>
+<td>Scénarios alternatifs</td>
+<td>A1 aucun historique → message + lien catalogue ; A2 identifiant d'un autre client dans l'URL → 404.</td>
+</tr>
+<tr>
+<td>Scénarios d'exception</td>
+<td>E1 tentative d'IDOR → 404 + journal (<code>SEC-13</code>) ; aucune donnée renvoyée.</td>
+</tr>
+<tr>
+<td>Postconditions</td>
+<td>visibilité strictement limitée à son périmètre</td>
+</tr>
+<tr>
+<td>Effets sur le système</td>
+<td>aucune écriture</td>
+</tr>
+<tr>
+<td>Règles métier appliquées</td>
+<td><code>RB-06</code>, <code>RB-08</code>, <code>RB-10</code>, <code>SEC-08</code></td>
+</tr>
+<tr>
+<td>Exigences couvertes</td>
+<td><code>EF-CLI-08/09</code></td>
+</tr>
+<tr>
+<td>Tests de recette</td>
+<td>F-19, F-20, S-03</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-09-annuler-une-commande">UC-09 — Annuler une commande<a class="headerlink" href="#uc-09-annuler-une-commande" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>But</td>
+<td>Demander l'annulation d'une commande non expédiée, avec restitution du stock.</td>
+</tr>
+<tr>
+<td>Acteur principal</td>
+<td>Client</td>
+</tr>
+<tr>
+<td>Acteurs secondaires</td>
+<td>MySQL (<code>sp_cancel_order</code>, <code>trg_ligne_restore_stock</code>)</td>
+</tr>
+<tr>
+<td>Données en entrée</td>
+<td><code>id_commande</code>, motif</td>
+</tr>
+<tr>
+<td>Préconditions</td>
+<td>commande appartenant au client ; statut <code>BROUILLON</code>, <code>EN_PREPARATION</code> ou <code>PAYEE</code></td>
+</tr>
+<tr>
+<td>Scénario nominal</td>
+<td>1. bouton « Annuler » depuis le détail ; 2. confirmation + motif ; 3. <code>CALL sp_cancel_order(id, client)</code> ; 4. purge des lignes → restitution du stock par trigger ; 5. statut <code>ANNULEE</code> + trace d'historique ; 6. message de confirmation.</td>
+</tr>
+<tr>
+<td>Scénarios alternatifs</td>
+<td>A1 commande expédiée/livrée → <code>COMMANDE_NON_ANNULABLE</code> ; A2 commande d'un autre client → <code>ACCES_NON_AUTORISE</code> ; A3 annulation déjà effectuée → idempotence (<code>STATUT_DEJA_A_JOUR</code>).</td>
+</tr>
+<tr>
+<td>Scénarios d'exception</td>
+<td>E1 annulation simultanée côté admin → transaction sérialisée par <code>FOR UPDATE</code>, le second appel ne double pas la restitution.</td>
+</tr>
+<tr>
+<td>Postconditions</td>
+<td>commande annulée, stock juste, historique complet</td>
+</tr>
+<tr>
+<td>Effets sur le système</td>
+<td>statut <code>ANNULEE</code>, lignes purgées, stock restauré exactement une fois</td>
+</tr>
+<tr>
+<td>Règles métier appliquées</td>
+<td><code>RB-09</code>, <code>RB-11</code>, <code>RB-18</code></td>
+</tr>
+<tr>
+<td>Exigences couvertes</td>
+<td><code>EF-CLI-10</code></td>
+</tr>
+<tr>
+<td>Tests de recette</td>
+<td>F-21, T-21</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-10-gerer-les-produits">UC-10 — Gérer les produits<a class="headerlink" href="#uc-10-gerer-les-produits" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>But</td>
+<td>Créer, modifier, masquer ou supprimer un produit sans casser le prix payé ni le stock.</td>
+</tr>
+<tr>
+<td>Acteur principal</td>
+<td>Administrateur</td>
+</tr>
+<tr>
+<td>Acteurs secondaires</td>
+<td>MySQL (<code>sp_save_product</code>, <code>sp_delete_product</code>, triggers)</td>
+</tr>
+<tr>
+<td>Données en entrée</td>
+<td>référence, nom, slug, description, prix HT, TVA, stock initial, seuil, catégorie, visibilité, image</td>
+</tr>
+<tr>
+<td>Préconditions</td>
+<td>session administrateur ; catégorie existante ; référence et slug uniques</td>
+</tr>
+<tr>
+<td>Scénario nominal</td>
+<td>1. liste paginée avec recherche (<code>p_admin = 1</code>) ; 2. formulaire ; 3. validation serveur ; 4. <code>CALL sp_save_product(…)</code> ; 5. <code>prix_ttc</code> recalculé par trigger ; 6. retour sur la liste.</td>
+</tr>
+<tr>
+<td>Scénarios alternatifs</td>
+<td>A1 <code>REFERENCE_DEJA_UTILISEE</code> / <code>SLUG_DEJA_UTILISE</code> ; A2 <code>RB02_PRIX_DOIT_ETRE_STRICTEMENT_POSITIF</code> ; A3 produit déjà commandé → masquage <code>visible = 0</code> au lieu de la suppression.</td>
+</tr>
+<tr>
+<td>Scénarios d'exception</td>
+<td>E1 tentative de <code>DELETE</code> direct → <code>PRODUIT_REFERENCE_INTERDIT_DE_SUPPRIMER</code> (trigger) ; E2 catégorie inexistante → refus.</td>
+</tr>
+<tr>
+<td>Postconditions</td>
+<td>catalogue à jour sans perte d'historique</td>
+</tr>
+<tr>
+<td>Effets sur le système</td>
+<td>création ou modification de <code>PRODUIT</code>, date de modification, cohérence TTC</td>
+</tr>
+<tr>
+<td>Règles métier appliquées</td>
+<td><code>RB-02</code>, <code>RB-03</code>, <code>RB-07</code>, <code>RB-09</code>, <code>RB-14</code>, <code>RB-16</code>, <code>RB-17</code></td>
+</tr>
+<tr>
+<td>Exigences couvertes</td>
+<td><code>EF-ADM-01/02</code></td>
+</tr>
+<tr>
+<td>Tests de recette</td>
+<td>F-22, F-23, T-15, T-20</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-11-gerer-les-categories">UC-11 — Gérer les catégories<a class="headerlink" href="#uc-11-gerer-les-categories" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>But</td>
+<td>Organiser le catalogue en rayons, sans créer d'orphelins.</td>
+</tr>
+<tr>
+<td>Acteur principal</td>
+<td>Administrateur</td>
+</tr>
+<tr>
+<td>Acteurs secondaires</td>
+<td>MySQL (<code>sp_save_category</code>, <code>sp_delete_category</code>)</td>
+</tr>
+<tr>
+<td>Données en entrée</td>
+<td>nom, slug, description</td>
+</tr>
+<tr>
+<td>Préconditions</td>
+<td>session administrateur ; nom unique ; suppression seulement si catégorie vide</td>
+</tr>
+<tr>
+<td>Scénario nominal</td>
+<td>1. liste avec nombre de produits visibles ; 2. création/renommage via <code>sp_save_category</code> ; 3. suppression via <code>sp_delete_category</code>.</td>
+</tr>
+<tr>
+<td>Scénarios alternatifs</td>
+<td>A1 catégorie non vide → <code>CATEGORIE_NON_VIDE_REASSIGNER_LES_PRODUITS</code> + lien vers le filtrage des produits ; A2 nom dupliqué → refus.</td>
+</tr>
+<tr>
+<td>Scénarios d'exception</td>
+<td>E1 suppression en cascade tentée → refus FK <code>RESTRICT</code> + trigger.</td>
+</tr>
+<tr>
+<td>Postconditions</td>
+<td>classement cohérent avec <code>RB-07</code>/<code>RB-08</code></td>
+</tr>
+<tr>
+<td>Effets sur le système</td>
+<td>ligne <code>CATEGORIE</code></td>
+</tr>
+<tr>
+<td>Règles métier appliquées</td>
+<td><code>RB-07</code>, <code>RB-08</code>, <code>RB-14</code></td>
+</tr>
+<tr>
+<td>Exigences couvertes</td>
+<td><code>EF-ADM-03</code></td>
+</tr>
+<tr>
+<td>Tests de recette</td>
+<td>F-25, T-14</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-12-gerer-les-stocks">UC-12 — Gérer les stocks<a class="headerlink" href="#uc-12-gerer-les-stocks" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>But</td>
+<td>Réapprovisionner, corriger un inventaire, sortir du stock, sans jamais passer en négatif.</td>
+</tr>
+<tr>
+<td>Acteur principal</td>
+<td>Administrateur</td>
+</tr>
+<tr>
+<td>Acteurs secondaires</td>
+<td>MySQL (<code>sp_adjust_stock</code>, <code>trg_produit_regles</code>)</td>
+</tr>
+<tr>
+<td>Données en entrée</td>
+<td><code>id_produit</code>, mode (<code>SET</code>/<code>DELTA</code>), quantité, motif</td>
+</tr>
+<tr>
+<td>Préconditions</td>
+<td>session administrateur ; produit existant ; mouvement justifié</td>
+</tr>
+<tr>
+<td>Scénario nominal</td>
+<td>1. liste filtrée (ruptures, seuils) ; 2. saisie du mouvement ; 3. <code>CALL sp_adjust_stock(…)</code> avec verrou de ligne ; 4. nouveau stock et message de confirmation.</td>
+</tr>
+<tr>
+<td>Scénarios alternatifs</td>
+<td>A1 mouvement menant à un stock négatif → <code>RB03_STOCK_NE_PEUT_PAS_ETRE_NEGATIF</code>, stock inchangé ; A2 produit inexistant → 404.</td>
+</tr>
+<tr>
+<td>Scénarios d'exception</td>
+<td>E1 commande validée entre-temps qui épuise le stock → verrou puis second contrôle du trigger ; aucune valeur incohérente.</td>
+</tr>
+<tr>
+<td>Postconditions</td>
+<td>stock physiquement juste</td>
+</tr>
+<tr>
+<td>Effets sur le système</td>
+<td><code>PRODUIT.stock</code>, motif tracé dans le commentaire de l'action</td>
+</tr>
+<tr>
+<td>Règles métier appliquées</td>
+<td><code>RB-03</code>, <code>RB-17</code>, <code>RB-18</code></td>
+</tr>
+<tr>
+<td>Exigences couvertes</td>
+<td><code>EF-ADM-04/05</code></td>
+</tr>
+<tr>
+<td>Tests de recette</td>
+<td>F-26, F-27, T-19, T-26, T-27</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-13-gerer-les-commandes-back-office">UC-13 — Gérer les commandes (back-office)<a class="headerlink" href="#uc-13-gerer-les-commandes-back-office" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>But</td>
+<td>Suivre l'activité : lister, filtrer, consulter le détail et la piste d'audit, suivre les indicateurs.</td>
+</tr>
+<tr>
+<td>Acteur principal</td>
+<td>Administrateur</td>
+</tr>
+<tr>
+<td>Acteurs secondaires</td>
+<td>MySQL (<code>sp_revenue_report</code>, <code>sp_update_order_status</code>)</td>
+</tr>
+<tr>
+<td>Données en entrée</td>
+<td>filtres : statut, client, période, montant</td>
+</tr>
+<tr>
+<td>Préconditions</td>
+<td>rôle <code>GESTIONNAIRE</code> ou <code>SUPER</code></td>
+</tr>
+<tr>
+<td>Scénario nominal</td>
+<td>1. filtres appliqués (requête paramétrée) ; 2. liste paginée + montant cumulé ; 3. détail d'une commande : lignes, prix payés, historique des statuts ; 4. indicateurs via <code>sp_revenue_report</code>.</td>
+</tr>
+<tr>
+<td>Scénarios alternatifs</td>
+<td>A1 aucune commande sur la période → message + élargissement proposé ; A2 période incohérente → demande de correction.</td>
+</tr>
+<tr>
+<td>Scénarios d'exception</td>
+<td>E1 consultation d'un identifiant inexistant → liste vide, aucune erreur.</td>
+</tr>
+<tr>
+<td>Postconditions</td>
+<td>visibilité complète et tracée</td>
+</tr>
+<tr>
+<td>Effets sur le système</td>
+<td>journalisation des consultations sensibles (<code>SEC-13</code>)</td>
+</tr>
+<tr>
+<td>Règles métier appliquées</td>
+<td><code>RB-10</code>, <code>RB-11</code>, <code>RB-15</code></td>
+</tr>
+<tr>
+<td>Exigences couvertes</td>
+<td><code>EF-ADM-06/08/09</code></td>
+</tr>
+<tr>
+<td>Tests de recette</td>
+<td>F-28, F-30, F-31</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-14-modifier-le-statut-dune-commande">UC-14 — Modifier le statut d'une commande<a class="headerlink" href="#uc-14-modifier-le-statut-dune-commande" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>But</td>
+<td>Faire avancer une commande dans son cycle de vie selon la matrice <code>RB-11</code>, en conservant la trace de chaque changement.</td>
+</tr>
+<tr>
+<td>Acteur principal</td>
+<td>Administrateur</td>
+</tr>
+<tr>
+<td>Acteurs secondaires</td>
+<td>MySQL (<code>sp_update_order_status</code>, <code>trg_history_statut</code>, <code>trg_commande_transition_statut</code>)</td>
+</tr>
+<tr>
+<td>Données en entrée</td>
+<td><code>id_commande</code>, statut cible, commentaire</td>
+</tr>
+<tr>
+<td>Préconditions</td>
+<td>commande existante et non <code>BROUILLON</code> ; transition autorisée ; commentaire obligatoire pour une annulation</td>
+</tr>
+<tr>
+<td>Scénario nominal</td>
+<td>8 étapes, <strong>détaillées au §5.1.5.3 du CDC</strong>.</td>
+</tr>
+<tr>
+<td>Scénarios alternatifs</td>
+<td>A1 <code>RB11_TRANSITION_STATUT_INTERDITE</code> (aucune écriture, aucune trace) ; A2 <code>STATUT_DEJA_A_JOUR</code> ; A3 commande en <code>BROUILLON</code> → <code>COMMANDE_NON_TRAITABLE</code> ; A4 annulation → restitution de stock éventuelle.</td>
+</tr>
+<tr>
+<td>Scénarios d'exception</td>
+<td>E1 commande supprimée entre-temps → <code>COMMANDE_INTROUVABLE</code> + rafraîchissement ; E2 <code>UPDATE</code> manuel en base → refusé ou tracé quand même par les triggers.</td>
+</tr>
+<tr>
+<td>Postconditions</td>
+<td>cycle de vie maîtrisé et auditable</td>
+</tr>
+<tr>
+<td>Effets sur le système</td>
+<td><code>statut</code>, <code>commentaire</code>, <code>date_modification</code>, une ligne dans <code>ORDER_STATUS_HISTORY</code></td>
+</tr>
+<tr>
+<td>Règles métier appliquées</td>
+<td><code>RB-09</code>, <code>RB-10</code>, <code>RB-11</code>, <code>RB-13</code>, <code>RB-15</code></td>
+</tr>
+<tr>
+<td>Exigences couvertes</td>
+<td><code>EF-ADM-07</code></td>
+</tr>
+<tr>
+<td>Tests de recette</td>
+<td>F-29, T-10, T-12, T-13, T-22</td>
+</tr>
+</tbody>
+</table>
+<footer class="doc">
+  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/annexes/annexe-cas-usage.md</code>
+  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+</footer>
+</main>
+</body>
+</html>

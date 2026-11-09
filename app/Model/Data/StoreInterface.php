@@ -132,6 +132,16 @@ interface StoreInterface
     public function inTransaction(): bool;
 
     /**
+     * Exécute $work dans une transaction : commit si tout passe, rollback
+     * complet si une exception est levée (atomicité multi-tables).
+     *
+     * @template T
+     * @param callable(StoreInterface): T $work
+     * @return T
+     */
+    public function transactional(callable $work): mixed;
+
+    /**
      * Acteur courant (traçabilité des déclencheurs : qui écrit ?).
      *
      * @param array{id?: int|null, role?: 'CLIENT'|'ADMIN'|'SYSTEME', nom?: string|null} $actor

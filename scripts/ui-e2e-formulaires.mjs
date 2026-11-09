@@ -37,6 +37,12 @@ import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
+// Ces parcours modifient le serveur ciblé : jamais les lancer implicitement sur les données locales.
+if (!process.env.UI_BASE_URL || process.env.UI_TEST_INSTANCE_JETABLE !== '1') {
+  console.error('UI_BASE_URL et UI_TEST_INSTANCE_JETABLE=1 requis : utiliser uniquement une instance de test jetable. Ces tests modifient ses données.');
+  process.exit(2);
+}
+
 const REPO = join(import.meta.dirname, '..');
 const PORT = Number(process.env.UI_PORT ?? 8118);
 let base = (process.env.UI_BASE_URL ?? `http://127.0.0.1:${PORT}`).replace(/\/$/, '');
@@ -210,7 +216,7 @@ try {
   formProduit.querySelector('#prix_ht').value = '10.00';
   formProduit.querySelector('#stock').value = '4';
   await nav.cliquerBouton(bouton(formProduit, 'Créer le produit'));
-  check('produit témoin créé et listé dans Produits', nav.texte().includes(NOM_TEMOIN), nav.page.url);
+  check('création confirmée et retour à la liste Produits', nav.texte().includes('Produit créé.') && new URL(nav.page.url).pathname === '/admin/produits', nav.page.url);
 
   // ---------------------------------------------------------- 4. Produits : le filtre
   console.log('\n== 4 · Produits : « Catégorie : » avec sa liste, filtre fonctionnel ==');
@@ -268,18 +274,18 @@ try {
   const panneau = doc().querySelector('details.filtres-catalogue');
   panneau.querySelector('summary').click();
   check('le panneau « Filtrer » s\'ouvre', panneau.open === true);
-  const formCatalogue = panneau.querySelector('form.formulaire-filtres-catalogue');
+  const formCatalogue = panneau.querySelector('form[data-filtres]');
   check('le formulaire de filtres porte sa classe de grille', !!formCatalogue);
   const ordreChamps = [...formCatalogue.querySelectorAll('#q, #cat, #prix_min, #prix_max, [name="stock"], #tri')]
     .map((el) => el.id || el.getAttribute('name'));
   check('ordre régulier : q, cat, prix_min, prix_max, stock, tri',
     ordreChamps.join('|') === 'q|cat|prix_min|prix_max|stock|tri', ordreChamps.join('|'));
   check('« Prix TTC minimum » et « Prix TTC maximum » sont deux libellés complets, chacun avec son champ',
-    formCatalogue.querySelector('label[for="prix_min"]')?.textContent.trim() === 'Prix TTC minimum (€) :'
-      && formCatalogue.querySelector('label[for="prix_max"]')?.textContent.trim() === 'Prix TTC maximum (€) :'
-      && !!formCatalogue.querySelector('p.champ #prix_max'));
+    formCatalogue.querySelector('label[for="prix_min"]')?.textContent.trim() === 'Prix TTC minimum (€)'
+      && formCatalogue.querySelector('label[for="prix_max"]')?.textContent.trim() === 'Prix TTC maximum (€)'
+      && !!formCatalogue.querySelector('p #prix_max'));
   formCatalogue.querySelector('#prix_max').value = '100';
-  await nav.cliquerBouton(bouton(formCatalogue, 'Appliquer'));
+  await nav.cliquerBouton(bouton(formCatalogue, 'Appliquer les filtres'));
   check('filtre prix appliqué par clic (URL prix_max=100, panneau rouvert « Filtrer (actifs) »)',
     new URL(nav.page.url).searchParams.get('prix_max') === '100'
       && (doc().querySelector('details.filtres-catalogue summary')?.textContent.trim() ?? '') === 'Filtrer (actifs)',
@@ -287,24 +293,26 @@ try {
 
   // ---------------------------------------------------------- 8. la feuille qui ordonne
   console.log('\n== 8 · Feuille servie : les grilles et blocs sont écrits ==');
-  const resCss = await fetch(`${base}/minishop.css`, { headers: nav.enTetes() });
+  const resCss = await fetch(`${base}/css/app.css`, { headers: nav.enTetes() });
   const css = await resCss.text();
   check('la feuille est servie (200) et définit les formulaires',
-    resCss.status === 200 && css.includes('.formulaire-produit') && css.includes('.formulaire-filtres-catalogue'),
+    resCss.status === 200 && css.includes('.formulaire-produit') && css.includes('.panneau-filtres'),
     `HTTP ${resCss.status}`);
   check('produit : rangées en grille 11rem/1fr alignées au départ',
     /\.formulaire-produit \.champ\s*\{[^}]*grid-template-columns:\s*11rem minmax\(0, 1fr\)[^}]*align-items:\s*start/.test(css));
-  check('catalogue : fieldset en grille à deux colonnes, blocs champ empilés',
-    /\.formulaire-filtres-catalogue fieldset\s*\{[^}]*grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/.test(css)
-      && /\.formulaire-filtres-catalogue \.champ\s*\{[^}]*flex-direction:\s*column/.test(css)
-      || /\.formulaire-filtres-produits \.champ,\s*\.formulaire-filtres-catalogue \.champ\s*\{[^}]*flex-direction:\s*column/.test(css));
+  check('catalogue : libellés et champs restent groupés dans le panneau',
+    css.includes('.panneau-filtres label') && !!formCatalogue.querySelector('label[for="prix_min"]')
+      && !!formCatalogue.querySelector('label[for="prix_max"]'));
+  check('produit : la grille passe en une colonne sur mobile',
+    css.includes('.formulaire-produit .champ { grid-template-columns: minmax(0, 1fr); }'));
+
 
   console.log(`\n${'='.repeat(64)}`);
   if (échecs > 0) {
     console.log(`E2E UI formulaires : ${échecs}/${tests} vérification(s) en échec ❌`);
     process.exitCode = 1;
   } else {
-    console.log(`E2E UI formulaires : TOUT EST VERT ✅ (${tests} vérifications, clics réels sur l'UI)`);
+    console.log(`E2E UI formulaires : TOUT EST VERT ✅ (${tests} vérifications, interactions DOM simulées avec jsdom)`);
   }
 } catch (e) {
   console.error('\nE2E UI formulaires : ERREUR fatale —', e);

@@ -29,6 +29,7 @@ use App\Model\Data\Filter;
 use App\Model\Data\JsonStore;
 use App\Model\Data\Seed;
 use App\Model\Data\StoreInterface;
+use App\Model\Data\Text;
 use App\Model\Data\Views;
 use App\Model\PanierSession;
 use App\Repository\CategorieRepository;
@@ -119,7 +120,20 @@ echo "A. UC-01 — consultation des catégories\n";
     $categories = (new CategorieRepository($store))->listerAvecCompteur();
     $check('4 catégories classées par nom', count($categories) === 4 && $categories[0]['nom'] === 'Accessoires');
     $parNom = array_column($categories, 'nb_produits', 'nom');
-    $check('compteur = produits VISIBLES uniquement (RB-19)', $parNom['Accessoires'] === 3 && $parNom['Objets connectés'] === 1);
+    // Le compteur doit égaler le nombre de produits VISIBLES de la catégorie :
+    // on le calcule depuis le magasin au lieu de figer des effectifs, sinon le
+    // test casse dès qu'un produit de démonstration est ajouté.
+    $attendus = [];
+    foreach ($categories as $categorie) {
+        $attendus[$categorie['nom']] = $store->count('produit', [
+            ['id_categorie', '=', $categorie['id_categorie']],
+            ['visible', '=', 1],
+        ]);
+    }
+    $check('compteur = produits VISIBLES uniquement (RB-19)', $parNom === $attendus, json_encode($parNom));
+    $check('le masqué n’est compté nulle part',
+        array_sum($parNom) === $store->count('produit', [['visible', '=', 1]])
+        && array_sum($parNom) < $store->count('produit'));
     $check('find / findBySlug', (new CategorieRepository($store))->find(1)['nom'] === 'Informatique'
         && (new CategorieRepository($store))->findBySlug('audio')['nom'] === 'Audio');
 }
@@ -130,22 +144,88 @@ echo "\nB. UC-02 — recherche et filtres du catalogue (EF-VIS-02/03, ENF-04)\n"
     $store = magasin();
     $repo = new ProduitRepository($store);
     $r = $repo->searchProducts(['mot_cle' => 'casque']);
-    $check('recherche par mot-clé', $r['total'] === 1 && $r['lignes'][0]['reference'] === 'CASQ-005');
-    $check('recherche insensible casse', $repo->searchProducts(['mot_cle' => 'CaSqUe'])['total'] === 1);
-    $check('recherche insensible accent (nom + description)', $repo->searchProducts(['mot_cle' => 'ÉCRAN'])['total'] === 2);
+    $check('recherche par mot-clé', $r['total'] >= 1
+        && in_array('CASQ-005', array_column($r['lignes'], 'reference'), true)
+        && $r['total'] === array_sum(array_map(
+            static fn (array $p): int => (int) (stripos(Text::fold((string) $p['nom']), 'casque') !== false
+                || stripos(Text::fold((string) $p['description']), 'casque') !== false), $store->select('produit'))));
+    $check('recherche insensible casse', $repo->searchProducts(['mot_cle' => 'CaSqUe'])['total'] === $r['total']);
+    $resultatEcran = $repo->searchProducts(['mot_cle' => 'ÉCRAN']);
+    $check('recherche insensible accent (nom + description)',
+        $resultatEcran['total'] >= 1
+        && $resultatEcran['total'] === $repo->searchProducts(['mot_cle' => 'ecran'])['total'],
+        (string) $resultatEcran['total']);
     $r = $repo->searchProducts(['id_categorie' => 1, 'prix_max' => 800, 'tri' => 'prix_asc']);
-    $check('filtres catégorie + prix TTC, tri prix croissant', $r['total'] === 2
-        && array_column($r['lignes'], 'reference') === ['CLAV-004', 'ECRA-003']);
+    $prix = array_map(static fn (array $p): float => (float) $p['prix_ttc'], $r['lignes']);
+    $tries = $prix;
+    sort($tries);
+    $check('filtres catégorie + prix TTC, tri prix croissant',
+        $r['total'] >= 1
+        && $r['total'] === $store->count('produit', [['id_categorie', '=', 1], ['visible', '=', 1], ['prix_ttc', '<=', 800]])
+        && $prix === $tries
+        && in_array('ECRA-003', array_column($r['lignes'], 'reference'), true),
+        (string) $r['total']);
     $r = $repo->searchProducts(['en_stock' => true, 'id_categorie' => 3]);
-    $check('filtre « en stock » exclut la rupture', $r['total'] === 2 && !in_array('POWER-010', array_column($r['lignes'], 'reference'), true));
-    $check('tri inconnu → repli liste blanche (nom)', $repo->searchProducts(['tri' => 'DROP TABLE'])['lignes'][0]['reference'] === 'POWER-010');
+    $check('filtre « en stock » exclut la rupture',
+        $r['total'] >= 1
+        && !in_array('POWER-010', array_column($r['lignes'], 'reference'), true)
+        && array_reduce($r['lignes'], static fn (bool $ok, array $ligne): bool => $ok && (int) $ligne['stock'] > 0, true));
+    // Repli sur le nom : le premier résultat doit être le plus petit nom du
+    // catalogue visible, quel qu'il soit — l'ancien test figeait POWER-010.
+    $nomsVisibles = array_map(
+        static fn (array $p): string => (string) $p['nom'],
+        $store->select('produit', [['visible', '=', 1]]),
+    );
+    sort($nomsVisibles);
+    $check('tri inconnu → repli liste blanche (nom)',
+        $repo->searchProducts(['tri' => 'DROP TABLE'])['lignes'][0]['nom'] === $nomsVisibles[0]);
+    // Tester l'ordre global, y compris le passage entre deux pages et les
+    // filtres, indépendamment de l'ordre initial des données de démonstration.
+    foreach (ProduitRepository::TRIS as $triCatalogue) {
+        foreach ([[], ['id_categorie' => 3], ['mot_cle' => 'batterie'], ['en_stock' => true]] as $filtreCatalogue) {
+            $criteresCatalogue = array_merge($filtreCatalogue, ['tri' => $triCatalogue, 'par_page' => 5, 'ruptures_fin' => true]);
+            $premiere = $repo->searchProducts($criteresCatalogue);
+            $reunis = [];
+            for ($pageCatalogue = 1; $pageCatalogue <= $premiere['pages']; ++$pageCatalogue) {
+                $pageResultat = $repo->searchProducts(array_merge($criteresCatalogue, ['page' => $pageCatalogue]));
+                $reunis = array_merge($reunis, $pageResultat['lignes']);
+            }
+            // L'ordre sans priorité de stock constitue l'oracle du tri secondaire.
+            $sansPriorite = $repo->searchProducts(array_merge($filtreCatalogue, ['tri' => $triCatalogue, 'par_page' => 60]));
+            $ordreAttendu = array_merge(
+                array_values(array_filter($sansPriorite['lignes'], static fn (array $p): bool => (int) $p['stock'] > 0)),
+                array_values(array_filter($sansPriorite['lignes'], static fn (array $p): bool => (int) $p['stock'] <= 0)),
+            );
+            $check('ruptures en dernier avant pagination : ' . $triCatalogue . ' ' . json_encode($filtreCatalogue),
+                count($reunis) === $premiere['total']
+                && array_column($reunis, 'id_produit') === array_column($ordreAttendu, 'id_produit'));
+        }
+    }
+    $videStock = $repo->searchProducts(['mot_cle' => 'zzzzzz', 'ruptures_fin' => true]);
+    $check('ruptures en dernier : aucun résultat et page hors limites',
+        $videStock['total'] === 0 && $videStock['lignes'] === []
+        && $repo->searchProducts(['ruptures_fin' => true, 'page' => 999])['lignes'] === []);
+    $ruptureSeule = $repo->searchProducts(['mot_cle' => 'POWER-010', 'ruptures_fin' => true]);
+    $check('ruptures en dernier : recherche ne contenant que des ruptures',
+        $ruptureSeule['total'] === 1 && (int) $ruptureSeule['lignes'][0]['stock'] === 0);
     $r = $repo->searchProducts(['par_page' => 500, 'page' => 1]);
     $check('par_page borné à 60 (ENF-04)', $r['par_page'] === 60 && $r['pages'] === 1);
     $r = $repo->searchProducts(['par_page' => 5, 'page' => 999]);
     $check('page 999 : aucune erreur, liste vide', $r['lignes'] === [] && $r['page'] === 999);
     $check('page 0 ramenée à 1', $repo->searchProducts(['par_page' => 5, 'page' => 0])['page'] === 1);
-    $check('le client ne voit jamais le masqué (RB-19)', $repo->searchProducts(['mot_cle' => 'bracelet'])['total'] === 0);
-    $check('l\'admin voit le masqué', $repo->searchProducts(['mot_cle' => 'bracelet', 'admin' => true])['total'] === 1);
+    // Filtrage en PHP : sur le magasin JSON, `Filter::eq('visible', 0)` ne
+    // discrimine pas (les booléens y sont comparés comme des chaînes non vides).
+    $masques = array_column(array_values(array_filter(
+        $store->select('produit'),
+        static fn (array $p): bool => (int) $p['visible'] === 0,
+    )), 'reference');
+    $check('le client ne voit jamais le masqué (RB-19)',
+        $masques !== []
+        && array_intersect($masques, array_column(
+            $repo->searchProducts(['par_page' => 60])['lignes'], 'reference')) === []);
+    $check('l\'admin voit le masqué',
+        array_intersect($masques, array_column(
+            $repo->searchProducts(['par_page' => 60, 'admin' => true])['lignes'], 'reference')) === $masques);
     $check('prix_min > prix_max : filtre ignoré sans exception', $repo->searchProducts(['prix_min' => 500, 'prix_max' => 10])['total'] === 0);
 }
 

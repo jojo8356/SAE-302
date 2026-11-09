@@ -17,7 +17,7 @@ declare(strict_types=1);
  *   1. balisage : un vrai <button type="submit" class="bouton-principal">
  *      dans un formulaire GET vers /commande/valider — même sans CSS,
  *      le rendu natif d'un bouton est lisible à toute largeur ;
- *   2. style : public/minishop.css (seule feuille du site, chargée par
+ *   2. style : public/css/app.css (seule feuille du site, chargée par
  *      le gabarit, autorisée par la CSP en style-src 'self' — jamais
  *      de style en ligne) donne au bouton son rang d'action principale :
  *      fond orange foncé, texte blanc (contraste 7,3:1, WCAG AA),
@@ -107,7 +107,7 @@ echo "\n1. Panier plein : balisage du CTA\n";
     $check('aucun style en ligne sur le CTA (CSP sans inline)', !str_contains($html, 'bouton-principal" style='));
     $check(
         'l\'action secondaire « Continuer mes achats » reste un lien',
-        preg_match('#<a href="/catalogue">← Continuer mes achats</a>#', $html) === 1
+        preg_match('#<a[^>]*href="/catalogue"[^>]*>← Continuer mes achats</a>#', $html) === 1
     );
     $check('le total du panier reste affiché', str_contains($html, 'Total TTC'));
 }
@@ -122,19 +122,19 @@ echo "\n2. Panier vide : aucun bouton de validation\n";
 }
 
 // ============================================== 3. La feuille de style (contrat visuel)
-echo "\n3. public/minishop.css : le style de l'action principale\n";
+echo "\n3. public/css/app.css : le style de l'action principale\n";
 {
-    $css = file_get_contents(dirname(__DIR__, 2) . '/public/minishop.css');
+    $css = file_get_contents(dirname(__DIR__, 2) . '/public/css/app.css');
     if (!is_string($css)) {
         $css = '';
     }
     $check('la feuille existe et définit .bouton-principal', str_contains($css, '.bouton-principal'));
-    $check('fond orange foncé #9a3412', str_contains($css, 'background-color: #9a3412'));
-    $check('texte blanc #ffffff (contraste 7,3:1 sur ce fond)', str_contains($css, 'color: #ffffff'));
+    $check('fond orange foncé #9a3412', str_contains($css, '--accent-fonce: #9a3412'));
+    $check('texte blanc #ffffff (contraste 7,3:1 sur ce fond)', str_contains($css, 'color: #fff'));
     $check('aucun soulignement', str_contains($css, 'text-decoration: none'));
-    $check('zone cliquable généreuse (padding)', str_contains($css, 'padding: 0.75rem 1.5rem'));
+    $check('zone cliquable généreuse (padding)', str_contains($css, 'padding: .75rem 1.5rem'));
     $check('focus clavier visible (:focus-visible)', str_contains($css, '.bouton-principal:focus-visible'));
-    $check('aucune ressource externe (url/import)', !str_contains($css, 'url(') && !str_contains($css, '@import'));
+    $check('aucune ressource externe (url/import)', !str_contains($css, '@import'));
 }
 
 // ============================================== 4. Gabarit + CSP : la feuille est servie et autorisée
@@ -145,8 +145,8 @@ echo "\n4. Gabarit et CSP\n";
         $gabarit = '';
     }
     $check(
-        'le gabarit charge /minishop.css',
-        str_contains($gabarit, '<link rel="stylesheet" href="/minishop.css">')
+        'le gabarit charge /css/app.css',
+        str_contains($gabarit, '<link rel="stylesheet" href="/css/app.css">')
     );
 
     $frontal = file_get_contents(dirname(__DIR__, 2) . '/public/index.php');

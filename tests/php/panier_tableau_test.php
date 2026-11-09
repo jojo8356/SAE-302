@@ -84,7 +84,7 @@ function recapPlein(): array
 /** Extrait le bloc <table …>…</table> du HTML rendu (null si absent). */
 function extraireTableau(string $html): ?string
 {
-    if (preg_match('/<table class="tableau-panier">.*?<\/table>/s', $html, $m) === 1) {
+    if (preg_match('/<table class="tableau-panier tableau-nombres">.*?<\/table>/s', $html, $m) === 1) {
         return $m[0];
     }
 
@@ -129,8 +129,8 @@ $check(
 $check(
     'la ligne produit : prix unitaire et total en cellules montant',
     $tableau !== null
-        && str_contains($tableau, '<td class="montant">154,80 €</td>')
-        && substr_count($tableau, '<td class="montant">') >= 2
+        && str_contains($tableau, '<td class="montant" data-label="Prix unitaire TTC">154,80 €</td>')
+        && substr_count($tableau, '<td class="montant" data-label=') >= 2
 );
 $check(
     'la ligne produit garde son lien, sa quantité modifiable et son bouton Retirer',
@@ -139,29 +139,11 @@ $check(
         && str_contains($tableau, 'name="quantite"')
         && str_contains($tableau, '>Retirer</button>')
 );
-$pied = null;
-if ($tableau !== null && preg_match('/<tfoot>.*?<\/tfoot>/s', $tableau, $m) === 1) {
-    $pied = $m[0];
-}
-$check('le pied de tableau existe (sous-total, port, total)', $pied !== null);
-$check(
-    'les trois libellés du pied sont présents, en cellules d\'en-tête pleine largeur',
-    $pied !== null
-        && str_contains($pied, '<th scope="row" colspan="3">Sous-total (marchandises TTC)</th>')
-        && str_contains($pied, '<th scope="row" colspan="3">Frais de port')
-        && str_contains($pied, '<th scope="row" colspan="3">Total TTC</th>')
-);
-$check(
-    'les trois montants du pied sont en cellules montant (154,80 / 4,90 / 159,70 €)',
-    $pied !== null
-        && substr_count($pied, '<td colspan="2" class="montant">') === 3
-        && str_contains($pied, '154,80 €') && str_contains($pied, '4,90 €') && str_contains($pied, '159,70 €'),
-    (string) $pied
-);
-$check(
-    'le motif du port reste affiché sous son libellé',
-    $pied !== null && str_contains($pied, 'offerts dès 80,00 € de marchandises')
-);
+$check('récapitulatif présent hors du tableau avec libellés et montants',
+    str_contains($html, '<div class="recap">') && str_contains($html, '<dt>Sous-total</dt>')
+        && str_contains($html, '<dt>Frais de port</dt>') && str_contains($html, '<dt><strong>Total TTC</strong></dt>')
+        && str_contains($html, '154,80 €') && str_contains($html, '4,90 €') && str_contains($html, '159,70 €'));
+$check('motif du port affiché dans le récapitulatif', str_contains($html, 'offerts dès 80,00 € de marchandises'));
 $check(
     'non-régression : le CTA « Valider ma commande » reste le bouton principal',
     str_contains($html, '<button type="submit" class="bouton-principal">Valider ma commande →</button>')
@@ -172,56 +154,15 @@ $check(
     !str_contains($htmlVide, 'tableau-panier') && str_contains($htmlVide, 'Votre panier est vide.')
 );
 
-/* ── 2. CSS : les règles qui tiennent la page ──────────────────────── */
-echo "\n== 2 · Feuille du site : la mise en page est explicite, pas par défaut ==\n";
-$css = (string) file_get_contents(dirname(__DIR__, 2) . '/public/minishop.css');
-$blocTableau = blocCss($css, '.tableau-panier');
-$check('.tableau-panier existe et prend toute la largeur, bordures fusionnées',
-    $blocTableau !== null && str_contains($blocTableau, 'width: 100%') && str_contains($blocTableau, 'border-collapse: collapse'));
-$blocCaption = blocCss($css, '.tableau-panier caption');
-$check(
-    'la légende tient sur UNE ligne (nowrap), alignée à gauche comme le reste',
-    $blocCaption !== null && str_contains($blocCaption, 'white-space: nowrap') && str_contains($blocCaption, 'text-align: left'),
-    (string) $blocCaption
-);
-$blocCellules = blocCss($css, '.tableau-panier th, .tableau-panier td');
-if ($blocCellules === null) {
-    $blocCellules = blocCss($css, ".tableau-panier th,\n.tableau-panier td");
-}
-$check(
-    'en-têtes et cellules partagent le même alignement par défaut : à gauche',
-    $blocCellules !== null && str_contains($blocCellules, 'text-align: left'),
-    (string) $blocCellules
-);
-$blocMontant = blocCss($css, '.tableau-panier .montant');
-$check(
-    'les montants (et eux seuls) sont alignés à droite, sans retour à la ligne',
-    $blocMontant !== null && str_contains($blocMontant, 'text-align: right') && str_contains($blocMontant, 'white-space: nowrap')
-);
-$blocPied = null;
-if (preg_match('/\.tableau-panier tfoot th,\s*\.tableau-panier tfoot td\s*\{([^}]*)\}/s', $css, $m) === 1) {
-    $blocPied = $m[1];
-}
-$check(
-    'le pied : libellés ET montants partagent le même fond (plus de fonds décalés)',
-    $blocPied !== null && str_contains($blocPied, 'background-color: #f5f5f4'),
-    (string) $blocPied
-);
-$blocPiedLibelle = blocCss($css, '.tableau-panier tfoot th');
-$check(
-    'les libellés du pied tiennent sur une ligne (« Sous-total (marchandises TTC) »)',
-    $blocPiedLibelle !== null && str_contains($blocPiedLibelle, 'white-space: nowrap'),
-    (string) $blocPiedLibelle
-);
-$blocQuantite = blocCss($css, '.tableau-panier input[type="number"]');
-$check(
-    'le champ quantité a une largeur tenue (4rem), à gauche avec son bouton',
-    $blocQuantite !== null && str_contains($blocQuantite, 'width: 4rem')
-);
-$check(
-    'l\'en-tête de colonnes a le même gris que le pied (cohérence haut/bas)',
-    str_contains($css, '.tableau-panier thead th') && substr_count($css, 'background-color: #f5f5f4') >= 3
-);
+/* ── 2. Feuille effectivement chargée ─────────────────────────────── */
+echo "\n== 2 · Feuille du site : tableau, récapitulatif et mobile ==\n";
+$css = (string) file_get_contents(dirname(__DIR__, 2) . '/public/css/app.css');
+$layout = (string) file_get_contents(dirname(__DIR__, 2) . '/app/View/layout.php');
+$check('le gabarit charge la feuille examinée', str_contains($layout, 'href="/css/app.css"'));
+$check('montants alignés à droite', str_contains((string) blocCss($css, '.tableau-panier .montant'), 'text-align: right'));
+$check('quantité bornée par les règles de formulaire', str_contains($css, 'input[data-largeur-courte]') && str_contains($css, 'max-width: 5.5rem'));
+$check('récapitulatif en grille, total occupant toute sa largeur', str_contains((string) blocCss($css, '.recap dl'), 'display: grid') && str_contains((string) blocCss($css, '.recap .total'), 'grid-column: 1 / -1'));
+$check('panier transformé en cartes étiquetées sur mobile', str_contains($css, '.tableau-panier td::before') && str_contains($css, 'content: attr(data-label)') && str_contains($html, 'data-label="Quantité"'));
 
 ob_end_clean();
 

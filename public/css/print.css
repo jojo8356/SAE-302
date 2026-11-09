@@ -1,0 +1,80 @@
+/* MiniShop — feuille d'impression dédiée (CGV, récapitulatif de commande).
+   Chargée avec media="print" : elle ne s'applique jamais à l'écran. */
+@page {
+    margin: 18mm 16mm;
+}
+
+body {
+    background: #fff;
+    color: #000;
+    font-size: 11pt;
+    line-height: 1.45;
+}
+
+.entete,
+.pied,
+.nav-principal,
+.panneau-filtres,
+.actions-ligne,
+.actions-formulaire,
+.btn,
+button,
+.lien-evitement,
+#zone-annonces {
+    display: none;
+}
+
+h1 {
+    font-size: 18pt;
+}
+
+h2 {
+    font-size: 13pt;
+    margin-top: 14pt;
+}
+
+a {
+    color: #000;
+    text-decoration: none;
+}
+
+table {
+    border: 1px solid #333;
+    font-size: 9.5pt;
+}
+
+th,
+td {
+    border-bottom: 1px solid #999;
+}
+
+.ph-print-only {
+    display: block;
+}
+
+.recap {
+    border: 1px solid #333;
+    page-break-inside: avoid;
+}
+
+/* Les régions défilantes ne doivent pas rogner le tableau sur papier. */
+.tableau-defilant {
+    overflow: visible;
+    background: none;
+}
+
+.carte,
+.recap,
+table,
+tr,
+figure {
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+h2,
+h3,
+thead {
+    break-after: avoid;
+    page-break-after: avoid;
+}

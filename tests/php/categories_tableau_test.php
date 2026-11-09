@@ -140,8 +140,8 @@ $check(
 $check(
     'slugs, nombres de produits et descriptions restent affichés',
     $tableau !== null
-        && str_contains($tableau, '<td>audio</td>')
-        && str_contains($tableau, '<td>3</td>')
+        && str_contains($tableau, '<td data-label="Slug">audio</td>')
+        && str_contains($tableau, '<td data-label="Produits visibles">3</td>')
         && str_contains($tableau, 'stations météo domestiques')
 );
 $check(
@@ -156,68 +156,23 @@ $check(
     str_contains($htmlErreurs, 'role="alert"') && str_contains($htmlErreurs, 'Une catégorie porte déjà ce nom.')
 );
 
-/* ── 2. CSS : les règles qui tiennent la page ──────────────────────── */
-echo "\n== 2 · Feuille du site : répartition fixe, champs tenus, boutons entiers ==\n";
-$css = (string) file_get_contents(dirname(__DIR__, 2) . '/public/minishop.css');
-$blocTableau = blocCss($css, '.tableau-categories');
-$check(
-    '.tableau-categories : largeur 100 %, colonnes à répartition fixe, bordures fusionnées',
-    $blocTableau !== null && str_contains($blocTableau, 'width: 100%')
-        && str_contains($blocTableau, 'table-layout: fixed') && str_contains($blocTableau, 'border-collapse: collapse'),
-    (string) $blocTableau
-);
+/* ── 2. Feuille effectivement chargée ─────────────────────────────── */
+echo "\n== 2 · Feuille du site : formulaires et cartes mobiles ==\n";
+$css = (string) file_get_contents(dirname(__DIR__, 2) . '/public/css/app.css');
+$layout = (string) file_get_contents(dirname(__DIR__, 2) . '/app/View/layout.php');
+$check('feuille utilisée par le gabarit', str_contains($layout, 'href="/css/app.css"'));
+$check('répartition fixe à 100 % pour les catégories', str_contains($css, '.tableau-commandes, .tableau-categories { width: 100%; table-layout: fixed;'));
 $largeurs = [];
 foreach (['col-edition', 'col-slug', 'col-produits', 'col-description', 'col-actions'] as $colonne) {
     $bloc = blocCss($css, '.tableau-categories .' . $colonne);
-    $largeur = null;
     if ($bloc !== null && preg_match('/width:\s*(\d+)%/', $bloc, $m) === 1) {
-        $largeur = (int) $m[1];
-    }
-    $largeurs[$colonne] = $largeur;
-}
-$check(
-    'chaque colonne a sa largeur explicite (edition 32, slug 15, produits 11, description 26, actions 16)',
-    $largeurs === ['col-edition' => 32, 'col-slug' => 15, 'col-produits' => 11, 'col-description' => 26, 'col-actions' => 16],
-    (string) json_encode($largeurs)
-);
-$totalLargeurs = 0;
-foreach ($largeurs as $largeur) {
-    if ($largeur !== null) {
-        $totalLargeurs += $largeur;
+        $largeurs[] = (int) $m[1];
     }
 }
-$check('les largeurs totalisent 100 % : la page tient dans la fenêtre, sans défilement', $totalLargeurs === 100, (string) $totalLargeurs);
-$blocCellules = blocCss($css, ".tableau-categories th,\n.tableau-categories td");
-if ($blocCellules === null) {
-    $blocCellules = blocCss($css, '.tableau-categories th, .tableau-categories td');
-}
-$check(
-    'en-têtes et cellules alignés à gauche, contenus longs repliés (overflow-wrap)',
-    $blocCellules !== null && str_contains($blocCellules, 'text-align: left') && str_contains($blocCellules, 'overflow-wrap: break-word'),
-    (string) $blocCellules
-);
-$blocForm = blocCss($css, '.tableau-categories form');
-$check(
-    'les formulaires du tableau sont empilés en grille (plus de champs côte à côte qui étalent)',
-    $blocForm !== null && str_contains($blocForm, 'display: grid'),
-    (string) $blocForm
-);
-$blocInput = blocCss($css, '.tableau-categories input');
-$check(
-    'les champs d\'édition tiennent dans leur colonne (largeur 100 %, box-sizing)',
-    $blocInput !== null && str_contains($blocInput, 'width: 100%') && str_contains($blocInput, 'box-sizing: border-box'),
-    (string) $blocInput
-);
-$blocDanger = blocCss($css, '.tableau-categories .bouton-danger');
-$check(
-    'le bouton « Supprimer » reste en une pièce dans sa colonne (nowrap, zone resserrée)',
-    $blocDanger !== null && str_contains($blocDanger, 'white-space: nowrap') && str_contains($blocDanger, 'padding: 0.6rem 0.75rem'),
-    (string) $blocDanger
-);
-$check(
-    'l\'en-tête de colonnes a le même gris que les autres tableaux du site (#f5f5f4)',
-    str_contains($css, '.tableau-categories thead th') && str_contains($css, 'background-color: #f5f5f4')
-);
+$check('cinq colonnes couvrent exactement 100 %', count($largeurs) === 5 && array_sum($largeurs) === 100);
+$check('formulaires empilés et champs bornés', str_contains($css, '.tableau-categories form { display: grid;') && str_contains($css, '.tableau-categories input { width: 100%; min-width: 0;'));
+$check('action danger distinguée et accessible au clavier', str_contains($css, '.bouton-danger:focus-visible') && str_contains($css, '.bouton-danger { display: inline-flex;'));
+$check('cartes mobiles avec libellés et actions', str_contains($html, 'tableau-defilant--admin') && str_contains($html, 'data-label="Actions"') && str_contains($css, '.tableau-defilant--admin tbody td::before') && str_contains($css, 'content: attr(data-label)'));
 
 ob_end_clean();
 

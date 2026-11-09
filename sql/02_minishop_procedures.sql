@@ -27,6 +27,13 @@
 --    CREATE FUNCTION exige SUPER sur certains SGBD : si la fonction ne peut
 --    pas etre creee, sp_compute_shipping utilise la valeur par defaut documentee.
 -- ---------------------------------------------------------------------
+-- Collation de connexion = collation de la base. Les procédures et les
+-- déclencheurs MÉMORISENT la collation de la connexion qui les a créés :
+-- un chargement en utf8mb4_general_ci (défaut de `SET NAMES utf8mb4` selon
+-- la version du serveur) provoque ensuite l'erreur 1267 « Illegal mix of
+-- collations » quand l'application appelle sp_search_products.
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 DELIMITER $$
 
 DROP FUNCTION IF EXISTS fn_param $$
@@ -214,7 +221,7 @@ BEGIN
     CASE
       WHEN p_trie_par = 'prix_asc'  THEN ' ORDER BY p.prix_ttc ASC, p.id_produit'
       WHEN p_trie_par = 'prix_desc' THEN ' ORDER BY p.prix_ttc DESC, p.id_produit'
-      WHEN p_trie_par = 'nouveaute' THEN ' ORDER BY p.date_creation DESC, p.id_produit'
+      WHEN p_trie_par = 'nouveaute' THEN ' ORDER BY p.date_creation DESC, p.id_produit DESC'
       WHEN p_trie_par = 'stock'     THEN ' ORDER BY p.stock DESC, p.id_produit'
       ELSE ' ORDER BY p.nom ASC'
     END,
@@ -516,8 +523,10 @@ BEGIN
 
   -- (3) RB-17 : le produit a pu disparaitre du catalogue entre l'ajout au
   --     panier et la validation -> verrou du stock + lecture du prix courant
+  -- RB-19 : un produit masqué n'est plus commandable, même s'il était dans le
+  -- panier avant sa disparition du catalogue.
   SELECT prix_ttc, stock INTO v_prix, v_stock
-    FROM produit WHERE id_produit = p_id_produit FOR UPDATE;
+    FROM produit WHERE id_produit = p_id_produit AND visible = 1 FOR UPDATE;
   IF v_prix IS NULL THEN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'PRODUIT_SUPPRIME_DU_CATALOGUE';
   END IF;
@@ -774,7 +783,14 @@ BEGIN
   DECLARE cur CURSOR FOR
       SELECT id_produit, quantite FROM ligne_commande WHERE id_commande = p_id_commande;
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_done = 1;
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION
+  BEGIN
+    ROLLBACK;
+    RESIGNAL;
+  END;
 
+  -- Verrou maintenu jusqu’au COMMIT pour éviter une double restitution.
+  START TRANSACTION;
   SELECT id_client, statut INTO v_id_client, v_statut
     FROM commande WHERE id_commande = p_id_commande FOR UPDATE;
   IF v_statut IS NULL THEN
@@ -787,7 +803,6 @@ BEGIN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'COMMANDE_NON_ANNULABLE';
   END IF;
 
-  START TRANSACTION;
     -- La restitution du stock est faite ici, ligne a ligne (RB-18) : les
     -- lignes ne sont PLUS supprimees (elles restent l'historique de la
     -- commande annulee), donc trg_ligne_restore_stock n'est plus le
@@ -807,9 +822,9 @@ BEGIN
     -- Le trigger RB-15 admet cet etat solde (ANNULEE et montant 0) comme seul
     -- ecart a la formule (montant = lignes + port).
     UPDATE commande SET statut = 'ANNULEE',
+                        montant_avant_annulation = montant_total,
                         frais_port = 0.00,
                         montant_total = 0.00,
-                        montant_avant_annulation = montant_total,
                         commentaire = IFNULL(commentaire, 'Annulation demandée par le client')
      WHERE id_commande = p_id_commande;   -- trg_history_statut trace EN_PREPARATION -> ANNULEE
   COMMIT;

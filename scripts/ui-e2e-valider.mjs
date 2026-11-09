@@ -24,6 +24,12 @@
 import { spawn, spawnSync } from 'node:child_process';
 import { JSDOM } from 'jsdom';
 
+// Ces parcours modifient le serveur ciblé : jamais les lancer implicitement sur les données locales.
+if (!process.env.UI_BASE_URL || process.env.UI_TEST_INSTANCE_JETABLE !== '1') {
+  console.error('UI_BASE_URL et UI_TEST_INSTANCE_JETABLE=1 requis : utiliser uniquement une instance de test jetable. Ces tests modifient ses données.');
+  process.exit(2);
+}
+
 const PORT = 8134;
 const base = process.env.UI_BASE_URL ?? `http://127.0.0.1:${PORT}`;
 let échecs = 0;
@@ -152,7 +158,6 @@ async function attendreServeur() {
 
 async function aller() {
   if (!process.env.UI_BASE_URL) {
-    spawnSync('node', ['scripts/wasm_run.mjs', 'scripts/seed.php'], { stdio: 'inherit' });
     serveur = spawn('node', ['scripts/wasm-serve.mjs'], { env: { ...process.env, PORT: String(PORT) }, stdio: 'inherit' });
     await attendreServeur();
   }
@@ -189,7 +194,7 @@ async function aller() {
   check('le colgroup fige les 4 colonnes (produit, prix, qté, total)',
     cols.join(',') === 'col-produit,col-prix,col-qte,col-total', cols.join(','));
   const lignesPied = tableau ? [...tableau.querySelectorAll('tfoot tr')] : [];
-  const paires = [['Sous-total', 'sous-total'], ['Frais de port', 'port'], ['Total à payer', 'total']];
+  const paires = [['Sous-total', 'sous-total'], ['Frais de port', 'port'], ['Total simulé', 'total']];
   const montants = {};
   for (const [libellé] of paires) {
     const ligne = lignesPied.find((tr) => tr.querySelector('th')?.textContent.includes(libellé));
@@ -200,28 +205,24 @@ async function aller() {
   }
   const enEuros = (s) => Number.parseFloat(s.replace(/[^0-9,]/g, '').replace(',', '.'));
   check('les montants lus se recomposent (sous-total + port = total à payer)',
-    Math.abs(enEuros(montants['Sous-total']) + enEuros(montants['Frais de port']) - enEuros(montants['Total à payer'])) < 0.005,
+    Math.abs(enEuros(montants['Sous-total']) + enEuros(montants['Frais de port']) - enEuros(montants['Total simulé'])) < 0.005,
     JSON.stringify(montants));
 
   console.log("\n[Valider 375 px] 3 · La feuille servie tient le tableau en page");
-  const css = await (await fetch(`${base}/minishop.css`)).text();
-  const bloc = css.slice(css.indexOf('.tableau-recapitulatif {'), css.indexOf('}', css.indexOf('.tableau-recapitulatif {')));
-  check('CSS servie : largeur 100 % et répartition fixe des colonnes',
-    bloc.includes('width: 100%') && bloc.includes('table-layout: fixed'));
-  const totalLargeurs = ['col-produit', 'col-prix', 'col-qte', 'col-total']
-    .map((c) => {
-      const i = css.indexOf(`.tableau-recapitulatif .${c}`);
-      const m = /width:\s*(\d+)%/.exec(css.slice(i, i + 120));
-      return m ? Number.parseInt(m[1], 10) : 0;
-    })
-    .reduce((a, b) => a + b, 0);
-  check('CSS servie : les largeurs de colonnes totalisent 100 % (rien hors écran)',
-    totalLargeurs === 100, String(totalLargeurs));
+  const cssResponse = await fetch(`${base}/css/app.css`);
+  const css = await cssResponse.text();
+  check('la feuille réellement chargée prévoit les cartes mobiles', cssResponse.ok
+    && css.includes('.tableau-defilant--client table')
+    && css.includes('min-width: 0') && css.includes('width: 100%'));
+  check('les libellés de colonnes sont repris dans les cartes et les totaux restent ensemble',
+    css.includes('content: attr(data-label)')
+      && css.includes('.tableau-recapitulatif tfoot tr')
+      && css.includes('justify-content: space-between'));
 
   console.log("\n[Valider 375 px] 4 · Le total est sous les yeux au moment de confirmer");
   const bouton = navigateur.doc.querySelector('form[action="/commande/valider"] button[type="submit"], form[action="/commande/valider"] button');
   check('le bouton de confirmation affiche le total à payer',
-    bouton !== null && bouton.textContent.includes(montants['Total à payer']),
+    bouton !== null && bouton.textContent.includes(montants['Total simulé']),
     bouton?.textContent.trim());
   check('aucun code technique sur la page (RB-18/RB-06/RB-20 ont disparu au signalement n° 18)',
     !/RB-\d|EF-[A-Z]|ENF-\d|UC-\d/.test(navigateur.texte));
@@ -229,7 +230,6 @@ async function aller() {
   console.log(`\n${échecs === 0 ? '✅' : '❌'} Valider à 375 px : ${échecs === 0 ? 'toutes les vérifications réussies' : échecs + ' vérification(s) en échec'}\n`);
   if (serveur) {
     serveur.kill();
-    spawnSync('git', ['checkout', '--', 'data'], { stdio: 'inherit' });
   }
   process.exit(échecs === 0 ? 0 : 1);
 }
@@ -238,7 +238,6 @@ aller().catch(async (error) => {
   console.error('❌ Erreur E2E valider 375 px :', error.message);
   if (serveur) {
     serveur.kill();
-    spawnSync('git', ['checkout', '--', 'data'], { stdio: 'inherit' });
   }
   process.exit(1);
 });

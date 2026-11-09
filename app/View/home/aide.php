@@ -2,41 +2,45 @@
 
 declare(strict_types=1);
 
-/** Page statique EF-GEN-05 — aide et questions fréquentes. */
+/** Page d'aide (EF-VIS-08) — aucune donnée, que du contenu. */
 ?>
-<h1>Aide</h1>
+<header class="entete-page">
+    <div>
+        <h1>Aide</h1>
+        <p class="chapo">Les réponses aux questions les plus fréquentes, et les raccourcis du site.</p>
+    </div>
+</header>
 
-<h2>Comment commander ?</h2>
-<p>Parcourez le <a href="/catalogue">catalogue</a>, ajoutez les produits à votre
-panier, puis cliquez sur « Valider ma commande ». Les frais de port sont affichés
-<strong>avant</strong> la validation, et le prix de chaque article est figé au
-moment de l'achat.</p>
+<div class="grille grille--categories">
+    <section class="carte">
+        <h2>Comment commander ?</h2>
+        <ol>
+            <li>Ajoutez des produits au panier (la quantité est plafonnée au stock réel).</li>
+            <li>Vérifiez le récapitulatif : sous-total, TVA, frais de port, total TTC.</li>
+            <li>Créez un compte ou connectez-vous, puis validez : vous recevez un numéro de commande.</li>
+        </ol>
+        <p>Le paiement est simulé : aucune donnée bancaire n’est demandée.</p>
+        <p><a href="/catalogue">Commencer par le catalogue →</a> · <a href="/livraison">Livraison</a></p>
+    </section>
 
-<h2>Le paiement est-il réel ?</h2>
-<p>Non. MiniShop est une maquette pédagogique : le paiement est
-<strong>simulé</strong>, aucune donnée bancaire ne vous sera jamais demandée et
-aucun débit n'a lieu. C'est indiqué au moment de valider la commande.</p>
+    <section class="carte">
+        <h2>Suivre ou annuler</h2>
+        <p>L'historique et le détail (y compris les changements de statut) sont dans « Mes commandes ».
+            L'annulation est possible tant que la commande n'est pas expédiée : le stock est restitué
+            et les frais de port annulés.</p>
+        <p>Cette annulation technique est distincte du <a href="/retractation">droit de rétractation</a>.</p>
+        <p><a href="/mes-commandes">Voir mes commandes →</a></p>
+    </section>
 
-<h2>Suivre ou annuler ma commande</h2>
-<p>Connectez-vous, ouvrez <a href="/mes-commandes">Mes commandes</a> et cliquez
-sur le numéro de la commande pour voir son statut. Tant qu'elle n'est pas
-expédiée, vous pouvez l'annuler depuis cette page : une confirmation vous sera
-demandée, le stock est alors restitué et le montant soldé. Le détail des
-conditions est sur la page <a href="/retractation">Rétractation</a>.</p>
+    <section class="carte">
+        <h2>Prix et frais de port</h2>
+        <p>Les prix sont affichés <strong>TTC</strong> ; le détail HT et le taux de TVA figurent sur chaque fiche.
+            Les frais de port sont calculés côté serveur et affichés avant la validation.</p>
+    </section>
 
-<h2>Quels sont les frais et délais de livraison ?</h2>
-<p>La livraison standard coûte <strong>4,90&nbsp;€</strong> et est
-<strong>offerte dès 80,00&nbsp;€</strong> d'achats. Le montant exact est annoncé
-avant la validation et ne change plus ensuite. Voir la page
-<a href="/livraison">Livraison</a>.</p>
-
-<h2>Créer un compte, modifier mes informations</h2>
-<p>L'inscription se fait depuis <a href="/inscription">Créer un compte</a>.
-Ensuite, la page <a href="/compte">Mon compte</a> permet de mettre à jour vos
-coordonnées et votre adresse de livraison, et de changer votre mot de passe.</p>
-
-<h2>Une autre question ?</h2>
-<p>Consultez la page <a href="/contact">Contact</a>. Les conditions de vente
-sont détaillées dans les <a href="/cgv">Conditions générales de vente</a> et le
-traitement de vos données sur la page
-<a href="/confidentialite">Confidentialité</a>.</p>
+    <section class="carte">
+        <h2>Accessibilité</h2>
+        <p>Un lien d’évitement, des repères clavier et une réduction des animations sont prévus.
+            Une vérification complète d’accessibilité reste nécessaire. <a href="/contact">Formulaire de démonstration</a> : aucun e-mail n’est envoyé et aucune réponse n’est garantie.</p>
+    </section>
+</div>

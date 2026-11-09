@@ -92,7 +92,7 @@ echo "== 1 · Aucun filtre : « Filtrer » en haut, fermé, produits juste aprè
 $html = rendreCatalogue(criteresVides());
 $posDetails = strpos($html, '<details class="filtres-catalogue"');
 $posForm = strpos($html, '<form method="get"');
-$posProduits = strpos($html, '<ul>');
+$posProduits = strpos($html, 'class="grille grille--produits"');
 $posPagination = strpos($html, 'Pagination');
 $check('le panneau de filtres existe', $posDetails !== false);
 $check('le panneau est AVANT le formulaire qu\'il contient', $posDetails !== false && $posForm !== false && $posDetails < $posForm);
@@ -115,9 +115,9 @@ $check(
     'le panneau contient la recherche et les filtres habituels',
     str_contains($html, 'id="q"') && str_contains($html, 'id="cat"')
         && str_contains($html, 'id="prix_min"') && str_contains($html, 'id="tri"')
-        && str_contains($html, '>Appliquer</button>')
+        && str_contains($html, '>Appliquer les filtres</button>')
 );
-$check('le formulaire part toujours en GET sur /catalogue', str_contains($html, '<form method="get" class="formulaire-filtres-catalogue" action="/catalogue">'));
+$check('le formulaire part toujours en GET sur /catalogue', str_contains($html, '<form method="get" action="/catalogue"'));
 
 /* ── 2. Avec filtre : panneau ouvert, état visible, champs remplis ── */
 echo "\n== 2 · Filtre actif : le panneau s'ouvre, les critères restent affichés ==\n";
@@ -155,7 +155,7 @@ $check(
 /* ── 3. Recherche (page /recherche) : même comportement ───────────── */
 echo "\n== 3 · Page Recherche : même panneau, formulaire vers /recherche ==\n";
 $htmlRecherche = rendreCatalogue(criteresVides(), true);
-$check('le formulaire de /recherche vise /recherche', str_contains($htmlRecherche, '<form method="get" class="formulaire-filtres-catalogue" action="/recherche">'));
+$check('le formulaire de /recherche vise /recherche', str_contains($htmlRecherche, '<form method="get" action="/recherche"'));
 $check('panneau fermé par défaut aussi en recherche', !str_contains((string) baliseDetails($htmlRecherche), ' open'));
 $check('titre « Recherche » conservé', str_contains($htmlRecherche, '<h1>Recherche</h1>'));
 
@@ -165,7 +165,7 @@ $check(
     'aucun <script>, aucun onclick : le panneau est natif',
     !str_contains($html, '<script') && !str_contains($html, 'onclick')
 );
-$css = (string) file_get_contents(dirname(__DIR__, 2) . '/public/minishop.css');
+$css = (string) file_get_contents(dirname(__DIR__, 2) . '/public/css/app.css');
 $check(
     'le bouton « Filtrer » a une zone tactile dédiée (feuille du site)',
     str_contains($css, '.filtres-catalogue > summary') && str_contains($css, 'cursor: pointer')

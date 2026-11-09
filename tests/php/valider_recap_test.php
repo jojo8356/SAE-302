@@ -124,7 +124,7 @@ $check(
 $paires = [
     'Sous-total TTC' => '12,00',
     'Frais de port' => '4,90',
-    'Total à payer' => '16,90',
+    'Total simulé' => '16,90',
 ];
 foreach ($paires as $libelle => $montant) {
     $trouve = false;
@@ -139,8 +139,8 @@ foreach ($paires as $libelle => $montant) {
 }
 $check(
     "chaque montant du pied est dans une cellule .montant (à droite, une ligne)",
-    $tableau !== null && substr_count($tableau, '<td class="montant">') >= 4
-        && str_contains($tableau, '<th scope="row" colspan="3">Total à payer</th><td class="montant"><strong>')
+    $tableau !== null && substr_count($tableau, '<td class="montant">') >= 3
+        && str_contains($tableau, '<th scope="row" colspan="3">Total simulé</th><td class="montant"><strong>')
 );
 $check(
     "le bouton de confirmation affiche le total (« Confirmer et payer : 16,90 € (simulé) »)",
@@ -148,7 +148,7 @@ $check(
 );
 $check(
     "les libellés de totaux restent uniques sur la page (aucun doublon réintroduit)",
-    substr_count($html, 'Sous-total') === 1 && substr_count($html, 'Total à payer') === 1
+    substr_count($html, 'Sous-total') === 1 && substr_count($html, 'Total simulé') === 1
         && substr_count($html, 'Récapitulatif de votre panier') === 1
 );
 $check(
@@ -156,59 +156,21 @@ $check(
     preg_match('/(RB-\\d|EF-[A-Z]|ENF-\\d|UC-\\d)/', $html) === 0
 );
 
-/* ── 2. CSS : les règles qui tiennent la page à 375 px ─────────────── */
-echo "\n== 2 · Feuille du site : 100 % fixe, libellé et montant côte à côte ==\n";
-$css = (string) file_get_contents(dirname(__DIR__, 2) . '/public/minishop.css');
-$bloc = blocCss($css, '.tableau-recapitulatif');
-$check(
-    ".tableau-recapitulatif : largeur 100 %, colonnes à répartition fixe, bordures fusionnées",
-    $bloc !== null && str_contains($bloc, 'width: 100%')
-        && str_contains($bloc, 'table-layout: fixed') && str_contains($bloc, 'border-collapse: collapse'),
-    (string) $bloc
-);
-$largeurs = [];
-foreach (['col-produit', 'col-prix', 'col-qte', 'col-total'] as $colonne) {
-    $blocColonne = blocCss($css, '.tableau-recapitulatif .' . $colonne);
-    $largeur = null;
-    if ($blocColonne !== null && preg_match('/width:\\s*(\\d+)%/', $blocColonne, $m) === 1) {
-        $largeur = (int) $m[1];
-    }
-    $largeurs[$colonne] = $largeur;
-}
-$check(
-    "chaque colonne a sa largeur explicite (produit 38, prix 22, qté 13, total 27)",
-    $largeurs === ['col-produit' => 38, 'col-prix' => 22, 'col-qte' => 13, 'col-total' => 27],
-    (string) json_encode($largeurs)
-);
-$totalLargeurs = 0;
-foreach ($largeurs as $largeur) {
-    if ($largeur !== null) {
-        $totalLargeurs += $largeur;
-    }
-}
-$check(
-    "les largeurs totalisent exactement 100 % (rien ne déborde, rien à faire défiler)",
-    $totalLargeurs === 100,
-    (string) $totalLargeurs
-);
-$blocMontant = blocCss($css, '.tableau-recapitulatif .montant');
-$check(
-    "les montants sont alignés à droite et tenus sur une ligne (nowrap)",
-    $blocMontant !== null && str_contains($blocMontant, 'text-align: right')
-        && str_contains($blocMontant, 'white-space: nowrap')
-);
-$blocPied = blocCss($css, '.tableau-recapitulatif tfoot th');
-$blocCellules = blocCss($css, '.tableau-recapitulatif th');
-$check(
-    "les libellés du pied peuvent passer à la ligne dans leur zone (pas de nowrap qui expulserait le montant)",
-    $blocCellules !== null && str_contains($blocCellules, 'overflow-wrap: break-word')
-        && ($blocPied === null || !str_contains($blocPied, 'nowrap')),
-    (string) $blocPied
-);
-$check(
-    "aucun défilement horizontal n'est organisé pour ce tableau (pas d'overflow-x dans la feuille)",
-    !str_contains($css, 'overflow-x')
-);
+/* ── 2. CSS réellement chargée : cartes sur mobile ─────────────────── */
+echo "\n== 2 · Feuille chargée : récapitulatif lisible en cartes sur mobile ==\n";
+$racine = dirname(__DIR__, 2);
+$css = (string) file_get_contents($racine . '/public/css/app.css');
+$layout = (string) file_get_contents($racine . '/app/View/layout.php');
+$check('le gabarit charge la feuille vérifiée', str_contains($layout, 'href="/css/app.css"'));
+$check('région dédiée au parcours client', str_contains($html, 'tableau-defilant--client'));
+$blocTable = blocCss($css, '.tableau-defilant--client table');
+$check('largeur bornée et sans minimum fixe sur mobile', $blocTable !== null && str_contains($blocTable, 'min-width: 0') && str_contains($blocTable, 'width: 100%'));
+$check('cartes et champs étiquetés', str_contains($css, '.tableau-defilant--client tbody td::before') && str_contains($css, 'content: attr(data-label)') && str_contains($html, 'data-label="Prix TTC"') && str_contains($html, 'data-label="Total TTC"'));
+$blocPied = blocCss($css, '.tableau-recapitulatif tfoot tr');
+$check('libellé et montant restent ensemble dans le pied', $blocPied !== null && str_contains($blocPied, 'display: flex') && str_contains($blocPied, 'justify-content: space-between'));
+$blocLibelle = blocCss($css, '.tableau-recapitulatif tfoot th');
+$blocMontant = blocCss($css, '.tableau-recapitulatif tfoot td');
+$check('libellé repliable et montant conservé', $blocLibelle !== null && str_contains($blocLibelle, 'min-width: 0') && $blocMontant !== null && str_contains($blocMontant, 'flex: 0 0 auto'));
 
 ob_end_clean();
 

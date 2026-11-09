@@ -19,17 +19,21 @@ export const REPO_ROOT = join(import.meta.dirname, '..');
 export const WASM_ROOT = '/repo';
 
 /** Dossiers utiles au fonctionnement de l'application dans le runtime WASM. */
-export const UPLOAD_DIRS = ['app', 'public', 'data', 'tests/php', 'scripts'];
+// `tests/sql` est monté aussi : les tests unitaires vérifient que le harnais SQL
+// aligne sa collation de session sur celle du schéma (cf. ERROR 1267 sur les
+// colonnes de vue). Sans ce montage, le contrôle serait muet en sandbox.
+export const UPLOAD_DIRS = ['app', 'public', 'data', 'tests/php', 'tests/phpunit', 'tests/sql', 'scripts', 'sql'];
 
 /** Dossiers que l'application peut muter → à rapatrier sur l'hôte. */
 export const MUTABLE_DIRS = ['data', 'var'];
 
 /** Crée le runtime PHP-WASM prêt à servir l'application. */
-export async function createPhp(absoluteUrl = 'http://localhost:8080/') {
+export async function createPhp(absoluteUrl = 'http://localhost:8080/', { inclureDonnees = true } = {}) {
   const php = await NodePHP.load('8.2', {
     requestHandler: { documentRoot: `${WASM_ROOT}/public`, absoluteUrl },
   });
   for (const dir of UPLOAD_DIRS) {
+    if (dir === 'data' && !inclureDonnees) continue;
     const hostDir = join(REPO_ROOT, dir);
     if (existsSync(hostDir)) {
       await uploadTree(php, hostDir, `${WASM_ROOT}/${dir}`);
@@ -60,8 +64,8 @@ export async function uploadTree(php, hostDir, wasmDir) {
 }
 
 /** Rapatrie les dossiers mutés (data/, var/) du FS WASM vers l'hôte. */
-export async function syncBack(php) {
-  for (const dir of MUTABLE_DIRS) {
+export async function syncBack(php, dirs = MUTABLE_DIRS) {
+  for (const dir of dirs) {
     await downloadTree(php, `${WASM_ROOT}/${dir}`, join(REPO_ROOT, dir));
   }
 }
@@ -90,6 +94,23 @@ async function downloadTree(php, wasmDir, hostDir) {
 /** Exécute un script PHP du dépôt (chemin relatif au repo) et affiche sa sortie. */
 export async function runScript(php, relativePath) {
   const result = await php.run({ scriptPath: `${WASM_ROOT}/${relativePath}` });
+  const errors = result.errors ?? '';
+  return { text: result.text ?? '', errors, exitCode: result.exitCode ?? 0 };
+}
+
+/**
+ * Exécute un script PHP avec des arguments de ligne de commande.
+ *
+ * Le runtime php-wasm n'expose pas `$argv` en mode « scriptPath » : on amorce
+ * un fragment PHP qui place les arguments dans $_SERVER puis charge le script.
+ * Les scripts concernés lisent $_SERVER['argv'] (voir scripts/db_init.php).
+ */
+export async function runScriptAvecArguments(php, relativePath, args = []) {
+  // argv[0] = script (chemin dans le runtime), argv[1…] = arguments bruts
+  const chemins = [`${WASM_ROOT}/${relativePath}`, ...args];
+  const amorce = `<?php $_SERVER['argv'] = ${JSON.stringify(chemins)}; `
+    + `$_SERVER['argc'] = ${chemins.length}; require ${JSON.stringify(`${WASM_ROOT}/${relativePath}`)};`;
+  const result = await php.run({ code: amorce });
   const errors = result.errors ?? '';
   return { text: result.text ?? '', errors, exitCode: result.exitCode ?? 0 };
 }

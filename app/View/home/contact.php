@@ -2,34 +2,60 @@
 
 declare(strict_types=1);
 
-/** Page statique EF-GEN-05 — contact. */
+/** @var list<string> $erreurs @var array<string,string> $valeurs */
+$valeurs = array_merge(['nom' => '', 'email' => '', 'message' => ''], $valeurs ?? []);
 ?>
-<section class="page-contact">
-<h1>Contact</h1>
+<div class="auth">
+    <header class="entete-page">
+        <div>
+            <h1>Nous contacter</h1>
+            <p class="chapo">Formulaire de démonstration : le message est enregistré localement, sans envoi d’e-mail ni réponse garantie.</p>
+        </div>
+    </header>
 
-<p>MiniShop est une <strong>maquette pédagogique</strong> réalisée par une
-équipe d'étudiants (BUT Informatique — BUT2, Université Côte d'Azur),
-pour apprendre à construire une boutique en ligne complète : il n'y a ni
-service client, ni entrepôt, ni paiement réel derrière ce site.</p>
+    <?php if (($erreurs ?? []) !== []): ?>
+        <div class="message message--erreur" role="alert">
+            <?= icone('alerte', 20) ?>
+            <ul>
+                <?php foreach ($erreurs as $erreur): ?><li><?= e($erreur) ?></li><?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
 
-<h2>Vous testez la maquette ?</h2>
-<p>La plupart des réponses se trouvent sur la page <a href="/aide">Aide</a> :
-commander, suivre ou annuler une commande, frais de
-<a href="/livraison">livraison</a>, <a href="/retractation">rétractation</a>…
-Vous pouvez aussi créer un compte depuis
-<a href="/inscription">Créer un compte</a> ou utiliser un compte de
-démonstration fourni avec le projet.</p>
+    <p>Consultez notre <a href="/aide">aide</a> ou gérez vos informations dans <a href="/compte">Mon compte</a>.</p>
+    <form method="post" action="/contact">
+        <?= csrf_field() ?>
+        <fieldset>
+            <legend class="visuellement-cache">Votre message</legend>
+            <h2 class="auth__titre">Votre message</h2>
 
-<h2>Un souci avec vos données ?</h2>
-<p>Vos informations se consultent et se corrigent depuis
-<a href="/compte">Mon compte</a> ; la page
-<a href="/confidentialite">Confidentialité</a> explique ce qui est enregistré
-et combien de temps.</p>
+            <p>
+                <label for="nom">Nom et prénom <span class="texte-aide">(obligatoire)</span></label>
+                <input type="text" id="nom" name="nom" maxlength="120" required autocomplete="name"
+                       value="<?= e($valeurs['nom']) ?>" <?php if (($erreurs ?? []) !== []) { echo 'aria-invalid="true"'; } ?>>
+            </p>
 
-<h2>Nous écrire ?</h2>
-<p>Il n'y a ni formulaire de contact ni service client derrière cette
-maquette : aucun message ne peut être envoyé depuis ce site, et aucune
-réponse ne sera donc apportée. Cette page a valeur d'information dans
-le cadre du projet étudiant ; pour savoir qui édite et héberge le
-site, voir les <a href="/mentions-legales">Mentions légales</a>.</p>
-</section>
+            <p>
+                <label for="email">Email <span class="texte-aide">(obligatoire)</span></label>
+                <input type="email" id="email" name="email" maxlength="190" required autocomplete="email"
+                       value="<?= e($valeurs['email']) ?>">
+            </p>
+
+            <p>
+                <label for="message">Message <span class="texte-aide">(10 caractères minimum)</span></label>
+                <textarea id="message" name="message" rows="6" maxlength="2000" required
+                          data-compteur="2000"><?= e($valeurs['message']) ?></textarea>
+            </p>
+
+            <p class="texte-aide">
+                Le nom, l’e-mail et le message sont enregistrés dans un journal local. N’envoyez pas de données sensibles.
+                Consultez la <a href="/confidentialite">politique de confidentialité</a> et les limites de conservation.
+            </p>
+
+            <div class="actions-formulaire">
+                <button type="submit" class="btn--acheter">Enregistrer le message de démonstration</button>
+                <a class="btn btn--secondaire" href="/">Retour à l'accueil</a>
+            </div>
+        </fieldset>
+    </form>
+</div>

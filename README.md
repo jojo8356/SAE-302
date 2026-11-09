@@ -1,6 +1,6 @@
 # MiniShop — site e-commerce + back-office (SAE)
 
-[![CI — GitHub (dev)](https://github.com/jojo8356/SAE-302/actions/workflows/ci.yml/badge.svg)](https://github.com/jojo8356/SAE-302/actions/workflows/ci.yml) [![CI — GitLab (prod)](https://gitlab.example.com/minishop/badges/main/pipeline.svg)](https://gitlab.example.com/minishop/-/pipelines)
+[![CI — GitHub (dev)](https://github.com/jojo8356/SAE-302/actions/workflows/ci.yml/badge.svg)](https://github.com/jojo8356/SAE-302/actions/workflows/ci.yml) [![CI — GitLab (prod)](https://iut-git.unice.fr/but2_s302/s302/badges/main/pipeline.svg)](https://iut-git.unice.fr/but2_s302/s302/-/pipelines)
 
 Projet pédagogique : catalogue, panier, commandes, espace d'administration — **PHP 8 / MySQL (PDO) /
 procédures stockées / déclencheurs / architecture MVC** — avec sa base de données conçue, normalisée,
@@ -17,11 +17,34 @@ testée, et son cahier des charges complet.
 | **Référente** | Thanh-Phuong Nguyen — `thanh-phuong.nguyen@univ-cotedazur.fr` |
 | **Documents** | [`docs/01-cahier-des-charges-MiniShop.md`](docs/01-cahier-des-charges-MiniShop.md) (spécification **et** conception de base de données) · [`docs/02-document-tests-validation.md`](docs/02-document-tests-validation.md) · [`docs/03-support-soutenance.md`](docs/03-support-soutenance.md) · [`docs/04-conception-bd-et-sql.md`](docs/04-conception-bd-et-sql.md) (livrable n°3 autonome : MCD, MLD, normalisation, analyse + **liens vers les scripts SQL livrés en fichiers**) · [`docs/05-wbs-projet.md`](docs/05-wbs-projet.md) (WBS : 6 divisions, 16 lots, 86 tâches individuelles, charges bottom-up, plan de charge, Gantt, chemin critique) · [`docs/08-fiche-suivi-commits.md`](docs/08-fiche-suivi-commits.md) (fiche de suivi des 32 commits + script de rejeu vers un nouveau GitLab) |
 | **Scripts SQL** | [`sql/01_minishop_schema.sql`](sql/01_minishop_schema.sql) (DDL + données) · [`sql/02_minishop_procedures.sql`](sql/02_minishop_procedures.sql) (1 fonction + 17 procédures) · [`sql/03_minishop_triggers.sql`](sql/03_minishop_triggers.sql) (16 déclencheurs) · [`sql/04_minishop_demo.sql`](sql/04_minishop_demo.sql) (démo via `CALL`) — chaîne validée de zéro sur MariaDB 11.8.6 |
-| **État** | base de données + 29 tests SQL **exécutés avec succès** (règles RB-01…RB-20, vues, frais de port) ; application PHP spécifiée (code à produire aux lots L8→L13 du planning) |
+| **État** | base de données + 29 tests SQL **exécutés avec succès** (règles RB-01…RB-20, vues, frais de port) ; application PHP **livrée** (MVC, design system, suite PHPUnit, E2E HTTP 301 vérifications (WASM)) ; écarts restants suivis dans [`docs/10-todo-corrections.md`](docs/10-todo-corrections.md) |
+
+## Audit global
+
+Le [rapport d’audit global](docs/17-audit-global-projet.md) et son [inventaire des fichiers versionnés](docs/17-inventaire-projet.csv) distinguent corrections, vérifications et limites.
+
+## Informations légales et données (maquette)
+
+Le pied de page donne accès aux mentions légales, CGV pédagogiques, livraison, rétractation,
+garanties, confidentialité et cookies. **Aucune vente, livraison ou paiement réel** : l'identité
+du vendeur et de l'hébergeur, le médiateur, les durées de conservation effectives et d'autres
+informations restent à renseigner. La fonction légale de rétractation en ligne avec accusé durable
+**n'est pas opérationnelle** : ne pas utiliser ce projet pour vendre en l'état. L'audit, les sources,
+le détail des cookies réellement identifiés et la checklist figurent dans
+[`docs/12-information-juridique.md`](docs/12-information-juridique.md).
+
+## Aide locale en ligne de commande
+
+```bash
+php scripts/aide.php --help
+php scripts/aide.php --comptes-demo
+```
+
+Ces commandes ne se connectent à aucune base et ne modifient pas les données. La seconde affiche les **identifiants initiaux** du jeu de démonstration JSON : ils peuvent avoir été changés ou être absents de l’installation courante. Ne pas laisser ces comptes actifs sur une instance accessible sans protection.
 
 ## Prérequis
 
-- PHP **8.1+** avec les extensions `pdo_mysql`, `mbstring`, `json`, `intl`
+- PHP **8.2+** avec les extensions `pdo_mysql`, `mbstring`, `json`, `intl`
 - MySQL **8.0.16+** (les contraintes `CHECK` sont appliquées depuis cette version) **ou MariaDB 10.6+**
 - Apache 2.4 avec `mod_rewrite` (ou le serveur embarqué PHP pour un essai rapide)
 - client `mysql` / `mariadb` en ligne de commande, `bash`
@@ -29,62 +52,157 @@ testée, et son cahier des charges complet.
 
 ## Installation (5 commandes)
 
+**Attention :** les commandes de création/réinitialisation de base ci-dessous et
+le harnais SQL direct peuvent détruire des données. Ne les exécuter que sur un
+serveur de développement jetable, après sauvegarde et vérification de la cible.
+
 ```bash
 # 1. cloner et placer le projet
 git clone <URL_DU_DEPOT> minishop && cd minishop
 
-# 2. configuration (jamais commitée)
-cp app/Config/env.example.php app/Config/env.php      # puis éditer db_user / db_pass
+# 2. configuration locale (jamais commitée)
+cp .env.example .env        # puis éditer DB_USER / DB_PASSWORD si vous passez en MySQL
 
-# 3. créer la base, les tables, les 16 triggers, la fonction + 17 procédures et le jeu de démonstration
-DB_USER=root DB_PASS='...' ./scripts/load_db.sh
+# 3. créer la base MySQL locale : 8 tables, 3 vues, 1 fonction, 17 procédures,
+#    16 triggers et le jeu de démonstration (36 produits, 3 clients)
+./run.sh --db               # = php scripts/db_init.php --switch  (bascule .env sur sql)
+#   autre base   : DB_NAME=minishop_test php scripts/db_init.php --yes
+#   sans démo    : php scripts/db_init.php --no-demo
+#   diagnostic   : php scripts/db_init.php --check
 
-# 4. vérifier que la base est saine (29 tests de règles de gestion, vues et frais de port)
-DB_USER=root DB_PASS='...' ./scripts/run_sql_tests.sh   # 29 tests, attendu : « Tests conformes : 29 / 29 »
+# 4. Tests SQL : uniquement sur serveur jetable ; voir la section Tests.
+# L’enveloppe refuse une base de test existante par défaut.
+# Ne pas lancer le harnais SQL direct sur une base contenant des données à conserver.
 
 # 5. lancer (développement) — en production : DocumentRoot = public/
-php -S localhost:8000 -t public
+./run.sh                    # tout-en-un : vérifie PHP, prépare les données, démarre
+PORT=8080 ./run.sh          # autre port (prioritaire sur .env)
+./run.sh --check            # diagnostic seul (ne démarre rien)
 #   http://localhost:8000/            (front-office)
-#   http://localhost:8000/admin        (back-office, compte admin requis)
+#   http://localhost:8000/catalogue
+#   http://localhost:8000/admin/connexion   (back-office)
 ```
 
-### Lancement : Linux d'abord, Windows/XAMPP en appoint
+### Récupérer la dernière version d'une branche
 
-Le serveur cible (démo et production) est **sous Linux** : Apache 2.4,
-`DocumentRoot = public/`, et `public/.htaccess` fait foi pour le routage.
-Windows/XAMPP n'est **pas** une cible de déploiement — le lancement
-ci-dessous n'est qu'une commodité de développement, supportée au même
-titre que `php -S` sous Linux, sans MySQL/Apache à configurer (le moteur
-livré est le moteur JSON, cf. « État réel du dépôt »).
+`git checkout <branche> -- fichier1 fichier2 …` avec une liste écrite à la main laisse régulièrement un
+fichier périmé derrière soi — et le message d'erreur d'une révision antérieure ressemble alors à un bug
+de la révision courante. Deuxième piège, rencontré en vrai : la liste calculée par
+`git diff HEAD <branche> --name-only` contient aussi les fichiers que la branche **n'a jamais eus** (ils
+n'existent que dans votre copie), et `git checkout` échoue dessus avec « ne correspond à aucun fichier
+connu de git ».
 
 ```bash
-# Routeur optionnel (émule le .htaccess sous php -S : fichiers réels de
-# public/ servis directement, le reste passe par public/index.php).
-# scripts/dev-router.php résout ses chemins depuis son propre dossier :
-# aucun réglage XAMPP/Apache n'est nécessaire.
-php -S localhost:8000 -t public scripts/dev-router.php
+git fetch github
+scripts/maj-depuis-branche.sh github/arena/6e1d3706-sae-302
 ```
 
-> ⚠️ Les deux échecs Windows signalés venaient de la commande, pas du
-> code : (1) « `Fatal error: Failed opening required
-> scripts/dev-router.php` » = le fichier n'existait pas dans le dépôt
-> (il est livré désormais) **ou** la commande n'était pas lancée depuis
-> la racine du projet — `scripts/…` et `-t public` sont relatifs au
-> dossier courant ; (2) « le serveur démarre puis s'arrête sans
-> message » = même cause côté `-t public`. Depuis PowerShell, se placer
-> d'abord à la racine, et si `php` n'est pas dans le `PATH` (cas XAMPP),
-> l'appeler par son chemin complet :
->
-> ```powershell
-> cd C:\xampp\htdocs\minishop
-> C:\xampp\php\php.exe -S localhost:8000 -t public scripts\dev-router.php
-> ```
->
-> Variante valable depuis n'importe quel dossier : `-t` et routeur en
-> chemins absolus
-> (`-t C:\xampp\htdocs\minishop\public C:\xampp\htdocs\minishop\scripts\dev-router.php`).
-> Exécuter `php scripts\dev-router.php` seul ne lance aucun serveur :
-> le fichier affiche désormais l'aide au lieu de s'arrêter en silence.
+Le script ne raisonne que sur la divergence réelle (`git merge-base`) : il charge les fichiers
+ajoutés/modifiés, supprime ceux que la branche a réellement supprimés, et **ne touche jamais** aux
+fichiers propres à votre copie (par exemple `sql/05_minishop_requetes.sql`, ou le travail de votre
+binôme). Le tri se fait fichier par fichier :
+
+- contenu déjà identique à la branche → « déjà à jour », rien à faire (c'est le cas d'une synchro
+  précédente : `git checkout` indexe les fichiers chargés, donc l'arbre est sale après coup — un refus
+  global aurait bloqué toute mise à jour ultérieure) ;
+- modifié localement **et** différent de la branche → refus nominatif, `git stash` ou `--force`.
+
+Il annonce toujours son plan avant d'écrire, et termine par la révision obtenue.
+
+`run.sh` et `php scripts/db_init.php` affichent de leur côté la **révision du code** exécuté
+(`code : cf1606a · 2026-10-27`, ou `+ modifications locales`) : à comparer avec
+`git log -1 --oneline github/arena/6e1d3706-sae-302` **avant** de signaler un bug.
+
+Enfin, `run.sh` **avertit tout seul** quand la copie est en retard :
+
+```
+⚠ copie de travail en retard sur github/arena/… (12 commit(s) que cette copie n'a pas)
+```
+
+Le calcul se fait sur l'empreinte laissée par `scripts/maj-depuis-branche.sh`
+(`.git/minishop-synchro`) et non sur `HEAD` : une synchro de fichiers ne déplace pas la tête de
+branche, donc comparer à `HEAD` allumait une alerte permanente — que l'on finit par ignorer.
+
+> **Ubuntu 24.04 / Debian 12** : le paquet `mysql-server` n'existe plus, il est remplacé par
+> `mariadb-server` (`sudo apt install mariadb-server && sudo systemctl enable --now mariadb`).
+> C'est une cible supportée (MariaDB ≥ 10.6) : `php scripts/db_init.php --check` affiche la version
+> détectée et refuse un serveur trop ancien (MySQL < 8.0.16 ignorerait silencieusement les `CHECK`).
+
+### Configuration : `.env` (et rien d'autre)
+
+Un seul fichier de configuration, **local** et ignoré par Git ; le modèle `.env.example` est versionné.
+`run.sh` le crée au premier lancement.
+
+| Clé | Défaut | Rôle |
+|---|---|---|
+| `STORAGE_DRIVER` | `json` | `json` = moteur JSON natif (aucun service) · `sql` = MySQL/MariaDB via PDO |
+| `DB_HOST` / `DB_PORT` | `127.0.0.1` / `3306` | serveur MySQL |
+| `DB_NAME` | `minishop` | base utilisée (`[A-Za-z0-9_]+`) |
+| `DB_USER` / `DB_PASSWORD` | `root` / *(vide)* | identifiants MySQL |
+| `DB_SOCKET` | *(vide)* | socket Unix explicite (`/run/mysqld/mysqld.sock`) ; vide = TCP puis repli socket |
+| `DATA_PATH` | *(vide)* | dossier des données du pilote JSON (`data/minishop` par défaut) |
+| `APP_ENV` / `APP_DEBUG` | `dev` / `1` | environnement et erreurs détaillées |
+| `PORT` / `HOST` | `8000` / `0.0.0.0` | serveur de développement de `run.sh` |
+
+### Base de données locale
+
+```bash
+php scripts/db_init.php --check      # diagnostic (serveur, version, base, objets)
+php scripts/db_init.php --yes        # crée la base, les 8 tables, 17 procédures, 16 déclencheurs
+php scripts/db_init.php --switch     # passe STORAGE_DRIVER=sql dans .env
+./run.sh --db                        # les trois d'un coup, puis démarre le serveur
+```
+
+**`root` sous Debian/Ubuntu n'accepte pas le TCP.** Le paquet `mariadb-server` crée `root@localhost`
+avec le greffon `unix_socket` : ce greffon ne compare pas un mot de passe, il compare **l'utilisateur du
+système** du processus qui se connecte. `sudo mariadb` passe (le shell est root), `php` non (il tourne sous
+votre compte) — et aucune option côté PHP ne peut contourner cette décision du SGBD, socket Unix comprise.
+
+`./run.sh --db` règle donc le problème **tout seul**, avec l'option `--compte` :
+
+1. un `sudo mariadb` ponctuel (mot de passe sudo demandé une fois) ;
+2. création de `minishop@localhost` et `minishop@127.0.0.1` avec un mot de passe aléatoire hexadécimal ;
+3. droits **limités à `minishop.*`** (jamais `*.*`) ;
+4. écriture de `DB_USER` / `DB_PASSWORD` dans `.env` (fichier local, ignoré par Git).
+
+```bash
+php scripts/db_init.php --compte --yes    # équivalent manuel, sans run.sh
+php scripts/db_init.php --check           # vérifier ensuite (connexion + inventaire)
+```
+
+Si `sudo` est indisponible, la commande affiche le SQL exact à exécuter à la main, mot de passe compris :
+rien n'est caché, rien n'est laissé à moitié fait.
+
+`DB_SOCKET` reste utile dans un seul cas : une socket sur un chemin non standard, ou PHP lancé en root.
+
+Pour travailler avec un compte dédié (recommandé dès que la base n'est plus jetable) :
+
+```sql
+-- sudo mariadb
+CREATE DATABASE IF NOT EXISTS minishop CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER IF NOT EXISTS 'minishop'@'localhost' IDENTIFIED BY 'motdepasse_local';
+CREATE USER IF NOT EXISTS 'minishop'@'127.0.0.1' IDENTIFIED BY 'motdepasse_local';
+GRANT ALL PRIVILEGES ON minishop.* TO 'minishop'@'localhost';
+GRANT ALL PRIVILEGES ON minishop.* TO 'minishop'@'127.0.0.1';
+```
+
+```ini
+DB_USER=minishop
+DB_PASSWORD=motdepasse_local
+```
+
+Ordre de priorité : **variables d'environnement réelles** > `.env` > `app/Config/env.php` (ancien format,
+encore lu pour compatibilité) > valeurs par défaut du code. L'application ne lit ce fichier qu'à un seul
+endroit (`App\Config\Env`, via `App\Config\Database`) : aucun contrôleur ne connaît d'identifiant.
+
+```bash
+DB_NAME=minishop_test php scripts/db_init.php --yes    # base jetable pour les essais
+STORAGE_DRIVER=json ./run.sh                           # forcer le JSON sans toucher au .env
+```
+
+Sans `run.sh` (équivalent manuel) : `php -S localhost:8000 -t public scripts/dev-router.php`.
+Le troisième argument est **indispensable** : le serveur intégré de PHP n'applique pas
+`public/.htaccess`, donc sans routeur `/catalogue` ou `/produit/…` répondent 404.
 
 Le script `load_db.sh` encapsule les fichiers contenant des procédures/triggers avec un
 `DELIMITER $$` (le client `mysql` n'accepte pas `DELIMITER` en mode batch). Sous MySQL Workbench ou
@@ -114,22 +232,22 @@ UNION ALL SELECT 'procedures', COUNT(*) FROM information_schema.routines WHERE r
 UNION ALL SELECT 'triggers',   COUNT(*) FROM (SELECT DISTINCT TRIGGER_NAME FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA = DATABASE()) t;
 ```
 
-8 tables · 3 vues · 1 fonction + 17 procédures stockées · 16 déclencheurs · 12 produits · 4 catégories · 3 clients · 1 admin · 4 commandes de démonstration (dont une qui paie 4,90 EUR de frais de port).
+8 tables · 3 vues · 1 fonction + 17 procédures stockées · 16 déclencheurs · 36 produits · 4 catégories · 3 clients · 1 admin · 4 commandes de démonstration (dont une qui paie 4,90 EUR de frais de port).
 
 ## État réel du dépôt (à lire avant de chercher un fichier)
 
 | Zone | Statut | Comment le vérifier |
 |---|---|---|
-| `app/**`, `public/**`, `data/`, `scripts/seed.php` | **application livrée et testée** (PHP pur, moteur JSON, zéro SQL ; une seule feuille CSS, `public/minishop.css`, limitée au bouton d'action principal du panier) | `npm run test:all` → suites vertes (cf. « Tests livrés ») |
-| `app/Model/Data/` | moteur « JSON-comme-SGBD » : schéma, contraintes (NOT NULL/ENUM/CHECK/UNIQUE/FK), triggers, transactions, vues, journal JSONL — piloté par l'énumération `StorageDriver` (JSON actif, SQL en stub pour la fusion finale) | `node scripts/wasm_run.mjs tests/php/engine_smoke.php` |
+| `app/**`, `public/**`, `data/`, `scripts/seed.php` | **application livrée et testée** (PHP pur, moteur JSON, **design system CSS/JS + SVG**) | `npm run test:all` → 10 suites PHP vertes + E2E WASM 268 ; contrat catalogue JSON : 7 656 scénarios sur le jeu actuel |
+| `app/Model/Data/` | moteur « JSON-comme-SGBD » : schéma, contraintes (NOT NULL/ENUM/CHECK/UNIQUE/FK), triggers, transactions, vues, journal JSONL — piloté par l'énumération `StorageDriver` (JSON actif ; `SqlStore` = pilote PDO réel, procédures à brancher) | `node scripts/wasm_run.mjs tests/php/engine_smoke.php` |
 | `tests/php/**`, `scripts/wasm-e2e.mjs`, `scripts/run-all-tests.mjs` | **livrés et exécutés** (voir « Tests livrés » ci-dessus) | `npm run test:all` |
 | `sql/`, `tests/sql/`, `docs/` (CDC, tests, soutenance, annexes, diagrammes) | **livrés** ; `sql/` = référence comportementale du moteur JSON | `./scripts/run_sql_tests.sh` → 29/29 |
-| `tests/security/controles.sh`, `tests/charge/reserver.sh`, `tests/perf/mesurer.sh` | **scripts livrés** ; les deux derniers supposent l'application en service | `bash -n` passe |
+| `tests/security/controles.sh`, `tests/charge/reserver.sh`, `tests/perf/mesurer.sh`, `scripts/capture_perf.sh` | **scripts livrés** ; la charge et les mesures supposent l'application en service | `bash -n` passe |
 | `tests/sql/out/*.log` | non versionnés (régénérables) — seul `tests/sql/rapport_tests_sql.md` est versionné, preuve de recette à l'appui | `.gitignore`, §14.1 règle 7 |
 
 ## Tests livrés
 
-L'application est livrée avec **cinq suites, toutes vertes**, exécutables d'un bloc :
+L'application est livrée avec **huit suites, toutes vertes**, exécutables d'un bloc :
 
 ```bash
 npm run test:all        # ou : node scripts/run-all-tests.mjs
@@ -139,16 +257,58 @@ npm run test:all        # ou : node scripts/run-all-tests.mjs
 
 | Suite | Fichier | Couverture | Verdict |
 |---|---|---|---|
-| Linter strict types | `scripts/strict_types_lint.php` | règle `declare_strict_types` de php-cs-fixer + types natifs « PHPStan level 9 » (params, retours, propriétés) + **règle maison : opérateur ternaire interdit** (`? :` et `?:`, remplacés par `if/else` ; `??` et types nullables `?int` autorisés) sur **tout le livrable PHP** | ✅ 0 violation / 79 fichiers |
+| Linter strict types | `scripts/strict_types_lint.php` | règle `declare_strict_types` de php-cs-fixer + types natifs « PHPStan level 9 » (params, retours, propriétés) + **règle maison : opérateur ternaire interdit** (`? :` et `?:`, remplacés par `if/else` ; `??` et types nullables `?int` autorisés) sur **tout le livrable PHP** | ✅ 0 violation / 100 fichiers |
 | Moteur JSON | `tests/php/engine_smoke.php` | contraintes, triggers, transactions, journal du moteur | ✅ vert |
 | Règles de gestion | `tests/php/run_tests.php` | T-01…T-29 du document de tests (RB-01…RB-20, vues, frais de port) | ✅ 29/29 |
-| Unitaires | `tests/php/unit_tests.php` | `Text` (fold/slug/collation), échappement, CSRF, **matrice RB-11 complète** (36 couples), `Filter`, `PanierSession`, prix TTC, journal | ✅ 98/98 |
-| Fonctionnalités | `tests/php/features_test.php` | **UC-01…UC-14** via les repositories (catalogue, compte, panier, commande, annulation, back-office, indicateurs) | ✅ 108/108 |
-| E2E HTTP | `scripts/wasm-e2e.mjs` | T1…T13 : parcours réels (cookies + CSRF) — pages publiques, auth, commande 488,40 €, annulation, back-office, cloisonnement, catalogue avancé, compte, panier (plafond/re-tri/prix falsifié), CRUD admin, filtres + audit + journal, **sécurité offensive** (injection, XSS stocké, IDOR, fixation de session, traversées, escalation), rôles RB-13 | ✅ 150/150 |
+| Unitaires | `tests/php/unit_tests.php` | `Text` (fold/slug/collation), échappement, CSRF, **matrice RB-11 complète** (36 couples), `Filter`, `PanierSession`, prix TTC, journal, **`.env`**, versions SGBD, **DSN et repli socket Unix** | ✅ 282/282 |
+| Fonctionnalités | `tests/php/features_test.php` | **UC-01…UC-14** via les repositories (catalogue, compte, panier, commande, annulation, back-office, indicateurs) | ✅ 131/131 |
+| Catalogue : ruptures en dernier | `tests/php/catalogue_stock_test.php` | noms et références, recherche, filtres, tris et pages ; scénarios en stock, en rupture et réapprovisionnement ; fixture JSON jetable | ✅ 7 656 scénarios sur le jeu actuel |
+| Derniers ajouts | `tests/php/nouveautes_test.php` | dates, égalités, visibilité, pagination, création, modification et rupture ; fixture JSON isolée | ✅ 18/18 |
+| Contrats de design | `tests/php/css_contract.php` | tokens de `docs/DA.md`, contrastes WCAG calculés, classes des vues réellement définies, `prefers-reduced-motion`, feuille d'impression, **illustration du hero** (signature JPEG, dimensions, poids, `alt`, CLS) | ✅ 69/69 |
+| Contrat responsive | `tests/php/responsive_contract.php` | 320 px → 1536 px : paliers en `em`, menu repliable, tableaux accessibles, panier en cartes, `dvh`, encoches, `pointer: coarse`, container queries | ✅ 50/50 |
+| Contrats HTTP | `tests/php/contract_http.php` | chaque `href`/`action` des vues pointe vers une route déclarée (tous verbes : un `<form action>` vise une route POST), garde sur toutes les routes `/admin/*`, aucune écriture en `GET`, en-têtes CSP / `nosniff` / `Referrer-Policy` / `X-Frame-Options`, vues 403/404/500 | ✅ 28/28 |
+| Unitaires PHPUnit | `tests/phpunit/` | `Text`, `Filter`, moteur JSON (contraintes, transactions), matrice RB-11, prix TTC, contrats de sécurité — exécutés hors ligne par `run-local.php` | ✅ 34/34 |
+| Intégration SQL | `tests/php/sql_integration.php` | crée une base de test absente, charge `sql/01` → `sql/04`, vérifie le catalogue via `SqlStore`, rejoue les **29 scénarios**, puis supprime cette base ; refuse par défaut une base existante et toujours `DB_NAME` | ✅ 29/29 (avec serveur) / ⏭ NON JOUÉ sinon |
+| Autotest du harnais | `scripts/wasm_verdict.mjs` | le verdict d'une suite ne peut pas venir du `exitCode` de PHP-WASM (mesuré : 1 pour un script normal, 0 pour `exit(3)`, 0 sur erreur fatale) : 7 cas vérifient le calcul réel (0 / 1 / 2 / 255) | ✅ 7/7 |
+| E2E HTTP | `scripts/wasm-e2e.mjs` | T1…T14 : requêtes au front controller sous PHP-WASM (cookies + CSRF, sans navigateur) — pages publiques, auth, commande 488,40 €, annulation, back-office, cloisonnement, catalogue avancé, compte, panier (plafond/re-tri/prix falsifié), CRUD admin, filtres + audit + journal, **sécurité offensive** (injection, XSS stocké, IDOR, fixation de session, traversées, escalation), rôles RB-13, contact/API/paramètres, pages juridiques, cookies et dates des derniers ajouts | ✅ 301/301 |
 
-Commandes individuelles : `npm test` (règles), `npm run test:units`, `npm run test:features`, `npm run test:e2e` (re-seed puis parcours HTTP ; l'E2E **pollue** `data/minishop` par construction — re-seeder ensuite : `node scripts/wasm_run.mjs scripts/seed.php`).
+### Lancer les tests sans toucher à SQL ni à l’E2E
+
+Prérequis : PHP CLI **8.2 ou plus**, extension `mbstring`, et **Python 3**. Aucun paquet npm n’est nécessaire pour ces commandes. Dans le dossier du projet :
+
+```bash
+php -v
+php -m | grep -i '^mbstring$'
+python3 --version
+
+# Analyse PHP de compilation, sans exécuter les fichiers et sans base :
+python3 scripts/verifier_deprecations.py
+
+# Suites PHP + contrôle des dépréciations, sans SQL ni E2E :
+php scripts/run-all-tests.php --sans-sql --sans-e2e
+```
+
+Un résultat vert indique **« aucune détectée à l’analyse »** pour la version PHP affichée et **« TOUT EST VERT »** pour les suites exécutées. SQL et E2E doivent être indiqués **NON JOUÉ** : ils ne sont pas validés par cette commande. Une dépréciation détectée ou un test en échec fait sortir le runner en code 1. Si PHP est absent, l’analyse seule annonce **NON JOUÉ** et sort en code 2. Vérifier avec chaque version PHP réellement utilisée, notamment celle de l’hébergement.
+
+L’analyse compile les fichiers PHP dans `app`, `public`, `scripts`, `tests/php` et `tests/phpunit`, sans exécuter leur code ; elle détecte aussi un message `Deprecated` quand `php -l` renvoie quand même 0. Les suites PHP sont lancées avec un détecteur d’`E_DEPRECATED` et `E_USER_DEPRECATED`, même masquées par `@` : une dépréciation observée fait échouer la suite. Les autotests utilisent des fichiers temporaires, y compris une **copie isolée** du schéma SQL, sans serveur SQL. Limites : code non exécuté, gestionnaire d’erreur PHP remplacé par le code testé, dépendances exclues et autres langages ne sont pas couverts ; le PHP CLI local peut différer de celui du serveur Web. Les dépréciations à l’exécution de l’E2E HTTP ne sont pas couvertes par ce garde.
+
+### Audit du code et des fichiers
+
+Le runner ci-dessus vérifie aussi les nouveaux candidats au code inutilisé et l’inventaire des fichiers applicatifs versionnés. Pour consulter **tous** les candidats déjà identifiés, sans modifier les fichiers :
+
+```bash
+php scripts/code_mort.php --rapport
+```
+
+Résultat : des **candidats à examiner**, pas une preuve qu’on peut les supprimer. Les paramètres non cités, certaines variables écrites une seule fois et les fonctions/méthodes sans autre référence textuelle sont contrôlés ; appels dynamiques ou externes, variables globales, code JS/CSS et chemins non joués ne sont pas couverts exhaustivement. Lorsqu’un candidat est résolu ou qu’un nouveau candidat est jugé nécessaire, mettre à jour `scripts/code_mort_reference.json` **après revue**, pas pour masquer une alerte. L’[audit fichier par fichier](docs/16-audit-code-mort.md) explique le rôle des fichiers `app/` et `public/`, y compris les petits fichiers et les vues sans méthodes.
+
+**Attention :** sans `--sans-sql`, le runner crée puis supprime une base de test ; il refuse désormais une base existante et refuse la base configurée dans `DB_NAME`. L’option SQL `--reinitialiser-base-existante` est **destructive**, à utiliser uniquement après vérification sur un serveur jetable. Les autres scripts SQL directs peuvent aussi effacer des données. L’E2E, lui, crée ses données dans le système de fichiers PHP-WASM jetable, sans charger ni restaurer le dossier `data/` de l’hôte. Avec Node et PHP-WASM déjà installés, `node scripts/run-all-tests.mjs --sans-sql --sans-e2e` offre aussi ce mode ; sans PHP natif, il signale l’analyse de compilation **NON JOUÉE** et joue les suites PHP sous WASM 8.2. Ne pas interpréter cela comme une validation des versions PHP plus récentes.
+
+Commandes individuelles existantes : `npm test`, `npm run test:units`, `npm run test:features`, `npm run test:design`, `npm run test:responsive`, `npm run test:http`, `npm run test:phpunit`, `npm run test:e2e`, `npm run test:sql`, `npm run coverage`, `npm run perf`. Les commandes SQL et performance nécessitent un environnement isolé ; les tests lancés directement hors runner ne bénéficient pas automatiquement du garde des dépréciations.
 
 **Suite routeur de développement** (`tests/php/dev_router_test.php`, hors WASM) : lance le vrai `php -S … scripts/dev-router.php` en sous-processus — démarrage depuis un dossier étranger en chemins absolus (cas XAMPP) et depuis la racine en chemins relatifs (commande ci-dessus), fichiers réels de `public/` servis/exécutés directement, 404 du frontal, 7 traversées sans fuite, aide en exécution directe. PHP natif requis (`php tests/php/dev_router_test.php`, ou `npm run test:router`) ; en sandbox PHP-WASM elle se déclare SKIP. Elle est bloquante en CI GitHub, sur **Linux et Windows** (job `dev-router`, `MINISHOP_ROUTER_TEST_STRICT=1`).
+
+> **Intégration de `main` en cours :** les descriptions de régression ci-dessous proviennent de versions différentes et doivent encore être réconciliées avec les vues et CSS effectives. Les commandes `npm run test:ui...` historiques peuvent être absentes. Les scripts `scripts/ui-e2e-*.mjs` modifient le serveur cible : ne les lancer que sur une instance jetable dédiée, avec `UI_BASE_URL` et `UI_TEST_INSTANCE_JETABLE=1`. Aucun seed ou restauration de données utilisateur n’est lancé automatiquement par ces scripts.
 
 **Régression « doublon de catégorie »** (Admin > Catégories, EF-ADM-03) : créer une catégorie de nom déjà utilisé est **refusé** (`NOM_DEJA_UTILISE`, slug en collision : `SLUG_CATEGORIE_DEJA_UTILISE`), en création comme en renommage, sans toucher à la catégorie existante — l'ancien comportement fusionnait en silence et écrasait sa description. Verrouillé à deux niveaux : suite Repository dédiée `tests/php/categorie_doublon_test.php` (29 vérifications, `npm run test:categorie`, incluse dans `test:all`) et **E2E UI à clics réels** `scripts/ui-e2e-categories.mjs` (20 vérifications, `npm run test:ui`) qui remplit les formulaires et clique les boutons des vraies pages (connexion admin → création « Audio »/« test » → refus affiché, Audio intacte ; création témoin puis suppression par l'UI), contre `wasm-serve` en local ou `UI_BASE_URL` sur un serveur déjà lancé. En CI GitHub, le job `ui-e2e` rejoue les deux contre `php -S` natif.
 
@@ -184,9 +344,35 @@ Commandes individuelles : `npm test` (règles), `npm run test:units`, `npm run t
 
 Les suites PHP sont **autonomes** (aucun SQL, magasins JSON temporaires par section) : elles s'exécutent telles quelles avec `php tests/php/<suite>.php` sur une machine normale, ou via `node scripts/wasm_run.mjs` en sandbox.
 
+Deux mesures complémentaires, réservées à une machine avec PHP natif (elles lancent des processus enfants, ce que la sandbox ne permet pas — elles l'annoncent alors **NON JOUÉ** et sortent en code 2) :
+
+```bash
+php scripts/coverage.php --liste   # fichiers de app/ jamais chargés par une suite (code mort probable)
+php scripts/coverage.php --min=80  # échoue sous 80 % (CI)
+
+sudo bash scripts/capture_perf.sh  # volumétrie minishop_perf + mesures EXPLAIN / p95
+                                   # → tests/perf/dernieres_mesures.txt
+```
+
+La stratégie complète — pourquoi cette forme de pyramide, ce que chaque étage prouve, ce qu'il ne prouve pas, et ce qui n'est pas jouable en sandbox — est dans [`docs/11-strategie-tests.md`](docs/11-strategie-tests.md).
+
 **Qualité de code type « Packagist »** : sur machine normale (avec Composer), `composer cs:check` (php-cs-fixer, config `.php-cs-fixer.php`) et `composer lint:types` (PHPStan level 9 + strict-rules, config `phpstan.neon`) — tous deux en `require-dev`, **aucune dépendance runtime**. Dans la sandbox (Packagist injoignable), `npm run lint:types` rejoue les mêmes vérifications via le tokenizer PHP. Passages du 28/09 : 4 fermetures non typées corrigées, puis **éradication des 156 opérateurs ternaires du livrable** (vues, contrôleurs, dépôts, moteur, tests) remplacés par des `if/else` — règle maison ajoutée au linter.
 
-Compléments livrés par ailleurs : `bash tests/security/controles.sh` (contrôles statiques), `bash tests/charge/reserver.sh` (survente), `bash tests/perf/mesurer.sh` (p95, ENF-01), `docs/diagrams/render.sh` (14 diagrammes), `./scripts/build-docs.sh` (assemblage documentaire complet).
+Compléments livrés par ailleurs : `bash tests/security/controles.sh` (contrôles statiques, 10/10), `bash tests/charge/reserver.sh` (survente), `bash tests/perf/mesurer.sh` (p95, ENF-01), `docs/diagrams/render.sh` (14 diagrammes PlantUML), `bash scripts/build-docs.sh` (assemblage documentaire complet : HTML autonome, PDF, Word, diaporama).
+
+## Captures d'écran responsive (preuve visuelle du design)
+
+`scripts/screenshots.mjs` capture **32 pages** à plusieurs largeurs (320, 390, 768, 1024, 1440 px par défaut) dans trois sessions (public, client, back-office), puis produit une galerie HTML et un rapport Markdown. Un audit **WCAG 1.4.10** est injecté dans chaque page : tout élément qui déborde horizontalement est listé (les tableaux de données `.tableau-defilant` et les éléments `position: fixed` sont exclus, conformément à l'exception normative).
+
+```bash
+node scripts/wasm-serve.mjs 8080        # ou : ./run.sh  (php -S + routeur)
+npm install --save-dev puppeteer        # une seule fois (~150 Mo, Chromium inclus)
+npm run shots                           # 5 largeurs, 160 captures
+npm run shots -- --all-widths --pdf      # 8 largeurs + PDF d'impression
+npm run shots:check                      # diagnostic en 2 s, sans navigateur
+```
+
+Sorties : `captures/<page>/<largeur>.png`, `captures/index.html` (galerie), `captures/rapport.md` (débordements, contrastes de mise en page, tailles). Code de sortie `1` dès qu'un débordement ou une page en erreur est détecté → utilisable en CI. `--check` rejoue les 32 routes et les deux connexions sans navigateur : c'est la preuve vérifiable dans un environnement sans Chromium. Options détaillées : `node scripts/screenshots.mjs --help`.
 
 *Historique : la campagne SQL d'origine (`./scripts/run_sql_tests.sh`, 29/29, rapport `tests/sql/rapport_tests_sql.md`) reste jouable — `sql/` sert de référence comportementale au moteur JSON.*
 
@@ -196,10 +382,13 @@ Compléments livrés par ailleurs : `bash tests/security/controles.sh` (contrôl
 app/Config, app/Controller, app/Model, app/Repository, app/Security, app/View
 docs/{01-cahier-des-charges, 02-document-tests-validation, 03-support-soutenance, 04-conception-bd-et-sql, 05-wbs-projet, 06-todolist}, docs/annexes, docs/diagrams/{src/*.puml, *.png}
 public/{index.php, .htaccess, css, js, img, gen_volumes.php, mesurer.php (dev-only, navigateur)}
-scripts/{load_db.sh, run_sql_tests.sh, deploy.php, build-docs.sh, dev-router.php (routeur php -S, dev), gen_volumes.php (wrapper dev)}
+.env.example (configuration versionnée — copier vers .env)  ·  run.sh (lancement local en une commande)
+app/Config/Env.php + app/Tools/{DbInstaller,EnvFile,SqlLoader}.php (configuration et base MySQL)
+scripts/{load_db.sh, load_db.php, dev-router.php, run_sql_tests.sh, deploy.php, build-docs.sh, md_to_{html,pdf,docx,pptx}.py (rendus documentaires), screenshots.mjs (captures responsive), e2e.mjs (E2E dans WASM jetable), data_snapshot.mjs (ancien utilitaire à ne pas employer sur des données à conserver), gen_volumes.php (wrapper dev)}
 sql/{01_minishop_schema.sql, 02_minishop_procedures.sql, 03_minishop_triggers.sql, 04_minishop_demo.sql}
 tests/{sql/** (manifest, fixture, tNN_*.sql, rapport), security/controles.sh, charge/reserver.sh, perf/mesurer_sql.sh, perf/mesurer.php→public/mesurer.php, php/**}
-var/log  ·  .gitignore  ·  .gitlab-ci.yml (6 jobs, prod)  ·  .github/workflows/ci.yml (6 jobs + dev-router, dev/GitHub)
+livrables/{html,pdf,docx,minishop-soutenance.pptx} (rendus versionnés)  ·  var/log  ·  .gitignore
+.gitlab-ci.yml (6 jobs, prod)  ·  .github/workflows/ci.yml (6 jobs, dev/GitHub)
 ```
 
 ## Documents et rendus (les diagrammes ne s'affichent PAS dans un aperçu sans réseau)
@@ -247,9 +436,9 @@ Projet pédagogique — code et documents fournis tels quels, usage pédagogique
 
 **Régression « CGV article 4 : annulation ≠ rétractation »** (signalement n° 19, art. L221-18 du code de la consommation) : l'article 4 des CGV s'intitulait « Droit de rétractation » et disait « Conformément au droit de rétractation, le client peut annuler sa commande tant qu'elle n'a pas été expédiée » — juridiquement faux : pour un achat à distance, le droit de rétractation court **14 jours à compter de la réception** du bien ; ce que MiniShop propose avant l'expédition est une **annulation avant expédition**, facilité de la boutique. Correctif (rédactionnel, la règle métier ne change pas) : article 4 renommé « Annulation avant expédition » — mécanisme réel décrit (avant expédition, stock restitué, port compris soldé), droit légal explicitement distingué avec son point de départ (14 jours à compter de la réception, art. L221-18, renvoi à la page Rétractation) et rappel qu'aucune rétractation ni aucun retour n'est mis en œuvre sur cette maquette pédagogique ; même phrase corrigée sous le bouton d'annulation du détail de commande (« annulation avant expédition, CGV art. 4 ») ; page Rétractation restructurée pour ne plus confondre les deux notions (« ne se confond pas avec le droit de rétractation »). Verrouillé par `tests/php/cgv_retractation_test.php` (19 vérifications : vues CGV/Rétractation/détail/aide/livraison rendues et relues, plus le comportement réel — annulation acceptée avant expédition avec stock restitué, refusée après avec `COMMANDE_NON_ANNULABLE`) et par l'E2E UI `scripts/ui-e2e-retractation.mjs` (13 vérifications, `npm run test:ui-retractation`) : CGV et Rétractation lues comme un client, parcours commande complet jusqu'à l'écran de confirmation d'annulation, aide et livraison cohérentes. Les attentes de `scripts/ui-e2e-pied-de-page.mjs` qui verrouillaient l'ancien titre fautif ont été alignées.
 
-**Régression « mentions légales incomplètes »** (signalement n° 20, EF-GEN-05) : la page ne donnait ni le nom ni un contact de l'éditeur, ni l'hébergeur, et annonçait « BUT Informatique / Licence 3 » alors que l'équipe est en BUT2. Correctif : la section Éditeur nomme l'équipe projet MiniShop (BUT2, Université Côte d'Azur) et donne un moyen de la joindre (lien vers la page Contact du site — aucune donnée personnelle inventée pour une maquette), une section **Hébergeur** nomme l'Université Côte d'Azur et sa plateforme LineServ, et le cadre affiché est le bon (BUT2) — la même erreur de niveau a été corrigée sur la page Contact et dans le « Cadre » du présent README. Verrouillé par `tests/php/mentions_legales_test.php` (9 vérifications : page rendue relue — éditeur nommé, lien Contact présent dans le HTML, hébergeur nommé après son titre — et absence de « Licence 3 » sur toutes les pages statiques visibles) et par l'E2E UI `scripts/ui-e2e-mentions.mjs` (8 vérifications, `npm run test:ui-mentions`) : page lue comme un client, lien Contact réellement cliqué jusqu'à /contact, README lu et comparé.
+**Mentions légales :** les coordonnées de l’éditeur et de l’hébergeur restent à renseigner et vérifier pour tout déploiement réel. Le formulaire de démonstration ne remplace pas un moyen de contact professionnel.
 
-**Régression « Contact : promesse de réponse et données »** (signalement n° 21, EF-GEN-05) : ni la promesse « sous 2 jours ouvrés » ni la mention « aucune donnée personnelle conservée » n'existaient dans l'application (aucun formulaire de contact du tout, pied de page limité à « aucun paiement réel ») — les incohérences réelles, voisines, étaient la réserve au conditionnel reléguée en petits caractères sur Contact (« Aucun message envoyé à un éventuel canal de contact ne serait traité », pour un canal inexistant), la page Confidentialité qui envoyait les demandes de données « par la page Contact » d'où rien ne peut partir, et les Mentions légales qui affirmaient que les comptes « contiennent des données fictives » alors que l'inscription enregistre nom et e-mail (conservés 36 mois). Correctif : Contact dit en pleine page qu'il n'y a ni formulaire ni service client, qu'aucun message ne peut être envoyé et qu'aucune réponse ne sera donc apportée ; Confidentialité désigne « Mon compte » comme seule voie de demande de la maquette ; les Mentions légales conseillent des informations fictives au lieu de l'affirmer et renvoient à Confidentialité — la transparence (données enregistrées, 36 mois) ne bouge pas. Verrouillé par `tests/php/contact_coherence_test.php` (13 vérifications : trois pages rendues relues, pied de page lu dans le layout, balayage des pages statiques) et par l'E2E UI `scripts/ui-e2e-contact.mjs` (9 vérifications, `npm run test:ui-contact`) : Contact et son pied de page servis, Confidentialité ouverte par clic depuis Contact, Mentions légales cohérentes.
+**Contact de démonstration :** le formulaire est conservé. Le nom, l’e-mail et le message sont enregistrés localement dans `var/log/contact.jsonl` ; aucun e-mail n’est envoyé et aucune réponse n’est garantie. La page de confidentialité décrit cette conservation sans promettre de purge automatique ; les coordonnées du responsable restent à renseigner. Le formulaire ne garantit pas le traitement d’une demande de droits. Les parcours UI doivent cibler exclusivement une instance de test jetable.
 
 **Régression « annulée : 0 article, 0,00 € »** (signalement n° 22, RB-18, RB-20, RB-15) : après une annulation, la commande affichait 0 article et 0,00 € — le 0,00 € est conforme à RB-20 (plus rien à facturer), mais les lignes étaient **supprimées**, ce qui restituait le stock et rendait la formule RB-15 (montant = lignes + port) vraie à zéro ; le client ne voyait plus ce qu'il avait commandé. Correctif : les lignes sont **conservées comme historique** (noms, prix figés, quantités), le stock est restitué explicitement ligne à ligne, port et montant restent soldés à 0, et le total d'origine (port compris) est mémorisé dans la nouvelle colonne `commande.montant_avant_annulation` ; le déclencheur RB-15 (PHP et SQL) admet l'état soldé (ANNULEE et montant 0) comme seul écart à la formule et continue de refuser tout autre montant incohérent, y compris de relever un montant soldé. La spécification SQL est amendée en cohérence (`sql/01` colonne, `sql/02` sp_cancel_order ne supprime plus les lignes, `sql/03` exemption soldée). Affichage : détail client et admin montrent les articles, le « Total de la commande avant annulation » puis le « Montant soldé (annulée — rien à payer) » ; « Mes commandes » recompte les articles. Verrouillé par `tests/php/annulation_historique_test.php` (12 vérifications : moteur — lignes conservées, stock exact, soldes, mémoire du total, seconde annulation refusée, RB-15 toujours armée — et vues rendues depuis les vraies données) et par l'E2E UI `scripts/ui-e2e-annulation-historique.mjs` (9 vérifications, `npm run test:ui-annulation-historique`) : achat, annulation réelle par les écrans de confirmation, détail rouvert et liste relue. Le verrou historique de `tests/php/features_test.php` (« lignes purgées ») a été actualisé en « lignes conservées comme historique ».
 

@@ -12,7 +12,8 @@ declare(strict_types=1);
  *    "new":{…}}
  *
  * Équivalent du binlog MySQL en beaucoup plus simple : rejouable, greppable,
- * et consultable depuis le back-office pour justifier une traçabilité.
+ * lisible par un outil autorisé. Aucune interface de consultation n'est
+ * actuellement branchée dans le back-office.
  * Si le dossier var/ n'est pas inscriptible, le moteur continue de fonctionner
  * (le journal est une exigence de traçabilité, pas une dépendance forte).
  */
@@ -64,10 +65,10 @@ final class Journal
         }
     }
 
-    /** @return list<array<string,mixed>> les N dernières écritures (audit BO). */
+    /** @return list<array<string,mixed>> entrées valides parmi les N dernières lignes ; N <= 0 donne []. */
     public function tail(int $limit = 50): array
     {
-        if (!is_file($this->filePath)) {
+        if ($limit <= 0 || !is_file($this->filePath)) {
             return [];
         }
         $lines = @file($this->filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);

@@ -20,6 +20,12 @@
 import { spawn, spawnSync } from 'node:child_process';
 import { JSDOM } from 'jsdom';
 
+// Ces parcours modifient le serveur ciblé : jamais les lancer implicitement sur les données locales.
+if (!process.env.UI_BASE_URL || process.env.UI_TEST_INSTANCE_JETABLE !== '1') {
+  console.error('UI_BASE_URL et UI_TEST_INSTANCE_JETABLE=1 requis : utiliser uniquement une instance de test jetable. Ces tests modifient ses données.');
+  process.exit(2);
+}
+
 const PORT = 8132;
 const base = process.env.UI_BASE_URL ?? `http://127.0.0.1:${PORT}`;
 let échecs = 0;
@@ -148,7 +154,6 @@ async function attendreServeur() {
 
 async function aller() {
   if (!process.env.UI_BASE_URL) {
-    spawnSync('node', ['scripts/wasm_run.mjs', 'scripts/seed.php'], { stdio: 'inherit' });
     serveur = spawn('node', ['scripts/wasm-serve.mjs'], { env: { ...process.env, PORT: String(PORT) }, stdio: 'inherit' });
     await attendreServeur();
   }
@@ -158,8 +163,8 @@ async function aller() {
   await navigateur.aller('/catalogue');
   const liens = [...navigateur.doc.querySelectorAll('a[href^="/produit/"]')];
   let lienFiche = liens.find((a) => a.textContent.includes('Câble')) ?? liens[0];
-  const nomProduit = lienFiche.textContent.trim();
   await navigateur.aller(lienFiche.getAttribute('href'));
+  const nomProduit = navigateur.doc.querySelector('h1').textContent.trim();
   await navigateur.cliquerBouton(navigateur.doc.querySelector('form[action="/panier/ajouter"] button'));
   await navigateur.aller('/inscription');
   navigateur.remplir('#nom', 'Dupont');
@@ -210,7 +215,6 @@ async function aller() {
   console.log(`\n${échecs === 0 ? '✅' : '❌'} Annulation historique : ${échecs === 0 ? 'toutes les vérifications réussies' : échecs + ' vérification(s) en échec'}\n`);
   if (serveur) {
     serveur.kill();
-    spawnSync('git', ['checkout', '--', 'data'], { stdio: 'inherit' });
   }
   process.exit(échecs === 0 ? 0 : 1);
 }
@@ -219,7 +223,6 @@ aller().catch(async (error) => {
   console.error('❌ Erreur E2E annulation historique :', error.message);
   if (serveur) {
     serveur.kill();
-    spawnSync('git', ['checkout', '--', 'data'], { stdio: 'inherit' });
   }
   process.exit(1);
 });

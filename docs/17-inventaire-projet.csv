@@ -1,0 +1,469 @@
+chemin,categorie,controle_structurel
+.env.example,Configuration et fichiers racine,Présence et non-vide uniquement
+.github/workflows/ci.yml,Outils et intégration continue,Présence et non-vide uniquement
+.gitignore,Configuration et fichiers racine,Présence et non-vide uniquement
+.gitlab-ci.yml,Configuration et fichiers racine,Présence et non-vide uniquement
+.gitlab/merge_request_templates/Bugfix.md,Outils et intégration continue,Présence et non-vide uniquement
+.gitlab/merge_request_templates/Docs.md,Outils et intégration continue,Présence et non-vide uniquement
+.gitlab/merge_request_templates/Lot.md,Outils et intégration continue,Présence et non-vide uniquement
+.gitlab/merge_request_templates/Release.md,Outils et intégration continue,Présence et non-vide uniquement
+.php-cs-fixer.php,Configuration et fichiers racine,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+.tools/README.md,Outils et intégration continue,Présence et non-vide uniquement
+.tools/build_doc04.py,Outils et intégration continue,"Présence, non-vide, syntaxe Python"
+.tools/build_doc04_html.py,Outils et intégration continue,"Présence, non-vide, syntaxe Python"
+.tools/build_todolist.py,Outils et intégration continue,"Présence, non-vide, syntaxe Python"
+.tools/build_wbs.py,Outils et intégration continue,"Présence, non-vide, syntaxe Python"
+README.md,Configuration et fichiers racine,Présence et non-vide uniquement
+app/Config/Database.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Config/DbConnexion.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Config/Env.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Config/env.example.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Controller/Admin/CategorieAdminController.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Controller/Admin/CommandeAdminController.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Controller/Admin/DashboardController.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Controller/Admin/EquipeAdminController.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Controller/Admin/ParametreAdminController.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Controller/Admin/ProduitAdminController.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Controller/Admin/StockAdminController.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Controller/ApiController.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Controller/AuthController.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Controller/CatalogueController.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Controller/CommandeController.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Controller/CompteController.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Controller/Controller.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Controller/HomeController.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Controller/PanierController.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Model/Data/BusinessError.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Model/Data/ConstraintError.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Model/Data/Errors.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Model/Data/Filter.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Model/Data/Journal.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Model/Data/JsonStore.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Model/Data/JsonTable.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Model/Data/QueryError.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Model/Data/Schema.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Model/Data/SchemaError.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Model/Data/Seed.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Model/Data/SqlStore.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Model/Data/StorageDriver.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Model/Data/StoreInterface.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Model/Data/Text.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Model/Data/Triggers.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Model/Data/Views.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Model/PanierSession.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Repository/CategorieRepository.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Repository/ClientRepository.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Repository/CommandeRepository.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Repository/ParametreRepository.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Repository/ProduitRepository.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Router.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Security/AccesRefuse.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Security/Auth.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Security/Csrf.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Security/xss.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Tools/DbInstaller.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Tools/DbProvision.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Tools/EnvFile.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Tools/Heure.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Tools/Revision.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Tools/SqlLoader.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Tools/VolumetryGenerator.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/Image/AlternativeDecorative.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/Image/AlternativeImage.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/Image/AlternativeInformative.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/admin/categories.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/admin/commande_detail.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/admin/commandes.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/admin/confirmer_suppression_categorie.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/admin/confirmer_suppression_produit.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/admin/dashboard.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/admin/equipe.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/admin/parametres.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/admin/produit_form.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/admin/produits.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/admin/stocks.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/auth/admin_connexion.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/auth/connexion.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/auth/inscription.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/catalogue/index.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/catalogue/produit.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/commande/confirmer_annulation.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/commande/detail.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/commande/mes.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/commande/valider.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/compte/index.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/errors/403.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/errors/404.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/errors/500.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/home/aide.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/home/apropos.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/home/categories.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/home/cgu.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/home/cgv.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/home/confidentialite.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/home/contact.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/home/cookies.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/home/garanties.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/home/garanties_encadre.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/home/index.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/home/livraison.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/home/mentions_legales.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/home/retractation.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/layout.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/panier/index.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/bootstrap.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+artefacts/01-cahier-des-charges-MiniShop.html,Artefacts documentaires,Présence et non-vide uniquement
+artefacts/02-document-tests-validation.html,Artefacts documentaires,Présence et non-vide uniquement
+artefacts/03-support-soutenance.html,Artefacts documentaires,Présence et non-vide uniquement
+artefacts/04-conception-bd-et-sql.html,Artefacts documentaires,Présence et non-vide uniquement
+artefacts/05-wbs-projet.html,Artefacts documentaires,Présence et non-vide uniquement
+artefacts/06-todolist.html,Artefacts documentaires,Présence et non-vide uniquement
+artefacts/README.html,Artefacts documentaires,Présence et non-vide uniquement
+composer.json,Configuration et fichiers racine,"Présence, non-vide, structure JSON"
+data/minishop/administrateur.json,Données de démonstration,"Présence, non-vide, structure JSON"
+data/minishop/categorie.json,Données de démonstration,"Présence, non-vide, structure JSON"
+data/minishop/client.json,Données de démonstration,"Présence, non-vide, structure JSON"
+data/minishop/commande.json,Données de démonstration,"Présence, non-vide, structure JSON"
+data/minishop/ligne_commande.json,Données de démonstration,"Présence, non-vide, structure JSON"
+data/minishop/order_status_history.json,Données de démonstration,"Présence, non-vide, structure JSON"
+data/minishop/parametre.json,Données de démonstration,"Présence, non-vide, structure JSON"
+data/minishop/produit.json,Données de démonstration,"Présence, non-vide, structure JSON"
+docs/01-cahier-des-charges-MiniShop.md,Documentation,Présence et non-vide uniquement
+docs/02-document-tests-validation.md,Documentation,Présence et non-vide uniquement
+docs/03-support-soutenance.md,Documentation,Présence et non-vide uniquement
+docs/04-conception-bd-et-sql.md,Documentation,Présence et non-vide uniquement
+docs/05-wbs-projet.md,Documentation,Présence et non-vide uniquement
+docs/06-todolist.md,Documentation,Présence et non-vide uniquement
+docs/07-note-cybersecurite.md,Documentation,Présence et non-vide uniquement
+docs/08-fiche-suivi-commits.md,Documentation,Présence et non-vide uniquement
+docs/09-audit-ecarts.md,Documentation,Présence et non-vide uniquement
+docs/10-todo-corrections.md,Documentation,Présence et non-vide uniquement
+docs/11-strategie-tests.md,Documentation,Présence et non-vide uniquement
+docs/12-diaporama-soutenance.md,Documentation,Présence et non-vide uniquement
+docs/12-information-juridique.md,Documentation,Présence et non-vide uniquement
+docs/13-fiches-recette-uc.md,Documentation,Présence et non-vide uniquement
+docs/13-suivi-recette-uc.csv,Documentation,Présence et non-vide uniquement
+docs/14-guide-lineserv.md,Documentation,Présence et non-vide uniquement
+docs/15-email-recette-lineserv.md,Documentation,Présence et non-vide uniquement
+docs/16-audit-code-mort.md,Documentation,Présence et non-vide uniquement
+docs/17-audit-global-projet.md,Documentation,Présence et non-vide uniquement
+docs/17-inventaire-projet.csv,Documentation,Présence et non-vide uniquement
+docs/DA.md,Documentation,Présence et non-vide uniquement
+docs/annexes/annexe-cas-usage.md,Documentation,Présence et non-vide uniquement
+docs/annexes/annexe-enf.md,Documentation,Présence et non-vide uniquement
+docs/annexes/annexe-gitlab.md,Documentation,Présence et non-vide uniquement
+docs/annexes/annexe-php-patterns.md,Documentation,Présence et non-vide uniquement
+docs/annexes/annexe-sql.md,Documentation,Présence et non-vide uniquement
+docs/diagrams/activite_passer_commande.png,Documentation,Présence et non-vide uniquement
+docs/diagrams/architecture_mvc.png,Documentation,Présence et non-vide uniquement
+docs/diagrams/cas_utilisation_commandes.png,Documentation,Présence et non-vide uniquement
+docs/diagrams/cas_utilisation_detail.png,Documentation,Présence et non-vide uniquement
+docs/diagrams/cas_utilisation_global.png,Documentation,Présence et non-vide uniquement
+docs/diagrams/diagramme_classes.png,Documentation,Présence et non-vide uniquement
+docs/diagrams/etats_commande.png,Documentation,Présence et non-vide uniquement
+docs/diagrams/mcd_minishop.png,Documentation,Présence et non-vide uniquement
+docs/diagrams/mld_minishop.png,Documentation,Présence et non-vide uniquement
+docs/diagrams/render.sh,Documentation,"Présence, non-vide, syntaxe Bash si disponible"
+docs/diagrams/seq_ajout_panier.png,Documentation,Présence et non-vide uniquement
+docs/diagrams/seq_authentification.png,Documentation,Présence et non-vide uniquement
+docs/diagrams/seq_consulter_catalogue.png,Documentation,Présence et non-vide uniquement
+docs/diagrams/seq_passer_commande.png,Documentation,Présence et non-vide uniquement
+docs/diagrams/seq_recherche_produit.png,Documentation,Présence et non-vide uniquement
+docs/diagrams/src/activite_passer_commande.puml,Documentation,Présence et non-vide uniquement
+docs/diagrams/src/architecture_mvc.puml,Documentation,Présence et non-vide uniquement
+docs/diagrams/src/cas_utilisation_commandes.puml,Documentation,Présence et non-vide uniquement
+docs/diagrams/src/cas_utilisation_detail.puml,Documentation,Présence et non-vide uniquement
+docs/diagrams/src/cas_utilisation_global.puml,Documentation,Présence et non-vide uniquement
+docs/diagrams/src/diagramme_classes.puml,Documentation,Présence et non-vide uniquement
+docs/diagrams/src/etats_commande.puml,Documentation,Présence et non-vide uniquement
+docs/diagrams/src/mcd_minishop.puml,Documentation,Présence et non-vide uniquement
+docs/diagrams/src/mld_minishop.puml,Documentation,Présence et non-vide uniquement
+docs/diagrams/src/seq_ajout_panier.puml,Documentation,Présence et non-vide uniquement
+docs/diagrams/src/seq_authentification.puml,Documentation,Présence et non-vide uniquement
+docs/diagrams/src/seq_consulter_catalogue.puml,Documentation,Présence et non-vide uniquement
+docs/diagrams/src/seq_passer_commande.puml,Documentation,Présence et non-vide uniquement
+docs/diagrams/src/seq_recherche_produit.puml,Documentation,Présence et non-vide uniquement
+docs/sql-a-ecrire/requetes-sql-a-ecrire.md,Documentation,Présence et non-vide uniquement
+docs/sql-a-ecrire/requetes-sql-a-ecrire.pdf,Documentation,Présence et non-vide uniquement
+livrables/README.md,Livrables,Présence et non-vide uniquement
+livrables/docx/01-cahier-des-charges-MiniShop.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/docx/02-document-tests-validation.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/docx/03-support-soutenance.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/docx/04-conception-bd-et-sql.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/docx/05-wbs-projet.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/docx/06-todolist.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/docx/07-note-cybersecurite.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/docx/08-fiche-suivi-commits.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/docx/09-audit-ecarts.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/docx/10-todo-corrections.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/docx/12-diaporama-soutenance.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/docx/DA.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/docx/README.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/docx/annexe-cas-usage.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/docx/annexe-enf.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/docx/annexe-gitlab.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/docx/annexe-php-patterns.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/docx/annexe-sql.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/docx/requetes-sql-a-ecrire.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/html/01-cahier-des-charges-MiniShop.html,Livrables,Présence et non-vide uniquement
+livrables/html/02-document-tests-validation.html,Livrables,Présence et non-vide uniquement
+livrables/html/03-support-soutenance.html,Livrables,Présence et non-vide uniquement
+livrables/html/04-conception-bd-et-sql.html,Livrables,Présence et non-vide uniquement
+livrables/html/05-wbs-projet.html,Livrables,Présence et non-vide uniquement
+livrables/html/06-todolist.html,Livrables,Présence et non-vide uniquement
+livrables/html/07-note-cybersecurite.html,Livrables,Présence et non-vide uniquement
+livrables/html/08-fiche-suivi-commits.html,Livrables,Présence et non-vide uniquement
+livrables/html/09-audit-ecarts.html,Livrables,Présence et non-vide uniquement
+livrables/html/10-todo-corrections.html,Livrables,Présence et non-vide uniquement
+livrables/html/12-diaporama-soutenance.html,Livrables,Présence et non-vide uniquement
+livrables/html/DA.html,Livrables,Présence et non-vide uniquement
+livrables/html/README.html,Livrables,Présence et non-vide uniquement
+livrables/html/annexe-cas-usage.html,Livrables,Présence et non-vide uniquement
+livrables/html/annexe-enf.html,Livrables,Présence et non-vide uniquement
+livrables/html/annexe-gitlab.html,Livrables,Présence et non-vide uniquement
+livrables/html/annexe-php-patterns.html,Livrables,Présence et non-vide uniquement
+livrables/html/annexe-sql.html,Livrables,Présence et non-vide uniquement
+livrables/html/requetes-sql-a-ecrire.html,Livrables,Présence et non-vide uniquement
+livrables/minishop-soutenance.pptx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/pdf/01-cahier-des-charges-MiniShop.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/02-document-tests-validation.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/03-support-soutenance.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/04-conception-bd-et-sql.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/05-wbs-projet.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/06-todolist.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/07-note-cybersecurite.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/08-fiche-suivi-commits.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/09-audit-ecarts.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/10-todo-corrections.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/12-diaporama-soutenance.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/DA.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/README.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/annexe-cas-usage.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/annexe-enf.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/annexe-gitlab.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/annexe-php-patterns.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/annexe-sql.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/requetes-sql-a-ecrire.pdf,Livrables,Présence et non-vide uniquement
+package-lock.json,Configuration et fichiers racine,"Présence, non-vide, structure JSON"
+package.json,Configuration et fichiers racine,"Présence, non-vide, structure JSON"
+phpstan.neon,Configuration et fichiers racine,Présence et non-vide uniquement
+phpunit.xml,Configuration et fichiers racine,"Présence, non-vide, structure XML"
+public/.htaccess,Ressources et point d’entrée publics,Présence et non-vide uniquement
+public/css/app.css,Ressources et point d’entrée publics,Présence et non-vide uniquement
+public/css/print.css,Ressources et point d’entrée publics,Présence et non-vide uniquement
+public/fonts/OFL.txt,Ressources et point d’entrée publics,Présence et non-vide uniquement
+public/fonts/minishop-euro.woff2,Ressources et point d’entrée publics,Présence et non-vide uniquement
+public/gen_volumes.php,Ressources et point d’entrée publics,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+public/img/aura.svg,Ressources publiques,"Présence, non-vide ; XML par contrôle séparé"
+public/img/band.svg,Ressources publiques,"Présence, non-vide ; XML par contrôle séparé"
+public/img/boom.svg,Ressources publiques,"Présence, non-vide ; XML par contrôle séparé"
+public/img/favicon.svg,Ressources et point d’entrée publics,"Présence, non-vide, structure XML SVG"
+public/img/fit2.svg,Ressources publiques,"Présence, non-vide ; XML par contrôle séparé"
+public/img/illustration-achat.jpg,Ressources et point d’entrée publics,Présence et non-vide uniquement
+public/img/k87.svg,Ressources publiques,"Présence, non-vide ; XML par contrôle séparé"
+public/img/logo-mark.svg,Ressources et point d’entrée publics,"Présence, non-vide, structure XML SVG"
+public/img/logo.svg,Ressources et point d’entrée publics,"Présence, non-vide, structure XML SVG"
+public/img/power20.svg,Ressources publiques,"Présence, non-vide ; XML par contrôle séparé"
+public/img/procast.svg,Ressources publiques,"Présence, non-vide ; XML par contrôle séparé"
+public/img/produits/aura.jpg,Ressources et point d’entrée publics,Présence et non-vide uniquement
+public/img/produits/band.jpg,Ressources et point d’entrée publics,Présence et non-vide uniquement
+public/img/produits/boom.jpg,Ressources et point d’entrée publics,Présence et non-vide uniquement
+public/img/produits/fit2.jpg,Ressources et point d’entrée publics,Présence et non-vide uniquement
+public/img/produits/k87.jpg,Ressources et point d’entrée publics,Présence et non-vide uniquement
+public/img/produits/power20.jpg,Ressources et point d’entrée publics,Présence et non-vide uniquement
+public/img/produits/procast.jpg,Ressources et point d’entrée publics,Présence et non-vide uniquement
+public/img/produits/qhd27.jpg,Ressources et point d’entrée publics,Présence et non-vide uniquement
+public/img/produits/sac25.jpg,Ressources et point d’entrée publics,Présence et non-vide uniquement
+public/img/produits/turbox.jpg,Ressources et point d’entrée publics,Présence et non-vide uniquement
+public/img/produits/usbc.jpg,Ressources et point d’entrée publics,Présence et non-vide uniquement
+public/img/produits/zen14.jpg,Ressources et point d’entrée publics,Présence et non-vide uniquement
+public/img/qhd27.svg,Ressources publiques,"Présence, non-vide ; XML par contrôle séparé"
+public/img/sac25.svg,Ressources publiques,"Présence, non-vide ; XML par contrôle séparé"
+public/img/turbox.svg,Ressources publiques,"Présence, non-vide ; XML par contrôle séparé"
+public/img/usbc.svg,Ressources publiques,"Présence, non-vide ; XML par contrôle séparé"
+public/img/zen14.svg,Ressources publiques,"Présence, non-vide ; XML par contrôle séparé"
+public/index.php,Ressources et point d’entrée publics,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+public/js/panier.js,Ressources et point d’entrée publics,"Présence, non-vide, syntaxe Node si disponible"
+public/js/ui.js,Ressources et point d’entrée publics,"Présence, non-vide, syntaxe Node si disponible"
+public/mesurer.php,Ressources et point d’entrée publics,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+public/minishop.css,Ressources publiques,Présence et non-vide uniquement
+requirements-docs.txt,Configuration et fichiers racine,Présence et non-vide uniquement
+run.sh,Configuration et fichiers racine,"Présence, non-vide, syntaxe Bash si disponible"
+scripts/ci_php_diagnostic.py,Scripts et outillage,"Présence, non-vide, compilation Python"
+scripts/aide.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+scripts/build-docs.sh,Scripts et outillage,"Présence, non-vide, syntaxe Bash si disponible"
+scripts/capture_perf.sh,Scripts et outillage,"Présence, non-vide, syntaxe Bash si disponible"
+scripts/code_mort.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+scripts/code_mort_lib.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+scripts/code_mort_reference.json,Scripts et outillage,"Présence, non-vide, structure JSON"
+scripts/coverage.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+scripts/data_snapshot.mjs,Scripts et outillage,"Présence, non-vide, syntaxe Node si disponible"
+scripts/db_init.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+scripts/deploy.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+scripts/dev-router.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+scripts/e2e.mjs,Scripts et outillage,"Présence, non-vide, syntaxe Node si disponible"
+scripts/gen_volumes.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+scripts/gen_volumes.sh,Scripts et outillage,"Présence, non-vide, syntaxe Bash si disponible"
+scripts/gen_volumes_cli.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+scripts/load_db.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+scripts/load_db.sh,Scripts et outillage,"Présence, non-vide, syntaxe Bash si disponible"
+scripts/maj-depuis-branche.sh,Scripts et outillage,"Présence, non-vide, syntaxe Bash si disponible"
+scripts/md_to_docx.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
+scripts/md_to_html.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
+scripts/md_to_pdf.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
+scripts/md_to_pptx.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
+scripts/preparer_sql_lineserv.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
+scripts/rejeu_gitlab.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
+scripts/run-all-tests.mjs,Scripts et outillage,"Présence, non-vide, syntaxe Node si disponible"
+scripts/run-all-tests.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+scripts/run_sql_tests.sh,Scripts et outillage,"Présence, non-vide, syntaxe Bash si disponible"
+scripts/screenshots.mjs,Scripts et outillage,"Présence, non-vide, syntaxe Node si disponible"
+scripts/seed.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+scripts/strict_types_lint.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+scripts/ui-e2e-alignement.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
+scripts/ui-e2e-annulation-historique.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
+scripts/ui-e2e-annulation.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
+scripts/ui-e2e-apropos.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
+scripts/ui-e2e-catalogue.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
+scripts/ui-e2e-categories-tableau.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
+scripts/ui-e2e-categories.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
+scripts/ui-e2e-codes.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
+scripts/ui-e2e-commandes-tableau.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
+scripts/ui-e2e-contact.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
+scripts/ui-e2e-divers.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
+scripts/ui-e2e-formulaires.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
+scripts/ui-e2e-heure.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
+scripts/ui-e2e-inscription.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
+scripts/ui-e2e-mentions.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
+scripts/ui-e2e-mes-commandes.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
+scripts/ui-e2e-panier-tableau.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
+scripts/ui-e2e-panier.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
+scripts/ui-e2e-pied-de-page.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
+scripts/ui-e2e-produit.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
+scripts/ui-e2e-retractation.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
+scripts/ui-e2e-stocks.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
+scripts/ui-e2e-valider.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
+scripts/verifier_deprecations.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
+scripts/verifier_fiches_uc.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
+scripts/wasm-e2e.mjs,Scripts et outillage,"Présence, non-vide, syntaxe Node si disponible"
+scripts/wasm-serve.mjs,Scripts et outillage,"Présence, non-vide, syntaxe Node si disponible"
+scripts/wasm_lib.mjs,Scripts et outillage,"Présence, non-vide, syntaxe Node si disponible"
+scripts/wasm_run.mjs,Scripts et outillage,"Présence, non-vide, syntaxe Node si disponible"
+scripts/wasm_verdict.mjs,Scripts et outillage,"Présence, non-vide, syntaxe Node si disponible"
+sql/01_minishop_schema.sql,SQL source,Présence et non-vide uniquement
+sql/02_minishop_procedures.sql,SQL source,Présence et non-vide uniquement
+sql/03_minishop_triggers.sql,SQL source,Présence et non-vide uniquement
+sql/04_minishop_demo.sql,SQL source,Présence et non-vide uniquement
+tests/charge/reserver.sh,Tests et fixtures,"Présence, non-vide, syntaxe Bash si disponible"
+tests/js/deprecations_wasm.mjs,Tests et fixtures,"Présence, non-vide, syntaxe Node si disponible"
+tests/node/e2e_isolation.mjs,Tests et fixtures,"Présence, non-vide, syntaxe Node si disponible"
+tests/perf/mesurer.sh,Tests et fixtures,"Présence, non-vide, syntaxe Bash si disponible"
+tests/perf/mesurer_sql.sh,Tests et fixtures,"Présence, non-vide, syntaxe Bash si disponible"
+tests/php/actions_destructrices_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/adresse_livraison_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/alignement_colonnes_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/annulation_historique_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/apropos_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/cartes_accessibilite_test.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/catalogue_filtres_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/catalogue_stock_cases.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/catalogue_stock_test.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/categorie_doublon_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/categories_tableau_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/cgv_retractation_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/code_mort_test.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/codes_techniques_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/commandes_tableau_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/contact_coherence_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/contract_http.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/css_contract.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/date_ajout_test.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/deprecations_bootstrap.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/dev_router_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/divers_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/engine_smoke.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/features_test.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/fiche_produit_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/formulaires_admin_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/heure_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/information_juridique_test.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/inscription_erreurs_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/mentions_legales_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/mes_commandes_tableau_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/nouveautes_cases.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/nouveautes_test.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/pages_pied_de_page_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/panier_cta_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/panier_tableau_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/responsive_contract.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/run_tests.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/sql_integration.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/stocks_defaut_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/unit_tests.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/valider_recap_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/phpunit/AlternativeImageTest.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/phpunit/FilterTest.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/phpunit/JournalEtTableTest.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/phpunit/JsonStoreTest.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/phpunit/PrixTest.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/phpunit/SecurityContractTest.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/phpunit/TextTest.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/phpunit/TriggersTest.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/phpunit/bootstrap.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/phpunit/run-local.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/python/test_aide_cli.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
+tests/python/test_audit_structurel.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
+tests/python/test_auth_403_http.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
+tests/python/test_code_mort_integration.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
+tests/python/test_deprecations.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
+tests/python/test_inventaire_app.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
+tests/python/test_preparer_sql_lineserv.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
+tests/python/test_securite_gitignore.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
+tests/security/controles.sh,Tests et fixtures,"Présence, non-vide, syntaxe Bash si disponible"
+tests/sql/fixture.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/manifest.txt,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/rapport_tests_sql.md,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/run_tests.sh,Tests et fixtures,"Présence, non-vide, syntaxe Bash si disponible"
+tests/sql/t01_prix_zero.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t02_stock_negatif.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t03_trigger_stock.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t04_email_duplicate.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t05_hash_obligatoire.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t06_quantite_zero.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t07_check_quantite.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t08_stock_insuffisant.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t09_stock_insuffisant_sp.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t10_montant_saisi.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t11_prix_modifie.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t12_transition.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t13_transition2.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t14_categorie_occupee.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t15_produit_commande.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t16_commande_vide.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t17_client_inexistant.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t18_a_dere.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t19_adjust_negatif.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t20_suppression_logique.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t21_annulation.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t22_historique.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t23_snapshot.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t24_purge.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t25_recherche.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t26_alerte_stock.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t27_vues.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t28_port.sql,Tests et fixtures,Présence et non-vide uniquement
+tests/sql/t29_rollback_commande.sql,Tests et fixtures,Présence et non-vide uniquement
+uploads/01_minishop_schema.txt,Copies SQL et captures,Présence et non-vide uniquement
+uploads/02_minishop_procedures.txt,Copies SQL et captures,Présence et non-vide uniquement
+uploads/03_minishop_triggers.txt,Copies SQL et captures,Présence et non-vide uniquement
+uploads/04_minishop_demo.txt,Copies SQL et captures,Présence et non-vide uniquement
+uploads/test_global_clean.png,Copies SQL et captures,Présence et non-vide uniquement
+uploads/test_global_final.png,Copies SQL et captures,Présence et non-vide uniquement
+uploads/test_global_final2.png,Copies SQL et captures,Présence et non-vide uniquement
+uploads/test_global_refait.png,Copies SQL et captures,Présence et non-vide uniquement
+uploads/test_global_ultra.png,Copies SQL et captures,Présence et non-vide uniquement
+uploads/test_global_v2.png,Copies SQL et captures,Présence et non-vide uniquement
+uploads/test_global_v3.png,Copies SQL et captures,Présence et non-vide uniquement
+uploads/test_global_v4.png,Copies SQL et captures,Présence et non-vide uniquement
+uploads/test_global_v5.png,Copies SQL et captures,Présence et non-vide uniquement
+uploads/test_global_v6_1720.png,Copies SQL et captures,Présence et non-vide uniquement

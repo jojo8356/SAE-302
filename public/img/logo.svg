@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 232 48" role="img" aria-label="MiniShop">
+  <rect width="48" height="48" rx="12" fill="#1D4ED8"/>
+  <path d="M12 34V16l6 7.5 6-7.5v18" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="35" cy="20" r="3" fill="#C2410C"/>
+  <path d="M35 23v10h-6" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  <text x="60" y="31" font-family="system-ui, Segoe UI, Roboto, Arial, sans-serif" font-size="22" font-weight="700" fill="#0F172A">MiniShop</text>
+  <text x="60" y="42" font-family="system-ui, Segoe UI, Roboto, Arial, sans-serif" font-size="9" letter-spacing="1.6" fill="#475569">MATÉRIEL &amp; OBJETS CONNECTÉS</text>
+</svg>

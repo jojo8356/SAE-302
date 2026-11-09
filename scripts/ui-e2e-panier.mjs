@@ -13,7 +13,7 @@
  *   - sur /panier, le CTA est un <button type="submit"
  *     class="bouton-principal"> dans un GET /commande/valider, et il
  *     n'existe plus aucun <a href="/commande/valider"> ;
- *   - la feuille /minishop.css est liée par le gabarit, servie (200)
+ *   - la feuille /css/app.css est liée par le gabarit, servie (200)
  *     et autorisée par la CSP (style-src 'self') ;
  *   - le clic sur le bouton mène réellement à la validation : page de
  *     connexion si on est anonyme, puis page « Valider ma commande »
@@ -32,6 +32,12 @@ import { JSDOM } from 'jsdom';
 import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
+
+// Ces parcours modifient le serveur ciblé : jamais les lancer implicitement sur les données locales.
+if (!process.env.UI_BASE_URL || process.env.UI_TEST_INSTANCE_JETABLE !== '1') {
+  console.error('UI_BASE_URL et UI_TEST_INSTANCE_JETABLE=1 requis : utiliser uniquement une instance de test jetable. Ces tests modifient ses données.');
+  process.exit(2);
+}
 
 const REPO = join(import.meta.dirname, '..');
 const PORT = Number(process.env.UI_PORT ?? 8094);
@@ -209,18 +215,18 @@ try {
   check('plus aucun lien « Valider ma commande »', !doc().querySelector('a[href="/commande/valider"]'));
   check('« Continuer mes achats » reste un lien (action secondaire)',
     !!doc().querySelector('a[href="/catalogue"]'));
-  check('la feuille /minishop.css est liée par le gabarit',
-    !!doc().querySelector('link[rel="stylesheet"][href="/minishop.css"]'));
+  check('la feuille /css/app.css est liée par le gabarit',
+    !!doc().querySelector('link[rel="stylesheet"][href="/css/app.css"]'));
   check("la CSP autorise style-src 'self'",
     (nav.page.enTetes.get('content-security-policy') ?? '').includes("style-src 'self'"),
     nav.page.enTetes.get('content-security-policy') ?? 'absente');
 
-  const resCss = await fetch(`${base}/minishop.css`, { headers: nav.enTetes() });
+  const resCss = await fetch(`${base}/css/app.css`, { headers: nav.enTetes() });
   const css = await resCss.text();
   check('la feuille est servie (200) et définit .bouton-principal',
     resCss.status === 200 && css.includes('.bouton-principal'), `HTTP ${resCss.status}`);
   check('style du bouton principal : fond foncé, texte blanc, pas de soulignement',
-    css.includes('background-color: #9a3412') && css.includes('color: #ffffff') && css.includes('text-decoration: none'));
+    css.includes('.bouton-principal {') && css.includes('background: var(--accent-fonce)') && css.includes('.bouton-principal:focus-visible'));
 
   // ---------------------------------------------------------- 4. clic anonyme → connexion
   console.log('\n== 4 · Clic sur le CTA sans connexion : page de connexion ==');
@@ -250,7 +256,7 @@ try {
     console.log(`E2E UI panier : ${échecs}/${tests} vérification(s) en échec ❌`);
     process.exitCode = 1;
   } else {
-    console.log(`E2E UI panier : TOUT EST VERT ✅ (${tests} vérifications, clics réels sur l'UI)`);
+    console.log(`E2E UI panier : TOUT EST VERT ✅ (${tests} vérifications, interactions DOM simulées avec jsdom)`);
   }
 } catch (e) {
   console.error('\nE2E UI panier : ERREUR fatale —', e);

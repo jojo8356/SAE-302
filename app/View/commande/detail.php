@@ -14,6 +14,7 @@ $annulable = in_array($commande['statut'], ['BROUILLON', 'EN_PREPARATION', 'PAYE
 </p>
 
 <h2>Articles (prix TTC figés à l'achat)</h2>
+<div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
 <table>
     <thead>
     <tr><th scope="col">Produit</th><th scope="col">Prix unitaire TTC</th><th scope="col">Qté</th><th scope="col">Total TTC</th></tr>
@@ -38,8 +39,10 @@ $annulable = in_array($commande['statut'], ['BROUILLON', 'EN_PREPARATION', 'PAYE
     <?php endif; ?>
     </tfoot>
 </table>
+</div>
 
 <h2>Historique des statuts</h2>
+<div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
 <table>
     <thead><tr><th scope="col">Quand</th><th scope="col">Statut</th><th scope="col">Par</th><th scope="col">Commentaire</th></tr></thead>
     <tbody>
@@ -53,14 +56,15 @@ $annulable = in_array($commande['statut'], ['BROUILLON', 'EN_PREPARATION', 'PAYE
     <?php endforeach; ?>
     </tbody>
 </table>
+</div>
 
 <?php if ($annulable): ?>
     <h2>Annuler ma commande</h2>
-    <p>Vous pouvez annuler tant que la commande n'est pas expédiée (annulation avant
-        expédition, CGV art. 4) : le stock sera restitué et le montant (port
-        compris) soldé.</p>
+    <p>Cette annulation technique de la commande simulée est possible avant expédition :
+        le stock est restitué et le montant simulé soldé. Elle est distincte du
+        <a href="/retractation">droit légal de rétractation</a>, dont la fonction réelle n’est pas disponible sur cette maquette.</p>
     <form method="get" action="/mes-commandes/<?= (int) $commande['id_commande'] ?>/annulation/confirmation">
-        <p><button type="submit" class="bouton-danger">Annuler cette commande</button></p>
+        <button type="submit" class="bouton-danger">Annuler cette commande</button>
     </form>
 <?php endif; ?>
 

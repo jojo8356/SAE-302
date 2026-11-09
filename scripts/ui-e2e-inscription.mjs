@@ -30,6 +30,12 @@
 import { spawn, spawnSync } from 'node:child_process';
 import { JSDOM } from 'jsdom';
 
+// Ces parcours modifient le serveur ciblé : jamais les lancer implicitement sur les données locales.
+if (!process.env.UI_BASE_URL || process.env.UI_TEST_INSTANCE_JETABLE !== '1') {
+  console.error('UI_BASE_URL et UI_TEST_INSTANCE_JETABLE=1 requis : utiliser uniquement une instance de test jetable. Ces tests modifient ses données.');
+  process.exit(2);
+}
+
 const HOTE = process.env.UI_HOTE ?? '127.0.0.1';
 const PORT = 8138;
 const BASE_EXTERNE = process.env.UI_BASE_URL;
@@ -131,9 +137,6 @@ class NavigateurUI {
 
 async function demarrer() {
   if (!BASE_EXTERNE) {
-    spawnSync('node', ['scripts/wasm_run.mjs', 'scripts/seed.php'], { stdio: 'inherit' });
-    spawnSync('git', ['checkout', '--', 'data'], { stdio: 'ignore' });
-    spawnSync('node', ['scripts/wasm_run.mjs', 'scripts/seed.php'], { stdio: 'inherit' });
     serveur = spawn('node', ['scripts/wasm-serve.mjs'], {
       env: { ...process.env, PORT: String(PORT) }, stdio: 'ignore',
     });
@@ -146,7 +149,6 @@ async function demarrer() {
     }
     throw new Error('le serveur local ne repond pas');
   }
-  spawnSync('node', ['scripts/wasm_run.mjs', 'scripts/seed.php'], { stdio: 'inherit' });
 }
 
 async function principal() {
@@ -173,7 +175,7 @@ async function principal() {
   visiteur.doc.querySelector('#confirmation').value = 'AutreMotDePasse2!';
   visiteur.doc.querySelector('input[name="cgv"]').checked = true;
   await visiteur.cliquerBouton(visiteur.doc.querySelector('form[action="/inscription"] button'));
-  const erreurs = [...visiteur.doc.querySelectorAll('ul[role="alert"] li')].map((li) => li.textContent.trim());
+  const erreurs = [...visiteur.doc.querySelectorAll('[role="alert"] li')].map((li) => li.textContent.trim());
   verifier('l\u2019erreur de confirmation ET l\u2019email déjà utilisé s\u2019affichent ensemble, dès le premier envoi',
     erreurs.some((e) => e.includes('confirmation')) && erreurs.some((e) => e.includes('déjà utilisée')),
     erreurs.join(' | '));
@@ -191,7 +193,7 @@ async function principal() {
   visiteur.doc.querySelector('#mot_de_passe').value = 'MotDePasse1!';
   visiteur.doc.querySelector('#confirmation').value = 'MotDePasse1!'; // confirmation réparée
   await visiteur.cliquerBouton(visiteur.doc.querySelector('form[action="/inscription"] button'));
-  const erreurs2 = [...visiteur.doc.querySelectorAll('ul[role="alert"] li')].map((li) => li.textContent.trim());
+  const erreurs2 = [...visiteur.doc.querySelectorAll('[role="alert"] li')].map((li) => li.textContent.trim());
   verifier('confirmation réparée : seule l\u2019erreur d\u2019email subsiste, annoncée dès le départ',
     erreurs2.length === 1 && erreurs2[0].includes('déjà utilisée'),
     erreurs2.join(' | '));
@@ -216,5 +218,4 @@ principal()
   .catch((erreur) => { console.error(erreur); process.exitCode = 1; })
   .finally(() => {
     if (serveur) serveur.kill();
-    if (!BASE_EXTERNE) spawnSync('git', ['checkout', '--', 'data']);
   });

@@ -1,0 +1,22 @@
+@startuml seq_ajout_panier
+title Séquence — ajouter au panier (UC-06, EF-CLI-03, RB-18)
+actor Client
+participant "panier.js" as JS
+participant "ApiController" as API
+participant "PanierSession" as PS
+participant "ProduitRepository" as PR
+Client -> JS : clic « Ajouter »
+JS -> API : POST /api/panier/ajouter (JSON + jeton CSRF)
+API -> API : Csrf::verifier()
+API -> PR : disponibilité (stock serveur)
+PR --> API : stock
+alt stock insuffisant
+  API --> JS : 409 {code: STOCK_INSUFFISANT, reste: N}
+  JS --> Client : message serveur affiché, bouton grisé
+else ajouté
+  API -> PS : ajouter(id, quantite plafonnée)
+  API --> JS : 200 {nombre_articles, total_ttc}
+  JS --> Client : badge mis à jour (aria-live), total recalculé
+end
+note right of API : aucun prix ni stock calculé côté navigateur (EF-GEN-01)
+@enduml

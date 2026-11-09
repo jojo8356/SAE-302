@@ -1,0 +1,36 @@
+@startuml architecture_mvc
+title Architecture MVC en 3 couches (§9)
+skinparam componentStyle rectangle
+actor "Navigateur" as B
+package "Présentation" {
+  [public/index.php\n(front controller)] as FC
+  [app/Router.php] as R
+  [app/Controller/*] as C
+  [app/View/*] as V
+}
+package "Métier" {
+  [app/Repository/*] as REP
+  [app/Model/PanierSession] as PS
+  [app/Security/*] as SEC
+}
+package "Données" {
+  [StoreInterface] as SI
+  [JsonStore] as JS
+  [SqlStore\n(PDO)] as SQL
+  [data/minishop/*.json] as FS
+  database "MySQL\nprocédures + triggers" as DB
+}
+B --> FC : HTTP
+FC --> R
+R --> C
+C --> REP
+C --> V
+C --> SEC
+C --> PS
+REP --> SI
+SI <|.. JS
+SI <|.. SQL
+JS --> FS
+SQL --> DB
+note bottom of SI : le contrôleur ne connaît que l'interface :\nbasculer JSON ⇄ MySQL ne change ni les vues ni les tests
+@enduml

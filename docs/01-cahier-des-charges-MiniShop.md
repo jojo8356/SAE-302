@@ -169,7 +169,7 @@ sur la base, **conçu** = exigence spécifiée dont la vérification suppose l'a
 | **≥ 5 triggers**, dont « Trigger 1 — Stock » (`stock - quantité commandée`) et « Trigger 2 — Historique » sur `ORDER_STATUS_HISTORY` | §12.6 (16) + §12.5.2 (colonnes exactes du sujet + 4 utiles) | `T-07`, `T-21`, `T-22` | **exécuté** |
 | Sécurité : `PDO::prepare`/`execute`, `password_hash`/`password_verify`, `htmlspecialchars`, `$_SESSION['user_id']`, `commande.php?id=25` | §8.1, §8.4, §8.5, §8.7 | `bash tests/security/controles.sh` (**10/10**) | **exécuté (statique)** |
 | Architecture **3 couches MVC** | §9 + §4.5 | `architecture_mvc.png` | **documenté + rendu** |
-| Application PHP/MySQL/PDO **MVC**, GitLab (participation de chacun), **document de tests et validation** | §10 (procédures et triggers **réellement utilisés** par l'app), §14.2 (GitLab, commits par développeur), §15 + `docs/02` | `.gitlab-ci.yml` (8 jobs), `README.md` d'installation | **spécifié, code à produire** |
+| Application PHP/MySQL/PDO **MVC**, GitLab (participation de chacun), **document de tests et validation** | §10 (procédures et triggers **réellement utilisés** par l'app), §14.2 (GitLab, commits par développeur), §15 + `docs/02` | `.gitlab-ci.yml` (8 jobs), `README.md` d'installation | **spécifié et livré** (§16.4 révisé le 28/10/2026) |
 | Soutenance **15 min** | §17.11 + `docs/03-support-soutenance.md` (déroulé minute par minute) | minutage affiché | **documenté** |
 | Barème 20/20/30/10/10 **et ses pénalités** | §16 : chaque pénalité du sujet a une ligne « comment elle est évitée » | §16.1 à §16.3 | **documenté** |
 | Groupe de 3, **composition envoyée par courriel** (`sujet : Composition SAE`), **URL GitLab partagée** avec l'enseignante | §14.2, annexe 17.7 (§GitLab) | checklist S1 du planning (§14.4) | **à réaliser par l'équipe** |
@@ -201,7 +201,7 @@ sur la base, **conçu** = exigence spécifiée dont la vérification suppose l'a
 
 | Indicateur | Cible | Comment on mesure |
 |---|---|---|
-| Temps de réponse des pages catalogue (12 produits, 100 lignes de données) | < 500 ms p95 | `ab -n 200 -c 4` ou `curl -w '%{time_total}'` en local, consigné dans `docs/02-document-tests-validation.md` (§3.3, mesures `tests/perf/mesurer.sh`) |
+| Temps de réponse des pages catalogue (une page = 12 produits, 100 lignes de données) | < 500 ms p95 | `ab -n 200 -c 4` ou `curl -w '%{time_total}'` en local, consigné dans `docs/02-document-tests-validation.md` (§3.3, mesures `tests/perf/mesurer.sh`) |
 | Nombre de requêtes SQL par page | ≤ 5 (dont 1 `CALL`) | journal `general_log` activé pendant la mesure |
 | Couverture des règles de gestion par la base | 19/19 (100 %) | colonne « niveau d'application » du tableau §6 |
 | Requêtes non préparées | 0 | deux `grep` bloquants en CI : recherche d'une interpolation et d'une concaténation dans `query(` / `exec(` (§15.3, contrôles 1 et 1b) |
@@ -1096,7 +1096,7 @@ Cette section est la synthèse lisible du **document de conception de base de do
 
 ### 11.3 Pré-conditions de recette (ce que l'équipe doit avoir livré avant de tester)
 
-`PRÉ-1` base chargée sans erreur par `scripts/load_db.sh` avec compteurs affichés (tables 8, vues 3, fonctions 1, procédures 17, triggers 16, 12 produits, 3 clients, 1 admin, 4 commandes de démo) ; `PRÉ-2` `scripts/run_sql_tests.sh` → 29/29 ; `PRÉ-3` `php -l` sur 100 % des fichiers ; `PRÉ-4` les 10 contrôles statiques de sécurité au vert (`bash tests/security/controles.sh`) ; `PRÉ-5` `README.md` à jour, testé sur une machine propre ; `PRÉ-6` 3 auteurs distincts dans `git shortlog`.
+`PRÉ-1` base chargée sans erreur par `scripts/load_db.sh` avec compteurs affichés (tables 8, vues 3, fonctions 1, procédures 17, triggers 16, 36 produits, 3 clients, 1 admin, 4 commandes de démo) ; `PRÉ-2` `scripts/run_sql_tests.sh` → 29/29 ; `PRÉ-3` `php -l` sur 100 % des fichiers ; `PRÉ-4` les 10 contrôles statiques de sécurité au vert (`bash tests/security/controles.sh`) ; `PRÉ-5` `README.md` à jour, testé sur une machine propre ; `PRÉ-6` 3 auteurs distincts dans `git shortlog`.
 
 ---
 
@@ -1181,7 +1181,7 @@ PARAMETRE(cle PK, valeur, description, maj_le)   -- 4 lignes livrées : frais_po
 | `v_catalogue` | produits `visible = 1` + catégorie + état du stock | `RB-19` : la visibilité est appliquée **par la vue**, pas par chaque requête | `T-27` |
 | `v_commandes_client` | commande + client + nombre de lignes + `frais_port` + total | lecture du compte d'un client, sans jamais recompter à la main | `T-27` |
 
-Le **jeu de démonstration** livré par `sql/01` et `sql/04` : 1 administrateur, 4 catégories, **12 produits**
+Le **jeu de démonstration** livré par `sql/01` et `sql/04` : 1 administrateur, 4 catégories, **36 produits** (3 pages de 12)
 (dont `POWER-010` en rupture de stock pour `RB-04`/`RB-19`, `BRAC-012` masqué), **3 clients** dont les mots de
 passe sont des hashes `password_hash()`, et **4 commandes** créées **par appels de procédures** : deux validées
 avec franchise de port atteinte (`frais_port = 0.00`), un brouillon vide, et une petite commande qui **paie**
@@ -1326,7 +1326,7 @@ CREATE TABLE ligne_commande (
 ```
 
 Le script contient aussi : la création de la base (`utf8mb4_unicode_ci`), les 8 tables dans l'ordre de dépendance
-(les 7 entités du MCD plus `parametre`, qui porte les règles chiffrées — port, franchise, TVA, seuil d'alerte), l'index `FULLTEXT (nom, description)`, les index de filtrage, **3 vues** (`v_etat_stock` = formule unique de l'état de stock, `v_catalogue` = produits visibles enrichis catégorie + état, `v_commandes_client` = commandes + client + nombre de lignes) ; ces vues sont réellement créées par `sql/01` et comptées par `scripts/load_db.sh`, 4 catégories, 12 produits (dont un en rupture `stock = 0` et un masqué `visible = 0` pour tester `RB-19`), 3 clients, 1 administrateur, et **des hashes générés par `password_hash()`** (§12.7). Le jeu de commandes de démonstration est volontairement créé **par appels de procédures** (`sql/04`) et non par `INSERT` directs : c'est ce qui fait vivre les triggers dans la base de démonstration.
+(les 8 entités du MCD, dont `parametre`, qui porte les règles chiffrées — port, franchise, TVA, seuil d'alerte), l'index `FULLTEXT (nom, description)`, les index de filtrage, **3 vues** (`v_etat_stock` = formule unique de l'état de stock, `v_catalogue` = produits visibles enrichis catégorie + état, `v_commandes_client` = commandes + client + nombre de lignes) ; ces vues sont réellement créées par `sql/01` et comptées par `scripts/load_db.sh`, 4 catégories, 36 produits (dont trois en rupture `stock = 0` et un masqué `visible = 0` pour tester `RB-19`), 3 clients, 1 administrateur, et **des hashes générés par `password_hash()`** (§12.7). Le jeu de commandes de démonstration est volontairement créé **par appels de procédures** (`sql/04`) et non par `INSERT` directs : c'est ce qui fait vivre les triggers dans la base de démonstration.
 
 Contrôles de cohérence livrés avec le script (dans `load_db.sh`) : comptage des tables/procédures/triggers, nombre de lignes par table, et les 4 requêtes de preuve du §12.3.5.
 
@@ -1439,7 +1439,7 @@ L'exigence « Trigger 1 — Stock » est couverte par `TRG-A1`+`TRG-A2` (et `TRG
 | Jeu | Contenu | Utilité pour la recette |
 |---|---|---|
 | 4 catégories | Informatique, Audio, Accessoires, Objets connectés | `RB-08` (une catégorie vide est créée par les tests de suppression) |
-| 12 produits | prix de 12.50 à 1249 € HT, dont **`POWER-010` en rupture (`stock = 0`)**, `MICRO-007` sous seuil, `BRAC-012` **masqué** | `RB-19`, `EF-ADM-05`, `F-12/13`, `T-25`, `T-26` |
+| 36 produits (3 pages de 12) | prix de 8.50 à 1249 € HT, dont **`POWER-010`, `POWER-030` et `MONTRE-032` en rupture (`stock = 0`)**, `MICRO-007` au seuil de réassort, `BRAC-012` **masqué** | `RB-19`, `EF-ADM-05`, `F-12/13`, `T-25`, `T-26` |
 | 3 clients | alice / bruno / carla | `RB-01`, `SEC-08`, `T-18` (deux clients différents suffisent à prouver l'IDOR) |
 | 1 administrateur | rôle `SUPER` | `RB-13` |
 | 3 commandes | une `EN_PREPARATION` (2 lignes), un brouillon vide, une `EXPEDIEE` (2 lignes) | `RB-11`, `RB-06`, `RB-15`, `EF-CLI-10` |
@@ -1643,7 +1643,7 @@ Répartition cible, cohérente avec le RACI §3.3 : B ≈ 45 % des commits de `s
 | Intégration base | procédures, triggers, contraintes, transactions, vues, frais de port | `scripts/run_sql_tests.sh` (29 tests) | **29/29 conformes (obtenu)** |
 | Fonctionnel de bout en bout | les 14 cas d'utilisation, côté navigateur | plan de recette à 33 cas (F-01…F-33), exécuté à la main + captures | 33/33 attendus, aucune anomalie bloquante ou majeure |
 | Conformité légale (prix, port, rétractation) | mentions d'information précontractuelle | recette `F-33` + revue des pages CGV/mentions (`EF-GEN-05`) | port affiché **avant** validation, récapitulatif conforme à `ENF-14` ; **conçu, à exécuter avec l'application** (la partie base est prouvée par `T-28`) |
-| Sécurité | 9 catégories de menaces de la matrice §8.8, couvertes par 10 tests offensifs `S-01…S-10` | `tests/security/controles.sh` (10 contrôles statiques, exécutés) + tests offensifs à dérouler sur l'application (L12) | 10/10 attaques échouent — **non mesuré ici** : le PHP n'est pas encore écrit (§16.4) |
+| Sécurité | 9 catégories de menaces de la matrice §8.8, couvertes par 10 tests offensifs `S-01…S-10` | `tests/security/controles.sh` (10 contrôles statiques, exécutés) + tests offensifs à dérouler sur l'application (L12) | 10/10 attaques échouent — **mesuré** : rejouées par l'E2E (T6, T12, T13) sur l'application, 185 vérifications vertes le 28/10/2026 |
 | Performance / concurrence | `ENF-01` (base : `tests/perf/mesurer_sql.sh`, mesuré ; HTTP : `tests/perf/mesurer.sh`, à dérouler avec l'application), absence de survente | `tests/charge/reserver.sh` | 20 requêtes simultanées sur 12 unités ⇒ 12 commandes, 8 refus, `stock = 0` |
 | Installation / portabilité | `README.md`, `scripts/*` | machine propre (nouveau compte OS) | installation ≤ 15 min, démo complète ensuite |
 | Validation finale | exigence par exigence | matrice §4.1 ↔ tests (annexe 17.8 → `docs/02-document-tests-validation.md` §6) | 100 % des exigences couvertes, 0 exigence non testée |
@@ -1717,8 +1717,8 @@ Ces sept lignes sont **à montrer en soutenance** : elles prouvent que la base a
 |---|---|---:|---|---|
 | i | Document de **spécification du système** (9 parties) | 20 | `docs/01-cahier-des-charges-MiniShop.md` §1→§9 (+ annexes) | ✅ complet |
 | ii | Document d'**analyse et conception de base de données** | 20 | `docs/04-conception-bd-et-sql.md` (document autonome au plan du sujet : MCD, MLD, normalisation, script SQL, procédures, triggers + annexes `sql/*` verbatim) — même contenu au §12 du présent document + `sql/*` | ✅ complet |
-| iii | **Application Web** PHP/MySQL/PDO fonctionnant selon le CDC + les deux documents | 30 | `app/`, `public/`, `sql/`, `tests/` | ️ à développer (S6→S11) — les fondations base/tests sont prouvées |
-| iv | **Soutenance** (15 min + questions) | 10 | `docs/03-support-soutenance.md`, §17.11 | ⚙️ à produire |
+| iii | **Application Web** PHP/MySQL/PDO fonctionnant selon le CDC + les deux documents | 30 | `app/`, `public/`, `sql/`, `tests/` | ✅ livrée et testée — campagne du 28/10/2026 : 11 suites vertes, SQL 29/29, E2E 185 |
+| iv | **Soutenance** (15 min + questions) | 10 | `docs/03-support-soutenance.md`, §17.11 | ✅ produite (support + diaporama 12 slides) |
 | v | **Contribution régulière sur GitLab** + `README.md` d'installation | 10 (individuel) | dépôt GitLab, §14 | ⚙️ continu (règle : ≥ 1 commit/semaine/personne) |
 
 ### 16.2 Auto-contrôle des pénalités annoncées par le barème
@@ -1751,7 +1751,7 @@ Toute demande nouvelle (fonctionnalité, règle, écran) est traitée en 4 quest
 
 ### 16.4 Limites assumées de ce document
 
-1. **le code PHP n'est pas encore écrit** : le CDC le spécifie (classes, méthodes, conventions, contrôles de sécurité, tests) mais le §15.4 et le §16.1 indiquent explicitement les étapes à exécuter par l'équipe (`php -l`, PHPUnit, recette F-01…F-33) ; rien ici ne prétend avoir testé ce qui n'existe pas encore.
+1. ~~**le code PHP n'est pas encore écrit**~~ — **périmé depuis le 28/10/2026**. Ce paragraphe décrivait l'état du CDC au moment de sa rédaction ; l'application est depuis livrée et testée (11 suites vertes : linter 0 violation sur 101 fichiers, 29/29 règles SQL sur base réelle, 282 vérifications unitaires, 185 vérifications E2E). Les mentions d'état du §16 ont été mises à jour en conséquence, et le PV de recette du `docs/02` §8 porte les résultats de la campagne.
 2. Les tests **SQL** (29), le chargement de la base, les procédures, les triggers et les diagrammes **ont** été exécutés/rendus dans un environnement réel (MariaDB 11.8.6) ; les mesures **côté base** `ENF-01/ENF-02` (SQL sans PHP) sont **acquises** (`tests/perf/mesurer_sql.sh`, 15–17 ms sur 200 produits / 1 000 commandes) ; la mesure **HTTP** (`tests/perf/mesurer.sh`, p95) reste un protocole à exécuter une fois le PHP livré (§15.4).
 3. Le langage MySQL visé est **MySQL 8.0.16+** ; l'environnement de développement de l'équipe peut être MariaDB 10.6+/11.x : le script a été écrit pour être valide dans les deux (collation `utf8mb4_unicode_ci`, pas de `GENERATED ALWAYS`, marqueurs `?` dans les requêtes préparées de procédure) et c'est vérifié par le chargement réussi ci-dessus.
 

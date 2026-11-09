@@ -32,6 +32,12 @@ import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
+// Ces parcours modifient le serveur ciblé : jamais les lancer implicitement sur les données locales.
+if (!process.env.UI_BASE_URL || process.env.UI_TEST_INSTANCE_JETABLE !== '1') {
+  console.error('UI_BASE_URL et UI_TEST_INSTANCE_JETABLE=1 requis : utiliser uniquement une instance de test jetable. Ces tests modifient ses données.');
+  process.exit(2);
+}
+
 const REPO = join(import.meta.dirname, '..');
 const PORT = Number(process.env.UI_PORT ?? 8106);
 let base = (process.env.UI_BASE_URL ?? `http://127.0.0.1:${PORT}`).replace(/\/$/, '');
@@ -165,7 +171,7 @@ try {
   // ---------------------------------------------------------- 3. recherche réelle par clic
   console.log('\n== 3 · Recherche « CASQ » et clic « Appliquer » ==');
   panneau.querySelector('#q').value = 'CASQ';
-  const boutonAppliquer = [...panneau.querySelectorAll('button')].find((b) => b.textContent.trim() === 'Appliquer');
+  const boutonAppliquer = [...panneau.querySelectorAll('button')].find((b) => b.textContent.trim() === 'Appliquer les filtres');
   await nav.cliquerBouton(boutonAppliquer);
   check('URL filtrée (/catalogue?q=CASQ)', new URL(nav.page.url).searchParams.get('q') === 'CASQ', nav.page.url);
 
@@ -176,7 +182,7 @@ try {
     panneauActif?.querySelector('summary')?.textContent.trim() ?? '');
   check('le mot-clé est conservé dans le champ', panneauActif?.querySelector('#q')?.value === 'CASQ');
 
-  const lignes = [...doc().querySelectorAll('main ul li')];
+  const lignes = [...doc().querySelectorAll('main .carte-produit')];
   check('la liste est filtrée (moins de produits qu\'au départ)',
     lignes.length >= 1 && lignes.length < produits.length, `${lignes.length} lignes`);
   check('chaque résultat correspond à la recherche (Réf. CASQ…)',
@@ -195,7 +201,7 @@ try {
     console.log(`E2E UI catalogue : ${échecs}/${tests} vérification(s) en échec ❌`);
     process.exitCode = 1;
   } else {
-    console.log(`E2E UI catalogue : TOUT EST VERT ✅ (${tests} vérifications, clics réels sur l'UI, lecture mobile)`);
+    console.log(`E2E UI catalogue : TOUT EST VERT ✅ (${tests} vérifications, interactions DOM simulées avec jsdom, lecture mobile)`);
   }
 } catch (e) {
   console.error('\nE2E UI catalogue : ERREUR fatale —', e);

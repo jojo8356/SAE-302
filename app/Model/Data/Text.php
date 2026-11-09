@@ -11,9 +11,9 @@ declare(strict_types=1);
  * les comparaisons passent par ce pliage (folding).
  *
  * Stratégie « modules natifs d'abord, repli maison ensuite » (env-agnostic) :
- *   1. ext/intl (ICU)  : Transliterator « Any-Latin; Latin-ASCII » —
+ *   1. ext/intl (ICU)  : \Transliterator « Any-Latin; Latin-ASCII » —
  *      dé-accentuation Unicode COMPLÈTE (grec, cyrillique, ligatures…) et
- *      Collator (force PRIMARY) pour les comparaisons — l'équivalent direct
+ *      \Collator (force PRIMARY) pour les comparaisons — l'équivalent direct
  *      d'une collation utf8mb4_unicode_ci. Utilisé dès que l'extension est
  *      chargée (serveur LAMP normal).
  *   2. ext/mbstring    : mb_convert_case(…, MB_CASE_FOLD) — pliage de casse
@@ -130,7 +130,16 @@ final class Text
         return strcmp(self::fold($a), self::fold($b));
     }
 
-    /** @return \Transliterator|false l'instance « Any-Latin; Latin-ASCII », ou false si intl est absent */
+    /**
+     * Translittérateur ICU, ou `false` si l'extension intl est absente.
+     *
+     * Le nom de classe est écrit en absolu (`\Transliterator`) : dans un
+     * espace de noms, un nom non qualifié serait cherché sous
+     * App\Model\Data\Transliterator, ce qui échoue dès que intl est
+     * réellement chargée (bug invisible tant que l'extension manque).
+     *
+     * @return \Transliterator|false
+     */
     private static function transliterator(): mixed
     {
         if (self::$transliterator === null) {

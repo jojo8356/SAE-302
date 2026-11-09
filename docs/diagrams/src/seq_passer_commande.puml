@@ -1,0 +1,23 @@
+@startuml seq_passer_commande
+title Séquence — valider une commande (UC-07, RB-04/05/06/15/18/20, ENF-16)
+actor Client
+participant "CommandeController" as CC
+participant "CommandeRepository" as CR
+database "Base" as DB
+Client -> CC : POST /commande/valider (adresse, _csrf)
+CC -> CC : exigerClient() + Csrf::verifier()
+CC -> CR : confirmerDepuisPanier(client, adresse)
+CR -> DB : BEGIN
+CR -> DB : CALL sp_create_order_from_basket(...)
+DB -> DB : verrou FOR UPDATE sur le stock
+DB -> DB : contrôle de disponibilité (procédure + trigger)
+DB -> DB : décrément du stock, montants calculés, port figé
+CR -> DB : COMMIT
+alt code_retour = OK
+  CR --> CC : numero, montant, id
+  CC --> Client : 302 /mes-commandes/{id} + flash succès
+else STOCK_INSUFFISANT ou panier vide
+  CR -> DB : ROLLBACK
+  CC --> Client : 302 /panier + message traduit
+end
+@enduml

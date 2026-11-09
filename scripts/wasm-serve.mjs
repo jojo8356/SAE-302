@@ -14,37 +14,7 @@ import http from 'node:http';
 import { randomUUID } from 'node:crypto';
 import { createPhp, syncBack, REPO_ROOT } from './wasm_lib.mjs';
 import { existsSync, readFileSync, statSync } from 'node:fs';
-import { extname, join, resolve, sep } from 'node:path';
-
-/** Types MIME des assets statiques servis directement (comme php -S). */
-const TYPES_STATIQUES = {
-  '.css': 'text/css; charset=utf-8',
-  '.js': 'text/javascript; charset=utf-8',
-  '.png': 'image/png',
-  '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg',
-  '.gif': 'image/gif',
-  '.svg': 'image/svg+xml',
-  '.ico': 'image/x-icon',
-  '.txt': 'text/plain; charset=utf-8',
-};
-
-/**
- * Fichier statique réel de public/ pour ce chemin, ou null.
- * Le runtime PHP-WASM ne sert que du PHP : sans ce court-circuit,
- * /minishop.css (l'unique feuille du site) répondrait 404 en sandbox
- * alors que php -S la sert. Confiné à public/, jamais de .php ici
- * (les .php continuent vers le runtime, qui les exécute).
- */
-function fichierStatique(chemin) {
-  const type = TYPES_STATIQUES[extname(chemin).toLowerCase()];
-  if (!type) return null;
-  const publicDir = resolve(join(REPO_ROOT, 'public'));
-  const candidat = resolve(join(publicDir, `.${chemin}`));
-  if (!candidat.startsWith(publicDir + sep)) return null;
-  if (!existsSync(candidat) || !statSync(candidat).isFile()) return null;
-  return { candidat, type };
-}
+import { extname, join, normalize, sep } from 'node:path';
 
 const PORT = Number(process.argv[2] ?? process.env.PORT ?? 8080);
 const BASE_URL = `http://localhost:${PORT}/`;
@@ -58,25 +28,61 @@ if (!existsSync(join(REPO_ROOT, 'data/minishop/produit.json'))) {
 const php = await createPhp(BASE_URL);
 console.log(`[wasm-serve] PHP 8.2 (WASM) prêt — http://0.0.0.0:${PORT}/ (racine : public/)`);
 
+/**
+ * Fichiers statiques (CSS, JS, images) : le runtime PHP-WASM n'a pas de
+ * serveur web devant lui, donc /css/app.css serait routé vers PHP et
+ * répondrait 404 — la page s'afficherait sans style. On les sert ici,
+ * comme le ferait Apache ou `php -S`.
+ */
+const TYPES = {
+  '.css': 'text/css; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8',
+  '.mjs': 'text/javascript; charset=utf-8',
+  '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp',
+  '.ico': 'image/x-icon',
+  '.woff2': 'font/woff2',
+  '.json': 'application/json; charset=utf-8',
+  '.txt': 'text/plain; charset=utf-8',
+};
+
+function servirStatique(req, res, cheminUrl) {
+  if (req.method !== 'GET' && req.method !== 'HEAD') return false;
+  if (!cheminUrl.startsWith('/css/') && !cheminUrl.startsWith('/js/') &&
+      !cheminUrl.startsWith('/img/') && !cheminUrl.startsWith('/fonts/') && cheminUrl !== '/favicon.ico') {
+    return false;
+  }
+  // anti-traversée : on normalise et on vérifie que le chemin reste dans public/
+  const relatif = normalize(decodeURIComponent(cheminUrl)).replace(/^([/\\])+/, '');
+  // Après décodage/normalisation, rester dans une racine publique statique :
+  // ne pas exposer le PHP source via /fonts/../index.php ou un fichier caché.
+  if (!['css/', 'js/', 'img/', 'fonts/'].some((prefixe) => relatif.startsWith(prefixe)) && relatif !== 'favicon.ico') return false;
+  if (/(^|[/\\])\./.test(relatif) || !Object.hasOwn(TYPES, extname(relatif).toLowerCase())) return false;
+  const absolu = join(REPO_ROOT, 'public', relatif);
+  if (!absolu.startsWith(join(REPO_ROOT, 'public') + sep)) return false;
+  if (!existsSync(absolu) || !statSync(absolu).isFile()) return false;
+
+  const corps = readFileSync(absolu);
+  res.writeHead(200, {
+    'content-type': TYPES[extname(absolu).toLowerCase()] ?? 'application/octet-stream',
+    'content-length': corps.length,
+    'cache-control': 'no-cache',
+    'x-content-type-options': 'nosniff',
+  });
+  res.end(req.method === 'HEAD' ? undefined : corps);
+  return true;
+}
+
 /** File d'attente : le runtime WASM traite une requête à la fois. */
 let file = Promise.resolve();
 const enqueue = (task) => (file = file.then(task, task));
 
 const serveur = http.createServer((req, res) => {
-  // Assets statiques réels de public/ : servis tels quels, hors file PHP.
-  if (req.method === 'GET' || req.method === 'HEAD') {
-    let chemin = '';
-    try {
-      chemin = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
-    } catch {
-      chemin = '';
-    }
-    const statique = chemin ? fichierStatique(chemin) : null;
-    if (statique) {
-      res.writeHead(200, { 'content-type': statique.type });
-      res.end(req.method === 'HEAD' ? undefined : readFileSync(statique.candidat));
-      return;
-    }
+  if (servirStatique(req, res, (req.url ?? '/').split('?')[0])) {
+    return;
   }
   enqueue(async () => {
     try {

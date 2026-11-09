@@ -24,13 +24,48 @@ final class StockAdminController extends Controller
         $store = Database::store();
 
         $etats = (new Views($store))->etatStocks();
+
+        // EF-ADM-05 — filtre d'état et tri par criticité (RUPTURE → TRES_BAS → DISPONIBLE).
+        $filtre = strtoupper($this->str('etat', 20));
+        if (in_array($filtre, ['RUPTURE', 'TRES_BAS', 'DISPONIBLE'], true)) {
+            $etats = array_values(array_filter(
+                $etats,
+                static fn (array $etat): bool => strtoupper((string) $etat['etat']) === $filtre,
+            ));
+        }
+
+        $criticite = ['RUPTURE' => 0, 'TRES_BAS' => 1, 'DISPONIBLE' => 2];
+        usort($etats, static function (array $a, array $b) use ($criticite): int {
+            $rangA = $criticite[strtoupper((string) $a['etat'])] ?? 3;
+            $rangB = $criticite[strtoupper((string) $b['etat'])] ?? 3;
+            if ($rangA !== $rangB) {
+                return $rangA <=> $rangB;
+            }
+
+            return (int) $a['stock'] <=> (int) $b['stock'];
+        });
         $valeurInventaire = 0.0;
         foreach ($store->select('produit') as $produit) {
             $valeurInventaire += (float) $produit['prix_ht'] * (int) $produit['stock'];
         }
 
+        $compteurs = ['RUPTURE' => 0, 'TRES_BAS' => 0, 'DISPONIBLE' => 0];
+        foreach ((new Views($store))->etatStocks() as $etat) {
+            $cle = strtoupper((string) $etat['etat']);
+            if (isset($compteurs[$cle])) {
+                ++$compteurs[$cle];
+            }
+        }
+
+        $filtreRetenu = '';
+        if (in_array($filtre, ['RUPTURE', 'TRES_BAS', 'DISPONIBLE'], true)) {
+            $filtreRetenu = $filtre;
+        }
+
         $this->render('admin/stocks', [
             'etats' => $etats,
+            'filtre' => $filtreRetenu,
+            'compteurs' => $compteurs,
             'valeur_inventaire' => round($valeurInventaire, 2),
             'erreurs' => [],
         ], 'Back-office — stocks');

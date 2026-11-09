@@ -1,25 +1,14 @@
 #!/usr/bin/env node
-/**
- * MiniShop — E2E « CGV article 4 : annulation, pas rétractation » (port 8126 ; UI_BASE_URL en CI).
- *
- * Signalement : l'article 4 des CGV appelait « droit de rétractation »
- * l'annulation avant expédition. Or, pour un achat à distance, le droit
- * de rétractation (art. L221-18 du code de la consommation) court
- * 14 jours à compter de la réception du bien. Vérifié ici en vrai
- * parcours navigateur (jsdom) :
- *   1. /cgv : article 4 « Annulation avant expédition », mécanisme réel
- *      décrit, droit légal distingué (14 jours, réception, L221-18),
- *      ancienne phrase fautive absente ;
- *   2. /retractation : droit de 14 jours après réception d'abord,
- *      annulation avant expédition ensuite, « ne se confond pas » ;
- *   3. parcours réel : commande, détail — sous le bouton d'annulation,
- *      « annulation avant expédition, CGV art. 4 », jamais
- *      « Conformément au droit de rétractation » ;
- *   4. /aide et /livraison racontent la même règle (avant expédition).
- */
+/** Contrôle que l’annulation simulée reste distincte du droit de rétractation. */
 
 import { spawn, spawnSync } from 'node:child_process';
 import { JSDOM } from 'jsdom';
+
+// Ces parcours modifient le serveur ciblé : jamais les lancer implicitement sur les données locales.
+if (!process.env.UI_BASE_URL || process.env.UI_TEST_INSTANCE_JETABLE !== '1') {
+  console.error('UI_BASE_URL et UI_TEST_INSTANCE_JETABLE=1 requis : utiliser uniquement une instance de test jetable. Ces tests modifient ses données.');
+  process.exit(2);
+}
 
 const PORT = 8126;
 const base = process.env.UI_BASE_URL ?? `http://127.0.0.1:${PORT}`;
@@ -149,35 +138,34 @@ async function attendreServeur() {
 
 async function aller() {
   if (!process.env.UI_BASE_URL) {
-    spawnSync('node', ['scripts/wasm_run.mjs', 'scripts/seed.php'], { stdio: 'inherit' });
     serveur = spawn('node', ['scripts/wasm-serve.mjs'], { env: { ...process.env, PORT: String(PORT) }, stdio: 'inherit' });
     await attendreServeur();
   }
 
-  console.log("\n[CGV art. 4] 1 · Les CGV corrigées, lues comme un client");
+  console.log("\n[CGV] 1 · Les CGV corrigées, lues comme un client");
   const visiteur = new NavigateurUI();
   await visiteur.aller('/cgv');
-  check("l'article 4 s'intitule « Annulation avant expédition »",
-    visiteur.texte.includes('Article 4 — Annulation avant expédition'));
+  check("la section s'intitule « Annulation avant expédition »",
+    visiteur.texte.includes('Annulation avant expédition'));
   check("l'ancien titre « Article 4 — Droit de rétractation » a disparu",
     !visiteur.texte.includes('Article 4 — Droit de rétractation'));
   check('la phrase fautive « Conformément au droit de rétractation, le client peut annuler » a disparu',
     !visiteur.texte.includes('Conformément au droit de rétractation'));
   check('le mécanisme réel est décrit (pas encore expédiée, stock restitué, port compris soldé)',
-    visiteur.texte.includes("n'a pas été expédiée") && visiteur.texte.includes('port compris'));
+    visiteur.texte.includes('avant son expédition simulée') && visiteur.texte.includes('stock est restitué') && visiteur.texte.includes('port compris'));
   check('le vrai droit est rappelé à sa place (14 jours à compter de la réception, L221-18)',
-    visiteur.texte.includes('14 jours à compter de la réception') && visiteur.texte.includes('L221-18'));
+    visiteur.texte.includes('14 jours à compter de la réception') && visiteur.texte.includes('L. 221-18'));
 
-  console.log("\n[CGV art. 4] 2 · La page Rétractation distingue les deux notions");
+  console.log("\n[CGV] 2 · La page Rétractation distingue les deux notions");
   await visiteur.aller('/retractation');
   check('le droit légal ouvre la page (14 jours à compter de la réception)',
     visiteur.texte.includes('14 jours') && visiteur.texte.includes('à compter de la réception'));
   check("la facilité du site porte son vrai nom (« l'annulation avant expédition »)",
-    visiteur.texte.includes("l'annulation avant expédition"));
+    visiteur.texte.includes('annulation avant expédition simulée'));
   check('la distinction est écrite (« ne se confond pas avec le droit de rétractation »)',
-    visiteur.texte.includes('ne se confond pas avec le droit de rétractation'));
+    visiteur.texte.includes('distincte du droit légal de rétractation'));
 
-  console.log("\n[CGV art. 4] 3 · Parcours réel : le détail de commande parle juste");
+  console.log("\n[CGV] 3 · Parcours réel : le détail de commande parle juste");
   const navigateur = new NavigateurUI();
   await navigateur.aller('/catalogue');
   const liens = [...navigateur.doc.querySelectorAll('a[href^="/produit/"]')];
@@ -201,7 +189,7 @@ async function aller() {
   await navigateur.aller('/commande/valider');
   await navigateur.cliquerBouton(navigateur.doc.querySelector('form[action="/commande/valider"] button'));
   check('sous le bouton d\'annulation : « annulation avant expédition, CGV art. 4 »',
-    navigateur.texte.includes("annulation avant expédition, CGV art. 4"));
+    navigateur.texte.includes('annulation technique') && navigateur.texte.includes('avant expédition') && navigateur.texte.includes('droit légal de rétractation'));
   check('la phrase fautive « Conformément au droit de rétractation » a disparu du détail',
     !navigateur.texte.includes('Conformément au droit de rétractation'));
   await navigateur.cliquerBouton(navigateur.doc.querySelector('button.bouton-danger'));
@@ -210,28 +198,26 @@ async function aller() {
   check("l'écran de confirmation ne promet aucun « droit de rétractation »",
     !navigateur.texte.includes('Conformément au droit de rétractation'));
 
-  console.log("\n[CGV art. 4] 4 · Aide et Livraison racontent la même règle");
+  console.log("\n[CGV] 4 · Aide et Livraison racontent la même règle");
   const aide = new NavigateurUI();
   await aide.aller('/aide');
   check("l'aide : annuler tant que ce n'est pas expédié, renvoi vers Rétractation",
-    aide.texte.includes("Tant qu'elle n'est pas expédiée, vous pouvez l'annuler"));
+    aide.texte.includes('annulation est possible tant que la commande') && aide.texte.includes('pas expédiée'));
   await aide.aller('/livraison');
   check('livraison : annulation possible tant que la commande n\'est pas expédiée',
-    aide.texte.includes("Tant que la commande n'est pas expédiée, vous pouvez encore"));
+    aide.texte.includes('commande simulée non expédiée peut être annulée'));
 
-  console.log(`\n${échecs === 0 ? '✅' : '❌'} CGV article 4 : ${échecs === 0 ? 'toutes les vérifications réussies' : échecs + ' vérification(s) en échec'}\n`);
+  console.log(`\n${échecs === 0 ? '✅' : '❌'} CGV et rétractation : ${échecs === 0 ? 'toutes les vérifications réussies' : échecs + ' vérification(s) en échec'}\n`);
   if (serveur) {
     serveur.kill();
-    spawnSync('git', ['checkout', '--', 'data'], { stdio: 'inherit' });
   }
   process.exit(échecs === 0 ? 0 : 1);
 }
 
 aller().catch(async (error) => {
-  console.error('❌ Erreur E2E CGV article 4 :', error.message);
+  console.error('❌ Erreur E2E CGV et rétractation :', error.message);
   if (serveur) {
     serveur.kill();
-    spawnSync('git', ['checkout', '--', 'data'], { stdio: 'inherit' });
   }
   process.exit(1);
 });

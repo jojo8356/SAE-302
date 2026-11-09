@@ -1,0 +1,18 @@
+@startuml etats_commande
+title Cycle de vie d'une commande (RB-11)
+[*] --> BROUILLON : création
+BROUILLON --> PAYEE : validation (stock réservé)
+PAYEE --> EN_PREPARATION : préparation
+EN_PREPARATION --> EXPEDIEE : expédition
+EXPEDIEE --> LIVREE : livraison confirmée
+BROUILLON --> ANNULEE : abandon
+PAYEE --> ANNULEE : annulation client ou admin
+EN_PREPARATION --> ANNULEE : annulation admin (motif obligatoire)
+EXPEDIEE --> RETOURNEE : retour reçu
+LIVREE --> RETOURNEE : retour sous 14 jours
+ANNULEE --> [*]
+RETOURNEE --> [*]
+LIVREE --> [*]
+note right of ANNULEE : restitution du stock par trigger, port remis à 0 (RB-20)
+note right of RETOURNEE : transition interdite en sens inverse
+@enduml

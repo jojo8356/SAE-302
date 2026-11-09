@@ -3,12 +3,19 @@
 declare(strict_types=1);
 
 /**
- * MiniShop — modèle de configuration (jamais commité avec de vrais secrets).
- * Copier vers app/Config/env.php puis renseigner les valeurs locales.
+ * MiniShop — ancien modèle de configuration PHP.
+ *
+ * ⚠️  Déprécié : la configuration vit désormais dans `.env` à la racine
+ *     (modèle versionné `.env.example`, lu par App\Config\Env). Les deux
+ *     formats restent acceptés, `.env` étant prioritaire ; ce fichier n'est
+ *     conservé que pour les dépôts déjà configurés de cette façon.
+ *
+ * Ordre de lecture (le dernier gagne) : valeurs par défaut du code →
+ * ce fichier (copié vers env.php) → `.env` → variables d'environnement.
  *
  * Hors dépôt : app/Config/env.php est ignoré par .gitignore (règle §14.1).
- * Sans ce fichier, l'application fonctionne avec les valeurs par défaut
- * ci-dessous (pilote JSON, données dans data/minishop).
+ * Sans aucun fichier, l'application démarre en pilote JSON et lit
+ * data/minishop.
  */
 
 return [

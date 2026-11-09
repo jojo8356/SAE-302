@@ -570,7 +570,7 @@ git add .gitlab-ci.yml \
 git commit -F- <<'MESSAGE'
 ci: chaîne GitLab CI (6 jobs) + miroir GitHub Actions (CT-09)
 
-Jobs : syntaxe PHP, schéma rejouable, 28 tests SQL, tests PHP (moteur + règles), génération des documents. Un pipeline vert prouve que les critères du barème sont tenus ; un job rouge bloque le merge.
+Jobs : syntaxe PHP, schéma rejouable, 29 tests SQL, tests PHP (moteur + règles), génération des documents. Un pipeline vert prouve que les critères du barème sont tenus ; un job rouge bloque le merge.
 
 Cible de notation : GitLab CI (ce fichier). Le workflow GitHub Actions est le miroir de développement, maintenu synchrone.
 MESSAGE

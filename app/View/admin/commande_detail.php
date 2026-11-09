@@ -22,7 +22,8 @@ declare(strict_types=1);
         Livraison : <?= e($commande['adresse_livraison']) ?></p>
 <?php endif; ?>
 
-<h2>Lignes (prix TTC figés)</h2>
+<h2>Articles (prix TTC figés)</h2>
+<div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
 <table>
     <thead><tr><th scope="col">Produit</th><th scope="col">Réf.</th><th scope="col">Prix unitaire TTC</th><th scope="col">Qté</th><th scope="col">Total TTC</th></tr></thead>
     <tbody>
@@ -37,6 +38,7 @@ declare(strict_types=1);
     <?php endforeach; ?>
     </tbody>
 </table>
+</div>
 
 <h2>Changer le statut</h2>
 <?php if ($transitions === []): ?>
@@ -60,7 +62,8 @@ declare(strict_types=1);
     </form>
 <?php endif; ?>
 
-<h2>Piste d'audit des statuts</h2>
+<h2>Historique des statuts</h2>
+<div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
 <table>
     <thead><tr><th scope="col">Quand</th><th scope="col">Statut</th><th scope="col">Par</th><th scope="col">Commentaire</th></tr></thead>
     <tbody>
@@ -74,5 +77,6 @@ declare(strict_types=1);
     <?php endforeach; ?>
     </tbody>
 </table>
+</div>
 
 <p><a href="/admin/commandes">← Toutes les commandes</a></p>

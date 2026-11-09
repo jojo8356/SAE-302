@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-/** Page d'erreur 500 — aucune information technique divulguée (SEC-03). */
+/**
+ * Page d'erreur 500 — aucune fuite technique (SEC-03).
+ * Le détail est journalisé (error_log) et n'apparaît ici qu'en mode debug.
+ * @var bool|null $debug
+ */
 ?>
-<!doctype html>
-<html lang="fr">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Erreur — MiniShop</title>
-</head>
-<body>
-<h1>Une erreur inattendue est survenue (500)</h1>
-<p>Nous sommes désolés : la page n'a pas pu être traitée. Aucune donnée n'a été
-corrompue — l'application applique des transactions.</p>
-<?php if (!empty($debug)): ?>
-    <pre><?= htmlspecialchars((string) ($e ?? null), ENT_QUOTES, 'UTF-8') ?></pre>
-<?php endif; ?>
-<p><a href="/">Retour à l'accueil</a></p>
-</body>
-</html>
+<div class="erreur-page">
+    <p class="erreur-page__code">500</p>
+    <h1>Erreur technique</h1>
+    <p>Une erreur inattendue est survenue. L'incident a été journalisé ; aucune donnée n'a été modifiée.</p>
+    <p>Vous pouvez revenir à l'accueil ou réessayer dans quelques instants.</p>
+    <?php if (($debug ?? false) === true): ?>
+        <p class="message message--erreur">Mode debug : consultez <code>var/log</code> pour le détail.</p>
+    <?php endif; ?>
+    <p>
+        <a class="btn btn--acheter" href="/">Retour à l'accueil</a>
+        <a class="btn btn--secondaire" href="/catalogue">Voir le catalogue</a>
+    </p>
+</div>

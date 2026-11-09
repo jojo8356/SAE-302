@@ -93,12 +93,12 @@ $check(
 );
 $check(
     "la case CGV reste cochée après l'erreur",
-    preg_match('/<input type="checkbox" name="cgv" value="1" required checked>/', $html) === 1
+    preg_match('/<input type="checkbox" id="cgv" name="cgv" value="1" required checked>/', $html) === 1
 );
 $htmlDecochee = rendreInscription([], ['nom' => '', 'prenom' => '', 'email' => '']);
 $check(
     "sans saisie, la case part décochée (aucun cochage forcé)",
-    preg_match('/<input type="checkbox" name="cgv" value="1" required>/', $htmlDecochee) === 1
+    preg_match('/<input type="checkbox" id="cgv" name="cgv" value="1" required>/', $htmlDecochee) === 1
 );
 $check(
     "les mots de passe ne repartent jamais (aucune valeur réaffichée)",
@@ -116,8 +116,8 @@ $check(
         && str_contains($html, '<label for="prenom">Prénom *</label>')
         && str_contains($html, '<label for="email">Email *</label>')
         && str_contains($html, '<label for="mot_de_passe">Mot de passe *')
-        && str_contains($html, '<label for="confirmation">Confirmation *</label>')
-        && str_contains($html, 'conditions générales de vente</a> *</label>')
+        && str_contains($html, '<label for="confirmation">Confirmation du mot de passe *</label>')
+        && preg_match('/conditions générales de vente<\/a>\s*\*\s*<\/label>/', $html) === 1
 );
 
 /* ── 2. Repository : le doublon est détectable dès la validation ──── */

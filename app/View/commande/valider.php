@@ -10,6 +10,7 @@ declare(strict_types=1);
  */
 ?>
 <h1>Valider ma commande</h1>
+<p class="message message--info">Maquette pédagogique : aucun paiement ni livraison réelle. Les coordonnées de commande sont enregistrées.</p>
 
 <?php if ($erreurs !== []): ?>
     <ul role="alert">
@@ -17,6 +18,7 @@ declare(strict_types=1);
     </ul>
 <?php endif; ?>
 
+<div class="tableau-defilant tableau-defilant--client" role="region" tabindex="0" aria-label="Récapitulatif de la commande">
 <table class="tableau-recapitulatif">
     <caption>Récapitulatif de votre panier</caption>
     <colgroup><col class="col-produit"><col class="col-prix"><col class="col-qte"><col class="col-total"></colgroup>
@@ -26,19 +28,20 @@ declare(strict_types=1);
     <tbody>
     <?php foreach ($recap['articles'] as $ligne): ?>
         <tr>
-            <td><?= e($ligne['nom']) ?> <small>(réf. <?= e($ligne['reference']) ?>)</small></td>
-            <td class="montant"><?= euros($ligne['prix_unitaire']) ?></td>
-            <td><?= (int) $ligne['quantite'] ?></td>
-            <td class="montant"><?= euros($ligne['total_ligne']) ?></td>
+            <td data-label="Produit"><?= e($ligne['nom']) ?> <small>(réf. <?= e($ligne['reference']) ?>)</small></td>
+            <td class="montant" data-label="Prix TTC"><?= euros($ligne['prix_unitaire']) ?></td>
+            <td data-label="Quantité"><?= (int) $ligne['quantite'] ?></td>
+            <td class="montant" data-label="Total TTC"><?= euros($ligne['total_ligne']) ?></td>
         </tr>
     <?php endforeach; ?>
     </tbody>
     <tfoot>
     <tr><th scope="row" colspan="3">Sous-total TTC</th><td class="montant"><?= euros($recap['sous_total']) ?></td></tr>
     <tr><th scope="row" colspan="3">Frais de port <small>(<?= e($recap['port_motif']) ?>)</small></th><td class="montant"><?= euros($recap['frais_port']) ?></td></tr>
-    <tr><th scope="row" colspan="3">Total à payer</th><td class="montant"><strong><?= euros($recap['total']) ?></strong></td></tr>
+    <tr><th scope="row" colspan="3">Total simulé</th><td class="montant"><strong><?= euros($recap['total']) ?></strong></td></tr>
     </tfoot>
 </table>
+</div>
 
 <form method="post" action="/commande/valider">
     <?= csrf_field() ?>
@@ -62,6 +65,6 @@ declare(strict_types=1);
 </form>
 
 <p><small>En validant, vous acceptez les <a href="/cgv">CGV</a>. Le stock est vérifié et
-décrémenté au moment présent ; le prix de chaque ligne est <strong>figé</strong>
-pour toujours et le port gelé avec la commande.</small></p>
+décrémenté lors de la confirmation ; le prix de chaque ligne et les frais de port sont <strong>figés</strong> dans la commande.</small></p>
+<p><small>Avant de confirmer : <a href="/livraison">livraison</a>, <a href="/retractation">rétractation</a>, <a href="/garanties">garanties</a> et <a href="/confidentialite">données personnelles</a>.</small></p>
 <p><a href="/panier">← Revenir au panier</a></p>

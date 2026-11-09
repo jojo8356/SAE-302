@@ -79,7 +79,7 @@ function pid(StoreInterface $store, string $reference): int
 /** Valeur de l'option sélectionnée du select « mode » rendu (null si aucune). */
 function modeSelectionne(string $html): ?string
 {
-    if (preg_match('/<select name="mode">(.*?)<\/select>/s', $html, $m) !== 1) {
+    if (preg_match('/<select\b[^>]*\bname="mode"[^>]*>(.*?)<\/select>/s', $html, $m) !== 1) {
         return null;
     }
     if (preg_match('/<option value="([A-Z]+)" selected>/', $m[1], $o) === 1) {
@@ -113,7 +113,7 @@ ob_start();
 include dirname(__DIR__, 2) . '/app/View/admin/stocks.php';
 $html = (string) ob_get_clean();
 
-$check('le select « mode » est rendu', str_contains($html, '<select name="mode">'));
+$check('le select « mode » est rendu', preg_match('/<select\b[^>]*\bname="mode"[^>]*>/', $html) === 1);
 $check(
     'le mode sélectionné par défaut est DELTA',
     modeSelectionne($html) === 'DELTA',

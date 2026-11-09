@@ -1,0 +1,23 @@
+@startuml seq_authentification
+title Séquence — connexion client (SEC-04, SEC-05, RB-12)
+actor Client
+participant "AuthController" as AC
+participant "ClientRepository" as CR
+participant "Auth" as AUTH
+database "Store" as DB
+Client -> AC : POST /connexion (email, mot de passe, _csrf)
+AC -> AC : Csrf::verifier()
+AC -> CR : rechercherParEmail(email)
+CR -> DB : select client (préparé)
+DB --> CR : hash bcrypt + actif
+CR --> AC : client|null
+alt client introuvable ou inactif
+  AC --> Client : 302 /connexion + message générique
+else mot de passe valide
+  AC -> AUTH : connecter(client)
+  AUTH -> AUTH : session_regenerate_id(true)
+  AUTH -> DB : mise à jour date_derniere_connexion
+  AC --> Client : 302 /compte
+end
+note right of AC : message identique dans les deux cas (pas d'énumération de comptes)
+@enduml

@@ -211,11 +211,11 @@ $check(
 echo "\n== 4 · Catalogue : prix minimum et maximum, chacun son champ complet ==\n";
 $catalogueHtml = rendreCatalogue();
 $check('le formulaire de filtres porte la classe formulaire-filtres-catalogue',
-    str_contains($catalogueHtml, '<form method="get" class="formulaire-filtres-catalogue" action="/catalogue">'));
+    str_contains($catalogueHtml, '<form method="get" action="/catalogue"'));
 $check(
     '« Prix TTC minimum (€) » et « Prix TTC maximum (€) » sont deux blocs complets (plus de « max : » orphelin)',
-    preg_match('/<p class="champ">\s*<label for="prix_min">Prix TTC minimum \(€\) :<\/label>\s*<input type="number" id="prix_min"/s', $catalogueHtml) === 1
-        && preg_match('/<p class="champ">\s*<label for="prix_max">Prix TTC maximum \(€\) :<\/label>\s*<input type="number" id="prix_max"/s', $catalogueHtml) === 1
+    preg_match('/<p>\s*<label for="prix_min">Prix TTC minimum \(€\)<\/label>\s*<input type="number" id="prix_min"/s', $catalogueHtml) === 1
+        && preg_match('/<p>\s*<label for="prix_max">Prix TTC maximum \(€\)<\/label>\s*<input type="number" id="prix_max"/s', $catalogueHtml) === 1
         && !str_contains($catalogueHtml, '>max :</label>')
 );
 $ordre = [];
@@ -235,50 +235,23 @@ $check(
 $check(
     'non-régression : le panneau « Filtrer » et le bouton « Appliquer » sont toujours là',
     str_contains($catalogueHtml, '<summary>Filtrer</summary>')
-        && str_contains($catalogueHtml, '<p class="champ-envoi">')
-        && str_contains($catalogueHtml, '>Appliquer</button>')
+        && str_contains($catalogueHtml, '>Appliquer les filtres</button>')
 );
 
-/* ── 5. CSS : les rangées écrites, pas le défaut du navigateur ─────── */
-echo "\n== 5 · Feuille du site : grilles et blocs libellé/champ explicites ==\n";
-$css = (string) file_get_contents(dirname(__DIR__, 2) . '/public/minishop.css');
-$blocChampProduit = blocCss($css, '.formulaire-produit .champ');
-$check(
-    'produit : rangées en grille libellé/champ, alignées au départ (Description en haut)',
-    $blocChampProduit !== null && str_contains($blocChampProduit, 'display: grid')
-        && str_contains($blocChampProduit, 'grid-template-columns: 11rem minmax(0, 1fr)')
-        && str_contains($blocChampProduit, 'align-items: start'),
-    (string) $blocChampProduit
-);
-$blocChampFiltres = blocCss($css, ".formulaire-filtres-produits .champ,\n.formulaire-filtres-catalogue .champ");
-if ($blocChampFiltres === null) {
-    $blocChampFiltres = blocCss($css, '.formulaire-filtres-produits .champ, .formulaire-filtres-catalogue .champ');
-}
-$check(
-    'filtres : chaque bloc champ empile libellé puis champ (inséparables)',
-    $blocChampFiltres !== null && str_contains($blocChampFiltres, 'flex-direction: column'),
-    (string) $blocChampFiltres
-);
-$blocGrille = blocCss($css, '.formulaire-filtres-catalogue fieldset');
-$check(
-    'catalogue : le fieldset est une grille régulière à deux colonnes (prix côte à côte)',
-    $blocGrille !== null && str_contains($blocGrille, 'display: grid')
-        && str_contains($blocGrille, 'grid-template-columns: repeat(2, minmax(0, 1fr))'),
-    (string) $blocGrille
-);
-$blocFlexProduits = blocCss($css, '.formulaire-filtres-produits');
-$check(
-    'produits : la ligne de filtre est souple et alignée en bas (bouton avec les champs)',
-    $blocFlexProduits !== null && str_contains($blocFlexProduits, 'display: flex')
-        && str_contains($blocFlexProduits, 'align-items: end'),
-    (string) $blocFlexProduits
-);
-$blocAide = blocCss($css, '.formulaire-creation-categorie .aide');
-$check(
-    'catégories : le paragraphe d\'aide se replie dans le cadre (overflow-wrap)',
-    $blocAide !== null && str_contains($blocAide, 'overflow-wrap: break-word'),
-    (string) $blocAide
-);
+/* ── 5. CSS réellement chargée ───────────────────────────────────── */
+echo "\n== 5 · Feuille chargée : formulaires adaptatifs ==\n";
+$css = (string) file_get_contents(dirname(__DIR__, 2) . '/public/css/app.css');
+$layout = (string) file_get_contents(dirname(__DIR__, 2) . '/app/View/layout.php');
+$check('feuille de l’application chargée', str_contains($layout, 'href="/css/app.css"'));
+$blocProduit = blocCss($css, '.formulaire-produit .champ');
+$check('produit : grille à deux colonnes avec champs bornés', $blocProduit !== null
+    && str_contains($blocProduit, 'display: grid') && str_contains($blocProduit, 'minmax(0, 1fr)'));
+$check('produit : empilement prévu sur mobile', str_contains($css, '@media (max-width: 35em)')
+    && str_contains($css, '.formulaire-produit .champ { grid-template-columns: minmax(0, 1fr); }'));
+$check('catégories : aide repliable', str_contains($css, '.formulaire-creation-categorie .aide { overflow-wrap: anywhere; }'));
+$check('produits : filtres souples et alignés', str_contains($css, '.formulaire-filtres-produits { display: flex; flex-wrap: wrap; align-items: end;'));
+$check('catalogue : champs du panneau de filtres séparés et libellés', str_contains($css, '.panneau-filtres label')
+    && str_contains($catalogueHtml, 'for="prix_min"') && str_contains($catalogueHtml, 'for="prix_max"'));
 
 ob_end_clean();
 

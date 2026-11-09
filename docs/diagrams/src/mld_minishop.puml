@@ -1,0 +1,58 @@
+@startuml mld_minishop
+title MLD — MiniShop (clés, index, contraintes)
+skinparam classAttributeIconSize 0
+class categorie {
+  id_categorie : INT UNSIGNED <<PK>>
+  nom : VARCHAR(100) UNIQUE
+  slug : VARCHAR(120) UNIQUE
+  description : TEXT
+}
+class produit {
+  id_produit : INT UNSIGNED <<PK>>
+  reference : VARCHAR(40) UNIQUE
+  nom : VARCHAR(150)
+  slug : VARCHAR(160) UNIQUE
+  prix_ht : DECIMAL(10,2) CHECK > 0
+  tva : DECIMAL(5,2) CHECK >= 0
+  prix_ttc : DECIMAL(10,2) -- dénormalisation protégée par trigger
+  stock : INT CHECK >= 0
+  seuil_alerte : INT
+  id_categorie : <<FK>> categorie
+  visible : TINYINT
+}
+class client {
+  id_client : INT UNSIGNED <<PK>>
+  email : VARCHAR(190) UNIQUE
+  mot_de_passe_hash : CHAR(60)
+  actif : TINYINT
+}
+class commande {
+  id_commande : INT UNSIGNED <<PK>>
+  numero : VARCHAR(20) UNIQUE
+  statut : ENUM(BROUILLON, PAYEE, EN_PREPARATION, EXPEDIEE, LIVREE, ANNULEE, RETOURNEE)
+  montant_total : DECIMAL(10,2)
+  frais_port : DECIMAL(10,2) CHECK >= 0
+  id_client : <<FK>> client
+}
+class ligne_commande {
+  id_ligne : INT UNSIGNED <<PK>>
+  id_commande : <<FK>> commande ON DELETE CASCADE
+  id_produit : <<FK>> produit ON DELETE RESTRICT
+  quantite : INT CHECK > 0
+  prix_unitaire : DECIMAL(10,2)
+  total_ligne : DECIMAL(10,2)
+}
+class order_status_history {
+  id : BIGINT <<PK>>
+  order_id : <<FK>> commande
+  old_status / new_status : VARCHAR(20)
+  changed_at : DATETIME
+  changed_by : VARCHAR(120)
+}
+categorie "1" -- "0..*" produit
+client "1" -- "0..*" commande
+commande "1" -- "1..*" ligne_commande
+produit "1" -- "0..*" ligne_commande
+commande "1" -- "0..*" order_status_history
+note bottom of produit : idx_catalogue(id_categorie, visible)\nidx_recherche(nom)\nprix_ttc recalculé par trg_produit_ttc
+@enduml

@@ -22,6 +22,12 @@
 import { spawn, spawnSync } from 'node:child_process';
 import { JSDOM } from 'jsdom';
 
+// Ces parcours modifient le serveur ciblé : jamais les lancer implicitement sur les données locales.
+if (!process.env.UI_BASE_URL || process.env.UI_TEST_INSTANCE_JETABLE !== '1') {
+  console.error('UI_BASE_URL et UI_TEST_INSTANCE_JETABLE=1 requis : utiliser uniquement une instance de test jetable. Ces tests modifient ses données.');
+  process.exit(2);
+}
+
 const PORT = 8122;
 const base = process.env.UI_BASE_URL ?? `http://127.0.0.1:${PORT}`;
 let échecs = 0;
@@ -159,7 +165,6 @@ async function attendreServeur() {
 
 async function aller() {
   if (!process.env.UI_BASE_URL) {
-    spawnSync('node', ['scripts/wasm_run.mjs', 'scripts/seed.php'], { stdio: 'inherit' });
     serveur = spawn('node', ['scripts/wasm-serve.mjs'], { env: { ...process.env, PORT: String(PORT) }, stdio: 'inherit' });
     await attendreServeur();
   }
@@ -180,8 +185,9 @@ async function aller() {
     aucunCode(navigateur.texte) === '', aucunCode(navigateur.texte));
 
   console.log('\n[Codes techniques] 2 · Port offert et validation : français aussi');
-  await navigateur.aller('/catalogue');
-  const lienCasque = [...navigateur.doc.querySelectorAll('a[href^="/produit/"]')].find((a) => a.textContent.includes('Casque'));
+  await navigateur.aller('/catalogue?q=Casque');
+  const lienCasque = [...navigateur.doc.querySelectorAll('a[href^="/produit/"]')].find((a) => (a.getAttribute('aria-label') ?? a.textContent).includes('Casque'));
+  if (!lienCasque) throw new Error('Aucun casque disponible dans le catalogue de test');
   await navigateur.aller(lienCasque.getAttribute('href'));
   const boutonAjout2 = navigateur.doc.querySelector('form[action="/panier/ajouter"] button');
   await navigateur.cliquerBouton(boutonAjout2);
@@ -257,7 +263,6 @@ async function aller() {
   console.log(`\n${échecs === 0 ? '✅' : '❌'} Codes techniques : ${échecs === 0 ? 'toutes les vérifications réussies' : échecs + ' vérification(s) en échec'}\n`);
   if (serveur) {
     serveur.kill();
-    spawnSync('git', ['checkout', '--', 'data'], { stdio: 'inherit' });
   }
   process.exit(échecs === 0 ? 0 : 1);
 }
@@ -266,7 +271,6 @@ aller().catch(async (error) => {
   console.error('❌ Erreur E2E codes techniques :', error.message);
   if (serveur) {
     serveur.kill();
-    spawnSync('git', ['checkout', '--', 'data'], { stdio: 'inherit' });
   }
   process.exit(1);
 });

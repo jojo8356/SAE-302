@@ -1,27 +1,17 @@
 #!/usr/bin/env node
 /**
- * MiniShop — E2E « Contact : réponse et données » (port 8130 ; UI_BASE_URL en CI).
- *
- * Signalement : le site promettrait une réponse « sous 2 jours ouvrés »
- * sur une maquette, et le pied de page dirait « aucune donnée
- * personnelle conservée » alors que le formulaire demande nom et
- * e-mail. Ni l'une ni l'autre phrase n'existe dans l'application (pas
- * de formulaire de contact du tout) ; les incohérences réelles,
- * voisines, corrigées et vérifiées ici en vrai parcours (jsdom) :
- *   1. /contact : l'absence de réponse, autrefois reléguée en petits
- *      caractères au conditionnel, est dite en pleine page (ni
- *      formulaire ni service client, aucun message, aucune réponse) ;
- *   2. /confidentialite : les demandes de données passent par
- *      « Mon compte », seule voie réelle, et la transparence reste
- *      entière (nom, e-mail enregistrés, 36 mois) ;
- *   3. /mentions-legales : « utilisez des informations fictives »
- *      (conseil) au lieu d'affirmer qu'elles le sont ;
- *   4. pied de page servi : « aucun paiement réel », aucune négation
- *      de conservation des données.
+ * Parcours Contact sur instance jetable uniquement : formulaire CSRF, message
+ * stocké localement, sans e-mail ni réponse garantie, et cohérence légale.
  */
 
 import { spawn, spawnSync } from 'node:child_process';
 import { JSDOM } from 'jsdom';
+
+// Ces parcours modifient le serveur ciblé : jamais les lancer implicitement sur les données locales.
+if (!process.env.UI_BASE_URL || process.env.UI_TEST_INSTANCE_JETABLE !== '1') {
+  console.error('UI_BASE_URL et UI_TEST_INSTANCE_JETABLE=1 requis : utiliser uniquement une instance de test jetable. Ces tests modifient ses données.');
+  process.exit(2);
+}
 
 const PORT = 8130;
 const base = process.env.UI_BASE_URL ?? `http://127.0.0.1:${PORT}`;
@@ -162,42 +152,51 @@ async function aller() {
   console.log("\n[Contact] 1 · La page Contact, lue comme un client");
   const visiteur = new NavigateurUI();
   await visiteur.aller('/contact');
-  check("l'absence de réponse est dite clairement (aucun message, aucune réponse apportée)",
-    visiteur.texte.includes('aucun message ne peut être envoyé')
-      && visiteur.texte.includes('aucune réponse ne sera donc apportée'));
-  check('aucun délai de réponse promis (ni « jours ouvrés », ni « 2 jours »), plus d’« éventuel canal »',
-    !visiteur.texte.includes('jours ouvrés') && !visiteur.texte.includes('2 jours')
-      && !visiteur.texte.includes('éventuel canal'));
+  check('formulaire de contact POST protégé CSRF',
+    !!visiteur.doc.querySelector('form[method="post"][action="/contact"] input[name="_csrf"]'));
+  check('stockage local, sans e-mail et sans réponse garantie annoncés',
+    visiteur.texte.includes('enregistré localement')
+      && visiteur.texte.includes('sans envoi d’e-mail ni réponse garantie'));
+  check('aucun délai de réponse promis',
+    !visiteur.texte.includes('jours ouvrés') && !visiteur.texte.includes('48 heures'));
   const pied = piedDePage(visiteur);
-  check('le pied de page servi promet « aucun paiement réel » et ne nie aucune conservation de données',
-    pied.includes('aucun paiement réel') && !pied.includes('donnée'));
+  check('le pied ne nie pas la conservation de données',
+    pied !== '' && !pied.includes('aucune donnée personnelle conservée'));
 
-  console.log("\n[Contact] 2 · Confidentialité : voie de demande réelle, transparence entière");
+  visiteur.remplir('#nom', 'Test fictif');
+  visiteur.remplir('#email', 'contact-test@example.invalid');
+  visiteur.remplir('#message', 'Ceci est un message de démonstration pour le test.');
+  const bouton = visiteur.doc.querySelector('form[action="/contact"] button[type="submit"]');
+  await visiteur.cliquerBouton(bouton);
+  check('confirmation du stockage local sans envoi de mail',
+    visiteur.texte.includes('Message de démonstration enregistré localement')
+      && visiteur.texte.includes('Aucun e-mail n’a été envoyé')
+      && visiteur.texte.includes('aucune réponse n’est garantie'));
+
+  console.log("\n[Contact] 2 · Confidentialité et mentions légales");
   const lienConfidentialite = [...visiteur.doc.querySelectorAll('a')].find((a) => a.getAttribute('href') === '/confidentialite');
+  if (!lienConfidentialite) throw new Error('lien confidentialité absent');
   await visiteur.aller(lienConfidentialite.getAttribute('href'));
-  check('la page Confidentialité s’ouvre depuis Contact (200)',
-    visiteur.page.statut === 200 && visiteur.texte.includes('Confidentialité'));
-  check('ce qui est enregistré est dit (nom, prénom et e-mail, conservés 36 mois)',
-    visiteur.texte.includes('vos nom, prénom et e-mail') && visiteur.texte.includes('conservées 36 mois'));
-  check('les demandes passent par « Mon compte », seule voie de demande — plus de renvoi trompeur',
-    visiteur.texte.includes("c'est la seule voie de demande")
-      && !visiteur.texte.includes('passez par la page'));
-
-  console.log("\n[Contact] 3 · Mentions légales : le fictif est un conseil, pas une affirmation");
+  check('Confidentialité indique les données du journal local',
+    visiteur.page.statut === 200 && visiteur.texte.includes('nom, e-mail, message et date')
+      && visiteur.texte.includes('var/log/contact.jsonl'));
+  check('pas de mail, pas de réponse garantie et pas de purge automatique annoncés',
+    visiteur.texte.includes('Aucun e-mail n’est envoyé')
+      && visiteur.texte.includes('aucune réponse n’est garantie')
+      && visiteur.texte.includes('Aucune durée effective générale ni purge automatique'));
+  check('le formulaire ne garantit pas le traitement des demandes de droits',
+    visiteur.texte.includes('ne garantit pas le traitement d’une demande de droits'));
   await visiteur.aller('/mentions-legales');
-  check('« Utilisez des informations fictives : ce que vous saisissez… est enregistré »',
-    visiteur.texte.includes('Utilisez des informations fictives')
-      && visiteur.texte.includes('est enregistré pour faire fonctionner la boutique'));
-  check('l’ancienne affirmation (« contiennent des données fictives ») a disparu',
+  check('le formulaire ne remplace pas des coordonnées professionnelles',
+    visiteur.texte.includes('ne remplace pas des coordonnées professionnelles fonctionnelles'));
+  check('pas de fausse affirmation sur des données fictives',
     !visiteur.texte.includes('contiennent des données fictives'));
-  const lienConf2 = [...visiteur.doc.querySelectorAll('a')].find((a) => a.getAttribute('href') === '/confidentialite');
-  check('la section Données personnelles renvoie au détail (lien Confidentialité présent)',
-    lienConf2 !== undefined);
+  check('lien Confidentialité dans les mentions',
+    !!visiteur.doc.querySelector('a[href="/confidentialite"]'));
 
   console.log(`\n${échecs === 0 ? '✅' : '❌'} Contact cohérence : ${échecs === 0 ? 'toutes les vérifications réussies' : échecs + ' vérification(s) en échec'}\n`);
   if (serveur) {
     serveur.kill();
-    spawnSync('git', ['checkout', '--', 'data'], { stdio: 'inherit' });
   }
   process.exit(échecs === 0 ? 0 : 1);
 }
@@ -206,7 +205,6 @@ aller().catch(async (error) => {
   console.error('❌ Erreur E2E contact cohérence :', error.message);
   if (serveur) {
     serveur.kill();
-    spawnSync('git', ['checkout', '--', 'data'], { stdio: 'inherit' });
   }
   process.exit(1);
 });

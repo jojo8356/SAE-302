@@ -8,7 +8,12 @@
 app/Config/env.php
 config/env.php
 .env
-.env.local
+.env.*
+!/.env.example
+*.p12
+*.pfx
+id_rsa
+id_ed25519
 *.pem
 *.key
 
@@ -17,9 +22,17 @@ var/
 !var/.gitkeep
 *.log
 
+# --- sauvegardes laissées par les outils de correction (jamais versionnées)
+*.bak
+*.orig
+
 # --- artefacts générés (reproductibles par les scripts du dépôt)
 vendor/
+.phpunit.cache/
+build/coverage/
 node_modules/
+__pycache__/
+*.pyc
 dist/
 docs/diagrams/*.svg.tmp
 docs/diagrams/*.tmp

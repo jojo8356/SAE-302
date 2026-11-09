@@ -10,11 +10,9 @@ declare(strict_types=1);
     <p>Vous n'avez pas encore de commande.</p>
     <p><a href="/catalogue">Parcourir le catalogue →</a></p>
 <?php else: ?>
-    <table class="tableau-mes-commandes">
+    <div class="tableau-defilant tableau-defilant--client" role="region" tabindex="0" aria-label="Historique de vos commandes">
+<table class="tableau-commandes-client">
         <caption>Historique de vos commandes (prix figés à l'achat)</caption>
-        <colgroup>
-            <col class="col-numero"><col class="col-date"><col class="col-statut"><col class="col-articles"><col class="col-montant"><col class="col-detail">
-        </colgroup>
         <thead>
         <tr>
             <th scope="col">Numéro</th><th scope="col">Date</th><th scope="col">Statut</th>
@@ -24,14 +22,15 @@ declare(strict_types=1);
         <tbody>
         <?php foreach ($commandes as $commande): ?>
             <tr>
-                <td><a href="/mes-commandes/<?= (int) $commande['id_commande'] ?>"><?= e($commande['numero']) ?></a></td>
-                <td><?= e(date_fr($commande['date_commande'], true)) ?></td>
-                <td><?= e(statut_libelle($commande['statut'])) ?></td>
-                <td><?= (int) ($commande['nb_lignes'] ?? 0) ?></td>
-                <td class="montant"><?= euros($commande['montant_total']) ?></td>
-                <td><a href="/mes-commandes/<?= (int) $commande['id_commande'] ?>">Détail →</a></td>
+                <td data-label="Numéro"><a href="/mes-commandes/<?= (int) $commande['id_commande'] ?>"><?= e($commande['numero']) ?></a></td>
+                <td data-label="Date"><?= e(date_fr($commande['date_commande'], true)) ?></td>
+                <td data-label="Statut"><?= e(statut_libelle($commande['statut'])) ?></td>
+                <td data-label="Articles"><?= (int) ($commande['nb_lignes'] ?? 0) ?></td>
+                <td class="montant" data-label="Montant TTC"><?= euros($commande['montant_total']) ?></td>
+                <td data-label="Détail"><a href="/mes-commandes/<?= (int) $commande['id_commande'] ?>">Détail →</a></td>
             </tr>
         <?php endforeach; ?>
         </tbody>
     </table>
+</div>
 <?php endif; ?>

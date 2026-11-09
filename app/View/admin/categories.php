@@ -30,16 +30,14 @@ declare(strict_types=1);
 </form>
 
 <h2>Catégories existantes</h2>
+<div class="tableau-defilant tableau-defilant--admin" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
 <table class="tableau-categories">
-    <colgroup>
-        <col class="col-edition"><col class="col-slug"><col class="col-produits">
-        <col class="col-description"><col class="col-actions">
-    </colgroup>
+    <colgroup><col class="col-edition"><col class="col-slug"><col class="col-produits"><col class="col-description"><col class="col-actions"></colgroup>
     <thead><tr><th scope="col">Nom</th><th scope="col">Slug</th><th scope="col">Produits visibles</th><th scope="col">Description</th><th scope="col">Actions</th></tr></thead>
     <tbody>
     <?php foreach ($categories as $categorie): ?>
         <tr>
-            <td>
+            <td data-label="Nom et édition">
                 <form method="post" action="/admin/categories/<?= (int) $categorie['id_categorie'] ?>/modification">
                     <?= csrf_field() ?>
                     <input name="nom" aria-label="Nom de la catégorie" maxlength="100" required value="<?= e($categorie['nom']) ?>">
@@ -48,10 +46,10 @@ declare(strict_types=1);
                     <button type="submit">Enregistrer</button>
                 </form>
             </td>
-            <td><?= e($categorie['slug']) ?></td>
-            <td><?= (int) $categorie['nb_produits'] ?></td>
-            <td><?= e($categorie['description']) ?></td>
-            <td>
+            <td data-label="Slug"><?= e($categorie['slug']) ?></td>
+            <td data-label="Produits visibles"><?= (int) $categorie['nb_produits'] ?></td>
+            <td data-label="Description"><?= e($categorie['description']) ?></td>
+            <td data-label="Actions">
                 <form method="get" action="/admin/categories/<?= (int) $categorie['id_categorie'] ?>/suppression/confirmation">
                     <button type="submit" class="bouton-danger">Supprimer</button>
                 </form>
@@ -61,3 +59,4 @@ declare(strict_types=1);
     <?php endforeach; ?>
     </tbody>
 </table>
+</div>

@@ -20,6 +20,12 @@
 -- Chargement :  mysql -u root -p minishop < sql/03_minishop_triggers.sql
 --               (ou scripts/load_db.sh qui encapsule le DELIMITER $$)
 -- =====================================================================
+-- Collation de connexion = collation de la base. Les procédures et les
+-- déclencheurs MÉMORISENT la collation de la connexion qui les a créés :
+-- un chargement en utf8mb4_general_ci (défaut de `SET NAMES utf8mb4` selon
+-- la version du serveur) provoque ensuite l'erreur 1267 « Illegal mix of
+-- collations » quand l'application appelle sp_search_products.
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- =====================================================================
 -- BLOC A — STOCK (RB-03, RB-18) : le stock ne peut jamais devenir négatif

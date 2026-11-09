@@ -3,10 +3,9 @@
 -- Attendu : OK
 -- On verifie les trois etats possibles de la vue v_etat_stock :
 --   - RUPTURE : POWER-010 (stock=0 dans le seed)
---   - TRES_BAS : MICRO-007 (stock=2, seuil_alerte=1 — non, le seed
---     fixe MICRO a stock=2 seuil=1 -> 2 > 1 donc DISPONIBLE). On
---     utilise le produit TST-900 (fixture : stock=5, seuil_alerte=2)
---     que l'on ajuste temporairement a stock=1 via sp_adjust_stock
+--   - TRES_BAS : MICRO-007 (stock=2, seuil_alerte=2 -> 2 <= 2), et
+--     accessoirement TST-900 (fixture : stock=5, seuil_alerte=2) que
+--     l'on ajuste temporairement a stock=1 via sp_adjust_stock
 --     (DELTA -4) pour tomber sous le seuil.
 --   - DISPONIBLE : le reste.
 -- Le test est OK si les trois etats existent bien sur la vue.

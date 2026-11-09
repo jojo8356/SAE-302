@@ -12,51 +12,119 @@
  *   2. run_tests.php      — règles de gestion T-01…T-29 (CDC §6)
  *   3. unit_tests.php     — unitaires (Text, Csrf, RB-11, PanierSession…)
  *   4. features_test.php  — fonctionnalités UC-01…UC-14 via les repositories
- *   5. wasm-e2e.mjs       — parcours HTTP complet (seed requis, pollue data/)
+ *   4 bis. catalogue_stock_test.php — ruptures, recherches, filtres et pages
+ *   4 ter. nouveautes_test.php — dates, visibilité et derniers ajouts
+ *   5. css_contract.php   — contrats du design system (tokens, contrastes, CSP)
+ *   6. responsive_contract.php — robustesse responsive (320 px → 1536 px)
+ *   6. tests/phpunit/**   — suite PHPUnit (exécutée par son runner hors ligne)
+ *   7. e2e.mjs            — seed + parcours HTTP complet, données restaurées
  */
 import { spawnSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
+
+// Le drapeau bloque la provision applicative (DbProvision::contexteDeTest()).
+// Attention : la suite SQL explicite peut créer et supprimer minishop_test.
+process.env.MINISHOP_TESTS = '1';
+const options = process.argv.slice(2);
+if (options.some(option => !['--sans-sql', '--sans-e2e'].includes(option))) {
+  console.error('Usage : node scripts/run-all-tests.mjs [--sans-sql] [--sans-e2e]');
+  process.exit(2);
+}
+const sansSql = options.includes('--sans-sql');
+const sansE2e = options.includes('--sans-e2e');
+
+// Sur une machine avec PHP natif, AUCUNE dépendance npm n'est nécessaire :
+// on exécute directement `php <script>`. Le runtime WASM (@php-wasm/node) ne
+// sert que dans les environnements sans PHP (sandbox de développement).
+const phpExiste = spawnSync('php', ['-r', 'echo PHP_VERSION;'], { encoding: 'utf8' }).status === 0;
+if (phpExiste) {
+  const natif = spawnSync('php', ['scripts/run-all-tests.php', ...options], { stdio: 'inherit' });
+  process.exit(natif.status ?? 1);
+}
+
+/** Construit la commande d'un script PHP : natif si possible, sinon WASM. */
+const commande = (fichier) => {
+  if (phpExiste) return ['php', [fichier]];
+  return ['node', ['scripts/wasm_run.mjs', fichier]];
+};
+
+const lancer = (fichier) => {
+  const [programme, arguments_] = commande(fichier);
+  return spawnSync(programme, arguments_, { stdio: 'inherit' });
+};
 
 const suites = [
-  ['Heure / fuseaux (régression)', 'tests/php/heure_test.php'],
-  ['Adresse de livraison (régression)', 'tests/php/adresse_livraison_test.php'],
-  ['Actions définitives / confirmation (régression)', 'tests/php/actions_destructrices_test.php'],
-  ['Stocks mode par défaut (régression)', 'tests/php/stocks_defaut_test.php'],
-  ['Pages du pied de page (régression)', 'tests/php/pages_pied_de_page_test.php'],
-  ['Catalogue filtres en haut (régression)', 'tests/php/catalogue_filtres_test.php'],
-  ['Fiche produit caractéristiques (régression)', 'tests/php/fiche_produit_test.php'],
-  ['Panier tableau, mise en page (régression)', 'tests/php/panier_tableau_test.php'],
-  ['Commandes admin, colonne Statut (régression)', 'tests/php/commandes_tableau_test.php'],
-  ['Catégories admin, page tenue en page (régression)', 'tests/php/categories_tableau_test.php'],
-  ['Alignement Produit/Référence panier, stocks, alertes (régression)', 'tests/php/alignement_colonnes_test.php'],
-  ['Formulaires produit, catégories, produits, catalogue (régression)', 'tests/php/formulaires_admin_test.php'],
-  ['Divers panier, Top 5, photos, description, pied de page, contact (régression)', 'tests/php/divers_test.php'],
-  ['Codes techniques visibles (régression)', 'tests/php/codes_techniques_test.php'],
-  ['CGV article 4, annulation avant expédition (régression)', 'tests/php/cgv_retractation_test.php'],
-  ['Mentions légales, éditeur, hébergeur, BUT2 (régression)', 'tests/php/mentions_legales_test.php'],
-  ['Contact, réponse non promise, données cohérentes (régression)', 'tests/php/contact_coherence_test.php'],
-  ['Annulation, historique conservé, montant soldé (régression)', 'tests/php/annulation_historique_test.php'],
-  ['Valider ma commande, récapitulatif à 375 px (régression)', 'tests/php/valider_recap_test.php'],
-  ['Inscription, erreurs simultanées, saisie conservée (régression)', 'tests/php/inscription_erreurs_test.php'],
-  ['Mes commandes, tableau à 375 px, légende (régression)', 'tests/php/mes_commandes_tableau_test.php'],
-  ['Page À propos (régression)', 'tests/php/apropos_test.php'],
-  ['Bouton panier (régression)', 'tests/php/panier_cta_test.php'],
-  ['Doublon catégorie (régression)', 'tests/php/categorie_doublon_test.php'],
+  ['Autotests code potentiellement inutilisé', 'tests/php/code_mort_test.php'],
+  ['Nouveaux candidats code potentiellement inutilisé', 'scripts/code_mort.php'],
   ['Moteur JSON', 'tests/php/engine_smoke.php'],
   ['Règles de gestion', 'tests/php/run_tests.php'],
   ['Unitaires', 'tests/php/unit_tests.php'],
   ['Fonctionnalités', 'tests/php/features_test.php'],
+  ['Catalogue : ruptures en dernier', 'tests/php/catalogue_stock_test.php'],
+  ['Accueil : derniers ajouts', 'tests/php/nouveautes_test.php'],
+  ['Accueil : dates des ajouts', 'tests/php/date_ajout_test.php'],
+  ['Cartes produit : accessibilité', 'tests/php/cartes_accessibilite_test.php'],
+  ['Contrats de design', 'tests/php/css_contract.php'],
+  ['Contrat responsive', 'tests/php/responsive_contract.php'],
+  ['Contrats HTTP', 'tests/php/contract_http.php'],
+  ['Information juridique et données', 'tests/php/information_juridique_test.php'],
+  ['Unitaires PHPUnit', 'tests/phpunit/run-local.php'],
 ];
 
 let échecs = 0;
 
+console.log(phpExiste
+  ? '\nExécution en PHP natif (aucune dépendance npm requise).'
+  : '\nPHP natif absent : exécution via le runtime WASM (@php-wasm/node).');
+
+console.log('⏭ NON JOUÉ : analyse de compilation des dépréciations (PHP CLI natif absent).');
+console.log('  Les suites WASM contrôlent les dépréciations à l’exécution avec PHP 8.2.');
+
+console.log(`\n${'='.repeat(64)}\n▸ Autotests du contrôle des dépréciations\n${'='.repeat(64)}`);
+const autoAnalyse = spawnSync('python3', ['tests/python/test_deprecations.py'], { stdio: 'inherit' });
+if (autoAnalyse.status !== 0) ++échecs;
+for (const test of ['tests/python/test_code_mort_integration.py', 'tests/python/test_inventaire_app.py', 'tests/python/test_securite_gitignore.py', 'tests/python/test_audit_structurel.py']) {
+  const result = spawnSync('python3', [test], { stdio: 'inherit' });
+  if (result.status !== 0) ++échecs;
+}
+const autoWasm = spawnSync('node', ['tests/js/deprecations_wasm.mjs'], { stdio: 'inherit' });
+if (autoWasm.status !== 0) ++échecs;
+
+// Le harnais se vérifie lui-même : sans cela, une régression du calcul du
+// verdict rendrait toutes les suites vertes par construction.
+console.log(`\n${'='.repeat(64)}\n▸ Autotest du verdict WASM — scripts/wasm_verdict.mjs\n${'='.repeat(64)}`);
+const autotest = spawnSync('node', ['scripts/wasm_verdict.mjs'], { stdio: 'inherit' });
+if (autotest.status !== 0) ++échecs;
+
 console.log(`\n${'='.repeat(64)}\n▸ Linter strict types — scripts/strict_types_lint.php\n${'='.repeat(64)}`);
-const lint = spawnSync('node', ['scripts/wasm_run.mjs', 'scripts/strict_types_lint.php'], { stdio: 'inherit' });
+const lint = lancer('scripts/strict_types_lint.php');
 if (lint.status !== 0) ++échecs;
 
 for (const [nom, fichier] of suites) {
   console.log(`\n${'='.repeat(64)}\n▸ ${nom} — ${fichier}\n${'='.repeat(64)}`);
-  const r = spawnSync('node', ['scripts/wasm_run.mjs', fichier], { stdio: 'inherit' });
+  const r = lancer(fichier);
   if (r.status !== 0) ++échecs;
+}
+
+// Intégration SQL : code 2 = suite non jouable ici (pas de serveur), ce n'est
+// pas un échec. La compter comme telle ferait échouer la sandbox sur une suite
+// qu'elle ne peut structurellement pas exécuter.
+let étatsql = 'NON JOUÉ ⏭ (serveur ou client MySQL absent)';
+if (sansSql) {
+  étatsql = 'NON JOUÉ ⏭ (--sans-sql)';
+  console.log('⏭ NON JOUÉ : intégration SQL (--sans-sql).');
+} else if (!existsSync('tests/php/sql_integration.php')) {
+  console.log('  ❌ fichier absent');
+  ++échecs;
+  étatsql = 'fichier absent ❌';
+} else {
+  console.log(`\n${'='.repeat(64)}\n▸ Intégration SQL — tests/php/sql_integration.php\n${'='.repeat(64)}`);
+  const sql = lancer('tests/php/sql_integration.php');
+  if (sql.status === 0) étatsql = 'joué ✅';
+  if (sql.status !== 0 && sql.status !== 2) {
+    ++échecs;
+    étatsql = 'ÉCHEC ❌';
+  }
 }
 
 console.log(`\n${'='.repeat(64)}\n${'='.repeat(64)}`);
@@ -64,181 +132,28 @@ if (échecs > 0) {
   console.log(`SUITES : ${échecs} étape(s) en échec ❌ — E2E non joué`);
   process.exit(1);
 }
-console.log('SUITES PHP : TOUT EST VERT ✅ — E2E :');
+console.log(`SUITES PHP EXÉCUTÉES : TOUT EST VERT ✅ — analyse de compilation : NON JOUÉE — SQL : ${étatsql} — E2E :`);
 
-// l'E2E exige un magasin propre (il le pollue par construction : syncBack)
-const seed = spawnSync('node', ['scripts/wasm_run.mjs', 'scripts/seed.php'], { stdio: 'inherit' });
-const e2e = seed.status === 0
-  ? spawnSync('node', ['scripts/wasm-e2e.mjs'], { stdio: 'inherit' })
-  : { status: 1 };
+// L'E2E pilote l'application par requêtes HTTP internes : il repose sur le
+// runtime WASM. Sans PHP natif, il tourne partout ; avec PHP natif, il faut
+// le paquet npm — on l'annonce clairement au lieu d'échouer salement.
+if (sansE2e) {
+  console.log('⏭ NON JOUÉ : E2E (--sans-e2e).');
+  process.exit(0);
+}
+const e2eDisponible = !phpExiste || spawnSync('node', ['-e', "require.resolve('@php-wasm/node')"]).status === 0;
+if (!e2eDisponible) {
+  console.log('⏭  E2E ignoré : @php-wasm/node absent (npm install).');
+  console.log('   Les 10 suites PHP ci-dessus sont vertes ; pour l’E2E complet :');
+  console.log('     npm install && npm run test:e2e');
+  process.exit(0);
+}
+
+// l'E2E exige un magasin propre et écrit (seed + parcours) : scripts/e2e.mjs
+// photographie data/minishop avant, le restaure après — même en cas d'échec.
+const e2e = spawnSync('node', ['scripts/e2e.mjs'], { stdio: 'inherit' });
 if (e2e.status !== 0) {
   console.log('E2E : ÉCHEC ❌');
   process.exit(1);
 }
-
-// E2E UI (clics réels sur les pages, jsdom) : il faut un magasin propre,
-// l'E2E HTTP vient de le polluer — re-seed avant de le lancer.
-console.log(`\n${'='.repeat(64)}\n▸ E2E UI Catégories (clics) — scripts/ui-e2e-categories.mjs\n${'='.repeat(64)}`);
-const reseed = spawnSync('node', ['scripts/wasm_run.mjs', 'scripts/seed.php'], { stdio: 'inherit' });
-const ui = reseed.status === 0
-  ? spawnSync('node', ['scripts/ui-e2e-categories.mjs'], { stdio: 'inherit' })
-  : { status: 1 };
-if (ui.status !== 0) {
-  console.log('E2E UI : ÉCHEC ❌');
-  process.exit(1);
-}
-
-console.log(`\n${'='.repeat(64)}\n▸ E2E UI Panier (clics) — scripts/ui-e2e-panier.mjs\n${'='.repeat(64)}`);
-const uiPanier = spawnSync('node', ['scripts/ui-e2e-panier.mjs'], { stdio: 'inherit' });
-if (uiPanier.status !== 0) {
-  console.log('E2E UI panier : ÉCHEC ❌');
-  process.exit(1);
-}
-
-console.log(`\n${'='.repeat(64)}\n▸ E2E UI À propos — scripts/ui-e2e-apropos.mjs\n${'='.repeat(64)}`);
-const uiApropos = spawnSync('node', ['scripts/ui-e2e-apropos.mjs'], { stdio: 'inherit' });
-if (uiApropos.status !== 0) {
-  console.log('E2E UI À propos : ÉCHEC ❌');
-  process.exit(1);
-}
-
-console.log(`\n${'='.repeat(64)}\n▸ E2E UI Heure — scripts/ui-e2e-heure.mjs\n${'='.repeat(64)}`);
-const uiHeure = spawnSync('node', ['scripts/ui-e2e-heure.mjs'], { stdio: 'inherit' });
-if (uiHeure.status !== 0) {
-  console.log('E2E UI Heure : ÉCHEC ❌');
-  process.exit(1);
-}
-
-console.log(`\n${'='.repeat(64)}\n▸ E2E UI Annulation / suppressions confirmées — scripts/ui-e2e-annulation.mjs\n${'='.repeat(64)}`);
-const uiAnnulation = spawnSync('node', ['scripts/ui-e2e-annulation.mjs'], { stdio: 'inherit' });
-if (uiAnnulation.status !== 0) {
-  console.log('E2E UI Annulation : ÉCHEC ❌');
-  process.exit(1);
-}
-
-console.log(`\n${'='.repeat(64)}\n▸ E2E UI Stocks — scripts/ui-e2e-stocks.mjs\n${'='.repeat(64)}`);
-const uiStocks = spawnSync('node', ['scripts/ui-e2e-stocks.mjs'], { stdio: 'inherit' });
-if (uiStocks.status !== 0) {
-  console.log('E2E UI Stocks : ÉCHEC ❌');
-  process.exit(1);
-}
-
-console.log(`\n${'='.repeat(64)}\n▸ E2E UI Pied de page — scripts/ui-e2e-pied-de-page.mjs\n${'='.repeat(64)}`);
-const uiPiedDePage = spawnSync('node', ['scripts/ui-e2e-pied-de-page.mjs'], { stdio: 'inherit' });
-if (uiPiedDePage.status !== 0) {
-  console.log('E2E UI Pied de page : ÉCHEC ❌');
-  process.exit(1);
-}
-
-console.log(`\n${'='.repeat(64)}\n▸ E2E UI Catalogue (mobile) — scripts/ui-e2e-catalogue.mjs\n${'='.repeat(64)}`);
-const uiCatalogue = spawnSync('node', ['scripts/ui-e2e-catalogue.mjs'], { stdio: 'inherit' });
-if (uiCatalogue.status !== 0) {
-  console.log('E2E UI Catalogue : ÉCHEC ❌');
-  process.exit(1);
-}
-
-console.log(`\n${'='.repeat(64)}\n▸ E2E UI Fiche produit — scripts/ui-e2e-produit.mjs\n${'='.repeat(64)}`);
-const uiProduit = spawnSync('node', ['scripts/ui-e2e-produit.mjs'], { stdio: 'inherit' });
-if (uiProduit.status !== 0) {
-  console.log('E2E UI Produit : ÉCHEC ❌');
-  process.exit(1);
-}
-
-console.log(`\n${'='.repeat(64)}\n▸ E2E UI Panier tableau — scripts/ui-e2e-panier-tableau.mjs\n${'='.repeat(64)}`);
-const uiPanierTableau = spawnSync('node', ['scripts/ui-e2e-panier-tableau.mjs'], { stdio: 'inherit' });
-if (uiPanierTableau.status !== 0) {
-  console.log('E2E UI Panier tableau : ÉCHEC ❌');
-  process.exit(1);
-}
-
-console.log(`\n${'='.repeat(64)}\n▸ E2E UI Commandes admin (colonne Statut) — scripts/ui-e2e-commandes-tableau.mjs\n${'='.repeat(64)}`);
-const uiCommandesTableau = spawnSync('node', ['scripts/ui-e2e-commandes-tableau.mjs'], { stdio: 'inherit' });
-if (uiCommandesTableau.status !== 0) {
-  console.log('E2E UI Commandes admin : ÉCHEC ❌');
-  process.exit(1);
-}
-
-console.log(`\n${'='.repeat(64)}\n▸ E2E UI Catégories admin (page tenue en page) — scripts/ui-e2e-categories-tableau.mjs\n${'='.repeat(64)}`);
-const uiCategoriesTableau = spawnSync('node', ['scripts/ui-e2e-categories-tableau.mjs'], { stdio: 'inherit' });
-if (uiCategoriesTableau.status !== 0) {
-  console.log('E2E UI Catégories admin : ÉCHEC ❌');
-  process.exit(1);
-}
-
-console.log(`\n${'='.repeat(64)}\n▸ E2E UI Alignement Produit/Référence — scripts/ui-e2e-alignement.mjs\n${'='.repeat(64)}`);
-const uiAlignement = spawnSync('node', ['scripts/ui-e2e-alignement.mjs'], { stdio: 'inherit' });
-if (uiAlignement.status !== 0) {
-  console.log('E2E UI Alignement : ÉCHEC ❌');
-  process.exit(1);
-}
-
-console.log(`\n${'='.repeat(64)}\n▸ E2E UI Formulaires (produit, catégories, produits, catalogue) — scripts/ui-e2e-formulaires.mjs\n${'='.repeat(64)}`);
-const uiFormulaires = spawnSync('node', ['scripts/ui-e2e-formulaires.mjs'], { stdio: 'inherit' });
-if (uiFormulaires.status !== 0) {
-  console.log('E2E UI Formulaires : ÉCHEC ❌');
-  process.exit(1);
-}
-
-console.log(`\n${'='.repeat(64)}\n▸ E2E UI Divers — scripts/ui-e2e-divers.mjs\n${'='.repeat(64)}`);
-const uiDivers = spawnSync('node', ['scripts/ui-e2e-divers.mjs'], { stdio: 'inherit' });
-
-console.log(`\n${'='.repeat(64)}\n▸ E2E UI Codes techniques — scripts/ui-e2e-codes.mjs\n${'='.repeat(64)}`);
-const uiCodes = spawnSync('node', ['scripts/ui-e2e-codes.mjs'], { stdio: 'inherit' });
-
-console.log(`\n${'='.repeat(64)}\n▸ E2E UI CGV article 4 — scripts/ui-e2e-retractation.mjs\n${'='.repeat(64)}`);
-const uiRetractation = spawnSync('node', ['scripts/ui-e2e-retractation.mjs'], { stdio: 'inherit' });
-
-console.log(`\n${'='.repeat(64)}\n▸ E2E UI Mentions légales — scripts/ui-e2e-mentions.mjs\n${'='.repeat(64)}`);
-const uiMentions = spawnSync('node', ['scripts/ui-e2e-mentions.mjs'], { stdio: 'inherit' });
-
-console.log(`\n${'='.repeat(64)}\n▸ E2E UI Contact cohérence — scripts/ui-e2e-contact.mjs\n${'='.repeat(64)}`);
-const uiContact = spawnSync('node', ['scripts/ui-e2e-contact.mjs'], { stdio: 'inherit' });
-
-console.log(`\n${'='.repeat(64)}\n▸ E2E UI Annulation historique — scripts/ui-e2e-annulation-historique.mjs\n${'='.repeat(64)}`);
-const uiAnnulationHistorique = spawnSync('node', ['scripts/ui-e2e-annulation-historique.mjs'], { stdio: 'inherit' });
-
-console.log(`\n${'='.repeat(64)}\n▸ E2E UI Valider 375 px — scripts/ui-e2e-valider.mjs\n${'='.repeat(64)}`);
-const uiValider = spawnSync('node', ['scripts/ui-e2e-valider.mjs'], { stdio: 'inherit' });
-
-console.log(`\n${'='.repeat(64)}\n▸ E2E UI Inscription — scripts/ui-e2e-inscription.mjs\n${'='.repeat(64)}`);
-const uiInscription = spawnSync('node', ['scripts/ui-e2e-inscription.mjs'], { stdio: 'inherit' });
-
-console.log(`\n${'='.repeat(64)}\n▸ E2E UI Mes commandes — scripts/ui-e2e-mes-commandes.mjs\n${'='.repeat(64)}`);
-const uiMesCommandes = spawnSync('node', ['scripts/ui-e2e-mes-commandes.mjs'], { stdio: 'inherit' });
-if (uiDivers.status !== 0) {
-  console.log('E2E UI Divers : ÉCHEC ❌');
-  process.exit(1);
-}
-if (uiCodes.status !== 0) {
-  console.log('E2E UI Codes techniques : ÉCHEC ❌');
-  process.exit(1);
-}
-if (uiRetractation.status !== 0) {
-  console.log('E2E UI CGV article 4 : ÉCHEC ❌');
-  process.exit(1);
-}
-if (uiMentions.status !== 0) {
-  console.log('E2E UI Mentions légales : ÉCHEC ❌');
-  process.exit(1);
-}
-if (uiContact.status !== 0) {
-  console.log('E2E UI Contact cohérence : ÉCHEC ❌');
-  process.exit(1);
-}
-if (uiAnnulationHistorique.status !== 0) {
-  console.log('E2E UI Annulation historique : ÉCHEC ❌');
-  process.exit(1);
-}
-if (uiMesCommandes.status !== 0) {
-  console.log('E2E UI Mes commandes : ÉCHEC ❌');
-  process.exit(1);
-}
-if (uiInscription.status !== 0) {
-  console.log('E2E UI Inscription : ÉCHEC ❌');
-  process.exit(1);
-}
-if (uiValider.status !== 0) {
-  console.log('E2E UI Valider 375 px : ÉCHEC ❌');
-  process.exit(1);
-}
-console.log('\nTOUTES LES SUITES SONT VERTES ✅ (moteur, règles, unitaires, fonctionnalités, E2E HTTP, E2E UI)');
+console.log('\nTOUTES LES SUITES SONT VERTES ✅ (moteur, règles, unitaires, fonctionnalités, design, responsive, PHPUnit, E2E)');

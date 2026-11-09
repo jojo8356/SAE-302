@@ -1,24 +1,15 @@
 #!/usr/bin/env node
-/**
- * MiniShop — E2E « Mentions légales » (port 8128 ; UI_BASE_URL en CI).
- *
- * Signalement : la page Mentions légales ne donnait ni le nom ou un
- * contact de l'éditeur, ni l'hébergeur (l'université, une fois le site
- * sur LineServ) ; et elle annonçait « BUT Informatique / Licence 3 »
- * alors que l'équipe est en BUT2 (même erreur sur la page Contact).
- *
- * Vérifié ici en vrai parcours navigateur (jsdom) :
- *   1. /mentions-legales : éditeur nommé (équipe projet MiniShop),
- *      moyen de le joindre, section Hébergeur (Université Côte
- *      d'Azur, LineServ), BUT2 affiché, « Licence 3 » absent ;
- *   2. le lien « Contact » de la page s'ouvre sur /contact, elle-même
- *      en BUT2 et sans « Licence 3 » ;
- *   3. le README du projet annonce le même cadre (BUT2).
- */
+/** Mentions légales : ne pas inventer l’éditeur ou l’hébergement ; instance jetable. */
 
 import { spawn, spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { JSDOM } from 'jsdom';
+
+// Ces parcours modifient le serveur ciblé : jamais les lancer implicitement sur les données locales.
+if (!process.env.UI_BASE_URL || process.env.UI_TEST_INSTANCE_JETABLE !== '1') {
+  console.error('UI_BASE_URL et UI_TEST_INSTANCE_JETABLE=1 requis : utiliser uniquement une instance de test jetable. Ces tests modifient ses données.');
+  process.exit(2);
+}
 
 const PORT = 8128;
 const base = process.env.UI_BASE_URL ?? `http://127.0.0.1:${PORT}`;
@@ -155,23 +146,26 @@ async function aller() {
   console.log("\n[Mentions légales] 1 · La page complète, lue comme un client");
   const visiteur = new NavigateurUI();
   await visiteur.aller('/mentions-legales');
-  check("l'éditeur est nommé (« l'équipe projet MiniShop »)",
-    visiteur.texte.includes("Éditeur : l'équipe projet MiniShop"));
-  check('un moyen de joindre l\'éditeur est donné (page Contact du site)',
-    visiteur.texte.includes("Pour joindre l'équipe"));
+  check('coordonnées de l’éditeur et du directeur à renseigner',
+    visiteur.texte.includes('Éditeur et responsable de publication')
+      && visiteur.texte.includes('Directeur de publication') && visiteur.texte.includes('à renseigner'));
+  check('pas de vendeur affirmé sans vérification', visiteur.texte.includes('Aucun vendeur n’est identifié'));
   const lienContact = [...visiteur.doc.querySelectorAll('a')].find((a) => a.getAttribute('href') === '/contact');
-  check('le renvoi « Contact » est un vrai lien cliquable', lienContact !== undefined);
-  check('l’hébergeur est nommé (Université Côte d’Azur, plateforme LineServ)',
-    visiteur.texte.includes('Hébergeur') && visiteur.texte.includes("l'Université Côte d'Azur, sur sa plateforme LineServ"));
-  check('le cadre dit vrai (BUT Informatique — BUT2), « Licence 3 » a disparu',
-    visiteur.texte.includes('BUT Informatique — BUT2') && !visiteur.texte.includes('Licence 3'));
+  check('renvoi Contact présent sans le présenter comme un contact professionnel',
+    lienContact !== undefined && visiteur.texte.includes('ne remplace pas des coordonnées professionnelles fonctionnelles'));
+  check('hébergeur à renseigner, sans affirmer LineServ',
+    visiteur.texte.includes('Nom ou dénomination de l’hébergeur') && visiteur.texte.includes('à renseigner')
+      && !visiteur.texte.includes('plateforme LineServ'));
+  check('le caractère pédagogique et non productif est indiqué',
+    visiteur.texte.includes('Projet pédagogique') && visiteur.texte.includes('pas une boutique en production'));
+  check('lien confidentialité présent', !!visiteur.doc.querySelector('a[href="/confidentialite"]'));
 
-  console.log("\n[Mentions légales] 2 · Du lien Contact aux mêmes informations justes");
+  console.log("\n[Mentions légales] 2 · Contact de démonstration");
   await visiteur.aller(lienContact.getAttribute('href'));
-  check("le lien Contact s'ouvre (page Contact, statut 200)",
-    visiteur.page.statut === 200 && visiteur.texte.includes('Contact'));
-  check('la page Contact annonce le même cadre (BUT2), sans « Licence 3 »',
-    visiteur.texte.includes('BUT2') && !visiteur.texte.includes('Licence 3'));
+  check('lien Contact : page 200 avec formulaire', visiteur.page.statut === 200
+    && !!visiteur.doc.querySelector('form[action="/contact"]'));
+  check('stockage local, sans mail ni réponse garantie', visiteur.texte.includes('enregistré localement')
+    && visiteur.texte.includes('sans envoi d’e-mail ni réponse garantie'));
 
   console.log("\n[Mentions légales] 3 · Le README du projet raconte la même chose");
   const readme = readFileSync('README.md', 'utf8');
@@ -183,7 +177,6 @@ async function aller() {
   console.log(`\n${échecs === 0 ? '✅' : '❌'} Mentions légales : ${échecs === 0 ? 'toutes les vérifications réussies' : échecs + ' vérification(s) en échec'}\n`);
   if (serveur) {
     serveur.kill();
-    spawnSync('git', ['checkout', '--', 'data'], { stdio: 'inherit' });
   }
   process.exit(échecs === 0 ? 0 : 1);
 }
@@ -192,7 +185,6 @@ aller().catch(async (error) => {
   console.error('❌ Erreur E2E mentions légales :', error.message);
   if (serveur) {
     serveur.kill();
-    spawnSync('git', ['checkout', '--', 'data'], { stdio: 'inherit' });
   }
   process.exit(1);
 });

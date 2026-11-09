@@ -31,7 +31,7 @@ la manipulation qui prouve la conformité. Une exigence sans moyen de vérificat
 | `ENF-19` | toute règle `RB-*` est appliquée au **minimum** à deux niveaux (PHP + base) | défendu par le tableau §6.2 et prouvé par les tests de contournement |
 | `ENF-20` | aucune dépendance runtime hors PHP/MySQL/Apache | réductibilité et auditabilité ; `composer` réservé au `require-dev` |
 | `ENF-21` | chaque fichier livré a un auteur identifiable dans GitLab (pas de commit « fourre-tout » de plus de 400 lignes) | condition d'équité de la note de contribution |
-| `ENF-13` | le `README.md` permet une installation complète en ≤ 15 min sur une machine propre | critère de recette n° 6 (§11.3) |
+| `ENF-22` | le `README.md` permet une installation complète en ≤ 15 min sur une machine propre | critère de recette n° 6 (§11.3) |
 
 > **Rétention des données** (issue du même examen légal que `ENF-14`) : les durées de conservation ne sont pas
 > écrites dans le code mais dans la table `parametre` (`conservation_compte` = 36 mois après le dernier contact,

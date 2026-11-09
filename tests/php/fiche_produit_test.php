@@ -136,7 +136,7 @@ $check('le tableau est avant la description et l\'ajout au panier',
         && $posTableau < $posDescription && $posDescription < $posAjout);
 $check('le formulaire d\'ajout est toujours là (avec CSRF et plafond de stock)',
     str_contains($html, 'name="_csrf"') && str_contains($html, 'max="16"'));
-$check('le retour au catalogue est toujours là', str_contains($html, '<a href="/catalogue">← Retour au catalogue</a>'));
+$check('le retour au catalogue est toujours là', str_contains($html, '<a href="/catalogue">Catalogue</a>'));
 $check('les anciennes sections « Prix »/« Disponibilité » en prose ont laissé place au tableau',
     !str_contains($html, '<h2>Prix</h2>') && !str_contains($html, '<h2>Disponibilité</h2>'));
 
@@ -157,7 +157,7 @@ $check('aucun formulaire d\'ajout en rupture', !str_contains($htmlRupture, 'acti
 
 /* ── 4. La feuille garantit que tout tient (pas de défilement) ────── */
 echo "\n== 4 · CSS : deux colonnes qui tiennent en entier, à toute largeur ==\n";
-$css = (string) file_get_contents(dirname(__DIR__, 2) . '/public/minishop.css');
+$css = (string) file_get_contents(dirname(__DIR__, 2) . '/public/css/app.css');
 $bloc = null;
 if (preg_match('/\.tableau-caracteristiques\s*\{([^}]*)\}/', $css, $m) === 1) {
     $bloc = $m[1];
@@ -183,7 +183,7 @@ $check(
 $gabarit = (string) file_get_contents(dirname(__DIR__, 2) . '/app/View/layout.php');
 $check(
     'la feuille est bien chargée par le gabarit (fiche incluse)',
-    str_contains($gabarit, '<link rel="stylesheet" href="/minishop.css">')
+    str_contains($gabarit, '<link rel="stylesheet" href="/css/app.css">')
 );
 
 ob_end_clean();

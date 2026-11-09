@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="SAÉ 302 — MiniShop : Annexe 17.7 — Patterns PHP / PDO / sécurité de référence#">
+<title>Annexe 17.7 — Patterns PHP / PDO / sécurité de référence# — MiniShop</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --papier: #fbfaf7;
+  --carte: #ffffff;
+  --trait: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-clair: #dbeafe;
+  --code: #f1f5f9;
+  --mesure: 72ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
+    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
+    --accent-clair: #1e3a8a; --code: #16223a;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  max-width: calc(var(--mesure) + 6rem);
+  background: var(--papier);
+  color: var(--encre);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
+h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
+p, li { max-width: var(--mesure); }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+}
+pre {
+  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
+  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.35rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+thead th { background: var(--accent-clair); }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
+img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li input[type="checkbox"] { margin-right: 0.4rem; }
+.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
+.toc > ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1rem; }
+footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+@media print {
+  :root { --papier: #fff; --carte: #fff; }
+  @page { size: A4; margin: 18mm 16mm; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#1-connexion-pdo-centralisee-appconfigdatabasephp">1. Connexion PDO centralisée (app/Config/Database.php)</a></li>
+<li><a href="#2-repository-appel-de-procedure-stockee-avec-parametres-lies">2. Repository : appel de procédure stockée avec paramètres liés</a></li>
+<li><a href="#3-ecriture-multi-tables-transactionnelle-traduction-des-rejets-de-regles">3. Écriture multi-tables transactionnelle + traduction des rejets de règles</a></li>
+<li><a href="#4-authentification-password_hash-password_verify">4. Authentification : password_hash / password_verify</a></li>
+<li><a href="#5-sessions-et-controle-dacces-appsecurityauthphp">5. Sessions et contrôle d'accès (app/Security/Auth.php)</a></li>
+<li><a href="#6-csrf-et-echappement">6. CSRF et échappement</a></li>
+<li><a href="#7-javascript-mise-a-jour-du-panier-sans-html-concatene">7. JavaScript : mise à jour du panier sans HTML concaténé</a></li>
+<li><a href="#8-vue-derreur-code-http-aucune-fuite-technique">8. Vue d'erreur / code HTTP (aucune fuite technique)</a></li>
+<li><a href="#9-ce-que-la-revue-de-code-doit-refuser-check-list-du-relecteur">9. Ce que la revue de code doit refuser (check-list du relecteur)</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="annexe-177-patterns-php-pdo-securite-de-reference">Annexe 17.7 — Patterns PHP / PDO / sécurité de référence<a class="headerlink" href="#annexe-177-patterns-php-pdo-securite-de-reference" title="Permanent link">#</a></h1>
+<p>Ces extraits sont les <strong>modèles à reproduire</strong> dans l'application (lot L8→L12 du planning) ; ils ont été
+écrits en cohérence avec le DDL, les procédures et les triggers réellement testés (<code>sql/01…04</code>, 26/26 tests
+conformes). Ils ne sont pas encore exécutés ici : <code>php -l</code> et les tests PHPUnit sont à courir par l'équipe
+sur son environnement PHP 8.2.</p>
+<h2 id="1-connexion-pdo-centralisee-appconfigdatabasephp">1. Connexion PDO centralisée (<code>app/Config/Database.php</code>)<a class="headerlink" href="#1-connexion-pdo-centralisee-appconfigdatabasephp" title="Permanent link">#</a></h2>
+<pre><code class="language-php">&lt;?php
+declare(strict_types=1);
+
+namespace App\Config;
+
+use PDO;
+
+final class Database
+{
+    private static ?PDO $pdo = null;
+
+    public static function pdo(): PDO
+    {
+        if (self::$pdo instanceof PDO) {
+            return self::$pdo;
+        }
+        $cfg = require __DIR__ . '/env.php';        // hors dépôt (modèle : env.example.php)
+        $dsn = sprintf('mysql:host=%s;port=%d;dbname=%s;charset=utf8mb4',
+                       $cfg['db_host'], $cfg['db_port'], $cfg['db_name']);
+        self::$pdo = new PDO($dsn, $cfg['db_user'], $cfg['db_pass'], [
+            PDO::ATTR_ERRMODE            =&gt; PDO::ERRMODE_EXCEPTION,   // jamais de warning muet
+            PDO::ATTR_EMULATE_PREPARES   =&gt; false,                    // requêtes préparées RÉELLES (SEC-01)
+            PDO::ATTR_DEFAULT_FETCH_MODE =&gt; PDO::FETCH_ASSOC,
+            PDO::ATTR_STRINGIFY_FETCHES  =&gt; false,
+            PDO::MYSQL_ATTR_INIT_COMMAND =&gt; &quot;SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci&quot;,
+        ]);
+        return self::$pdo;
+    }
+}
+</code></pre>
+<h2 id="2-repository-appel-de-procedure-stockee-avec-parametres-lies">2. Repository : appel de procédure stockée avec paramètres liés<a class="headerlink" href="#2-repository-appel-de-procedure-stockee-avec-parametres-lies" title="Permanent link">#</a></h2>
+<pre><code class="language-php">&lt;?php
+declare(strict_types=1);
+
+namespace App\Repository;
+
+use App\Model\SearchQuery;
+use PDO;
+
+final class ProduitRepository
+{
+    public function __construct(private readonly PDO $pdo) {}
+
+    /** Catalogue/recherche/filtres : tout le SQL dynamique vit DANS la procédure. */
+    public function search(SearchQuery $q, bool $admin = false): array
+    {
+        $stmt = $this-&gt;pdo-&gt;prepare(
+            'CALL sp_search_products(?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        );
+        $stmt-&gt;execute([
+            $q-&gt;keyword, $q-&gt;categoryId, $q-&gt;priceMin, $q-&gt;priceMax,
+            $q-&gt;inStockOnly ? 1 : 0, $q-&gt;sort, $q-&gt;page, $q-&gt;perPage, $admin ? 1 : 0,
+        ]);
+        $lignes = $stmt-&gt;fetchAll();
+        $total  = 0;
+        if ($stmt-&gt;nextRowset()) {
+            $total = (int) $stmt-&gt;fetchColumn();
+        }
+        return ['lignes' =&gt; $lignes, 'total' =&gt; $total];
+    }
+}
+</code></pre>
+<h2 id="3-ecriture-multi-tables-transactionnelle-traduction-des-rejets-de-regles">3. Écriture multi-tables transactionnelle + traduction des rejets de règles<a class="headerlink" href="#3-ecriture-multi-tables-transactionnelle-traduction-des-rejets-de-regles" title="Permanent link">#</a></h2>
+<pre><code class="language-php">&lt;?php
+declare(strict_types=1);
+
+namespace App\Repository;
+
+use App\Model\Commande;
+use App\Security\RegleInterdite;
+use App\Security\StockInsuffisant;
+use App\Security\AccesRefuse;
+use PDO;
+use PDOException;
+
+final class CommandeRepository
+{
+    /** Codes renvoyés par la base → objets métier (seule traduction autorisée du rejet). */
+    private const TRADUCTIONS = [
+        'STOCK_INSUFFISANT'            =&gt; StockInsuffisant::class,
+        'ACCES_NON_AUTORISE'           =&gt; AccesRefuse::class,
+        'RB04_COMMANDE_DOIT_CONTENIR_AU_MOINS_UNE_LIGNE' =&gt; RegleInterdite::class,
+        'RB05_QUANTITE_DOIT_ETRE_SUPERIEURE_A_ZERO'       =&gt; RegleInterdite::class,
+        'RB06_PRIX_ET_QUANTITE_NON_MODIFIABLE'            =&gt; RegleInterdite::class,
+        'RB11_TRANSITION_STATUT_INTERDITE'                =&gt; RegleInterdite::class,
+        'RB15_MONTANT_CALCULE_INTERDIT'                   =&gt; RegleInterdite::class,
+        'PRODUIT_SUPPRIME_DU_CATALOGUE'                   =&gt; RegleInterdite::class,
+        'RB19_PANIER_VIDE'                                =&gt; RegleInterdite::class,
+    ];
+
+    public function __construct(private readonly PDO $pdo) {}
+
+    public function confirmerDepuisPanier(int $clientId, string $adresse, array $lignes, bool $payee): Commande
+    {
+        $json = json_encode(
+            array_map(static fn (array $l) =&gt; ['id_produit' =&gt; (int) $l['id_produit'],
+                                                'quantite'  =&gt; (int) $l['quantite']], $lignes),
+            JSON_THROW_ON_ERROR
+        );
+
+        $this-&gt;pdo-&gt;beginTransaction();
+        try {
+            $stmt = $this-&gt;pdo-&gt;prepare(
+                'CALL sp_create_order_from_basket(?, ?, ?, ?, @id, @num, @montant, @code)'
+            );
+            $stmt-&gt;execute([$clientId, $adresse, $json, $payee ? 1 : 0]);
+
+            $lecture = $this-&gt;pdo-&gt;query('SELECT @id AS id, @num AS numero,
+                                                @montant AS montant, @code AS code')-&gt;fetch();
+            if ($lecture['code'] !== 'OK') {
+                throw $this-&gt;traduire((string) $lecture['code']);
+            }
+            $this-&gt;pdo-&gt;commit();
+            return Commande::depuisLigne($lecture);
+        } catch (\Throwable $e) {
+            $this-&gt;pdo-&gt;rollBack();          // aucune trace partielle : jamais de &quot;commande sans lignes&quot;
+            throw $e;
+        }
+    }
+
+    private function traduire(string $code): \RuntimeException
+    {
+        $classe = self::TRADUCTIONS[$code] ?? RegleInterdite::class;
+        return new $classe($code);           // le SQL et ses détails ne remontent JAMAIS à l'IHM (SEC-12)
+    }
+}
+</code></pre>
+<blockquote>
+<p>Note d'exécution : selon le pilote, le <code>OUT</code> des procédures peut être lu par session (<code>SELECT @id</code>) comme
+ci-dessus, ou passé en paramètres et relu dans le même appel ; l'important, pour le jury, est qu'il n'y ait
+<strong>aucune</strong> concaténation dans le texte SQL et <strong>un seul</strong> <code>ROLLBACK</code> possible.</p>
+</blockquote>
+<h2 id="4-authentification-password_hash-password_verify">4. Authentification : <code>password_hash</code> / <code>password_verify</code><a class="headerlink" href="#4-authentification-password_hash-password_verify" title="Permanent link">#</a></h2>
+<pre><code class="language-php">&lt;?php
+declare(strict_types=1);
+
+namespace App\Security;
+
+final class Hasher
+{
+    private const OPTIONS = ['cost' =&gt; 12];
+
+    public function hacher(string $clair): string
+    {
+        $hash = password_hash($clair, PASSWORD_BCRYPT, self::OPTIONS);
+        if ($hash === false) {                       // échec explicite, jamais un mot de passe en clair
+            throw new \RuntimeException('Hachage impossible : algorithme indisponible.');
+        }
+        return $hash;
+    }
+
+    public function verifier(string $clair, string $hash): bool
+    {
+        return password_verify($clair, $hash);       // comparaison en temps constant
+    }
+
+    public function doitRehacher(string $hash): bool
+    {
+        return password_needs_rehash($hash, PASSWORD_BCRYPT, self::OPTIONS);
+    }
+}
+</code></pre>
+<pre><code class="language-php">// AuthController : le message est le même pour « email inconnu » et « mot de passe erroné » (SEC-04)
+$stmt = $this-&gt;clients-&gt;requireStatement();           // CALL sp_get_credentials(?)
+$stmt-&gt;execute([$email]);
+[$idClient, $hash, $statut] = array_values($stmt-&gt;fetch() ?: [null, null, 'INCONNU']);
+
+if ($idClient === null || $statut === 'INCONNU' || $statut === 'COMPTE_BLOQUE'
+    || !$this-&gt;hasher-&gt;verifier($motDePasse, (string) $hash)) {
+    $this-&gt;temporiserApresEchec();                    // SEC-06
+    $this-&gt;flash('danger', 'Email ou mot de passe incorrect.');
+    return $this-&gt;redirect('/connexion', 303);
+}
+$this-&gt;auth-&gt;ouvreSessionClient((int) $idClient);     // session_regenerate_id(true) à l'intérieur
+</code></pre>
+<h2 id="5-sessions-et-controle-dacces-appsecurityauthphp">5. Sessions et contrôle d'accès (<code>app/Security/Auth.php</code>)<a class="headerlink" href="#5-sessions-et-controle-dacces-appsecurityauthphp" title="Permanent link">#</a></h2>
+<pre><code class="language-php">&lt;?php
+declare(strict_types=1);
+
+namespace App\Security;
+
+final class Auth
+{
+    public const VIE_INACTIF = 1800;      // 30 min
+    public const VIE_MAX     = 43200;     // 12 h
+
+    public function demarrer(): void
+    {
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            return;
+        }
+        session_name('MINISHOPSESSID');
+        session_set_cookie_params([
+            'lifetime' =&gt; 0, 'path' =&gt; '/', 'domain' =&gt; '',
+            'secure'   =&gt; !APP_DEV,
+            'httponly' =&gt; true,
+            'samesite' =&gt; 'Lax',
+        ]);
+        session_start();
+        $this-&gt;expireSiTropVieux();
+    }
+
+    public function ouvreSessionClient(int $id): void
+    {
+        session_regenerate_id(true);                              // anti-fixation (SEC-05)
+        $_SESSION = ['user_id' =&gt; $id, 'role' =&gt; 'client',
+                     'created' =&gt; time(), 'last' =&gt; time(), 'ip' =&gt; self::ip()];
+    }
+
+    public function exigeClient(): int
+    {
+        if (($_SESSION['role'] ?? null) !== 'client' || empty($_SESSION['user_id'])) {
+            $_SESSION['after'] = $_SERVER['REQUEST_URI'] ?? '/';
+            header('Location: /connexion', true, 303);
+            exit;
+        }
+        $_SESSION['last'] = time();
+        return (int) $_SESSION['user_id'];
+    }
+
+    public function exigeAdmin(string ...$roles): int
+    {
+        if (($_SESSION['role'] ?? null) !== 'admin'
+            || ($roles &amp;&amp; !in_array($_SESSION['admin_role'] ?? '', $roles, true))) {
+            header('Location: /connexion?esp=admin', true, 303);
+            exit;
+        }
+        return (int) $_SESSION['admin_id'];
+    }
+
+    public function fermer(): void
+    {
+        $_SESSION = [];
+        if (ini_get('session.use_cookies')) {
+            $p = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000, $p['path'], $p['domain'], $p['secure'], $p['httponly']);
+        }
+        session_destroy();                                   // déconnexion réelle : le panier part aussi
+    }
+
+    private function expireSiTropVieux(): void
+    {
+        $now = time();
+        $create = (int) ($_SESSION['created'] ?? $now);
+        $last  = (int) ($_SESSION['last'] ?? $now);
+        if ($now - $last &gt; self::VIE_INACTIF || $now - $create &gt; self::VIE_MAX) {
+            $this-&gt;fermer();
+            session_start();
+        }
+    }
+
+    public static function ip(): string
+    {
+        return (string) ($_SERVER['REMOTE_ADDR'] ?? '');
+    }
+}
+</code></pre>
+<h2 id="6-csrf-et-echappement">6. CSRF et échappement<a class="headerlink" href="#6-csrf-et-echappement" title="Permanent link">#</a></h2>
+<pre><code class="language-php">&lt;?php
+declare(strict_types=1);
+// app/Security/csrf.php
+function jeton_csrf(): string
+{
+    if (empty($_SESSION['_csrf'])) {
+        $_SESSION['_csrf'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['_csrf'];
+}
+
+function verifie_jeton_csrf(?string $recu, bool $consommer = false): void
+{
+    if (!is_string($recu) || !hash_equals($_SESSION['_csrf'] ?? '', $recu)) {
+        Journal::ecrit('CSRF_REJECTED', ['route' =&gt; $_SERVER['REQUEST_URI'] ?? '']);
+        http_response_code(419);
+        exit('Session expirée ou requête non autorisée. Rechargez la page.');
+    }
+    if ($consommer) {
+        unset($_SESSION['_csrf']);      // jeton à usage unique pour la validation de commande
+    }
+}
+</code></pre>
+<pre><code class="language-php">&lt;?php
+declare(strict_types=1);
+// app/Security/xss.php — l'unique sortie HTML autorisée dans les vues (SEC-03)
+function e(?string $valeur): string
+{
+    return htmlspecialchars((string) $valeur,
+                            ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
+}
+</code></pre>
+<h2 id="7-javascript-mise-a-jour-du-panier-sans-html-concatene">7. JavaScript : mise à jour du panier <strong>sans</strong> HTML concaténé<a class="headerlink" href="#7-javascript-mise-a-jour-du-panier-sans-html-concatene" title="Permanent link">#</a></h2>
+<pre><code class="language-js">// public/js/panier.js — module ES2022 ; la sécurité est côté serveur, ici on ne fait que l'affichage.
+const zone = document.querySelector('#recap-panier');
+
+async function changerQuantite(idProduit, quantite) {
+  const champ = document.querySelector(`[data-qte=&quot;${idProduit}&quot;]`);
+  const reponse = await fetch('/panier/quantite', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': jeton() },
+    body: JSON.stringify({ id_produit: Number(idProduit), quantite: Number(quantite) })
+  });
+  const data = await reponse.json();
+
+  if (!reponse.ok) {                       // STOCK_INSUFFISANT, PRODUIT_INTROUVABLE, …
+    afficherErreur(zone, data.erreur, data.reste);   //textContent : aucun HTML injecté → XSS neutralisé
+    champ.max = String(data.stock ?? 0);
+    return;
+  }
+  rendreRecapitulatif(zone, data);         // idem : construction par nœuds / textContent
+  document.querySelector('#badge-panier').textContent = String(data.nb_articles);
+}
+
+document.addEventListener('input', (e) =&gt; {
+  const champ = e.target.closest('[data-qte]');
+  if (!champ) return;
+  const max = Number(champ.max || 999);
+  const valeur = Math.max(1, Math.min(max, Number(champ.value || 1)));
+  if (valeur !== Number(champ.value)) champ.value = String(valeur);   // confort, pas sécurité
+  debounced(champ);
+});
+</code></pre>
+<h2 id="8-vue-derreur-code-http-aucune-fuite-technique">8. Vue d'erreur / code HTTP (aucune fuite technique)<a class="headerlink" href="#8-vue-derreur-code-http-aucune-fuite-technique" title="Permanent link">#</a></h2>
+<pre><code class="language-php">// app/View/erreur.php
+http_response_code($statut);            // 400, 403 → 404 pour ressource d'autrui, 409, 419, 500, 503
+echo '&lt;h1&gt;' . e($titre) . '&lt;/h1&gt;';
+echo '&lt;p&gt;' . e($message) . '&lt;/p&gt;';      // message métier traduit ; jamais le SQL, jamais un chemin serveur
+if (APP_DEV) {
+    echo '&lt;pre&gt;' . e($trace) . '&lt;/pre&gt;';   // trace réservée au développement local
+}
+</code></pre>
+<h2 id="9-ce-que-la-revue-de-code-doit-refuser-check-list-du-relecteur">9. Ce que la revue de code doit refuser (check-list du relecteur)<a class="headerlink" href="#9-ce-que-la-revue-de-code-doit-refuser-check-list-du-relecteur" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Interdit</th>
+<th>Pourquoi</th>
+<th>Détecté par</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$sql = "… WHERE id = $id"</code></td>
+<td>injection SQL</td>
+<td><code>grep</code> CI n° 1 + revue</td>
+</tr>
+<tr>
+<td><code>mysql_*</code>, <code>mysqli_query($conn, "…$var…")</code></td>
+<td>hors <code>CT-02</code> (PDO imposé)</td>
+<td>revue</td>
+</tr>
+<tr>
+<td><code>echo $produit['nom']</code> sans <code>e()</code></td>
+<td>XSS</td>
+<td><code>grep</code> CI n° 2</td>
+</tr>
+<tr>
+<td><code>$_POST['montant']</code> utilisé pour un prix</td>
+<td>violerait <code>RB-15</code>/<code>RB-06</code></td>
+<td>revue</td>
+</tr>
+<tr>
+<td><code>md5()</code>/<code>sha1()</code> pour un mot de passe</td>
+<td><code>RB-12</code></td>
+<td><code>grep</code> + test</td>
+</tr>
+<tr>
+<td>requête <code>UPDATE produit SET stock = ?</code> depuis un contrôleur</td>
+<td>la base décide (<code>RB-03</code>/<code>RB-18</code>) : passer par <code>sp_adjust_stock</code></td>
+<td>revue</td>
+</tr>
+<tr>
+<td>affichage de <code>PDOException::getMessage()</code> à l'utilisateur</td>
+<td>fuite d'information (<code>SEC-12</code>)</td>
+<td>revue</td>
+</tr>
+<tr>
+<td><code>id</code> de commande pris dans l'URL sans filtre <code>id_client</code></td>
+<td>IDOR (<code>SEC-08</code>)</td>
+<td><code>grep</code> CI n° 5</td>
+</tr>
+</tbody>
+</table>
+<footer class="doc">
+  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/annexes/annexe-php-patterns.md</code>
+  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+</footer>
+</main>
+</body>
+</html>

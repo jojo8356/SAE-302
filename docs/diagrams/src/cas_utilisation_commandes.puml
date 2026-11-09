@@ -1,0 +1,31 @@
+@startuml cas_utilisation_commandes
+title MiniShop — cas d'utilisation du back-office
+left to right direction
+actor "Gestionnaire" as G
+actor "Super administrateur" as S
+rectangle "Back-office" {
+  usecase "Gérer les produits" as P
+  usecase "Gérer les catégories" as K
+  usecase "Ajuster le stock" as ST
+  usecase "Consulter les alertes" as AL
+  usecase "Consulter les commandes" as CO
+  usecase "Changer le statut" as CH
+  usecase "Consulter la piste d'audit" as AU
+  usecase "Consulter les indicateurs" as IN
+  usecase "Gérer les paramètres" as PA
+  usecase "Gérer les comptes d'équipe" as EQ
+}
+G --> P
+G --> K
+G --> ST
+G --> AL
+G --> CO
+G --> CH
+G --> AU
+G --> IN
+S --> G
+S --> PA
+S --> EQ
+CH ..> AU : trace automatique (trigger)
+ST ..> AL : recalcul du seuil
+@enduml

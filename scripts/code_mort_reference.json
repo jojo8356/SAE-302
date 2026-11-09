@@ -1,0 +1,4 @@
+{
+  "description": "Candidats existants, à étudier avant toute suppression ; une nouvelle clé fait échouer le contrôle.",
+  "candidats": []
+}

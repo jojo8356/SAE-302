@@ -115,7 +115,7 @@ function rendreDashboard(): string
 /** Extrait le bloc <table class="$classe">…</table> du HTML (null si absent). */
 function extraireTableau(string $html, string $classe): ?string
 {
-    if (preg_match('/<table class="' . $classe . '">.*?<\/table>/s', $html, $m) === 1) {
+    if (preg_match('/<table class="[^"]*\b' . $classe . '\b[^"]*">.*?<\/table>/s', $html, $m) === 1) {
         return $m[0];
     }
 
@@ -145,11 +145,11 @@ $check(
 );
 $check(
     'panier : la cellule Produit (nom + référence CASQ-005) porte la classe produit',
-    $panier !== null && str_contains($panier, '<td class="produit">') && str_contains($panier, 'Réf. CASQ-005')
+    $panier !== null && str_contains($panier, '<td class="produit" data-label="Produit">') && str_contains($panier, 'Réf. CASQ-005')
 );
 $check(
     'panier : les montants gardent leur classe montant (la règle ne change pas pour eux)',
-    $panier !== null && str_contains($panier, '<td class="montant">154,80 €</td>')
+    $panier !== null && str_contains($panier, '<td class="montant" data-label="Prix unitaire TTC">154,80 €</td>')
 );
 
 /* ── 2. Admin > Stocks ─────────────────────────────────────────────── */
@@ -165,9 +165,9 @@ $check(
 $check(
     'stocks : chaque ligne a sa référence et son produit en cellules alignées comme les titres',
     $stocks !== null
-        && str_contains($stocks, '<td class="reference">CASQ-005</td>')
-        && str_contains($stocks, '<td class="produit">Casque audio sans fil Aura</td>')
-        && str_contains($stocks, '<td class="reference">ENCH-006</td>')
+        && str_contains($stocks, '<td class="reference" data-label="Référence">CASQ-005</td>')
+        && str_contains($stocks, '<td class="produit" data-label="Produit">Casque audio sans fil Aura</td>')
+        && str_contains($stocks, '<td class="reference" data-label="Référence">ENCH-006</td>')
 );
 $check(
     'stocks : non-régression — l\'ajustement reste là, mode « Ajouter / retirer » présélectionné',
@@ -190,46 +190,24 @@ $check(
 $check(
     'alertes : la ligne d\'alerte a sa référence et son produit en cellules alignées comme les titres',
     $alertes !== null
-        && str_contains($alertes, '<td class="reference">ENCH-006</td>')
-        && str_contains($alertes, '<td class="produit">Enceinte connectée Halo</td>')
+        && str_contains($alertes, '<td class="reference" data-label="Référence">ENCH-006</td>')
+        && str_contains($alertes, '<td class="produit" data-label="Produit">Enceinte connectée Halo</td>')
 );
 $check(
     'alertes : non-régression — le renvoi « Gérer les stocks → » reste sous le tableau',
-    str_contains($dashboard, '<a href="/admin/stocks">Gérer les stocks →</a>')
+    str_contains($dashboard, 'href="/admin/stocks">Gérer les stocks →</a>')
 );
 
-/* ── 4. CSS : la règle écrite, pas le défaut du navigateur ─────────── */
-echo "\n== 4 · Feuille du site : libellés à gauche explicites sur les trois écrans ==\n";
-$css = (string) file_get_contents(dirname(__DIR__, 2) . '/public/minishop.css');
-$blocPanierProduit = blocCss($css, '.tableau-panier .produit');
-$check(
-    'panier : .tableau-panier .produit est aligné à gauche',
-    $blocPanierProduit !== null && str_contains($blocPanierProduit, 'text-align: left'),
-    (string) $blocPanierProduit
-);
-$blocCellules = null;
-if (preg_match('/\.tableau-stocks th,\s*\.tableau-stocks td,\s*\.tableau-alertes th,\s*\.tableau-alertes td\s*\{([^}]*)\}/s', $css, $m) === 1) {
-    $blocCellules = $m[1];
-}
-$check(
-    'stocks et alertes : en-têtes et cellules partagent l\'alignement à gauche',
-    $blocCellules !== null && str_contains($blocCellules, 'text-align: left'),
-    (string) $blocCellules
-);
-$blocLibelles = null;
-if (preg_match('/\.tableau-stocks \.reference,\s*\.tableau-stocks \.produit,\s*\.tableau-alertes \.reference,\s*\.tableau-alertes \.produit\s*\{([^}]*)\}/s', $css, $m) === 1) {
-    $blocLibelles = $m[1];
-}
-$check(
-    'stocks et alertes : .reference et .produit sont explicitement à gauche',
-    $blocLibelles !== null && str_contains($blocLibelles, 'text-align: left'),
-    (string) $blocLibelles
-);
+/* ── 4. Feuille réellement chargée ─────────────────────────────────── */
+echo "\n== 4 · Feuille du site : libellés à gauche et montants à droite ==\n";
+$css = (string) file_get_contents(dirname(__DIR__, 2) . '/public/css/app.css');
+$layout = (string) file_get_contents(dirname(__DIR__, 2) . '/app/View/layout.php');
+$check('le gabarit charge la feuille examinée', str_contains($layout, 'href="/css/app.css"'));
+$check('libellés produit et référence à gauche dans les trois tableaux',
+    preg_match('/\.tableau-panier \.produit,\s*\.tableau-stocks \.reference,\s*\.tableau-stocks \.produit,\s*\.tableau-alertes \.reference,\s*\.tableau-alertes \.produit\s*\{[^}]*text-align:\s*left/s', $css) === 1);
 $blocMontant = blocCss($css, '.tableau-panier .montant');
-$check(
-    'cohérence d\'ensemble : au panier, seuls les montants sont à droite',
-    $blocMontant !== null && str_contains($blocMontant, 'text-align: right')
-);
+$check('montants du panier alignés à droite', $blocMontant !== null && str_contains($blocMontant, 'text-align: right'));
+$check('étiquettes et cartes mobiles restent prévues', str_contains($css, '.tableau-defilant--admin tbody td::before') && str_contains($css, 'content: attr(data-label)'));
 
 ob_end_clean();
 

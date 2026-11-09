@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * MiniShop — régression « CGV article 4 : annulation ≠ rétractation »
+ * MiniShop — régression « CGV : annulation ≠ rétractation »
  * (EF-GEN-05, EF-CLI-10, art. L221-18 du code de la consommation).
  *
  * Signalement : l'article 4 des CGV s'intitulait « Droit de
@@ -25,7 +25,7 @@ declare(strict_types=1);
  *    rétractation légal (14 jours à compter de la réception,
  *    art. L221-18) et rappelle qu'aucune rétractation ni aucun
  *    retour n'est mis en œuvre sur cette maquette pédagogique ;
- *  - détail de commande : « annulation avant expédition, CGV art. 4 » ;
+ *  - détail de commande : « annulation avant expédition, CGV » ;
  *  - page Rétractation : le droit légal d'abord (14 jours après
  *    réception), l'annulation avant expédition ensuite, présentée
  *    comme une facilité qui « ne se confond pas » avec ce droit.
@@ -77,14 +77,14 @@ function texteRendu(string $vue, array $vars = []): string
     return (string) preg_replace('/\s+/u', ' ', $texte);
 }
 
-echo "MiniShop — CGV article 4 : l'annulation avant expédition ne s'appelle plus rétractation\n\n";
+echo "MiniShop — CGV : l'annulation avant expédition ne s'appelle plus rétractation\n\n";
 
 /* ── 1. CGV : article 4 renommé et droit rappelé ───────────────────── */
 echo "== 1 · CGV : « Annulation avant expédition », droit de rétractation distingué ==\n";
 $cgv = texteRendu('home/cgv');
 $check(
-    "l'article 4 s'intitule « Annulation avant expédition »",
-    str_contains($cgv, 'Article 4 — Annulation avant expédition')
+    "la section s'intitule « Annulation avant expédition »",
+    str_contains($cgv, 'Annulation avant expédition')
 );
 $check(
     "l'ancien titre « Article 4 — Droit de rétractation » a disparu",
@@ -95,21 +95,21 @@ $check(
     !str_contains($cgv, 'Conformément au droit de rétractation')
 );
 $check(
-    "l'article 4 décrit le mécanisme réel (pas encore expédiée, stock restitué, port compris soldé)",
-    str_contains($cgv, "n'a pas été expédiée") && str_contains($cgv, 'stock est restitué')
-        && str_contains($cgv, 'montant total (port compris) est soldé')
+    "la section décrit le mécanisme réel (pas encore expédiée, stock restitué, port compris soldé)",
+    str_contains($cgv, 'avant son expédition simulée') && str_contains($cgv, 'stock est restitué')
+        && str_contains($cgv, 'port compris, est soldé')
 );
 $check(
     "la distinction est écrite noir sur blanc (« distincte du droit de rétractation »)",
-    str_contains($cgv, 'est distincte du droit de rétractation')
+    str_contains($cgv, 'distincte du droit légal de rétractation')
 );
 $check(
     "le vrai droit est rappelé avec son point de départ légal (14 jours à compter de la réception, L221-18)",
-    str_contains($cgv, '14 jours à compter de la réception') && str_contains($cgv, 'L221-18')
+    str_contains($cgv, '14 jours à compter de la réception') && str_contains($cgv, 'L. 221-18')
 );
 $check(
-    "l'article renvoie à la page Rétractation et assume le statut de maquette (aucun retour traité)",
-    str_contains($cgv, "aucune procédure de rétractation ni de retour de marchandise n'est mise en œuvre")
+    "le document renvoie à la page Rétractation et assume le statut de maquette (aucun retour traité)",
+    str_contains($cgv, 'aucun retour réel n’est traité') && str_contains($cgv, 'rétractation et modèle de formulaire')
 );
 
 /* ── 2. Page Rétractation : le droit d'abord, la facilité ensuite ──── */
@@ -118,23 +118,23 @@ $retractation = texteRendu('home/retractation');
 $check(
     "le droit légal est énoncé avec son délai et son point de départ (14 jours, réception, L221-18)",
     str_contains($retractation, '14 jours') && str_contains($retractation, 'à compter de la réception')
-        && str_contains($retractation, 'L221-18')
+        && str_contains($retractation, 'L. 221-18')
 );
 $check(
     "la facilité du site porte son vrai nom (« annulation avant expédition »)",
-    str_contains($retractation, "Concrètement, sur MiniShop : l'annulation avant expédition")
+    str_contains($retractation, 'annulation avant expédition simulée')
 );
 $check(
     "la page dit explicitement que l'annulation « ne se confond pas avec le droit de rétractation »",
-    str_contains($retractation, 'ne se confond pas avec le droit de rétractation')
+    str_contains($retractation, 'distincte du droit légal de rétractation')
 );
 $check(
     "après expédition, la page rattache le délai de 14 jours à la réception (pas à l'annulation)",
-    str_contains($retractation, "droit de rétractation de 14 jours à compter de la réception qui s'appliquerait")
+    str_contains($retractation, '14 jours à compter de la réception')
 );
 $check(
     "la page renvoie toujours aux CGV (article 4) et à Mes commandes",
-    str_contains($retractation, "l'article 4 des Conditions générales de vente")
+    str_contains($retractation, 'conditions générales de vente') && str_contains($retractation, 'Mes commandes')
 );
 
 /* ── 3. Détail de commande et aide : même vocabulaire partout ──────── */
@@ -150,8 +150,8 @@ $lignes = [[
 ]];
 $detail = texteRendu('commande/detail', ['commande' => $commande, 'lignes' => $lignes, 'historique' => []]);
 $check(
-    "sous le bouton d'annulation : « annulation avant expédition, CGV art. 4 »",
-    str_contains($detail, "annulation avant expédition, CGV art. 4")
+    "sous le bouton d'annulation : « annulation avant expédition, CGV »",
+    str_contains($detail, 'annulation technique') && str_contains($detail, 'avant expédition') && str_contains($detail, 'droit légal de rétractation')
 );
 $check(
     "la phrase fautive « Conformément au droit de rétractation » a disparu du détail",
@@ -160,13 +160,13 @@ $check(
 $aide = texteRendu('home/aide');
 $check(
     "l'aide raconte la même règle (annuler tant que ce n'est pas expédié, renvoi Rétractation)",
-    str_contains($aide, "Tant qu'elle n'est pas expédiée, vous pouvez l'annuler")
+    str_contains($aide, 'annulation est possible tant que la commande') && str_contains($aide, 'pas expédiée')
         && !str_contains($aide, 'Conformément au droit de rétractation')
 );
 $livraison = texteRendu('home/livraison');
 $check(
     "la page Livraison reste cohérente (annulation possible tant que ce n'est pas expédié)",
-    str_contains($livraison, "Tant que la commande n'est pas expédiée, vous pouvez encore")
+    str_contains($livraison, 'commande simulée non expédiée peut être annulée')
 );
 
 /* ── 4. La règle décrite est la règle appliquée ────────────────────── */
@@ -215,5 +215,5 @@ if ($echecs === 0) {
     $symbole = '✅';
     $code = 0;
 }
-echo $symbole, " CGV article 4 (annulation avant expédition, pas rétractation) : ", ($tests - $echecs), "/", $tests, " vérifications réussies\n";
+echo $symbole, " CGV (annulation simulée distincte de la rétractation) : ", ($tests - $echecs), "/", $tests, " vérifications réussies\n";
 exit($code);

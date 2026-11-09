@@ -35,6 +35,12 @@ import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
+// Ces parcours modifient le serveur ciblé : jamais les lancer implicitement sur les données locales.
+if (!process.env.UI_BASE_URL || process.env.UI_TEST_INSTANCE_JETABLE !== '1') {
+  console.error('UI_BASE_URL et UI_TEST_INSTANCE_JETABLE=1 requis : utiliser uniquement une instance de test jetable. Ces tests modifient ses données.');
+  process.exit(2);
+}
+
 const REPO = join(import.meta.dirname, '..');
 const PORT = Number(process.env.UI_PORT ?? 8108);
 let base = (process.env.UI_BASE_URL ?? `http://127.0.0.1:${PORT}`).replace(/\/$/, '');
@@ -108,7 +114,7 @@ try {
   check('catalogue en 200', page.statut === 200, `HTTP ${page.statut}`);
   const lienProduit = doc().querySelector('a[href^="/produit/"]');
   check('un produit du catalogue est cliquable', !!lienProduit);
-  const nomAttendu = lienProduit.textContent.trim();
+  const nomAttendu = lienProduit.closest('article')?.querySelector('h2')?.textContent.trim();
   await aller(lienProduit.getAttribute('href'));
   check('fiche produit en 200', page.statut === 200, `HTTP ${page.statut}`);
   check('le titre de la fiche est le nom du produit cliqué',
@@ -146,7 +152,7 @@ try {
 
   // ---------------------------------------------------------- 3. la tenue en page (CSS servie)
   console.log('\n== 3 · La feuille servie garantit : tout tient, pas de défilement ==');
-  const resCss = await fetch(`${base}/minishop.css`);
+  const resCss = await fetch(`${base}/css/app.css`);
   const css = await resCss.text();
   check('la feuille est servie (200)', resCss.status === 200, `HTTP ${resCss.status}`);
   check('le tableau fait 100 % de large, colonnes à répartition fixe',
@@ -172,7 +178,7 @@ try {
     console.log(`E2E UI produit : ${échecs}/${tests} vérification(s) en échec ❌`);
     process.exitCode = 1;
   } else {
-    console.log(`E2E UI produit : TOUT EST VERT ✅ (${tests} vérifications, clics réels sur l'UI)`);
+    console.log(`E2E UI produit : TOUT EST VERT ✅ (${tests} vérifications, interactions DOM simulées avec jsdom)`);
   }
 } catch (e) {
   console.error('\nE2E UI produit : ERREUR fatale —', e);

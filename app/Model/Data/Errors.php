@@ -16,9 +16,7 @@
  *  - SchemaError     (SchemaError.php)     ≈ table, colonne ou vue inconnue
  *                                           (≈ SQLSTATE 42S02/42S22).
  *
- * L'application n'exécute AUCUNE requête SQL : les données vivent dans des
- * fichiers JSON (data/minishop/<table>.json) manipulés par des opérations
- * natives. La migration future vers MySQL (StorageDriver::SQL) réutilisera
- * la même taxonomie : les mêmes codes remonteront depuis la base, sans
- * changer une ligne des vues ni des tests.
+ * Le pilote JSON et le pilote SQL/PDO partagent cette taxonomie :
+ * SqlStore traduit notamment les violations de contrainte SQL en
+ * ConstraintError. Ce fichier est documentaire, non chargé par l’autoloader.
  */

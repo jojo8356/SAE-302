@@ -23,17 +23,11 @@ $libellesParametres = [
     'frais_port' => 'Livraison standard',
     'franchise_port' => 'Livraison offerte à partir de',
     'tva_defaut' => 'TVA par défaut (nos prix sont toujours affichés TTC)',
-    'conservation_compte' => 'Conservation de vos données de compte après votre dernier contact',
+    'conservation_compte' => 'Conservation des comptes inactifs (durée indicative, sans suppression automatique)',
 ];
 ?>
 <h1>À propos de MiniShop</h1>
-<p>MiniShop est une boutique en ligne de <strong>matériel informatique et
-d'objets connectés</strong> : ordinateurs, audio, accessoires et montres
-connectées. Vous y composez votre panier, vous suivez vos commandes depuis
-votre compte, et vous réglez en ligne — en toute démonstration : le paiement
-est simulé et aucun débit réel n'est effectué.</p>
-<p>Tous nos prix sont affichés <strong>TTC</strong> et la disponibilité
-indiquée est celle du stock au moment de votre visite.</p>
+<p>MiniShop est une boutique de démonstration consacrée au matériel informatique et aux objets connectés. Le paiement et la livraison sont simulés : aucune transaction réelle n’est effectuée.</p>
 
 <h2>La boutique en chiffres</h2>
 <ul>
@@ -45,7 +39,7 @@ indiquée est celle du stock au moment de votre visite.</p>
 
 <h2>Nos <?= count($parametres) ?> règles chiffrées</h2>
 <p>Pas de surprise au moment de payer : voici les montants et durées qui
-s'appliquent à chaque commande, affichés avant la validation.</p>
+sont configurés dans la maquette. Les prix et frais simulés sont affichés avant la validation. La durée de conservation est indicative : aucune purge automatique n’est en place.</p>
 <ul>
     <?php foreach ($parametres as $parametre): ?>
         <?php
@@ -75,12 +69,6 @@ et espace d'administration réservé à l'équipe du magasin.</p>
 
 <h2>Et côté technique ?</h2>
 <p>La boutique est développée en <strong>PHP</strong>. Son modèle de données
-est conçu pour <strong>MySQL</strong> : produits, clients et commandes y sont
-liés et contrôlés de façon cohérente, et l'accès à la base se fera via
-<strong>PDO</strong> lors de la mise en ligne sur l'hébergement final.
-Dans cette version de démonstration, un moteur de données intégré au projet
-assure temporairement ce rôle, le temps de la bascule : c'est un choix
-d'étape, pas l'architecture cible — et cela ne change rien à votre
-navigation, ni à vos commandes.</p>
+a pour cible <strong>MySQL ou MariaDB via PDO</strong> ; elle peut aussi utiliser le moteur JSON de démonstration selon la configuration. Produits, clients et commandes y sont liés et contrôlés de façon cohérente. L’hébergement final doit encore être vérifié.</p>
 <p>Le détail du fonctionnement interne est décrit dans la documentation du
 projet, disponible avec le code source.</p>

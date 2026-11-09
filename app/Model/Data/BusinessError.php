@@ -74,5 +74,8 @@ final class BusinessError extends \RuntimeException
         'NOM_DEJA_UTILISE'                             => 'Ce nom de catégorie existe déjà.',
         'SLUG_CATEGORIE_DEJA_UTILISE'                  => 'Ce slug de catégorie existe déjà.',
         'AUCUNE_MODIFICATION'                          => 'Aucune modification à appliquer.',
+        'PARAMETRE_INTROUVABLE'                        => 'Paramètre inconnu : rechargez la page du back-office.',
+        'PARAMETRE_VALEUR_INVALIDE'                    => 'Valeur invalide : un nombre positif est attendu (ex. 4.90).',
+        'MESSAGE_CONTACT_REQUIS'                       => 'Merci de préciser votre nom, un email valide et un message.',
     ];
 }

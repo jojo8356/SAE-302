@@ -133,14 +133,14 @@ $check(
 $check(
     'chaque statut est rendu en entier dans une cellule statut (« En préparation », « Payée »)',
     $tableau !== null
-        && str_contains($tableau, '<td class="statut">En préparation</td>')
-        && str_contains($tableau, '<td class="statut">Payée</td>')
+        && str_contains($tableau, '<td class="statut" data-label="Statut">En préparation</td>')
+        && str_contains($tableau, '<td class="statut" data-label="Statut">Payée</td>')
 );
 $check(
     'les montants sont en cellules montant (159,70 € et 94,80 €)',
     $tableau !== null
-        && str_contains($tableau, '<td class="montant">159,70 €</td>')
-        && str_contains($tableau, '<td class="montant">94,80 €</td>')
+        && str_contains($tableau, '<td class="montant" data-label="Montant TTC">159,70 €</td>')
+        && str_contains($tableau, '<td class="montant" data-label="Montant TTC">94,80 €</td>')
 );
 $check(
     'numéros, dates et clients restent affichés (le contenu long se repliera, pas le statut)',
@@ -169,61 +169,23 @@ $check(
         && !str_contains($tableauVide, 'Ouvrir')
 );
 
-/* ── 2. CSS : les règles qui tiennent la page ──────────────────────── */
-echo "\n== 2 · Feuille du site : répartition fixe, Statut jamais coupé ==\n";
-$css = (string) file_get_contents(dirname(__DIR__, 2) . '/public/minishop.css');
-$blocTableau = blocCss($css, '.tableau-commandes');
-$check(
-    '.tableau-commandes : largeur 100 %, colonnes à répartition fixe, bordures fusionnées',
-    $blocTableau !== null && str_contains($blocTableau, 'width: 100%')
-        && str_contains($blocTableau, 'table-layout: fixed') && str_contains($blocTableau, 'border-collapse: collapse'),
-    (string) $blocTableau
-);
+/* ── 2. Feuille effectivement chargée ─────────────────────────────── */
+echo "\n== 2 · Feuille du site : répartition et cartes mobiles ==\n";
+$css = (string) file_get_contents(dirname(__DIR__, 2) . '/public/css/app.css');
+$layout = (string) file_get_contents(dirname(__DIR__, 2) . '/app/View/layout.php');
+$check('feuille utilisée par le gabarit', str_contains($layout, 'href="/css/app.css"'));
+$check('répartition fixe à 100 % pour les commandes', str_contains($css, '.tableau-commandes, .tableau-categories { width: 100%; table-layout: fixed;'));
 $largeurs = [];
 foreach (['col-numero', 'col-date', 'col-client', 'col-statut', 'col-montant', 'col-detail'] as $colonne) {
     $bloc = blocCss($css, '.tableau-commandes .' . $colonne);
-    $largeur = null;
     if ($bloc !== null && preg_match('/width:\s*(\d+)%/', $bloc, $m) === 1) {
-        $largeur = (int) $m[1];
-    }
-    $largeurs[$colonne] = $largeur;
-}
-$check(
-    'chaque colonne a sa largeur explicite (numero 15, date 19, client 23, statut 17, montant 14, detail 12)',
-    $largeurs === ['col-numero' => 15, 'col-date' => 19, 'col-client' => 23, 'col-statut' => 17, 'col-montant' => 14, 'col-detail' => 12],
-    (string) json_encode($largeurs)
-);
-$totalLargeurs = 0;
-foreach ($largeurs as $largeur) {
-    if ($largeur !== null) {
-        $totalLargeurs += $largeur;
+        $largeurs[] = (int) $m[1];
     }
 }
-$check('les largeurs totalisent 100 % : tout tient dans la page, sans défilement', $totalLargeurs === 100, (string) $totalLargeurs);
-$blocCellules = blocCss($css, ".tableau-commandes th,\n.tableau-commandes td");
-if ($blocCellules === null) {
-    $blocCellules = blocCss($css, '.tableau-commandes th, .tableau-commandes td');
-}
-$check(
-    'en-têtes et cellules alignés à gauche, contenus longs repliés (overflow-wrap)',
-    $blocCellules !== null && str_contains($blocCellules, 'text-align: left') && str_contains($blocCellules, 'overflow-wrap: break-word'),
-    (string) $blocCellules
-);
-$blocStatut = blocCss($css, '.tableau-commandes .statut');
-$check(
-    'la colonne Statut : libellé jamais coupé (nowrap) et mis en avant (gras)',
-    $blocStatut !== null && str_contains($blocStatut, 'white-space: nowrap') && str_contains($blocStatut, 'font-weight: 700'),
-    (string) $blocStatut
-);
-$blocMontant = blocCss($css, '.tableau-commandes .montant');
-$check(
-    'les montants (et eux seuls) sont alignés à droite, sans retour à la ligne',
-    $blocMontant !== null && str_contains($blocMontant, 'text-align: right') && str_contains($blocMontant, 'white-space: nowrap')
-);
-$check(
-    'l\'en-tête de colonnes a le même gris que les autres tableaux du site (#f5f5f4)',
-    str_contains($css, '.tableau-commandes thead th') && str_contains($css, 'background-color: #f5f5f4')
-);
+$check('six colonnes couvrent exactement 100 %', count($largeurs) === 6 && array_sum($largeurs) === 100);
+$check('valeurs longues repliables', str_contains($css, '.tableau-commandes th, .tableau-commandes td') && str_contains($css, 'overflow-wrap: anywhere'));
+$check('statut mis en évidence et montants alignés', str_contains($css, '.tableau-commandes .statut { font-weight: 700; }') && str_contains($css, '.tableau-commandes .montant { text-align: right;'));
+$check('cartes mobiles avec chaque champ étiqueté', str_contains($html, 'tableau-defilant--admin') && str_contains($html, 'data-label="Statut"') && str_contains($html, 'data-label="Montant TTC"') && str_contains($css, '.tableau-defilant--admin tbody td::before') && str_contains($css, 'content: attr(data-label)'));
 
 ob_end_clean();
 

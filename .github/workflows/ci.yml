@@ -67,7 +67,7 @@ jobs:
     name: php-lint (validate)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Setup PHP 8.2
         uses: shivammathur/setup-php@v2
         with:
@@ -80,6 +80,64 @@ jobs:
           if [ ! -d app ] && [ ! -d public ]; then echo "aucun dossier app/public, skip"; exit 0; fi
           find app public scripts tests/php -name '*.php' -print0 | xargs -0 -n1 -P4 php -l
           echo "✓ syntaxe OK"
+
+  # Dépréciations : les suites isolées ne créent ni base SQL ni données E2E.
+  deprecations:
+    name: Dépréciations PHP ${{ matrix.php }} et suites isolées
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["8.2", "8.5"]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, pdo_mysql
+          coverage: none
+          tools: none
+      - name: Analyse et tests sans SQL ni E2E
+        shell: bash
+        run: |
+          set +e
+          php scripts/run-all-tests.php --sans-sql --sans-e2e 2>&1 | tee "$RUNNER_TEMP/minishop-tests.log"
+          etat=${PIPESTATUS[0]}
+          set -e
+          if [ "$etat" -ne 0 ]; then
+            # Résumé consultable via les annotations même si les logs sont indisponibles.
+            grep -E '❌|ERROR:|FAIL:|AssertionError|Fatal error|Parse error|Deprecated:' "$RUNNER_TEMP/minishop-tests.log" | head -20 | while IFS= read -r ligne; do
+              ligne=${ligne//%/%25}
+              echo "::error::${ligne}"
+            done || true
+          fi
+          exit "$etat"
+
+      - name: Contrats HTTP 403 sur serveur PHP temporaire
+        shell: bash
+        run: |
+          set +e
+          python3 tests/python/test_auth_403_http.py -v 2>&1 | tee "$RUNNER_TEMP/auth403.log"
+          etat=${PIPESTATUS[0]}
+          set -e
+          if [ "$etat" -ne 0 ]; then
+            tail -8 "$RUNNER_TEMP/auth403.log" | while IFS= read -r ligne; do
+              ligne=${ligne//%/%25}
+              echo "::error::${ligne}"
+            done
+          fi
+          exit "$etat"
+
+  e2e-isolation:
+    name: E2E WASM et isolation des données
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts
+      - run: node tests/node/e2e_isolation.mjs
 
   # -----------------------------------------------------------------
   # 1b. Routeur de développement `php -S` (scripts/dev-router.php) :
@@ -109,7 +167,7 @@ jobs:
           coverage: none
           tools: none
       - name: Tests unitaires en PHP natif (ext-intl présente)
-        run: php tests/php/unit_tests.php
+        run: python scripts/ci_php_diagnostic.py tests/php/unit_tests.php
       - name: Tests du routeur de développement
         run: php tests/php/dev_router_test.php
 
@@ -125,6 +183,8 @@ jobs:
   ui-e2e:
     name: ui-e2e (clics Admin > Catégories)
     runs-on: ubuntu-latest
+    env:
+      UI_TEST_INSTANCE_JETABLE: "1" # runner GitHub Actions jetable
     steps:
       - uses: actions/checkout@v4
       - name: Setup PHP 8.2
@@ -300,7 +360,7 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Setup PHP 8.2
         uses: shivammathur/setup-php@v2
         with:
@@ -325,7 +385,7 @@ jobs:
     name: security-scan (validate)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Auto-test des motifs (les contrôles doivent savoir mordre)
         if: hashFiles('tests/security/controles.sh') != ''
         shell: bash
@@ -432,7 +492,7 @@ jobs:
       DB_TEST: minishop_test
       MYSQL_DATABASE: minishop_test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install mariadb-client
         run: |
@@ -449,7 +509,8 @@ jobs:
           if [ -f scripts/load_db.sh ]; then
             echo "→ scripts/load_db.sh présent (GitLab originel)"
             chmod +x scripts/load_db.sh
-            DB_HOST=127.0.0.1 DB_USER=root DB_PASS="" ./scripts/load_db.sh
+            DB=minishop DB_NAME=minishop DB_HOST=127.0.0.1 DB_USER=root DB_PASS="" ./scripts/load_db.sh
+            DB=minishop_test DB_NAME=minishop_test DB_HOST=127.0.0.1 DB_USER=root DB_PASS="" ./scripts/load_db.sh
           else
             echo "→ scripts/load_db.sh absent — fallback chargement direct (GitHub dev)"
             # Crée les deux bases (prod seed + test)
@@ -487,7 +548,17 @@ jobs:
           if [ -f scripts/run_sql_tests.sh ]; then
             echo "→ scripts/run_sql_tests.sh présent"
             chmod +x scripts/run_sql_tests.sh
-            DB_HOST=127.0.0.1 DB_USER=root DB_PASS="" DB_TEST=minishop_test ./scripts/run_sql_tests.sh || cat tests/sql/rapport_tests_sql.md || true
+            set +e
+            DB_HOST=127.0.0.1 DB_USER=root DB_PASS="" DB_TEST=minishop_test ./scripts/run_sql_tests.sh 2>&1 | tee "$RUNNER_TEMP/sql-tests.log"
+            etat=${PIPESTATUS[0]}
+            set -e
+            if [ "$etat" -ne 0 ]; then
+              grep -E 'ERREUR|ERROR|\[FAIL\]|\[FIX\]|attendu |Tests conformes' "$RUNNER_TEMP/sql-tests.log" | head -25 | while IFS= read -r ligne; do
+                ligne=${ligne//%/%25}
+                echo "::error::${ligne}"
+              done || true
+              exit "$etat"
+            fi
           else
             echo "→ scripts/run_sql_tests.sh absent — vérif manuelle minimale"
             mysql -h 127.0.0.1 -u root minishop_test -e "SHOW TABLES;" || true
@@ -500,9 +571,40 @@ jobs:
             echo "ℹ run_sql_tests.sh absent : OK en dev GitHub (bloquant en GitLab prod quand livré)"
           fi
 
+      - name: Setup PHP pour l'intégration SQL
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo_mysql
+          coverage: none
+          tools: none
+
+      - name: Garde-fous et intégration SQL sur serveur jetable
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          trap 'etat=$?; echo "::error::Intégration SQL : échec ligne $LINENO (code $etat)"; for f in "$RUNNER_TEMP/integration-sql.log" "$RUNNER_TEMP/refus-app.log" "$RUNNER_TEMP/refus.log"; do if [ -f "$f" ]; then { grep -E "❌|ERREUR|ERROR|FAIL|[Éé]chec" "$f" || tail -7 "$f"; } | head -7 | while IFS= read -r ligne; do ligne=${ligne//%/%25}; echo "::error::${ligne}"; done; break; fi; done; exit "$etat"' ERR
+          mysql -h 127.0.0.1 -u root -e "CREATE DATABASE minishop_safety_ci; CREATE TABLE minishop_safety_ci.temoin (id INT); INSERT INTO minishop_safety_ci.temoin VALUES (42);"
+          if MINISHOP_TEST_DB=minishop_safety_ci DB_NAME=minishop php tests/php/sql_integration.php > "$RUNNER_TEMP/refus.log" 2>&1; then
+            echo "Une base existante a été acceptée sans consentement"; exit 1
+          fi
+          grep -q 'création impossible' "$RUNNER_TEMP/refus.log"
+          echo "::notice::Refus de base existante vérifié"
+          test "$(mysql -h 127.0.0.1 -u root -N -e 'SELECT id FROM minishop_safety_ci.temoin')" = 42
+          if MINISHOP_TEST_DB=minishop_safety_ci DB_NAME=minishop_safety_ci php tests/php/sql_integration.php --reinitialiser-base-existante > "$RUNNER_TEMP/refus-app.log" 2>&1; then
+            echo "La base applicative a été acceptée"; exit 1
+          fi
+          grep -q 'correspond à DB_NAME' "$RUNNER_TEMP/refus-app.log"
+          echo "::notice::Refus de base applicative vérifié"
+          test "$(mysql -h 127.0.0.1 -u root -N -e 'SELECT id FROM minishop_safety_ci.temoin')" = 42
+          MINISHOP_TEST_DB=minishop_safety_ci DB_NAME=minishop php tests/php/sql_integration.php --reinitialiser-base-existante 2>&1 | tee "$RUNNER_TEMP/integration-sql.log"
+          if mysql -h 127.0.0.1 -u root -N -e "SHOW DATABASES LIKE 'minishop_safety_ci'" | grep -q .; then
+            echo "Base de test non supprimée"; exit 1
+          fi
+
       - name: Upload SQL rapport
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: sql-rapport
           if-no-files-found: warn
@@ -542,7 +644,7 @@ jobs:
       DB_TEST: minishop_test
       MYSQL_DATABASE: minishop_test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup PHP 8.2
         uses: shivammathur/setup-php@v2
@@ -562,7 +664,7 @@ jobs:
         run: |
           set -euxo pipefail
           if [ -f scripts/load_db.sh ]; then
-            DB_HOST=127.0.0.1 DB_USER=root DB_PASS="" ./scripts/load_db.sh || true
+            DB_HOST=127.0.0.1 DB_USER=root DB_PASS="" ./scripts/load_db.sh
           else
             mysql -h 127.0.0.1 -u root -e "CREATE DATABASE IF NOT EXISTS minishop_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" || true
             mysql -h 127.0.0.1 -u root minishop_test < sql/01_minishop_schema.sql || true
@@ -585,14 +687,23 @@ jobs:
       - name: PHPUnit
         shell: bash
         run: |
-          if [ ! -f composer.json ]; then echo "skip phpunit (pas de composer.json)"; exit 0; fi
-          if [ ! -f vendor/bin/phpunit ]; then echo "phpunit absent, skip"; exit 0; fi
-          ./vendor/bin/phpunit --testsuite app --log-junit phpunit.xml || ./vendor/bin/phpunit --log-junit phpunit.xml || true
-          cat phpunit.xml 2>/dev/null | head -n 80 || true
+          if [ ! -f composer.json ]; then echo "composer.json absent"; exit 1; fi
+          if [ ! -f vendor/bin/phpunit ]; then echo "phpunit absent"; exit 1; fi
+          set +e
+          ./vendor/bin/phpunit --testsuite app --log-junit phpunit.xml 2>&1 | tee "$RUNNER_TEMP/phpunit.log"
+          etat=${PIPESTATUS[0]}
+          set -e
+          if [ "$etat" -ne 0 ]; then
+            tail -12 "$RUNNER_TEMP/phpunit.log" | head -8 | while IFS= read -r ligne; do
+              ligne=${ligne//%/%25}
+              echo "::error::${ligne}"
+            done
+            exit "$etat"
+          fi
 
       - name: Upload phpunit report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: phpunit-junit
           if-no-files-found: warn
@@ -608,10 +719,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: [php-lint]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Java 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
@@ -646,7 +757,7 @@ jobs:
 
       - name: Upload diagrams
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: diagrams
           if-no-files-found: warn

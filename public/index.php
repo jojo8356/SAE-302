@@ -27,7 +27,9 @@ use App\Controller\Admin\CommandeAdminController;
 use App\Controller\Admin\DashboardController;
 use App\Controller\Admin\EquipeAdminController;
 use App\Controller\Admin\ProduitAdminController;
+use App\Controller\Admin\ParametreAdminController;
 use App\Controller\Admin\StockAdminController;
+use App\Controller\ApiController;
 use App\Controller\AuthController;
 use App\Controller\CatalogueController;
 use App\Controller\CommandeController;
@@ -36,13 +38,16 @@ use App\Controller\HomeController;
 use App\Controller\PanierController;
 use App\Model\Data\BusinessError;
 use App\Router;
+use App\Security\AccesRefuse;
 use App\Security\Auth;
 
 // ----------------------------------------------------------- en-têtes HTTP
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
 header('Referrer-Policy: same-origin');
-header("Content-Security-Policy: default-src 'none'; style-src 'self'; img-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
+// CSP stricte : tout est servi depuis l'origine, aucune ressource externe.
+// Les styles et scripts vivent dans /css et /js : aucune autorisation en ligne.
+header("Content-Security-Policy: default-src 'none'; img-src 'self' data:; font-src 'self'; style-src 'self'; script-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'");
 header('X-XSS-Protection: 0'); // navigation modernes : on s'appuie sur l'échappement, pas sur ce filtre hérité
 
 Auth::demarrer();
@@ -54,12 +59,17 @@ $routeur->get('/', [HomeController::class, 'index']);
 $routeur->get('/categories', [HomeController::class, 'categories']);
 $routeur->get('/a-propos', [HomeController::class, 'aPropos']);
 $routeur->get('/mentions-legales', [HomeController::class, 'mentionsLegales']);
-$routeur->get('/cgv', [HomeController::class, 'cgv']);
+$routeur->get('/mentions', [HomeController::class, 'mentionsLegales']);
 $routeur->get('/aide', [HomeController::class, 'aide']);
-$routeur->get('/livraison', [HomeController::class, 'livraison']);
+$routeur->get('/contact', [HomeController::class, 'formulaireContact']);
+$routeur->post('/contact', [HomeController::class, 'envoyerContact']);
+$routeur->get('/cgv', [HomeController::class, 'cgv']);
 $routeur->get('/confidentialite', [HomeController::class, 'confidentialite']);
+$routeur->get('/cookies', [HomeController::class, 'cookies']);
+$routeur->get('/livraison', [HomeController::class, 'livraison']);
 $routeur->get('/retractation', [HomeController::class, 'retractation']);
-$routeur->get('/contact', [HomeController::class, 'contact']);
+$routeur->get('/garanties', [HomeController::class, 'garanties']);
+$routeur->get('/cgu', [HomeController::class, 'cgu']);
 
 $routeur->get('/catalogue', [CatalogueController::class, 'catalogue']);
 $routeur->get('/recherche', [CatalogueController::class, 'recherche']);
@@ -79,6 +89,14 @@ $routeur->get('/panier', [PanierController::class, 'index']);
 $routeur->post('/panier/ajouter', [PanierController::class, 'ajouter']);
 $routeur->post('/panier/quantite', [PanierController::class, 'quantite']);
 $routeur->post('/panier/retirer', [PanierController::class, 'retirer']);
+
+// ------------------------------------------------------------- API interne
+// Contrepartie JSON du panier (progressive enhancement, DA §8). Le jeton CSRF
+// est exigé exactement comme sur les routes HTML : aucune exception de sécurité.
+$routeur->get('/api/panier', [ApiController::class, 'etat']);
+$routeur->post('/api/panier/ajouter', [ApiController::class, 'ajouter']);
+$routeur->post('/api/panier/quantite', [ApiController::class, 'quantite']);
+$routeur->post('/api/panier/retirer', [ApiController::class, 'retirer']);
 
 $routeur->get('/commande/valider', [CommandeController::class, 'formulaire'], 'client');
 $routeur->post('/commande/valider', [CommandeController::class, 'valider'], 'client');
@@ -115,6 +133,9 @@ $routeur->get('/admin/commandes', [CommandeAdminController::class, 'index'], 'ad
 $routeur->get('/admin/commandes/{id}', [CommandeAdminController::class, 'detail'], 'admin');
 $routeur->post('/admin/commandes/{id}/statut', [CommandeAdminController::class, 'changerStatut'], 'admin');
 
+$routeur->get('/admin/parametres', [ParametreAdminController::class, 'index'], 'admin');
+$routeur->post('/admin/parametres', [ParametreAdminController::class, 'enregistrer'], 'admin');
+
 $routeur->get('/admin/equipe', [EquipeAdminController::class, 'index'], 'super');
 $routeur->post('/admin/equipe', [EquipeAdminController::class, 'creer'], 'super');
 $routeur->post('/admin/equipe/{id}/basculer', [EquipeAdminController::class, 'basculer'], 'super');
@@ -122,6 +143,9 @@ $routeur->post('/admin/equipe/{id}/basculer', [EquipeAdminController::class, 'ba
 // ------------------------------------------------------------- dispatch
 try {
     $routeur->executer($routeur->resoudre($_SERVER['REQUEST_METHOD'] ?? 'GET', $_SERVER['REQUEST_URI'] ?? '/'));
+} catch (AccesRefuse $e) {
+    http_response_code(403);
+    (new HomeController())->page403();
 } catch (BusinessError $e) {
     // erreur métier remontée jusqu'ici : message humain, aucun détail interne
     $_SESSION['flash_erreur'] = $e->messageHumain();

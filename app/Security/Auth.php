@@ -48,11 +48,16 @@ final class Auth
         if (session_status() === PHP_SESSION_ACTIVE) {
             return;
         }
-        session_set_cookie_params([
-            'httponly' => true,
-            'samesite' => 'Lax',
-            'secure' => (($_SERVER['HTTPS'] ?? '') !== '' && ($_SERVER['HTTPS'] ?? 'off') !== 'off'),
-        ]);
+        // Les harnais de tests désactivent les cookies de session (sortie CLI
+        // propre) : PHP émet alors un avertissement si on règle ses paramètres.
+        // On ne les règle donc que lorsque les cookies sont réellement utilisés.
+        if (ini_get('session.use_cookies') !== '0') {
+            session_set_cookie_params([
+                'httponly' => true,
+                'samesite' => 'Lax',
+                'secure' => (($_SERVER['HTTPS'] ?? '') !== '' && ($_SERVER['HTTPS'] ?? 'off') !== 'off'),
+            ]);
+        }
         session_name('MINISHOPSESS');
         ini_set('session.use_strict_mode', '1'); // identifiant inconnu ⇒ nouvelle session
         session_start();
@@ -247,9 +252,7 @@ final class Auth
     {
         $admin = self::exigeAdmin();
         if ($admin['role'] !== 'SUPER') {
-            \http_response_code(403);
-            $_SESSION['flash_erreur'] = 'Réservé au rôle SUPER.';
-            self::rediriger('/admin');
+            throw new AccesRefuse('Réservé au rôle SUPER.');
         }
 
         return $admin;

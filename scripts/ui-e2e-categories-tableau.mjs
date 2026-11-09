@@ -37,6 +37,12 @@ import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
+// Ces parcours modifient le serveur ciblé : jamais les lancer implicitement sur les données locales.
+if (!process.env.UI_BASE_URL || process.env.UI_TEST_INSTANCE_JETABLE !== '1') {
+  console.error('UI_BASE_URL et UI_TEST_INSTANCE_JETABLE=1 requis : utiliser uniquement une instance de test jetable. Ces tests modifient ses données.');
+  process.exit(2);
+}
+
 const REPO = join(import.meta.dirname, '..');
 const PORT = Number(process.env.UI_PORT ?? 8114);
 let base = (process.env.UI_BASE_URL ?? `http://127.0.0.1:${PORT}`).replace(/\/$/, '');
@@ -221,7 +227,7 @@ try {
 
   // ---------------------------------------------------------- 3. la feuille qui garantit la tenue
   console.log('\n== 3 · Feuille servie : les règles de tenue sont là ==');
-  const resCss = await fetch(`${base}/minishop.css`, { headers: nav.enTetes() });
+  const resCss = await fetch(`${base}/css/app.css`, { headers: nav.enTetes() });
   const css = await resCss.text();
   check('la feuille est servie (200) et définit .tableau-categories', resCss.status === 200 && css.includes('.tableau-categories'),
     `HTTP ${resCss.status}`);
@@ -239,8 +245,9 @@ try {
     /\.tableau-categories form\s*\{[^}]*display:\s*grid/.test(css)
       && /\.tableau-categories input\s*\{[^}]*width:\s*100%/.test(css)
       && /\.tableau-categories input\s*\{[^}]*box-sizing:\s*border-box/.test(css));
-  check('le bouton « Supprimer » reste en une pièce dans sa colonne (nowrap)',
-    /\.tableau-categories \.bouton-danger\s*\{[^}]*white-space:\s*nowrap/.test(css));
+  check('les actions restent étiquetées sur mobile et le bouton est visible',
+    css.includes('.tableau-defilant--admin tbody td::before')
+      && lignes.every((tr) => tr.querySelector('td[data-label="Actions"] button.bouton-danger')));
 
   // ---------------------------------------------------------- 4. l'édition fonctionne toujours
   console.log('\n== 4 · Édition d\'une description par le formulaire de la ligne ==');
@@ -263,7 +270,7 @@ try {
     console.log(`E2E UI catégories (tableau) : ${échecs}/${tests} vérification(s) en échec ❌`);
     process.exitCode = 1;
   } else {
-    console.log(`E2E UI catégories (tableau) : TOUT EST VERT ✅ (${tests} vérifications, clics réels sur l'UI)`);
+    console.log(`E2E UI catégories (tableau) : TOUT EST VERT ✅ (${tests} vérifications, interactions DOM simulées avec jsdom)`);
   }
 } catch (e) {
   console.error('\nE2E UI catégories (tableau) : ERREUR fatale —', e);

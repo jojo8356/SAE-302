@@ -1,6 +1,6 @@
 {
     "table": "categorie",
-    "auto_increment": 6,
+    "auto_increment": 5,
     "rows": [
         {
             "id_categorie": 1,

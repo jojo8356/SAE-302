@@ -34,6 +34,12 @@ import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
+// Ces parcours modifient le serveur ciblé : jamais les lancer implicitement sur les données locales.
+if (!process.env.UI_BASE_URL || process.env.UI_TEST_INSTANCE_JETABLE !== '1') {
+  console.error('UI_BASE_URL et UI_TEST_INSTANCE_JETABLE=1 requis : utiliser uniquement une instance de test jetable. Ces tests modifient ses données.');
+  process.exit(2);
+}
+
 const REPO = join(import.meta.dirname, '..');
 const PORT = Number(process.env.UI_PORT ?? 8116);
 let base = (process.env.UI_BASE_URL ?? `http://127.0.0.1:${PORT}`).replace(/\/$/, '');
@@ -264,18 +270,18 @@ try {
 
   // ---------------------------------------------------------- 4. la feuille qui garantit l'alignement
   console.log('\n== 4 · Feuille servie : la règle écrite pour les trois tableaux ==');
-  const resCss = await fetch(`${base}/minishop.css`, { headers: admin.enTetes() });
+  const resCss = await fetch(`${base}/css/app.css`, { headers: admin.enTetes() });
   const css = await resCss.text();
   check('la feuille est servie (200) et définit les trois tableaux',
     resCss.status === 200 && css.includes('.tableau-panier') && css.includes('.tableau-stocks') && css.includes('.tableau-alertes'),
     `HTTP ${resCss.status}`);
-  check('panier : .tableau-panier .produit est à gauche, .montant reste à droite',
-    /\.tableau-panier \.produit\s*\{[^}]*text-align:\s*left/.test(css)
+  check('produit et référence alignés à gauche, montant du panier à droite',
+    /\.tableau-panier \.produit,[^}]*\.tableau-stocks \.reference,[^}]*\.tableau-alertes \.produit\s*\{[^}]*text-align:\s*left/s.test(css)
       && /\.tableau-panier \.montant\s*\{[^}]*text-align:\s*right/.test(css));
-  check('stocks et alertes : en-têtes et cellules partagent l\'alignement à gauche',
-    /\.tableau-stocks th,\s*\.tableau-stocks td,\s*\.tableau-alertes th,\s*\.tableau-alertes td\s*\{[^}]*text-align:\s*left/.test(css));
-  check('stocks et alertes : .reference et .produit sont explicitement à gauche',
-    /\.tableau-stocks \.reference,\s*\.tableau-stocks \.produit,\s*\.tableau-alertes \.reference,\s*\.tableau-alertes \.produit\s*\{[^}]*text-align:\s*left/.test(css));
+  check('stocks et alertes sont étiquetés pour les cartes mobiles',
+    css.includes('.tableau-defilant--admin tbody td::before') && temoin.tr.querySelector('td.produit')?.dataset.label === 'Produit'
+      && ligneAlerte?.querySelector('td.reference')?.dataset.label === 'Référence');
+
 
   // ---------------------------------------------------------- 5. remise en état
   console.log('\n== 5 · Remise du stock témoin à son état initial ==');
@@ -293,7 +299,7 @@ try {
     console.log(`E2E UI alignement : ${échecs}/${tests} vérification(s) en échec ❌`);
     process.exitCode = 1;
   } else {
-    console.log(`E2E UI alignement : TOUT EST VERT ✅ (${tests} vérifications, clics réels sur l'UI)`);
+    console.log(`E2E UI alignement : TOUT EST VERT ✅ (${tests} vérifications, interactions DOM simulées avec jsdom)`);
   }
 } catch (e) {
   console.error('\nE2E UI alignement : ERREUR fatale —', e);

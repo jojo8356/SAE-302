@@ -6,7 +6,8 @@ declare(strict_types=1);
  * MiniShop — peuplement initial du magasin de données (CLI).
  *
  * Crée (ou recrée) data/minishop/*.json à partir du schéma et du jeu de
- * démonstration : 4 catégories, 12 produits, 3 clients + 1 admin, 4 paramètres.
+ * démonstration : 4 catégories, 36 produits (3 pages de 12), 3 clients +
+ * 1 admin, 4 paramètres.
  *
  * Usage : php scripts/seed.php          (sur machine normale)
  *        node scripts/wasm_run.mjs scripts/seed.php   (dans la sandbox)

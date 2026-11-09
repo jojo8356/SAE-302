@@ -538,6 +538,17 @@ controle_fonctions_interdites() {
     fi
 }
 
+# Autorise uniquement les deux modèles publics et la classe de lecture Env.php.
+# Toute autre variante (.env.example.local, env.php, clés…) reste interdite.
+fichiers_sensibles() {
+    grep -iE '(^|/)(\.env(\..*)?|env\.php|id_rsa|id_ed25519|.*\.pem|.*\.key|.*\.p12|.*\.pfx)$' \
+        | grep -vFx -e '.env.example' -e 'app/Config/Env.php' -e 'app/Config/env.example.php'
+}
+
+valeur_sensible_env() {
+    grep -qiE "^[[:space:]]*(export[[:space:]]+)?[A-Z0-9_]*(PASSWORD|PASSWD|SECRET|TOKEN|API_KEY|DB_PASS)[A-Z0-9_]*[[:space:]]*=[[:space:]]*[\"']?[^#\"'[:space:]]" "$1"
+}
+
 # =============================================================================
 #  CONTRÔLE 10 — Aucun secret dans le dépôt
 # =============================================================================
@@ -545,10 +556,8 @@ controle_secrets_depot() {
     titre "Dépôt — configuration locale et clés privées hors versionnement"
 
     local suivis=""
-    if command -v git >/dev/null 2>&1 && [ -d .git ]; then
-        suivis="$(git ls-files 2>/dev/null \
-            | grep -iE '(^|/)(\.env(\..*)?|env\.php|id_rsa|id_ed25519|.*\.pem|.*\.key|.*\.p12)$' \
-            | grep -vE 'env\.example\.php')"
+    if command -v git >/dev/null 2>&1 && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        suivis="$(git ls-files 2>/dev/null | fichiers_sensibles)"
 
         if [ -n "$suivis" ]; then
             ko "fichier sensible versionné"
@@ -560,6 +569,15 @@ controle_secrets_depot() {
         # Ne JAMAIS afficher un ✓ pour une vérification qu'on n'a pas pu faire :
         # un vert obtenu par défaut d'outil est pire qu'un rouge.
         ko "git indisponible : impossible de vérifier l'index (installer git dans l'image CI)"
+    fi
+
+    # Le modèle public est versionné volontairement, jamais ses mots de passe.
+    if [ -f .env.example ]; then
+        if valeur_sensible_env .env.example; then
+            ko ".env.example contient une valeur sensible non vide (valeur non affichée)"
+        else
+            ok ".env.example : aucune valeur sensible non vide détectée"
+        fi
     fi
 
     # .gitignore doit couvrir les chemins de configuration réels.
@@ -654,6 +672,25 @@ PHP
     else
         printf '        %s✘ %s faux positif(s) sur du HTML légitime%s\n' "$C_KO" "$vus_negatifs" "$C_RAZ"
         grep -nE -e "$m_var" -e "$m_conf" "$tmp/faux_positif.php" | grep -vEi -e "$bruit_html" | sed 's/^/          → /'
+        erreurs=$((erreurs + 1))
+    fi
+
+    printf '%s\n' 'DB_PASSWORD=' 'DB_PASS=""' '# SECRET=ignore' > "$tmp/env-sain"
+    printf '%s\n' 'DB_PASSWORD=nonvide' > "$tmp/env-secret"
+    if ! valeur_sensible_env "$tmp/env-sain" && valeur_sensible_env "$tmp/env-secret"; then
+        printf '        %s✓%s valeurs sensibles non vides du modèle détectées\n' "$C_OK" "$C_RAZ"
+    else
+        printf '        %s✘ détection des valeurs du modèle incorrecte%s\n' "$C_KO" "$C_RAZ"
+        erreurs=$((erreurs + 1))
+    fi
+
+    local chemins attendus
+    chemins="$(printf '%s\n' '.env' '.env.production' '.env.example' '.env.example.local' 'app/Config/env.php' 'app/Config/Env.php' 'app/Config/env.example.php' 'cles/id_rsa' 'certificat.pfx' | fichiers_sensibles)"
+    attendus="$(printf '%s\n' '.env' '.env.production' '.env.example.local' 'app/Config/env.php' 'cles/id_rsa' 'certificat.pfx')"
+    if [ "$chemins" = "$attendus" ]; then
+        printf '        %s✓%s seuls les modèles publics et la classe Env sont exclus ; secrets et variantes restent détectés\n' "$C_OK" "$C_RAZ"
+    else
+        printf '        %s✘ filtrage des chemins sensibles incorrect%s\n' "$C_KO" "$C_RAZ"
         erreurs=$((erreurs + 1))
     fi
 
