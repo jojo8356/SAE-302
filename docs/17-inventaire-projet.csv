@@ -289,6 +289,7 @@ public/mesurer.php,Ressources et point d’entrée publics,"Présence, non-vide 
 public/minishop.css,Ressources publiques,Présence et non-vide uniquement
 requirements-docs.txt,Configuration et fichiers racine,Présence et non-vide uniquement
 run.sh,Configuration et fichiers racine,"Présence, non-vide, syntaxe Bash si disponible"
+scripts/ci_php_diagnostic.py,Scripts et outillage,"Présence, non-vide, compilation Python"
 scripts/aide.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 scripts/build-docs.sh,Scripts et outillage,"Présence, non-vide, syntaxe Bash si disponible"
 scripts/capture_perf.sh,Scripts et outillage,"Présence, non-vide, syntaxe Bash si disponible"

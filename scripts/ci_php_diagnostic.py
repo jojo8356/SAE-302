@@ -2,6 +2,9 @@
 import subprocess
 import sys
 
+sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+
 if len(sys.argv) != 2:
     raise SystemExit('Usage: python scripts/ci_php_diagnostic.py tests/php/<test>.php')
 
