@@ -699,7 +699,16 @@ jobs:
         with:
           node-version: '22'
       - run: npm ci --ignore-scripts
-      - run: npx playwright install --with-deps chromium
+      - name: Installer Chromium et ses dépendances système
+        shell: bash
+        run: |
+          set -o pipefail
+          npx playwright install --with-deps chromium 2>&1 | tee "$RUNNER_TEMP/chromium-install.log" || {
+            tail -18 "$RUNNER_TEMP/chromium-install.log" | while IFS= read -r ligne; do
+              ligne=${ligne//%/%25}; echo "::error::$ligne"
+            done
+            exit 1
+          }
       - name: Parcours 375 et 1440 pixels sur copie jetable
         env:
           MINISHOP_BROWSER_ARTIFACTS: ${{ runner.temp }}/captures-responsive
