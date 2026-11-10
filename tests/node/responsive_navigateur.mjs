@@ -128,6 +128,11 @@ try {
       page.locator('form[action="/panier/ajouter"] button').click(),
     ]);
     assert.ok(ajout.ok(), `Ajout AJAX : HTTP ${ajout.status()}`);
+    await page.waitForFunction(() => document.querySelector('#badge-panier') && !document.querySelector('#badge-panier').hidden);
+    const ariaPanierEn = await page.locator('#badge-panier').locator('xpath=ancestor::a[1]').getAttribute('aria-label');
+    assert.match(ariaPanierEn ?? '', /^Cart, \d+ items?$/, `Badge panier non traduit en EN : ${ariaPanierEn}`);
+    const texteAnnonceEn = await page.locator('#zone-annonces').innerText();
+    assert.ok(!texteAnnonceEn.includes('ajouté au panier'), `Annonce AJAX restée en FR : ${texteAnnonceEn}`);
     await aller(page, '/panier');
     await pageVerifiee(page, 'panier', largeur, '.tableau-panier tbody tr');
     await aller(page, '/connexion');
@@ -139,12 +144,37 @@ try {
     await page.locator('form[action="/commande/valider"] button').click();
     await page.waitForURL(/\/mes-commandes\/\d+$/);
     const commandeId = page.url().match(/\/mes-commandes\/(\d+)$/)[1];
+    // Seconde commande dédiée au test d'annulation admin après expédition (sans retour de stock)
+    await aller(page, href);
+    await Promise.all([
+      page.waitForResponse((reponse) => reponse.url().includes('/api/panier/ajouter') && reponse.request().method() === 'POST'),
+      page.locator('form[action="/panier/ajouter"] button').click(),
+    ]);
+    await aller(page, '/commande/valider');
+    await page.locator('form[action="/commande/valider"] button').click();
+    await page.waitForURL(/\/mes-commandes\/\d+$/);
+    const commandeExpedieeId = page.url().match(/\/mes-commandes\/(\d+)$/)[1];
     await aller(page, '/mes-commandes');
     await pageVerifiee(page, 'mes-commandes', largeur, '.tableau-commandes-client tbody tr');
     assert.equal(await page.locator('h1').first().innerText(), 'My orders');
-    for (const [routeInfo, nomInfo] of [['/compte', 'compte-en'], ['/mentions-legales', 'mentions-legales-en'], ['/confidentialite', 'confidentialite-en'], ['/cgv', 'cgv-en']]) {
+    for (const [routeInfo, nomInfo] of [
+      ['/compte', 'compte-en'],
+      ['/mentions-legales', 'mentions-legales-en'],
+      ['/cgu', 'cgu-en'],
+      ['/cookies', 'cookies-en'],
+      ['/retractation', 'retractation-en'],
+      ['/confidentialite', 'confidentialite-en'],
+      ['/cgv', 'cgv-en'],
+      ['/livraison', 'livraison-en'],
+      ['/garanties', 'garanties-en'],
+    ]) {
       await aller(page, routeInfo);
       await pageVerifiee(page, nomInfo, largeur);
+      if (routeInfo === '/mentions-legales') {
+        const corpsMentions = await page.locator('main').innerText();
+        assert.ok(corpsMentions.includes('Johan Polsinelli') && corpsMentions.includes('Chahd Gouiaa'), 'Co-éditeurs absents en EN');
+        assert.ok(corpsMentions.includes('linserv-info-01.campus.unice.fr'), 'Hébergeur LineServ absent en EN');
+      }
     }
     await aller(page, '/admin/connexion');
     await page.fill('#email', 'admin@minishop.fr');
@@ -235,7 +265,22 @@ try {
     await administration.locator('form[action$="/statut"] button').click();
     await administration.getByRole('button', { name: 'Confirmer l’annulation définitive' }).click();
     assert.ok((await administration.locator('body').innerText()).includes('Montant soldé'));
-    console.log(`✅ Confirmation administrateur sans JavaScript — ${largeur}px`);
+
+    // Confirmation administrateur sans JS sur une commande EXPEDIEE : avertissement dédié + non-restitution du stock.
+    await aller(administration, `/admin/commandes/${commandeExpedieeId}`);
+    await administration.selectOption('#statut', 'EXPEDIEE');
+    await administration.fill('#commentaire', 'Remis transporteur');
+    await administration.locator('form[action$="/statut"] button').click();
+    await aller(administration, `/admin/commandes/${commandeExpedieeId}`);
+    await administration.selectOption('#statut', 'ANNULEE');
+    await administration.fill('#commentaire', 'Colis égaré en transit');
+    await administration.locator('form[action$="/statut"] button').click();
+    await administration.getByRole('heading', { name: 'Confirmer l’annulation' }).waitFor();
+    await pageVerifiee(administration, 'confirmer-annulation-expediee', largeur);
+    assert.ok(await administration.getByText('le stock ne sera pas automatiquement restitué').isVisible());
+    await administration.getByRole('button', { name: 'Confirmer l’annulation définitive' }).click();
+    assert.ok((await administration.locator('body').innerText()).includes('Montant soldé'));
+    console.log(`✅ Confirmation administrateur sans JavaScript (PAYEE & EXPEDIEE) — ${largeur}px`);
     await admin.close();
 
     const perso = await browser.newContext({ viewport: { width: largeur, height: 900 }, locale: 'fr-FR',

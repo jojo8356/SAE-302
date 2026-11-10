@@ -152,7 +152,33 @@ try {
     if ((int) $pdo->query('SELECT stock FROM produit WHERE id_produit=8')->fetchColumn() !== $stockInitial) {
         throw new RuntimeException('La seconde annulation administrateur a modifié le stock.');
     }
-    echo "✅ Annulation administrateur SQL, trace et protection du statut générique vérifiées\n";
+
+    // Commande EXPEDIEE : le client est bloqué, l'administrateur annule sans retour de stock.
+    $commandeExpediee = $repo->createOrderFromBasket(1, 'Adresse colis transit', [['id_produit' => 8, 'quantite' => 1]], true);
+    $idExp = (int) $commandeExpediee['id_commande'];
+    $stockApresExpedition = (int) $pdo->query('SELECT stock FROM produit WHERE id_produit=8')->fetchColumn();
+    if ($stockApresExpedition !== $stockInitial - 1) {
+        throw new RuntimeException('Décrément de stock avant expédition inattendu.');
+    }
+    $repo->updateOrderStatus($idExp, 'EXPEDIEE', 'Remis au transporteur', 1, 'ADMIN');
+    $codeClientRefuse = '';
+    try {
+        $repo->updateOrderStatus($idExp, 'ANNULEE', 'Tentative client', 1, 'CLIENT');
+    } catch (App\Model\Data\BusinessError $erreur) {
+        $codeClientRefuse = $erreur->businessCode;
+    }
+    if ($codeClientRefuse !== 'ANNULATION_TROP_TARDIVE') {
+        throw new RuntimeException('Une commande expédiée a pu être annulée par un client.');
+    }
+    $repo->updateOrderStatus($idExp, 'ANNULEE', 'Colis perdu transporteur', 1, 'ADMIN');
+    $apresExp = $repo->find($idExp);
+    if ($apresExp === null || $apresExp['statut'] !== 'ANNULEE'
+        || (float) $apresExp['montant_total'] !== 0.0
+        || (float) $apresExp['montant_avant_annulation'] !== (float) $commandeExpediee['montant']
+        || (int) $pdo->query('SELECT stock FROM produit WHERE id_produit=8')->fetchColumn() !== $stockApresExpedition) {
+        throw new RuntimeException('Annulation administrateur sur commande EXPEDIEE incorrecte (stock ou montants).');
+    }
+    echo "✅ Annulation administrateur SQL (PAYEE et EXPEDIEE sans retour stock), trace et protection du statut générique vérifiées\n";
 
     // Exécuter uniquement sur cette base jetable. Aucun compte avec commande
     // n'est supprimé ; vérifier aussi le paramètre migré et l'idempotence.

@@ -18,11 +18,14 @@ class RetentionCliTest(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory(prefix='minishop-retention-cli-')
         self.addCleanup(self.tmp.cleanup)
         self.data = Path(self.tmp.name) / 'data'
-        shutil.copytree(ROOT / 'data/minishop', self.data)
         self.env = dict(os.environ, STORAGE_DRIVER='json', DATA_PATH=str(self.data),
                         MINISHOP_ENV_FILE=str(Path(self.tmp.name) / 'absent.env'), MINISHOP_TESTS='1')
         for key in ('DB', 'DB_NAME', 'DB_HOST', 'DB_USER', 'DB_PASSWORD', 'DB_PASS', 'DB_SOCKET'):
             self.env.pop(key, None)
+        subprocess.run(
+            [PHP, '-r', 'require "app/bootstrap.php"; App\\Model\\Data\\Seed::force(App\\Model\\Data\\JsonStore::open(getenv("DATA_PATH")));'],
+            cwd=ROOT, env=self.env, check=True, capture_output=True, text=True, timeout=30,
+        )
         path = self.data / 'client.json'
         self.clients = json.loads(path.read_text())
         now = datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')

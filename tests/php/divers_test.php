@@ -36,6 +36,9 @@ declare(strict_types=1);
 
 require dirname(__DIR__, 2) . '/app/bootstrap.php';
 
+use App\Model\Data\JsonStore;
+use App\Model\Data\Seed;
+
 ob_start();
 
 $echecs = 0;
@@ -220,10 +223,23 @@ $check(
     'sans image déclarée, aucune balise img cassée n\'est affichée',
     !str_contains($ficheSansImage, '<img')
 );
-$donnees = json_decode((string) file_get_contents(dirname(__DIR__, 2) . '/data/minishop/produit.json'), true);
+$dossierDivers = sys_get_temp_dir() . '/minishop_divers_' . getmypid() . '_' . bin2hex(random_bytes(4));
 $lignes = [];
-if (is_array($donnees) && isset($donnees['rows']) && is_array($donnees['rows'])) {
-    $lignes = $donnees['rows'];
+try {
+    $storeDivers = JsonStore::open($dossierDivers);
+    Seed::force($storeDivers);
+    $lignes = array_values($storeDivers->all('produit'));
+} finally {
+    $fichiersDivers = scandir($dossierDivers);
+    if ($fichiersDivers === false) {
+        $fichiersDivers = [];
+    }
+    foreach ($fichiersDivers as $fichierDiver) {
+        if ($fichierDiver !== '.' && $fichierDiver !== '..') {
+            @unlink($dossierDivers . '/' . $fichierDiver);
+        }
+    }
+    @rmdir($dossierDivers);
 }
 $urls = [];
 foreach ($lignes as $ligne) {
@@ -233,7 +249,7 @@ foreach ($lignes as $ligne) {
 }
 $check(
     'les produits du jeu de démonstration ont des images réutilisées par type',
-    count($urls) === count($lignes) && count(array_unique($urls)) >= 2,
+    count($lignes) > 0 && count($urls) === count($lignes) && count(array_unique($urls)) >= 2,
     count($urls) . ' URL, ' . count(array_unique($urls)) . ' distinctes'
 );
 $fichiersOk = true;

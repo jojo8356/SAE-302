@@ -1054,6 +1054,141 @@ process.stdout.write(B('T14 · design, contact, API panier, paramètres (ajouts 
   check('paramètres protégés (visiteur) → refus', [302, 403].includes(gestionnaireRefuse.httpStatusCode), `status ${gestionnaireRefuse.httpStatusCode}`);
 }
 
+process.stdout.write(B('T15 · mentions LCEN, préférences sans session, annulations 2 étapes & filtres UTC'));
+
+{
+  // 1) /mentions-legales : identités éditoriales, art. 6, III, 2 LCEN, hébergeur IUT LineServ
+  const anonMentions = new Navigateur('t15-mentions');
+  const ml = await anonMentions.get('/mentions-legales');
+  check('GET /mentions-legales → 200', ml.httpStatusCode === 200, `status ${ml.httpStatusCode}`);
+  contient('mentions : Johan Polsinelli', ml.text, 'Johan Polsinelli');
+  contient('mentions : Chahd Gouiaa', ml.text, 'Chahd Gouiaa');
+  contient('mentions : article 6, III, 2 LCEN', ml.text, 'article 6, III, 2');
+  contient('mentions : serveur IUT LineServ', ml.text, 'linserv-info-01.campus.unice.fr');
+
+  // 2) /preferences : accessible sans compte connecté et sans cookie de préférence serveur
+  const anonPrefs = new Navigateur('t15-prefs');
+  const pr = await anonPrefs.get('/preferences');
+  const cookiesPrefs = pr.headers['set-cookie'] ?? [];
+  check('GET /preferences sans session authentifiée → 200', pr.httpStatusCode === 200, `status ${pr.httpStatusCode}`);
+  contient('préférences : sélecteur de langue présent', pr.text, 'id="pref-langue"');
+  contient('préférences : sélecteur de fuseau présent', pr.text, 'id="pref-zone"');
+  check('GET /preferences : aucun cookie de préférence/suivi émis',
+    cookiesPrefs.every((c) => /^MINISHOPSESS=/.test(c)), cookiesPrefs.join('; '));
+
+  // 3) Annulation client en 2 étapes (GET confirmation sans effet de bord -> POST annulation avec retour stock)
+  const produitsAvant = await lireTable('produit');
+  const cibleStock = produitsAvant.find((p2) => (p2.visible === 1 || p2.visible === true) && Number(p2.stock) >= 4);
+  check('T15 : produit disponible trouvé', Boolean(cibleStock));
+  const stockDepart = Number(cibleStock.stock);
+
+  const client = new Navigateur('t15-bruno');
+  const jc = await client.csrf('/connexion');
+  const loginBruno = await client.post('/connexion', { _csrf: jc, email: 'bruno@example.com', mot_de_passe: 'Demo2026!' });
+  check('T15 : connexion bruno → 302', loginBruno.httpStatusCode === 302, `status ${loginBruno.httpStatusCode}`);
+
+  // Commande A : annulée par la cliente via l'écran de confirmation
+  const jAjoutA = await client.csrf(`/produit/${cibleStock.slug}`);
+  await client.post('/panier/ajouter', { _csrf: jAjoutA, id_produit: cibleStock.id_produit, quantite: 1 });
+  const jValA = await client.csrf('/commande/valider');
+  const valA = await client.post('/commande/valider', {
+    _csrf: jValA,
+    adresse: '10 avenue Jean Médecin, 06000 Nice',
+    paiement_simule: '1',
+  });
+  const locA = (valA.headers.location ?? []).join(' ');
+  const idCmdA = Number((/\/mes-commandes\/(\d+)/.exec(locA) ?? [])[1] ?? 0);
+  check('commande A créée pour annulation cliente', idCmdA > 0, locA);
+
+  const confClient = await client.get(`/mes-commandes/${idCmdA}/annulation/confirmation`);
+  check('GET /mes-commandes/{id}/annulation/confirmation → 200', confClient.httpStatusCode === 200, `status ${confClient.httpStatusCode}`);
+  const etatAvantPost = (await lireTable('commande')).find((c) => c.id_commande === idCmdA);
+  check('GET confirmation cliente sans effet de bord', etatAvantPost?.statut === 'PAYEE', `statut=${etatAvantPost?.statut}`);
+
+  const jAnnulClient = (/name="_csrf"\s+value="([^"]+)"/.exec(confClient.text ?? '') ?? [])[1] ?? '';
+  const postAnnulClient = await client.post(`/mes-commandes/${idCmdA}/annulation`, { _csrf: jAnnulClient });
+  check('POST annulation cliente → 302', postAnnulClient.httpStatusCode === 302, `status ${postAnnulClient.httpStatusCode}`);
+  const stockApresClient = Number((await lireTable('produit')).find((p2) => p2.id_produit === cibleStock.id_produit)?.stock);
+  check('annulation cliente restitue le stock', stockApresClient === stockDepart, `${stockApresClient} vs ${stockDepart}`);
+
+  // 4) Commande B passée en EXPEDIEE puis annulée par l'admin en 2 étapes sans JS (sans retour de stock)
+  const jAjoutB = await client.csrf(`/produit/${cibleStock.slug}`);
+  await client.post('/panier/ajouter', { _csrf: jAjoutB, id_produit: cibleStock.id_produit, quantite: 2 });
+  const jValB = await client.csrf('/commande/valider');
+  const valB = await client.post('/commande/valider', {
+    _csrf: jValB,
+    adresse: '20 rue Pastorelli, 06000 Nice',
+    paiement_simule: '1',
+  });
+  const idCmdB = Number((/\/mes-commandes\/(\d+)/.exec((valB.headers.location ?? []).join(' ')) ?? [])[1] ?? 0);
+  check('commande B créée pour parcours EXPEDIEE', idCmdB > 0);
+
+  const adminT15 = new Navigateur('t15-admin');
+  const jAdm = await adminT15.csrf('/admin/connexion');
+  await adminT15.post('/admin/connexion', { _csrf: jAdm, email: 'admin@minishop.fr', mot_de_passe: 'Admin2026!' });
+
+  const jExp = await adminT15.csrf(`/admin/commandes/${idCmdB}`);
+  const rExp = await adminT15.post(`/admin/commandes/${idCmdB}/statut`, {
+    _csrf: jExp,
+    statut: 'EXPEDIEE',
+    commentaire: 'Colis confié au transporteur',
+  });
+  check('admin passe commande B en EXPEDIEE → 302', rExp.httpStatusCode === 302, `status ${rExp.httpStatusCode}`);
+
+  // La cliente ne peut plus accéder à l'écran d'annulation d'une commande EXPEDIEE
+  const refusClientExp = await client.get(`/mes-commandes/${idCmdB}/annulation/confirmation`);
+  check('cliente bloquée sur /annulation/confirmation après expédition → 302', refusClientExp.httpStatusCode === 302, `status ${refusClientExp.httpStatusCode}`);
+
+  // Étape 1 admin sans confirmer_annulation=1 : affiche la page de confirmation, statut toujours EXPEDIEE
+  const jAnn1 = await adminT15.csrf(`/admin/commandes/${idCmdB}`);
+  const etape1 = await adminT15.post(`/admin/commandes/${idCmdB}/statut`, {
+    _csrf: jAnn1,
+    statut: 'ANNULEE',
+    commentaire: 'Colis endommagé en transit',
+  });
+  check('étape 1 annulation admin sans JS → 200 confirmation', etape1.httpStatusCode === 200, `status ${etape1.httpStatusCode}`);
+  contient('confirmation admin EXPEDIEE signale non-retour stock', etape1.text, 'le stock ne sera pas automatiquement restitué');
+  const etatPendantConf = (await lireTable('commande')).find((c) => c.id_commande === idCmdB);
+  check('statut inchangé pendant la confirmation admin', etatPendantConf?.statut === 'EXPEDIEE', `statut=${etatPendantConf?.statut}`);
+
+  // Étape 2 admin avec confirmer_annulation=1 : commande soldée, stock NON restitué
+  const jAnn2 = (/name="_csrf"\s+value="([^"]+)"/.exec(etape1.text ?? '') ?? [])[1] ?? jAnn1;
+  const etape2 = await adminT15.post(`/admin/commandes/${idCmdB}/statut`, {
+    _csrf: jAnn2,
+    statut: 'ANNULEE',
+    commentaire: 'Colis endommagé en transit',
+    confirmer_annulation: '1',
+  });
+  check('étape 2 annulation admin confirmée → 302', etape2.httpStatusCode === 302, `status ${etape2.httpStatusCode}`);
+  const etatApresAdmin = (await lireTable('commande')).find((c) => c.id_commande === idCmdB);
+  const stockApresExp = Number((await lireTable('produit')).find((p2) => p2.id_produit === cibleStock.id_produit)?.stock);
+  check('commande B annulée et soldée', etatApresAdmin?.statut === 'ANNULEE' && Number(etatApresAdmin?.montant_total) === 0);
+  check('commande EXPEDIEE annulée : stock non restitué', stockApresExp === stockDepart - 2, `${stockApresExp} vs ${stockDepart - 2}`);
+
+  // 5) Filtres temporels UTC sur /admin/commandes et /admin
+  const cmdB = await lireTable('commande');
+  const ligneB = cmdB.find((c) => c.id_commande === idCmdB);
+  const jourCmd = String(ligneB.date_commande).slice(0, 10);
+  const listeJour = await adminT15.get(
+    `/admin/commandes?du=${jourCmd}&au=${jourCmd}&debut_utc=${encodeURIComponent(`${jourCmd} 00:00:00`)}&fin_utc=${encodeURIComponent(`${jourCmd} 23:59:59`)}`
+  );
+  check('GET /admin/commandes avec bornes UTC valides → 200', listeJour.httpStatusCode === 200);
+  contient('commande du jour présente dans le filtre UTC', listeJour.text, ligneB.numero);
+
+  const listeAncienne = await adminT15.get('/admin/commandes?du=2001-01-01&au=2001-01-01');
+  check('GET /admin/commandes hors période exclut la commande récente',
+    listeAncienne.httpStatusCode === 200 && !(listeAncienne.text ?? '').includes(ligneB.numero));
+
+  const maintenantMs = Date.now();
+  const debutFenetre = new Date(maintenantMs - 12 * 3600 * 1000).toISOString().slice(0, 19).replace('T', ' ');
+  const finFenetre = new Date(maintenantMs + 12 * 3600 * 1000).toISOString().slice(0, 19).replace('T', ' ');
+  const jourCourant = new Date(maintenantMs).toISOString().slice(0, 10);
+  const dashUtc = await adminT15.get(
+    `/admin?jour_local=${jourCourant}&debut_utc=${encodeURIComponent(debutFenetre)}&fin_utc=${encodeURIComponent(finFenetre)}`
+  );
+  check('GET /admin avec fenêtre UTC 24 h encadrant maintenant → 200', dashUtc.httpStatusCode === 200, `status ${dashUtc.httpStatusCode}`);
+}
+
 // Les données et journaux du runtime WASM sont jetables ; rien n'est rapatrié.
 process.stdout.write(`\n${'='.repeat(60)}\n`);
 if (échecs === 0) {

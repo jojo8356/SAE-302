@@ -6,6 +6,7 @@ import { createPhp } from '../../scripts/wasm_lib.mjs';
 const i18n = await readFile('public/js/i18n-en.js', 'utf8');
 const js = await readFile('public/js/preferences.js', 'utf8');
 const uiJs = await readFile('public/js/ui.js', 'utf8');
+const panierJs = await readFile('public/js/panier.js', 'utf8');
 const tz = await readFile('public/js/tz-lookup.js', 'utf8');
 
 const html = `<!doctype html><html lang="fr"><head><meta name="description" content="MiniShop — catalogue en ligne de matériel informatique et d'objets connectés. Prix TTC, stock en temps réel, commande et suivi."><title>Préférences — MiniShop</title></head><body><nav><a>Catalogue</a></nav><div class="preferences"><h1>Préférences</h1><form id="form-preferences" hidden>
@@ -306,6 +307,16 @@ for (const [clePage, htmlPage] of Object.entries(donneesPages.pages)) {
         }
     }
 
+    if (clePage === 'mentions') {
+        assert.equal(docEn.querySelector('h1')?.textContent.trim(), 'Legal notice');
+        assert.match(docEn.body.textContent, /Johan Polsinelli/);
+        assert.match(docEn.body.textContent, /Chahd Gouiaa/);
+        assert.match(docEn.body.textContent, /Article 6\(III\)\(2\)/);
+        assert.match(docEn.body.textContent, /linserv-info-01\.campus\.unice\.fr/);
+    }
+    if (clePage === 'cgu') {
+        assert.equal(docEn.querySelector('h1')?.textContent.trim(), 'Terms of Use');
+    }
     if (clePage === 'contact') {
         assert.equal(docEn.querySelector('#message').value, 'Texte utilisateur intact', 'textarea modifiée par la traduction');
         assert.equal(docEn.querySelector('#nom').value, 'Alice', 'input modifié par la traduction');
@@ -319,7 +330,100 @@ for (const [clePage, htmlPage] of Object.entries(donneesPages.pages)) {
         assert.equal(docEn.documentElement.lang, 'fr');
         assert.equal(docEn.querySelector('h1').textContent.trim(), h1Fr);
     }
+
+    // Aller-retour FR -> EN -> FR sans perte sur chacune des 48 vues (titre, h1, nœuds texte et attributs)
+    if (clePage !== 'preferences') {
+        const injection = `<div aria-hidden="true"><form id="form-preferences" hidden><select id="pref-langue"><option value="fr">Français</option><option value="en">English</option></select><select id="pref-zone"></select><p id="pref-decalage"></p><button id="pref-position" type="button"></button><button type="submit"></button><button id="pref-reinitialiser" type="button"></button><p id="pref-etat"></p></form></div>`;
+        const htmlAllerRetour = htmlPage.replace('</body>', `${injection}</body>`);
+        const winAr = setup({ langue: 'fr-FR', htmlDoc: htmlAllerRetour });
+        const docAr = winAr.document;
+        const titreInitial = docAr.title;
+        const h1Initial = docAr.querySelector('h1')?.textContent.trim();
+        const textesInitiaux = collecterTextes(docAr, winAr);
+
+        docAr.querySelector('#pref-langue').value = 'en';
+        docAr.querySelector('#form-preferences').requestSubmit();
+        assert.equal(docAr.documentElement.lang, 'en', `${clePage} : bascule EN échouée`);
+        assert.notEqual(docAr.title, titreInitial, `${clePage} : titre non basculé en EN`);
+
+        docAr.querySelector('#pref-langue').value = 'fr';
+        docAr.querySelector('#form-preferences').requestSubmit();
+        assert.equal(docAr.documentElement.lang, 'fr', `${clePage} : retour FR échoué`);
+        assert.equal(docAr.title, titreInitial, `${clePage} : <title> altéré après FR->EN->FR`);
+        assert.equal(docAr.querySelector('h1')?.textContent.trim(), h1Initial, `${clePage} : <h1> altéré après FR->EN->FR`);
+        assert.deepEqual(collecterTextes(docAr, winAr), textesInitiaux, `${clePage} : nœuds texte altérés après FR->EN->FR`);
+    }
 }
 
-console.log(`Préférences : tests DOM, fuseaux, DST, géolocalisation, confidentialité et traduction intégrale FR/EN (${Object.keys(donneesPages.pages).length} vues, ${donneesPages.business.length} erreurs métier) réussis.`);
+// Comportement de public/js/panier.js en anglais (AJAX, badge singulier/pluriel, traduction erreur serveur, secours hors-ligne)
+{
+    const htmlPanierAjax = `<!doctype html><html lang="fr"><head><title>Catalogue — MiniShop</title></head><body>
+    <a id="lien-panier" href="/panier" aria-label="Panier, 0 article">Panier <span id="badge-panier" hidden>0</span></a>
+    <p data-total-panier>0,00 €</p>
+    <div id="zone-annonces" hidden></div>
+    <form id="f-panier" data-panier action="/panier/ajouter" method="post">
+      <input type="hidden" name="_csrf" value="jeton-test">
+      <input type="hidden" name="id_produit" value="1">
+      <input type="hidden" name="quantite" value="1">
+      <button id="btn-ajout" type="submit">Ajouter au panier</button>
+    </form></body></html>`;
+
+    const winP = setup({ langue: 'en-US', htmlDoc: htmlPanierAjax, silenceNavigation: true });
+    let resoudreFetch;
+    winP.fetch = () => new Promise((resolve) => { resoudreFetch = resolve; });
+    winP.eval(panierJs);
+
+    const form = winP.document.querySelector('#f-panier');
+    const btn = winP.document.querySelector('#btn-ajout');
+    const zoneAnnonces = winP.document.querySelector('#zone-annonces');
+    const lienPanier = winP.document.querySelector('#lien-panier');
+
+    // 1. Pendant l'envoi : bouton désactivé « Adding… » puis retour avec 1 article (« Cart, 1 item »)
+    form.dispatchEvent(new winP.Event('submit', { bubbles: true, cancelable: true }));
+    assert.equal(btn.disabled, true);
+    assert.equal(btn.textContent, 'Adding…');
+    resoudreFetch({
+        status: 200,
+        json: async () => ({ ok: true, nombre_articles: 1, total_ttc: '29,90 €' }),
+    });
+    await new Promise((r) => setTimeout(r, 20));
+    assert.equal(btn.disabled, false);
+    assert.equal(zoneAnnonces.textContent, 'Product added to cart.');
+    assert.equal(lienPanier.getAttribute('aria-label'), 'Cart, 1 item');
+    assert.equal(winP.document.querySelector('[data-total-panier]').textContent, '29,90 €');
+
+    // 2. Passage au pluriel (« Cart, 2 items »)
+    winP.fetch = async () => ({
+        status: 200,
+        json: async () => ({ ok: true, nombre_articles: 2, total_ttc: '59,80 €' }),
+    });
+    form.dispatchEvent(new winP.Event('submit', { bubbles: true, cancelable: true }));
+    await new Promise((r) => setTimeout(r, 20));
+    assert.equal(lienPanier.getAttribute('aria-label'), 'Cart, 2 items');
+
+    // 3. Traduction d'un message d'erreur serveur français (BusinessError)
+    winP.fetch = async () => ({
+        status: 409,
+        json: async () => ({ ok: false, message: 'Stock insuffisant pour cette quantité.' }),
+    });
+    form.dispatchEvent(new winP.Event('submit', { bubbles: true, cancelable: true }));
+    await new Promise((r) => setTimeout(r, 20));
+    assert.notEqual(zoneAnnonces.textContent, 'Stock insuffisant pour cette quantité.');
+    assert.match(zoneAnnonces.textContent, /stock/i);
+    assert.equal(zoneAnnonces.getAttribute('role'), 'alert');
+    btn.removeAttribute('aria-disabled');
+    btn.disabled = false;
+
+    // 4. Perte réseau : message anglais de repli + dataset.secours === '1'
+    let soumissionClassique = 0;
+    form.submit = () => { soumissionClassique += 1; };
+    winP.fetch = () => Promise.reject(new Error('offline'));
+    form.dispatchEvent(new winP.Event('submit', { bubbles: true, cancelable: true }));
+    await new Promise((r) => setTimeout(r, 20));
+    assert.equal(form.dataset.secours, '1');
+    assert.equal(soumissionClassique, 1);
+    assert.equal(zoneAnnonces.textContent, 'Connection lost: standard form submission remains available.');
+}
+
+console.log(`Préférences : tests DOM, fuseaux, DST, géolocalisation, panier AJAX EN et traduction intégrale FR/EN (${Object.keys(donneesPages.pages).length} vues avec aller-retour FR->EN->FR, ${donneesPages.business.length} erreurs métier) réussis.`);
 process.exit(0);

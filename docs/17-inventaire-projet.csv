@@ -425,6 +425,7 @@ tests/php/stocks_defaut_test.php,Tests et validation,"Présence, non-vide ; synt
 tests/php/unit_tests.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/php/valider_recap_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/phpunit/AlternativeImageTest.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/phpunit/ConservationEtFuseauTest.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/phpunit/FilterTest.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/phpunit/JournalEtTableTest.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/phpunit/JsonStoreTest.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"

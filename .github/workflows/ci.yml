@@ -74,11 +74,11 @@ jobs:
           php-version: "8.2"
           coverage: none
           tools: none
-      - name: Lint app + public
+      - name: Lint app + public + scripts + tests
         run: |
-          echo "== php -l sur app/ public/ scripts/ tests/php/ =="
+          echo "== php -l sur app/ public/ scripts/ tests/php/ tests/phpunit/ =="
           if [ ! -d app ] && [ ! -d public ]; then echo "aucun dossier app/public, skip"; exit 0; fi
-          find app public scripts tests/php -name '*.php' -print0 | xargs -0 -n1 -P4 php -l
+          find app public scripts tests/php tests/phpunit -name '*.php' -print0 | xargs -0 -n1 -P4 php -l
           echo "✓ syntaxe OK"
 
   # Dépréciations : les suites isolées ne créent ni base SQL ni données E2E.

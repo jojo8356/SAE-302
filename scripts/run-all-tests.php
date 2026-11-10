@@ -46,9 +46,35 @@ const SUITES = [
     ['Unitaires', 'tests/php/unit_tests.php'],
     ['Fonctionnalités', 'tests/php/features_test.php'],
     ['Catalogue : ruptures en dernier', 'tests/php/catalogue_stock_test.php'],
+    ['Catalogue : filtres et recherche', 'tests/php/catalogue_filtres_test.php'],
     ['Accueil : derniers ajouts', 'tests/php/nouveautes_test.php'],
     ['Accueil : dates des ajouts', 'tests/php/date_ajout_test.php'],
     ['Cartes produit : accessibilité', 'tests/php/cartes_accessibilite_test.php'],
+    ['Fiche produit : TVA et alternatives d’image', 'tests/php/fiche_produit_test.php'],
+    ['Panier : appels à l’action', 'tests/php/panier_cta_test.php'],
+    ['Panier : tableau récapitulatif', 'tests/php/panier_tableau_test.php'],
+    ['Validation : récapitulatif pré-commande', 'tests/php/valider_recap_test.php'],
+    ['Livraison : adresse pré-remplie et validée', 'tests/php/adresse_livraison_test.php'],
+    ['Inscription : validations et conservation saisies', 'tests/php/inscription_erreurs_test.php'],
+    ['Espace client : tableau Mes commandes', 'tests/php/mes_commandes_tableau_test.php'],
+    ['Confirmations d’actions destructrices', 'tests/php/actions_destructrices_test.php'],
+    ['Annulation et piste d’audit', 'tests/php/annulation_historique_test.php'],
+    ['Horodatage UTC et fuseau Europe/Paris', 'tests/php/heure_test.php'],
+    ['Rétention conservatrice des comptes', 'tests/php/retention_comptes_test.php'],
+    ['Rotation des journaux et sauvegardes', 'tests/php/nettoyage_fichiers_test.php'],
+    ['Back-office : formulaires d’administration', 'tests/php/formulaires_admin_test.php'],
+    ['Back-office : unicité des catégories', 'tests/php/categorie_doublon_test.php'],
+    ['Back-office : tableau des catégories', 'tests/php/categories_tableau_test.php'],
+    ['Back-office : tableau des commandes', 'tests/php/commandes_tableau_test.php'],
+    ['Back-office : seuils et défauts de stock', 'tests/php/stocks_defaut_test.php'],
+    ['Tableaux : alignement des colonnes', 'tests/php/alignement_colonnes_test.php'],
+    ['Non-régression transversale des vues', 'tests/php/divers_test.php'],
+    ['Absence de codes techniques bruts', 'tests/php/codes_techniques_test.php'],
+    ['Page À propos et indicateurs', 'tests/php/apropos_test.php'],
+    ['Formulaire de contact et cohérence', 'tests/php/contact_coherence_test.php'],
+    ['Pied de page et maillage légal', 'tests/php/pages_pied_de_page_test.php'],
+    ['CGV, rétractation et encadré garanties', 'tests/php/cgv_retractation_test.php'],
+    ['Mentions légales LCEN et hébergeur IUT', 'tests/php/mentions_legales_test.php'],
     ['Contrats de design', 'tests/php/css_contract.php'],
     ['Contrat responsive', 'tests/php/responsive_contract.php'],
     ['Contrats HTTP', 'tests/php/contract_http.php'],
@@ -154,8 +180,20 @@ if (lancerAvec('python3', 'tests/python/test_deprecations.py') !== 0) {
     ++$echecs;
 }
 
-section('▸ Autotests d’intégration code mort et inventaire');
-foreach (['tests/python/test_code_mort_integration.py', 'tests/python/test_aide_cli.py', 'tests/python/test_inventaire_app.py', 'tests/python/test_securite_gitignore.py', 'tests/python/test_audit_structurel.py'] as $testPython) {
+section('▸ Autotests d’intégration CLI, concurrence, inventaire et SQL LineServ');
+$suitesPython = [
+    'tests/python/test_code_mort_integration.py',
+    'tests/python/test_aide_cli.py',
+    'tests/python/test_inventaire_app.py',
+    'tests/python/test_securite_gitignore.py',
+    'tests/python/test_audit_structurel.py',
+    'tests/python/test_preparer_sql_lineserv.py',
+    'tests/python/test_nettoyage_cli.py',
+    'tests/python/test_retention_cli.py',
+    'tests/python/test_archive_restreinte.py',
+    'tests/python/test_annulation_concurrente.py',
+];
+foreach ($suitesPython as $testPython) {
     ++$jouees;
     if (lancerAvec('python3', $testPython) !== 0) {
         ++$echecs;
@@ -215,28 +253,47 @@ if ($sansSql) {
     }
 }
 
-// --------------------------------------------------------------- parcours E2E
-section('▸ Parcours E2E — scripts/e2e.mjs');
+// --------------------------------------------------------------- parcours E2E et DOM/JS
 $e2eJoue = false;
 $noeud = noeud();
 $dependance = $racine . '/node_modules/@php-wasm/node';
+$dependanceJsdom = $racine . '/node_modules/jsdom';
 
 if ($sansE2e) {
+    section('▸ Préférences & parcours E2E');
     echo "  ⏭ NON JOUÉ : option --sans-e2e.\n";
 } elseif ($noeud === null) {
+    section('▸ Préférences & parcours E2E');
     echo "  ⏭  NON JOUÉ : Node.js est absent de cette machine.\n";
     echo "     Voir README : section tests E2E (données isolées indispensables).\n";
 } elseif (!is_dir($dependance)) {
+    section('▸ Préférences & parcours E2E');
     echo "  ⏭  NON JOUÉ : la dépendance @php-wasm/node n'est pas installée.\n";
     echo "     Voir README : section tests E2E (données isolées indispensables).\n";
-} elseif (!is_file('scripts/e2e.mjs')) {
-    echo "  ❌ fichier absent\n";
-    ++$echecs;
 } else {
-    $e2eJoue = true;
-    ++$jouees;
-    if (lancerAvec((string) $noeud, 'scripts/e2e.mjs') !== 0) {
+    section('▸ Préférences, traduction FR/EN & panier AJAX — tests/node/preferences_test.mjs');
+    if (!is_dir($dependanceJsdom)) {
+        echo "  ⏭  NON JOUÉ : la dépendance jsdom n'est pas installée.\n";
+    } elseif (!is_file('tests/node/preferences_test.mjs')) {
+        echo "  ❌ fichier absent\n";
         ++$echecs;
+    } else {
+        ++$jouees;
+        if (lancerAvec((string) $noeud, 'tests/node/preferences_test.mjs') !== 0) {
+            ++$echecs;
+        }
+    }
+
+    section('▸ Parcours E2E isolé — tests/node/e2e_isolation.mjs');
+    if (!is_file('tests/node/e2e_isolation.mjs')) {
+        echo "  ❌ fichier absent\n";
+        ++$echecs;
+    } else {
+        $e2eJoue = true;
+        ++$jouees;
+        if (lancerAvec((string) $noeud, 'tests/node/e2e_isolation.mjs') !== 0) {
+            ++$echecs;
+        }
     }
 }
 
