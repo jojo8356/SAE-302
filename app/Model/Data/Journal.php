@@ -50,6 +50,14 @@ final class Journal
      */
     public function log(string $op, string $table, int|string $pk, ?array $old, ?array $new, array $actor): void
     {
+        // Les snapshots complets de comptes compromettraient leur suppression
+        // en base active. Garder uniquement les métadonnées nécessaires au suivi.
+        if ($table === 'client') {
+            $champs = array_flip(['id_client', 'actif', 'date_creation', 'derniere_connexion']);
+            if ($old !== null) { $old = array_intersect_key($old, $champs); }
+            if ($new !== null) { $new = array_intersect_key($new, $champs); }
+        }
+        if (($actor['role'] ?? '') === 'CLIENT') { $actor['nom'] = null; }
         $entry = [
             'at' => Heure::maintenantUtc()->format('c'),
             'op' => $op,

@@ -401,3 +401,9 @@ ls scripts/build-docs.sh docs/diagrams/render.sh tests/perf/mesurer.sh   # → i
 
 - [x] Suite PHP-WASM hors SQL/E2E : verte (dont PHPUnit 43/43, responsive contractuel 54, design 71) ; annulation historique 17/17 et Mes commandes 14/14.
 - [x] CI GitHub `42791754935` (commit `205c0b7`) : MariaDB 11.8 et migrations ciblées, MySQL 8, concurrence JSON (dont admin/client), Chromium 375/1440 avec confirmation sans JavaScript, Windows et E2E verts. [!] Pas de test concurrent SQL spécifique, ni validation sur LineServ, tous les appareils ou anciennes bases.
+
+### Comptes inactifs — durée et application (point 4)
+- [x] Vérifier les sources officielles : la CNIL recommande 24 mois après la dernière action pour les comptes inactifs ; 36 mois vise notamment la prospection. Choix utilisateur : 24 mois.
+- [x] Traitement CLI conservateur, simulation par défaut et exécution explicite : comptes sans commande seulement, verrou et relecture, dates incertaines exclues. Les comptes avec commandes sont conservés et signalés.
+- [x] Vues, documentation, tests, valeur initiale à 24 mois et migration SQL conditionnelle. Aucune migration exécutée sur une instance réelle.
+- [~] JSON et CLI couverts sur copies jetables ; MariaDB en CI. [!] La tâche planifiée n’est pas installée, les comptes avec commande et les anciennes copies/journaux ne sont pas purgés ; aucun effacement global ni conformité RGPD revendiqués.

@@ -14,7 +14,7 @@
  *
  * La suite verrouille la page visiteur : présentation de la boutique,
  * chiffres du catalogue, les 4 règles chiffrées complètes (dont la
- * conservation des données, 36 mois, celle qui manquait), formulation
+ * conservation des données, 24 mois, celle qui manquait), formulation
  * technique honnête (cible MySQL via PDO, démonstration distinguée),
  * et absence du jargon d'implémentation dans le texte affiché.
  *
@@ -160,8 +160,8 @@ try {
   check('livraison standard : 4,90 €', items.some((t) => t.includes('Livraison standard') && t.includes('4,90 €')), items.join(' | '));
   check('livraison offerte dès 80,00 €', items.some((t) => t.includes('offerte') && t.includes('80,00 €')));
   check('TVA : 20 %', items.some((t) => t.includes('TVA') && t.includes('20 %')));
-  check('conservation des données : 36 mois (la règle qui manquait)',
-    items.some((t) => t.includes('Conservation') && t.includes('36 mois')));
+  check('conservation des données : 24 mois (la règle qui manquait)',
+    items.some((t) => t.includes('Conservation') && t.includes('24 mois')));
 
   // ---------------------------------------------------------- 4. technique honnête, zéro jargon
   console.log('\n== 4 · Technique : cible MySQL/PDO assumée, jargon absent ==');

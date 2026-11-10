@@ -21,7 +21,7 @@ declare(strict_types=1);
         <p>Les données sont accessibles au personnel autorisé de l’instance et à ses éventuels prestataires techniques selon leur configuration. Le magasin peut utiliser des fichiers JSON ou une base SQL. Identité de l’hébergeur, liste des destinataires et sous-traitants, lieu de stockage, transferts éventuels hors EEE et garanties correspondantes : <strong>à déterminer et publier</strong> pour le déploiement réel. Aucun transfert n’est affirmé ou exclu sans audit de cet environnement.</p>
     </section>
     <section><h2>Durées de conservation</h2>
-        <p>Aucune durée effective générale ni purge automatique n’est établie dans la maquette. Le paramètre de 36 mois pour les comptes inactifs est indicatif : il ne déclenche pas à lui seul de suppression. Les comptes, commandes, messages, journaux et sauvegardes peuvent donc rester conservés jusqu’à leur suppression par l’exploitant.</p>
+        <p>La maquette propose un délai de 24 mois par défaut depuis la dernière activité authentifiée pour les comptes sans commande. Leur suppression de la base active est effectuée seulement si l’exploitant installe et active la tâche planifiée. Les comptes liés à des commandes sont conservés pour examen ; les messages, anciens journaux et sauvegardes ne sont pas purgés par cette tâche. Le paramètre est configurable ; aucun effacement général ne peut être garanti par cette maquette.</p>
         <p>Avant utilisation réelle, il faut définir et appliquer des durées ou critères justifiés pour chaque catégorie, y compris les archives comptables si elles existent, les sauvegardes et les journaux, puis mettre en place les purges et contrôles correspondants.</p>
     </section>
     <section><h2>Vos droits</h2>

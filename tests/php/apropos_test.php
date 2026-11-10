@@ -16,7 +16,7 @@ declare(strict_types=1);
  *      classes, codes RB-/ENF-/EF-, jargon SGBD) au lieu de présenter
  *      la boutique aux visiteurs ;
  *   3. « 4 paramètres métier » n'en citait que 3 — il manquait la
- *      conservation des données de compte (36 mois). Les paramètres
+ *      conservation des données de compte (24 mois). Les paramètres
  *      sont désormais rendus depuis la base : le nombre annoncé et le
  *      nombre affiché sont le même, par construction.
  *
@@ -166,8 +166,8 @@ echo "\n4. Paramètres métier : le compte annoncé est le compte affiché\n";
     $check('franchise citée : offerte dès 80,00 €', str_contains($regles, 'offerte') && str_contains($regles, '80,00 €'));
     $check('TVA citée : 20 %', str_contains($regles, 'TVA') && str_contains($regles, '20 %'));
     $check(
-        'conservation des données citée : 36 mois (le 4e paramètre, celui qui manquait)',
-        str_contains($regles, 'Conservation') && str_contains($regles, '36 mois')
+        'conservation des données citée : 24 mois (le 4e paramètre, celui qui manquait)',
+        str_contains($regles, 'Conservation') && str_contains($regles, '24 mois')
     );
 }
 

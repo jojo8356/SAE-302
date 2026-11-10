@@ -23,7 +23,7 @@ $libellesParametres = [
     'frais_port' => 'Livraison standard',
     'franchise_port' => 'Livraison offerte à partir de',
     'tva_defaut' => 'TVA par défaut (nos prix sont toujours affichés TTC)',
-    'conservation_compte' => 'Conservation des comptes inactifs (durée indicative, sans suppression automatique)',
+    'conservation_compte' => 'Conservation des comptes sans commande inactifs (traitement planifié)',
 ];
 ?>
 <h1>À propos de MiniShop</h1>
@@ -39,7 +39,7 @@ $libellesParametres = [
 
 <h2>Nos <?= count($parametres) ?> règles chiffrées</h2>
 <p>Pas de surprise au moment de payer : voici les montants et durées qui
-sont configurés dans la maquette. Les prix et frais simulés sont affichés avant la validation. La durée de conservation est indicative : aucune purge automatique n’est en place.</p>
+sont configurés dans la maquette. Les prix et frais simulés sont affichés avant la validation. Le traitement des comptes inactifs doit être activé par l’exploitant ; les comptes liés à des commandes sont conservés pour examen. Les journaux et sauvegardes ne sont pas purgés par ce traitement.</p>
 <ul>
     <?php foreach ($parametres as $parametre): ?>
         <?php

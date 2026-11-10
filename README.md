@@ -486,3 +486,38 @@ Il n’y a pas eu de migration sur une base réelle. Les coordonnées légales r
 à fournir et à vérifier ; le contact est un formulaire de démonstration sans envoi
 de courrier. Le pied sombre et l’image de repli sont conservés volontairement :
 ils rendent l’ancien mail périmé, sans être des erreurs fonctionnelles.
+
+### Comptes inactifs : traitement de la maquette
+
+La valeur initiale choisie pour le compte est **24 mois**. La CNIL recommande
+un délai de deux ans depuis la dernière action pour les comptes inactifs ;
+les trois ans cités dans son référentiel concernent notamment la prospection,
+et ne sont pas une obligation générale pour tous les comptes. Le responsable
+du traitement reste chargé de définir les durées et leurs justifications :
+[questions-réponses CNIL](https://www.cnil.fr/fr/questions-reponses-sur-les-referentiels-relatifs-la-gestion-des-activites-commerciales-et-des),
+[RGPD article 5](https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=CELEX%3A32016R0679),
+[code de commerce L123-22](https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000005634379/LEGISCTA000006161250/).
+
+`scripts/purger_comptes.php` est **une simulation par défaut** ; `--executer`
+supprime les seuls comptes sans commande dont la création et la dernière activité
+connue dépassent le délai configuré, avec deux jours de marge. Une activité de
+session authentifiée actualise la date au plus une fois par heure. Une date
+manquante, future ou invalide est conservée pour examen, de même que tout compte
+lié à une commande : ces comptes ne sont **ni supprimés ni archivés** par le
+script. Des interactions hors session, comme un message Contact non lié, ne sont
+pas prises en compte. Les traces anciennes, le journal Contact, les sauvegardes
+et les autres copies ne sont pas purgés ; les nouvelles entrées d'audit de compte
+ne contiennent plus ses coordonnées ni son condensat de mot de passe. Ce n'est
+pas une procédure complète d'effacement RGPD.
+
+L'exécution automatique **n'est pas activée par le code seul** : l'exploitant
+doit configurer une tâche planifiée de son hébergement, avec le PHP et le fichier
+`.env` de cette instance, et surveiller ses erreurs et les comptes exclus. Après
+sauvegarde vérifiée et simulation, elle peut lancer régulièrement la commande
+avec `--executer`. Le traitement est CLI uniquement, jamais exposé en HTTP.
+Ne pas installer cette tâche sur une instance existante avant d'avoir examiné les
+résultats et défini le traitement des commandes, journaux et sauvegardes. La
+migration `004_conservation_comptes_24_mois.sql`, à appliquer volontairement,
+ne change que l'ancien défaut de 36 en 24 et préserve les valeurs personnalisées.
+La configuration JSON existante doit être revue séparément. Une analyse des dates
+anciennes et du fuseau SQL est nécessaire avant toute activation réelle.

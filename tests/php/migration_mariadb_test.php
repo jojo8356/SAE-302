@@ -153,6 +153,38 @@ try {
         throw new RuntimeException('La seconde annulation administrateur a modifié le stock.');
     }
     echo "✅ Annulation administrateur SQL, trace et protection du statut générique vérifiées\n";
+
+    // Exécuter uniquement sur cette base jetable. Aucun compte avec commande
+    // n'est supprimé ; vérifier aussi le paramètre migré et l'idempotence.
+    $pdo->exec("UPDATE parametre SET valeur='36' WHERE cle='conservation_compte'");
+    $loader->chargerFichier($racine . '/sql/migrations/004_conservation_comptes_24_mois.sql');
+    $loader->chargerFichier($racine . '/sql/migrations/004_conservation_comptes_24_mois.sql');
+    if ($pdo->query("SELECT valeur FROM parametre WHERE cle='conservation_compte'")->fetchColumn() !== '24') {
+        throw new RuntimeException('Migration du délai de conservation incorrecte.');
+    }
+    $clients = new App\Repository\ClientRepository($store);
+    $clientAncien = $clients->createAccount('Compte', 'Test', 'retention@test.invalid', password_hash('motdepasseTest', PASSWORD_BCRYPT));
+    $store->update('client', [App\Model\Data\Filter::eq('id_client', $clientAncien)], [
+        'date_creation' => '2020-01-01 00:00:00', 'derniere_connexion' => '2020-01-01 00:00:00',
+    ]);
+    $store->update('client', [App\Model\Data\Filter::eq('id_client', 1)], [
+        'date_creation' => '2020-01-01 00:00:00', 'derniere_connexion' => '2020-01-01 00:00:00',
+    ]);
+    $traitement = new App\Service\RetentionComptes($store);
+    $avantPurge = $traitement->traiter(App\Tools\Heure::maintenantUtc(), false);
+    if ($avantPurge['éligibles'] !== 1 || $avantPurge['commandes'] !== 1 || $store->find('client', $clientAncien) === null) {
+        throw new RuntimeException('Simulation de rétention SQL incorrecte.');
+    }
+    $resultatPurge = $traitement->traiter(App\Tools\Heure::maintenantUtc(), true);
+    if ($resultatPurge['supprimés'] !== 1 || $store->find('client', $clientAncien) !== null || $store->find('client', 1) === null) {
+        throw new RuntimeException('Suppression sélective SQL incorrecte.');
+    }
+    $pdo->exec("UPDATE parametre SET valeur='18' WHERE cle='conservation_compte'");
+    $loader->chargerFichier($racine . '/sql/migrations/004_conservation_comptes_24_mois.sql');
+    if ($pdo->query("SELECT valeur FROM parametre WHERE cle='conservation_compte'")->fetchColumn() !== '18') {
+        throw new RuntimeException('La migration a écrasé une valeur personnalisée.');
+    }
+    echo "✅ Rétention SQL : simulation, suppression sélective et paramètre personnalisé vérifiés\n";
 } finally {
     if ($cree) {
         $pdo->exec('DROP DATABASE `' . $base . '`');

@@ -56,7 +56,7 @@ declare(strict_types=1);
         <li><strong>Frais de port</strong> : affichés dans le panier et le récapitulatif avant validation (obligation légale).</li>
         <li><strong>Franchise</strong> : au-delà de ce montant de marchandises, le port est offert.</li>
         <li><strong>TVA par défaut</strong> : proposée à la création d'un produit ; le prix TTC est recalculé par le moteur.</li>
-        <li><strong>Conservation</strong> : durée indicative de conservation des comptes inactifs (référentiel CNIL).</li>
+        <li><strong>Conservation</strong> : délai en mois avant traitement des comptes sans commande. La tâche planifiée doit être installée par l’exploitant ; les comptes avec commande, journaux et sauvegardes nécessitent un traitement distinct.</li>
     </ul>
     <p class="texte-aide">Chaque modification est journalisée avec l'auteur et l'horodatage (EF-GEN-04).</p>
 </section>

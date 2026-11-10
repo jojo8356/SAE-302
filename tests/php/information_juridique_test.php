@@ -54,7 +54,7 @@ $check('CGV : encadré légal inclus réellement', str_contains($cgv, "require _
 $check('garanties : délais, remèdes et vices cachés', str_contains($encadre, 'délai de trente jours') && str_contains($encadre, 'six mois') && str_contains($encadre, '1641 à 1649'));
 $privacy = $lire('app/View/home/confidentialite.php');
 $check('données : contact, journaux et anciennes valeurs expliqués', str_contains($privacy, 'contact.jsonl') && str_contains($privacy, 'anciennes et nouvelles valeurs'));
-$check('données : 36 mois non présentés comme purge réelle', str_contains($privacy, 'ne déclenche pas à lui seul de suppression'));
+$check('données : activation et limites de la tâche précisées', str_contains($privacy, 'seulement si l’exploitant installe et active') && str_contains($privacy, 'comptes liés à des commandes'));
 $check('droits et contact incomplet signalés', str_contains($privacy, 'CNIL') && str_contains($privacy, 'à renseigner'));
 $cookies = $lire('app/View/home/cookies.php');
 $auth = $lire('app/Security/Auth.php');

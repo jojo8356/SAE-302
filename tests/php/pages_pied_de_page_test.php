@@ -19,7 +19,7 @@ declare(strict_types=1);
  * Contact · À propos · Mentions légales · Conditions générales de
  * vente. Contenus cohérents avec le fonctionnement réel du site
  * (port 4,90 € offert dès 80 €, annulation avant expédition,
- * conservation 36 mois, paiement simulé).
+ * conservation 24 mois, paiement simulé).
  *
  * Usage :  php tests/php/pages_pied_de_page_test.php
  *         node scripts/wasm_run.mjs tests/php/pages_pied_de_page_test.php   (sandbox)
@@ -76,7 +76,7 @@ echo "== 1 · Les pages créées : un vrai contenu visiteur ==\n";
 $pages = [
     'aide' => ['<h1>Aide</h1>', 'Comment commander ?', '/mes-commandes', '/contact'],
     'livraison' => ['<h1>Livraison</h1>', 'Simulation uniquement', '/mes-commandes', '/retractation'],
-    'confidentialite' => ['<h1>Politique de confidentialité</h1>', '36 mois', '/compte', '/contact'],
+    'confidentialite' => ['<h1>Politique de confidentialité</h1>', '24 mois', '/compte', '/contact'],
     'retractation' => ['<h1>Rétractation et retours</h1>', '14 jours', '/mes-commandes', '/cgv'],
     'contact' => ['<h1>Nous contacter</h1>', 'sans envoi d’e-mail ni réponse garantie', '/aide', '/compte'],
 ];
@@ -178,8 +178,8 @@ $check(
 );
 $confidentialite = texteVisible(rendrePage('confidentialite'));
 $check(
-    'confidentialité : conservation 36 mois (paramètre du site) et aucun paiement réel',
-    str_contains($confidentialite, '36 mois') && str_contains($confidentialite, 'ne déclenche pas à lui seul de suppression') && str_contains($confidentialite, 'pas de numéro de carte bancaire')
+    'confidentialité : conservation 24 mois (paramètre du site) et aucun paiement réel',
+    str_contains($confidentialite, '24 mois') && str_contains($confidentialite, 'tâche planifiée') && str_contains($confidentialite, 'pas de numéro de carte bancaire')
 );
 $aide = texteVisible(rendrePage('aide'));
 $check(

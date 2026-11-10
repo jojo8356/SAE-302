@@ -206,6 +206,10 @@ jobs:
         run: php tests/php/panier_cta_test.php
       - name: Régression page À propos (contenu visiteur, PHP natif)
         run: php tests/php/apropos_test.php
+      - name: Rétention des comptes sur magasin JSON jetable
+        run: php tests/php/retention_comptes_test.php
+      - name: CLI de rétention sur copie jetable
+        run: python3 tests/python/test_retention_cli.py -v
       - name: Régression heures décalées (UTC→Europe/Paris, PHP natif)
         run: php tests/php/heure_test.php
       - name: Régression adresse de livraison incomplète (préremplissage, PHP natif)

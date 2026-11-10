@@ -161,7 +161,7 @@ final class Auth
         if ($id === null) {
             return null;
         }
-        $client = \App\Config\Database::store()->find('client', (int) $id);
+        $client = (new \App\Repository\ClientRepository(\App\Config\Database::store()))->clientActif((int) $id);
 
         if ($client === null || !$client['actif']) {
             return null;

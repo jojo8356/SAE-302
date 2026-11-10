@@ -32,7 +32,7 @@ final class ParametreAdminController extends Controller
         'frais_port' => 'Frais de port standard (EUR TTC)',
         'franchise_port' => 'Port offert à partir de (EUR TTC de marchandises)',
         'tva_defaut' => 'Taux de TVA par défaut des nouveaux produits (%)',
-        'conservation_compte' => 'Conservation des comptes inactifs (mois)',
+        'conservation_compte' => 'Délai des comptes inactifs sans commande (mois)',
     ];
 
     public function index(): void
