@@ -192,6 +192,7 @@ $suitesPython = [
     'tests/python/test_retention_cli.py',
     'tests/python/test_archive_restreinte.py',
     'tests/python/test_annulation_concurrente.py',
+    'scripts/verifier_fiches_uc.py',
 ];
 foreach ($suitesPython as $testPython) {
     ++$jouees;

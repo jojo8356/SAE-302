@@ -1,6 +1,6 @@
 # MiniShop S302 — préparation LineServ, initialisation et recette
 
-> **État au moment de la rédaction : préparation, pas déploiement validé.** Aucun accès au LineServ, import SQL ni test de navigateur réel n'a été effectué depuis ce dépôt. Les 150 scénarios de recette restent non joués. Avant d'envoyer un lien de test, lever les blocages du §1 et vérifier l'instance réelle.
+> **État au moment de la rédaction : préparation, pas déploiement validé.** Aucun accès au LineServ, import SQL ni test de navigateur réel sur cet hébergement n'a été effectué depuis ce dépôt. Les 173 scénarios de recette manuelle (et les 36 couples de transition, soit 209 entrées dans le journal CSV) restent `NON JOUÉ`. Avant d'envoyer un lien de test, lever les blocages du §1 et vérifier l'instance réelle.
 >
 > Ce guide reprend les indications communiquées pour le cours : SFTP `linserv-info-01.campus.unice.fr`, fichiers dans `www/`, URL en `https://linserv-info-01.campus.unice.fr/~login/…`, phpMyAdmin à `https://linserv-info-01.campus.unice.fr/phpmyadmin`. La disponibilité, les droits et la configuration actuels n'ont **pas** été vérifiés. Suivre les consignes de l'IUT si elles diffèrent.
 
@@ -111,13 +111,15 @@ Avec le jeu SQL livré inchangé, attendre respectivement `4`, `36`, `3`. Cela i
 
 Sur une instance de recette isolée, utiliser uniquement des comptes et données fictifs. Relever l'URL exacte, la date et la révision ; comparer aux fichiers réellement publiés.
 
-- [ ] L'accueil, les images et CSS se chargent ; cliquer catalogue, recherche et fiche produit ne sort pas de `/~pj509414/s302/`.
+- [ ] L'accueil, les images locales (visuel informatif en fiche produit, vignettes décoratives en liste) et CSS/JS se chargent ; cliquer catalogue, recherche et fiche produit ne sort pas de `/~pj509414/s302/`.
 - [ ] Formulaires et navigation conservent le préfixe ; les URL directes et rechargements fonctionnent ; une route inconnue donne une 404 sans détail interne.
-- [ ] Inscription, connexion, panier, commande simulée, historique et déconnexion fonctionnent avec les comptes de recette.
-- [ ] Après connexion admin autorisée : listes, modification d'un produit fictif et évolution d'une commande de test fonctionnent ; aucune action ne modifie d'autres projets.
-- [ ] Répéter un parcours avec deux sessions isolées ; vérifier qu'aucune commande d'un autre compte n'est exposée.
-- [ ] Test sur ordinateur et téléphone réel ; clavier et zoom ; vérifier une page connectée avec WAVE (§8).
-- [ ] Pas d'accès public aux fichiers privés ou aux outils de développement ; débogage désactivé ; comptes de démonstration non exposés.
+- [ ] Inscription, connexion, panier (avec et sans JavaScript), commande simulée, historique et annulation client en 2 étapes (avec conservation des lignes en historique) fonctionnent avec les comptes de recette.
+- [ ] Après connexion admin autorisée : listes, mode par défaut « Ajouter / retirer » (`DELTA`) sur `/admin/stocks`, modification d'un produit fictif, filtres de dates en fuseau local et évolution/annulation en 2 étapes d'une commande de test (avec retour de stock avant expédition et sans retour automatique si `EXPEDIEE`) fonctionnent ; aucune action ne modifie d'autres projets.
+- [ ] Sur `/preferences` (sans connexion requise) : vérifier la bascule intégrale `Français` ↔ `English` sur les pages publiques, client et admin, le choix manuel ou par géolocalisation locale sans requête réseau externe du fuseau horaire, et la réinitialisation.
+- [ ] Sur `/mentions-legales` : contrôler l'affichage exact des co-éditeurs étudiants et des coordonnées de l'hébergeur IUT.
+- [ ] Répéter un parcours avec deux sessions isolées ; vérifier qu'aucune commande d'un autre compte n'est exposée (404).
+- [ ] Test sur ordinateur et téléphone réel (320 et 375 px : tableaux repliés en cartes mobiles étiquetées `data-label` sans débordement horizontal global) ; clavier et zoom 200 % ; vérifier une page publique et une page connectée avec WAVE (§8).
+- [ ] Pas d'accès public aux fichiers privés ou aux outils de développement (`public/mesurer.php`, `public/gen_volumes.php`) ; débogage désactivé ; comptes de démonstration non exposés.
 - [ ] Consigner les résultats réels et anomalies dans [la fiche](13-fiches-recette-uc.md) et [le suivi CSV](13-suivi-recette-uc.csv), pas dans ce guide comme s'ils étaient déjà validés.
 
 Problèmes fréquents : **404 sur `/catalogue` ou CSS absent** → préfixe, réécriture et liens non adaptés ; **500 dès l'accueil** → chemin du bootstrap, droits de lecture, version PHP ou base ; **connexion DB refusée** → coordonnées et droits attribués, sans montrer le mot de passe ; **import SQL incomplet** → routines, délimiteurs ou privilèges, à constater sans réinitialiser. Ne pas activer le debug public pour obtenir un message ; voir les journaux privés avec l'accord de l'IUT.

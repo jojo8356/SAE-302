@@ -8,16 +8,16 @@ La pyramide des tests est souvent citée puis contredite par les chiffres. Voici
 
 | Étage | Nature | Suite | Volume | Durée |
 |---|---|---|---|---|
-| 0 | Analyse statique | `scripts/strict_types_lint.php` (règles php-cs-fixer `declare_strict_types`, types natifs niveau PHPStan 9, interdiction du ternaire) + autotest du harnais `scripts/wasm_verdict.mjs` | **104 fichiers**, 0 violation · **9 cas** de verdict | < 1 s |
-| 1 | Unitaires purs | `tests/php/unit_tests.php` (`Text`, `Csrf`, `Filter`, `PanierSession`, `RB-11`…) + `tests/phpunit/**` | **282** vérifications + **34** tests PHPUnit | ~ 6 s |
-| 2 | Contrats (sans exécution) | `tests/php/contract_http.php`, `tests/php/css_contract.php`, `tests/php/responsive_contract.php` | **27** + **69** + **50** vérifications | ~ 2 s |
-| 3 | Règles de gestion sur le moteur | `tests/php/run_tests.php` (T-01 → T-29 du CDC §6), `tests/php/engine_smoke.php` | **29/29** scénarios, **44** contrôles moteur | ~ 10 s |
-| 4 | Fonctionnalités de bout en bout (application court-circuitée) | `tests/php/features_test.php` (UC-01 → UC-14 via les dépôts) | **131** vérifications | ~ 4 s |
-| 4 bis | Contrat catalogue / ruptures | `tests/php/catalogue_stock_test.php` sur une fixture JSON isolée | **7 656** scénarios sur le jeu actuel | variable |
-| 4 ter | Derniers ajouts | `tests/php/nouveautes_test.php` sur fixture JSON temporaire | **18** vérifications | variable |
-| 5 | Intégration SQL réelle | `tests/php/sql_integration.php` → `tests/sql/run_tests.sh` | **29** scénarios SQL + matrice catalogue ; à rejouer sur MariaDB | ~ 30 s |
-| 6 | Parcours HTTP complet | `scripts/e2e.mjs` (natif) ; `scripts/wasm-e2e.mjs` (WASM) | **268** WASM via `scripts/e2e.mjs` | ~ 90 s |
-| 7 | Performance | `scripts/capture_perf.sh` → `gen_volumes.sh` + `tests/perf/mesurer_sql.sh` | 5 requêtes types + `EXPLAIN` + p95 de la recherche | ~ 60 s |
+| 0 | Analyse statique & audits documentaires | `scripts/strict_types_lint.php` (`declare_strict_types`, types natifs complets, zéro ternaire) + `tests/security/controles.sh` (10 contrôles + autotest) + `scripts/verifier_fiches_uc.py` + `tests/python/test_audit_structurel.py` + autotest `scripts/wasm_verdict.mjs` | **158 fichiers** PHP lintés, 0 violation · **10/10** contrôles sécurité · **45** contrôles fiches manuelles (`173` scénarios + `36` couples) | < 2 s |
+| 1 | Unitaires purs | `tests/php/unit_tests.php` + `tests/phpunit/**` (9 classes : `Text`, `Filter`, `Prix`, `Triggers`, `JsonStore`, `SecurityContract`, `AlternativeImage`, `JournalEtTable`, `ConservationEtFuseau`) | suite PHP unitaire + **50** tests PHPUnit 11 | ~ 6 s |
+| 2 | Contrats statiques & métier ciblés | `contract_http.php`, `css_contract.php`, `responsive_contract.php` + 31 suites spécialisées `tests/php/*_test.php` (confirmations 2 étapes, historique annulation, doublons catégories, défaut stock `DELTA`, mentions LCEN, heure UTC/DST, rétention 24 mois, nettoyage, visuels, alignements…) | **42 suites PHP** exécutées sous PHP 8.2 et PHP 8.5 sans dépréciation | ~ 15 s |
+| 3 | Règles de gestion sur le moteur | `tests/php/run_tests.php` (`T-01` → `T-29` du CDC §6), `tests/php/engine_smoke.php`, `tests/php/json_concurrency_stress.php` | **29/29** scénarios + contrôles moteur + stress concurrent JSON | ~ 10 s |
+| 4 | Fonctionnalités via dépôts & fixtures isolées | `tests/php/features_test.php` (UC-01 → UC-14), `catalogue_stock_test.php`, `nouveautes_test.php` (magasins temporaires dédiés, `data/minishop` jamais lu ni modifié) | **7 656+** cas catalogue + parcours UC complets | ~ 8 s |
+| 5 | Intégration SQL réelle & migrations | `tests/php/sql_integration.php` (`tests/sql/run_tests.sh` + étape 6 PDO : `sp_cancel_order`, `ANNULATION_VIA_PARCOURS_DEDIE`, `EXPEDIEE` sans retour stock, UTC `+00:00`, `revenueReport`, `RetentionComptes`) + `tests/php/migration_mariadb_test.php` | **29** scénarios SQL + étape 6 + migrations sur **MySQL 8.0** et **MariaDB 11.8** | ~ 30 s |
+| 6 | Parcours HTTP E2E, DOM bilingue FR↔EN & CLI Python | `scripts/wasm-e2e.mjs` + 23 suites `scripts/ui-e2e-*.mjs` + `tests/node/preferences_test.mjs` + `tests/node/e2e_isolation.mjs` + `tests/python/test_{retention_cli,nettoyage_cli,archive_restreinte,preparer_sql_lineserv,auth_403_http}.py` | **338** contrôles HTTP E2E isolés + **48 vues** `FR -> EN -> FR` & **44 erreurs** métier + AJAX `panier.js` | ~ 90 s |
+| 6 bis | Navigateur réel headless (CI) | `tests/node/responsive_navigateur.mjs` (Playwright Chromium : 320, 375 et 1440 px, français et anglais, avec et sans JavaScript) | cartes `data-label`, pages légales FR/EN, panier AJAX EN, annulation admin `EXPEDIEE` sans JS | ~ 45 s |
+| 7 | Performance & volumétrie | `scripts/capture_perf.sh` → `gen_volumes.sh` + `tests/perf/mesurer_sql.sh` | 5 requêtes types + `EXPLAIN` + p95 de la recherche | ~ 60 s |
+| 8 | Suites de recette manuelle humaine | [`docs/13-fiches-recette-uc.md`](13-fiches-recette-uc.md) + [`docs/13-suivi-recette-uc.csv`](13-suivi-recette-uc.csv) + [`docs/14-guide-lineserv.md`](14-guide-lineserv.md) | **173 scénarios** (`UC-01..14` + `TCX-01..25`) + **36 couples** = **209 lignes `NON JOUÉ`** | campagne humaine |
 
 **Total** : les volumes détaillés figurent ci-dessus ; les scénarios catalogue varient avec le nombre de produits. La matrice catalogue MariaDB reste à jouer.
 
@@ -146,25 +146,17 @@ php tests/php/run_tests.php
 Un défaut trouvé par ces tests et **non corrigé** est documenté plutôt que masqué : l'agrégation `sp_revenue_report` reste en `ALL` (anomalie A-08, 17 ms mesurées, sous le seuil `ENF-01`) — corriger aurait ajouté un index de couverture non justifié par la volumétrie retenue.
 
 
-## Information juridique et protection des données (28/10/2026)
+## Information juridique, mentions légales LCEN et protection des données
 
-`tests/php/information_juridique_test.php` vérifie 46 contrats statiques de navigation,
-contenu, cookies, information et design ; ces contrôles ne constituent pas un avis juridique.
-Le parcours `scripts/wasm-e2e.mjs` teste les huit pages, l'encadré de garanties rendu,
-l'avertissement de rétractation, le cookie de session observé et le contact (réussite,
-message de plus de 500 caractères, erreur d'écriture, CSRF et XSS). Les données de test
-restent isolées : le harnais de test ne synchronise pas `var/` vers la machine.
-Résultats de cette passe : 299 contrôles E2E, 46 contrats, 0 échec ; SQL MariaDB et
-rendu navigateur non joués. Détails et réserves dans `docs/12-information-juridique.md`.
+`tests/php/information_juridique_test.php` et `tests/php/mentions_legales_test.php` vérifient les contrats statiques de navigation, contenu, cookies/stockage local (`sessionStorage` et `document.cookie` interdits dans `public/js/*.js`), mentions légales étudiantes conformes à l'article 6, III, 2 de la LCEN (Point 20 : co-éditeurs Johan Polsinelli et Chahd Gouiaa, hébergeur IUT `linserv-info-01.campus.unice.fr`), information précontractuelle et design ; ces contrôles ne constituent pas un avis juridique.
+Le parcours `scripts/wasm-e2e.mjs` (338 vérifications, sections T1 à T15) et `scripts/ui-e2e-mentions.mjs` testent les 12 pages d'information/légales, `/preferences` sans compte ni traceur, l'encadré de garanties rendu, l'avertissement de rétractation, le cookie de session observé et le contact (réussite, message de plus de 500 caractères, erreur d'écriture, CSRF et XSS). Les données de test restent isolées dans un magasin temporaire dédié. Détails et réserves dans `docs/12-information-juridique.md`.
 
 
-## Dates des derniers ajouts (28/10/2026)
+## Dates UTC, fuseau horaire local et traduction intégrale FR ↔ EN
 
-`php tests/php/date_ajout_test.php` vérifie 13 cas de rendu et de style : date et heure
-réelles, valeur machine, date bissextile, dates absentes ou invalides, injection et
-position sous le bouton. Le parcours HTTP vérifie également chaque date de la page
-d'accueil et celle d'un produit créé pendant le test. Suite complète en PHP-WASM :
-301 vérifications E2E, sans échec ; SQL et rendu visuel navigateur non joués.
+- `tests/php/date_ajout_test.php`, `tests/php/heure_test.php` et `tests/phpunit/ConservationEtFuseauTest.php` vérifient le stockage UTC de bout en bout (`SET time_zone = '+00:00'` sur PDO), les conversions `Europe/Paris` et fuseaux IANA (dont jours de bascule DST de 23 h et 25 h), ainsi que les bornes UTC des filtres `/admin/commandes` et du tableau de bord `/admin`.
+- `tests/node/preferences_test.mjs` exerce dans JSDOM la page `/preferences` (choix manuel, géolocalisation locale CC0 `tz-lookup.js` sans requête réseau externe ni coordonnée stockée, `localStorage` indisponible, réinitialisation), l'aller-retour complet `FR -> EN -> FR` sans perte sur les **48 vues** de l'application, la traduction des **44 erreurs métier** (`BusinessError`) et le comportement anglais de `panier.js` (`Adding…`, `Cart, 1 item` / `2 items`).
+- `tests/node/responsive_navigateur.mjs` valide dans un vrai Chromium headless (en CI, job `responsive-browser`) les largeurs **320, 375 et 1440 px** en français et en anglais, avec et sans JavaScript : absence de débordement horizontal, cartes mobiles étiquetées `data-label` sur les tableaux d'administration, pages légales EN, annonce AJAX du panier EN et confirmation d'annulation admin sans JS d'une commande `EXPEDIEE`.
 
 
 ## Dépréciations PHP et isolation des tests
@@ -185,3 +177,14 @@ La commande normale compare les candidats au référentiel `scripts/code_mort_re
 ## Page 403 et rôles administrateurs
 
 Un administrateur connecté sans le rôle SUPER reçoit désormais un statut HTTP 403 et la page « Accès refusé » ; un visiteur non connecté est toujours redirigé vers `/admin/connexion`. Les routes GET et POST sont protégées avant l’action, y compris avec un jeton CSRF valide. Les parcours E2E WASM incluent l’absence de mutation et l’accès SUPER. La CI exécute également `tests/python/test_auth_403_http.py` sur un serveur PHP natif et des données **temporaires**, sans SQL ; ce test est annoncé ignoré si PHP est absent. Ces tests ne remplacent pas une vérification dans un navigateur réel.
+
+## Articulation avec les suites de tests manuels (`docs/13-*`)
+
+Même avec **15 jobs CI automatisés**, une campagne humaine reste indispensable pour valider :
+1. le rendu tactile, l'orientation portrait/paysage et le zoom 200 % sur de **vrais téléphones** (au-delà de Chromium headless) ;
+2. la restitution vocale effective dans un **lecteur d'écran réel** (NVDA, Orca, VoiceOver : distinction vignettes décoratives `alt=""` vs visuel informatif de fiche produit, annonces `aria-live` du panier en FR et EN, lecture des cartes mobiles `data-label`) ;
+3. l'expérience réelle de la boîte de dialogue navigateur de permission de géolocalisation sur `/preferences` et la qualité linguistique perçue des pages traduites en anglais ;
+4. l'hébergement cible **LineServ** (sous-dossier éventuel, séparation des fichiers privés, import phpMyAdmin sur base dédiée, absence de scripts de développement exposés).
+
+L'ensemble de ces vérifications humaines est formalisé dans [`docs/13-fiches-recette-uc.md`](13-fiches-recette-uc.md) (**173 scénarios** sur `UC-01` à `UC-14` et `TCX-01` à `TCX-25`, plus les **36 couples** de la matrice `RB-11`) et son journal [`docs/13-suivi-recette-uc.csv`](13-suivi-recette-uc.csv) (**209 lignes** initialisées à `NON JOUÉ`). L'intégrité structurelle et la synchronisation de ces deux fichiers avec le code (`Triggers::TRANSITIONS`, routes et fichiers cités) sont vérifiées automatiquement par `python3 scripts/verifier_fiches_uc.py` dans les orchestrateurs de tests et en CI.
+

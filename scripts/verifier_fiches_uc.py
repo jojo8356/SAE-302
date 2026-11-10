@@ -52,6 +52,8 @@ for i in range(1, 15):
         check(f'UC-{i:02d} : synthèse cohérente', f'{found[0]} à {found[-1]}' in text)
 transverse = [x for x in ids if x.startswith('TCX-')]
 check('scénarios transversaux ordonnés', transverse == [f'TCX-{i:02d}' for i in range(1, len(transverse) + 1)] and bool(transverse))
+if transverse:
+    check('scénarios transversaux : synthèse cohérente', f'{transverse[0]} à {transverse[-1]}' in text)
 
 states = ['BROUILLON', 'EN_PREPARATION', 'PAYEE', 'EXPEDIEE', 'LIVREE', 'ANNULEE']
 rows = re.findall(r'^\| (BROUILLON|EN_PREPARATION|PAYEE|EXPEDIEE|LIVREE|ANNULEE) \| ([AIX]) \| ([AIX]) \| ([AIX]) \| ([AIX]) \| ([AIX]) \| ([AIX]) \|$', text, re.MULTILINE)
@@ -79,6 +81,14 @@ check('fichiers du dépôt cités existants', bool(code_paths) and not missing_p
 if missing_paths:
     print('  fichiers absents : ' + ', '.join(missing_paths))
 check('méthodes documentées et limites explicites', all(term in text for term in ['Microsoft', 'Atlassian', 'ISTQB', 'Google', 'NON JOUÉ', 'pas une promesse']))
+obsolete_terms = ['36 mois', 'sans appeler `cancelOrder`', 'lignes purgées', 'règle de fusion/mise à jour']
+check('absence de formulations obsolètes dans la fiche', all(term not in text for term in obsolete_terms))
+required_topics = [
+    '/preferences', 'localStorage', 'tz-lookup.js', 'English', 'data-label',
+    'ANNULATION_VIA_PARCOURS_DEDIE', 'Johan Polsinelli', 'Chahd Gouiaa',
+    'purger_comptes.php', 'nettoyage_donnees.php', 'archive_restreinte.php',
+]
+check('couverture manuelle des évolutions récentes', all(topic in text for topic in required_topics))
 
 try:
     with CSV.open(encoding='utf-8-sig', newline='') as file:
