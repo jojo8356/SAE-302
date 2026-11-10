@@ -406,4 +406,5 @@ ls scripts/build-docs.sh docs/diagrams/render.sh tests/perf/mesurer.sh   # → i
 - [x] Vérifier les sources officielles : la CNIL recommande 24 mois après la dernière action pour les comptes inactifs ; 36 mois vise notamment la prospection. Choix utilisateur : 24 mois.
 - [x] Traitement CLI conservateur, simulation par défaut et exécution explicite : comptes sans commande seulement, verrou et relecture, dates incertaines exclues. Les comptes avec commandes sont conservés et signalés.
 - [x] Vues, documentation, tests, valeur initiale à 24 mois et migration SQL conditionnelle. Aucune migration exécutée sur une instance réelle.
-- [~] JSON et CLI couverts sur copies jetables ; MariaDB en CI. [!] La tâche planifiée n’est pas installée, les comptes avec commande et les anciennes copies/journaux ne sont pas purgés ; aucun effacement global ni conformité RGPD revendiqués.
+- [x] CI `42794381999` (commit `c12f0bb`) : JSON et CLI sur copies jetables, MariaDB 11.8, MySQL 8, Chromium, Windows et E2E verts.
+- [!] La tâche planifiée n’est pas installée, les comptes avec commande et les anciennes copies/journaux ne sont pas purgés ; aucun effacement global ni conformité RGPD revendiqués.
