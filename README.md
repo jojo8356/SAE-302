@@ -26,12 +26,15 @@ Le [rapport d’audit global](docs/17-audit-global-projet.md) et son [inventaire
 ## Informations légales et données (maquette)
 
 Le pied de page donne accès aux mentions légales, CGV pédagogiques, livraison, rétractation,
-garanties, confidentialité et cookies. **Aucune vente, livraison ou paiement réel** : l'identité
-du vendeur et de l'hébergeur, le médiateur, les durées de conservation effectives et d'autres
-informations restent à renseigner. La fonction légale de rétractation en ligne avec accusé durable
-**n'est pas opérationnelle** : ne pas utiliser ce projet pour vendre en l'état. L'audit, les sources,
-le détail des cookies réellement identifiés et la checklist figurent dans
-[`docs/12-information-juridique.md`](docs/12-information-juridique.md).
+garanties, confidentialité et cookies. Les mentions légales renseignent l’édition étudiante à
+titre non professionnel (**Johan Polsinelli** et **Chahd Gouiaa**, SAE S3.02 — IUT Nice Côte d’Azur,
+art. 6-III-2 LCEN) ainsi que l’hébergement pédagogique visé (**Université Côte d’Azur — IUT Nice Côte d’Azur**,
+`linserv-info-01.campus.unice.fr`). **Aucune vente, livraison ou paiement réel** : l’identité d’un
+vendeur professionnel, le médiateur, le responsable de traitement commercial et les durées de
+conservation effectives restent hors périmètre de la maquette. La fonction légale de rétractation
+en ligne avec accusé durable **n'est pas opérationnelle** : ne pas utiliser ce projet pour vendre
+en l'état. L'audit, les sources, le détail des cookies réellement identifiés et la checklist
+figurent dans [`docs/12-information-juridique.md`](docs/12-information-juridique.md).
 
 ## Aide locale en ligne de commande
 

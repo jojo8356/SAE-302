@@ -146,16 +146,24 @@ async function aller() {
   console.log("\n[Mentions légales] 1 · La page complète, lue comme un client");
   const visiteur = new NavigateurUI();
   await visiteur.aller('/mentions-legales');
-  check('coordonnées de l’éditeur et du directeur à renseigner',
+  check('éditeurs étudiants, co-direction de publication et emails universitaires renseignés',
     visiteur.texte.includes('Éditeur et responsable de publication')
-      && visiteur.texte.includes('Directeur de publication') && visiteur.texte.includes('à renseigner'));
+      && visiteur.texte.includes('Johan Polsinelli')
+      && visiteur.texte.includes('Chahd Gouiaa')
+      && visiteur.texte.includes('Directeur de publication : co-responsabilité de l’équipe projet')
+      && visiteur.texte.includes('johan.polsinelli@etu.unice.fr')
+      && visiteur.texte.includes('chahd.gouiaa@etu.univ-cotedazur.fr')
+      && !visiteur.texte.includes('à renseigner'));
   check('pas de vendeur affirmé sans vérification', visiteur.texte.includes('Aucun vendeur n’est identifié'));
   const lienContact = [...visiteur.doc.querySelectorAll('a')].find((a) => a.getAttribute('href') === '/contact');
   check('renvoi Contact présent sans le présenter comme un contact professionnel',
     lienContact !== undefined && visiteur.texte.includes('ne remplace pas des coordonnées professionnelles fonctionnelles'));
-  check('hébergeur à renseigner, sans affirmer LineServ',
-    visiteur.texte.includes('Nom ou dénomination de l’hébergeur') && visiteur.texte.includes('à renseigner')
-      && !visiteur.texte.includes('plateforme LineServ'));
+  check('hébergeur pédagogique Université Côte d’Azur / IUT avec réserve hors serveur',
+    visiteur.texte.includes('Université Côte d’Azur — IUT Nice Côte d’Azur')
+      && visiteur.texte.includes('linserv-info-01.campus.unice.fr')
+      && visiteur.texte.includes('28 avenue Valrose, 06103 Nice Cedex 2')
+      && visiteur.texte.includes('+33 (0)4 89 15 00 00')
+      && visiteur.texte.includes('hors de ce serveur universitaire'));
   check('le caractère pédagogique et non productif est indiqué',
     visiteur.texte.includes('Projet pédagogique') && visiteur.texte.includes('pas une boutique en production'));
   check('lien confidentialité présent', !!visiteur.doc.querySelector('a[href="/confidentialite"]'));

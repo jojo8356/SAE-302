@@ -226,6 +226,9 @@ echo json_encode(['pages' => $pages, 'business' => array_values(BusinessError::M
 const donneesPages = JSON.parse(rendu.text);
 const identiquesOuDonnees = new Set([
     'Admin Chef', 'Alice Dupont', 'Bob B', 'Clavier Test', 'Souris', 'C',
+    'Johan Polsinelli', 'Chahd Gouiaa',
+    'johan.polsinelli@etu.unice.fr', 'chahd.gouiaa@etu.unice.fr', 'chahd.gouiaa@etu.univ-cotedazur.fr',
+    'Université Côte d’Azur — IUT Nice Côte d’Azur',
     'MS-2026-0001', 'REF-001', 'REF-002', 'a@b.c', 'b@b.c',
     'informatique', 'audio', 'accessoires', 'objets-connectes',
     'MiniShop', 'PHP', 'English', 'Français',

@@ -142,7 +142,7 @@ try {
     await aller(page, '/mes-commandes');
     await pageVerifiee(page, 'mes-commandes', largeur, '.tableau-commandes-client tbody tr');
     assert.equal(await page.locator('h1').first().innerText(), 'My orders');
-    for (const [routeInfo, nomInfo] of [['/compte', 'compte-en'], ['/confidentialite', 'confidentialite-en'], ['/cgv', 'cgv-en']]) {
+    for (const [routeInfo, nomInfo] of [['/compte', 'compte-en'], ['/mentions-legales', 'mentions-legales-en'], ['/confidentialite', 'confidentialite-en'], ['/cgv', 'cgv-en']]) {
       await aller(page, routeInfo);
       await pageVerifiee(page, nomInfo, largeur);
     }
