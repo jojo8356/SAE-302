@@ -425,3 +425,10 @@ ls scripts/build-docs.sh docs/diagrams/render.sh tests/perf/mesurer.sh   # → i
 - [ ] Valider les durées, habilitations, sauvegardes, exceptions et conditions d'exploitation ; tester sur des copies et redémarrer les anciens processus avant toute utilisation réelle.
 - [x] CI `42798289371` (commit `d5ceec5`) réussie : tests PHP natifs de rotation, CLI et écritures concurrentes sur fichiers jetables, plus les autres jobs. En local : suites PHP-WASM hors SQL et E2E isolé (309 vérifications) réussis ; PHP natif/POSIX et SQL non disponibles localement.
 - [!] Auto-évaluation : la rotation ciblée est testée, mais elle ne contrôle ni les gels individuels ni l'intégrité des sauvegardes, ne traite pas les copies d'hébergement et ne résout pas la suppression des comptes avec commandes. Aucune exécution ou planification réelle sur LineServ.
+
+
+### Fuseau de session SQL (point 5)
+- [x] Vérifier le code : PHP interprète les dates comme UTC, mais les sessions PDO SQL n'imposaient pas UTC alors que les valeurs `CURRENT_TIMESTAMP` en dépendaient ; les anciens tests PHP ne vérifiaient pas ce point.
+- [x] Fixer UTC sur les nouvelles connexions centrales, les connexions PDO injectées et celles du générateur de volumétrie ; refuser une session non initialisable. Ajouter un test SQL sur base jetable avec session initialement UTC+5:30 et dates d'hiver/été, plus un test de refus en mode silencieux.
+- [!] Les dates SQL déjà écrites ne sont ni vérifiées ni modifiées automatiquement. Les connexions ou imports externes, les anciennes sessions et le déploiement réel doivent être contrôlés séparément. Aucune intervention sur LineServ.
+- [ ] Vérifier la configuration et la provenance des anciennes dates de l'instance réelle, sur une copie sauvegardée ; ne pas appliquer de décalage uniforme sans preuve.

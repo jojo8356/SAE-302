@@ -75,6 +75,9 @@ final class SqlStore implements StoreInterface
         }
 
         if ($this->connexionFournie instanceof PDO) {
+            // Une connexion injectée peut avoir hérité d'un fuseau non UTC.
+            // Ne pas la mettre en cache tant que l'initialisation n'a pas réussi.
+            DbConnexion::imposerFuseauUtc($this->connexionFournie);
             $this->pdo = $this->connexionFournie;
 
             return $this->pdo;

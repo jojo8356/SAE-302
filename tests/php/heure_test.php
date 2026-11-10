@@ -144,6 +144,23 @@ $check('date_fr() délègue au gestionnaire', str_contains($xss, 'Heure::formate
 $check('date_fr() ne lit plus l\'horloge serveur (strtotime/date)', !str_contains($xss, 'strtotime'));
 $check('le gestionnaire existe à l\'emplacement PSR-4 App\\Tools', is_file($racine . '/app/Tools/Heure.php'));
 
+/* La connexion échoue fermée même si PDO est en mode silencieux. */
+$pdoSilencieux = new class extends PDO {
+    public int $appels = 0;
+    public function __construct() {}
+    public function exec(string $statement): int|false
+    {
+        ++$this->appels;
+        return false;
+    }
+};
+$refus = 0;
+$storeSql = new \App\Model\Data\SqlStore($pdoSilencieux);
+for ($i = 0; $i < 2; ++$i) {
+    try { $storeSql->pdo(); } catch (PDOException) { ++$refus; }
+}
+$check('session SQL non initialisable : échec fermé et aucun cache de connexion', $refus === 2 && $pdoSilencieux->appels === 2);
+
 ob_end_clean();
 
 $symbole = '❌';

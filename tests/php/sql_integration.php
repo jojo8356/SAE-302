@@ -144,6 +144,54 @@ try {
     exit(1);
 }
 
+// Vérification sur table TEMPORAIRE et session dédiée : aucun changement global
+// du serveur, aucune donnée applicative modifiée. Jouée sur MySQL et MariaDB.
+echo "\n2 bis. Fuseau de session SQL et dates automatiques\n";
+$echecsFuseau = 0;
+try {
+    $pdoFuseau = DbConnexion::ouvrir($base, $config);
+    if ($pdoFuseau->query('SELECT @@session.time_zone')->fetchColumn() !== '+00:00') {
+        throw new RuntimeException('La connexion centrale ne fixe pas UTC.');
+    }
+    // Simuler une connexion extérieure non UTC avant de l'injecter dans SqlStore.
+    $pdoFuseau->exec("SET SESSION time_zone = '+05:30'");
+    $temoin = $pdoFuseau->query('SELECT @@session.time_zone, TIMESTAMPDIFF(SECOND, UTC_TIMESTAMP(), CURRENT_TIMESTAMP())')->fetch(PDO::FETCH_NUM);
+    if ($temoin === false || $temoin[0] !== '+05:30' || (int) $temoin[1] !== 19800) {
+        throw new RuntimeException('Le fuseau hostile de test ne fonctionne pas.');
+    }
+    $storeFuseau = new \App\Model\Data\SqlStore($pdoFuseau);
+    $storeFuseau->pdo();
+    if ($pdoFuseau->query('SELECT @@session.time_zone')->fetchColumn() !== '+00:00') {
+        throw new RuntimeException('La connexion injectée ne revient pas en UTC.');
+    }
+    $pdoFuseau->exec('CREATE TEMPORARY TABLE test_fuseau_utc (id INT NOT NULL PRIMARY KEY, cree DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, modifie DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)');
+    $cas = [
+        ['2026-01-15 18:15:00', '15/01/2026 19h15'],
+        ['2026-07-15 17:15:00', '15/07/2026 19h15'],
+    ];
+    foreach ($cas as $i => [$utc, $paris]) {
+        $instant = new DateTimeImmutable($utc, new DateTimeZone('UTC'));
+        $pdoFuseau->exec('SET timestamp = ' . $instant->getTimestamp());
+        if ($i === 0) {
+            $pdoFuseau->exec('INSERT INTO test_fuseau_utc (id) VALUES (1)');
+            $colonne = 'cree';
+        } else {
+            $pdoFuseau->exec('UPDATE test_fuseau_utc SET id = 2 WHERE id = 1');
+            $colonne = 'modifie';
+        }
+        $stocke = $pdoFuseau->query('SELECT ' . $colonne . ' FROM test_fuseau_utc')->fetchColumn();
+        if ($stocke !== $utc || date_fr($stocke, true) !== $paris) {
+            throw new RuntimeException('Date SQL ou affichage Paris incorrect pour le cas ' . $i);
+        }
+    }
+    $pdoFuseau->exec('SET timestamp = 0');
+    $pdoFuseau->exec('DROP TEMPORARY TABLE test_fuseau_utc');
+    echo "   ✅ session UTC, connexion injectée hostile, INSERT et UPDATE en hiver et été\n";
+} catch (Throwable $erreur) {
+    $echecsFuseau = 1;
+    echo '   ❌ fuseau SQL : ' . $erreur->getMessage() . "\n";
+}
+
 // Contrat de pagination du repository, sur la même base dédiée et en lecture seule.
 // Jamais sur la base applicative. Les scénarios sont partagés avec le pilote JSON.
 echo "\n3. Catalogue : ruptures en dernier (pilote SQL)\n";
@@ -223,7 +271,7 @@ $sortie = [];
 $code = 0;
 @exec($prefixe . 'bash ' . escapeshellarg($harnais) . ' 2>&1', $sortie, $code);
 echo implode("\n", $sortie) . "\n";
-if (($echecsCatalogue !== 0 || $echecsNouveautes !== 0) && $code === 0) {
+if (($echecsCatalogue !== 0 || $echecsNouveautes !== 0 || $echecsFuseau !== 0) && $code === 0) {
     $code = 1;
 }
 

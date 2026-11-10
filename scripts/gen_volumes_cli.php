@@ -21,6 +21,7 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/app/bootstrap.php';
 
+use App\Config\DbConnexion;
 use App\Tools\SqlLoader;
 use App\Tools\VolumetryGenerator;
 
@@ -73,6 +74,7 @@ if ($options['load']) {
             $pass,
             [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION],
         );
+        DbConnexion::imposerFuseauUtc($pdoChargement);
         $pdoChargement->exec('CREATE DATABASE IF NOT EXISTS `' . str_replace('`', '', $dbName)
             . '` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci');
         $pdoChargement->exec('USE `' . str_replace('`', '', $dbName) . '`');
@@ -107,6 +109,7 @@ try {
             PDO::ATTR_EMULATE_PREPARES => false,
         ],
     );
+    DbConnexion::imposerFuseauUtc($pdo);
 } catch (PDOException $e) {
     fwrite(STDERR, "✘ connexion impossible à $host:$port/$dbName — " . $e->getMessage() . "\n");
     fwrite(STDERR, "  Astuce : ./scripts/load_db.sh puis relancer, ou ajouter --load.\n");
