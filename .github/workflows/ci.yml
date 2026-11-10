@@ -191,7 +191,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
-          extensions: mbstring, intl
+          extensions: mbstring, intl, sodium, posix
           coverage: none
           tools: none
       - name: Setup Node 22
@@ -210,6 +210,10 @@ jobs:
         run: php tests/php/retention_comptes_test.php
       - name: CLI de rétention sur copie jetable
         run: python3 tests/python/test_retention_cli.py -v
+      - name: Copies chiffrées et accès sur fichiers jetables
+        run: |
+          php -r 'exit(extension_loaded("sodium") && extension_loaded("posix") ? 0 : 1);'
+          python3 tests/python/test_archive_restreinte.py -v
       - name: Régression heures décalées (UTC→Europe/Paris, PHP natif)
         run: php tests/php/heure_test.php
       - name: Régression adresse de livraison incomplète (préremplissage, PHP natif)

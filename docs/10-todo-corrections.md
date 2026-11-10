@@ -408,3 +408,9 @@ ls scripts/build-docs.sh docs/diagrams/render.sh tests/perf/mesurer.sh   # → i
 - [x] Vues, documentation, tests, valeur initiale à 24 mois et migration SQL conditionnelle. Aucune migration exécutée sur une instance réelle.
 - [x] CI `42794381999` (commit `c12f0bb`) : JSON et CLI sur copies jetables, MariaDB 11.8, MySQL 8, Chromium, Windows et E2E verts.
 - [!] La tâche planifiée n’est pas installée, les comptes avec commande et les anciennes copies/journaux ne sont pas purgés ; aucun effacement global ni conformité RGPD revendiqués.
+
+### Copies restreintes et politique proposée (point 4)
+- [x] Documenter par catégorie les durées proposées, les obligations conditionnelles, les droits d'accès, les sauvegardes et les mesures à valider : `docs/18-politique-conservation.md`.
+- [x] Ajouter un outil CLI de copie chiffrée à clé publique, simulation par défaut, fichiers et répertoires privés, clé privée séparée et journalisation locale des restitutions ; tests sur fichiers jetables. L'outil ne modifie pas la source.
+- [!] **Point 4 non terminé** : les commandes/comptes restent dans la base active ; il manque sélection minimale et transfert effectif sûr, retrait des originaux et restrictions vérifiées. L'outil ne réalise ni purge des messages/journaux ni gestion des sauvegardes ou des échéances ; journal de consultation non inviolable et traçabilité contournable avec la clé privée. Aucune validation du responsable, installation ni intervention réelle.
+- [ ] Faire valider la politique et les habilitations ; développer et tester le transfert et la purge, y compris concurrence, restaurations, anciennes copies et droits des personnes ; inventorier et traiter les données de l'hébergeur avant activation.

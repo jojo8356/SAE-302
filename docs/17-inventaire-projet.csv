@@ -150,6 +150,7 @@ docs/15-email-recette-lineserv.md,Documentation,Présence et non-vide uniquement
 docs/16-audit-code-mort.md,Documentation,Présence et non-vide uniquement
 docs/17-audit-global-projet.md,Documentation,Présence et non-vide uniquement
 docs/17-inventaire-projet.csv,Documentation,Présence et non-vide uniquement
+docs/18-politique-conservation.md,Documentation,Présence et non-vide uniquement
 docs/DA.md,Documentation,Présence et non-vide uniquement
 docs/annexes/annexe-cas-usage.md,Documentation,Présence et non-vide uniquement
 docs/annexes/annexe-enf.md,Documentation,Présence et non-vide uniquement
@@ -292,6 +293,7 @@ public/minishop.css,Ressources publiques,Présence et non-vide uniquement
 requirements-docs.txt,Configuration et fichiers racine,Présence et non-vide uniquement
 run.sh,Configuration et fichiers racine,"Présence, non-vide, syntaxe Bash si disponible"
 scripts/aide.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+scripts/archive_restreinte.php,Outils et intégration continue,Présence et non-vide uniquement
 scripts/build-docs.sh,Scripts et outillage,"Présence, non-vide, syntaxe Bash si disponible"
 scripts/capture_perf.sh,Scripts et outillage,"Présence, non-vide, syntaxe Bash si disponible"
 scripts/ci_php_diagnostic.py,Scripts et outillage,"Présence, non-vide, compilation Python"
@@ -314,8 +316,8 @@ scripts/md_to_docx.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
 scripts/md_to_html.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
 scripts/md_to_pdf.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
 scripts/md_to_pptx.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
-scripts/purger_comptes.php,Outils et intégration continue,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 scripts/preparer_sql_lineserv.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
+scripts/purger_comptes.php,Outils et intégration continue,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 scripts/rejeu_gitlab.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
 scripts/run-all-tests.mjs,Scripts et outillage,"Présence, non-vide, syntaxe Node si disponible"
 scripts/run-all-tests.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
@@ -404,9 +406,9 @@ tests/php/nouveautes_cases.php,Tests et fixtures,"Présence, non-vide ; syntaxe 
 tests/php/nouveautes_test.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/php/pages_pied_de_page_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/php/panier_cta_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
-tests/php/retention_comptes_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/php/panier_tableau_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/php/responsive_contract.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/retention_comptes_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/php/run_tests.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/php/sql_integration.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/php/stocks_defaut_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
@@ -423,14 +425,15 @@ tests/phpunit/TriggersTest.php,Tests et fixtures,"Présence, non-vide ; syntaxe 
 tests/phpunit/bootstrap.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/phpunit/run-local.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/python/test_aide_cli.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
-tests/python/test_retention_cli.py,Tests et validation,Présence et non-vide uniquement
 tests/python/test_annulation_concurrente.py,Tests,"Présence, non-vide, syntaxe Python"
+tests/python/test_archive_restreinte.py,Tests,Présence et non-vide uniquement
 tests/python/test_audit_structurel.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
 tests/python/test_auth_403_http.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
 tests/python/test_code_mort_integration.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
 tests/python/test_deprecations.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
 tests/python/test_inventaire_app.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
 tests/python/test_preparer_sql_lineserv.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
+tests/python/test_retention_cli.py,Tests et validation,Présence et non-vide uniquement
 tests/python/test_securite_gitignore.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
 tests/security/controles.sh,Tests et fixtures,"Présence, non-vide, syntaxe Bash si disponible"
 tests/sql/fixture.sql,Tests et fixtures,Présence et non-vide uniquement
