@@ -400,4 +400,4 @@ ls scripts/build-docs.sh docs/diagrams/render.sh tests/perf/mesurer.sh   # → i
 - [x] Tests JSON et SQL ajoutés ; migrations SQL ciblées et limites documentées. [!] Les identités et coordonnées légales restent à renseigner ; aucune migration ni revue sur LineServ. Les visuels de repli et le pied sombre sont conservés : le mail doit être actualisé.
 
 - [x] Suite PHP-WASM hors SQL/E2E : verte (dont PHPUnit 43/43, responsive contractuel 54, design 71) ; annulation historique 17/17 et Mes commandes 14/14.
-- [ ] Vérifier les nouveaux jobs natifs MariaDB, concurrence JSON et Chromium en CI après le push ; aucune garantie sur tous les appareils ou anciennes bases.
+- [x] CI GitHub `42791754935` (commit `205c0b7`) : MariaDB 11.8 et migrations ciblées, MySQL 8, concurrence JSON (dont admin/client), Chromium 375/1440 avec confirmation sans JavaScript, Windows et E2E verts. [!] Pas de test concurrent SQL spécifique, ni validation sur LineServ, tous les appareils ou anciennes bases.

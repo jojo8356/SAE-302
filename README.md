@@ -478,6 +478,10 @@ La procédure générique SQL refuse désormais l’annulation directe ; utilise
 parcours applicatif administrateur ou `sp_cancel_order` pour une annulation client.
 Les anciens commentaires génériques correspondant au format connu sont rendus lisibles à l’affichage sans
 modifier les archives ; les anciens montants inconnus ne sont pas inventés.
+Les tests SQL de ce changement sont séquentiels : ils ne prouvent pas tous les
+scénarios de concurrence ni la sécurité des autres écritures. Les changements de
+statut effectués directement en SQL sans les variables de session applicatives
+sont tracés comme « SYSTEME ».
 Il n’y a pas eu de migration sur une base réelle. Les coordonnées légales restent
 à fournir et à vérifier ; le contact est un formulaire de démonstration sans envoi
 de courrier. Le pied sombre et l’image de repli sont conservés volontairement :
