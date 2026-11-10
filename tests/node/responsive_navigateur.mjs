@@ -32,7 +32,6 @@ try {
   }
   const env = {
     ...process.env, MINISHOP_TESTS: '1', STORAGE_DRIVER: 'json',
-    PHP_CLI_SERVER_WORKERS: '4',
     MINISHOP_ENV_FILE: path.join(tmp, 'absent.env'), DATA_PATH: path.join(tmp, 'data/minishop'),
   };
   for (const nom of ['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASSWORD', 'DB_PASS', 'DB_SOCKET', 'DB']) delete env[nom];
@@ -139,7 +138,10 @@ try {
     await aller(page, '/connexion');
     await page.fill('#email', 'alice@example.com');
     await page.fill('#mot_de_passe', 'Demo2026!');
-    await page.locator('form[action="/connexion"] button').click();
+    await Promise.all([
+      page.waitForURL(/\/(compte|panier|commande)/),
+      page.locator('form[action="/connexion"] button').click(),
+    ]);
     await aller(page, '/commande/valider');
     await pageVerifiee(page, 'validation', largeur, '.tableau-recapitulatif tbody tr');
     await page.locator('form[action="/commande/valider"] button').click();
@@ -180,7 +182,10 @@ try {
     await aller(page, '/admin/connexion');
     await page.fill('#email', 'admin@minishop.fr');
     await page.fill('#mot_de_passe', 'Admin2026!');
-    await page.locator('form[action="/admin/connexion"] button').click();
+    await Promise.all([
+      page.waitForURL(/\/admin$/),
+      page.locator('form[action="/admin/connexion"] button').click(),
+    ]);
     for (const [routeEn, nomEn, cibleEn] of [
       ['/admin', 'dashboard-admin-en', '.kpis'],
       ['/admin/commandes', 'commandes-admin-en', '.tableau-commandes tbody tr'],
@@ -205,7 +210,10 @@ try {
     await aller(administration, '/admin/connexion');
     await administration.fill('#email', 'admin@minishop.fr');
     await administration.fill('#mot_de_passe', 'Admin2026!');
-    await administration.locator('form[action="/admin/connexion"] button').click();
+    await Promise.all([
+      administration.waitForURL(/\/admin$/),
+      administration.locator('form[action="/admin/connexion"] button').click(),
+    ]);
     for (const [route, nom, cible] of [
       ['/admin/categories', 'categories-admin', '.tableau-categories tbody tr'],
       ['/admin/commandes', 'commandes-admin', '.tableau-commandes tbody tr'],
@@ -271,7 +279,10 @@ try {
     await aller(administration, `/admin/commandes/${commandeExpedieeId}`);
     await administration.selectOption('#statut', 'EXPEDIEE');
     await administration.fill('#commentaire', 'Remis transporteur');
-    await administration.locator('form[action$="/statut"] button').click();
+    await Promise.all([
+      administration.waitForNavigation({ waitUntil: 'networkidle' }),
+      administration.locator('form[action$="/statut"] button').click(),
+    ]);
     await aller(administration, `/admin/commandes/${commandeExpedieeId}`);
     await administration.selectOption('#statut', 'ANNULEE');
     await administration.fill('#commentaire', 'Colis égaré en transit');
@@ -329,8 +340,12 @@ try {
 } finally {
   if (browser) await browser.close();
   if (serveur && serveur.exitCode === null) {
+    serveur.stderr?.destroy();
     serveur.kill('SIGTERM');
-    await new Promise((resolve) => serveur.once('exit', resolve));
+    await Promise.race([
+      new Promise((resolve) => serveur.once('exit', resolve)),
+      new Promise((resolve) => setTimeout(resolve, 3000)),
+    ]);
   }
   await rm(tmp, { recursive: true, force: true });
 }
