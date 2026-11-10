@@ -32,6 +32,7 @@ try {
   }
   const env = {
     ...process.env, MINISHOP_TESTS: '1', STORAGE_DRIVER: 'json',
+    PHP_CLI_SERVER_WORKERS: '4',
     MINISHOP_ENV_FILE: path.join(tmp, 'absent.env'), DATA_PATH: path.join(tmp, 'data/minishop'),
   };
   for (const nom of ['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASSWORD', 'DB_PASS', 'DB_SOCKET', 'DB']) delete env[nom];

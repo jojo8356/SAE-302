@@ -733,7 +733,7 @@ jobs:
         run: |
           set -o pipefail
           node tests/node/responsive_navigateur.mjs 2>&1 | tee "$RUNNER_TEMP/chromium.log" || {
-            tail -80 "$RUNNER_TEMP/chromium.log" | while IFS= read -r ligne; do
+            tail -8 "$RUNNER_TEMP/chromium.log" | while IFS= read -r ligne; do
               ligne=${ligne//%/%25}; echo "::error::$ligne"
             done
             exit 1
