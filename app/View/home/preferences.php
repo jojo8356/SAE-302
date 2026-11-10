@@ -14,7 +14,7 @@
             <p id="pref-decalage" aria-live="polite"></p>
             <p id="pref-aide">Choisissez une ville ou demandez votre position. L’heure d’été est calculée pour chaque date.</p>
             <button class="btn btn--secondaire" type="button" id="pref-position">Utiliser ma position</button>
-            <p>Votre navigateur demandera votre accord. Les coordonnées servent uniquement à déterminer le fuseau sur cet appareil : MiniShop ne les conserve pas et ne les transmet pas. La détection est approximative ; vérifiez le fuseau proposé, notamment près des frontières.</p>
+            <p>Votre navigateur demandera votre accord. Les coordonnées servent uniquement à déterminer le fuseau sur cet appareil : MiniShop ne les conserve pas et ne les transmet pas. La détection est approximative ; vérifiez le fuseau proposé, notamment près des frontières. Réinitialiser efface le choix enregistré ici, mais ne révoque pas l’autorisation de localisation : pour la retirer, utilisez les paramètres du navigateur pour ce site.</p>
             <div class="preferences__actions">
                 <button class="btn btn--acheter" type="submit">Enregistrer</button>
                 <button class="btn btn--secondaire" type="button" id="pref-reinitialiser">Réinitialiser</button>

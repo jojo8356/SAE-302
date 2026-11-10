@@ -11,7 +11,7 @@ declare(strict_types=1);
 <div class="erreur-page">
     <p class="erreur-page__code">500</p>
     <h1>Erreur technique</h1>
-    <p>Une erreur inattendue est survenue. L'incident a été journalisé ; aucune donnée n'a été modifiée.</p>
+    <p>Une erreur inattendue est survenue. Vérifiez l’état de votre commande ou de votre compte avant de réessayer.</p>
     <p>Vous pouvez revenir à l'accueil ou réessayer dans quelques instants.</p>
     <?php if (($debug ?? false) === true): ?>
         <p class="message message--erreur">Mode debug : consultez <code>var/log</code> pour le détail.</p>

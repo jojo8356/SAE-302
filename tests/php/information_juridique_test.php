@@ -73,6 +73,8 @@ foreach ($fichiersJs as $fichierJs) {
     }
 }
 $check('stockage local limité aux préférences et expliqué', str_contains($javascript, 'minishop.preferences.v1') && !str_contains($javascript, 'sessionStorage') && !str_contains($javascript, 'document.cookie') && str_contains($lire('app/View/home/cookies.php'), 'localStorage'));
+$check('préférences : retrait permission navigateur distingué de la réinitialisation', str_contains($lire('app/View/home/preferences.php'), 'paramètres du navigateur'));
+$check('erreur 500 : aucune fausse promesse d’absence de modification', !str_contains($lire('app/View/errors/500.php'), 'aucune donnée n\'a été modifiée') && !str_contains($lire('app/View/errors/500.php'), 'aucune donnée n’a été modifiée'));
 $check('contrôleur : ressources et connexions limitées à l’origine', str_contains($routes, "script-src 'self'") && str_contains($routes, "connect-src 'self'"));
 $ecritureContact = $lire('app/Service/NettoyageJournaux.php');
 $check('contact : succès dépend de l’écriture', str_contains($controleur, 'if (!$this->journaliserContact') && str_contains($controleur, 'return NettoyageJournaux::ajouter(') && str_contains($ecritureContact, '$n === strlen($ligne)'));
