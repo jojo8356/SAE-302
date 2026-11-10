@@ -54,7 +54,7 @@ $check('CGV : encadré légal inclus réellement', str_contains($cgv, "require _
 $check('garanties : délais, remèdes et vices cachés', str_contains($encadre, 'délai de trente jours') && str_contains($encadre, 'six mois') && str_contains($encadre, '1641 à 1649'));
 $privacy = $lire('app/View/home/confidentialite.php');
 $check('données : contact, journaux et anciennes valeurs expliqués', str_contains($privacy, 'contact.jsonl') && str_contains($privacy, 'anciennes et nouvelles valeurs'));
-$check('données : 36 mois non présentés comme purge réelle', str_contains($privacy, 'ne déclenche pas à lui seul de suppression'));
+$check('données : activation et limites de la tâche précisées', str_contains($privacy, 'seulement si l’exploitant installe et active') && str_contains($privacy, 'comptes liés à des commandes'));
 $check('droits et contact incomplet signalés', str_contains($privacy, 'CNIL') && str_contains($privacy, 'à renseigner'));
 $cookies = $lire('app/View/home/cookies.php');
 $auth = $lire('app/Security/Auth.php');
@@ -72,9 +72,12 @@ foreach ($fichiersJs as $fichierJs) {
         $javascript .= $contenuJs;
     }
 }
-$check('scripts locaux : pas de stockage navigateur identifié', !str_contains($javascript, 'localStorage') && !str_contains($javascript, 'sessionStorage') && !str_contains($javascript, 'document.cookie'));
+$check('stockage local limité aux préférences et expliqué', str_contains($javascript, 'minishop.preferences.v1') && !str_contains($javascript, 'sessionStorage') && !str_contains($javascript, 'document.cookie') && str_contains($lire('app/View/home/cookies.php'), 'localStorage'));
+$check('préférences : retrait permission navigateur distingué de la réinitialisation', str_contains($lire('app/View/home/preferences.php'), 'paramètres du navigateur'));
+$check('erreur 500 : aucune fausse promesse d’absence de modification', !str_contains($lire('app/View/errors/500.php'), 'aucune donnée n\'a été modifiée') && !str_contains($lire('app/View/errors/500.php'), 'aucune donnée n’a été modifiée'));
 $check('contrôleur : ressources et connexions limitées à l’origine', str_contains($routes, "script-src 'self'") && str_contains($routes, "connect-src 'self'"));
-$check('contact : succès dépend de l’écriture', str_contains($controleur, 'if (!$this->journaliserContact') && str_contains($controleur, '$ecrit === strlen('));
+$ecritureContact = $lire('app/Service/NettoyageJournaux.php');
+$check('contact : succès dépend de l’écriture', str_contains($controleur, 'if (!$this->journaliserContact') && str_contains($controleur, 'return NettoyageJournaux::ajouter(') && str_contains($ecritureContact, '$n === strlen($ligne)'));
 $check('contact : aucun engagement de réponse fictif', !str_contains($controleur, 'répondons sous 2 jours'));
 $check('pied : aucune fausse absence de conservation', !str_contains($pied, 'aucune donnée personnelle conservée'));
 $css = $lire('public/css/app.css');

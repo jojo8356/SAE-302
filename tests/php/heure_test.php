@@ -35,6 +35,7 @@ use App\Tools\Heure;
 
 ob_start();
 
+
 $echecs = 0;
 $tests = 0;
 $check = static function (string $label, bool $ok, string $detail = '') use (&$echecs, &$tests): void {
@@ -143,6 +144,33 @@ $xss = file_get_contents($racine . '/app/Security/xss.php');
 $check('date_fr() délègue au gestionnaire', str_contains($xss, 'Heure::formater('));
 $check('date_fr() ne lit plus l\'horloge serveur (strtotime/date)', !str_contains($xss, 'strtotime'));
 $check('le gestionnaire existe à l\'emplacement PSR-4 App\\Tools', is_file($racine . '/app/Tools/Heure.php'));
+
+$check('bornes Paris au changement d’heure', Heure::borneJourUtc('2026-03-29') === '2026-03-28 23:00:00' && Heure::borneJourUtc('2026-03-29', true) === '2026-03-29 22:00:00');
+$check('jour invalide refusé', Heure::borneJourUtc('2026-02-31') === null && Heure::borneJourUtc('x') === null);
+
+$check('borne UTC transmise acceptée', Heure::borneTransmise('2026-03-29', '2026-03-29 04:00:00') === '2026-03-29 04:00:00');
+$check('borne du lendemain transmise acceptée', Heure::borneTransmise('2026-03-29', '2026-03-30 04:00:00', true) === '2026-03-30 04:00:00');
+$check('borne impossible ou trop éloignée refusée', Heure::borneTransmise('2026-03-29', '2026-03-35 04:00:00') === null && Heure::borneTransmise('2026-03-29', '2026-05-01 04:00:00') === null);
+$check('borne injectée ou jour invalide refusé', Heure::borneTransmise('2026-03-29', '2026-03-29 04:00:00 OR 1=1') === null && Heure::borneTransmise('2026-02-31', '2026-03-01 00:00:00') === null);
+$check('date html porte un instant UTC', str_contains(date_html('2026-01-15 18:15:00', true), 'datetime="2026-01-15T18:15:00Z"') && str_contains(date_html('2026-01-15 18:15:00', true), '19h15'));
+$check('date html absente sans élément time', date_html(null, true) === '—');
+
+/* La connexion échoue fermée même si PDO est en mode silencieux. */
+$pdoSilencieux = new class extends PDO {
+    public int $appels = 0;
+    public function __construct() {}
+    public function exec(string $statement): int|false
+    {
+        ++$this->appels;
+        return false;
+    }
+};
+$refus = 0;
+$storeSql = new \App\Model\Data\SqlStore($pdoSilencieux);
+for ($i = 0; $i < 2; ++$i) {
+    try { $storeSql->pdo(); } catch (PDOException) { ++$refus; }
+}
+$check('session SQL non initialisable : échec fermé et aucun cache de connexion', $refus === 2 && $pdoSilencieux->appels === 2);
 
 ob_end_clean();
 

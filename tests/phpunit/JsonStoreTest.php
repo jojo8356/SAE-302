@@ -214,4 +214,151 @@ final class JsonStoreTest extends TestCase
         $this->expectException(BusinessError::class);
         $depot->updateOrderStatus((int) $commande['id_commande'], 'BROUILLON', 'retour en arrière interdit', 1, 'ADMIN');
     }
+
+    /** @return array{client_id:int,autre_client_id:int,produit_id:int,stock_avant:int} */
+    private function preparerContexteAnnulation(): array
+    {
+        $idClient = $this->store->insert('client', [
+            'nom' => 'Durand',
+            'prenom' => 'Alice',
+            'email' => 'alice.' . bin2hex(random_bytes(4)) . '@example.test',
+            'mot_de_passe_hash' => password_hash('MotDePasse2026!', PASSWORD_BCRYPT, ['cost' => 4]),
+            'adresse_livraison' => '10 avenue Jean Médecin',
+            'code_postal' => '06000',
+            'ville' => 'Nice',
+            'actif' => 1,
+        ]);
+        $idAutreClient = $this->store->insert('client', [
+            'nom' => 'Martin',
+            'prenom' => 'Bruno',
+            'email' => 'bruno.' . bin2hex(random_bytes(4)) . '@example.test',
+            'mot_de_passe_hash' => password_hash('MotDePasse2026!', PASSWORD_BCRYPT, ['cost' => 4]),
+            'adresse_livraison' => '20 rue Gioffredo',
+            'code_postal' => '06000',
+            'ville' => 'Nice',
+            'actif' => 1,
+        ]);
+
+        $produit = null;
+        foreach ($this->store->all('produit') as $candidat) {
+            if ((int) $candidat['visible'] === 1 && (int) $candidat['stock'] >= 5) {
+                $produit = $candidat;
+                break;
+            }
+        }
+        self::assertNotNull($produit, 'produit avec stock >= 5 requis');
+
+        return [
+            'client_id' => $idClient,
+            'autre_client_id' => $idAutreClient,
+            'produit_id' => (int) $produit['id_produit'],
+            'stock_avant' => (int) $produit['stock'],
+        ];
+    }
+
+    public function testAnnulationClientRestitueStockEtRefuseUsurpationOuDoubleAnnulation(): void
+    {
+        $ctx = $this->preparerContexteAnnulation();
+        $this->store->setActor(['id' => $ctx['client_id'], 'role' => 'CLIENT', 'nom' => 'Alice Durand']);
+        $depot = CommandeRepository::for($this->store);
+
+        $commande = $depot->createOrder($ctx['client_id'], '10 avenue Jean Médecin, 06000 Nice');
+        $idCommande = (int) $commande['id_commande'];
+        $depot->addOrderLine($idCommande, $ctx['produit_id'], 2);
+        $montantPaye = $depot->confirmOrder($idCommande, $ctx['client_id'], true);
+        self::assertGreaterThan(0.0, $montantPaye);
+
+        $apresAchat = $this->store->find('produit', $ctx['produit_id']);
+        self::assertNotNull($apresAchat);
+        self::assertSame($ctx['stock_avant'] - 2, (int) $apresAchat['stock']);
+
+        // Un autre client ne peut pas annuler cette commande.
+        $codeUsurpation = '';
+        try {
+            $depot->cancelOrder($idCommande, $ctx['autre_client_id']);
+        } catch (BusinessError $erreur) {
+            $codeUsurpation = $erreur->businessCode;
+        }
+        self::assertSame('ACCES_NON_AUTORISE', $codeUsurpation);
+
+        // Le client titulaire annule : stock restitué, montant_avant_annulation figé, total ramené à 0.
+        $bilan = $depot->cancelOrder($idCommande, $ctx['client_id']);
+        self::assertSame(2, $bilan['unites_rendues']);
+        self::assertEqualsWithDelta($montantPaye, $bilan['montant_rembourse'], 0.01);
+
+        $apresAnnulation = $this->store->find('produit', $ctx['produit_id']);
+        self::assertNotNull($apresAnnulation);
+        self::assertSame($ctx['stock_avant'], (int) $apresAnnulation['stock']);
+
+        $commandeAnnulee = $this->store->find('commande', $idCommande);
+        self::assertNotNull($commandeAnnulee);
+        self::assertSame('ANNULEE', $commandeAnnulee['statut']);
+        self::assertEqualsWithDelta(0.0, (float) $commandeAnnulee['montant_total'], 0.001);
+        self::assertEqualsWithDelta(0.0, (float) $commandeAnnulee['frais_port'], 0.001);
+        self::assertEqualsWithDelta($montantPaye, (float) $commandeAnnulee['montant_avant_annulation'], 0.01);
+
+        // Une seconde annulation est refusée avec COMMANDE_NON_ANNULABLE.
+        $codeDouble = '';
+        try {
+            $depot->cancelOrder($idCommande, $ctx['client_id']);
+        } catch (BusinessError $erreur) {
+            $codeDouble = $erreur->businessCode;
+        }
+        self::assertSame('COMMANDE_NON_ANNULABLE', $codeDouble);
+    }
+
+    public function testAnnulationApresExpeditionReserveeAdminSansRetourStock(): void
+    {
+        $ctx = $this->preparerContexteAnnulation();
+        $this->store->setActor(['id' => 1, 'role' => 'ADMIN', 'nom' => 'Admin Test']);
+        $depot = CommandeRepository::for($this->store);
+
+        $commande = $depot->createOrder($ctx['client_id'], '10 avenue Jean Médecin, 06000 Nice');
+        $idCommande = (int) $commande['id_commande'];
+        $depot->addOrderLine($idCommande, $ctx['produit_id'], 2);
+        $montantInitial = $depot->confirmOrder($idCommande, $ctx['client_id'], true);
+
+        $depot->updateOrderStatus($idCommande, 'EXPEDIEE', 'Colis remis au transporteur', 1, 'ADMIN');
+
+        // Un client ne peut plus annuler une commande déjà expédiée (ni par cancelOrder ni par updateOrderStatus).
+        $codeClientCancel = '';
+        try {
+            $depot->cancelOrder($idCommande, $ctx['client_id']);
+        } catch (BusinessError $erreur) {
+            $codeClientCancel = $erreur->businessCode;
+        }
+        self::assertSame('COMMANDE_NON_ANNULABLE', $codeClientCancel);
+
+        $codeRoleClient = '';
+        try {
+            $depot->updateOrderStatus($idCommande, 'ANNULEE', 'Tentative client', $ctx['client_id'], 'CLIENT');
+        } catch (BusinessError $erreur) {
+            $codeRoleClient = $erreur->businessCode;
+        }
+        self::assertSame('ANNULATION_TROP_TARDIVE', $codeRoleClient);
+
+        // L'administrateur peut annuler une commande EXPEDIEE sans remettre le colis en stock.
+        $resultatAdmin = $depot->updateOrderStatus($idCommande, 'ANNULEE', 'Colis égaré en transit', 1, 'ADMIN');
+        self::assertSame('OK', $resultatAdmin);
+
+        $produitApres = $this->store->find('produit', $ctx['produit_id']);
+        self::assertNotNull($produitApres);
+        self::assertSame($ctx['stock_avant'] - 2, (int) $produitApres['stock'], 'colis expédié non restitué au stock');
+
+        $commandeFinale = $this->store->find('commande', $idCommande);
+        self::assertNotNull($commandeFinale);
+        self::assertSame('ANNULEE', $commandeFinale['statut']);
+        self::assertEqualsWithDelta(0.0, (float) $commandeFinale['montant_total'], 0.001);
+        self::assertEqualsWithDelta($montantInitial, (float) $commandeFinale['montant_avant_annulation'], 0.01);
+        self::assertSame('Colis égaré en transit', $commandeFinale['commentaire']);
+
+        $historique = $depot->historique($idCommande);
+        $derniereTrace = end($historique);
+        self::assertTrue(is_array($derniereTrace));
+        if (is_array($derniereTrace)) {
+            self::assertSame('ADMIN', $derniereTrace['changed_by_role']);
+            self::assertSame(1, (int) $derniereTrace['changed_by']);
+            self::assertSame('Colis égaré en transit', $derniereTrace['commentaire']);
+        }
+    }
 }

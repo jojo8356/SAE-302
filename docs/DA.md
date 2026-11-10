@@ -497,3 +497,30 @@ refaire WAVE après déploiement ; aucun rendu réel n’a été exécuté ici.
 ### Alternatives des visuels produit
 
 Les cartes conservent une image décorative (`alt=""`), le nom étant déjà visible. La fiche choisit explicitement une alternative informative qui identifie le visuel comme indicatif. Ce libellé reprend le nom, sans inventer de détail sur la photographie ; une véritable description visuelle doit être fournie et vérifiée si l’image véhicule une information supplémentaire. Le choix entre les deux stratégies se fait à l’exécution, pas par le compilateur PHP.
+
+
+### Complément — filtres de prix
+
+Dans la continuité des filtres à facettes observés chez Boulanger (§2.4), les bornes
+de prix forment un groupe unique : deux champs côte à côte si l’espace le permet,
+puis empilés sur les écrans les plus étroits. Les libellés restent visibles et
+les champs ne doivent pas provoquer de défilement horizontal. L’implémentation
+est dans `.filtres-prix` et le rendu reste à vérifier sur les appareils réels.
+
+## 20. Étude ciblée — tableaux administrateur sur mobile
+
+**Étude avant implémentation.** Le [composant Table de shadcn/ui](https://ui.shadcn.com/docs/components/base/table) conserve un vrai tableau dans une zone défilante ; sa [documentation Typeset](https://ui.shadcn.com/docs/typeset) distingue le retour à la ligne et le défilement horizontal contenu. Le [design system USWDS](https://designsystem.digital.gov/components/table/) recommande le tableau défilant pour comparer de nombreuses colonnes chiffrées, et les lignes empilées avec `data-label` identique à l'en-tête pour des fiches descriptives. Le [W3C](https://www.w3.org/WAI/WCAG21/Understanding/reflow.html) prévoit une exception pour le tableau bidimensionnel, pas pour le débordement du reste de la page.
+
+**Décision MiniShop.** Garder les tableaux HTML et leurs en-têtes sur grand écran ; sur mobile, présenter chaque enregistrement comme une fiche, chaque libellé au-dessus de sa valeur, sans imposer une ligne unique. Les noms, montants, statuts, liens et actions restent visibles, sans troncature ; les mots très longs peuvent se couper, les contrôles restent utilisables. Pour les tableaux qui doivent rester comparatifs, conserver la région défilante bornée et accessible au clavier. Reprendre les principes, pas installer React/shadcn ni copier leurs composants : le projet reste PHP/CSS autonome. Vérifier à 320, 375 et 1440 px, avec textes longs et JavaScript désactivé ; les tests automatisés ne remplacent pas une revue sur appareils et lecteurs d'écran.
+
+### Préférences de fuseau (étude avant réalisation)
+
+- [Smashing Magazine, sélecteurs de langue et région](https://www.smashingmagazine.com/2022/05/designing-better-language-selector/) : séparer langue et localisation, proposer une préférence modifiable, accessible au clavier et retrouvable en pied de page.
+- [MDN, Geolocation API](https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API) : accès explicite et uniquement en contexte sécurisé ; traiter refus et indisponibilité sans bloquer le choix manuel.
+- Décision : préférences personnelles communes aux visiteurs et à l'administration, choix de fuseau IANA manuel ou détection volontaire, retour d'état clair, bouton de réinitialisation et formulaire lisible à 320 px. Stockage du seul choix dans le navigateur ; pas de coordonnées ni de préférence en base. Pour les calculs de jours côté serveur, seules des bornes UTC nécessaires aux requêtes sont transmises. Le fuseau doit rester IANA (pas uniquement un UTC±n actuel), afin de respecter les changements d'heure des dates passées et futures.
+- Le choix anglais traduit désormais l’ensemble de l’interface (navigation, boutique, panier, validation, espace client, pages d’information et pages légales, back-office complet et messages dynamiques) et signale honnêtement que les données libres issues du catalogue ou saisies en base conservent leur langue d’enregistrement. La géolocalisation utilise la bibliothèque locale `@photostructure/tz-lookup` 11.8.0 (CC0), approximative près des frontières ; le navigateur calcule les heures via `Intl`.
+
+### Traduction bilingue FR/EN et indépendance linguistique du CSS
+
+- [WCAG 2.1 — Technique H57 (SC 3.1.1 Language of Page)](https://www.w3.org/WAI/WCAG21/Techniques/html/H57) et SC 3.1.2 : l’attribut `lang` de `<html>` est synchronisé avec la langue active (`fr` ou `en`), et les options du sélecteur de langue portent leur propre attribut `lang` (`Français` / `English`).
+- [W3C Internationalization — Text size in translation](https://www.w3.org/International/articles/article-text-size) et [USWDS Table](https://designsystem.digital.gov/components/table/) : les conteneurs flexibles/empilés absorbent la variation de longueur FR/EN à 320 px sans débordement horizontal, les étiquettes mobiles `td::before { content: attr(data-label); }` restent synchronisées avec les en-têtes `thead th` traduits, et la cellule principale du panier cible la classe structurelle `.tableau-panier td.produit` en plus de `[data-label="Produit"]` pour conserver son empilement pleine largeur lorsque `data-label` devient `"Product"`.

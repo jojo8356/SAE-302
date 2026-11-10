@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 <p>Êtes-vous sûr de vouloir annuler la commande
     <strong><?= e($commande['numero']) ?></strong>
-    (<?= e(date_fr($commande['date_commande'], true)) ?>,
+    (<?= date_html($commande['date_commande'], true) ?>,
     <?= euros($commande['montant_total']) ?>) ?</p>
 
 <p><strong>Cette action est définitive.</strong> La commande passera au statut

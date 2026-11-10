@@ -8,7 +8,7 @@ $annulable = in_array($commande['statut'], ['BROUILLON', 'EN_PREPARATION', 'PAYE
 <h1>Commande <?= e($commande['numero']) ?></h1>
 
 <p>
-    Passée le <?= e(date_fr($commande['date_commande'], true)) ?> ·
+    Passée le <?= date_html($commande['date_commande'], true) ?> ·
     Statut : <strong><?= e(statut_libelle($commande['statut'])) ?></strong> ·
     Livraison : <?= e($commande['adresse_livraison']) ?>
 </p>
@@ -48,7 +48,7 @@ $annulable = in_array($commande['statut'], ['BROUILLON', 'EN_PREPARATION', 'PAYE
     <tbody>
     <?php foreach ($historique as $entree): ?>
         <tr>
-            <td><?= e(date_fr($entree['changed_at'], true)) ?></td>
+            <td><?= date_html($entree['changed_at'], true) ?></td>
             <td><?= e(statut_libelle($entree['new_status'])) ?></td>
             <td><?= e($entree['changed_by_role']) ?><?php if (!empty($entree['changed_by'])) { echo ' #' . (int) $entree['changed_by']; } else { echo ''; } ?></td>
             <td><?= e($entree['commentaire']) ?></td>

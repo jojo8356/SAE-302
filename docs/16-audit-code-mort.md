@@ -94,6 +94,9 @@ Tailles en octets historiques mesurées lors du premier audit (`870dda5`) ; les 
 | `app/Security/Auth.php` | 10330 | 16 | Session, authentification et gardes de rôles. Références : `app/Controller/Admin/CategorieAdminController.php`, `app/Controller/Admin/CommandeAdminController.php`, `app/Controller/Admin/DashboardController.php`…. |
 | `app/Security/Csrf.php` | 1906 | 4 | Génération et vérification des jetons CSRF. Références : `app/Controller/Admin/CategorieAdminController.php`, `app/Controller/Admin/CommandeAdminController.php`, `app/Controller/Admin/EquipeAdminController.php`…. |
 | `app/Security/xss.php` | 9276 | 15 | Helpers d’échappement, formatage, icônes et visuels. Références : `app/bootstrap.php`, `docs/01-cahier-des-charges-MiniShop.md`, `docs/07-note-cybersecurite.md`…. |
+| `app/Service/NettoyageJournaux.php` | — | 4 | Verrou partagé des écritures JSONL et rotation par date, utilisée par le formulaire, le journal et la CLI. |
+| `app/Service/NettoyageSauvegardes.php` | — | 1 | Rotation limitée au dossier dédié de sauvegardes identifiées, utilisée par la CLI. |
+| `app/Service/RetentionComptes.php` | 4184 | 1 | Traitement conservateur des comptes inactifs, appelé par la commande CLI de maintenance. |
 | `app/Tools/DbInstaller.php` | 17780 | 28 | Outil d’installation et inventaire SQL, utilisé par les scripts de développement. Références : `app/Config/DbConnexion.php`, `docs/10-todo-corrections.md`, `scripts/code_mort_reference.json`…. |
 | `app/Tools/DbProvision.php` | 10558 | 16 | Outil de provisionnement d’un compte SQL de développement. Références : `docs/10-todo-corrections.md`, `scripts/code_mort_reference.json`, `scripts/db_init.php`…. |
 | `app/Tools/EnvFile.php` | 3962 | 7 | Lecture/écriture ciblée du fichier de configuration local .env. Références : `docs/10-todo-corrections.md`, `scripts/code_mort_reference.json`, `scripts/db_init.php`…. |
@@ -168,6 +171,7 @@ Tailles en octets historiques mesurées lors du premier audit (`870dda5`) ; les 
 ## Ajouts de `main` à examiner lors de l’intégration
 
 | `app/Tools/Heure.php` | 8492 | 12 | Conversion et formatage des dates UTC et Europe/Paris. |
+| `app/View/admin/confirmer_annulation.php` | 1228 | 0 | Vue de confirmation de l’annulation administrateur, rendue par `app/Controller/Admin/CommandeAdminController.php`. |
 | `app/View/admin/confirmer_suppression_categorie.php` | 740 | 0 | Vue de confirmation avant action définitive. |
 | `app/View/admin/confirmer_suppression_produit.php` | 813 | 0 | Vue de confirmation avant action définitive. |
 | `app/View/commande/confirmer_annulation.php` | 925 | 0 | Vue de confirmation avant action définitive. |
@@ -184,3 +188,8 @@ Tailles en octets historiques mesurées lors du premier audit (`870dda5`) ; les 
 | `public/img/usbc.svg` | 693 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
 | `public/img/zen14.svg` | 699 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
 | `public/minishop.css` | 15182 | — | Feuille de style issue de main ; non chargée par le layout actuel, intégration à examiner. |
+
+| `app/View/home/preferences.php` | 0 | 0 | Préférences locales de langue et de fuseau, choix manuel et géolocalisation volontaire. |
+| `public/js/i18n-en.js` | 0 | 0 | Dictionnaire et règles de traduction anglaise FR/EN de l’interface, des pages légales, du back-office et des messages dynamiques. |
+| `public/js/preferences.js` | 0 | 0 | Affichage des dates, traduction réversible FR/EN et gestion locale des préférences, avec bornes UTC des filtres. |
+| `public/js/tz-lookup.js` | 0 | 0 | Bibliothèque locale de conversion approximative des coordonnées en fuseau. |

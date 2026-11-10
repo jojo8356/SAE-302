@@ -16,8 +16,8 @@ declare(strict_types=1);
  *   - DÉCLENCHEURS: les 16 triggers métier de sql/03 portés en callbacks PHP
  *                   (cf. Triggers) — ils sont la dernière barrière, y compris
  *                   pour un code applicatif défaillant (défense en profondeur) ;
- *   - TRANSACTIONS: snapshot mémoire + rollback (ENF-16 : un refus ne laisse
- *                   JAMAIS de données incohérentes), commit = flush atomique ;
+ *   - TRANSACTIONS: verrou coopératif local, écritures différées, rollback
+ *                   avant commit ; le commit reste atomique par fichier seul.
  *   - INDEX       : index PK en table de hachage (accès O(1) par clé) ;
  *   - JOURNAL     : piste d'audit append-only de chaque écriture
  *                   (var/journal/db.jsonl, exigence EF-GEN-04) ;
@@ -30,8 +30,10 @@ declare(strict_types=1);
  * le jour du basculement StorageDriver::SQL, les mêmes spécifications
  * deviennent des clauses WHERE indexées et ce fichier disparaît.
  *
- * Hors transaction, chaque écriture est immédiatement persistée ; en
- * transaction, les tables modifiées ne sont écrites qu'au commit().
+ * Hors transaction, chaque écriture utilise une transaction implicite. Les
+ * processus qui modifient les fichiers sans ce store ne respectent pas ce
+ * verrou. En cas de panne pendant le commit de plusieurs fichiers, une partie
+ * du commit peut être persistée : ce stockage n'est pas un SGBD transactionnel.
  */
 
 namespace App\Model\Data;
@@ -54,8 +56,8 @@ final class JsonStore implements StoreInterface
 
     private bool $transaction = false;
 
-    /** @var array<string, array> snapshot des tables chargées au BEGIN */
-    private array $snapshot = [];
+    /** @var resource|null verrou coopératif du dossier, détenu jusqu'à commit/rollback */
+    private $verrou = null;
 
     private ?Journal $journal;
 
@@ -198,6 +200,9 @@ final class JsonStore implements StoreInterface
 
     public function insert(string $table, array $row): int
     {
+        if (!$this->transaction) {
+            return $this->transactional(fn (): int => $this->insert($table, $row));
+        }
         $this->guardWritable($table);
         $def = Schema::table($table);
         $pk = $def['pk'];
@@ -236,6 +241,9 @@ final class JsonStore implements StoreInterface
 
     public function update(string $table, array $where, array $changes): int
     {
+        if (!$this->transaction) {
+            return $this->transactional(fn (): int => $this->update($table, $where, $changes));
+        }
         $this->guardWritable($table);
         $def = Schema::table($table);
         $pk = $def['pk'];
@@ -273,6 +281,9 @@ final class JsonStore implements StoreInterface
 
     public function delete(string $table, array $where): int
     {
+        if (!$this->transaction) {
+            return $this->transactional(fn (): int => $this->delete($table, $where));
+        }
         $this->guardWritable($table);
         $def = Schema::table($table);
         $pk = $def['pk'];
@@ -327,10 +338,18 @@ final class JsonStore implements StoreInterface
         if ($this->transaction) {
             throw new QueryError('Transaction déjà ouverte (imbrication interdite, comme un SGBD simple)');
         }
-        $this->snapshot = [];
-        foreach (array_keys($this->tables) as $name) {
-            $this->snapshot[$name] = $this->table($name)->snapshot();
+        $verrou = @fopen($this->dataPath . '/.minishop.lock', 'c+');
+        if ($verrou === false) {
+            throw new QueryError('Impossible d’ouvrir le verrou du magasin JSON');
         }
+        if (!flock($verrou, LOCK_EX)) {
+            fclose($verrou);
+            throw new QueryError('Impossible de verrouiller le magasin JSON');
+        }
+        $this->verrou = $verrou;
+        // Une autre requête peut avoir écrit depuis la dernière lecture de ce
+        // store. Recharger après acquisition, avant les contrôles métier.
+        $this->viderCache();
         $this->transaction = true;
     }
 
@@ -339,9 +358,13 @@ final class JsonStore implements StoreInterface
         if (!$this->transaction) {
             throw new QueryError('Aucune transaction ouverte');
         }
-        $this->transaction = false;
-        $this->snapshot = [];
-        $this->flush();
+        try {
+            $this->flush();
+        } finally {
+            $this->transaction = false;
+            $this->viderCache();
+            $this->libererVerrou();
+        }
     }
 
     public function rollback(): void
@@ -349,12 +372,26 @@ final class JsonStore implements StoreInterface
         if (!$this->transaction) {
             throw new QueryError('Aucune transaction ouverte');
         }
-        foreach ($this->snapshot as $name => $snap) {
-            $this->table($name)->restore($snap);
-            $this->invalidate($name);
-        }
+        // Aucune table n'a encore été écrite ; oublier les modifications.
         $this->transaction = false;
-        $this->snapshot = [];
+        $this->viderCache();
+        $this->libererVerrou();
+    }
+
+    private function viderCache(): void
+    {
+        $this->tables = [];
+        $this->pkIndex = [];
+        $this->pkIndexStale = [];
+    }
+
+    private function libererVerrou(): void
+    {
+        if (is_resource($this->verrou)) {
+            flock($this->verrou, LOCK_UN);
+            fclose($this->verrou);
+        }
+        $this->verrou = null;
     }
 
     public function inTransaction(): bool
@@ -408,6 +445,10 @@ final class JsonStore implements StoreInterface
     /** Force l'état d'une table (seed, tests, réinstallation). */
     public function replaceAll(string $table, array $rows, ?int $autoIncrement = null): void
     {
+        if (!$this->transaction) {
+            $this->transactional(fn () => $this->replaceAll($table, $rows, $autoIncrement));
+            return;
+        }
         $def = Schema::table($table);
         $pk = $def['pk'];
         $prepared = [];

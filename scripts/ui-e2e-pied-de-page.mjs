@@ -13,7 +13,7 @@
  *     les huit entrées attendues ;
  *   - chaque lien mène à une page réelle (HTTP 200) portant son
  *     propre titre, avec un contenu cohérent (port 4,90 € / 80 €,
- *     rétractation 14 jours, conservation 36 mois…).
+ *     rétractation 14 jours, conservation 24 mois…).
  *
  * Serveur cible : UI_BASE_URL si défini (CI : php -S + dev-router),
  * sinon scripts/wasm-serve.mjs démarré sur UI_PORT (défaut 8104).
@@ -108,7 +108,7 @@ const ENTREES = {
   '/aide': ['Aide', 'Aide', 'Comment commander ?'],
   '/livraison': ['Livraison', 'Livraison', 'Simulation uniquement'],
   '/retractation': ['Rétractation et retours', 'Rétractation', '14 jours'],
-  '/confidentialite': ['Confidentialité', 'confidentialité', '36 mois'],
+  '/confidentialite': ['Confidentialité', 'confidentialité', '24 mois'],
   '/contact': ['Contact', 'contacter', 'sans envoi d’e-mail ni réponse garantie'],
   '/a-propos': ['À propos', 'À propos', 'MiniShop'],
   '/mentions-legales': ['Mentions légales', 'Mentions légales', 'Projet pédagogique'],

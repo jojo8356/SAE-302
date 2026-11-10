@@ -109,7 +109,7 @@ $check(
 $check(
     "les six colonnes sont présentes et étiquetées sur mobile",
     str_contains($html, 'data-label="Numéro"') && str_contains($html, 'data-label="Date"')
-        && str_contains($html, 'data-label="Statut"') && str_contains($html, 'data-label="Articles"')
+        && str_contains($html, 'data-label="Statut"') && str_contains($html, 'data-label="Lignes d’articles"')
         && str_contains($html, 'data-label="Montant TTC"') && str_contains($html, 'data-label="Détail"')
 );
 $check(
@@ -136,7 +136,7 @@ $check(
     str_contains($html, 'CMD2026-000007')
         && str_contains($html, '15/01/2026')
         && str_contains($html, 'En préparation')
-        && str_contains($html, '<td data-label="Articles">3</td>')
+        && str_contains($html, '<td data-label="Lignes d’articles">3</td>')
 );
 $htmlVide = rendreMesCommandes([]);
 $check(

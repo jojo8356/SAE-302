@@ -802,6 +802,16 @@ body > main {
     margin-bottom: var(--e-4);
 }
 
+.filtres-prix {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--e-2);
+}
+.filtres-prix input { width: 100%; min-width: 0; }
+@media (max-width: 22em) {
+    .filtres-prix { grid-template-columns: minmax(0, 1fr); }
+}
+
 .panneau-filtres label {
     display: block;
     font-size: var(--t-sm);
@@ -1993,11 +2003,13 @@ select[data-largeur-courte] {
         color: var(--encre-douce);
     }
 
+    .tableau-panier td.produit,
     .tableau-panier td[data-label="Produit"] {
         display: block;
         padding-bottom: var(--e-2);
     }
 
+    .tableau-panier td.produit::before,
     .tableau-panier td[data-label="Produit"]::before {
         display: block;
         margin-bottom: var(--e-1);
@@ -2372,11 +2384,26 @@ select[data-largeur-courte] {
     .tableau-defilant--admin thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
     .tableau-defilant--admin table, .tableau-defilant--admin tbody, .tableau-defilant--admin tr, .tableau-defilant--admin td { display: block; width: 100%; }
     .tableau-defilant--admin tbody tr { border: 1px solid var(--bordure); border-radius: var(--r-md); background: var(--surface); padding: var(--e-3); margin-bottom: var(--e-3); }
-    .tableau-defilant--admin tbody td { display: grid; grid-template-columns: minmax(6rem, 35%) minmax(0, 1fr); gap: var(--e-2); padding: var(--e-1) 0; border: 0; text-align: left; overflow-wrap: anywhere; }
-    .tableau-defilant--admin tbody td::before { content: attr(data-label); font-weight: 700; color: var(--encre-douce); }
+    /* Une étiquette au-dessus de chaque valeur laisse toute la largeur utile,
+       y compris aux montants, libellés longs et formulaires de stock. */
+    .tableau-defilant--admin tbody td { display: block; min-width: 0; padding: var(--e-2) 0; border: 0; text-align: left; white-space: normal; overflow-wrap: anywhere; }
+    .tableau-defilant--admin tbody td + td { border-top: 1px solid var(--bordure); }
+    .tableau-defilant--admin .tableau-commandes .montant { text-align: left; white-space: normal; }
+    .tableau-defilant--admin tbody td::before { content: attr(data-label); display: block; margin-bottom: .2rem; font-size: var(--t-sm); font-weight: 700; color: var(--encre-douce); }
+    .tableau-defilant--admin tbody td .badge { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+    .tableau-defilant--admin .form-inline { display: grid; grid-template-columns: minmax(0, 1fr); }
+    .tableau-defilant--admin .form-inline input, .tableau-defilant--admin .form-inline select { max-width: 100%; width: 100%; }
+    .tableau-defilant--admin caption { white-space: normal; overflow-wrap: anywhere; }
 }
 
 /* Libellés à gauche, montants à droite : mêmes alignements que leurs titres. */
 .tableau-panier .produit, .tableau-stocks .reference, .tableau-stocks .produit,
 .tableau-alertes .reference, .tableau-alertes .produit { text-align: left; }
 .tableau-panier .montant { text-align: right; }
+
+/* Préférences personnelles : largeur de lecture et commandes adaptées au mobile. */
+.preferences { max-width: 48rem; margin: 2rem auto; padding: 0 var(--e-4); }
+.preferences fieldset { display: grid; gap: var(--e-3); min-width: 0; }
+.preferences select { width: 100%; max-width: 100%; }
+.preferences__actions { display: flex; flex-wrap: wrap; gap: var(--e-3); }
+.preferences button { white-space: normal; }

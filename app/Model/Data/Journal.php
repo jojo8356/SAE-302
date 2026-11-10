@@ -11,7 +11,7 @@ declare(strict_types=1);
  *    "pk":"42","actor":{"id":7,"role":"CLIENT","nom":"Dupont"},"old":null,
  *    "new":{…}}
  *
- * Équivalent du binlog MySQL en beaucoup plus simple : rejouable, greppable,
+ * Piste JSON simplifiée : les comptes sont minimisés, elle ne permet pas de rejouer toutes les écritures ;
  * lisible par un outil autorisé. Aucune interface de consultation n'est
  * actuellement branchée dans le back-office.
  * Si le dossier var/ n'est pas inscriptible, le moteur continue de fonctionner
@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace App\Model\Data;
 
 use App\Tools\Heure;
+use App\Service\NettoyageJournaux;
 
 final class Journal
 {
@@ -50,6 +51,21 @@ final class Journal
      */
     public function log(string $op, string $table, int|string $pk, ?array $old, ?array $new, array $actor): void
     {
+        // Les snapshots complets de comptes compromettraient leur suppression
+        // en base active. Garder uniquement les métadonnées nécessaires au suivi.
+        if ($table === 'client') {
+            $champs = array_flip(['id_client', 'actif', 'date_creation', 'derniere_connexion']);
+            if ($old !== null) { $old = array_intersect_key($old, $champs); }
+            if ($new !== null) { $new = array_intersect_key($new, $champs); }
+        }
+        if ($table === 'administrateur') {
+            // Identité et condensat sont dans la table source, pas nécessaires
+            // aux instantanés de la piste de modification des habilitations.
+            $champs = array_flip(['id_admin', 'actif', 'role', 'date_creation']);
+            if ($old !== null) { $old = array_intersect_key($old, $champs); }
+            if ($new !== null) { $new = array_intersect_key($new, $champs); }
+        }
+        if (($actor['role'] ?? '') === 'CLIENT') { $actor['nom'] = null; }
         $entry = [
             'at' => Heure::maintenantUtc()->format('c'),
             'op' => $op,
@@ -61,7 +77,7 @@ final class Journal
         ];
         $line = json_encode($entry, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         if ($line !== false) {
-            @file_put_contents($this->filePath, $line . "\n", FILE_APPEND | LOCK_EX);
+            NettoyageJournaux::ajouter($this->filePath, $line . "\n");
         }
     }
 

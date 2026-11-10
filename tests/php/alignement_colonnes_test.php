@@ -159,7 +159,7 @@ $check('stocks : le tableau porte la classe tableau-stocks', $stocks !== null);
 $check(
     'stocks : les en-têtes Réf. et Produit portent leurs classes d\'alignement',
     $stocks !== null
-        && str_contains($stocks, '<th scope="col" class="reference">Réf.</th>')
+        && str_contains($stocks, '<th scope="col" class="reference">Référence</th>')
         && str_contains($stocks, '<th scope="col" class="produit">Produit</th>')
 );
 $check(

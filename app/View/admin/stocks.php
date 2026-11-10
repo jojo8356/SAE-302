@@ -40,12 +40,12 @@ $compteurs = $compteurs ?? ['RUPTURE' => 0, 'TRES_BAS' => 0, 'DISPONIBLE' => 0];
         <p><a class="btn btn--secondaire" href="/admin/stocks">Voir tous les stocks</a></p>
     </div>
 <?php else: ?>
-    <div class="tableau-defilant tableau-defilant--admin" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
+    <div class="tableau-defilant tableau-defilant--admin" role="region" tabindex="0" aria-label="Tableau de données">
         <table class="tableau-stocks tableau-nombres">
             <caption>Le stock ne peut jamais devenir négatif ; chaque mouvement est journalisé avec son auteur</caption>
             <thead>
             <tr>
-                <th scope="col" class="reference">Réf.</th><th scope="col" class="produit">Produit</th><th scope="col">Stock</th>
+                <th scope="col" class="reference">Référence</th><th scope="col" class="produit">Produit</th><th scope="col">Stock</th>
                 <th scope="col">Seuil</th><th scope="col">État</th><th scope="col">Ajustement</th>
             </tr>
             </thead>

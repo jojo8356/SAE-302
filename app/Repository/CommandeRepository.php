@@ -26,6 +26,7 @@ namespace App\Repository;
 use App\Model\Data\BusinessError;
 use App\Model\Data\Filter;
 use App\Model\Data\StoreInterface;
+use App\Model\Data\SqlStore;
 use App\Model\Data\Triggers;
 use App\Tools\Heure;
 
@@ -81,10 +82,19 @@ final class CommandeRepository
     /** Piste d'audit des statuts d'une commande (RB-11, EF-ADM-08). */
     public function historique(int $idCommande): array
     {
-        return $this->store->select('order_status_history', [
+        $historique = $this->store->select('order_status_history', [
             'where' => [Filter::eq('order_id', $idCommande)],
             'order' => [Filter::sort('id')],
         ]);
+        foreach ($historique as &$entree) {
+            $texte = (string) ($entree['commentaire'] ?? '');
+            if (preg_match('/^Tracé par trg_history_statut le (\d{4}-\d{2}-\d{2} \d{2}:\d{2})$/u', $texte, $parts) === 1) {
+                $entree['commentaire'] = 'Changement de statut le ' . $parts[1];
+            }
+        }
+        unset($entree);
+
+        return $historique;
     }
 
     /** Historique de commandes d'un client (UC-08, EF-CLI-08). */
@@ -292,78 +302,115 @@ final class CommandeRepository
         if (!in_array($nouveauStatut, Triggers::STATUTS, true)) {
             throw new BusinessError('STATUT_NON_AUTORISE');
         }
-        $commande = $this->store->find('commande', $idCommande);
-        if ($commande === null) {
-            throw new BusinessError('COMMANDE_INTROUVABLE');
-        }
-        // règle métier : le client annule tant que ce n'est pas expédié ; l'admin
-        // peut en plus piloter tout le cycle (matrice RB-11 côté déclencheur)
-        if ($roleAuteur === 'CLIENT' && !in_array($commande['statut'], ['BROUILLON', 'EN_PREPARATION', 'PAYEE'], true)) {
-            throw new BusinessError('ANNULATION_TROP_TARDIVE');
+        if ($nouveauStatut === 'ANNULEE') {
+            $this->annuler($idCommande, $idAuteur, $roleAuteur, $commentaire, true);
+
+            return 'OK';
         }
 
-        if ($commande['statut'] === $nouveauStatut) {
-            return 'STATUT_DEJA_A_JOUR';
-        }
+        return $this->store->transactional(function () use ($idCommande, $nouveauStatut, $commentaire, $idAuteur, $roleAuteur): string {
+            $commande = $this->trouverVerrouille('commande', $idCommande);
+            if ($commande === null) {
+                throw new BusinessError('COMMANDE_INTROUVABLE');
+            }
+            if ($roleAuteur === 'CLIENT' && !in_array($commande['statut'], ['BROUILLON', 'EN_PREPARATION', 'PAYEE'], true)) {
+                throw new BusinessError('ANNULATION_TROP_TARDIVE');
+            }
+            if ($commande['statut'] === $nouveauStatut) {
+                return 'STATUT_DEJA_A_JOUR';
+            }
+            $this->store->setActor(['id' => $idAuteur, 'role' => $roleAuteur]);
+            try {
+                $changes = ['statut' => $nouveauStatut];
+                if ($commentaire !== null && trim($commentaire) !== '') {
+                    $changes['commentaire'] = trim($commentaire);
+                }
+                $this->store->update('commande', [Filter::eq('id_commande', $idCommande)], $changes);
+            } finally {
+                $this->store->setActor(['id' => null, 'role' => 'SYSTEME']);
+            }
 
-        $this->store->setActor(['id' => $idAuteur, 'role' => $roleAuteur]);
-        $changes = ['statut' => $nouveauStatut];
-        if ($commentaire !== null && trim($commentaire) !== '') {
-            $changes['commentaire'] = trim($commentaire);
-        }
-        $this->store->update('commande', [Filter::eq('id_commande', $idCommande)], $changes);
-        $this->store->setActor(['id' => null, 'role' => 'SYSTEME']);
-
-        return 'OK';
+            return 'OK';
+        });
     }
 
-    /**
-     * sp_cancel_order — annulation par le client (UC-09, EF-CLI-10) :
-     * restitution du stock LIGNE À LIGNE, puis statut ANNULEE. RB-20 : une
-     * commande annulée n'a plus rien à facturer — frais de port et montant
-     * total sont soldés à 0. En revanche les LIGNES SONT CONSERVÉES comme
-     * historique de ce qui avait été commandé (le client continue de voir
-     * ses articles et leurs prix figés), et le total d'origine (port
-     * compris) est mémorisé dans montant_avant_annulation pour l'affichage.
-     *
+    /** @return array<string,mixed>|null */
+    private function trouverVerrouille(string $table, int $id): ?array
+    {
+        if ($this->store instanceof SqlStore) {
+            return $this->store->findForUpdate($table, $id);
+        }
+
+        return $this->store->find($table, $id);
+    }
+
+    /** Annulation client : lignes conservées et montants soldés.
      * @return array{unites_rendues: int, montant_rembourse: float}
      */
     public function cancelOrder(int $idCommande, ?int $idClient): array
     {
-        $commande = $this->store->find('commande', $idCommande);
-        if ($commande === null) {
-            throw new BusinessError('COMMANDE_INTROUVABLE');
-        }
-        if ($idClient !== null && (int) $commande['id_client'] !== $idClient) {
-            throw new BusinessError('ACCES_NON_AUTORISE');
-        }
-        if (!in_array($commande['statut'], ['BROUILLON', 'EN_PREPARATION', 'PAYEE'], true)) {
-            throw new BusinessError('COMMANDE_NON_ANNULABLE');
-        }
+        return $this->annuler($idCommande, $idClient, 'CLIENT', null, false);
+    }
 
-        return $this->store->transactional(function () use ($idCommande, $idClient, $commande): array {
-            $this->store->setActor(['id' => $idClient, 'role' => 'CLIENT']);
-            // Le stock est restitué explicitement, ligne à ligne (RB-18) :
-            // les lignes ne sont plus supprimées, elles restent l'historique
-            // de la commande annulée.
-            $unitesRendues = 0;
-            foreach ($this->lignes($idCommande) as $ligne) {
-                $unitesRendues += (int) $ligne['quantite'];
-                $produit = $this->store->find('produit', (int) $ligne['id_produit']);
-                if ($produit !== null) {
-                    $this->store->update('produit', [Filter::eq('id_produit', (int) $ligne['id_produit'])], [
-                        'stock' => (int) $produit['stock'] + (int) $ligne['quantite'],
-                    ]);
-                }
+    /** Pour une commande expédiée, le stock ne revient qu'après retour physique vérifié.
+     * @return array{unites_rendues: int, montant_rembourse: float}
+     */
+    private function annuler(int $idCommande, ?int $idAuteur, string $roleAuteur, ?string $commentaire, bool $messageTardive): array
+    {
+        return $this->store->transactional(function () use ($idCommande, $idAuteur, $roleAuteur, $commentaire, $messageTardive): array {
+            $commande = $this->trouverVerrouille('commande', $idCommande);
+            if ($commande === null) {
+                throw new BusinessError('COMMANDE_INTROUVABLE');
             }
-            $this->store->update('commande', [Filter::eq('id_commande', $idCommande)], [
-                'statut' => 'ANNULEE',
-                'frais_port' => 0.0,
-                'montant_total' => 0.0,
-                'montant_avant_annulation' => (float) $commande['montant_total'],
-                'commentaire' => $commande['commentaire'] ?? 'Annulation demandée par le client',
-            ]);
-            $this->store->setActor(['id' => null, 'role' => 'SYSTEME']);
+            if ($roleAuteur === 'CLIENT' && $idAuteur !== null && (int) $commande['id_client'] !== $idAuteur) {
+                throw new BusinessError('ACCES_NON_AUTORISE');
+            }
+            $statut = (string) $commande['statut'];
+            $autorisés = ['BROUILLON', 'EN_PREPARATION', 'PAYEE'];
+            if ($roleAuteur === 'ADMIN') {
+                $autorisés[] = 'EXPEDIEE';
+            }
+            if (!in_array($statut, $autorisés, true)) {
+                if ($messageTardive && $roleAuteur === 'CLIENT' && $statut === 'EXPEDIEE') {
+                    throw new BusinessError('ANNULATION_TROP_TARDIVE');
+                }
+                throw new BusinessError('COMMANDE_NON_ANNULABLE');
+            }
+
+            $this->store->setActor(['id' => $idAuteur, 'role' => $roleAuteur]);
+            try {
+                $unitesRendues = 0;
+                $lignes = $this->lignes($idCommande);
+                usort($lignes, static fn (array $a, array $b): int => (int) $a['id_produit'] <=> (int) $b['id_produit']);
+                if ($statut !== 'EXPEDIEE') {
+                    foreach ($lignes as $ligne) {
+                        $produit = $this->trouverVerrouille('produit', (int) $ligne['id_produit']);
+                        if ($produit !== null) {
+                            $quantite = (int) $ligne['quantite'];
+                            $this->store->update('produit', [Filter::eq('id_produit', (int) $ligne['id_produit'])], [
+                                'stock' => (int) $produit['stock'] + $quantite,
+                            ]);
+                            $unitesRendues += $quantite;
+                        }
+                    }
+                }
+                $motif = trim((string) $commentaire);
+                if ($motif === '') {
+                    $motif = 'Annulation demandée par le client';
+                    if ($roleAuteur === 'ADMIN') {
+                        $motif = 'Annulation par l’administration';
+                    }
+                }
+                $this->store->update('commande', [Filter::eq('id_commande', $idCommande)], [
+                    'statut' => 'ANNULEE',
+                    'frais_port' => 0.0,
+                    'montant_total' => 0.0,
+                    'montant_avant_annulation' => (float) $commande['montant_total'],
+                    'commentaire' => $motif,
+                ]);
+            } finally {
+                $this->store->setActor(['id' => null, 'role' => 'SYSTEME']);
+            }
 
             return ['unites_rendues' => $unitesRendues, 'montant_rembourse' => (float) $commande['montant_total']];
         });

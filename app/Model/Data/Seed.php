@@ -66,8 +66,8 @@ final class Seed
                 'comment' => 'Port offert au-delà de ce montant de marchandises'],
             ['cle' => 'tva_defaut', 'valeur' => '20.00', 'unite' => '%',
                 'comment' => 'Taux par défaut proposé à la création d’un produit'],
-            ['cle' => 'conservation_compte', 'valeur' => '36', 'unite' => 'mois',
-                'comment' => 'Données client en base active après le dernier contact (référentiel CNIL)'],
+            ['cle' => 'conservation_compte', 'valeur' => '24', 'unite' => 'mois',
+                'comment' => 'Délai en mois depuis la dernière activité du compte ; traitement planifié à installer'],
         ]);
 
         $store->replaceAll('administrateur', [

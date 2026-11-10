@@ -17,6 +17,7 @@ use App\Model\Data\Triggers;
 use App\Model\Data\Views;
 use App\Repository\CommandeRepository;
 use App\Security\Auth;
+use App\Tools\Heure;
 
 final class CommandeAdminController extends Controller
 {
@@ -54,11 +55,19 @@ final class CommandeAdminController extends Controller
         }
         $du = $this->str('du', 10);
         if ($du !== '') {
-            $where[] = Filter::gte('date_commande', $du . ' 00:00:00');
+            $borne = $this->str('debut_utc', 19);
+            $debutUtc = Heure::borneJourUtc($du);
+            if ($borne !== '') { $debutUtc = Heure::borneTransmise($du, $borne); }
+            if ($debutUtc === null) { $where[] = Filter::eq('id_commande', -1); }
+            else { $where[] = Filter::gte('date_commande', $debutUtc); }
         }
         $au = $this->str('au', 10);
         if ($au !== '') {
-            $where[] = Filter::lte('date_commande', $au . ' 23:59:59');
+            $borne = $this->str('fin_utc', 19);
+            $finUtc = Heure::borneJourUtc($au, true);
+            if ($borne !== '') { $finUtc = Heure::borneTransmise($au, $borne, true); }
+            if ($finUtc === null) { $where[] = Filter::eq('id_commande', -1); }
+            else { $where[] = Filter::lt('date_commande', $finUtc); }
         }
         $montantMin = $this->float('montant_min');
         if ($montantMin !== null) {
@@ -118,6 +127,19 @@ final class CommandeAdminController extends Controller
         if ($nouveauStatut === 'ANNULEE' && ($commentaire === null || trim($commentaire) === '')) {
             $this->flashErreur('Un commentaire est obligatoire pour annuler une commande.');
             $this->rediriger('/admin/commandes/' . $id);
+        }
+
+        if ($nouveauStatut === 'ANNULEE' && $this->str('confirmer_annulation', 1) !== '1') {
+            $commande = $repo->find((int) $id);
+            if ($commande === null) {
+                $this->flashErreur('Commande introuvable.');
+                $this->rediriger('/admin/commandes');
+            }
+            $this->render('admin/confirmer_annulation', [
+                'commande' => $commande,
+                'commentaire' => $commentaire,
+            ], 'Confirmer l’annulation');
+            return;
         }
 
         try {

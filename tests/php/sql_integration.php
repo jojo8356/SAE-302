@@ -144,6 +144,54 @@ try {
     exit(1);
 }
 
+// Vérification sur table TEMPORAIRE et session dédiée : aucun changement global
+// du serveur, aucune donnée applicative modifiée. Jouée sur MySQL et MariaDB.
+echo "\n2 bis. Fuseau de session SQL et dates automatiques\n";
+$echecsFuseau = 0;
+try {
+    $pdoFuseau = DbConnexion::ouvrir($base, $config);
+    if ($pdoFuseau->query('SELECT @@session.time_zone')->fetchColumn() !== '+00:00') {
+        throw new RuntimeException('La connexion centrale ne fixe pas UTC.');
+    }
+    // Simuler une connexion extérieure non UTC avant de l'injecter dans SqlStore.
+    $pdoFuseau->exec("SET SESSION time_zone = '+05:30'");
+    $temoin = $pdoFuseau->query('SELECT @@session.time_zone, TIMESTAMPDIFF(SECOND, UTC_TIMESTAMP(), CURRENT_TIMESTAMP())')->fetch(PDO::FETCH_NUM);
+    if ($temoin === false || $temoin[0] !== '+05:30' || (int) $temoin[1] !== 19800) {
+        throw new RuntimeException('Le fuseau hostile de test ne fonctionne pas.');
+    }
+    $storeFuseau = new \App\Model\Data\SqlStore($pdoFuseau);
+    $storeFuseau->pdo();
+    if ($pdoFuseau->query('SELECT @@session.time_zone')->fetchColumn() !== '+00:00') {
+        throw new RuntimeException('La connexion injectée ne revient pas en UTC.');
+    }
+    $pdoFuseau->exec('CREATE TEMPORARY TABLE test_fuseau_utc (id INT NOT NULL PRIMARY KEY, cree DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, modifie DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)');
+    $cas = [
+        ['2026-01-15 18:15:00', '15/01/2026 19h15'],
+        ['2026-07-15 17:15:00', '15/07/2026 19h15'],
+    ];
+    foreach ($cas as $i => [$utc, $paris]) {
+        $instant = new DateTimeImmutable($utc, new DateTimeZone('UTC'));
+        $pdoFuseau->exec('SET timestamp = ' . $instant->getTimestamp());
+        if ($i === 0) {
+            $pdoFuseau->exec('INSERT INTO test_fuseau_utc (id) VALUES (1)');
+            $colonne = 'cree';
+        } else {
+            $pdoFuseau->exec('UPDATE test_fuseau_utc SET id = 2 WHERE id = 1');
+            $colonne = 'modifie';
+        }
+        $stocke = $pdoFuseau->query('SELECT ' . $colonne . ' FROM test_fuseau_utc')->fetchColumn();
+        if ($stocke !== $utc || date_fr($stocke, true) !== $paris) {
+            throw new RuntimeException('Date SQL ou affichage Paris incorrect pour le cas ' . $i);
+        }
+    }
+    $pdoFuseau->exec('SET timestamp = 0');
+    $pdoFuseau->exec('DROP TEMPORARY TABLE test_fuseau_utc');
+    echo "   ✅ session UTC, connexion injectée hostile, INSERT et UPDATE en hiver et été\n";
+} catch (Throwable $erreur) {
+    $echecsFuseau = 1;
+    echo '   ❌ fuseau SQL : ' . $erreur->getMessage() . "\n";
+}
+
 // Contrat de pagination du repository, sur la même base dédiée et en lecture seule.
 // Jamais sur la base applicative. Les scénarios sont partagés avec le pilote JSON.
 echo "\n3. Catalogue : ruptures en dernier (pilote SQL)\n";
@@ -223,7 +271,123 @@ $sortie = [];
 $code = 0;
 @exec($prefixe . 'bash ' . escapeshellarg($harnais) . ' 2>&1', $sortie, $code);
 echo implode("\n", $sortie) . "\n";
-if (($echecsCatalogue !== 0 || $echecsNouveautes !== 0) && $code === 0) {
+
+// Étape 6 placée APRÈS run_tests.sh pour ne jamais altérer le jeu d'essai initial attendu par l'étape 5.
+echo "\n6. Annulation (client/admin/expédiée), bornes UTC et rétention des comptes (pilote SQL)\n";
+$echecsParcoursSql = 0;
+try {
+    $pdoParcours = DbConnexion::ouvrir($base, $config);
+    $storeParcours = new \App\Model\Data\SqlStore($pdoParcours);
+    $repoCmd = \App\Repository\CommandeRepository::for($storeParcours);
+
+    $ligneProduit = $pdoParcours->query('SELECT id_produit, stock FROM produit WHERE visible = 1 AND stock >= 6 ORDER BY id_produit ASC LIMIT 1')->fetch(PDO::FETCH_ASSOC);
+    if (!is_array($ligneProduit)) {
+        throw new RuntimeException('Aucun produit avec stock >= 6 sur la base de test.');
+    }
+    $idProdTest = (int) $ligneProduit['id_produit'];
+    $stockReference = (int) $ligneProduit['stock'];
+
+    // 6a. sp_cancel_order (client) restitue le stock et solde les montants.
+    $cmdClient = $repoCmd->createOrderFromBasket(1, '10 rue de la République, 06000 Nice', [['id_produit' => $idProdTest, 'quantite' => 2]], true);
+    $idCmdClient = (int) $cmdClient['id_commande'];
+    $pdoParcours->exec("CALL sp_cancel_order($idCmdClient, 1, @code_cancel_sql)");
+    $codeCancelSql = (string) $pdoParcours->query('SELECT @code_cancel_sql')->fetchColumn();
+    $etatCmdClient = $repoCmd->find($idCmdClient);
+    $stockApresClient = (int) $pdoParcours->query('SELECT stock FROM produit WHERE id_produit = ' . $idProdTest)->fetchColumn();
+    if ($codeCancelSql !== 'OK' || $etatCmdClient === null || $etatCmdClient['statut'] !== 'ANNULEE'
+        || (float) $etatCmdClient['montant_total'] !== 0.0 || $stockApresClient !== $stockReference) {
+        throw new RuntimeException('sp_cancel_order incorrect : code=' . $codeCancelSql . ', stock=' . $stockApresClient);
+    }
+
+    // 6b. Garde ANNULATION_VIA_PARCOURS_DEDIE sur sp_update_order_status + annulation admin PAYEE (stock restitué).
+    $cmdAdminPayee = $repoCmd->createOrderFromBasket(1, '12 avenue Jean Médecin, 06000 Nice', [['id_produit' => $idProdTest, 'quantite' => 1]], true);
+    $idCmdPayee = (int) $cmdAdminPayee['id_commande'];
+    $gardeActive = false;
+    try {
+        $pdoParcours->exec("CALL sp_update_order_status($idCmdPayee, 'ANNULEE', 'direct interdit', 1, 'ADMIN', @code_interdit)");
+    } catch (PDOException $erreurSql) {
+        if (str_contains($erreurSql->getMessage(), 'ANNULATION_VIA_PARCOURS_DEDIE')) {
+            $gardeActive = true;
+        } else {
+            throw $erreurSql;
+        }
+    }
+    if (!$gardeActive) {
+        throw new RuntimeException('sp_update_order_status a laissé passer ANNULEE en direct.');
+    }
+    $repoCmd->updateOrderStatus($idCmdPayee, 'ANNULEE', 'Rupture fournisseur', 1, 'ADMIN');
+    $stockApresAdminPayee = (int) $pdoParcours->query('SELECT stock FROM produit WHERE id_produit = ' . $idProdTest)->fetchColumn();
+    if ($stockApresAdminPayee !== $stockReference) {
+        throw new RuntimeException('Annulation admin PAYEE : stock non restitué.');
+    }
+
+    // 6c. Annulation admin d'une commande EXPEDIEE : stock non restitué, client bloqué.
+    $cmdExp = $repoCmd->createOrderFromBasket(1, '14 boulevard Victor Hugo, 06000 Nice', [['id_produit' => $idProdTest, 'quantite' => 2]], true);
+    $idCmdExp = (int) $cmdExp['id_commande'];
+    $repoCmd->updateOrderStatus($idCmdExp, 'EXPEDIEE', 'Colis expédié', 1, 'ADMIN');
+    $codeRefusClient = '';
+    try {
+        $repoCmd->updateOrderStatus($idCmdExp, 'ANNULEE', 'Client trop tard', 1, 'CLIENT');
+    } catch (\App\Model\Data\BusinessError $erreurMetier) {
+        $codeRefusClient = $erreurMetier->businessCode;
+    }
+    if ($codeRefusClient !== 'ANNULATION_TROP_TARDIVE') {
+        throw new RuntimeException('Refus client sur commande EXPEDIEE attendu (obtenu : ' . $codeRefusClient . ').');
+    }
+    $repoCmd->updateOrderStatus($idCmdExp, 'ANNULEE', 'Avarie transporteur', 1, 'ADMIN');
+    $stockApresExp = (int) $pdoParcours->query('SELECT stock FROM produit WHERE id_produit = ' . $idProdTest)->fetchColumn();
+    $etatExp = $repoCmd->find($idCmdExp);
+    if ($stockApresExp !== $stockReference - 2 || $etatExp === null || $etatExp['statut'] !== 'ANNULEE' || (float) $etatExp['montant_total'] !== 0.0) {
+        throw new RuntimeException('Annulation admin EXPEDIEE incorrecte (le stock ne devait pas revenir).');
+    }
+
+    // 6d. Filtrage UTC strict par bornes [debut, fin[ sur revenueReport.
+    $jourUtc = \App\Tools\Heure::maintenantUtc()->format('Y-m-d');
+    $debutJour = \App\Tools\Heure::borneJourUtc($jourUtc, false);
+    $finJour = \App\Tools\Heure::borneJourUtc($jourUtc, true);
+    if ($debutJour === null || $finJour === null) {
+        throw new RuntimeException('Bornes UTC du jour courant introuvables.');
+    }
+    $cmdRapport = $repoCmd->createOrderFromBasket(1, '16 rue Pastorelli, 06000 Nice', [['id_produit' => $idProdTest, 'quantite' => 1]], true);
+    $rapportJour = $repoCmd->revenueReport($debutJour, $finJour);
+    $rapportVide = $repoCmd->revenueReport('1999-01-01 00:00:00', '1999-01-02 00:00:00');
+    if ($rapportJour['par_statut'] === [] || $rapportVide['par_statut'] !== [] || (int) $cmdRapport['id_commande'] <= 0) {
+        throw new RuntimeException('Filtrage par bornes UTC de revenueReport incohérent.');
+    }
+
+    // 6e. RetentionComptes sur SqlStore : simulation puis suppression sélective d'un compte inactif sans commande.
+    if ($storeParcours->find('parametre', 'conservation_compte') === null) {
+        $storeParcours->insert('parametre', [
+            'cle' => 'conservation_compte',
+            'valeur' => '24',
+            'description' => 'Conservation comptes inactifs (mois)',
+        ]);
+    } else {
+        $storeParcours->update('parametre', [\App\Model\Data\Filter::eq('cle', 'conservation_compte')], ['valeur' => '24']);
+    }
+    $repoClients = new \App\Repository\ClientRepository($storeParcours);
+    $emailInactif = 'sql.inactif.' . bin2hex(random_bytes(4)) . '@example.test';
+    $idInactif = $repoClients->createAccount('Inactif', 'Sql', $emailInactif, password_hash('MotDePasse2026!', PASSWORD_BCRYPT, ['cost' => 4]));
+    $storeParcours->update('client', [\App\Model\Data\Filter::eq('id_client', $idInactif)], [
+        'date_creation' => '2021-02-01 08:00:00',
+        'derniere_connexion' => '2021-03-01 08:00:00',
+    ]);
+    $retentionSql = new \App\Service\RetentionComptes($storeParcours);
+    $simSql = $retentionSql->traiter(\App\Tools\Heure::maintenantUtc(), false);
+    if ($simSql['supprimés'] !== 0 || $simSql['éligibles'] < 1 || $storeParcours->find('client', $idInactif) === null) {
+        throw new RuntimeException('Simulation RetentionComptes SQL invalide.');
+    }
+    $execSql = $retentionSql->traiter(\App\Tools\Heure::maintenantUtc(), true);
+    if ($execSql['supprimés'] < 1 || $storeParcours->find('client', $idInactif) !== null || $storeParcours->find('client', 1) === null) {
+        throw new RuntimeException('Exécution RetentionComptes SQL invalide.');
+    }
+    echo "   ✅ sp_cancel_order, garde sp_update_order_status, annulation EXPEDIEE sans retour stock, bornes UTC et RetentionComptes SQL\n";
+} catch (Throwable $erreur) {
+    $echecsParcoursSql = 1;
+    echo '   ❌ parcours SQL étape 6 : ' . $erreur->getMessage() . "\n";
+}
+
+if (($echecsCatalogue !== 0 || $echecsNouveautes !== 0 || $echecsFuseau !== 0 || $echecsParcoursSql !== 0) && $code === 0) {
     $code = 1;
 }
 

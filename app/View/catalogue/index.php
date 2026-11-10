@@ -69,6 +69,7 @@ $filtresActifs = $criteres['mot_cle'] !== '' || $criteres['id_categorie'] !== nu
                     </select>
                 </p>
 
+                <div class="filtres-prix">
                 <p>
                     <label for="prix_min">Prix TTC minimum (€)</label>
                     <input type="number" id="prix_min" name="prix_min" min="0" step="0.01" value="<?= e($criteres['prix_min']) ?>">
@@ -77,6 +78,7 @@ $filtresActifs = $criteres['mot_cle'] !== '' || $criteres['id_categorie'] !== nu
                     <label for="prix_max">Prix TTC maximum (€)</label>
                     <input type="number" id="prix_max" name="prix_max" min="0" step="0.01" value="<?= e($criteres['prix_max']) ?>">
                 </p>
+                </div>
 
                 <p>
                     <label for="stock">

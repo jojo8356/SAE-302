@@ -80,6 +80,9 @@ final class ParametreRepository
             throw new \App\Model\Data\BusinessError('PARAMETRE_VALEUR_INVALIDE');
         }
 
+        if ($cle === 'conservation_compte' && (preg_match('/^[1-9][0-9]{0,2}$/', $valeur) !== 1 || (int) $valeur > 120)) {
+            throw new \App\Model\Data\BusinessError('PARAMETRE_VALEUR_INVALIDE');
+        }
         $this->store->update('parametre', [['cle', '=', $cle]], ['valeur' => str_replace(',', '.', $valeur)]);
     }
 

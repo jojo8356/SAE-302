@@ -221,6 +221,48 @@ $check(
         && !str_contains($detailVivante, 'Montant soldé')
 );
 
+/* Parcours admin : montant, stock et acteur sont cohérents, y compris après expédition. */
+echo "\n== 4 · Annulation administrateur ==\n";
+$produitAdmin = pid($store, 'CABLE-009');
+$stockAvantAdmin = (int) $store->find('produit', $produitAdmin)['stock'];
+$creationAdmin = $repo->createOrderFromBasket($idCarla, 'Adresse test', [
+    ['id_produit' => $produitAdmin, 'quantite' => 2],
+], true);
+$idAdmin = (int) $creationAdmin['id_commande'];
+$avantAdmin = $repo->find($idAdmin);
+$repo->updateOrderStatus($idAdmin, 'ANNULEE', 'Client absent', 1, 'ADMIN');
+$apresAdmin = $repo->find($idAdmin);
+$histAdmin = $repo->historique($idAdmin);
+$derniereAdmin = end($histAdmin);
+$check('admin : stock restitué, montant soldé et original conservé',
+    (int) $store->find('produit', $produitAdmin)['stock'] === $stockAvantAdmin
+    && (float) $apresAdmin['montant_total'] === 0.0 && (float) $apresAdmin['frais_port'] === 0.0
+    && (float) $apresAdmin['montant_avant_annulation'] === (float) $avantAdmin['montant_total']);
+$check('admin : lignes, rôle et motif conservés', count($repo->lignes($idAdmin)) === 1
+    && $derniereAdmin['changed_by_role'] === 'ADMIN' && (int) $derniereAdmin['changed_by'] === 1
+    && $derniereAdmin['commentaire'] === 'Client absent');
+$codeAdmin = '';
+try { $repo->updateOrderStatus($idAdmin, 'ANNULEE', 'bis', 1, 'ADMIN'); }
+catch (BusinessError $e) { $codeAdmin = $e->businessCode; }
+$check('admin : seconde annulation refusée sans doubler le stock', $codeAdmin === 'COMMANDE_NON_ANNULABLE'
+    && (int) $store->find('produit', $produitAdmin)['stock'] === $stockAvantAdmin);
+
+$creationExpediee = $repo->createOrderFromBasket($idCarla, 'Adresse test', [
+    ['id_produit' => $produitAdmin, 'quantite' => 1],
+], true);
+$idExpediee = (int) $creationExpediee['id_commande'];
+$repo->updateOrderStatus($idExpediee, 'EXPEDIEE', 'Expédiée', 1, 'ADMIN');
+$stockExpedie = (int) $store->find('produit', $produitAdmin)['stock'];
+$repo->updateOrderStatus($idExpediee, 'ANNULEE', 'Retour à vérifier', 1, 'ADMIN');
+$check('admin : expédiée soldée sans restituer physiquement le stock',
+    (int) $store->find('produit', $produitAdmin)['stock'] === $stockExpedie
+    && (float) $repo->find($idExpediee)['montant_total'] === 0.0);
+$confirmation = texteRendu('admin/confirmer_annulation', ['commande' => ['numero' => 'TEST',
+    'id_commande' => 1, 'statut' => 'EXPEDIEE', 'montant_total' => 10], 'commentaire' => 'Motif']);
+$check('confirmation admin expédiée : avertissement stock et action explicite',
+    str_contains($confirmation, 'stock ne sera pas automatiquement restitué')
+    && str_contains($confirmation, 'Confirmer l’annulation définitive'));
+
 ob_end_clean();
 
 $symbole = '❌';

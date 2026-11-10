@@ -26,12 +26,15 @@ Le [rapport d’audit global](docs/17-audit-global-projet.md) et son [inventaire
 ## Informations légales et données (maquette)
 
 Le pied de page donne accès aux mentions légales, CGV pédagogiques, livraison, rétractation,
-garanties, confidentialité et cookies. **Aucune vente, livraison ou paiement réel** : l'identité
-du vendeur et de l'hébergeur, le médiateur, les durées de conservation effectives et d'autres
-informations restent à renseigner. La fonction légale de rétractation en ligne avec accusé durable
-**n'est pas opérationnelle** : ne pas utiliser ce projet pour vendre en l'état. L'audit, les sources,
-le détail des cookies réellement identifiés et la checklist figurent dans
-[`docs/12-information-juridique.md`](docs/12-information-juridique.md).
+garanties, confidentialité et cookies. Les mentions légales renseignent l’édition étudiante à
+titre non professionnel (**Johan Polsinelli** et **Chahd Gouiaa**, SAE S3.02 — IUT Nice Côte d’Azur,
+art. 6-III-2 LCEN) ainsi que l’hébergement pédagogique visé (**Université Côte d’Azur — IUT Nice Côte d’Azur**,
+`linserv-info-01.campus.unice.fr`). **Aucune vente, livraison ou paiement réel** : l’identité d’un
+vendeur professionnel, le médiateur, le responsable de traitement commercial et les durées de
+conservation effectives restent hors périmètre de la maquette. La fonction légale de rétractation
+en ligne avec accusé durable **n'est pas opérationnelle** : ne pas utiliser ce projet pour vendre
+en l'état. L'audit, les sources, le détail des cookies réellement identifiés et la checklist
+figurent dans [`docs/12-information-juridique.md`](docs/12-information-juridique.md).
 
 ## Aide locale en ligne de commande
 
@@ -316,7 +319,7 @@ Commandes individuelles existantes : `npm test`, `npm run test:units`, `npm run 
 
 **Régression « page À propos »** (EF-GEN-05) : la page parlait aux développeurs (chemins de fichiers, noms de classes, codes RB-…) et affirmait que la boutique « ne fonctionne ni avec MySQL, ni avec aucune requête SQL » — formulation trompeuse pour le sujet PHP/MySQL/PDO et fausse après la bascule MySQL de l'hébergement final ; elle annonçait en outre « 4 paramètres » en n'en citant que 3. La page présente désormais la boutique aux visiteurs (catalogue en chiffres, règles pratiques) avec une formulation technique honnête — cible MySQL via PDO, moteur intégré seulement pour l'étape de démonstration — et rend les paramètres **depuis la base** (`ParametreRepository::tous()`), donc le nombre annoncé est par construction le nombre affiché : livraison 4,90 €, offerte dès 80 €, TVA 20 %, conservation des données 36 mois. Verrouillé par `tests/php/apropos_test.php` (41 vérifications : rendu réel, données du seed, jargon banni, formulation MySQL/PDO) et l'E2E UI `scripts/ui-e2e-apropos.mjs` (31 vérifications, `npm run test:ui-apropos`), tous deux dans `test:all` et le job CI `ui-e2e`.
 
-**Régression « heures décalées »** (historique, détail et listes de commandes) : les horodatages naissaient en UTC (`date_default_timezone_set('UTC')` dans `app/bootstrap.php`, `date()` partout) et `date_fr()` les réaffichait tels quels — une commande passée à 19h15 à Paris s'affichait 18h15 (17h15 en été). Correctif : un gestionnaire unique, `app/Tools/Heure.php` (`App\Tools\Heure`) — **stockage en UTC** au format historique `Y-m-d H:i:s` (aucune migration, les données existantes étaient déjà en UTC), **affichage converti en Europe/Paris** par `DateTimeImmutable`/`DateTimeZone` (règles IANA : CET = UTC+1 l'hiver, CEST = UTC+2 l'été, transitions les derniers dimanches de mars et d'octobre — aucun calcul « +1/+2 » manuel). `date_fr()`, point d'affichage unique des vues, délègue au gestionnaire ; tous les sites de génération (moteur JSON, triggers d'historique, seed, journal, dernière connexion, année du numéro de commande) passent par lui, insensibles au `date.timezone` du php.ini. Verrouillé par `tests/php/heure_test.php` (45 vérifications : le cas signalé 18h15 UTC → 19h15 Paris en hiver comme en été, transitions de mars/octobre y compris l'heure répétée, aller-retour stockage, fuseau serveur hostile) et l'E2E UI `scripts/ui-e2e-heure.mjs` (14 vérifications, `npm run test:ui-heure`) : achat complet par clics, l'heure affichée (détail, piste des statuts, historique) confrontée à une référence indépendante, le `Intl` Europe/Paris du navigateur.
+**Régression « heures décalées »** (historique, détail et listes de commandes) : les horodatages naissaient en UTC (`date_default_timezone_set('UTC')` dans `app/bootstrap.php`, `date()` partout) et `date_fr()` les réaffichait tels quels — une commande passée à 19h15 à Paris s'affichait 18h15 (17h15 en été). Correctif : un gestionnaire unique, `app/Tools/Heure.php` (`App\Tools\Heure`) — **stockage en UTC** au format historique `Y-m-d H:i:s` (aucune migration automatique ; les dates anciennes SQL peuvent avoir été écrites dans un autre fuseau et doivent être vérifiées), **affichage par défaut converti en Europe/Paris** par `DateTimeImmutable`/`DateTimeZone` (règles IANA : CET = UTC+1 l'hiver, CEST = UTC+2 l'été, transitions les derniers dimanches de mars et d'octobre — aucun calcul « +1/+2 » manuel). `date_fr()` délègue au gestionnaire, comme les dates des cartes d’accueil ; tous les sites de génération (moteur JSON, triggers d'historique, seed, journal, dernière connexion, année du numéro de commande) passent par lui, insensibles au `date.timezone` du php.ini. Verrouillé par `tests/php/heure_test.php` (tests : le cas signalé 18h15 UTC → 19h15 Paris en hiver comme en été, transitions de mars/octobre y compris l'heure répétée, aller-retour stockage, fuseau serveur hostile) et l'E2E UI `scripts/ui-e2e-heure.mjs` (14 vérifications, `npm run test:ui-heure`) : achat complet par clics, l'heure affichée (détail, piste des statuts, historique) confrontée à une référence indépendante, le `Intl` Europe/Paris du navigateur.
 
 **Régression « adresse de livraison incomplète »** (page « Valider ma commande », UC-07) : le champ « Adresse de livraison complète » était prérempli avec la seule rue du profil (« 12 rue de France »), sans code postal ni ville, et la commande enregistrait cette adresse incomplète. Cause : le profil stocke rue, code postal et ville dans trois colonnes séparées (EF-CLI-01), la commande n'enregistre qu'une seule chaîne. Correctif : `ClientRepository::adresseLivraisonComplete()` compose « rue, CP Ville » depuis le profil (parties absentes omises proprement, profil sans adresse → champ vide), `CommandeController` la transmet à la vue, qui préremplit désormais l'adresse complète — toujours modifiable avant confirmation. Verrouillé par `tests/php/adresse_livraison_test.php` (25 vérifications : composition du cas signalé « 12 rue de France, 06000 Nice », profils partiels/vides, rendu réel de la vue, adresse réellement stockée par la commande créée) — suite volontairement statique (données du seed, magasin temporaire), sans E2E navigateur pour ce signalement.
 
@@ -432,6 +435,8 @@ les règles `RB-03`, `RB-06`, `RB-11`, `RB-18` cesseraient silencieusement d'êt
 
 Projet pédagogique — code et documents fournis tels quels, usage pédagogique uniquement.
 
+> Les paragraphes de régression ci-dessous décrivent des états historiques ; pour le fonctionnement actuel et les limites SQL, voir « Annulation administrateur et mise à jour SQL » en fin de fichier.
+
 **Régression « codes techniques visibles »** (signalement n° 18) : le client et l'équipe voyaient des codes internes — `PORT_OFFERT_A_PARTIR_DE_80.00` et `LIVRAISON_STANDARD` (panier, récapitulatif, validation), « Tracé par trg_history_statut », « Création tracée par trg_history_creation » (historiques de commande), `v_etat_stock` (stocks) et les références RB-xx partout (RB-06, RB-11, RB-18/20, RB-16, RB-19, RB-03, RB-12, RB-14…), jusque dans les CGV et les mentions légales ; deux numéros affichés étaient faux (suppression de catégorie notée RB-14 alors que `sql/02` la rattache à RB-07, seuil d'alerte noté RB-03, règle du stock non négatif — retirer les codes supprime aussi ces erreurs). Correctif : tous les textes AFFICHÉS parlent français — motifs de port (« livraison standard (4,90 €) », « frais de port offerts dès 80,00 € de marchandises », calculés depuis les paramètres), commentaires stockés dans l'historique (« Création de la commande », « Changement de statut le… »), messages d'erreur métier et intitulés des vues cliente et back-office ; les codes restent dans les commentaires de code, les journaux et les tests, jamais à l'écran. « Varier de » (stocks) avait déjà disparu au signalement n° 8 (« Ajouter / retirer ») — les tests le reverrouillent. Verrouillé par `tests/php/codes_techniques_test.php` (32 vérifications : une vingtaine de vues rendues passées au crible des motifs interdits, messages `BusinessError`, motifs `computeShipping`, commentaires des déclencheurs) et par l'E2E UI `scripts/ui-e2e-codes.mjs` (23 vérifications, `npm run test:ui-codes`) : parcours panier → commande → historique, pages légales et tout le back-office scannés en direct.
 
 **Régression « CGV article 4 : annulation ≠ rétractation »** (signalement n° 19, art. L221-18 du code de la consommation) : l'article 4 des CGV s'intitulait « Droit de rétractation » et disait « Conformément au droit de rétractation, le client peut annuler sa commande tant qu'elle n'a pas été expédiée » — juridiquement faux : pour un achat à distance, le droit de rétractation court **14 jours à compter de la réception** du bien ; ce que MiniShop propose avant l'expédition est une **annulation avant expédition**, facilité de la boutique. Correctif (rédactionnel, la règle métier ne change pas) : article 4 renommé « Annulation avant expédition » — mécanisme réel décrit (avant expédition, stock restitué, port compris soldé), droit légal explicitement distingué avec son point de départ (14 jours à compter de la réception, art. L221-18, renvoi à la page Rétractation) et rappel qu'aucune rétractation ni aucun retour n'est mis en œuvre sur cette maquette pédagogique ; même phrase corrigée sous le bouton d'annulation du détail de commande (« annulation avant expédition, CGV art. 4 ») ; page Rétractation restructurée pour ne plus confondre les deux notions (« ne se confond pas avec le droit de rétractation »). Verrouillé par `tests/php/cgv_retractation_test.php` (19 vérifications : vues CGV/Rétractation/détail/aide/livraison rendues et relues, plus le comportement réel — annulation acceptée avant expédition avec stock restitué, refusée après avec `COMMANDE_NON_ANNULABLE`) et par l'E2E UI `scripts/ui-e2e-retractation.mjs` (13 vérifications, `npm run test:ui-retractation`) : CGV et Rétractation lues comme un client, parcours commande complet jusqu'à l'écran de confirmation d'annulation, aide et livraison cohérentes. Les attentes de `scripts/ui-e2e-pied-de-page.mjs` qui verrouillaient l'ancien titre fautif ont été alignées.
@@ -447,3 +452,115 @@ Projet pédagogique — code et documents fournis tels quels, usage pédagogique
 **Régression « Créer un compte : erreur = tout retaper »** (signalement n° 24, EF-VIS-06, RB-01) : après une erreur d'inscription, la case d'acceptation des CGV repartait décochée (nom, prénom et email, eux, étaient bien conservés — seuls les mots de passe sont vidés, comme attendu) ; et le site ne signalait qu'une erreur à la fois : l'unicité de l'email n'était contrôlée qu'à la création du compte, après toutes les autres validations — une confirmation différente + un email déjà utilisé n'affichaient donc que la confirmation, puis l'email au second envoi. Les étoiles des champs obligatoires existaient déjà (même convention que « Mon compte »), sauf sur la case CGV, pourtant obligatoire. Correctif : le contrôleur signale toutes les erreurs en une fois — le doublon d'email est contrôlé dès la validation via `ClientRepository::emailExiste` (même normalisation que la connexion, même message que la création, dont le garde-fou reste armé) — et le formulaire repart avec nom, prénom, email et case CGV dans l'état saisi, seuls les mots de passe vidés ; la case CGV porte l'étoile. Verrouillé par `tests/php/inscription_erreurs_test.php` (12 vérifications : formulaire rendu avec valeurs conservées, case cochée, étoiles, erreurs listées ensemble ; `emailExiste` sur magasin semé, casse et espaces compris ; garde-fou de création intact ; câblage du contrôleur relu) et par l'E2E UI `scripts/ui-e2e-inscription.mjs` (9 vérifications, `npm run test:ui-inscription`) : envoi fautif réel (confirmation différente + email de démonstration déjà utilisé + CGV cochée) avec les deux erreurs dès le premier envoi, correction progressive sans va-et-vient, compte créé dès l'email libéré.
 
 **Régression « Mes commandes à 375 px : montant et Détail cachés, légende coupée »** (signalement n° 25, EF-CLI-08, UC-08) : sur « Mes commandes », le tableau défilait et le montant comme le lien « Détail » restaient cachés à droite ; la légende « Historique de vos commandes (prix figés à l'achat) » était coupée au lieu de passer à la ligne (le « — RB-06 » cité de mémoire a disparu au signalement n° 18). Cause : ce tableau était le dernier du parcours sans aucune règle dédiée — pas même une classe — donc dimensionné à son contenu (numéro, date complète avec l'heure), colonnes de droite hors écran et légende aussi large que le tableau. Correctif : le tableau devient `.tableau-mes-commandes` — largeur 100 %, répartition fixe par colgroup (numéro 20 %, date 22 %, statut 21 %, articles 10 %, montant 16 %, détail 11 %), montant (en-tête et valeurs) à droite sur une ligne, légende alignée à gauche et libre de passer à la ligne ; il n'y a plus aucun défilement horizontal, montant et « Détail » sont visibles à 375 px. Verrouillé par `tests/php/mes_commandes_tableau_test.php` (14 vérifications : page rendue — classe, colgroup, légende entière sans code, montants et liens par ligne, liste vide — et feuille relue — 100 % fixe, largeurs totalisant 100 %, légende sans ligne forcée, montants nowrap à droite, aucune règle `table` générique) et par l'E2E UI `scripts/ui-e2e-mes-commandes.mjs` (12 vérifications, `npm run test:ui-mes-commandes`) : achat complet en vrai parcours puis « Mes commandes » relue (commande listée, montant formaté, lien Détail) et CSS servie contrôlée.
+
+### Tests supplémentaires : concurrence, migration et navigateur réel
+
+La CI lance `tests/python/test_annulation_concurrente.py` avec deux processus PHP sur un dossier temporaire : double annulation, commandes partageant un stock, refus d'accès et libération du verrou après arrêt d'un processus. Le store JSON utilise un verrou coopératif par dossier pour ses écritures et transactions ; le contrôle d'annulation se fait à l'intérieur de la transaction. **Ce n'est pas une garantie générale de concurrence ou de reprise sur panne** : les opérations qui lisent avant leur transaction, les modifications directes des fichiers et les scripts de seed ne sont pas protégés de bout en bout ; un arrêt au milieu d'un commit multi-fichiers peut laisser un état partiel. Ne pas supprimer `.minishop.lock` pendant que le site tourne. Pour une utilisation concurrente réelle, préférer un SGBD transactionnel.
+
+La migration `sql/migrations/001_montant_avant_annulation_mariadb.sql` ajoute uniquement la colonne nullable sur MariaDB et ne reconstitue pas les anciens montants inconnus. La CI construit une ancienne base peuplée **jetable**, joue la migration deux fois et vérifie les données, l'annulation et les refus. Ce script ne met pas à jour les procédures et déclencheurs : leur déploiement est une étape séparée. Le DDL a un commit implicite ; avant toute migration réelle, prévoir maintenance, sauvegarde et restauration testée, et contrôler le type de toute colonne préexistante. Ne pas lancer les scripts de création ou seed sur une base partagée.
+
+La CI exécute aussi `tests/node/responsive_navigateur.mjs` avec Chromium à 375 et 1440 pixels, sur une copie temporaire avec comptes de démonstration : catalogue, produit, panier, validation, historique et tableaux administrateur. Elle vérifie les débordements et champs hors écran, et conserve des captures de diagnostic. Ce n'est pas un audit complet d'accessibilité, ni une validation de tous les navigateurs et appareils. Les paquets Playwright et Chromium sont installés **dans la CI** ; aucune installation npm n'est requise pour utiliser l'application PHP.
+
+
+### Annulation administrateur et mise à jour SQL
+
+L’annulation administrateur demande un motif et une confirmation explicite sans JavaScript.
+Pour une commande non expédiée elle conserve les lignes et le montant initial, solde
+le montant et les frais, et restitue le stock. Pour une commande déjà expédiée,
+le montant est soldé mais le stock ne revient pas automatiquement : il faut
+vérifier le retour physique avant un ajustement manuel tracé. Ce fonctionnement
+ne réalise ni paiement ni remboursement réel.
+
+Sur une base existante, sauvegarder et vérifier le schéma et les privilèges,
+puis tester d’abord sur une copie isolée. La colonne de montant initial nécessite
+la migration `001` si elle manque. Les migrations ciblées `002_historique_lisible.sql`
+et `003_statut_protege.sql` remplacent respectivement deux déclencheurs d’historique
+et la procédure de changement de statut. Leur DDL entraîne des commits implicites :
+prévoir une fenêtre sans écritures et vérifier les objets après installation.
+La procédure générique SQL refuse désormais l’annulation directe ; utiliser le
+parcours applicatif administrateur ou `sp_cancel_order` pour une annulation client.
+Les anciens commentaires génériques correspondant au format connu sont rendus lisibles à l’affichage sans
+modifier les archives ; les anciens montants inconnus ne sont pas inventés.
+Les tests SQL de ce changement sont séquentiels : ils ne prouvent pas tous les
+scénarios de concurrence ni la sécurité des autres écritures. Les changements de
+statut effectués directement en SQL sans les variables de session applicatives
+sont tracés comme « SYSTEME ».
+Il n’y a pas eu de migration sur une base réelle. Les coordonnées légales restent
+à fournir et à vérifier ; le contact est un formulaire de démonstration sans envoi
+de courrier. Le pied sombre et l’image de repli sont conservés volontairement :
+ils rendent l’ancien mail périmé, sans être des erreurs fonctionnelles.
+
+### Comptes inactifs : traitement de la maquette
+
+La valeur initiale choisie pour le compte est **24 mois**. La CNIL recommande
+un délai de deux ans depuis la dernière action pour les comptes inactifs ;
+les trois ans cités dans son référentiel concernent notamment la prospection,
+et ne sont pas une obligation générale pour tous les comptes. Le responsable
+du traitement reste chargé de définir les durées et leurs justifications :
+[questions-réponses CNIL](https://www.cnil.fr/fr/questions-reponses-sur-les-referentiels-relatifs-la-gestion-des-activites-commerciales-et-des),
+[RGPD article 5](https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=CELEX%3A32016R0679),
+[code de commerce L123-22](https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000005634379/LEGISCTA000006161250/).
+
+`scripts/purger_comptes.php` est **une simulation par défaut** ; `--executer`
+supprime les seuls comptes sans commande dont la création et la dernière activité
+connue dépassent le délai configuré, avec deux jours de marge. Une activité de
+session authentifiée actualise la date au plus une fois par heure. Une date
+manquante, future ou invalide est conservée pour examen, de même que tout compte
+lié à une commande : ces comptes ne sont **ni supprimés ni archivés** par le
+script. Des interactions hors session, comme un message Contact non lié, ne sont
+pas prises en compte. Les traces anciennes, le journal Contact, les sauvegardes
+et les autres copies ne sont pas purgés ; les nouvelles entrées d'audit de compte
+ne contiennent plus ses coordonnées ni son condensat de mot de passe. Ce n'est
+pas une procédure complète d'effacement RGPD.
+
+L'exécution automatique **n'est pas activée par le code seul** : l'exploitant
+doit configurer une tâche planifiée de son hébergement, avec le PHP et le fichier
+`.env` de cette instance, et surveiller ses erreurs et les comptes exclus. Après
+sauvegarde vérifiée et simulation, elle peut lancer régulièrement la commande
+avec `--executer`. Le traitement est CLI uniquement, jamais exposé en HTTP.
+Ne pas installer cette tâche sur une instance existante avant d'avoir examiné les
+résultats et défini le traitement des commandes, journaux et sauvegardes. La
+migration `004_conservation_comptes_24_mois.sql`, à appliquer volontairement,
+ne change que l'ancien défaut de 36 en 24 et préserve les valeurs personnalisées.
+La configuration JSON existante doit être revue séparément. Une analyse des dates
+anciennes et des écritures SQL externes est nécessaire avant toute activation réelle.
+
+La [politique de conservation proposée](docs/18-politique-conservation.md) et
+l'outil CLI `scripts/archive_restreinte.php` préparent des copies chiffrées à
+accès limité. Ces copies ne retirent rien de la base active : elles ne constituent
+pas un archivage intermédiaire complet. La politique, les habilitations, le
+transfert, les purges et les sauvegardes restent à valider et mettre en œuvre.
+
+Une maintenance distincte est accessible par `php scripts/db_init.php --nettoyage --help` :
+simulation par défaut pour comptes sans commande, Contact, journal JSON et sauvegardes
+locales dédiées ; exécution uniquement après validation explicite. Elle ne recrée pas
+la base et n'est pas planifiée. Les comptes avec commandes restent exclus à ce stade.
+Détails, prérequis, limites et essai sur données fictives dans
+[la politique de conservation](docs/18-politique-conservation.md).
+
+
+### Fuseau SQL et données existantes
+
+Les connexions PDO ouvertes par `DbConnexion` imposent maintenant `SET SESSION time_zone = '+00:00'` ; `SqlStore` le fait aussi sur une connexion injectée, et le générateur de volumétrie sur ses connexions directes. Le changement concerne les nouvelles sessions de ces chemins, pas le réglage global du serveur. Une impossibilité de régler la session bloque la connexion. Une connexion SQL ouverte autrement (console, outil tiers ou autre script) doit être configurée séparément. Le correctif ne transforme pas les anciens `DATETIME` : sans information fiable sur leur source et leur fuseau, un décalage automatique pourrait altérer les données. Analyser les dates historiques sur une copie et conserver une sauvegarde vérifiée avant toute correction.
+
+Les tests d'intégration utilisent une base jetable et une table temporaire : session initialement à UTC+5:30, retour à UTC par le pilote, insertion et mise à jour sur des dates d'hiver et d'été et affichage Europe/Paris. Ils ne prouvent ni le fuseau du serveur réel ni l'origine des données déjà présentes.
+
+Après déploiement de la version corrigée, cette commande teste une nouvelle connexion CLI sans modifier les données (seul le fuseau de sa session est réglé) avec la configuration `.env` de l'instance ; elle n'inspecte ni ne modifie les dates existantes :
+
+```bash
+cd /home/jojokes/Documents/BUT/Projet/s302
+php -r 'require "app/bootstrap.php"; $c=\App\Config\Database::config(); $p=\App\Config\DbConnexion::ouvrir((string)$c["db_name"], $c); $r=$p->query("SELECT @@session.time_zone AS session_sql, @@global.time_zone AS serveur, @@system_time_zone AS systeme, NOW() AS maintenant_sql, UTC_TIMESTAMP() AS utc_sql")->fetch(); foreach ($r as $k=>$v) { echo $k."=".$v.PHP_EOL; }'
+```
+
+Attendu : `session_sql=+00:00` et `maintenant_sql` identique à `utc_sql`. Les valeurs `serveur` et `systeme` dépendent de l'hébergement ; `SYSTEM` peut être normal pour la valeur globale. Cette vérification CLI ne démontre pas que la même version est déployée sur le serveur Web, ni la qualité des anciennes dates.
+
+
+### Préférences de langue et de fuseau
+
+La page **Préférences** est accessible depuis le menu, sans compte. Elle permet de choisir un fuseau IANA par ville ou de demander volontairement la position ; aucune permission n'est demandée avant le clic. Le fuseau est estimé dans le navigateur par la bibliothèque locale `@photostructure/tz-lookup` 11.8.0, puis `Intl` détermine le décalage et les changements d'heure pour chaque date. Cette estimation est approximative et peut se tromper : vérifiez la ville proposée, notamment près des frontières. La géolocalisation nécessite HTTPS et une autorisation, et le navigateur ou le système peut faire appel à ses propres services.
+
+Sans choix de fuseau, le français utilise Paris et l'anglais New York. La langue initiale suit celle du navigateur. **La traduction anglaise couvre toute l’interface** : navigation, catalogue, panier, validation, espace client, pages d’information et pages légales, back-office complet et messages dynamiques (`public/js/i18n-en.js` + `public/js/preferences.js`, attribut `<html lang>` synchronisé). Les données libres issues de la base ou du catalogue (noms et descriptions de produits saisis, adresses, commentaires) conservent leur langue d’enregistrement, et la version anglaise des textes juridiques reste indicative sans revue par un conseil juridique. JavaScript désactivé : textes français et dates en heure de Paris.
+
+La préférence langue/fuseau est enregistrée dans le `localStorage` du navigateur, non en base ; le bouton Réinitialiser la supprime. MiniShop ne conserve ni ne transmet les coordonnées. Pour les filtres de commandes et les indicateurs du jour, les bornes UTC calculées dans le navigateur sont transmises au serveur ; elles peuvent apparaître dans ses journaux HTTP. Le navigateur peut interdire le stockage local : le choix n'est alors valable que sur la page courante.
+
+Le stockage métier et les sessions SQL restent UTC. L'année des numéros de commande reste celle de Paris. L'ancien réglage `.env` `FUSEAU_AFFICHAGE` n'est plus utilisé et peut être supprimé ; les dates historiques ne sont pas modifiées et leur provenance doit être vérifiée. Stockage local et consentement de géolocalisation ne suffisent pas à garantir à eux seuls la conformité RGPD : le déploiement et son information doivent être examinés.

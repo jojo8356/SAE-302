@@ -18,7 +18,7 @@
        extérieur — les trois comportements attendus d'un menu disclosure.
        ------------------------------------------------------------------ */
     var menu = document.querySelector('[data-menu]');
-    if (menu) {
+    if (menu && typeof window.matchMedia === 'function') {
         var boutonMenu = menu.querySelector('summary');
         var petitEcran = window.matchMedia('(max-width: 64em)');
 
@@ -91,7 +91,8 @@
         zone.setAttribute('aria-describedby', info.id);
 
         function maj() {
-            info.textContent = zone.value.length + ' / ' + max + ' caractères';
+            var unite = document.documentElement.lang === 'en' ? ' characters' : ' caractères';
+            info.textContent = zone.value.length + ' / ' + max + unite;
         }
         zone.addEventListener('input', maj);
         maj();

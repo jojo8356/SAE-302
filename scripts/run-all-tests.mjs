@@ -61,9 +61,35 @@ const suites = [
   ['Unitaires', 'tests/php/unit_tests.php'],
   ['Fonctionnalités', 'tests/php/features_test.php'],
   ['Catalogue : ruptures en dernier', 'tests/php/catalogue_stock_test.php'],
+  ['Catalogue : filtres et recherche', 'tests/php/catalogue_filtres_test.php'],
   ['Accueil : derniers ajouts', 'tests/php/nouveautes_test.php'],
   ['Accueil : dates des ajouts', 'tests/php/date_ajout_test.php'],
   ['Cartes produit : accessibilité', 'tests/php/cartes_accessibilite_test.php'],
+  ['Fiche produit : TVA et alternatives d’image', 'tests/php/fiche_produit_test.php'],
+  ['Panier : appels à l’action', 'tests/php/panier_cta_test.php'],
+  ['Panier : tableau récapitulatif', 'tests/php/panier_tableau_test.php'],
+  ['Validation : récapitulatif pré-commande', 'tests/php/valider_recap_test.php'],
+  ['Livraison : adresse pré-remplie et validée', 'tests/php/adresse_livraison_test.php'],
+  ['Inscription : validations et conservation saisies', 'tests/php/inscription_erreurs_test.php'],
+  ['Espace client : tableau Mes commandes', 'tests/php/mes_commandes_tableau_test.php'],
+  ['Confirmations d’actions destructrices', 'tests/php/actions_destructrices_test.php'],
+  ['Annulation et piste d’audit', 'tests/php/annulation_historique_test.php'],
+  ['Horodatage UTC et fuseau Europe/Paris', 'tests/php/heure_test.php'],
+  ['Rétention conservatrice des comptes', 'tests/php/retention_comptes_test.php'],
+  ['Rotation des journaux et sauvegardes', 'tests/php/nettoyage_fichiers_test.php'],
+  ['Back-office : formulaires d’administration', 'tests/php/formulaires_admin_test.php'],
+  ['Back-office : unicité des catégories', 'tests/php/categorie_doublon_test.php'],
+  ['Back-office : tableau des catégories', 'tests/php/categories_tableau_test.php'],
+  ['Back-office : tableau des commandes', 'tests/php/commandes_tableau_test.php'],
+  ['Back-office : seuils et défauts de stock', 'tests/php/stocks_defaut_test.php'],
+  ['Tableaux : alignement des colonnes', 'tests/php/alignement_colonnes_test.php'],
+  ['Non-régression transversale des vues', 'tests/php/divers_test.php'],
+  ['Absence de codes techniques bruts', 'tests/php/codes_techniques_test.php'],
+  ['Page À propos et indicateurs', 'tests/php/apropos_test.php'],
+  ['Formulaire de contact et cohérence', 'tests/php/contact_coherence_test.php'],
+  ['Pied de page et maillage légal', 'tests/php/pages_pied_de_page_test.php'],
+  ['CGV, rétractation et encadré garanties', 'tests/php/cgv_retractation_test.php'],
+  ['Mentions légales LCEN et hébergeur IUT', 'tests/php/mentions_legales_test.php'],
   ['Contrats de design', 'tests/php/css_contract.php'],
   ['Contrat responsive', 'tests/php/responsive_contract.php'],
   ['Contrats HTTP', 'tests/php/contract_http.php'],
@@ -83,7 +109,19 @@ console.log('  Les suites WASM contrôlent les dépréciations à l’exécution
 console.log(`\n${'='.repeat(64)}\n▸ Autotests du contrôle des dépréciations\n${'='.repeat(64)}`);
 const autoAnalyse = spawnSync('python3', ['tests/python/test_deprecations.py'], { stdio: 'inherit' });
 if (autoAnalyse.status !== 0) ++échecs;
-for (const test of ['tests/python/test_code_mort_integration.py', 'tests/python/test_inventaire_app.py', 'tests/python/test_securite_gitignore.py', 'tests/python/test_audit_structurel.py']) {
+for (const test of [
+  'tests/python/test_code_mort_integration.py',
+  'tests/python/test_aide_cli.py',
+  'tests/python/test_inventaire_app.py',
+  'tests/python/test_securite_gitignore.py',
+  'tests/python/test_audit_structurel.py',
+  'tests/python/test_preparer_sql_lineserv.py',
+  'tests/python/test_nettoyage_cli.py',
+  'tests/python/test_retention_cli.py',
+  'tests/python/test_archive_restreinte.py',
+  'tests/python/test_annulation_concurrente.py',
+  'scripts/verifier_fiches_uc.py',
+]) {
   const result = spawnSync('python3', [test], { stdio: 'inherit' });
   if (result.status !== 0) ++échecs;
 }
@@ -149,11 +187,23 @@ if (!e2eDisponible) {
   process.exit(0);
 }
 
-// l'E2E exige un magasin propre et écrit (seed + parcours) : scripts/e2e.mjs
-// photographie data/minishop avant, le restaure après — même en cas d'échec.
-const e2e = spawnSync('node', ['scripts/e2e.mjs'], { stdio: 'inherit' });
+if (existsSync('node_modules/jsdom')) {
+  console.log(`\n${'='.repeat(64)}\n▸ Préférences, traduction FR/EN & panier AJAX — tests/node/preferences_test.mjs\n${'='.repeat(64)}`);
+  const prefs = spawnSync('node', ['tests/node/preferences_test.mjs'], { stdio: 'inherit' });
+  if (prefs.status !== 0) {
+    console.log('Préférences / i18n : ÉCHEC ❌');
+    process.exit(1);
+  }
+} else {
+  console.log('⏭  Préférences DOM/i18n ignoré : jsdom absent (npm install).');
+}
+
+// tests/node/e2e_isolation.mjs exécute l'intégralité du parcours HTTP WASM sur
+// une copie temporaire et prouve que les données hôte restent intactes.
+console.log(`\n${'='.repeat(64)}\n▸ Parcours E2E isolé — tests/node/e2e_isolation.mjs\n${'='.repeat(64)}`);
+const e2e = spawnSync('node', ['tests/node/e2e_isolation.mjs'], { stdio: 'inherit' });
 if (e2e.status !== 0) {
   console.log('E2E : ÉCHEC ❌');
   process.exit(1);
 }
-console.log('\nTOUTES LES SUITES SONT VERTES ✅ (moteur, règles, unitaires, fonctionnalités, design, responsive, PHPUnit, E2E)');
+console.log('\nTOUTES LES SUITES SONT VERTES ✅ (moteur, règles, unitaires, fonctionnalités, design, responsive, i18n, PHPUnit, E2E isolé)');

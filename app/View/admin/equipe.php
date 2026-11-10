@@ -34,18 +34,18 @@ jamais de compte client.</p>
 </form>
 
 <h2>Comptes existants</h2>
-<div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
+<div class="tableau-defilant tableau-defilant--admin" role="region" tabindex="0" aria-label="Tableau de données">
 <table>
     <thead><tr><th scope="col">Nom</th><th scope="col">Email</th><th scope="col">Rôle</th><th scope="col">Actif</th><th scope="col">Dernière connexion</th><th scope="col">Action</th></tr></thead>
     <tbody>
     <?php foreach ($admins as $admin): ?>
         <tr>
-            <td><?= e($admin['prenom'] . ' ' . $admin['nom']) ?></td>
-            <td><?= e($admin['email']) ?></td>
-            <td><?= e($admin['role']) ?></td>
-            <td><?php if (!empty($admin['actif'])) { echo '✔'; } else { echo '✘ bloqué'; } ?></td>
-            <td><?= e(date_fr($admin['derniere_connexion'] ?? null, true)) ?></td>
-            <td>
+            <td data-label="Nom"><?= e($admin['prenom'] . ' ' . $admin['nom']) ?></td>
+            <td data-label="Email"><?= e($admin['email']) ?></td>
+            <td data-label="Rôle"><?= e($admin['role']) ?></td>
+            <td data-label="Actif"><?php if (!empty($admin['actif'])) { echo '✔'; } else { echo '✘ bloqué'; } ?></td>
+            <td data-label="Dernière connexion"><?= date_html($admin['derniere_connexion'] ?? null, true) ?></td>
+            <td data-label="Action">
                 <form method="post" action="/admin/equipe/<?= (int) $admin['id_admin'] ?>/basculer">
                     <?= csrf_field() ?>
                     <button type="submit"><?php if (!empty($admin['actif'])) { echo 'Bloquer'; } else { echo 'Réactiver'; } ?></button>

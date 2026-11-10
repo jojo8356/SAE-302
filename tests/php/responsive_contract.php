@@ -109,6 +109,18 @@ $check('totaux du récapitulatif restent ensemble sur mobile',
     && str_contains($commandeValider, 'Confirmer et payer : <?= euros($recap[\'total\']) ?>'));
 
 
+$adminVues = ['categories.php', 'commande_detail.php', 'commandes.php', 'dashboard.php', 'equipe.php', 'produits.php', 'stocks.php'];
+foreach ($adminVues as $nomVue) {
+    $vue = (string) file_get_contents($racine . '/app/View/admin/' . $nomVue);
+    preg_match_all('/<td\b[^>]*>/i', $vue, $cellulesAdmin);
+    $sansEtiquette = array_filter($cellulesAdmin[0], static fn (string $cellule): bool => !str_contains($cellule, 'data-label='));
+    $check('admin ' . $nomVue . ' : cellules étiquetées et cartes prévues',
+        str_contains($vue, 'tableau-defilant--admin') && $cellulesAdmin[0] !== [] && $sansEtiquette === []);
+}
+$check('admin mobile : libellés empilés et valeurs repliables',
+    str_contains($css, '.tableau-defilant--admin tbody td::before { content: attr(data-label); display: block;')
+    && str_contains($css, '.tableau-defilant--admin .tableau-commandes .montant { text-align: left; white-space: normal; }'));
+
 // ------------------------------------------------------------ 4. typographie
 echo "\n4. Typographie fluide et lisibilité\n";
 $clamps = substr_count($css, 'clamp(');

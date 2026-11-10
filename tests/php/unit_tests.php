@@ -941,6 +941,15 @@ echo "\n19. Invariants des scripts SQL livrés (collations, garde-fous métier)\
             !str_contains($corps, 'INSERT INTO order_status_history'));
         $check('sp_update_order_status écrit bien le statut',
             str_contains($corps, 'UPDATE commande'));
+        $finProcedure = strpos($procedures, 'END $$', $debut);
+        $corpsStatut = substr($procedures, $debut, $finProcedure - $debut);
+        $check('annulation refusée par la procédure générique dans son propre corps',
+            str_contains($corpsStatut, "IF p_nouveau_statut = 'ANNULEE'")
+            && str_contains($corpsStatut, 'ANNULATION_VIA_PARCOURS_DEDIE'));
+        $ajout = strpos($procedures, 'CREATE PROCEDURE sp_add_order_line');
+        $finAjout = strpos($procedures, 'END $$', $ajout);
+        $check('le garde de statut ne se trouve pas dans l’ajout de ligne',
+            !str_contains(substr($procedures, $ajout, $finAjout - $ajout), 'p_nouveau_statut'));
     }
 
     // 4. Les triggers d'historique existent et sont tracés.

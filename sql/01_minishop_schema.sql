@@ -158,7 +158,7 @@ INSERT INTO parametre (cle, valeur, unite, comment) VALUES
   ('frais_port',            '4.90',  'EUR TTC', 'Livraison standard, montant affiche avant la validation (art. L221-5 4 deg C. conso.)'),
   ('franchise_port',        '80.00', 'EUR TTC', 'Port offert au-dela de ce montant de marchandises'),
   ('tva_defaut',            '20.00', '%',       'Taux par defaut propose a la creation d un produit'),
-  ('conservation_compte',   '36',    'mois',    'Donnees client en base active apres le dernier contact (referentiel CNIL)');
+  ('conservation_compte',   '24',    'mois',    'Delai depuis la derniere activite du compte ; traitement planifie a installer');
 
 -- ---------------------------------------------------------------------
 -- Table COMMANDE

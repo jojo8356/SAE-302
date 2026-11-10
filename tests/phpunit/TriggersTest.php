@@ -40,10 +40,13 @@ final class TriggersTest extends TestCase
         self::assertSame([], Triggers::TRANSITIONS['ANNULEE']);
     }
 
-    public function testAnnulationImpossibleApresExpedition(): void
+    public function testAnnulationImpossibleApresLivraisonEtParcoursExpedition(): void
     {
         self::assertNotContains('ANNULEE', Triggers::TRANSITIONS['LIVREE']);
         self::assertNotContains('BROUILLON', Triggers::TRANSITIONS['EXPEDIEE']);
         self::assertContains('ANNULEE', Triggers::TRANSITIONS['EN_PREPARATION']);
+        self::assertContains('ANNULEE', Triggers::TRANSITIONS['PAYEE']);
+        // Une commande EXPEDIEE n'est annulable que par un administrateur (sans retour de stock).
+        self::assertContains('ANNULEE', Triggers::TRANSITIONS['EXPEDIEE']);
     }
 }

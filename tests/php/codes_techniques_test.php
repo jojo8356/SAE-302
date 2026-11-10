@@ -39,6 +39,7 @@ require dirname(__DIR__, 2) . '/app/bootstrap.php';
 
 use App\Model\Data\BusinessError;
 use App\Model\Data\JsonStore;
+use App\Model\Data\Seed;
 use App\Repository\ParametreRepository;
 
 ob_start();
@@ -252,20 +253,35 @@ $check(
     (BusinessError::MESSAGES['RB02_PRIX_DOIT_ETRE_STRICTEMENT_POSITIF'] ?? '') === 'Le prix doit être strictement positif.'
         && (BusinessError::MESSAGES['CATEGORIE_NON_VIDE'] ?? '') === 'Cette catégorie contient des produits : réassignez-les avant suppression.'
 );
-$store = JsonStore::open(dirname(__DIR__, 2) . '/data/minishop');
-$repo = new ParametreRepository($store);
-$motifStandard = $repo->computeShipping(10.00);
-$check(
-    'port standard : motif affiché en français, montant correct',
-    $motifStandard['port'] === 4.90 && $motifStandard['motif'] === 'livraison standard (4,90 €)',
-    (string) json_encode($motifStandard)
-);
-$motifOffert = $repo->computeShipping(100.00);
-$check(
-    'port offert : motif affiché en français (« frais de port offerts dès 80,00 € de marchandises »)',
-    $motifOffert['port'] === 0.0 && $motifOffert['motif'] === 'frais de port offerts dès 80,00 € de marchandises',
-    (string) json_encode($motifOffert)
-);
+$dossierCodes = sys_get_temp_dir() . '/minishop_codes_' . getmypid() . '_' . bin2hex(random_bytes(4));
+$store = JsonStore::open($dossierCodes);
+try {
+    Seed::force($store);
+    $repo = new ParametreRepository($store);
+    $motifStandard = $repo->computeShipping(10.00);
+    $check(
+        'port standard : motif affiché en français, montant correct',
+        $motifStandard['port'] === 4.90 && $motifStandard['motif'] === 'livraison standard (4,90 €)',
+        (string) json_encode($motifStandard)
+    );
+    $motifOffert = $repo->computeShipping(100.00);
+    $check(
+        'port offert : motif affiché en français (« frais de port offerts dès 80,00 € de marchandises »)',
+        $motifOffert['port'] === 0.0 && $motifOffert['motif'] === 'frais de port offerts dès 80,00 € de marchandises',
+        (string) json_encode($motifOffert)
+    );
+} finally {
+    $fichiersCodes = scandir($dossierCodes);
+    if ($fichiersCodes === false) {
+        $fichiersCodes = [];
+    }
+    foreach ($fichiersCodes as $fichierCode) {
+        if ($fichierCode !== '.' && $fichierCode !== '..') {
+            @unlink($dossierCodes . '/' . $fichierCode);
+        }
+    }
+    @rmdir($dossierCodes);
+}
 $declencheurs = (string) file_get_contents(dirname(__DIR__, 2) . '/app/Model/Data/Triggers.php');
 $check(
     'les commentaires stockés dans l\'historique sont en français (création, changement de statut)',

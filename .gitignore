@@ -21,6 +21,8 @@ id_ed25519
 var/
 !var/.gitkeep
 *.log
+# Verrou interprocessus JSON : ne pas supprimer pendant que le site tourne
+.minishop.lock
 
 # --- sauvegardes laissées par les outils de correction (jamais versionnées)
 *.bak

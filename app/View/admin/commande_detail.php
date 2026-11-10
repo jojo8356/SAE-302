@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 <p>
     Statut actuel : <strong><?= e(statut_libelle($commande['statut'])) ?></strong> ·
-    Passée le <?= e(date_fr($commande['date_commande'], true)) ?> ·
+    Passée le <?= date_html($commande['date_commande'], true) ?> ·
     <?php if ($commande['statut'] === 'ANNULEE' && ($commande['montant_avant_annulation'] ?? null) !== null): ?>
     Montant soldé : <strong><?= euros($commande['montant_total']) ?></strong> (annulée — rien à payer) ·
     Total avant annulation : <?= euros($commande['montant_avant_annulation']) ?>
@@ -23,17 +23,17 @@ declare(strict_types=1);
 <?php endif; ?>
 
 <h2>Articles (prix TTC figés)</h2>
-<div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
+<div class="tableau-defilant tableau-defilant--admin" role="region" tabindex="0" aria-label="Tableau de données">
 <table>
     <thead><tr><th scope="col">Produit</th><th scope="col">Réf.</th><th scope="col">Prix unitaire TTC</th><th scope="col">Qté</th><th scope="col">Total TTC</th></tr></thead>
     <tbody>
     <?php foreach ($lignes as $ligne): ?>
         <tr>
-            <td><?= e($ligne['produit_nom']) ?></td>
-            <td><?= e($ligne['produit_reference']) ?></td>
-            <td><?= euros($ligne['prix_unitaire']) ?></td>
-            <td><?= (int) $ligne['quantite'] ?></td>
-            <td><?= euros($ligne['total_ligne']) ?></td>
+            <td data-label="Produit"><?= e($ligne['produit_nom']) ?></td>
+            <td data-label="Réf."><?= e($ligne['produit_reference']) ?></td>
+            <td data-label="Prix unitaire TTC"><?= euros($ligne['prix_unitaire']) ?></td>
+            <td data-label="Qté"><?= (int) $ligne['quantite'] ?></td>
+            <td data-label="Total TTC"><?= euros($ligne['total_ligne']) ?></td>
         </tr>
     <?php endforeach; ?>
     </tbody>
@@ -63,16 +63,16 @@ declare(strict_types=1);
 <?php endif; ?>
 
 <h2>Historique des statuts</h2>
-<div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
+<div class="tableau-defilant tableau-defilant--admin" role="region" tabindex="0" aria-label="Tableau de données">
 <table>
     <thead><tr><th scope="col">Quand</th><th scope="col">Statut</th><th scope="col">Par</th><th scope="col">Commentaire</th></tr></thead>
     <tbody>
     <?php foreach ($historique as $entree): ?>
         <tr>
-            <td><?= e(date_fr($entree['changed_at'], true)) ?></td>
-            <td><?= e(statut_libelle($entree['new_status'])) ?></td>
-            <td><?= e($entree['changed_by_role']) ?><?php if (!empty($entree['changed_by'])) { echo ' #' . (int) $entree['changed_by']; } else { echo ''; } ?></td>
-            <td><?= e($entree['commentaire']) ?></td>
+            <td data-label="Quand"><?= date_html($entree['changed_at'], true) ?></td>
+            <td data-label="Statut"><?= e(statut_libelle($entree['new_status'])) ?></td>
+            <td data-label="Par"><?= e($entree['changed_by_role']) ?><?php if (!empty($entree['changed_by'])) { echo ' #' . (int) $entree['changed_by']; } else { echo ''; } ?></td>
+            <td data-label="Commentaire"><?= e($entree['commentaire']) ?></td>
         </tr>
     <?php endforeach; ?>
     </tbody>

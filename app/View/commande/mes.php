@@ -16,16 +16,16 @@ declare(strict_types=1);
         <thead>
         <tr>
             <th scope="col">Numéro</th><th scope="col">Date</th><th scope="col">Statut</th>
-            <th scope="col">Articles</th><th scope="col" class="montant">Montant TTC</th><th scope="col"></th>
+            <th scope="col">Lignes d’articles</th><th scope="col" class="montant">Montant TTC</th><th scope="col"></th>
         </tr>
         </thead>
         <tbody>
         <?php foreach ($commandes as $commande): ?>
             <tr>
                 <td data-label="Numéro"><a href="/mes-commandes/<?= (int) $commande['id_commande'] ?>"><?= e($commande['numero']) ?></a></td>
-                <td data-label="Date"><?= e(date_fr($commande['date_commande'], true)) ?></td>
+                <td data-label="Date"><?= date_html($commande['date_commande'], true) ?></td>
                 <td data-label="Statut"><?= e(statut_libelle($commande['statut'])) ?></td>
-                <td data-label="Articles"><?= (int) ($commande['nb_lignes'] ?? 0) ?></td>
+                <td data-label="Lignes d’articles"><?= (int) ($commande['nb_lignes'] ?? 0) ?></td>
                 <td class="montant" data-label="Montant TTC"><?= euros($commande['montant_total']) ?></td>
                 <td data-label="Détail"><a href="/mes-commandes/<?= (int) $commande['id_commande'] ?>">Détail →</a></td>
             </tr>

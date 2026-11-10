@@ -338,7 +338,7 @@ public static function exigeSuper(): array
 ### 4.3 Journal d'audit (EF-GEN-04, SEC-13)
 - Toute écriture du moteur est tracée en JSONL (`var/journal/db.jsonl`) : `{at, op, table, pk, actor: {id, role, nom}, old, new}` — **qui** a fait **quoi**, avec avant/après.
 - La piste des statuts de commande (RB-11) est requêtable et affichée au back-office (`order_status_history`, transition + auteur + commentaire).
-- Jamais de mot de passe ni de hash dans les journaux (données non loggées par conception : seules les lignes de tables passent, et `mot_de_passe_hash` n'est journalisé qu'en `old/new` lors d'un changement — à masquer si besoin, cf. §6).
+- Les nouvelles entrées JSON de comptes client et administrateur sont limitées aux métadonnées de compte : les condensats, noms et e-mails ne figurent plus dans leurs instantanés `old/new`. Les anciennes entrées, les autres catégories, les noms d’acteurs administrateurs et les journaux ou sauvegardes externes doivent encore être examinés ; aucune suppression rétrospective n’a été effectuée.
 
 ### 4.4 Validation des entrées en profondeur (SEC-02)
 - Accesseurs typés bornés dans le contrôleur de base : `$this->int('quantite')`, `$this->str('nom', 100)`, `$this->float('prix_min')`, `$this->bool('cgv')` — troncature et transtypage explicites **avant** tout usage.

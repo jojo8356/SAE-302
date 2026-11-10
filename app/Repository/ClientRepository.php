@@ -16,6 +16,8 @@ namespace App\Repository;
 use App\Model\Data\BusinessError;
 use App\Model\Data\Filter;
 use App\Model\Data\StoreInterface;
+use App\Model\Data\SqlStore;
+use App\Service\RetentionComptes;
 use App\Tools\Heure;
 
 final class ClientRepository
@@ -48,6 +50,7 @@ final class ClientRepository
             'prenom' => trim($prenom),
             'email' => trim(strtolower($email)),
             'mot_de_passe_hash' => $hash,
+            'date_creation' => Heure::horodatageStockage(),
         ]);
     }
 
@@ -173,6 +176,32 @@ final class ClientRepository
             throw new BusinessError('HASH_MOT_DE_PASSE_INVALIDE');
         }
         $this->store->update('client', [Filter::eq('id_client', $idClient)], ['mot_de_passe_hash' => $nouveauHash]);
+    }
+
+    /** Dernière activité d'une session authentifiée, arrondie à une heure maximum.
+     * Le verrou partage la discipline du traitement d'inactivité.
+     * @return array<string,mixed>|null
+     */
+    public function clientActif(int $idClient): ?array
+    {
+        return $this->store->transactional(function () use ($idClient): ?array {
+            if ($this->store instanceof SqlStore) {
+                $client = $this->store->findForUpdate('client', $idClient);
+            } else {
+                $client = $this->store->find('client', $idClient);
+            }
+            if ($client === null || !$client['actif']) {
+                return null;
+            }
+            $derniere = RetentionComptes::dateUtc($client['derniere_connexion'] ?? null);
+            $maintenant = Heure::maintenantUtc();
+            if ($derniere === null || $derniere <= $maintenant->modify('-1 hour')) {
+                $this->store->update('client', [Filter::eq('id_client', $idClient)], [
+                    'derniere_connexion' => $maintenant->format('Y-m-d H:i:s'),
+                ]);
+            }
+            return $client;
+        });
     }
 
     /** Horodate la dernière connexion (traçabilité, sans bloquer le flux). */

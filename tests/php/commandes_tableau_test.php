@@ -157,7 +157,7 @@ $check(
 );
 $check(
     'non-régression : filtres et compteur toujours là (« 2 commande(s) affichée(s) », formulaire GET)',
-    str_contains($html, '<form method="get" action="/admin/commandes">')
+    str_contains($html, '<form method="get" action="/admin/commandes" data-filtre-jours>')
         && str_contains($html, '2 commande(s) affichée(s)')
         && str_contains($html, '<select id="statut" name="statut">')
 );

@@ -43,7 +43,7 @@ $htmlConf = rendreContactVue('home/confidentialite');
 $conf = texteContactVisible($htmlConf);
 $check('données et journal local indiqués', str_contains($conf, 'nom, e-mail, message et date') && str_contains($conf, 'var/log/contact.jsonl'));
 $check('pas de mail ni de garantie de réponse dans la politique', str_contains($conf, 'Aucun e-mail n’est envoyé') && str_contains($conf, 'aucune réponse n’est garantie'));
-$check('pas de purge ou durée effective inventée', str_contains($conf, 'Aucune durée effective générale ni purge automatique') && str_contains($conf, 'ne déclenche pas à lui seul de suppression'));
+$check('traitement conditionnel et limites sans promesse excessive', str_contains($conf, 'seulement si l’exploitant installe et active') && str_contains($conf, 'anciens journaux et sauvegardes ne sont pas purgés'));
 $check('exercice des droits non garanti par le formulaire', str_contains($conf, 'ne garantit pas le traitement d’une demande de droits'));
 $mentions = texteContactVisible(rendreContactVue('home/mentions_legales'));
 $check('le formulaire ne remplace pas des coordonnées professionnelles', str_contains($mentions, 'ne remplace pas des coordonnées professionnelles fonctionnelles'));

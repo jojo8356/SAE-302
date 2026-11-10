@@ -110,6 +110,7 @@ final class DbConnexion
             $dsn = $dsns[$index];
             try {
                 $pdo = new PDO($dsn, $utilisateur, $motDePasse, self::options());
+                self::imposerFuseauUtc($pdo);
                 self::$socketUtilisee = self::socketDuDsn($dsn);
 
                 return $pdo;
@@ -128,6 +129,16 @@ final class DbConnexion
         }
 
         throw new PDOException('Connexion MySQL impossible : aucun DSN n’a pu être construit.');
+    }
+
+    /** Fixe le fuseau de cette session uniquement, sans dépendre des tables IANA du serveur. */
+    public static function imposerFuseauUtc(PDO $pdo): void
+    {
+        // En mode PDO silencieux, exec peut retourner false au lieu de lever.
+        // Refuser alors la connexion plutôt que d'écrire des dates ambiguës.
+        if ($pdo->exec("SET SESSION time_zone = '+00:00'") === false) {
+            throw new PDOException('Impossible de fixer le fuseau UTC de la session SQL.');
+        }
     }
 
     /**

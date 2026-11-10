@@ -192,7 +192,7 @@ async function principal() {
     tableau?.querySelector('caption')?.textContent.trim());
   const premiereLigne = tableau?.querySelector('tbody tr');
   verifier('les six champs sont étiquetés pour les cartes mobiles',
-    ['Numéro', 'Date', 'Statut', 'Articles', 'Montant TTC', 'Détail']
+    ['Numéro', 'Date', 'Statut', 'Lignes d’articles', 'Montant TTC', 'Détail']
       .every((label) => premiereLigne?.querySelector(`td[data-label="${label}"]`)));
   const enteteMontant = [...(tableau?.querySelectorAll('th') ?? [])].find((th) => th.textContent.includes('Montant'));
   verifier('l\u2019en-tête « Montant TTC » est aligné avec ses montants (classe montant)',

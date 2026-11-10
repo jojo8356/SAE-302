@@ -87,6 +87,9 @@ $lienNav = static function (string $href, string $libelle) use ($estCourant): st
     <link rel="stylesheet" href="/css/print.css" media="print">
     <script src="/js/panier.js" defer></script>
     <script src="/js/ui.js" defer></script>
+    <?php if ($cheminCourant === '/preferences'): ?><script src="/js/tz-lookup.js" defer></script><?php endif; ?>
+    <script src="/js/i18n-en.js" defer></script>
+    <script src="/js/preferences.js" defer></script>
 </head>
 <body>
 <a class="lien-evitement" href="#contenu">Aller au contenu principal</a>
@@ -109,6 +112,7 @@ $lienNav = static function (string $href, string $libelle) use ($estCourant): st
                 <?= $lienNav('/categories', 'Catégories') // HTML-SAFE : échappé par le helper ?>
                 <?= $lienNav('/a-propos', 'À propos') // HTML-SAFE : échappé par le helper ?>
                 <?= $lienNav('/contact', 'Contact') // HTML-SAFE : échappé par le helper ?>
+                <?= $lienNav('/preferences', 'Préférences') // HTML-SAFE : échappé par le helper ?>
                 <li aria-hidden="true" class="nav-separateur"></li>
                 <li>
                     <a href="/panier"<?php if ($estCourant('/panier')) { echo ' aria-current="page"'; } ?> aria-label="Panier, <?= (int) $nbArticlesPanier ?> article<?php if ($nbArticlesPanier > 1) { echo 's'; } else { echo ''; } ?>">

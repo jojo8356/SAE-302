@@ -180,10 +180,10 @@ async function aller() {
   check('Confidentialité indique les données du journal local',
     visiteur.page.statut === 200 && visiteur.texte.includes('nom, e-mail, message et date')
       && visiteur.texte.includes('var/log/contact.jsonl'));
-  check('pas de mail, pas de réponse garantie et pas de purge automatique annoncés',
+  check('pas de mail, pas de réponse garantie et limites de la purge annoncées',
     visiteur.texte.includes('Aucun e-mail n’est envoyé')
       && visiteur.texte.includes('aucune réponse n’est garantie')
-      && visiteur.texte.includes('Aucune durée effective générale ni purge automatique'));
+      && visiteur.texte.includes('seulement si l’exploitant installe et active la tâche planifiée'));
   check('le formulaire ne garantit pas le traitement des demandes de droits',
     visiteur.texte.includes('ne garantit pas le traitement d’une demande de droits'));
   await visiteur.aller('/mentions-legales');

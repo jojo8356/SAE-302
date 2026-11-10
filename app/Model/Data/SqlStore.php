@@ -75,6 +75,9 @@ final class SqlStore implements StoreInterface
         }
 
         if ($this->connexionFournie instanceof PDO) {
+            // Une connexion injectée peut avoir hérité d'un fuseau non UTC.
+            // Ne pas la mettre en cache tant que l'initialisation n'a pas réussi.
+            DbConnexion::imposerFuseauUtc($this->connexionFournie);
             $this->pdo = $this->connexionFournie;
 
             return $this->pdo;
@@ -151,6 +154,24 @@ final class SqlStore implements StoreInterface
     public function find(string $table, int|string $pk): ?array
     {
         return $this->findOne($table, [[$this->clePrimaire($table), '=', $pk]]);
+    }
+
+    /** Lecture verrouillante réservée aux transactions métier SQL. */
+    public function findForUpdate(string $table, int|string $pk): ?array
+    {
+        if (!$this->inTransaction()) {
+            throw new RuntimeException('Une lecture verrouillante exige une transaction.');
+        }
+        $cle = $this->clePrimaire($table);
+        $sql = 'SELECT * FROM ' . $this->identifiant($table)
+            . ' WHERE ' . $this->identifiant($cle) . ' = ? FOR UPDATE';
+        $ligne = $this->executer($sql, [$pk])->fetch();
+
+        if ($ligne === false) {
+            return null;
+        }
+
+        return $this->normaliser($table, $ligne);
     }
 
     public function count(string $table, array $where = []): int
@@ -348,6 +369,11 @@ final class SqlStore implements StoreInterface
         if (isset($actor['nom'])) {
             $nom = (string) $actor['nom'];
         }
+        $role = (string) ($actor['role'] ?? 'SYSTEME');
+        if (!in_array($role, ['CLIENT', 'ADMIN', 'SYSTEME'], true)) {
+            throw new RuntimeException('Rôle de traçabilité invalide.');
+        }
+        $this->executer('SET @minishop_actor_id = ?, @minishop_actor_role = ?', [$identifiant, $role]);
         $this->acteur = [
             'id' => $identifiant,
             'role' => (string) ($actor['role'] ?? 'SYSTEME'),

@@ -30,7 +30,7 @@ declare(strict_types=1);
 
 <p><?= (int) $resultat['total'] ?> produit(s) — page <?= (int) $resultat['page'] ?> / <?= (int) $resultat['pages'] ?></p>
 
-<div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
+<div class="tableau-defilant tableau-defilant--admin" role="region" tabindex="0" aria-label="Tableau de données">
 <table>
     <caption>Le back-office voit aussi les produits masqués</caption>
     <thead>
@@ -43,15 +43,15 @@ declare(strict_types=1);
     <tbody>
     <?php foreach ($resultat['lignes'] as $produit): ?>
         <tr>
-            <td><?= e($produit['reference']) ?></td>
-            <td><a href="/admin/produit/<?= (int) $produit['id_produit'] ?>/modification"><?= e($produit['nom']) ?></a></td>
-            <td><?= e($produit['categorie']) ?></td>
-            <td><?= euros($produit['prix_ht']) ?></td>
-            <td><?= e(number_format((float) $produit['tva'], 2, ',', '')) ?> %</td>
-            <td><?= euros($produit['prix_ttc']) ?></td>
-            <td><?= (int) $produit['stock'] ?> <small>[<?= e(etat_libelle($produit['etat_stock'])) ?>]</small></td>
-            <td><?php if ((int) $produit['visible'] === 1) { echo '✔ oui'; } else { echo '✘ masqué'; } ?></td>
-            <td>
+            <td data-label="Réf."><?= e($produit['reference']) ?></td>
+            <td data-label="Nom"><a href="/admin/produit/<?= (int) $produit['id_produit'] ?>/modification"><?= e($produit['nom']) ?></a></td>
+            <td data-label="Catégorie"><?= e($produit['categorie']) ?></td>
+            <td data-label="Prix HT"><?= euros($produit['prix_ht']) ?></td>
+            <td data-label="TVA"><?= e(number_format((float) $produit['tva'], 2, ',', '')) ?> %</td>
+            <td data-label="Prix TTC"><?= euros($produit['prix_ttc']) ?></td>
+            <td data-label="Stock"><?= (int) $produit['stock'] ?> <small>[<?= e(etat_libelle($produit['etat_stock'])) ?>]</small></td>
+            <td data-label="Visible"><?php if ((int) $produit['visible'] === 1) { echo '✔ oui'; } else { echo '✘ masqué'; } ?></td>
+            <td data-label="Actions">
                 <a href="/admin/produit/<?= (int) $produit['id_produit'] ?>/modification">Modifier</a> ·
                 <form method="get" action="/admin/produits/<?= (int) $produit['id_produit'] ?>/suppression/confirmation">
                     <button type="submit" class="bouton-danger">Supprimer</button>

@@ -74,11 +74,11 @@ jobs:
           php-version: "8.2"
           coverage: none
           tools: none
-      - name: Lint app + public
+      - name: Lint app + public + scripts + tests
         run: |
-          echo "== php -l sur app/ public/ scripts/ tests/php/ =="
+          echo "== php -l sur app/ public/ scripts/ tests/php/ tests/phpunit/ =="
           if [ ! -d app ] && [ ! -d public ]; then echo "aucun dossier app/public, skip"; exit 0; fi
-          find app public scripts tests/php -name '*.php' -print0 | xargs -0 -n1 -P4 php -l
+          find app public scripts tests/php tests/phpunit -name '*.php' -print0 | xargs -0 -n1 -P4 php -l
           echo "✓ syntaxe OK"
 
   # Dépréciations : les suites isolées ne créent ni base SQL ni données E2E.
@@ -191,7 +191,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
-          extensions: mbstring, intl
+          extensions: mbstring, intl, sodium, posix
           coverage: none
           tools: none
       - name: Setup Node 22
@@ -206,6 +206,20 @@ jobs:
         run: php tests/php/panier_cta_test.php
       - name: Régression page À propos (contenu visiteur, PHP natif)
         run: php tests/php/apropos_test.php
+      - name: Rétention des comptes sur magasin JSON jetable
+        run: php tests/php/retention_comptes_test.php
+      - name: Nettoyage de journaux et sauvegardes jetables
+        run: |
+          php -r 'exit(extension_loaded("posix") ? 0 : 1);'
+          php tests/php/nettoyage_fichiers_test.php
+      - name: CLI de nettoyage et concurrence sur fichiers jetables
+        run: python3 tests/python/test_nettoyage_cli.py -v
+      - name: CLI de rétention sur copie jetable
+        run: python3 tests/python/test_retention_cli.py -v
+      - name: Copies chiffrées et accès sur fichiers jetables
+        run: |
+          php -r 'exit(extension_loaded("sodium") && extension_loaded("posix") ? 0 : 1);'
+          python3 tests/python/test_archive_restreinte.py -v
       - name: Régression heures décalées (UTC→Europe/Paris, PHP natif)
         run: php tests/php/heure_test.php
       - name: Régression adresse de livraison incomplète (préremplissage, PHP natif)
@@ -612,6 +626,126 @@ jobs:
           path: |
             tests/sql/rapport_tests_sql.md
             tests/sql/out/
+
+  # Tests de concurrence sur un répertoire temporaire distinct du dépôt.
+  json-concurrence:
+    name: Annulations JSON concurrentes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+          tools: none
+      - name: Deux processus PHP et magasin jetable
+        shell: bash
+        run: |
+          set -o pipefail
+          python3 -m unittest discover -s tests/python -p test_annulation_concurrente.py -v 2>&1 | tee "$RUNNER_TEMP/concurrence.log" || {
+            grep -E 'FAIL|ERROR|AssertionError|Traceback|Exception|Error:' "$RUNNER_TEMP/concurrence.log" | tail -12 | while IFS= read -r ligne; do
+              ligne=${ligne//%/%25}; echo "::error::$ligne"
+            done
+            exit 1
+          }
+
+  # Serveur MariaDB dédié au job : les tests créent des bases temporaires.
+  mariadb-regressions:
+    name: MariaDB 11.8 et migration
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:11.8
+        env:
+          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: '1'
+          MARIADB_ROOT_HOST: '%'
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=12
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: ''
+      DB_NAME: minishop
+      MINISHOP_MARIADB_INSTANCE_JETABLE: '1'
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo_mysql
+          coverage: none
+          tools: none
+      - name: Installer le client MariaDB
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends mariadb-client
+      - name: Migration depuis une ancienne base peuplée
+        run: python3 scripts/ci_php_diagnostic.py tests/php/migration_mariadb_test.php
+      - name: Campagne SQL et intégration sur une base neuve
+        shell: bash
+        run: |
+          set -o pipefail
+          MINISHOP_TEST_DB=minishop_mariadb_ci php tests/php/sql_integration.php 2>&1 | tee "$RUNNER_TEMP/mariadb.log" || {
+            grep -E '❌|FAIL|ERROR|ERREUR|échec|Fatal' "$RUNNER_TEMP/mariadb.log" | tail -15 | while IFS= read -r ligne; do
+              ligne=${ligne//%/%25}; echo "::error::$ligne"
+            done
+            exit 1
+          }
+
+  responsive-chromium:
+    name: Responsive Chromium réel
+    # Playwright 1.56 prend en charge 24.04 ; ubuntu-latest migre vers 26.04.
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, intl
+          coverage: none
+          tools: none
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts
+      - name: Préférences locales (tests DOM)
+        run: node tests/node/preferences_test.mjs
+      - name: Installer Chromium et ses dépendances système
+        shell: bash
+        run: |
+          set -o pipefail
+          npx playwright install --with-deps chromium 2>&1 | tee "$RUNNER_TEMP/chromium-install.log" || {
+            tail -18 "$RUNNER_TEMP/chromium-install.log" | while IFS= read -r ligne; do
+              ligne=${ligne//%/%25}; echo "::error::$ligne"
+            done
+            exit 1
+          }
+      - name: Parcours 320, 375 et 1440 pixels sur copie jetable
+        env:
+          MINISHOP_BROWSER_ARTIFACTS: ${{ runner.temp }}/captures-responsive
+        shell: bash
+        run: |
+          set -o pipefail
+          node tests/node/responsive_navigateur.mjs 2>&1 | tee "$RUNNER_TEMP/chromium.log" || {
+            tail -8 "$RUNNER_TEMP/chromium.log" | while IFS= read -r ligne; do
+              ligne=${ligne//%/%25}; echo "::error::$ligne"
+            done
+            exit 1
+          }
+      - name: Captures de diagnostic
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: responsive-chromium
+          path: ${{ runner.temp }}/captures-responsive
+          if-no-files-found: ignore
+          retention-days: 7
 
   # -----------------------------------------------------------------
   # 5. Tests unitaires PHP (modèles, repositories, sécurité) sur base test

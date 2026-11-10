@@ -25,9 +25,9 @@
         },
         {
             "cle": "conservation_compte",
-            "valeur": "36",
+            "valeur": "24",
             "unite": "mois",
-            "comment": "Données client en base active après le dernier contact (référentiel CNIL)",
+            "comment": "Délai en mois depuis la dernière activité du compte ; traitement planifié à installer",
             "date_modification": "2026-10-27 19:20:08"
         }
     ]
