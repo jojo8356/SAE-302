@@ -13,6 +13,16 @@
     var badge = document.getElementById('badge-panier');
     var zone = document.getElementById('zone-annonces');
     var total = document.querySelector('[data-total-panier]');
+    var estAnglais = function () {
+        return document.documentElement.lang === 'en';
+    };
+    var traduireServeur = function (texte) {
+        if (!estAnglais() || typeof texte !== 'string') { return texte; }
+        if (window.MINISHOP_I18N_EN && typeof window.MINISHOP_I18N_EN.traduire === 'function') {
+            return window.MINISHOP_I18N_EN.traduire(texte);
+        }
+        return texte;
+    };
 
     /** Affiche un message dans la zone aria-live (texte uniquement, jamais de HTML injecté). */
     function annoncer(message, type) {
@@ -29,7 +39,12 @@
         badge.hidden = nombre <= 0;
         var lien = badge.closest('a');
         if (lien) {
-            lien.setAttribute('aria-label', 'Panier, ' + nombre + ' article' + (nombre > 1 ? 's' : ''));
+            lien.setAttribute(
+                'aria-label',
+                estAnglais()
+                    ? 'Cart, ' + nombre + (nombre === 1 ? ' item' : ' items')
+                    : 'Panier, ' + nombre + ' article' + (nombre > 1 ? 's' : '')
+            );
         }
     }
 
@@ -45,7 +60,7 @@
         var libelle = bouton ? bouton.textContent : '';
         if (bouton) {
             bouton.disabled = true;
-            bouton.textContent = 'Ajout…';
+            bouton.textContent = estAnglais() ? 'Adding…' : 'Ajout…';
         }
 
         var donnees = new URLSearchParams(new FormData(formulaire));
@@ -62,7 +77,7 @@
         })
             .then(function (reponse) {
                 return reponse.json().catch(function () {
-                    return { ok: false, message: 'Réponse inattendue du serveur.' };
+                    return { ok: false, message: estAnglais() ? 'Unexpected server response.' : 'Réponse inattendue du serveur.' };
                 }).then(function (charge) {
                     charge.statut_http = reponse.status;
                     return charge;
@@ -70,7 +85,10 @@
             })
             .then(function (charge) {
                 var ok = charge.ok === true;
-                annoncer(charge.message || (ok ? 'Produit ajouté au panier.' : 'Ajout impossible.'), ok ? 'succes' : 'erreur');
+                var repli = ok
+                    ? (estAnglais() ? 'Product added to cart.' : 'Produit ajouté au panier.')
+                    : (estAnglais() ? 'Could not add item.' : 'Ajout impossible.');
+                annoncer(charge.message ? traduireServeur(charge.message) : repli, ok ? 'succes' : 'erreur');
                 if (ok) {
                     majBadge(charge.nombre_articles);
                     majTotal(charge.total_ttc);
@@ -81,7 +99,12 @@
                 return charge;
             })
             .catch(function () {
-                annoncer('Connexion perdue : le formulaire classique reste disponible.', 'erreur');
+                annoncer(
+                    estAnglais()
+                        ? 'Connection lost: standard form submission remains available.'
+                        : 'Connexion perdue : le formulaire classique reste disponible.',
+                    'erreur'
+                );
                 formulinaireSecours(formulaire);
             })
             .then(function () {
@@ -127,7 +150,8 @@
     /* --- Confirmations d'action destructive ----------------------------- */
     Array.prototype.forEach.call(document.querySelectorAll('form[data-confirme]'), function (formulaire) {
         formulaire.addEventListener('submit', function (evenement) {
-            var message = formulaire.getAttribute('data-confirme') || 'Confirmer cette action ?';
+            var repliConfirme = estAnglais() ? 'Confirm this action?' : 'Confirmer cette action ?';
+            var message = formulaire.getAttribute('data-confirme') || repliConfirme;
             if (!window.confirm(message)) {
                 evenement.preventDefault();
             }

@@ -190,5 +190,6 @@ Tailles en octets historiques mesurées lors du premier audit (`870dda5`) ; les 
 | `public/minishop.css` | 15182 | — | Feuille de style issue de main ; non chargée par le layout actuel, intégration à examiner. |
 
 | `app/View/home/preferences.php` | 0 | 0 | Préférences locales de langue et de fuseau, choix manuel et géolocalisation volontaire. |
-| `public/js/preferences.js` | 0 | 0 | Affichage des dates et gestion locale des préférences, avec bornes UTC des filtres. |
+| `public/js/i18n-en.js` | 0 | 0 | Dictionnaire et règles de traduction anglaise FR/EN de l’interface, des pages légales, du back-office et des messages dynamiques. |
+| `public/js/preferences.js` | 0 | 0 | Affichage des dates, traduction réversible FR/EN et gestion locale des préférences, avec bornes UTC des filtres. |
 | `public/js/tz-lookup.js` | 0 | 0 | Bibliothèque locale de conversion approximative des coordonnées en fuseau. |

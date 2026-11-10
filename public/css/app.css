@@ -2003,11 +2003,13 @@ select[data-largeur-courte] {
         color: var(--encre-douce);
     }
 
+    .tableau-panier td.produit,
     .tableau-panier td[data-label="Produit"] {
         display: block;
         padding-bottom: var(--e-2);
     }
 
+    .tableau-panier td.produit::before,
     .tableau-panier td[data-label="Produit"]::before {
         display: block;
         margin-bottom: var(--e-1);

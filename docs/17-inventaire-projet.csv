@@ -290,6 +290,7 @@ public/img/turbox.svg,Ressources publiques,"Présence, non-vide ; XML par contr�
 public/img/usbc.svg,Ressources publiques,"Présence, non-vide ; XML par contrôle séparé"
 public/img/zen14.svg,Ressources publiques,"Présence, non-vide ; XML par contrôle séparé"
 public/index.php,Ressources et point d’entrée publics,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+public/js/i18n-en.js,Application web,Présence et non-vide ; contrôles dédiés selon le composant
 public/js/panier.js,Ressources et point d’entrée publics,"Présence, non-vide, syntaxe Node si disponible"
 public/js/preferences.js,Application web,Présence et non-vide ; contrôles dédiés selon le composant
 public/js/tz-lookup.js,Application web,Présence et non-vide ; contrôles dédiés selon le composant

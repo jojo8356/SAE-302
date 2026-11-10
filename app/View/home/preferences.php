@@ -7,8 +7,8 @@
         <fieldset>
             <legend>Langue et heure</legend>
             <label for="pref-langue">Langue</label>
-            <select id="pref-langue"><option value="fr">Français</option><option value="en">English</option></select>
-            <p id="traduction-partielle">La traduction anglaise du site est en cours : certaines pages restent en français.</p>
+            <select id="pref-langue"><option value="fr" lang="fr">Français</option><option value="en" lang="en">English</option></select>
+            <p id="traduction-perimetre">L’interface et les pages d’information sont traduites (français / anglais) ; les fiches saisies au catalogue conservent leur langue d’enregistrement.</p>
             <label for="pref-zone">Fuseau horaire ou ville</label>
             <select id="pref-zone" aria-describedby="pref-aide"></select>
             <p id="pref-decalage" aria-live="polite"></p>

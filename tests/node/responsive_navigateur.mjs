@@ -99,10 +99,12 @@ try {
     assert.equal(reponse.status(), 200, `${route} : HTTP ${reponse.status()}`);
   }
   for (const largeur of [320, 375, 1440]) {
-    const contexte = await browser.newContext({ viewport: { width: largeur, height: 900 } });
+    const contexte = await browser.newContext({ viewport: { width: largeur, height: 900 }, locale: 'en-US' });
     const page = await contexte.newPage();
     await aller(page, '/catalogue');
     await pageVerifiee(page, 'catalogue', largeur, 'a[href^="/produit/"]');
+    assert.equal(await page.evaluate(() => document.documentElement.lang), 'en');
+    assert.equal(await page.locator('h1').first().innerText(), 'Catalog');
     await page.locator('.filtres-catalogue summary').click();
     const prix = await page.evaluate(() => {
       const min = document.querySelector('#prix_min').getBoundingClientRect();
@@ -139,6 +141,32 @@ try {
     const commandeId = page.url().match(/\/mes-commandes\/(\d+)$/)[1];
     await aller(page, '/mes-commandes');
     await pageVerifiee(page, 'mes-commandes', largeur, '.tableau-commandes-client tbody tr');
+    assert.equal(await page.locator('h1').first().innerText(), 'Your orders');
+    for (const [routeInfo, nomInfo] of [['/compte', 'compte-en'], ['/confidentialite', 'confidentialite-en'], ['/cgv', 'cgv-en']]) {
+      await aller(page, routeInfo);
+      await pageVerifiee(page, nomInfo, largeur);
+    }
+    await aller(page, '/admin/connexion');
+    await page.fill('#email', 'admin@minishop.fr');
+    await page.fill('#mot_de_passe', 'Admin2026!');
+    await page.locator('form[action="/admin/connexion"] button').click();
+    for (const [routeEn, nomEn, cibleEn] of [
+      ['/admin', 'dashboard-admin-en', '.kpis'],
+      ['/admin/commandes', 'commandes-admin-en', '.tableau-commandes tbody tr'],
+      ['/admin/stocks', 'stocks-admin-en', '.tableau-stocks tbody tr'],
+      ['/admin/produits', 'produits-admin-en', '.tableau-defilant--admin tbody tr'],
+      ['/admin/parametres', 'parametres-admin-en', 'form[action="/admin/parametres"]'],
+      ['/admin/equipe', 'equipe-admin-en', '.tableau-defilant--admin tbody tr'],
+    ]) {
+      await aller(page, routeEn);
+      await pageVerifiee(page, nomEn, largeur, cibleEn);
+      const ecartsEn = await page.evaluate(() => [...document.querySelectorAll('.tableau-defilant--admin table')].flatMap((table) => {
+        const titres = [...table.querySelectorAll('thead th')].map((th) => th.textContent.trim());
+        return [...table.querySelectorAll('tbody tr')].flatMap((tr) => [...tr.querySelectorAll(':scope > td')]
+          .map((td, i) => td.dataset.label === titres[i] ? null : `${td.dataset.label} != ${titres[i]}`).filter(Boolean));
+      }));
+      assert.deepEqual(ecartsEn, [], `${nomEn} : libellés anglais incohérents`);
+    }
     await contexte.close();
 
     const admin = await browser.newContext({ viewport: { width: largeur, height: 900 }, javaScriptEnabled: false });
