@@ -87,7 +87,7 @@ $lienNav = static function (string $href, string $libelle) use ($estCourant): st
     <link rel="stylesheet" href="/css/print.css" media="print">
     <script src="/js/panier.js" defer></script>
     <script src="/js/ui.js" defer></script>
-    <script src="/js/tz-lookup.js" defer></script>
+    <?php if ($cheminCourant === '/preferences'): ?><script src="/js/tz-lookup.js" defer></script><?php endif; ?>
     <script src="/js/preferences.js" defer></script>
 </head>
 <body>
