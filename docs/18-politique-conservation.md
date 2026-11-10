@@ -35,6 +35,7 @@ Générer la clé privée sur une machine de confiance distincte, non accessible
 
 ```bash
 cd /home/jojokes/Documents/BUT/Projet/s302
+(
 set -eu
 D=$(mktemp -d)
 trap 'rm -rf "$D"' EXIT
@@ -48,6 +49,7 @@ php scripts/archive_restreinte.php consulter --archive "$A" --cle-privee "$D/cle
 R=$(find "$D/sortie" -name 'restitution-*.bin' -type f -print -quit)
 cmp "$D/source.txt" "$R" && echo 'OK : restitution identique ; source inchangée'
 test "$(wc -l < "$D/sortie/acces.jsonl")" -eq 1 && echo 'OK : une demande de restitution tracée'
+)
 ```
 
 Sortie attendue : création des clés, `SIMULATION`, création d'une copie chiffrée, restitution en clair, puis les deux lignes `OK`. Les noms aléatoires varient. `2099-01-01` est une date de test, **pas** une durée de conservation approuvée. L'exemple n'installe ni planification ni politique sur l'instance.

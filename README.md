@@ -521,3 +521,9 @@ migration `004_conservation_comptes_24_mois.sql`, à appliquer volontairement,
 ne change que l'ancien défaut de 36 en 24 et préserve les valeurs personnalisées.
 La configuration JSON existante doit être revue séparément. Une analyse des dates
 anciennes et du fuseau SQL est nécessaire avant toute activation réelle.
+
+La [politique de conservation proposée](docs/18-politique-conservation.md) et
+l'outil CLI `scripts/archive_restreinte.php` préparent des copies chiffrées à
+accès limité. Ces copies ne retirent rien de la base active : elles ne constituent
+pas un archivage intermédiaire complet. La politique, les habilitations, le
+transfert, les purges et les sauvegardes restent à valider et mettre en œuvre.
