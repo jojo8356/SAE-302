@@ -542,7 +542,7 @@ Les connexions PDO ouvertes par `DbConnexion` imposent maintenant `SET SESSION t
 
 Les tests d'intégration utilisent une base jetable et une table temporaire : session initialement à UTC+5:30, retour à UTC par le pilote, insertion et mise à jour sur des dates d'hiver et d'été et affichage Europe/Paris. Ils ne prouvent ni le fuseau du serveur réel ni l'origine des données déjà présentes.
 
-Après déploiement de la version corrigée, cette commande **de lecture seule** teste une nouvelle connexion CLI avec la configuration `.env` de l'instance ; elle n'inspecte ni ne modifie les dates existantes :
+Après déploiement de la version corrigée, cette commande teste une nouvelle connexion CLI sans modifier les données (seul le fuseau de sa session est réglé) avec la configuration `.env` de l'instance ; elle n'inspecte ni ne modifie les dates existantes :
 
 ```bash
 cd /home/jojokes/Documents/BUT/Projet/s302
