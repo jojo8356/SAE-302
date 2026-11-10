@@ -111,8 +111,13 @@ try {
       return { minLeft: min.left, minRight: min.right, minTop: min.top,
         maxLeft: max.left, maxRight: max.right, maxTop: max.top, viewport: document.documentElement.clientWidth };
     });
-    assert.ok(prix.minRight <= prix.maxLeft && prix.maxRight <= prix.viewport + 1,
-      `Filtres prix coupés ou non côte à côte : ${JSON.stringify(prix)}`);
+    assert.ok(prix.minLeft >= 0 && prix.minRight <= prix.viewport + 1 && prix.maxLeft >= 0 && prix.maxRight <= prix.viewport + 1,
+      `Filtres prix coupés : ${JSON.stringify(prix)}`);
+    if (largeur >= 360) {
+      assert.ok(prix.minRight <= prix.maxLeft, `Filtres prix non côte à côte : ${JSON.stringify(prix)}`);
+    } else {
+      assert.ok(prix.maxTop > prix.minTop, `Filtres prix non empilés : ${JSON.stringify(prix)}`);
+    }
     await page.locator('.filtres-catalogue summary').click();
     const href = await page.locator('a[href^="/produit/"]').first().getAttribute('href');
     await aller(page, href);
