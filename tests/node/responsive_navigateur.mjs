@@ -250,6 +250,7 @@ try {
   console.log('✅ Vérifications Chromium terminées ; aucune garantie sur d’autres navigateurs ou appareils.');
 } catch (erreur) {
   console.error('❌ Test de rendu Chromium :', erreur);
+  console.error('❌ Diagnostic compact :', String(erreur?.stack || erreur).replace(/\n/g, ' | '));
   process.exitCode = 1;
 } finally {
   if (browser) await browser.close();
