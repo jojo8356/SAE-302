@@ -112,6 +112,7 @@ app/View/home/garanties_encadre.php,Application PHP,"Présence, non-vide ; synta
 app/View/home/index.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/View/home/livraison.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/View/home/mentions_legales.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/home/preferences.php,Application PHP,Présence et non-vide ; contrôles dédiés selon le composant
 app/View/home/retractation.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/View/layout.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/View/panier/index.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
@@ -188,6 +189,7 @@ docs/diagrams/src/seq_authentification.puml,Documentation,Présence et non-vide 
 docs/diagrams/src/seq_consulter_catalogue.puml,Documentation,Présence et non-vide uniquement
 docs/diagrams/src/seq_passer_commande.puml,Documentation,Présence et non-vide uniquement
 docs/diagrams/src/seq_recherche_produit.puml,Documentation,Présence et non-vide uniquement
+docs/licences/tz-lookup-CC0.txt,Documentation,Présence et non-vide ; contrôles dédiés selon le composant
 docs/sql-a-ecrire/requetes-sql-a-ecrire.md,Documentation,Présence et non-vide uniquement
 docs/sql-a-ecrire/requetes-sql-a-ecrire.pdf,Documentation,Présence et non-vide uniquement
 livrables/README.md,Livrables,Présence et non-vide uniquement
@@ -289,6 +291,8 @@ public/img/usbc.svg,Ressources publiques,"Présence, non-vide ; XML par contrôl
 public/img/zen14.svg,Ressources publiques,"Présence, non-vide ; XML par contrôle séparé"
 public/index.php,Ressources et point d’entrée publics,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 public/js/panier.js,Ressources et point d’entrée publics,"Présence, non-vide, syntaxe Node si disponible"
+public/js/preferences.js,Application web,Présence et non-vide ; contrôles dédiés selon le composant
+public/js/tz-lookup.js,Application web,Présence et non-vide ; contrôles dédiés selon le composant
 public/js/ui.js,Ressources et point d’entrée publics,"Présence, non-vide, syntaxe Node si disponible"
 public/mesurer.php,Ressources et point d’entrée publics,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 public/minishop.css,Ressources publiques,Présence et non-vide uniquement
@@ -369,6 +373,7 @@ sql/migrations/004_conservation_comptes_24_mois.sql,SQL source,Présence et non-
 tests/charge/reserver.sh,Tests et fixtures,"Présence, non-vide, syntaxe Bash si disponible"
 tests/js/deprecations_wasm.mjs,Tests et fixtures,"Présence, non-vide, syntaxe Node si disponible"
 tests/node/e2e_isolation.mjs,Tests et fixtures,"Présence, non-vide, syntaxe Node si disponible"
+tests/node/preferences_test.mjs,Tests et fixtures,Présence et non-vide ; contrôles dédiés selon le composant
 tests/node/responsive_navigateur.mjs,Tests,"Présence, non-vide, syntaxe Node si disponible"
 tests/perf/mesurer.sh,Tests et fixtures,"Présence, non-vide, syntaxe Bash si disponible"
 tests/perf/mesurer_sql.sh,Tests et fixtures,"Présence, non-vide, syntaxe Bash si disponible"

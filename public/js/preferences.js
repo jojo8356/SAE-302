@@ -85,7 +85,7 @@
         const zone = document.querySelector('#pref-zone');
         const etat = document.querySelector('#pref-etat');
         const options = typeof Intl.supportedValuesOf === 'function' ? Intl.supportedValuesOf('timeZone') : [];
-        const zones = [...new Set(['Europe/Paris', 'America/New_York', 'UTC', ...options, zoneActive()])].sort();
+        const zones = [...new Set(['Europe/Paris', 'America/New_York', 'Asia/Kathmandu', 'UTC', ...options, zoneActive()])].sort();
         const auto = document.createElement('option'); auto.value = ''; auto.textContent = 'Selon la langue / By language (Paris / New York)'; zone.append(auto);
         zones.forEach((nom) => { const o = document.createElement('option'); o.value = nom; o.textContent = nom.replace(/_/g, ' '); zone.append(o); });
         langue.value = prefs.langue;
