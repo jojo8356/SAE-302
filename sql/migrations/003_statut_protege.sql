@@ -1,6 +1,6 @@
 -- Protection ciblée de la procédure de changement de statut.
--- DDL à commit implicite : sauvegarde, privilège ALTER ROUTINE et fenêtre sans
--- écritures requis ; vérifier le résultat avant réouverture. Aucune donnée modifiée.
+-- DDL à commit implicite : sauvegarde, privilèges CREATE/ALTER ROUTINE et
+-- fenêtre sans écritures requis ; vérifier le résultat avant réouverture.
 DELIMITER $$
 DROP PROCEDURE IF EXISTS sp_update_order_status $$
 CREATE PROCEDURE sp_update_order_status (
@@ -17,6 +17,12 @@ BEGIN
   IF p_id_commande IS NULL OR p_nouveau_statut IS NULL
      OR p_nouveau_statut NOT IN ('BROUILLON','EN_PREPARATION','PAYEE','EXPEDIEE','LIVREE','ANNULEE') THEN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'STATUT_NON_AUTORISE';
+  END IF;
+
+  -- Une annulation doit solder et gérer le stock, jamais un simple UPDATE.
+  -- Utiliser sp_cancel_order pour le client ou le parcours administrateur applicatif.
+  IF p_nouveau_statut = 'ANNULEE' THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'ANNULATION_VIA_PARCOURS_DEDIE';
   END IF;
 
   SELECT statut INTO v_statut FROM commande WHERE id_commande = p_id_commande FOR UPDATE;

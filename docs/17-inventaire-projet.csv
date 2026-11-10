@@ -74,6 +74,7 @@ app/View/Image/AlternativeInformative.php,Application PHP,"Présence, non-vide ;
 app/View/admin/categories.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/View/admin/commande_detail.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/View/admin/commandes.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/View/admin/confirmer_annulation.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/View/admin/confirmer_suppression_categorie.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/View/admin/confirmer_suppression_produit.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/View/admin/dashboard.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
@@ -355,6 +356,8 @@ sql/02_minishop_procedures.sql,SQL source,Présence et non-vide uniquement
 sql/03_minishop_triggers.sql,SQL source,Présence et non-vide uniquement
 sql/04_minishop_demo.sql,SQL source,Présence et non-vide uniquement
 sql/migrations/001_montant_avant_annulation_mariadb.sql,SQL source,Présence et non-vide uniquement
+sql/migrations/002_historique_lisible.sql,SQL source,Présence et non-vide uniquement
+sql/migrations/003_statut_protege.sql,SQL source,Présence et non-vide uniquement
 tests/charge/reserver.sh,Tests et fixtures,"Présence, non-vide, syntaxe Bash si disponible"
 tests/js/deprecations_wasm.mjs,Tests et fixtures,"Présence, non-vide, syntaxe Node si disponible"
 tests/node/e2e_isolation.mjs,Tests et fixtures,"Présence, non-vide, syntaxe Node si disponible"

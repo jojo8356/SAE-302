@@ -168,6 +168,7 @@ Tailles en octets historiques mesurées lors du premier audit (`870dda5`) ; les 
 ## Ajouts de `main` à examiner lors de l’intégration
 
 | `app/Tools/Heure.php` | 8492 | 12 | Conversion et formatage des dates UTC et Europe/Paris. |
+| `app/View/admin/confirmer_annulation.php` | 1228 | 0 | Vue de confirmation de l’annulation administrateur, rendue par `app/Controller/Admin/CommandeAdminController.php`. |
 | `app/View/admin/confirmer_suppression_categorie.php` | 740 | 0 | Vue de confirmation avant action définitive. |
 | `app/View/admin/confirmer_suppression_produit.php` | 813 | 0 | Vue de confirmation avant action définitive. |
 | `app/View/commande/confirmer_annulation.php` | 925 | 0 | Vue de confirmation avant action définitive. |

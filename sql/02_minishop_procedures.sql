@@ -513,12 +513,6 @@ BEGIN
 
   -- (2) verrou sur l'en-tete de commande : une commande ne se modifie plus
   --     une fois Expediee/Livree/Annulee
-  -- Une annulation doit solder et gérer le stock, jamais un simple UPDATE.
-  -- Utiliser sp_cancel_order pour le client ou le parcours administrateur applicatif.
-  IF p_nouveau_statut = 'ANNULEE' THEN
-    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'ANNULATION_VIA_PARCOURS_DEDIE';
-  END IF;
-
   SELECT statut INTO v_statut FROM commande WHERE id_commande = p_id_commande FOR UPDATE;
   IF v_statut IS NULL THEN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'COMMANDE_INTROUVABLE';
@@ -741,6 +735,12 @@ BEGIN
   IF p_id_commande IS NULL OR p_nouveau_statut IS NULL
      OR p_nouveau_statut NOT IN ('BROUILLON','EN_PREPARATION','PAYEE','EXPEDIEE','LIVREE','ANNULEE') THEN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'STATUT_NON_AUTORISE';
+  END IF;
+
+  -- Une annulation doit solder et gérer le stock, jamais un simple UPDATE.
+  -- Utiliser sp_cancel_order pour le client ou le parcours administrateur applicatif.
+  IF p_nouveau_statut = 'ANNULEE' THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'ANNULATION_VIA_PARCOURS_DEDIE';
   END IF;
 
   SELECT statut INTO v_statut FROM commande WHERE id_commande = p_id_commande FOR UPDATE;
