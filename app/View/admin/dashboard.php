@@ -15,14 +15,15 @@ declare(strict_types=1);
     </div>
 </header>
 
-<section class="kpis" aria-label="Indicateurs clés">
+<p data-jour-info>Indicateurs du jour : heure de Paris (repli sans JavaScript).</p>
+<section class="kpis" aria-label="Indicateurs clés" data-dashboard-jour data-jour-accepte="<?php if (!empty($jourTransmisAccepte)) { echo 'oui'; } else { echo 'non'; } ?>">
     <div class="kpi kpi--accent">
         <p class="kpi__libelle">CA du jour</p>
-        <p class="kpi__valeur"><?= euros($indicateurs['ca_jour'] ?? 0) ?></p>
+        <p class="kpi__valeur" data-ca-jour><?= euros($indicateurs['ca_jour'] ?? 0) ?></p>
     </div>
     <div class="kpi">
         <p class="kpi__libelle">Commandes du jour</p>
-        <p class="kpi__valeur"><?= (int) ($indicateurs['commandes_jour'] ?? 0) ?></p>
+        <p class="kpi__valeur" data-commandes-jour><?= (int) ($indicateurs['commandes_jour'] ?? 0) ?></p>
     </div>
     <div class="kpi">
         <p class="kpi__libelle">CA cumulé</p>

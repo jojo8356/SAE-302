@@ -714,6 +714,8 @@ jobs:
         with:
           node-version: '22'
       - run: npm ci --ignore-scripts
+      - name: Préférences locales (tests DOM)
+        run: node tests/node/preferences_test.mjs
       - name: Installer Chromium et ses dépendances système
         shell: bash
         run: |

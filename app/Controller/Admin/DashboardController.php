@@ -34,6 +34,20 @@ final class DashboardController extends Controller
         if ($debutJour === null || $finJour === null) {
             throw new \RuntimeException('Jour courant invalide.');
         }
+        $jourTransmisAccepte = false;
+        $jourTransmis = $this->str('jour_local', 10);
+        $debutTransmis = Heure::borneTransmise($jourTransmis, $this->str('debut_utc', 19));
+        $finTransmise = Heure::borneTransmise($jourTransmis, $this->str('fin_utc', 19), true);
+        if ($debutTransmis !== null && $finTransmise !== null) {
+            $debutTs = strtotime($debutTransmis . ' UTC');
+            $finTs = strtotime($finTransmise . ' UTC');
+            if ($debutTs !== false && $finTs !== false && $finTs - $debutTs >= 20 * 3600
+                && $finTs - $debutTs <= 28 * 3600 && $debutTs <= time() && $finTs > time()) {
+                $jourTransmisAccepte = true;
+                $debutJour = $debutTransmis;
+                $finJour = $finTransmise;
+            }
+        }
         $filtreJour = [Filter::gte('date_commande', $debutJour), Filter::lt('date_commande', $finJour)];
         $duJour = [];
         foreach ($store->select('commande', ['where' => $filtreJour]) as $commande) {
@@ -54,6 +68,7 @@ final class DashboardController extends Controller
 
         $this->render('admin/dashboard', [
             'indicateurs' => $indicateurs,
+            'jourTransmisAccepte' => $jourTransmisAccepte,
             'rapport' => $rapport,
             'alertes' => $produits->alertesStock(),
         ], 'Back-office — tableau de bord');

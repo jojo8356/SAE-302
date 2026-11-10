@@ -3,18 +3,16 @@
 declare(strict_types=1);
 
 /**
- * Horodatages en UTC à l'écriture ; affichage configurable en Europe/Paris
- * (défaut avec changements d'heure) ou en décalage fixe UTC±n[:mm].
+ * Horodatages en UTC à l'écriture ; repli serveur Europe/Paris.
+ * Le navigateur affiche les dates selon les préférences personnelles.
  * Aucun changement de configuration ne modifie les dates stockées. Les anciennes
  * dates SQL de provenance inconnue doivent être examinées avant conversion.
  */
 
 namespace App\Tools;
 
-use App\Config\Env;
 use DateTimeImmutable;
 use DateTimeZone;
-use InvalidArgumentException;
 
 final class Heure
 {
@@ -34,22 +32,7 @@ final class Heure
 
     public static function fuseauAffichage(): DateTimeZone
     {
-        $valeur = trim((string) Env::get('FUSEAU_AFFICHAGE', self::FUSEAU_AFFICHAGE));
-        if ($valeur === '' || $valeur === self::FUSEAU_AFFICHAGE) {
-            return new DateTimeZone(self::FUSEAU_AFFICHAGE);
-        }
-        if ($valeur === 'UTC') { return new DateTimeZone('UTC'); }
-        if (preg_match('/^UTC([+-])(\d{1,2})(?::(\d{2}))?$/D', $valeur, $m) !== 1) {
-            throw new InvalidArgumentException('FUSEAU_AFFICHAGE invalide : utiliser Europe/Paris, UTC ou UTC+/-heures[:minutes].');
-        }
-        $heures = (int) $m[2];
-        $minutes = (int) ($m[3] ?? 0);
-        $maximum = 14;
-        if ($m[1] === '-') { $maximum = 12; }
-        if ($heures > $maximum || $minutes > 59 || ($heures === $maximum && $minutes !== 0)) {
-            throw new InvalidArgumentException('FUSEAU_AFFICHAGE hors limites (UTC-12 à UTC+14).');
-        }
-        return new DateTimeZone(sprintf('%s%02d:%02d', $m[1], $heures, $minutes));
+        return new DateTimeZone(self::FUSEAU_AFFICHAGE);
     }
 
     /** Instant courant, en UTC. */
@@ -188,9 +171,6 @@ final class Heure
      */
     public static function libelleFuseau(?DateTimeImmutable $instant = null): string
     {
-        if (self::fuseauAffichage()->getName() !== self::FUSEAU_AFFICHAGE) {
-            return self::decalage($instant) . ' (décalage fixe, sans heure d’été)';
-        }
         $saison = 'heure d\'hiver';
         if (self::estHeureAvancee($instant)) {
             $saison = 'heure d\'été';
@@ -209,6 +189,20 @@ final class Heure
         if ($date === false || $date->format('Y-m-d') !== $jour) { return null; }
         if ($lendemain) { $date = $date->modify('+1 day'); }
         return self::horodatageStockage($date);
+    }
+
+    /** Borne calculée par le navigateur, contrôlée sans enregistrer son fuseau. */
+    public static function borneTransmise(string $jour, string $borne, bool $lendemain = false): ?string
+    {
+        if (self::borneJourUtc($jour) === null || preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/D', $borne) !== 1) {
+            return null;
+        }
+        $date = DateTimeImmutable::createFromFormat('!Y-m-d H:i:s', $borne, self::fuseauStockage());
+        $milieu = DateTimeImmutable::createFromFormat('!Y-m-d', $jour, self::fuseauStockage());
+        if ($date === false || $milieu === false || $date->format('Y-m-d H:i:s') !== $borne) { return null; }
+        if ($lendemain) { $milieu = $milieu->modify('+1 day'); }
+        if (abs($date->getTimestamp() - $milieu->getTimestamp()) > 36 * 3600) { return null; }
+        return $borne;
     }
 
     /** Année civile à Paris (numérotation des commandes CMD{année}-…). */

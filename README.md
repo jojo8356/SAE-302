@@ -552,14 +552,12 @@ php -r 'require "app/bootstrap.php"; $c=\App\Config\Database::config(); $p=\App\
 Attendu : `session_sql=+00:00` et `maintenant_sql` identique à `utc_sql`. Les valeurs `serveur` et `systeme` dépendent de l'hébergement ; `SYSTEM` peut être normal pour la valeur globale. Cette vérification CLI ne démontre pas que la même version est déployée sur le serveur Web, ni la qualité des anciennes dates.
 
 
-### Fuseau d’affichage configurable
+### Préférences de langue et de fuseau
 
-Dans `.env` (copie locale non versionnée de `.env.example`), modifier par exemple :
+La page **Préférences** est accessible depuis le menu, sans compte. Elle permet de choisir un fuseau IANA par ville ou de demander volontairement la position ; aucune permission n'est demandée avant le clic. Le fuseau est estimé dans le navigateur par la bibliothèque locale `@photostructure/tz-lookup` 11.8.0, puis `Intl` détermine le décalage et les changements d'heure pour chaque date. Cette estimation est approximative et peut se tromper : vérifiez la ville proposée, notamment près des frontières. La géolocalisation nécessite HTTPS et une autorisation, et le navigateur ou le système peut faire appel à ses propres services.
 
-```dotenv
-FUSEAU_AFFICHAGE=UTC+2
-```
+Sans choix de fuseau, le français utilise Paris et l'anglais New York. La langue initiale suit celle du navigateur. **La traduction anglaise est partielle** : navigation et préférences seulement ; les autres pages, messages et documents juridiques nécessitent encore une traduction et une relecture. JavaScript désactivé : textes français et dates en heure de Paris.
 
-Valeurs acceptées : `Europe/Paris` (défaut, changement d'heure automatique), `UTC`, `UTC+2`, `UTC-5` ou un décalage avec minutes comme `UTC+5:30` ; plage autorisée de UTC-12:00 à UTC+14:00. Un décalage fixe **ne change pas entre l'été et l'hiver** : pour l'heure de Paris toute l'année, conserver `Europe/Paris`. Une valeur invalide déclenche une erreur au lieu de choisir silencieusement un mauvais fuseau. Redémarrer les processus applicatifs conservant leur configuration en mémoire après modification.
+La préférence langue/fuseau est enregistrée dans le `localStorage` du navigateur, non en base ; le bouton Réinitialiser la supprime. MiniShop ne conserve ni ne transmet les coordonnées. Pour les filtres de commandes et les indicateurs du jour, les bornes UTC calculées dans le navigateur sont transmises au serveur ; elles peuvent apparaître dans ses journaux HTTP. Le navigateur peut interdire le stockage local : le choix n'est alors valable que sur la page courante.
 
-Le réglage n'affecte que l'affichage et l'interprétation des dates saisies dans les filtres et les indicateurs du jour administrateur ; le stockage, la rétention et les sessions SQL restent en UTC, et l'année des numéros de commande reste celle de Paris. Aucune date ancienne n'est modifiée ou corrigée automatiquement ; leur origine doit encore être vérifiée.
+Le stockage métier et les sessions SQL restent UTC. L'année des numéros de commande reste celle de Paris. L'ancien réglage `.env` `FUSEAU_AFFICHAGE` n'est plus utilisé et peut être supprimé ; les dates historiques ne sont pas modifiées et leur provenance doit être vérifiée. Stockage local et consentement de géolocalisation ne suffisent pas à garantir à eux seuls la conformité RGPD : le déploiement et son information doivent être examinés.

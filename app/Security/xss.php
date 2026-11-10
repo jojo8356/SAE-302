@@ -28,6 +28,19 @@ function date_fr(?string $datetime, bool $avecHeure = false): string
     return \App\Tools\Heure::formater($datetime, $avecHeure);
 }
 
+/** Date sémantique : instant UTC pour le navigateur, repli serveur Paris. */
+function date_html(?string $datetime, bool $avecHeure = false): string
+{
+    $instant = \App\Tools\Heure::instantDepuisStockage($datetime);
+    if ($instant === null) {
+        return '—';
+    }
+    $utc = $instant->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z');
+    $format = 'date';
+    if ($avecHeure) { $format = 'datetime'; }
+    return '<time datetime="' . e($utc) . '" data-date-format="' . $format . '">' . e(date_fr($datetime, $avecHeure)) . '</time>';
+}
+
 /** Libellé humain d'un statut de commande (RB-11). */
 function statut_libelle(string $statut): string
 {

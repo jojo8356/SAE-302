@@ -163,6 +163,12 @@ final class HomeController extends Controller
         ], 'À propos de MiniShop');
     }
 
+    /** Préférences locales au navigateur, sans données de compte. */
+    public function preferences(): void
+    {
+        $this->render('home/preferences', [], 'Préférences');
+    }
+
     public function page404(): void
     {
         $this->render('errors/404', [], 'Page introuvable');

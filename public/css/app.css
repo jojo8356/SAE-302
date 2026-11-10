@@ -2398,3 +2398,10 @@ select[data-largeur-courte] {
 .tableau-panier .produit, .tableau-stocks .reference, .tableau-stocks .produit,
 .tableau-alertes .reference, .tableau-alertes .produit { text-align: left; }
 .tableau-panier .montant { text-align: right; }
+
+/* Préférences personnelles : largeur de lecture et commandes adaptées au mobile. */
+.preferences { max-width: 48rem; margin: 2rem auto; padding: 0 var(--e-4); }
+.preferences fieldset { display: grid; gap: var(--e-3); min-width: 0; }
+.preferences select { width: 100%; max-width: 100%; }
+.preferences__actions { display: flex; flex-wrap: wrap; gap: var(--e-3); }
+.preferences button { white-space: normal; }

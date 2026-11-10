@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 <p>
     Statut actuel : <strong><?= e(statut_libelle($commande['statut'])) ?></strong> ·
-    Passée le <?= e(date_fr($commande['date_commande'], true)) ?> ·
+    Passée le <?= date_html($commande['date_commande'], true) ?> ·
     <?php if ($commande['statut'] === 'ANNULEE' && ($commande['montant_avant_annulation'] ?? null) !== null): ?>
     Montant soldé : <strong><?= euros($commande['montant_total']) ?></strong> (annulée — rien à payer) ·
     Total avant annulation : <?= euros($commande['montant_avant_annulation']) ?>
@@ -69,7 +69,7 @@ declare(strict_types=1);
     <tbody>
     <?php foreach ($historique as $entree): ?>
         <tr>
-            <td data-label="Quand"><?= e(date_fr($entree['changed_at'], true)) ?></td>
+            <td data-label="Quand"><?= date_html($entree['changed_at'], true) ?></td>
             <td data-label="Statut"><?= e(statut_libelle($entree['new_status'])) ?></td>
             <td data-label="Par"><?= e($entree['changed_by_role']) ?><?php if (!empty($entree['changed_by'])) { echo ' #' . (int) $entree['changed_by']; } else { echo ''; } ?></td>
             <td data-label="Commentaire"><?= e($entree['commentaire']) ?></td>

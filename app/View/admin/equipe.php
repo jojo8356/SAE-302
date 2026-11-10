@@ -44,7 +44,7 @@ jamais de compte client.</p>
             <td data-label="Email"><?= e($admin['email']) ?></td>
             <td data-label="Rôle"><?= e($admin['role']) ?></td>
             <td data-label="Actif"><?php if (!empty($admin['actif'])) { echo '✔'; } else { echo '✘ bloqué'; } ?></td>
-            <td data-label="Dernière connexion"><?= e(date_fr($admin['derniere_connexion'] ?? null, true)) ?></td>
+            <td data-label="Dernière connexion"><?= date_html($admin['derniere_connexion'] ?? null, true) ?></td>
             <td data-label="Action">
                 <form method="post" action="/admin/equipe/<?= (int) $admin['id_admin'] ?>/basculer">
                     <?= csrf_field() ?>

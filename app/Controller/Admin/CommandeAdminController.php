@@ -55,13 +55,17 @@ final class CommandeAdminController extends Controller
         }
         $du = $this->str('du', 10);
         if ($du !== '') {
+            $borne = $this->str('debut_utc', 19);
             $debutUtc = Heure::borneJourUtc($du);
+            if ($borne !== '') { $debutUtc = Heure::borneTransmise($du, $borne); }
             if ($debutUtc === null) { $where[] = Filter::eq('id_commande', -1); }
             else { $where[] = Filter::gte('date_commande', $debutUtc); }
         }
         $au = $this->str('au', 10);
         if ($au !== '') {
+            $borne = $this->str('fin_utc', 19);
             $finUtc = Heure::borneJourUtc($au, true);
+            if ($borne !== '') { $finUtc = Heure::borneTransmise($au, $borne, true); }
             if ($finUtc === null) { $where[] = Filter::eq('id_commande', -1); }
             else { $where[] = Filter::lt('date_commande', $finUtc); }
         }

@@ -56,6 +56,7 @@ $routeur = new Router();
 
 // ------------------------------------------------------------ front-office
 $routeur->get('/', [HomeController::class, 'index']);
+$routeur->get('/preferences', [HomeController::class, 'preferences']);
 $routeur->get('/categories', [HomeController::class, 'categories']);
 $routeur->get('/a-propos', [HomeController::class, 'aPropos']);
 $routeur->get('/mentions-legales', [HomeController::class, 'mentionsLegales']);

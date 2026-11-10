@@ -72,7 +72,7 @@ foreach ($fichiersJs as $fichierJs) {
         $javascript .= $contenuJs;
     }
 }
-$check('scripts locaux : pas de stockage navigateur identifié', !str_contains($javascript, 'localStorage') && !str_contains($javascript, 'sessionStorage') && !str_contains($javascript, 'document.cookie'));
+$check('stockage local limité aux préférences et expliqué', str_contains($javascript, 'minishop.preferences.v1') && !str_contains($javascript, 'sessionStorage') && !str_contains($javascript, 'document.cookie') && str_contains($lire('app/View/home/cookies.php'), 'localStorage'));
 $check('contrôleur : ressources et connexions limitées à l’origine', str_contains($routes, "script-src 'self'") && str_contains($routes, "connect-src 'self'"));
 $ecritureContact = $lire('app/Service/NettoyageJournaux.php');
 $check('contact : succès dépend de l’écriture', str_contains($controleur, 'if (!$this->journaliserContact') && str_contains($controleur, 'return NettoyageJournaux::ajouter(') && str_contains($ecritureContact, '$n === strlen($ligne)'));

@@ -23,7 +23,7 @@ declare(strict_types=1);
         <?php foreach ($commandes as $commande): ?>
             <tr>
                 <td data-label="Numéro"><a href="/mes-commandes/<?= (int) $commande['id_commande'] ?>"><?= e($commande['numero']) ?></a></td>
-                <td data-label="Date"><?= e(date_fr($commande['date_commande'], true)) ?></td>
+                <td data-label="Date"><?= date_html($commande['date_commande'], true) ?></td>
                 <td data-label="Statut"><?= e(statut_libelle($commande['statut'])) ?></td>
                 <td data-label="Lignes d’articles"><?= (int) ($commande['nb_lignes'] ?? 0) ?></td>
                 <td class="montant" data-label="Montant TTC"><?= euros($commande['montant_total']) ?></td>

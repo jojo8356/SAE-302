@@ -35,8 +35,6 @@ use App\Tools\Heure;
 
 ob_start();
 
-$variableOrigine = getenv('FUSEAU_AFFICHAGE');
-putenv('FUSEAU_AFFICHAGE=Europe/Paris');
 
 $echecs = 0;
 $tests = 0;
@@ -147,43 +145,15 @@ $check('date_fr() délègue au gestionnaire', str_contains($xss, 'Heure::formate
 $check('date_fr() ne lit plus l\'horloge serveur (strtotime/date)', !str_contains($xss, 'strtotime'));
 $check('le gestionnaire existe à l\'emplacement PSR-4 App\\Tools', is_file($racine . '/app/Tools/Heure.php'));
 
-/* Décalages d'affichage configurables : écriture UTC et année métier inchangées. */
-putenv('FUSEAU_AFFICHAGE=UTC+2');
-$check('UTC+2 : affichage fixe hiver', date_fr('2026-01-15 18:15:00', true) === '15/01/2026 20h15');
-$check('UTC+2 : affichage fixe été', date_fr('2026-07-15 17:15:00', true) === '15/07/2026 19h15');
-$check('UTC+2 : borne du jour local en UTC', Heure::borneJourUtc('2026-01-15') === '2026-01-14 22:00:00' && Heure::borneJourUtc('2026-01-15', true) === '2026-01-15 22:00:00');
-$check('UTC+2 : stockage inchangé', Heure::horodatageStockage($instant) === '2026-01-15 18:15:00');
-$check('UTC+2 : libellé sans fausse heure d’été', str_contains(Heure::libelleFuseau($ete), 'décalage fixe') && !Heure::estHeureAvancee($ete));
-putenv('FUSEAU_AFFICHAGE=UTC-5');
-$check('UTC-5 : jour précédent', date_fr('2026-01-15 02:15:00', true) === '14/01/2026 21h15');
-$check('UTC-5 : filtre local converti', Heure::borneJourUtc('2026-01-15') === '2026-01-15 05:00:00');
-putenv('FUSEAU_AFFICHAGE=UTC+5:30');
-$check('UTC+5:30 : minutes et décalage affichés', date_fr('2026-01-15 18:15:00', true) === '15/01/2026 23h45' && Heure::decalage($hiver) === 'UTC+5:30');
-putenv('FUSEAU_AFFICHAGE=UTC');
-$check('UTC : aucun décalage', date_fr('2026-01-15 18:15:00', true) === '15/01/2026 18h15');
-foreach (['UTC+15', 'UTC-13', 'UTC+14:01', 'UTC+1:60', 'UTC+1xyz', 'Mars/Phobos'] as $incorrect) {
-    putenv('FUSEAU_AFFICHAGE=' . $incorrect);
-    $refuseInvalide = false;
-    try { Heure::fuseauAffichage(); } catch (InvalidArgumentException) { $refuseInvalide = true; }
-    $check('fuseau invalide refusé : ' . $incorrect, $refuseInvalide);
-}
-// Lecture réelle du fichier .env et priorité de l'environnement du processus.
-$ancienFichier = getenv('MINISHOP_ENV_FILE');
-$envTemp = sys_get_temp_dir() . '/minishop-fuseau-' . bin2hex(random_bytes(8)) . '.env';
-file_put_contents($envTemp, "FUSEAU_AFFICHAGE=UTC-3\n");
-putenv('MINISHOP_ENV_FILE=' . $envTemp);
-putenv('FUSEAU_AFFICHAGE');
-\App\Config\Env::reinitialiser();
-$check('valeur depuis .env', date_fr('2026-01-15 18:15:00', true) === '15/01/2026 15h15');
-putenv('FUSEAU_AFFICHAGE=UTC+1');
-$check('environnement prioritaire sur .env', date_fr('2026-01-15 18:15:00', true) === '15/01/2026 19h15');
-@unlink($envTemp);
-if ($ancienFichier === false) { putenv('MINISHOP_ENV_FILE'); } else { putenv('MINISHOP_ENV_FILE=' . $ancienFichier); }
-\App\Config\Env::reinitialiser();
-putenv('FUSEAU_AFFICHAGE=Europe/Paris');
-$check('bornes locales Paris au changement d’heure', Heure::borneJourUtc('2026-03-29') === '2026-03-28 23:00:00' && Heure::borneJourUtc('2026-03-29', true) === '2026-03-29 22:00:00');
+$check('bornes Paris au changement d’heure', Heure::borneJourUtc('2026-03-29') === '2026-03-28 23:00:00' && Heure::borneJourUtc('2026-03-29', true) === '2026-03-29 22:00:00');
 $check('jour invalide refusé', Heure::borneJourUtc('2026-02-31') === null && Heure::borneJourUtc('x') === null);
-if ($variableOrigine === false) { putenv('FUSEAU_AFFICHAGE'); } else { putenv('FUSEAU_AFFICHAGE=' . $variableOrigine); }
+
+$check('borne UTC transmise acceptée', Heure::borneTransmise('2026-03-29', '2026-03-29 04:00:00') === '2026-03-29 04:00:00');
+$check('borne du lendemain transmise acceptée', Heure::borneTransmise('2026-03-29', '2026-03-30 04:00:00', true) === '2026-03-30 04:00:00');
+$check('borne impossible ou trop éloignée refusée', Heure::borneTransmise('2026-03-29', '2026-03-35 04:00:00') === null && Heure::borneTransmise('2026-03-29', '2026-05-01 04:00:00') === null);
+$check('borne injectée ou jour invalide refusé', Heure::borneTransmise('2026-03-29', '2026-03-29 04:00:00 OR 1=1') === null && Heure::borneTransmise('2026-02-31', '2026-03-01 00:00:00') === null);
+$check('date html porte un instant UTC', str_contains(date_html('2026-01-15 18:15:00', true), 'datetime="2026-01-15T18:15:00Z"') && str_contains(date_html('2026-01-15 18:15:00', true), '19h15'));
+$check('date html absente sans élément time', date_html(null, true) === '—');
 
 /* La connexion échoue fermée même si PDO est en mode silencieux. */
 $pdoSilencieux = new class extends PDO {

@@ -28,6 +28,6 @@ require_once __DIR__ . '/Security/xss.php';
 
 // Fuseau par défaut UTC : garde-fou du gestionnaire d'heure
 // (App\Tools\Heure) — le stockage est en UTC, l'affichage est converti
-// dans le fuseau d’affichage configuré par Heure, jamais par un date() « nu ». Le réglage
+// dans le fuseau de repli Paris, puis adapté par le navigateur. Le réglage
 // date.timezone du php.ini est ainsi sans effet sur l'application.
 date_default_timezone_set('UTC');

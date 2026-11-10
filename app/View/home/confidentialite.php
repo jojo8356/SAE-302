@@ -10,6 +10,7 @@ declare(strict_types=1);
             <li><strong>Panier et session :</strong> identifiant de session, contenu du panier, authentification et jeton de protection des formulaires.</li>
             <li><strong>Commandes simulées :</strong> compte associé, adresse de livraison saisie, articles, montants et historique des statuts.</li>
             <li><strong>Contact de démonstration :</strong> nom, e-mail, message et date enregistrés localement dans <code>var/log/contact.jsonl</code>. Aucun e-mail n’est envoyé et aucune réponse n’est garantie. D’anciens messages peuvent n’avoir conservé que leurs 500 premiers caractères.</li>
+            <li><strong>Préférences locales :</strong> le choix de langue et de fuseau peut être enregistré dans ce navigateur. En cas de localisation volontaire, la position est utilisée sur l’appareil pour déterminer le fuseau, sans être enregistrée ni envoyée par MiniShop ; le navigateur ou le système peut utiliser ses propres services de localisation. Les bornes UTC des filtres et indicateurs sont transmises au serveur pour les calculs.</li>
             <li><strong>Journaux :</strong> en mode JSON, les écritures peuvent conserver l’identité de l’acteur et les anciennes et nouvelles valeurs, y compris des données de compte ou de commande ; l’hébergement peut également produire des journaux techniques selon sa configuration.</li>
         </ul>
         <p>La maquette ne demande pas de numéro de carte bancaire. Les <a href="/cookies">cookies et traceurs</a> sont détaillés séparément.</p>

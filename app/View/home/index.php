@@ -72,7 +72,7 @@ declare(strict_types=1);
                 <p class="carte-produit__date">
                     <?php if ($dateAjout !== false && $dateAjout->format('Y-m-d H:i:s') === $dateBrute): ?>
                         <?php $dateLocale = $dateAjout->setTimezone(\App\Tools\Heure::fuseauAffichage()); ?>
-                        Ajouté le <time datetime="<?= e($dateAjout->format('Y-m-d\TH:i:s\Z')) ?>"><?= e($dateLocale->format('d/m/Y')) ?> à <?= e($dateLocale->format('H\hi')) ?></time>
+                        Ajouté le <time data-date-format="ajout" datetime="<?= e($dateAjout->format('Y-m-d\TH:i:s\Z')) ?>"><?= e($dateLocale->format('d/m/Y')) ?> à <?= e($dateLocale->format('H\hi')) ?></time>
                     <?php else: ?>
                         Date d’ajout indisponible
                     <?php endif; ?>

@@ -33,7 +33,6 @@ try {
   const env = {
     ...process.env, MINISHOP_TESTS: '1', STORAGE_DRIVER: 'json',
     MINISHOP_ENV_FILE: path.join(tmp, 'absent.env'), DATA_PATH: path.join(tmp, 'data/minishop'),
-    FUSEAU_AFFICHAGE: 'UTC+2',
   };
   for (const nom of ['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASSWORD', 'DB_PASS', 'DB_SOCKET', 'DB']) delete env[nom];
   const seed = spawnSync(php, ['scripts/seed.php'], { cwd: tmp, env, encoding: 'utf8' });
@@ -169,8 +168,10 @@ try {
     const donnees = JSON.parse(await readFile(path.join(tmp, 'data/minishop/commande.json'), 'utf8'));
     const commande = donnees.rows.find((row) => String(row.id_commande) === commandeId);
     assert.ok(commande, 'Commande de test absente');
-    const instantLocal = new Date(Date.parse(commande.date_commande.replace(' ', 'T') + 'Z') + 2 * 3600000);
-    const dateLocale = instantLocal.toISOString().slice(0, 10);
+    const dateUtc = new Date(Date.parse(commande.date_commande.replace(' ', 'T') + 'Z'));
+    const parts = Object.fromEntries(new Intl.DateTimeFormat('en-GB', {timeZone:'Europe/Paris', year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(dateUtc).map(({type,value}) => [type,value]));
+    const dateLocale = `${parts.year}-${parts.month}-${parts.day}`;
+    const instantLocal = new Date(dateLocale + 'T12:00:00Z');
     await administration.fill('#du', dateLocale);
     await administration.fill('#au', dateLocale);
     await administration.locator('form[action="/admin/commandes"] button').click();
@@ -208,6 +209,43 @@ try {
     assert.ok((await administration.locator('body').innerText()).includes('Montant soldé'));
     console.log(`✅ Confirmation administrateur sans JavaScript — ${largeur}px`);
     await admin.close();
+
+    const perso = await browser.newContext({ viewport: { width: largeur, height: 900 }, locale: 'fr-FR',
+      geolocation: { latitude: 43.70, longitude: 7.26 }, permissions: ['geolocation'] });
+    const personnel = await perso.newPage();
+    const demandes = [];
+    personnel.on('request', (r) => demandes.push(r.url()));
+    await aller(personnel, '/preferences');
+    await pageVerifiee(personnel, 'preferences', largeur, '#pref-position');
+    await personnel.click('#pref-position');
+    await personnel.waitForFunction(() => document.querySelector('#pref-zone').value === 'Europe/Paris');
+    assert.equal(await personnel.evaluate(() => localStorage.length), 0, 'position enregistrée avant validation');
+    await personnel.selectOption('#pref-zone', 'Asia/Kathmandu');
+    await personnel.locator('#form-preferences button[type="submit"]').click();
+    const choix = await personnel.evaluate(() => JSON.parse(localStorage.getItem('minishop.preferences.v1')));
+    assert.deepEqual(choix, {langue:'fr', zone:'Asia/Kathmandu'});
+    assert.ok(!JSON.stringify(choix).includes('43.7'), 'coordonnées enregistrées');
+    await aller(personnel, '/');
+    const temps = personnel.locator('time[data-date-format="ajout"]').first();
+    const utc = await temps.getAttribute('datetime');
+    const parties = Object.fromEntries(new Intl.DateTimeFormat('fr-FR', {timeZone:'Asia/Kathmandu', year:'numeric', month:'2-digit', day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date(utc)).map(({type,value}) => [type,value]));
+    assert.equal(await temps.innerText(), `${parties.day}/${parties.month}/${parties.year} à ${parties.hour}h${parties.minute}`);
+    await aller(personnel, '/admin/connexion');
+    await personnel.fill('#email', 'admin@minishop.fr');
+    await personnel.fill('#mot_de_passe', 'Admin2026!');
+    await personnel.locator('form[action="/admin/connexion"] button').click();
+    await personnel.waitForFunction(() => document.querySelector('[data-jour-info]')?.textContent.includes('Asia/Kathmandu'));
+    await aller(personnel, '/admin/commandes');
+    await personnel.fill('#du', '2026-03-29');
+    await personnel.fill('#au', '2026-03-29');
+    await personnel.locator('form[action="/admin/commandes"] button').click();
+    const url = new URL(personnel.url());
+    assert.equal(url.searchParams.get('debut_utc'), '2026-03-28 18:15:00');
+    assert.equal(url.searchParams.get('fin_utc'), '2026-03-29 18:15:00');
+    assert.ok(demandes.every((url) => url.startsWith(base)), 'ressource externe sollicitée');
+    assert.ok(demandes.every((url) => !url.includes('43.7') && !url.includes('7.26')), 'coordonnées transmises');
+    console.log(`✅ Préférences et filtres personnels — ${largeur}px`);
+    await perso.close();
   }
   console.log('✅ Vérifications Chromium terminées ; aucune garantie sur d’autres navigateurs ou appareils.');
 } catch (erreur) {

@@ -6,9 +6,12 @@ declare(strict_types=1);
 ?>
 <h1>Commandes</h1>
 
-<form method="get" action="/admin/commandes">
+<form method="get" action="/admin/commandes" data-filtre-jours>
+    <input type="hidden" name="debut_utc" value="">
+    <input type="hidden" name="fin_utc" value="">
     <fieldset>
         <legend>Filtres (cumulables)</legend>
+        <p>Les dates utilisent votre fuseau d’affichage ; sans JavaScript, elles utilisent Paris.</p>
         <p>
             <label for="statut">Statut :</label>
             <select id="statut" name="statut">
@@ -49,7 +52,7 @@ declare(strict_types=1);
     <?php foreach ($commandes as $commande): ?>
         <tr>
             <td data-label="Numéro"><?= e($commande['numero']) ?></td>
-            <td data-label="Date"><?= e(date_fr($commande['date_commande'], true)) ?></td>
+            <td data-label="Date"><?= date_html($commande['date_commande'], true) ?></td>
             <td data-label="Client"><?= e($commande['client'] ?? ($commande['client_nom'] ?? '—')) ?></td>
             <td class="statut" data-label="Statut"><?= e(statut_libelle($commande['statut'])) ?></td>
             <td class="montant" data-label="Montant TTC"><?= euros($commande['montant_total']) ?></td>

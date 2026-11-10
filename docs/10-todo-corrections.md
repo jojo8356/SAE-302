@@ -223,7 +223,7 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 ## 6 undecies. Date et heure des derniers ajouts — fait
 
 - [x] Choix de présentation fondé sur le benchmark existant et les règles responsive, `docs/DA.md` §15.
-- [x] Date et heure `date_creation` sur chaque carte d’accueil, après le bouton, dans un élément `time` et un style centré. Initialement affichée sans conversion ; désormais convertie depuis UTC selon `FUSEAU_AFFICHAGE` (voir complément ci-dessous). Repli explicite si date absente ou invalide.
+- [x] Date et heure `date_creation` sur chaque carte d’accueil, après le bouton, dans un élément `time` et un style centré. Initialement affichée sans conversion ; désormais convertie depuis UTC selon les préférences du navigateur (voir complément ci-dessous). Repli explicite si date absente ou invalide.
 - [x] `tests/php/date_ajout_test.php` : 13 contrôles (format, valeur machine, date impossible ou absente, injection, ordre dans la carte et CSS). E2E : vérification des quatre dates et d’un produit nouvellement créé ; suite totale 301 vérifications vertes, design 69, responsive statique 50, catalogue 7 656. Les journaux locaux restent inchangés.
 - [!] Auto-évaluation : rendu des dates et responsive contrôlés par tests HTML/CSS et HTTP, pas de contrôle visuel navigateur en sandbox ; test SQL réel non joué. Les données de démonstration ont souvent la même seconde de création, donc la même date/heure affichée.
 
@@ -438,8 +438,14 @@ ls scripts/build-docs.sh docs/diagrams/render.sh tests/perf/mesurer.sh   # → i
 
 ### Fuseau personnalisable et tableaux admin mobiles (points 5 et 13)
 - [x] Étudier les pratiques shadcn/ui, USWDS et W3C avant les changements ; décisions dans `docs/DA.md`.
-- [x] Ajouter `FUSEAU_AFFICHAGE` dans `.env` : Europe/Paris par défaut ou UTC±n[:mm] fixe ; stockage SQL/JSON et rétention restent en UTC. Les filtres de dates admin utilisent les bornes du jour affiché converties en UTC ; le tableau de bord utilise aussi le jour affiché ; les numéros gardent l'année civile de Paris. Les dates des cartes d’accueil suivent le même réglage.
+- [x] Ancien réglage `FUSEAU_AFFICHAGE` dans `.env` (remplacé par les préférences personnelles ci-dessous) : Europe/Paris par défaut ou UTC±n[:mm] fixe ; stockage SQL/JSON et rétention restent en UTC. Les filtres de dates admin utilisent les bornes du jour affiché converties en UTC ; le tableau de bord utilise aussi le jour affiché ; les numéros gardent l'année civile de Paris. Les dates des cartes d’accueil suivent le même réglage.
 - [x] Afficher les tableaux administrateur en fiches mobiles à champs étiquetés, valeurs repliables et actions accessibles, sans installer React ou ajouter de dépendance de production.
 - [!] Un décalage fixe n'applique pas automatiquement l'heure d'été. Dates anciennes non modifiées ; leur provenance est à examiner. Rendu lecteur d'écran et appareils réels restent à vérifier.
 - [x] Vérifications : `heure_test.php` 65/65, `date_ajout_test.php` 13/13, contrat responsive 62 contrôles, suites PHP-WASM sans SQL et E2E isolé 309 contrôles. CI [42802784052](https://github.com/jojo8356/SAE-302/actions/runs/42802784052) verte sur le code `e130a50` : Chromium 320/375/1440 px (y compris valeurs longues, filtres et formulaires, sans JavaScript), MySQL 8 et MariaDB 11.8. Aucun test n'a modifié les données de production.
 - [!] Auto-évaluation : la structure de tableau et les libellés restent présents, et les limites locales fixes et DST sont couvertes ; pas de validation sur vrais téléphones, zoom avec technologie d'assistance ni lecteur d'écran. La provenance des dates historiques et la purge des comptes avec commandes (point 4, toujours partiel) restent à traiter séparément.
+
+### Préférences de fuseau individuelles
+- [x] Retirer la configuration `FUSEAU_AFFICHAGE` du serveur et du modèle `.env` ; conserver UTC au stockage.
+- [x] Préférences accessibles à tous : choix manuel ou localisation volontaire, mémorisées seulement dans le navigateur, repli français/anglais ; expliquer la protection des données et les limites.
+- [x] Dates des vues repérées, filtres de dates et indicateurs du jour cohérents avec le fuseau choisi ; repli sans JavaScript.
+- [ ] Tests automatisés des décalages, changements d'heure, refus de géolocalisation, stockage indisponible, données personnelles, filtres et responsive ; mise à jour documentation et auto-évaluation.
