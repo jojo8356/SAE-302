@@ -98,8 +98,17 @@ try {
     const reponse = await page.goto(base + route, { waitUntil: 'networkidle' });
     assert.equal(reponse.status(), 200, `${route} : HTTP ${reponse.status()}`);
   }
+  async function cliquerNavigationSansJs(page, cible) {
+    await cible.waitFor({ state: 'visible' });
+    assert.ok(await cible.isEnabled(), 'Élément interactif désactivé avant clic sans JS');
+    await cible.scrollIntoViewIfNeeded();
+    await Promise.all([
+      page.waitForNavigation({ waitUntil: 'networkidle' }),
+      cible.click({ force: true }),
+    ]);
+  }
   for (const largeur of [320, 375, 1440]) {
-    const contexte = await browser.newContext({ viewport: { width: largeur, height: 900 }, locale: 'en-US' });
+    const contexte = await browser.newContext({ viewport: { width: largeur, height: 900 }, locale: 'en-US', reducedMotion: 'reduce' });
     const page = await contexte.newPage();
     await aller(page, '/catalogue');
     await pageVerifiee(page, 'catalogue', largeur, 'a[href^="/produit/"]');
@@ -144,8 +153,10 @@ try {
     ]);
     await aller(page, '/commande/valider');
     await pageVerifiee(page, 'validation', largeur, '.tableau-recapitulatif tbody tr');
-    await page.locator('form[action="/commande/valider"] button').click();
-    await page.waitForURL(/\/mes-commandes\/\d+$/);
+    await Promise.all([
+      page.waitForURL(/\/mes-commandes\/\d+$/),
+      page.locator('form[action="/commande/valider"] button').click(),
+    ]);
     const commandeId = page.url().match(/\/mes-commandes\/(\d+)$/)[1];
     // Seconde commande dédiée au test d'annulation admin après expédition (sans retour de stock)
     await aller(page, href);
@@ -154,8 +165,10 @@ try {
       page.locator('form[action="/panier/ajouter"] button').click(),
     ]);
     await aller(page, '/commande/valider');
-    await page.locator('form[action="/commande/valider"] button').click();
-    await page.waitForURL(/\/mes-commandes\/\d+$/);
+    await Promise.all([
+      page.waitForURL(/\/mes-commandes\/\d+$/),
+      page.locator('form[action="/commande/valider"] button').click(),
+    ]);
     const commandeExpedieeId = page.url().match(/\/mes-commandes\/(\d+)$/)[1];
     await aller(page, '/mes-commandes');
     await pageVerifiee(page, 'mes-commandes', largeur, '.tableau-commandes-client tbody tr');
@@ -205,15 +218,13 @@ try {
     }
     await contexte.close();
 
-    const admin = await browser.newContext({ viewport: { width: largeur, height: 900 }, javaScriptEnabled: false });
+    const admin = await browser.newContext({ viewport: { width: largeur, height: 900 }, javaScriptEnabled: false, reducedMotion: 'reduce' });
     const administration = await admin.newPage();
     await aller(administration, '/admin/connexion');
     await administration.fill('#email', 'admin@minishop.fr');
     await administration.fill('#mot_de_passe', 'Admin2026!');
-    await Promise.all([
-      administration.waitForURL(/\/admin$/),
-      administration.locator('form[action="/admin/connexion"] button').click(),
-    ]);
+    await cliquerNavigationSansJs(administration, administration.locator('form[action="/admin/connexion"] button'));
+    assert.match(administration.url(), /\/admin$/);
     for (const [route, nom, cible] of [
       ['/admin/categories', 'categories-admin', '.tableau-categories tbody tr'],
       ['/admin/commandes', 'commandes-admin', '.tableau-commandes tbody tr'],
@@ -241,12 +252,12 @@ try {
     const instantLocal = new Date(dateLocale + 'T12:00:00Z');
     await administration.fill('#du', dateLocale);
     await administration.fill('#au', dateLocale);
-    await administration.locator('form[action="/admin/commandes"] button').click();
+    await cliquerNavigationSansJs(administration, administration.locator('form[action="/admin/commandes"] button'));
     assert.ok((await administration.locator('.tableau-commandes').innerText()).includes(commande.numero), 'filtre du jour affiché exclut une commande');
     const lendemain = new Date(instantLocal.getTime() + 86400000).toISOString().slice(0, 10);
     await administration.fill('#du', lendemain);
     await administration.fill('#au', lendemain);
-    await administration.locator('form[action="/admin/commandes"] button').click();
+    await cliquerNavigationSansJs(administration, administration.locator('form[action="/admin/commandes"] button'));
     assert.ok(!(await administration.locator('.tableau-commandes').innerText()).includes(commande.numero), 'filtre du lendemain inclut une commande');
     await aller(administration, '/admin/commandes');
     if (largeur <= 560) {
@@ -264,38 +275,35 @@ try {
     await pageVerifiee(administration, 'detail-admin', largeur, '.tableau-defilant--admin tbody tr');
     await administration.selectOption('#statut', 'ANNULEE');
     await administration.fill('#commentaire', 'Test confirmation');
-    await administration.locator('form[action$="/statut"] button').click();
+    await cliquerNavigationSansJs(administration, administration.locator('form[action$="/statut"] button'));
     await administration.getByRole('heading', { name: 'Confirmer l’annulation' }).waitFor();
     assert.ok(await administration.getByText('Les articles non expédiés seront restitués au stock.').isVisible());
-    await administration.getByRole('link', { name: 'Non, revenir à la commande' }).click();
+    await cliquerNavigationSansJs(administration, administration.getByRole('link', { name: 'Non, revenir à la commande' }));
     assert.ok(!(await administration.locator('body').innerText()).includes('Montant soldé'));
     await administration.selectOption('#statut', 'ANNULEE');
     await administration.fill('#commentaire', 'Test confirmation');
-    await administration.locator('form[action$="/statut"] button').click();
-    await administration.getByRole('button', { name: 'Confirmer l’annulation définitive' }).click();
+    await cliquerNavigationSansJs(administration, administration.locator('form[action$="/statut"] button'));
+    await cliquerNavigationSansJs(administration, administration.getByRole('button', { name: 'Confirmer l’annulation définitive' }));
     assert.ok((await administration.locator('body').innerText()).includes('Montant soldé'));
 
     // Confirmation administrateur sans JS sur une commande EXPEDIEE : avertissement dédié + non-restitution du stock.
     await aller(administration, `/admin/commandes/${commandeExpedieeId}`);
     await administration.selectOption('#statut', 'EXPEDIEE');
     await administration.fill('#commentaire', 'Remis transporteur');
-    await Promise.all([
-      administration.waitForNavigation({ waitUntil: 'networkidle' }),
-      administration.locator('form[action$="/statut"] button').click(),
-    ]);
+    await cliquerNavigationSansJs(administration, administration.locator('form[action$="/statut"] button'));
     await aller(administration, `/admin/commandes/${commandeExpedieeId}`);
     await administration.selectOption('#statut', 'ANNULEE');
     await administration.fill('#commentaire', 'Colis égaré en transit');
-    await administration.locator('form[action$="/statut"] button').click();
+    await cliquerNavigationSansJs(administration, administration.locator('form[action$="/statut"] button'));
     await administration.getByRole('heading', { name: 'Confirmer l’annulation' }).waitFor();
     await pageVerifiee(administration, 'confirmer-annulation-expediee', largeur);
     assert.ok(await administration.getByText('le stock ne sera pas automatiquement restitué').isVisible());
-    await administration.getByRole('button', { name: 'Confirmer l’annulation définitive' }).click();
+    await cliquerNavigationSansJs(administration, administration.getByRole('button', { name: 'Confirmer l’annulation définitive' }));
     assert.ok((await administration.locator('body').innerText()).includes('Montant soldé'));
     console.log(`✅ Confirmation administrateur sans JavaScript (PAYEE & EXPEDIEE) — ${largeur}px`);
     await admin.close();
 
-    const perso = await browser.newContext({ viewport: { width: largeur, height: 900 }, locale: 'fr-FR',
+    const perso = await browser.newContext({ viewport: { width: largeur, height: 900 }, locale: 'fr-FR', reducedMotion: 'reduce',
       geolocation: { latitude: 43.70, longitude: 7.26 }, permissions: ['geolocation'] });
     const personnel = await perso.newPage();
     const demandes = [];
@@ -318,12 +326,18 @@ try {
     await aller(personnel, '/admin/connexion');
     await personnel.fill('#email', 'admin@minishop.fr');
     await personnel.fill('#mot_de_passe', 'Admin2026!');
-    await personnel.locator('form[action="/admin/connexion"] button').click();
+    await Promise.all([
+      personnel.waitForURL(/\/admin$/),
+      personnel.locator('form[action="/admin/connexion"] button').click(),
+    ]);
     await personnel.waitForFunction(() => document.querySelector('[data-jour-info]')?.textContent.includes('Asia/Kathmandu'));
     await aller(personnel, '/admin/commandes');
     await personnel.fill('#du', '2026-03-29');
     await personnel.fill('#au', '2026-03-29');
-    await personnel.locator('form[action="/admin/commandes"] button').click();
+    await Promise.all([
+      personnel.waitForNavigation({ waitUntil: 'networkidle' }),
+      personnel.locator('form[action="/admin/commandes"] button').click(),
+    ]);
     const url = new URL(personnel.url());
     assert.equal(url.searchParams.get('debut_utc'), '2026-03-28 18:15:00');
     assert.equal(url.searchParams.get('fin_utc'), '2026-03-29 18:15:00');
