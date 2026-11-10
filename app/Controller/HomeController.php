@@ -15,6 +15,7 @@ use App\Repository\CategorieRepository;
 use App\Repository\ParametreRepository;
 use App\Repository\ProduitRepository;
 use App\Security\Csrf;
+use App\Service\NettoyageJournaux;
 
 final class HomeController extends Controller
 {
@@ -143,15 +144,7 @@ final class HomeController extends Controller
             return false;
         }
         $fichier = $dossier . '/contact.jsonl';
-        // Un umask restrictif protège aussi la création initiale du fichier.
-        $ancienMasque = umask(0o077);
-        $ecrit = @file_put_contents($fichier, $ligne . "\n", FILE_APPEND | LOCK_EX);
-        umask($ancienMasque);
-        if ($ecrit !== false) {
-            @chmod($fichier, 0o600);
-        }
-
-        return $ecrit === strlen($ligne . "\n");
+        return NettoyageJournaux::ajouter($fichier, $ligne . "\n");
     }
 
     /** Vue de synthèse du moteur de données (page « à propos » du projet). */

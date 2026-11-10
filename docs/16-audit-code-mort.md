@@ -94,6 +94,8 @@ Tailles en octets historiques mesurées lors du premier audit (`870dda5`) ; les 
 | `app/Security/Auth.php` | 10330 | 16 | Session, authentification et gardes de rôles. Références : `app/Controller/Admin/CategorieAdminController.php`, `app/Controller/Admin/CommandeAdminController.php`, `app/Controller/Admin/DashboardController.php`…. |
 | `app/Security/Csrf.php` | 1906 | 4 | Génération et vérification des jetons CSRF. Références : `app/Controller/Admin/CategorieAdminController.php`, `app/Controller/Admin/CommandeAdminController.php`, `app/Controller/Admin/EquipeAdminController.php`…. |
 | `app/Security/xss.php` | 9276 | 15 | Helpers d’échappement, formatage, icônes et visuels. Références : `app/bootstrap.php`, `docs/01-cahier-des-charges-MiniShop.md`, `docs/07-note-cybersecurite.md`…. |
+| `app/Service/NettoyageJournaux.php` | — | 4 | Verrou partagé des écritures JSONL et rotation par date, utilisée par le formulaire, le journal et la CLI. |
+| `app/Service/NettoyageSauvegardes.php` | — | 1 | Rotation limitée au dossier dédié de sauvegardes identifiées, utilisée par la CLI. |
 | `app/Service/RetentionComptes.php` | 4184 | 1 | Traitement conservateur des comptes inactifs, appelé par la commande CLI de maintenance. |
 | `app/Tools/DbInstaller.php` | 17780 | 28 | Outil d’installation et inventaire SQL, utilisé par les scripts de développement. Références : `app/Config/DbConnexion.php`, `docs/10-todo-corrections.md`, `scripts/code_mort_reference.json`…. |
 | `app/Tools/DbProvision.php` | 10558 | 16 | Outil de provisionnement d’un compte SQL de développement. Références : `docs/10-todo-corrections.md`, `scripts/code_mort_reference.json`, `scripts/db_init.php`…. |

@@ -74,7 +74,8 @@ foreach ($fichiersJs as $fichierJs) {
 }
 $check('scripts locaux : pas de stockage navigateur identifié', !str_contains($javascript, 'localStorage') && !str_contains($javascript, 'sessionStorage') && !str_contains($javascript, 'document.cookie'));
 $check('contrôleur : ressources et connexions limitées à l’origine', str_contains($routes, "script-src 'self'") && str_contains($routes, "connect-src 'self'"));
-$check('contact : succès dépend de l’écriture', str_contains($controleur, 'if (!$this->journaliserContact') && str_contains($controleur, '$ecrit === strlen('));
+$ecritureContact = $lire('app/Service/NettoyageJournaux.php');
+$check('contact : succès dépend de l’écriture', str_contains($controleur, 'if (!$this->journaliserContact') && str_contains($controleur, 'return NettoyageJournaux::ajouter(') && str_contains($ecritureContact, '$n === strlen($ligne)'));
 $check('contact : aucun engagement de réponse fictif', !str_contains($controleur, 'répondons sous 2 jours'));
 $check('pied : aucune fausse absence de conservation', !str_contains($pied, 'aucune donnée personnelle conservée'));
 $css = $lire('public/css/app.css');

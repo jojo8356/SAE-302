@@ -12,6 +12,7 @@ declare(strict_types=1);
  *   php scripts/db_init.php --check         # diagnostic seul (n'écrit rien)
  *   php scripts/db_init.php --switch        # écrit STORAGE_DRIVER="sql" dans .env
  *   php scripts/db_init.php --compte        # crée le compte applicatif (sudo mariadb)
+ *   php scripts/db_init.php --nettoyage ... # maintenance séparée, simulation par défaut
  *
  * La cible vient du fichier `.env` (modèle `.env.example`, jamais commité) :
  *
@@ -135,6 +136,12 @@ if (isset($_SERVER['argv']) && is_array($_SERVER['argv'])) {
     $argumentsBruts = array_slice($_SERVER['argv'], 1);
 }
 
+// Maintenance totalement distincte de la recréation : aucun --yes ni --switch.
+if (isset($argumentsBruts[0]) && $argumentsBruts[0] === '--nettoyage') {
+    require __DIR__ . '/nettoyage_donnees.php';
+    exit(0);
+}
+
 foreach ($argumentsBruts as $argument) {
     switch ($argument) {
         case '--check':
@@ -176,6 +183,7 @@ MiniShop — base de données locale
 
   php scripts/db_init.php               (re)crée la base + le jeu de démonstration
   php scripts/db_init.php --check       diagnostic seul (aucune écriture)
+  php scripts/db_init.php --nettoyage --help  maintenance séparée (simulation par défaut)
   php scripts/db_init.php --keep        ne fait rien si tout est déjà en place
   php scripts/db_init.php --no-demo     schéma, procédures, triggers — sans données
   php scripts/db_init.php --yes         ne demande pas de confirmation (DESTRUCTIF)

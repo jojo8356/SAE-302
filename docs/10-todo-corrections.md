@@ -416,3 +416,10 @@ ls scripts/build-docs.sh docs/diagrams/render.sh tests/perf/mesurer.sh   # → i
 - [ ] Faire valider la politique et les habilitations ; développer et tester le transfert et la purge, y compris concurrence, restaurations, anciennes copies et droits des personnes ; inventorier et traiter les données de l'hébergeur avant activation.
 
 - [x] CI `42796265969` (commit `e73c061`) : tests de copies chiffrées en PHP natif, lint et autres jobs réussis ; audits de structure et rétention PHP-WASM locaux réussis. [!] Auto-évaluation : la copie chiffrée et sa restitution sont testées, mais l'archivage intermédiaire réel, les purges et les habilitations restent incomplets ; absence de validation ou d'essai sur l'hébergement réel.
+
+### Nettoyage demandé dans l'initialisation
+- [x] Choix utilisateur : comptes avec commandes simulées terminées à supprimer si absence d'obligation ; Contact après 12 mois depuis réception, journaux après 6 mois, sauvegardes d'un dossier dédié après 30 jours.
+- [x] Ajouter à `db_init.php` une maintenance distincte, simulée par défaut et sans recréation de base ; exécution et attestation explicites par catégorie. Rotation ciblée des journaux et Contact, verrou commun avec les écritures, dates incertaines conservées ; rotation des sauvegardes locales strictement identifiées avec deux copies préservées.
+- [!] La validation humaine de l'absence d'exception est globale à chaque catégorie : aucun gel sélectif automatique. Les copies externes et hébergeur ne sont pas traitées, les sauvegardes ne sont pas vérifiées et aucun cron n'est installé.
+- [ ] Comptes avec commandes : développer une purge dédiée testée et autorisée dossier par dossier. Les triggers actuels interdisent la suppression des commandes validées et la suppression des lignes remet le stock ; ne pas les contourner. Les comptes avec commandes restent exclus.
+- [ ] Valider les durées, habilitations, sauvegardes, exceptions et conditions d'exploitation ; tester sur des copies et redémarrer les anciens processus avant toute utilisation réelle.

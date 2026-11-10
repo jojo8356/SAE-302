@@ -208,6 +208,12 @@ jobs:
         run: php tests/php/apropos_test.php
       - name: Rétention des comptes sur magasin JSON jetable
         run: php tests/php/retention_comptes_test.php
+      - name: Nettoyage de journaux et sauvegardes jetables
+        run: |
+          php -r 'exit(extension_loaded("posix") ? 0 : 1);'
+          php tests/php/nettoyage_fichiers_test.php
+      - name: CLI de nettoyage et concurrence sur fichiers jetables
+        run: python3 tests/python/test_nettoyage_cli.py -v
       - name: CLI de rétention sur copie jetable
         run: python3 tests/python/test_retention_cli.py -v
       - name: Copies chiffrées et accès sur fichiers jetables

@@ -61,6 +61,8 @@ app/Security/AccesRefuse.php,Application PHP,"Présence, non-vide ; syntaxe PHP 
 app/Security/Auth.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Security/Csrf.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Security/xss.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Service/NettoyageJournaux.php,Application,Présence et non-vide uniquement
+app/Service/NettoyageSauvegardes.php,Application,Présence et non-vide uniquement
 app/Service/RetentionComptes.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Tools/DbInstaller.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Tools/DbProvision.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
@@ -316,6 +318,7 @@ scripts/md_to_docx.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
 scripts/md_to_html.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
 scripts/md_to_pdf.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
 scripts/md_to_pptx.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
+scripts/nettoyage_donnees.php,Scripts et outillage,Présence et non-vide uniquement
 scripts/preparer_sql_lineserv.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
 scripts/purger_comptes.php,Outils et intégration continue,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 scripts/rejeu_gitlab.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
@@ -402,6 +405,7 @@ tests/php/inscription_erreurs_test.php,Tests et validation,"Présence, non-vide 
 tests/php/mentions_legales_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/php/mes_commandes_tableau_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/php/migration_mariadb_test.php,Tests,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/php/nettoyage_fichiers_test.php,Tests et validation,Présence et non-vide uniquement
 tests/php/nouveautes_cases.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/php/nouveautes_test.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/php/pages_pied_de_page_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
@@ -432,6 +436,7 @@ tests/python/test_auth_403_http.py,Tests et fixtures,"Présence, non-vide, synta
 tests/python/test_code_mort_integration.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
 tests/python/test_deprecations.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
 tests/python/test_inventaire_app.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
+tests/python/test_nettoyage_cli.py,Tests et validation,Présence et non-vide uniquement
 tests/python/test_preparer_sql_lineserv.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
 tests/python/test_retention_cli.py,Tests et validation,Présence et non-vide uniquement
 tests/python/test_securite_gitignore.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"

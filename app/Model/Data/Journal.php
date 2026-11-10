@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace App\Model\Data;
 
 use App\Tools\Heure;
+use App\Service\NettoyageJournaux;
 
 final class Journal
 {
@@ -69,7 +70,7 @@ final class Journal
         ];
         $line = json_encode($entry, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         if ($line !== false) {
-            @file_put_contents($this->filePath, $line . "\n", FILE_APPEND | LOCK_EX);
+            NettoyageJournaux::ajouter($this->filePath, $line . "\n");
         }
     }
 

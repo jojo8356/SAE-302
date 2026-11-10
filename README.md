@@ -527,3 +527,10 @@ l'outil CLI `scripts/archive_restreinte.php` préparent des copies chiffrées à
 accès limité. Ces copies ne retirent rien de la base active : elles ne constituent
 pas un archivage intermédiaire complet. La politique, les habilitations, le
 transfert, les purges et les sauvegardes restent à valider et mettre en œuvre.
+
+Une maintenance distincte est accessible par `php scripts/db_init.php --nettoyage --help` :
+simulation par défaut pour comptes sans commande, Contact, journal JSON et sauvegardes
+locales dédiées ; exécution uniquement après validation explicite. Elle ne recrée pas
+la base et n'est pas planifiée. Les comptes avec commandes restent exclus à ce stade.
+Détails, prérequis, limites et essai sur données fictives dans
+[la politique de conservation](docs/18-politique-conservation.md).
