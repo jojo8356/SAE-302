@@ -6,7 +6,7 @@
  */
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
-import { cp, mkdir, mkdtemp, rm } from 'node:fs/promises';
+import { cp, mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import net from 'node:net';
@@ -33,6 +33,7 @@ try {
   const env = {
     ...process.env, MINISHOP_TESTS: '1', STORAGE_DRIVER: 'json',
     MINISHOP_ENV_FILE: path.join(tmp, 'absent.env'), DATA_PATH: path.join(tmp, 'data/minishop'),
+    FUSEAU_AFFICHAGE: 'UTC+2',
   };
   for (const nom of ['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASSWORD', 'DB_PASS', 'DB_SOCKET', 'DB']) delete env[nom];
   const seed = spawnSync(php, ['scripts/seed.php'], { cwd: tmp, env, encoding: 'utf8' });
@@ -77,7 +78,7 @@ try {
             && (r.left < -1 || r.right > largeurViewport + 1);
         }).map((el) => `${el.tagName}#${el.id || ''} ${Math.round(el.getBoundingClientRect().width)}px`);
       const cellules = [...document.querySelectorAll(
-        '.tableau-panier tbody td, .tableau-recapitulatif tbody td, .tableau-commandes-client tbody td, .tableau-categories tbody td, .tableau-commandes tbody td, .tableau-stocks tbody td',
+        '.tableau-panier tbody td, .tableau-recapitulatif tbody td, .tableau-commandes-client tbody td, .tableau-defilant--admin tbody td',
       )];
       const cellulesProbleme = largeurViewport <= 560 ? cellules.filter((el) => {
         const r = el.getBoundingClientRect();
@@ -98,7 +99,7 @@ try {
     const reponse = await page.goto(base + route, { waitUntil: 'networkidle' });
     assert.equal(reponse.status(), 200, `${route} : HTTP ${reponse.status()}`);
   }
-  for (const largeur of [375, 1440]) {
+  for (const largeur of [320, 375, 1440]) {
     const contexte = await browser.newContext({ viewport: { width: largeur, height: 900 } });
     const page = await contexte.newPage();
     await aller(page, '/catalogue');
@@ -146,12 +147,48 @@ try {
       ['/admin/categories', 'categories-admin', '.tableau-categories tbody tr'],
       ['/admin/commandes', 'commandes-admin', '.tableau-commandes tbody tr'],
       ['/admin/stocks', 'stocks-admin', '.tableau-stocks tbody tr'],
+      ['/admin/produits', 'produits-admin', '.tableau-defilant--admin tbody tr'],
+      ['/admin/equipe', 'equipe-admin', '.tableau-defilant--admin tbody tr'],
+      ['/admin', 'dashboard-admin', '.kpis'],
     ]) {
       await aller(administration, route);
       await pageVerifiee(administration, nom, largeur, cible);
+      const correspondances = await administration.evaluate(() => [...document.querySelectorAll('.tableau-defilant--admin table')].flatMap((table) => {
+        const titres = [...table.querySelectorAll('thead th')].map((th) => th.textContent.trim());
+        return [...table.querySelectorAll('tbody tr')].flatMap((tr) => [...tr.querySelectorAll(':scope > td')]
+          .map((td, i) => td.dataset.label === titres[i] ? null : `${td.dataset.label} != ${titres[i]}`).filter(Boolean));
+      }));
+      assert.deepEqual(correspondances, [], `${nom} : libellés incohérents`);
+    }
+    await aller(administration, '/admin/commandes');
+    const donnees = JSON.parse(await readFile(path.join(tmp, 'data/minishop/commande.json'), 'utf8'));
+    const commande = donnees.rows.find((row) => String(row.id_commande) === commandeId);
+    assert.ok(commande, 'Commande de test absente');
+    const instantLocal = new Date(Date.parse(commande.date_commande.replace(' ', 'T') + 'Z') + 2 * 3600000);
+    const dateLocale = instantLocal.toISOString().slice(0, 10);
+    await administration.fill('#du', dateLocale);
+    await administration.fill('#au', dateLocale);
+    await administration.locator('form[action="/admin/commandes"] button').click();
+    assert.ok((await administration.locator('.tableau-commandes').innerText()).includes(commande.numero), 'filtre du jour affiché exclut une commande');
+    const lendemain = new Date(instantLocal.getTime() + 86400000).toISOString().slice(0, 10);
+    await administration.fill('#du', lendemain);
+    await administration.fill('#au', lendemain);
+    await administration.locator('form[action="/admin/commandes"] button').click();
+    assert.ok(!(await administration.locator('.tableau-commandes').innerText()).includes(commande.numero), 'filtre du lendemain inclut une commande');
+    await aller(administration, '/admin/commandes');
+    if (largeur <= 560) {
+      // Données longues injectées dans le DOM jetable : rien n'est enregistré.
+      await administration.evaluate(() => {
+        const row = document.querySelector('.tableau-commandes tbody tr');
+        row.querySelector('[data-label="Statut"]').textContent = 'Statut exceptionnel très long '.repeat(6);
+        row.querySelector('[data-label="Montant TTC"]').textContent = '123456789012345678901234567890 €';
+        row.querySelector('[data-label="Client"]').textContent = 'client'.repeat(35);
+      });
+      await pageVerifiee(administration, 'commandes-longues', largeur, '.tableau-commandes tbody tr');
     }
     // La confirmation fonctionne sans JavaScript et ne modifie rien au premier POST.
     await aller(administration, `/admin/commandes/${commandeId}`);
+    await pageVerifiee(administration, 'detail-admin', largeur, '.tableau-defilant--admin tbody tr');
     await administration.selectOption('#statut', 'ANNULEE');
     await administration.fill('#commentaire', 'Test confirmation');
     await administration.locator('form[action$="/statut"] button').click();

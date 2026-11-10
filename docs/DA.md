@@ -506,3 +506,9 @@ de prix forment un groupe unique : deux champs côte à côte si l’espace le p
 puis empilés sur les écrans les plus étroits. Les libellés restent visibles et
 les champs ne doivent pas provoquer de défilement horizontal. L’implémentation
 est dans `.filtres-prix` et le rendu reste à vérifier sur les appareils réels.
+
+## 20. Étude ciblée — tableaux administrateur sur mobile
+
+**Étude avant implémentation.** Le [composant Table de shadcn/ui](https://ui.shadcn.com/docs/components/base/table) conserve un vrai tableau dans une zone défilante ; sa [documentation Typeset](https://ui.shadcn.com/docs/typeset) distingue le retour à la ligne et le défilement horizontal contenu. Le [design system USWDS](https://designsystem.digital.gov/components/table/) recommande le tableau défilant pour comparer de nombreuses colonnes chiffrées, et les lignes empilées avec `data-label` identique à l'en-tête pour des fiches descriptives. Le [W3C](https://www.w3.org/WAI/WCAG21/Understanding/reflow.html) prévoit une exception pour le tableau bidimensionnel, pas pour le débordement du reste de la page.
+
+**Décision MiniShop.** Garder les tableaux HTML et leurs en-têtes sur grand écran ; sur mobile, présenter chaque enregistrement comme une fiche, chaque libellé au-dessus de sa valeur, sans imposer une ligne unique. Les noms, montants, statuts, liens et actions restent visibles, sans troncature ; les mots très longs peuvent se couper, les contrôles restent utilisables. Pour les tableaux qui doivent rester comparatifs, conserver la région défilante bornée et accessible au clavier. Reprendre les principes, pas installer React/shadcn ni copier leurs composants : le projet reste PHP/CSS autonome. Vérifier à 320, 375 et 1440 px, avec textes longs et JavaScript désactivé ; les tests automatisés ne remplacent pas une revue sur appareils et lecteurs d'écran.

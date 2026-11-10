@@ -90,7 +90,7 @@ const ordreAccueilValide = (html, produits) =>
   JSON.stringify(slugsRendusAccueil(html)) === JSON.stringify(slugsAttendusAccueil(produits));
 
 // Oracle indépendant : chaque carte doit afficher la date propre à son produit,
-// sans conversion de fuseau ni réutilisation de la date du dernier élément.
+// interprétée en UTC et affichée en Europe/Paris (réglage de la fixture).
 const datesAccueilValides = (html, produits) => {
   const bloc = (html ?? '').match(/<section aria-labelledby="titre-nouveautes">([\s\S]*?)<\/section>/);
   const cartes = [...(bloc?.[1] ?? '').matchAll(/<article class="carte carte-produit">([\s\S]*?)<\/article>/g)];
@@ -101,8 +101,13 @@ const datesAccueilValides = (html, produits) => {
     const d = String(produit?.date_creation ?? '').match(/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/);
     if (!d) return carte.includes('Date d’ajout indisponible') && !carte.includes('<time');
     const [, an, mois, jour, heure, minute, seconde] = d;
-    return carte.includes(`datetime="${an}-${mois}-${jour}T${heure}:${minute}:${seconde}"`)
-      && carte.includes(`${jour}/${mois}/${an} à ${heure}h${minute}`)
+    const brutUtc = `${an}-${mois}-${jour}T${heure}:${minute}:${seconde}Z`;
+    const pieces = Object.fromEntries(new Intl.DateTimeFormat('fr-FR', {
+      timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+    }).formatToParts(new Date(brutUtc)).map(({ type, value }) => [type, value]));
+    return carte.includes(`datetime="${brutUtc}"`)
+      && carte.includes(`${pieces.day}/${pieces.month}/${pieces.year} à ${pieces.hour}h${pieces.minute}`)
       && carte.indexOf('Voir la fiche') < carte.indexOf('carte-produit__date');
   });
 };

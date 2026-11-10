@@ -15,6 +15,7 @@ use App\Model\Data\Filter;
 use App\Repository\CommandeRepository;
 use App\Repository\ProduitRepository;
 use App\Security\Auth;
+use App\Tools\Heure;
 
 final class DashboardController extends Controller
 {
@@ -27,9 +28,15 @@ final class DashboardController extends Controller
         $produits = new ProduitRepository($store);
 
         // EF-ADM-09 : le tableau de bord distingue le jour même du cumul.
-        $debutJour = date('Y-m-d 00:00:00');
+        $jourLocal = Heure::maintenant()->format('Y-m-d');
+        $debutJour = Heure::borneJourUtc($jourLocal);
+        $finJour = Heure::borneJourUtc($jourLocal, true);
+        if ($debutJour === null || $finJour === null) {
+            throw new \RuntimeException('Jour courant invalide.');
+        }
+        $filtreJour = [Filter::gte('date_commande', $debutJour), Filter::lt('date_commande', $finJour)];
         $duJour = [];
-        foreach ($store->select('commande', ['where' => [Filter::gte('date_commande', $debutJour)]]) as $commande) {
+        foreach ($store->select('commande', ['where' => $filtreJour]) as $commande) {
             $statut = (string) $commande['statut'];
             $duJour[$statut] ??= 0;
             $duJour[$statut] += (float) $commande['montant_total'];
@@ -41,7 +48,7 @@ final class DashboardController extends Controller
             'clients' => $store->count('client'),
             'produits' => $store->count('produit'),
             'ca_total' => array_sum(array_column($rapport['par_statut'], 'montant_total')),
-            'commandes_jour' => $store->count('commande', [Filter::gte('date_commande', $debutJour)]),
+            'commandes_jour' => $store->count('commande', $filtreJour),
             'ca_jour' => array_sum($duJour),
         ];
 

@@ -66,12 +66,13 @@ declare(strict_types=1);
                 $dateBrute = (string) ($produit['date_creation'] ?? '');
                 $dateAjout = false;
                 if (preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/D', $dateBrute) === 1) {
-                    $dateAjout = DateTimeImmutable::createFromFormat('!Y-m-d H:i:s', $dateBrute);
+                    $dateAjout = DateTimeImmutable::createFromFormat('!Y-m-d H:i:s', $dateBrute, new DateTimeZone('UTC'));
                 }
                 ?>
                 <p class="carte-produit__date">
                     <?php if ($dateAjout !== false && $dateAjout->format('Y-m-d H:i:s') === $dateBrute): ?>
-                        Ajouté le <time datetime="<?= e($dateAjout->format('Y-m-d\TH:i:s')) ?>"><?= e($dateAjout->format('d/m/Y')) ?> à <?= e($dateAjout->format('H\hi')) ?></time>
+                        <?php $dateLocale = $dateAjout->setTimezone(\App\Tools\Heure::fuseauAffichage()); ?>
+                        Ajouté le <time datetime="<?= e($dateAjout->format('Y-m-d\TH:i:s\Z')) ?>"><?= e($dateLocale->format('d/m/Y')) ?> à <?= e($dateLocale->format('H\hi')) ?></time>
                     <?php else: ?>
                         Date d’ajout indisponible
                     <?php endif; ?>

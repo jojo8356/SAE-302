@@ -724,7 +724,7 @@ jobs:
             done
             exit 1
           }
-      - name: Parcours 375 et 1440 pixels sur copie jetable
+      - name: Parcours 320, 375 et 1440 pixels sur copie jetable
         env:
           MINISHOP_BROWSER_ARTIFACTS: ${{ runner.temp }}/captures-responsive
         shell: bash

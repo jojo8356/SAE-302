@@ -47,7 +47,7 @@ declare(strict_types=1);
     <?php if ($alertes === []): ?>
         <p class="message message--succes"><?= icone('coche', 20) ?><span>Aucune alerte : tous les stocks sont au-dessus de leur seuil.</span></p>
     <?php else: ?>
-        <div class="tableau-defilant tableau-defilant--admin" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
+        <div class="tableau-defilant tableau-defilant--admin" role="region" tabindex="0" aria-label="Tableau de données">
             <table class="tableau-alertes tableau-nombres">
                 <caption>Produits sous le seuil — le stock ne peut jamais devenir négatif</caption>
                 <thead><tr><th scope="col" class="reference">Référence</th><th scope="col" class="produit">Produit</th><th scope="col">Stock</th><th scope="col">Seuil</th><th scope="col">État</th></tr></thead>
@@ -70,16 +70,16 @@ declare(strict_types=1);
 
 <section>
     <h2>Chiffre d'affaires par statut</h2>
-    <div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
+    <div class="tableau-defilant tableau-defilant--admin" role="region" tabindex="0" aria-label="Tableau de données">
         <table class="tableau-nombres">
             <thead><tr><th scope="col">Statut</th><th scope="col">Nb commandes</th><th scope="col">Montant total</th><th scope="col">Montant moyen</th></tr></thead>
             <tbody>
             <?php foreach ($rapport['par_statut'] as $ligne): ?>
                 <tr>
-                    <td><?= badge_statut((string) $ligne['statut']) ?></td>
-                    <td><?= (int) $ligne['nb_commandes'] ?></td>
-                    <td><?= euros($ligne['montant_total']) ?></td>
-                    <td><?= euros($ligne['montant_moyen']) ?></td>
+                    <td data-label="Statut"><?= badge_statut((string) $ligne['statut']) ?></td>
+                    <td data-label="Nb commandes"><?= (int) $ligne['nb_commandes'] ?></td>
+                    <td data-label="Montant total"><?= euros($ligne['montant_total']) ?></td>
+                    <td data-label="Montant moyen"><?= euros($ligne['montant_moyen']) ?></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>
@@ -92,16 +92,16 @@ declare(strict_types=1);
     <?php if ($rapport['top_produits'] === []): ?>
         <p>Aucun produit vendu pour le moment.</p>
     <?php else: ?>
-    <div class="tableau-defilant" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
+    <div class="tableau-defilant tableau-defilant--admin" role="region" tabindex="0" aria-label="Tableau de données">
         <table class="tableau-nombres">
             <thead><tr><th scope="col">#</th><th scope="col">Produit</th><th scope="col">Unités</th><th scope="col">CA</th></tr></thead>
             <tbody>
             <?php $rang = 0; foreach ($rapport['top_produits'] as $top): ++$rang; ?>
                 <tr>
-                    <td><?= (int) $rang ?></td>
-                    <td><?= e($top['nom']) ?> <small>(réf. <?= e($top['reference']) ?>)</small></td>
-                    <td><?= (int) $top['unites'] ?></td>
-                    <td><?= euros($top['ca']) ?></td>
+                    <td data-label="#"><?= (int) $rang ?></td>
+                    <td data-label="Produit"><?= e($top['nom']) ?> <small>(réf. <?= e($top['reference']) ?>)</small></td>
+                    <td data-label="Unités"><?= (int) $top['unites'] ?></td>
+                    <td data-label="CA"><?= euros($top['ca']) ?></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>

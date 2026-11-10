@@ -36,7 +36,7 @@ declare(strict_types=1);
 
 <p><?= count($commandes) ?> commande(s) affichée(s) (100 max)</p>
 
-<div class="tableau-defilant tableau-defilant--admin" role="region" tabindex="0" aria-label="Tableau de données — faites défiler horizontalement si nécessaire">
+<div class="tableau-defilant tableau-defilant--admin" role="region" tabindex="0" aria-label="Tableau de données">
 <table class="tableau-commandes">
     <colgroup><col class="col-numero"><col class="col-date"><col class="col-client"><col class="col-statut"><col class="col-montant"><col class="col-detail"></colgroup>
     <thead>

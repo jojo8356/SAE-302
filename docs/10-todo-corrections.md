@@ -223,7 +223,7 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 ## 6 undecies. Date et heure des derniers ajouts — fait
 
 - [x] Choix de présentation fondé sur le benchmark existant et les règles responsive, `docs/DA.md` §15.
-- [x] Date et heure `date_creation` sur chaque carte d’accueil, après le bouton, dans un élément `time` et un style centré. Valeur de la base affichée sans conversion de fuseau ; repli explicite si date absente ou invalide.
+- [x] Date et heure `date_creation` sur chaque carte d’accueil, après le bouton, dans un élément `time` et un style centré. Initialement affichée sans conversion ; désormais convertie depuis UTC selon `FUSEAU_AFFICHAGE` (voir complément ci-dessous). Repli explicite si date absente ou invalide.
 - [x] `tests/php/date_ajout_test.php` : 13 contrôles (format, valeur machine, date impossible ou absente, injection, ordre dans la carte et CSS). E2E : vérification des quatre dates et d’un produit nouvellement créé ; suite totale 301 vérifications vertes, design 69, responsive statique 50, catalogue 7 656. Les journaux locaux restent inchangés.
 - [!] Auto-évaluation : rendu des dates et responsive contrôlés par tests HTML/CSS et HTTP, pas de contrôle visuel navigateur en sandbox ; test SQL réel non joué. Les données de démonstration ont souvent la même seconde de création, donc la même date/heure affichée.
 
@@ -434,3 +434,10 @@ ls scripts/build-docs.sh docs/diagrams/render.sh tests/perf/mesurer.sh   # → i
 - [ ] Vérifier la configuration et la provenance des anciennes dates de l'instance réelle, sur une copie sauvegardée ; ne pas appliquer de décalage uniforme sans preuve.
 - [x] CI `42800454010` sur `31ba72b` : intégration sur MySQL 8 et MariaDB 11.8 réussie, y compris session décalée, dates automatiques et affichage hiver/été ; test PHP-WASM 46/46 et audit structurel locaux réussis.
 - [!] Auto-évaluation : les futures écritures sur les connexions corrigées sont vérifiées en CI ; les anciennes données et l'instance réellement déployée ne le sont pas. Aucune conclusion sur leur fuseau sans vérification sur place.
+
+
+### Fuseau personnalisable et tableaux admin mobiles (points 5 et 13)
+- [x] Étudier les pratiques shadcn/ui, USWDS et W3C avant les changements ; décisions dans `docs/DA.md`.
+- [x] Ajouter `FUSEAU_AFFICHAGE` dans `.env` : Europe/Paris par défaut ou UTC±n[:mm] fixe ; stockage SQL/JSON et rétention restent en UTC. Les filtres de dates admin utilisent les bornes du jour affiché converties en UTC ; le tableau de bord utilise aussi le jour affiché ; les numéros gardent l'année civile de Paris. Les dates des cartes d’accueil suivent le même réglage.
+- [x] Afficher les tableaux administrateur en fiches mobiles à champs étiquetés, valeurs repliables et actions accessibles, sans installer React ou ajouter de dépendance de production.
+- [!] Un décalage fixe n'applique pas automatiquement l'heure d'été. Dates anciennes non modifiées ; leur provenance est à examiner. Rendu lecteur d'écran et appareils réels restent à vérifier.

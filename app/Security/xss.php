@@ -22,7 +22,7 @@ function euros(mixed $montant): string
     return number_format((float) $montant, 2, ',', ' ') . ' €';
 }
 
-/** Date/heure française lisible depuis « Y-m-d H:i:s » (stocké UTC, affiché Europe/Paris — App\Tools\Heure). */
+/** Date/heure française lisible depuis « Y-m-d H:i:s » (stocké UTC, affichage configurable — App\Tools\Heure). */
 function date_fr(?string $datetime, bool $avecHeure = false): string
 {
     return \App\Tools\Heure::formater($datetime, $avecHeure);

@@ -3,58 +3,18 @@
 declare(strict_types=1);
 
 /**
- * MiniShop — gestionnaire d'heure (fuseaux, stock, affichage français).
- *
- * Bug d'origine : `app/bootstrap.php` forçait
- * `date_default_timezone_set('UTC')`, les horodatages étaient produits
- * par `date()` (donc en UTC) puis réaffichés tels quels par `date_fr()`
- * — une commande passée à 19h15 à Paris s'affichait 18h15 dans
- * l'historique, le détail et les listes (et 17h15 en été).
- *
- * Règles du gestionnaire (convention unique, aucun calcul manuel
- * « +1 » ou « +2 » nulle part dans le code) :
- *
- *   1. STOCKAGE EN UTC, TOUJOURS. Tout instant écrit en base
- *      (date_commande, date_creation, changed_at, derniere_connexion…)
- *      est la représentation UTC de l'instant, au format existant
- *      « Y-m-d H:i:s » (compatibilité schéma SQL DATETIME inchangée).
- *      L'UTC ne connaît pas d'heure d'été : un instant stocké est sans
- *      ambiguïté, y compris pendant l'heure répétée d'octobre.
- *      → Heure::horodatageStockage()
- *
- *   2. AFFICHAGE EN Europe/Paris, TOUJOURS. Toute date montrée à un
- *      visiteur est convertie UTC → Europe/Paris par DateTimeImmutable
- *      + DateTimeZone, qui appliquent les règles IANA de la zone
- *      (CET = UTC+1 l'hiver, CEST = UTC+2 l'été, transitions le dernier
- *      dimanche de mars et d'octobre). → Heure::formater(), consommé
- *      par le helper global date_fr() de toutes les vues.
- *
- *   3. AUCUN APPEL date() « nu » pour un horodatage métier : la
- *      génération passe par ce gestionnaire, insensible au réglage
- *      date.timezone du php.ini comme au fuseau par défaut du script.
- *      (bootstrap maintient date_default_timezone_set('UTC') comme
- *      garde-fou : un oubli éventuel reste en UTC, jamais dans un
- *      fuseau serveur arbitraire.)
- *
- * Sources :
- *   - Manuel PHP, DateTimeImmutable (setTimezone, createFromFormat) :
- *     https://www.php.net/manual/fr/class.datetimeimmutable.php
- *   - Manuel PHP, DateTimeZone : https://www.php.net/manual/fr/class.datetimezone.php
- *   - IANA Time Zone Database (tzdb), zone Europe/Paris (CET/CEST) :
- *     https://data.iana.org/time-zones/data/zonenow.tab
- *     (« +01/+02 - CET/CEST · Europe/Paris ») et fichier europe de la tzdb.
- *
- * Données anciennes : les horodatages déjà stockés l'ont été en UTC
- * (c'était le fuseau forcé de bootstrap) ; la convention ci-dessus les
- * affiche donc correctement dès l'installation du correctif, sans
- * migration. Les lignes du jeu de démonstration SQL (dates figées) sont,
- * elles, lues comme des instants UTC — écart assumé et borné au seed.
+ * Horodatages en UTC à l'écriture ; affichage configurable en Europe/Paris
+ * (défaut avec changements d'heure) ou en décalage fixe UTC±n[:mm].
+ * Aucun changement de configuration ne modifie les dates stockées. Les anciennes
+ * dates SQL de provenance inconnue doivent être examinées avant conversion.
  */
 
 namespace App\Tools;
 
+use App\Config\Env;
 use DateTimeImmutable;
 use DateTimeZone;
+use InvalidArgumentException;
 
 final class Heure
 {
@@ -74,7 +34,22 @@ final class Heure
 
     public static function fuseauAffichage(): DateTimeZone
     {
-        return new DateTimeZone(self::FUSEAU_AFFICHAGE);
+        $valeur = trim((string) Env::get('FUSEAU_AFFICHAGE', self::FUSEAU_AFFICHAGE));
+        if ($valeur === '' || $valeur === self::FUSEAU_AFFICHAGE) {
+            return new DateTimeZone(self::FUSEAU_AFFICHAGE);
+        }
+        if ($valeur === 'UTC') { return new DateTimeZone('UTC'); }
+        if (preg_match('/^UTC([+-])(\d{1,2})(?::(\d{2}))?$/D', $valeur, $m) !== 1) {
+            throw new InvalidArgumentException('FUSEAU_AFFICHAGE invalide : utiliser Europe/Paris, UTC ou UTC+/-heures[:minutes].');
+        }
+        $heures = (int) $m[2];
+        $minutes = (int) ($m[3] ?? 0);
+        $maximum = 14;
+        if ($m[1] === '-') { $maximum = 12; }
+        if ($heures > $maximum || $minutes > 59 || ($heures === $maximum && $minutes !== 0)) {
+            throw new InvalidArgumentException('FUSEAU_AFFICHAGE hors limites (UTC-12 à UTC+14).');
+        }
+        return new DateTimeZone(sprintf('%s%02d:%02d', $m[1], $heures, $minutes));
     }
 
     /** Instant courant, en UTC. */
@@ -83,7 +58,7 @@ final class Heure
         return new DateTimeImmutable('now', self::fuseauStockage());
     }
 
-    /** Instant courant, vu de Paris. */
+    /** Instant courant, dans le fuseau d’affichage. */
     public static function maintenant(): DateTimeImmutable
     {
         return self::maintenantUtc()->setTimezone(self::fuseauAffichage());
@@ -111,7 +86,7 @@ final class Heure
      *   - « Y-m-d H:i:s » ou « Y-m-d » nus : lus comme de l'UTC
      *     (convention de stockage n° 1) ;
      *   - forme ISO 8601 portant son fuseau (« …T…+02:00 », « …Z ») :
-     *     l'instant est celui décrit, puis converti à Paris.
+     *     l'instant est celui décrit, puis converti dans le fuseau d’affichage.
      * Retourne null si la valeur est vide ou illisible.
      */
     public static function instantDepuisStockage(?string $valeur): ?DateTimeImmutable
@@ -147,8 +122,8 @@ final class Heure
 
     /**
      * Formate un horodatage stocké pour l'affichage français :
-     * « 15/01/2026 » ou, avec l'heure, « 15/01/2026 19h15 » (heure de
-     * Paris). Valeur absente ou illisible → « — » (contrat historique
+     * « 15/01/2026 » ou, avec l'heure, « 15/01/2026 19h15 » (heure
+     * configurée). Valeur absente ou illisible → « — » (contrat historique
      * du helper date_fr()).
      */
     public static function formater(?string $valeur, bool $avecHeure = false): string
@@ -161,7 +136,7 @@ final class Heure
         return self::formaterInstant($instant, $avecHeure);
     }
 
-    /** Formate un instant quelconque, converti à l'heure de Paris. */
+    /** Formate un instant quelconque dans le fuseau d’affichage. */
     public static function formaterInstant(DateTimeImmutable $instant, bool $avecHeure = false): string
     {
         $paris = $instant->setTimezone(self::fuseauAffichage());
@@ -213,6 +188,9 @@ final class Heure
      */
     public static function libelleFuseau(?DateTimeImmutable $instant = null): string
     {
+        if (self::fuseauAffichage()->getName() !== self::FUSEAU_AFFICHAGE) {
+            return self::decalage($instant) . ' (décalage fixe, sans heure d’été)';
+        }
         $saison = 'heure d\'hiver';
         if (self::estHeureAvancee($instant)) {
             $saison = 'heure d\'été';
@@ -221,9 +199,23 @@ final class Heure
         return self::FUSEAU_AFFICHAGE . ' (' . self::decalage($instant) . ', ' . $saison . ')';
     }
 
+    /** Minuit du jour affiché, ou du lendemain, converti en UTC pour les filtres. */
+    public static function borneJourUtc(string $jour, bool $lendemain = false): ?string
+    {
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/D', $jour) !== 1 || (int) substr($jour, 0, 4) < 1001 || (int) substr($jour, 0, 4) > 9998) {
+            return null;
+        }
+        $date = DateTimeImmutable::createFromFormat('!Y-m-d', $jour, self::fuseauAffichage());
+        if ($date === false || $date->format('Y-m-d') !== $jour) { return null; }
+        if ($lendemain) { $date = $date->modify('+1 day'); }
+        return self::horodatageStockage($date);
+    }
+
     /** Année civile à Paris (numérotation des commandes CMD{année}-…). */
     public static function anneeCivile(): int
     {
-        return (int) self::maintenant()->format('Y');
+        // L'identifiant métier conserve l'année civile de Paris indépendamment
+        // du réglage purement visuel du fuseau.
+        return (int) self::maintenantUtc()->setTimezone(new DateTimeZone(self::FUSEAU_AFFICHAGE))->format('Y');
     }
 }

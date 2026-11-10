@@ -17,6 +17,7 @@ use App\Model\Data\Triggers;
 use App\Model\Data\Views;
 use App\Repository\CommandeRepository;
 use App\Security\Auth;
+use App\Tools\Heure;
 
 final class CommandeAdminController extends Controller
 {
@@ -54,11 +55,15 @@ final class CommandeAdminController extends Controller
         }
         $du = $this->str('du', 10);
         if ($du !== '') {
-            $where[] = Filter::gte('date_commande', $du . ' 00:00:00');
+            $debutUtc = Heure::borneJourUtc($du);
+            if ($debutUtc === null) { $where[] = Filter::eq('id_commande', -1); }
+            else { $where[] = Filter::gte('date_commande', $debutUtc); }
         }
         $au = $this->str('au', 10);
         if ($au !== '') {
-            $where[] = Filter::lte('date_commande', $au . ' 23:59:59');
+            $finUtc = Heure::borneJourUtc($au, true);
+            if ($finUtc === null) { $where[] = Filter::eq('id_commande', -1); }
+            else { $where[] = Filter::lt('date_commande', $finUtc); }
         }
         $montantMin = $this->float('montant_min');
         if ($montantMin !== null) {
