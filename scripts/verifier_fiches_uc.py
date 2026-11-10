@@ -84,11 +84,19 @@ check('méthodes documentées et limites explicites', all(term in text for term 
 obsolete_terms = ['36 mois', 'sans appeler `cancelOrder`', 'lignes purgées', 'règle de fusion/mise à jour']
 check('absence de formulations obsolètes dans la fiche', all(term not in text for term in obsolete_terms))
 required_topics = [
-    '/preferences', 'localStorage', 'tz-lookup.js', 'English', 'data-label',
+    '/preferences', 'localStorage', 'tz-lookup.js', 'English',
     'ANNULATION_VIA_PARCOURS_DEDIE', 'Johan Polsinelli', 'Chahd Gouiaa',
     'purger_comptes.php', 'nettoyage_donnees.php', 'archive_restreinte.php',
 ]
 check('couverture manuelle des évolutions récentes', all(topic in text for topic in required_topics))
+responsive_re = re.compile(
+    r'\b(?:320|375|768|1440)\s*px\b|data-label|cartes mobiles|portrait/paysage|200\s*%\s*de\s*zoom',
+    re.IGNORECASE,
+)
+check(
+    'exclusion des scénarios manuels responsive multi-largeurs',
+    not any(responsive_re.search(row[4] + ' ' + row[5]) for row in cases),
+)
 
 try:
     with CSV.open(encoding='utf-8-sig', newline='') as file:

@@ -8,7 +8,7 @@ La pyramide des tests est souvent citée puis contredite par les chiffres. Voici
 
 | Étage | Nature | Suite | Volume | Durée |
 |---|---|---|---|---|
-| 0 | Analyse statique & audits documentaires | `scripts/strict_types_lint.php` (`declare_strict_types`, types natifs complets, zéro ternaire) + `tests/security/controles.sh` (10 contrôles + autotest) + `scripts/verifier_fiches_uc.py` + `tests/python/test_audit_structurel.py` + autotest `scripts/wasm_verdict.mjs` | **158 fichiers** PHP lintés, 0 violation · **10/10** contrôles sécurité · **45** contrôles fiches manuelles (`173` scénarios + `36` couples) | < 2 s |
+| 0 | Analyse statique & audits documentaires | `scripts/strict_types_lint.php` (`declare_strict_types`, types natifs complets, zéro ternaire) + `tests/security/controles.sh` (10 contrôles + autotest) + `scripts/verifier_fiches_uc.py` + `tests/python/test_audit_structurel.py` + autotest `scripts/wasm_verdict.mjs` | **158 fichiers** PHP lintés, 0 violation · **10/10** contrôles sécurité · **46** contrôles fiches manuelles (`164` scénarios + `36` couples) | < 2 s |
 | 1 | Unitaires purs | `tests/php/unit_tests.php` + `tests/phpunit/**` (9 classes : `Text`, `Filter`, `Prix`, `Triggers`, `JsonStore`, `SecurityContract`, `AlternativeImage`, `JournalEtTable`, `ConservationEtFuseau`) | suite PHP unitaire + **50** tests PHPUnit 11 | ~ 6 s |
 | 2 | Contrats statiques & métier ciblés | `contract_http.php`, `css_contract.php`, `responsive_contract.php` + 31 suites spécialisées `tests/php/*_test.php` (confirmations 2 étapes, historique annulation, doublons catégories, défaut stock `DELTA`, mentions LCEN, heure UTC/DST, rétention 24 mois, nettoyage, visuels, alignements…) | **42 suites PHP** exécutées sous PHP 8.2 et PHP 8.5 sans dépréciation | ~ 15 s |
 | 3 | Règles de gestion sur le moteur | `tests/php/run_tests.php` (`T-01` → `T-29` du CDC §6), `tests/php/engine_smoke.php`, `tests/php/json_concurrency_stress.php` | **29/29** scénarios + contrôles moteur + stress concurrent JSON | ~ 10 s |
@@ -17,7 +17,7 @@ La pyramide des tests est souvent citée puis contredite par les chiffres. Voici
 | 6 | Parcours HTTP E2E, DOM bilingue FR↔EN & CLI Python | `scripts/wasm-e2e.mjs` + 23 suites `scripts/ui-e2e-*.mjs` + `tests/node/preferences_test.mjs` + `tests/node/e2e_isolation.mjs` + `tests/python/test_{retention_cli,nettoyage_cli,archive_restreinte,preparer_sql_lineserv,auth_403_http}.py` | **338** contrôles HTTP E2E isolés + **48 vues** `FR -> EN -> FR` & **44 erreurs** métier + AJAX `panier.js` | ~ 90 s |
 | 6 bis | Navigateur réel headless (CI) | `tests/node/responsive_navigateur.mjs` (Playwright Chromium : 320, 375 et 1440 px, français et anglais, avec et sans JavaScript) | cartes `data-label`, pages légales FR/EN, panier AJAX EN, annulation admin `EXPEDIEE` sans JS | ~ 45 s |
 | 7 | Performance & volumétrie | `scripts/capture_perf.sh` → `gen_volumes.sh` + `tests/perf/mesurer_sql.sh` | 5 requêtes types + `EXPLAIN` + p95 de la recherche | ~ 60 s |
-| 8 | Suites de recette manuelle humaine | [`docs/13-fiches-recette-uc.md`](13-fiches-recette-uc.md) + [`docs/13-suivi-recette-uc.csv`](13-suivi-recette-uc.csv) + [`docs/14-guide-lineserv.md`](14-guide-lineserv.md) | **173 scénarios** (`UC-01..14` + `TCX-01..25`) + **36 couples** = **209 lignes `NON JOUÉ`** | campagne humaine |
+| 8 | Suites de recette manuelle humaine | [`docs/13-fiches-recette-uc.md`](13-fiches-recette-uc.md) + [`docs/13-suivi-recette-uc.csv`](13-suivi-recette-uc.csv) + [`docs/14-guide-lineserv.md`](14-guide-lineserv.md) | **164 scénarios** (`UC-01..14` + `TCX-01..24`, hors responsive multi-largeurs) + **36 couples** = **200 lignes `NON JOUÉ`** | campagne humaine |
 
 **Total** : les volumes détaillés figurent ci-dessus ; les scénarios catalogue varient avec le nombre de produits. La matrice catalogue MariaDB reste à jouer.
 
@@ -61,7 +61,7 @@ Trois suites tournent **sans exécuter l'application**. Elles sont rapides, et e
 | `css_contract.php` (69) | Les jetons du design system sont réellement définis et utilisés ; les contrastes calculés passent AA ; la CSP n'autorise pas d'origine externe | une couleur écrite en dur qui contourne le jeton ; un `style=` inline bloqué par la CSP |
 | `responsive_contract.php` (50) | La mise en page tient de 320 px à 1536 px (WCAG 1.4.10) : pas de largeur fixe, tableaux en conteneur défilant, cibles tactiles ≥ 24 px | une grille `min-width: 900px` qui provoque un défilement horizontal sur mobile |
 
-Ces tests sont **statiques** : ils analysent les fichiers. C'est une limite réelle (aucune validation de navigateur), compensée par la vérification manuelle des paliers 320/768/1024/1536 documentée au §5 du document de tests.
+Ces tests sont **statiques** : ils analysent les fichiers. C'est une limite réelle (aucune validation de navigateur dans ces trois scripts), compensée en CI par `tests/node/responsive_navigateur.mjs` sous Chromium headless (320, 375 et 1440 px) — l'équipe ayant choisi de retirer les campagnes responsive multi-largeurs des suites manuelles (trop longues à dérouler à la main).
 
 ## 4. Ce qui n'est pas joué en sandbox, et pourquoi c'est écrit
 
@@ -180,11 +180,12 @@ Un administrateur connecté sans le rôle SUPER reçoit désormais un statut HTT
 
 ## Articulation avec les suites de tests manuels (`docs/13-*`)
 
-Même avec **15 jobs CI automatisés**, une campagne humaine reste indispensable pour valider :
-1. le rendu tactile, l'orientation portrait/paysage et le zoom 200 % sur de **vrais téléphones** (au-delà de Chromium headless) ;
-2. la restitution vocale effective dans un **lecteur d'écran réel** (NVDA, Orca, VoiceOver : distinction vignettes décoratives `alt=""` vs visuel informatif de fiche produit, annonces `aria-live` du panier en FR et EN, lecture des cartes mobiles `data-label`) ;
-3. l'expérience réelle de la boîte de dialogue navigateur de permission de géolocalisation sur `/preferences` et la qualité linguistique perçue des pages traduites en anglais ;
-4. l'hébergement cible **LineServ** (sous-dossier éventuel, séparation des fichiers privés, import phpMyAdmin sur base dédiée, absence de scripts de développement exposés).
+Même avec **15 jobs CI automatisés**, une campagne humaine reste indispensable sur ordinateur pour valider :
+1. les parcours métier complets, la navigation au clavier et les confirmations explicites en deux étapes (avec et sans JavaScript) dans un navigateur réel ;
+2. l'expérience réelle de la boîte de dialogue navigateur de permission de géolocalisation sur `/preferences` et la qualité linguistique perçue des pages traduites en anglais ;
+3. l'hébergement cible **LineServ** (sous-dossier éventuel, séparation des fichiers privés, import phpMyAdmin sur base dédiée, absence de scripts de développement exposés).
 
-L'ensemble de ces vérifications humaines est formalisé dans [`docs/13-fiches-recette-uc.md`](13-fiches-recette-uc.md) (**173 scénarios** sur `UC-01` à `UC-14` et `TCX-01` à `TCX-25`, plus les **36 couples** de la matrice `RB-11`) et son journal [`docs/13-suivi-recette-uc.csv`](13-suivi-recette-uc.csv) (**209 lignes** initialisées à `NON JOUÉ`). L'intégrité structurelle et la synchronisation de ces deux fichiers avec le code (`Triggers::TRANSITIONS`, routes et fichiers cités) sont vérifiées automatiquement par `python3 scripts/verifier_fiches_uc.py` dans les orchestrateurs de tests et en CI.
+**Périmètre volontairement exclu du manuel :** les tests responsive multi-largeurs (`320/375/768/1440 px`, cartes mobiles `data-label`, portrait/paysage téléphone) ont été retirés des suites manuelles car trop longs à exécuter sur l'ensemble des vues ; ils reposent désormais exclusivement sur les suites automatisées (`tests/php/responsive_contract.php` et `tests/node/responsive_navigateur.mjs`). L'absence de validation humaine exhaustive sur téléphones physiques est assumée et documentée.
+
+L'ensemble des vérifications humaines retenues est formalisé dans [`docs/13-fiches-recette-uc.md`](13-fiches-recette-uc.md) (**164 scénarios** sur `UC-01` à `UC-14` et `TCX-01` à `TCX-24`, plus les **36 couples** de la matrice `RB-11`) et son journal [`docs/13-suivi-recette-uc.csv`](13-suivi-recette-uc.csv) (**200 lignes** initialisées à `NON JOUÉ`). L'intégrité structurelle et la synchronisation de ces deux fichiers avec le code (`Triggers::TRANSITIONS`, routes, fichiers cités et absence de retour des scénarios responsive manuels) sont vérifiées automatiquement par `python3 scripts/verifier_fiches_uc.py` dans les orchestrateurs de tests et en CI.
 

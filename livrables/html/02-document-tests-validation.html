@@ -116,7 +116,7 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 - préférences personnelles sur <code>/preferences</code> accessibles sans compte (<code>localStorage</code> seul, aucun cookie de suivi) : choix manuel ou géolocalisation navigateur locale sans tiers (<code>public/js/tz-lookup.js</code> CC0), traduction complète FR ↔ EN des 48 vues et du panier AJAX (<code>public/js/i18n-en.js</code>, <code>public/js/panier.js</code>), stockage UTC de bout en bout et affichage/filtrage selon le fuseau local choisi ;
 - compatibilité responsive à 320, 375, 768 et 1440 px avec tableaux administrateur et clients repliés en cartes mobiles étiquetées (<code>data-label</code>) et double implémentation décorative/informative des visuels produits ;
 - mentions légales de la maquette étudiante conformes à l'article 6, III, 2 de la LCEN (co-éditeurs <strong>Johan Polsinelli</strong> et <strong>Chahd Gouiaa</strong>, hébergeur pédagogique IUT Nice Côte d'Azur <code>linserv-info-01.campus.unice.fr</code>), transparence RGPD de la maquette scolaire et outils CLI de conservation/purge (<code>24 mois</code> comptes sans commande, <code>12 mois</code> contact, <code>6 mois</code> journaux, <code>30 jours</code> sauvegardes dédiées).</p>
-<p>Aucun résultat d'exécution humaine sur appareil physique, lecteur d'écran ou serveur LineServ n'est inventé : la colonne « Statut » distingue strictement ce qui est <strong>exécuté automatiquement en CI</strong> (15 jobs verts) de ce qui <strong>reste à dérouler manuellement</strong> (<code>[!]</code>, et <code>NON JOUÉ</code> sur les 209 entrées de <a href="13-suivi-recette-uc.csv"><code>13-suivi-recette-uc.csv</code></a>).</p>
+<p>Aucun résultat d'exécution humaine sur navigateur réel ou serveur LineServ n'est inventé : la colonne « Statut » distingue strictement ce qui est <strong>exécuté automatiquement en CI</strong> (15 jobs verts, y compris l'intégralité des contrôles responsive 320/375/1440 px sous Chromium) de ce qui <strong>reste à dérouler manuellement</strong> (<code>[!]</code>, et <code>NON JOUÉ</code> sur les 200 entrées de <a href="13-suivi-recette-uc.csv"><code>13-suivi-recette-uc.csv</code></a> — les campagnes responsive multi-largeurs ayant été volontairement retirées des suites manuelles car trop longues à jouer à la main).</p>
 <h2 id="1-dispositif">1. Dispositif<a class="headerlink" href="#1-dispositif" title="Permanent link">#</a></h2>
 <table>
 <thead>
@@ -140,7 +140,7 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 </tr>
 <tr>
 <td>Suites de recette manuelle</td>
-<td><a href="13-fiches-recette-uc.html"><code>docs/13-fiches-recette-uc.md</code></a> (<strong>173 scénarios</strong> sur UC-01..UC-14 + §15 transversal et <strong>36 couples</strong> de transition <code>RB-11</code>) et journal vierge <a href="13-suivi-recette-uc.csv"><code>docs/13-suivi-recette-uc.csv</code></a> (<strong>209 lignes <code>NON JOUÉ</code></strong>), complétés par <a href="14-guide-lineserv.html"><code>docs/14-guide-lineserv.md</code></a></td>
+<td><a href="13-fiches-recette-uc.html"><code>docs/13-fiches-recette-uc.md</code></a> (<strong>164 scénarios</strong> sur UC-01..UC-14 + §15 transversal et <strong>36 couples</strong> de transition <code>RB-11</code>, hors responsive multi-largeurs délégué à la CI) et journal vierge <a href="13-suivi-recette-uc.csv"><code>docs/13-suivi-recette-uc.csv</code></a> (<strong>200 lignes <code>NON JOUÉ</code></strong>), complétés par <a href="14-guide-lineserv.html"><code>docs/14-guide-lineserv.md</code></a></td>
 </tr>
 <tr>
 <td>Chaîne CI</td>
@@ -351,8 +351,8 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 </table>
 <h2 id="3-tests-fonctionnels-recette-de-lapplication-f-00-a-f-56">3. Tests fonctionnels (recette de l'application — <code>F-00</code> à <code>F-56</code>)<a class="headerlink" href="#3-tests-fonctionnels-recette-de-lapplication-f-00-a-f-56" title="Permanent link">#</a></h2>
 <p>Lecture de la colonne <strong>Statut</strong> :
-- <strong>« automatisé (...) »</strong> : assertions exécutées automatiquement par <code>scripts/run-all-tests.mjs</code> et les 15 jobs CI ;
-- <strong>« automatisé (...) + revue visuelle manuelle <code>[!]</code> »</strong> : structure DOM/CSS et absence de débordement en Chromium headless (320/375/1440 px) prouvées automatiquement, contrôle humain sur téléphone physique et lecteur d'écran restant à jouer (<code>NON JOUÉ</code> dans <a href="13-suivi-recette-uc.csv"><code>13-suivi-recette-uc.csv</code></a>) ;
+- <strong>« automatisé (...) »</strong> : assertions exécutées automatiquement par <code>scripts/run-all-tests.mjs</code> et les 15 jobs CI (les vérifications responsive 320/375/1440 px et cartes mobiles <code>data-label</code> sont couvertes uniquement en automatisé par <code>responsive_contract.php</code> et <code>responsive_navigateur.mjs</code>, hors suites manuelles) ;
+- <strong>« automatisé (...) + test navigateur réel <code>[!]</code> »</strong> : logique et DOM prouvés automatiquement en JSDOM/Chromium, comportement natif de l'interface navigateur (invite de permission de géolocalisation, stockage local, relecture linguistique) restant à constater humainement (<code>NON JOUÉ</code> dans <a href="13-suivi-recette-uc.csv"><code>13-suivi-recette-uc.csv</code></a>) ;
 - <strong>« manuel à rejouer <code>[!]</code> »</strong> : scénario d'installation ou d'exploitation humaine sur poste cible / LineServ.</p>
 <table>
 <thead>
@@ -721,29 +721,29 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 <tr>
 <td>F-39</td>
 <td>Tenue responsive 320/375 px de <code>/compte</code> et adresse pré-remplie</td>
-<td>client connecté, viewport 320 &amp; 375 px</td>
+<td>client connecté, viewport 320 &amp; 375 px (CI Chromium)</td>
 <td>saisir rue, code postal et ville sur <code>/compte</code>, ouvrir <code>/commande/valider</code></td>
 <td>aucun débordement horizontal ; adresse structurée pré-remplie à la validation</td>
 <td>EF-CLI-01, Responsive</td>
-<td>automatisé (<code>adresse_livraison_test</code>, <code>responsive_navigateur</code>) + revue visuelle manuelle <code>[!]</code></td>
+<td>automatisé (<code>adresse_livraison_test</code>, <code>responsive_navigateur</code>)</td>
 </tr>
 <tr>
 <td>F-40</td>
 <td>Tenue responsive 320/375 px de <code>/commande/valider</code></td>
-<td>panier multi-lignes, 320 &amp; 375 px</td>
+<td>panier multi-lignes, 320 &amp; 375 px (CI Chromium)</td>
 <td>ouvrir <code>/commande/valider</code> et inspecter le récapitulatif et le bloc totaux</td>
 <td>cartes mobiles <code>data-label</code> propres, totaux groupés, bouton d'action complet et liens précontractuels lisibles</td>
 <td>EF-CLI-07, Responsive</td>
-<td>automatisé (<code>valider_recap_test</code>, <code>ui-e2e-valider</code>, <code>responsive_navigateur</code>) + revue visuelle manuelle <code>[!]</code></td>
+<td>automatisé (<code>valider_recap_test</code>, <code>ui-e2e-valider</code>, <code>responsive_navigateur</code>)</td>
 </tr>
 <tr>
 <td>F-41</td>
 <td>Tenue responsive 320/375 px de <code>/mes-commandes</code> et du détail annulé</td>
-<td>commandes active + annulée, 320 &amp; 375 px</td>
+<td>commandes active + annulée, 320 &amp; 375 px (CI Chromium)</td>
 <td>ouvrir <code>/mes-commandes</code> et <code>/mes-commandes/{id}</code></td>
 <td>cartes mobiles étiquetées sans défilement horizontal ; lignes et <code>Total avant annulation</code> lisibles</td>
 <td>EF-CLI-08/09, Responsive</td>
-<td>automatisé (<code>mes_commandes_tableau_test</code>, <code>ui-e2e-mes-commandes</code>, <code>responsive_navigateur</code>) + revue visuelle manuelle <code>[!]</code></td>
+<td>automatisé (<code>mes_commandes_tableau_test</code>, <code>ui-e2e-mes-commandes</code>, <code>responsive_navigateur</code>)</td>
 </tr>
 <tr>
 <td>F-42</td>
@@ -784,20 +784,20 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 <tr>
 <td>F-46</td>
 <td>Tableaux et formulaires d'administration en cartes mobiles <code>data-label</code></td>
-<td>session admin, 320 &amp; 375 px</td>
+<td>session admin, 320 &amp; 375 px (CI Chromium)</td>
 <td>parcourir <code>/admin</code>, <code>/admin/produits</code>, <code>/admin/categories</code>, <code>/admin/stocks</code>, <code>/admin/commandes</code>, <code>/admin/equipe</code> avec valeurs longues</td>
 <td>repli en cartes mobiles étiquetées (<code>data-label</code> identique au <code>th</code>), valeurs longues repliées sans sortir du cadre, <code>scrollWidth &lt;= innerWidth</code></td>
 <td>Responsive, USWDS / WCAG 1.4.10</td>
-<td>automatisé (<code>categories_tableau_test</code>, <code>commandes_tableau_test</code>, <code>formulaires_admin_test</code>, <code>responsive_navigateur</code>) + revue visuelle manuelle <code>[!]</code></td>
+<td>automatisé (<code>categories_tableau_test</code>, <code>commandes_tableau_test</code>, <code>formulaires_admin_test</code>, <code>responsive_navigateur</code>)</td>
 </tr>
 <tr>
 <td>F-47</td>
 <td>Tenue 320/375 px de <code>/panier</code>, unicité des totaux et bouton principal</td>
-<td>panier garni, 320 &amp; 375 px</td>
+<td>panier garni, 320 &amp; 375 px (CI Chromium)</td>
 <td>ouvrir <code>/panier</code> et contrôler lignes, pied de tableau et CTA</td>
 <td>cartes <code>data-label</code> propres, totaux affichés une seule fois dans <code>tfoot</code>, bouton « Valider ma commande » mis en évidence</td>
 <td>EF-CLI-03…06, Responsive</td>
-<td>automatisé (<code>panier_tableau_test</code>, <code>panier_cta_test</code>, <code>ui-e2e-panier-tableau</code>, <code>responsive_navigateur</code>) + revue visuelle manuelle <code>[!]</code></td>
+<td>automatisé (<code>panier_tableau_test</code>, <code>panier_cta_test</code>, <code>ui-e2e-panier-tableau</code>, <code>responsive_navigateur</code>)</td>
 </tr>
 <tr>
 <td>F-48</td>
@@ -840,9 +840,9 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 <td>Traduction complète FR ↔ EN (<code>traduire_tout</code>) et réversibilité</td>
 <td>48 vues du site + panier AJAX</td>
 <td>basculer <code>Français -&gt; English -&gt; Français</code> sur front, légal, panier AJAX, erreurs métier, client et admin</td>
-<td><code>&lt;html lang&gt;</code> et <code>&lt;title&gt;</code> synchronisés, 100 % des textes d'interface, messages flash/API et <code>data-label</code> traduits, saisies formulaires préservées, aucun débordement à 320/375/1440 px</td>
+<td><code>&lt;html lang&gt;</code> et <code>&lt;title&gt;</code> synchronisés, 100 % des textes d'interface, messages flash/API et <code>data-label</code> traduits, saisies formulaires préservées, aucun débordement en CI Chromium</td>
 <td>WCAG 3.1.1, Ergonomie bilingue</td>
-<td>automatisé (<code>preferences_test</code> sur 48 vues + 44 erreurs, <code>responsive_navigateur</code>) + relecture humaine <code>[!]</code></td>
+<td>automatisé (<code>preferences_test</code> sur 48 vues + 44 erreurs, <code>responsive_navigateur</code>) + test navigateur réel <code>[!]</code></td>
 </tr>
 <tr>
 <td>F-53</td>
@@ -1273,7 +1273,7 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 <td>Parcours fonctionnels front, client, admin (<code>F-01</code>…<code>F-48</code>)</td>
 <td>48</td>
 <td><strong>48</strong></td>
-<td><strong>6</strong> revues visuelles sur appareils/lecteurs d'écran réels (<code>F-39</code>…<code>F-41</code>, <code>F-46</code>, <code>F-47</code>)</td>
+<td><strong>0</strong> (responsive multi-largeurs délégué à la CI Chromium, hors suites manuelles)</td>
 <td>0</td>
 <td>0</td>
 <td>42 suites PHP + <code>wasm-e2e</code> (338 contrôles) + 23 <code>ui-e2e-*</code> + Chromium CI</td>
@@ -1309,16 +1309,16 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 <td><strong>Sous-total du présent document</strong></td>
 <td><strong>113 vérifications</strong> (29 + 2 + 48 + 8 + 20 + 6)</td>
 <td><strong>108 automatisées en CI</strong></td>
-<td><strong>16 compléments humains <code>[!]</code></strong></td>
+<td><strong>10 compléments humains <code>[!]</code></strong></td>
 <td><strong>0</strong></td>
 <td><strong>0</strong></td>
 <td>pipeline CI 15/15 vert</td>
 </tr>
 <tr>
 <td><strong>Campagne manuelle complète par UC (<code>docs/13-*</code>)</strong></td>
-<td><strong>209 entrées</strong> (173 scénarios <code>TC*</code> + 36 couples <code>TC14-09/*</code>)</td>
-<td>structure vérifiée (<code>45/45</code> via <code>verifier_fiches_uc.py</code>)</td>
-<td><strong>209 <code>NON JOUÉ</code></strong> à dérouler par l'équipe</td>
+<td><strong>200 entrées</strong> (164 scénarios <code>TC*</code> + 36 couples <code>TC14-09/*</code>)</td>
+<td>structure vérifiée (<code>46/46</code> via <code>verifier_fiches_uc.py</code>)</td>
+<td><strong>200 <code>NON JOUÉ</code></strong> à dérouler par l'équipe</td>
 <td>—</td>
 <td>—</td>
 <td><a href="13-suivi-recette-uc.csv"><code>docs/13-suivi-recette-uc.csv</code></a></td>
@@ -1441,14 +1441,14 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 <td><code>Heure</code></td>
 <td>sessions SQL en UTC <code>+00:00</code>, <code>localStorage</code> navigateur seul</td>
 <td><code>/preferences</code>, <code>preferences.js</code>, <code>tz-lookup.js</code> (CC0 local), <code>i18n-en.js</code></td>
-<td>F-50, F-51, F-52, F-53, TCX-20…TCX-24</td>
+<td>F-50, F-51, F-52, F-53, TCX-19…TCX-23</td>
 </tr>
 <tr>
 <td>Mentions LCEN &amp; conservation</td>
 <td><code>RetentionComptes</code>, <code>Nettoyage*</code>, <code>Journal</code></td>
 <td><code>conservation_compte = 24</code> mois, verrous atomiques, archives <code>sodium</code></td>
 <td><code>/mentions-legales</code> (Point 20), <code>/confidentialite</code>, <code>scripts/{purger_comptes,nettoyage_donnees,archive_restreinte}.php</code></td>
-<td>F-24, F-36, F-49, F-54…F-56, TCX-18, TCX-19, TCX-25</td>
+<td>F-24, F-36, F-49, F-54…F-56, TCX-17, TCX-18, TCX-24</td>
 </tr>
 <tr>
 <td>SEC-01…SEC-13</td>
@@ -1462,7 +1462,7 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 <td>—</td>
 <td>index, <code>FULLTEXT</code>, transactions, <code>mysqldump --routines --triggers</code></td>
 <td>scripts <code>tests/perf/*</code>, <code>rollBack()</code></td>
-<td>P-01…P-06, B-01, F-18, T-09, T-29, TCX-15, TCX-16</td>
+<td>P-01…P-06, B-01, F-18, T-09, T-29, TCX-14, TCX-15</td>
 </tr>
 </tbody>
 </table>
@@ -1470,7 +1470,7 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 <ul>
 <li>la <strong>base de données</strong> est verrouillée par 29 scénarios SQL + l'étape 6 d'intégration PDO et la migration MariaDB, rejoués automatiquement à chaque push sur MySQL 8.0 et MariaDB 11.8 ;</li>
 <li>l'<strong>application complète</strong> (57 cas fonctionnels <code>F-00</code>…<code>F-56</code>, dont le bilinguisme intégral FR/EN, le fuseau horaire local sans tiers, les confirmations en 2 étapes, les tableaux mobiles <code>data-label</code>, les mentions légales LCEN et les outils de conservation) est couverte par les 15 jobs de CI ;</li>
-<li>la <strong>recette manuelle humaine</strong> dispose désormais de suites entièrement actualisées et synchronisées (<a href="13-fiches-recette-uc.html"><code>docs/13-fiches-recette-uc.md</code></a> et <a href="13-suivi-recette-uc.csv"><code>docs/13-suivi-recette-uc.csv</code></a>, 173 scénarios + 36 couples, tous honnêtement laissés à <code>NON JOUÉ</code> jusqu'à leur exécution sur appareils réels et sur LineServ) ;</li>
+<li>la <strong>recette manuelle humaine</strong> dispose de suites actualisées et allégées (<a href="13-fiches-recette-uc.html"><code>docs/13-fiches-recette-uc.md</code></a> et <a href="13-suivi-recette-uc.csv"><code>docs/13-suivi-recette-uc.csv</code></a>, 164 scénarios + 36 couples = 200 lignes <code>NON JOUÉ</code> à exécuter sur navigateur réel et sur LineServ, les tests responsive multi-largeurs ayant été retirés du périmètre manuel et confiés aux seules suites automatisées) ;</li>
 <li>les copies versionnées de ce document dans <code>livrables/{html,pdf,docx}/02-document-tests-validation.*</code> se régénèrent avec <code>python3 scripts/md_to_{html,pdf,docx}.py</code>.</li>
 </ul>
 <footer class="doc">

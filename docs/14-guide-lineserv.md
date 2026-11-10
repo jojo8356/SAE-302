@@ -118,13 +118,13 @@ Sur une instance de recette isolée, utiliser uniquement des comptes et données
 - [ ] Sur `/preferences` (sans connexion requise) : vérifier la bascule intégrale `Français` ↔ `English` sur les pages publiques, client et admin, le choix manuel ou par géolocalisation locale sans requête réseau externe du fuseau horaire, et la réinitialisation.
 - [ ] Sur `/mentions-legales` : contrôler l'affichage exact des co-éditeurs étudiants et des coordonnées de l'hébergeur IUT.
 - [ ] Répéter un parcours avec deux sessions isolées ; vérifier qu'aucune commande d'un autre compte n'est exposée (404).
-- [ ] Test sur ordinateur et téléphone réel (320 et 375 px : tableaux repliés en cartes mobiles étiquetées `data-label` sans débordement horizontal global) ; clavier et zoom 200 % ; vérifier une page publique et une page connectée avec WAVE (§8).
+- [ ] Parcourir sur ordinateur au clavier (`Tab`, `Maj+Tab`, `Entrée`) et vérifier une page publique et une page connectée avec WAVE (§8) — les tests responsive multi-tailles sont exclus de la campagne manuelle et couverts par la CI automatisée.
 - [ ] Pas d'accès public aux fichiers privés ou aux outils de développement (`public/mesurer.php`, `public/gen_volumes.php`) ; débogage désactivé ; comptes de démonstration non exposés.
 - [ ] Consigner les résultats réels et anomalies dans [la fiche](13-fiches-recette-uc.md) et [le suivi CSV](13-suivi-recette-uc.csv), pas dans ce guide comme s'ils étaient déjà validés.
 
 Problèmes fréquents : **404 sur `/catalogue` ou CSS absent** → préfixe, réécriture et liens non adaptés ; **500 dès l'accueil** → chemin du bootstrap, droits de lecture, version PHP ou base ; **connexion DB refusée** → coordonnées et droits attribués, sans montrer le mot de passe ; **import SQL incomplet** → routines, délimiteurs ou privilèges, à constater sans réinitialiser. Ne pas activer le debug public pour obtenir un message ; voir les journaux privés avec l'accord de l'IUT.
 
-## 8. Logiciels pour l'accessibilité et le responsive
+## 8. Logiciels pour l'accessibilité (et mémo optionnel hors campagne)
 
 ### WAVE : repérer les problèmes d'accessibilité
 
@@ -133,15 +133,13 @@ Problèmes fréquents : **404 sur `/catalogue` ou CSS absent** → préfixe, ré
 1. Installer l'extension depuis le lien officiel et ouvrir l'URL LineServ réellement validée.
 2. Sur l'accueil, cliquer l'icône WAVE. Relever les **Errors**, erreurs de contraste et **Alerts** : titre, description, élément et capture expurgée. Une alerte demande une vérification humaine, elle n'est pas forcément un défaut.
 3. Recommencer pour catalogue, produit, panier, inscription, commande et les pages connectées/admin autorisées, y compris quand un message d'erreur est affiché. Une analyse ne couvre que la page et l'état affichés.
-4. Tester en plus au clavier (`Tab`, `Maj+Tab`, `Entrée`, `Espace`, `Échap`) : focus visible, ordre logique, liens et formulaires utilisables ; essayer un lecteur d'écran comme Orca sous Linux ou NVDA sous Windows et demander des retours de personnes concernées si possible.
+4. Tester en plus au clavier (`Tab`, `Maj+Tab`, `Entrée`, `Espace`, `Échap`) : focus visible, ordre logique, liens et formulaires utilisables.
 
 **Limite :** WAVE détecte une partie des problèmes seulement. Ni absence d'erreurs ni un score ne prouve une conformité WCAG ou RGAA. Un audit humain approfondi et, le cas échéant, une évaluation experte restent nécessaires. Source : [aide officielle WAVE](https://wave.webaim.org/help).
 
-### Outils de développement du navigateur : tester le responsive
+### Note hors campagne manuelle : pourquoi le responsive n'est pas rejoué à la main
 
-Dans Chrome ou Chromium : `F12` ou `Ctrl+Maj+I`, puis `Ctrl+Maj+M` pour activer la barre d'appareils. Dans le menu, choisir **Responsive** et saisir successivement `320`, `375`, `768` et `1440` pixels de largeur. Refaire les parcours principaux à chaque taille : pas de contenu coupé ou superposé, menu et boutons accessibles, formulaires utilisables et pas de défilement horizontal global ; un tableau peut avoir son propre conteneur défilant si nécessaire. Tester également le zoom navigateur à 200 %, puis le reflow à 320 px de largeur CSS ; les exceptions de contenu bidimensionnel sont à examiner au cas par cas.
-
-L'onglet **Lighthouse → Accessibility → Analyze page load** donne un rapport complémentaire, pas une certification. Attention : un audit en mode navigation peut recharger la page ou modifier son état ; vérifier qu'on est toujours sur la bonne page et la bonne session, sans supprimer les données de recette. Enregistrer un rapport expurgé. Le mode appareil simule un écran, **pas** un vrai téléphone : compléter par un appareil physique et, si possible, un second navigateur. Voir la [documentation Chrome Device Mode](https://developer.chrome.com/docs/devtools/device-mode) et les [outils d'accessibilité Chrome](https://developer.chrome.com/docs/devtools/accessibility/reference).
+Par décision d'équipe, la vérification responsive multi-largeurs (`320`, `375`, `768`, `1440 px`) a été **retirée des suites de tests manuels** car trop longue à dérouler sur toutes les pages ; elle est exécutée automatiquement à chaque push par `tests/php/responsive_contract.php` et `tests/node/responsive_navigateur.mjs` (Chromium headless en CI). En cas d'anomalie visuelle ponctuelle signalée sur un écran particulier, le mode appareil de Chrome/Chromium (`F12` puis `Ctrl+Maj+M`, [documentation Chrome Device Mode](https://developer.chrome.com/docs/devtools/device-mode)) reste utilisable uniquement à titre de diagnostic ciblé, sans campagne complète exigée.
 
 ## 9. Documents et communication
 
