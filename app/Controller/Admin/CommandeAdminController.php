@@ -120,6 +120,19 @@ final class CommandeAdminController extends Controller
             $this->rediriger('/admin/commandes/' . $id);
         }
 
+        if ($nouveauStatut === 'ANNULEE' && $this->str('confirmer_annulation', 1) !== '1') {
+            $commande = $repo->find((int) $id);
+            if ($commande === null) {
+                $this->flashErreur('Commande introuvable.');
+                $this->rediriger('/admin/commandes');
+            }
+            $this->render('admin/confirmer_annulation', [
+                'commande' => $commande,
+                'commentaire' => $commentaire,
+            ], 'Confirmer l’annulation');
+            return;
+        }
+
         try {
             $resultat = $repo->updateOrderStatus((int) $id, $nouveauStatut, $commentaire, (int) $admin['id'], 'ADMIN');
             $message = 'Le statut était déjà à jour.';

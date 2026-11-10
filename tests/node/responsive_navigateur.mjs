@@ -103,6 +103,16 @@ try {
     const page = await contexte.newPage();
     await aller(page, '/catalogue');
     await pageVerifiee(page, 'catalogue', largeur, 'a[href^="/produit/"]');
+    await page.locator('.filtres-catalogue summary').click();
+    const prix = await page.evaluate(() => {
+      const min = document.querySelector('#prix_min').getBoundingClientRect();
+      const max = document.querySelector('#prix_max').getBoundingClientRect();
+      return { minLeft: min.left, minRight: min.right, minTop: min.top,
+        maxLeft: max.left, maxRight: max.right, maxTop: max.top, viewport: document.documentElement.clientWidth };
+    });
+    assert.ok(prix.minRight <= prix.maxLeft && prix.maxRight <= prix.viewport + 1,
+      `Filtres prix coupés ou non côte à côte : ${JSON.stringify(prix)}`);
+    await page.locator('.filtres-catalogue summary').click();
     const href = await page.locator('a[href^="/produit/"]').first().getAttribute('href');
     await aller(page, href);
     await pageVerifiee(page, 'produit', largeur, '.tableau-caracteristiques');
@@ -121,11 +131,12 @@ try {
     await pageVerifiee(page, 'validation', largeur, '.tableau-recapitulatif tbody tr');
     await page.locator('form[action="/commande/valider"] button').click();
     await page.waitForURL(/\/mes-commandes\/\d+$/);
+    const commandeId = page.url().match(/\/mes-commandes\/(\d+)$/)[1];
     await aller(page, '/mes-commandes');
     await pageVerifiee(page, 'mes-commandes', largeur, '.tableau-commandes-client tbody tr');
     await contexte.close();
 
-    const admin = await browser.newContext({ viewport: { width: largeur, height: 900 } });
+    const admin = await browser.newContext({ viewport: { width: largeur, height: 900 }, javaScriptEnabled: false });
     const administration = await admin.newPage();
     await aller(administration, '/admin/connexion');
     await administration.fill('#email', 'admin@minishop.fr');
@@ -139,6 +150,21 @@ try {
       await aller(administration, route);
       await pageVerifiee(administration, nom, largeur, cible);
     }
+    // La confirmation fonctionne sans JavaScript et ne modifie rien au premier POST.
+    await aller(administration, `/admin/commandes/${commandeId}`);
+    await administration.selectOption('#statut', 'ANNULEE');
+    await administration.fill('#commentaire', 'Test confirmation');
+    await administration.locator('form[action$="/statut"] button').click();
+    await administration.getByRole('heading', { name: 'Confirmer l’annulation' }).waitFor();
+    assert.ok(await administration.getByText('Les articles non expédiés seront restitués au stock.').isVisible());
+    await administration.getByRole('link', { name: 'Non, revenir à la commande' }).click();
+    assert.ok(!(await administration.locator('body').innerText()).includes('Montant soldé'));
+    await administration.selectOption('#statut', 'ANNULEE');
+    await administration.fill('#commentaire', 'Test confirmation');
+    await administration.locator('form[action$="/statut"] button').click();
+    await administration.getByRole('button', { name: 'Confirmer l’annulation définitive' }).click();
+    assert.ok((await administration.locator('body').innerText()).includes('Montant soldé'));
+    console.log(`✅ Confirmation administrateur sans JavaScript — ${largeur}px`);
     await admin.close();
   }
   console.log('✅ Vérifications Chromium terminées ; aucune garantie sur d’autres navigateurs ou appareils.');

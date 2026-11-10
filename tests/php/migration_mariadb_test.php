@@ -85,6 +85,10 @@ try {
 
     // Sur la base jetable uniquement, tester la version courante des routines.
     $loader->chargerFichiers([$racine . '/sql/02_minishop_procedures.sql', $racine . '/sql/03_minishop_triggers.sql']);
+    $loader->chargerFichier($racine . '/sql/migrations/002_historique_lisible.sql');
+    $loader->chargerFichier($racine . '/sql/migrations/002_historique_lisible.sql');
+    $loader->chargerFichier($racine . '/sql/migrations/003_statut_protege.sql');
+    $loader->chargerFichier($racine . '/sql/migrations/003_statut_protege.sql');
     try {
         $pdo->exec('CALL sp_cancel_order(1, 9999, @code)');
         throw new RuntimeException('Une annulation non autorisée a été acceptée.');
@@ -113,6 +117,42 @@ try {
         throw new RuntimeException('Le stock a été restitué deux fois.');
     }
     echo "✅ Annulation autorisée, refus, rollback et historique vérifiés sur MariaDB\n";
+
+    // La procédure générique ne doit pas contourner les invariants d'annulation.
+    $store = new App\Model\Data\SqlStore($pdo);
+    $repo = App\Repository\CommandeRepository::for($store);
+    $stockInitial = (int) $pdo->query('SELECT stock FROM produit WHERE id_produit=8')->fetchColumn();
+    $nouvelle = $repo->createOrderFromBasket(1, 'Adresse administrateur', [['id_produit' => 8, 'quantite' => 2]], true);
+    $id = (int) $nouvelle['id_commande'];
+    try {
+        $pdo->exec("CALL sp_update_order_status($id, 'ANNULEE', 'interdit', 1, 'ADMIN', @code)");
+        throw new RuntimeException('La procédure générique a accepté une annulation directe.');
+    } catch (PDOException $erreur) {
+        if (!str_contains($erreur->getMessage(), 'ANNULATION_VIA_PARCOURS_DEDIE')) {
+            throw $erreur;
+        }
+    }
+    $repo->updateOrderStatus($id, 'ANNULEE', 'Test motif administrateur', 1, 'ADMIN');
+    $apres = $repo->find($id);
+    $historique = $repo->historique($id);
+    $derniere = end($historique);
+    if ($apres['statut'] !== 'ANNULEE' || (float) $apres['montant_total'] !== 0.0
+        || (float) $apres['montant_avant_annulation'] !== (float) $nouvelle['montant']
+        || (int) $pdo->query('SELECT stock FROM produit WHERE id_produit=8')->fetchColumn() !== $stockInitial
+        || count($repo->lignes($id)) !== 1 || $derniere['changed_by_role'] !== 'ADMIN'
+        || (int) $derniere['changed_by'] !== 1 || $derniere['commentaire'] !== 'Test motif administrateur') {
+        throw new RuntimeException('Annulation administrateur SQL incorrecte.');
+    }
+    try {
+        $repo->updateOrderStatus($id, 'ANNULEE', 'seconde', 1, 'ADMIN');
+        throw new RuntimeException('Double annulation administrateur acceptée.');
+    } catch (App\Model\Data\BusinessError $erreur) {
+        if ($erreur->businessCode !== 'COMMANDE_NON_ANNULABLE') { throw $erreur; }
+    }
+    if ((int) $pdo->query('SELECT stock FROM produit WHERE id_produit=8')->fetchColumn() !== $stockInitial) {
+        throw new RuntimeException('La seconde annulation administrateur a modifié le stock.');
+    }
+    echo "✅ Annulation administrateur SQL, trace et protection du statut générique vérifiées\n";
 } finally {
     if ($cree) {
         $pdo->exec('DROP DATABASE `' . $base . '`');

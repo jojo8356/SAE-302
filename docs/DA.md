@@ -497,3 +497,12 @@ refaire WAVE après déploiement ; aucun rendu réel n’a été exécuté ici.
 ### Alternatives des visuels produit
 
 Les cartes conservent une image décorative (`alt=""`), le nom étant déjà visible. La fiche choisit explicitement une alternative informative qui identifie le visuel comme indicatif. Ce libellé reprend le nom, sans inventer de détail sur la photographie ; une véritable description visuelle doit être fournie et vérifiée si l’image véhicule une information supplémentaire. Le choix entre les deux stratégies se fait à l’exécution, pas par le compilateur PHP.
+
+
+### Complément — filtres de prix
+
+Dans la continuité des filtres à facettes observés chez Boulanger (§2.4), les bornes
+de prix forment un groupe unique : deux champs côte à côte si l’espace le permet,
+puis empilés sur les écrans les plus étroits. Les libellés restent visibles et
+les champs ne doivent pas provoquer de défilement horizontal. L’implémentation
+est dans `.filtres-prix` et le rendu reste à vérifier sur les appareils réels.

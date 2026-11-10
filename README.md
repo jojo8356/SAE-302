@@ -432,6 +432,8 @@ les règles `RB-03`, `RB-06`, `RB-11`, `RB-18` cesseraient silencieusement d'êt
 
 Projet pédagogique — code et documents fournis tels quels, usage pédagogique uniquement.
 
+> Les paragraphes de régression ci-dessous décrivent des états historiques ; pour le fonctionnement actuel et les limites SQL, voir « Annulation administrateur et mise à jour SQL » en fin de fichier.
+
 **Régression « codes techniques visibles »** (signalement n° 18) : le client et l'équipe voyaient des codes internes — `PORT_OFFERT_A_PARTIR_DE_80.00` et `LIVRAISON_STANDARD` (panier, récapitulatif, validation), « Tracé par trg_history_statut », « Création tracée par trg_history_creation » (historiques de commande), `v_etat_stock` (stocks) et les références RB-xx partout (RB-06, RB-11, RB-18/20, RB-16, RB-19, RB-03, RB-12, RB-14…), jusque dans les CGV et les mentions légales ; deux numéros affichés étaient faux (suppression de catégorie notée RB-14 alors que `sql/02` la rattache à RB-07, seuil d'alerte noté RB-03, règle du stock non négatif — retirer les codes supprime aussi ces erreurs). Correctif : tous les textes AFFICHÉS parlent français — motifs de port (« livraison standard (4,90 €) », « frais de port offerts dès 80,00 € de marchandises », calculés depuis les paramètres), commentaires stockés dans l'historique (« Création de la commande », « Changement de statut le… »), messages d'erreur métier et intitulés des vues cliente et back-office ; les codes restent dans les commentaires de code, les journaux et les tests, jamais à l'écran. « Varier de » (stocks) avait déjà disparu au signalement n° 8 (« Ajouter / retirer ») — les tests le reverrouillent. Verrouillé par `tests/php/codes_techniques_test.php` (32 vérifications : une vingtaine de vues rendues passées au crible des motifs interdits, messages `BusinessError`, motifs `computeShipping`, commentaires des déclencheurs) et par l'E2E UI `scripts/ui-e2e-codes.mjs` (23 vérifications, `npm run test:ui-codes`) : parcours panier → commande → historique, pages légales et tout le back-office scannés en direct.
 
 **Régression « CGV article 4 : annulation ≠ rétractation »** (signalement n° 19, art. L221-18 du code de la consommation) : l'article 4 des CGV s'intitulait « Droit de rétractation » et disait « Conformément au droit de rétractation, le client peut annuler sa commande tant qu'elle n'a pas été expédiée » — juridiquement faux : pour un achat à distance, le droit de rétractation court **14 jours à compter de la réception** du bien ; ce que MiniShop propose avant l'expédition est une **annulation avant expédition**, facilité de la boutique. Correctif (rédactionnel, la règle métier ne change pas) : article 4 renommé « Annulation avant expédition » — mécanisme réel décrit (avant expédition, stock restitué, port compris soldé), droit légal explicitement distingué avec son point de départ (14 jours à compter de la réception, art. L221-18, renvoi à la page Rétractation) et rappel qu'aucune rétractation ni aucun retour n'est mis en œuvre sur cette maquette pédagogique ; même phrase corrigée sous le bouton d'annulation du détail de commande (« annulation avant expédition, CGV art. 4 ») ; page Rétractation restructurée pour ne plus confondre les deux notions (« ne se confond pas avec le droit de rétractation »). Verrouillé par `tests/php/cgv_retractation_test.php` (19 vérifications : vues CGV/Rétractation/détail/aide/livraison rendues et relues, plus le comportement réel — annulation acceptée avant expédition avec stock restitué, refusée après avec `COMMANDE_NON_ANNULABLE`) et par l'E2E UI `scripts/ui-e2e-retractation.mjs` (13 vérifications, `npm run test:ui-retractation`) : CGV et Rétractation lues comme un client, parcours commande complet jusqu'à l'écran de confirmation d'annulation, aide et livraison cohérentes. Les attentes de `scripts/ui-e2e-pied-de-page.mjs` qui verrouillaient l'ancien titre fautif ont été alignées.
@@ -455,3 +457,28 @@ La CI lance `tests/python/test_annulation_concurrente.py` avec deux processus PH
 La migration `sql/migrations/001_montant_avant_annulation_mariadb.sql` ajoute uniquement la colonne nullable sur MariaDB et ne reconstitue pas les anciens montants inconnus. La CI construit une ancienne base peuplée **jetable**, joue la migration deux fois et vérifie les données, l'annulation et les refus. Ce script ne met pas à jour les procédures et déclencheurs : leur déploiement est une étape séparée. Le DDL a un commit implicite ; avant toute migration réelle, prévoir maintenance, sauvegarde et restauration testée, et contrôler le type de toute colonne préexistante. Ne pas lancer les scripts de création ou seed sur une base partagée.
 
 La CI exécute aussi `tests/node/responsive_navigateur.mjs` avec Chromium à 375 et 1440 pixels, sur une copie temporaire avec comptes de démonstration : catalogue, produit, panier, validation, historique et tableaux administrateur. Elle vérifie les débordements et champs hors écran, et conserve des captures de diagnostic. Ce n'est pas un audit complet d'accessibilité, ni une validation de tous les navigateurs et appareils. Les paquets Playwright et Chromium sont installés **dans la CI** ; aucune installation npm n'est requise pour utiliser l'application PHP.
+
+
+### Annulation administrateur et mise à jour SQL
+
+L’annulation administrateur demande un motif et une confirmation explicite sans JavaScript.
+Pour une commande non expédiée elle conserve les lignes et le montant initial, solde
+le montant et les frais, et restitue le stock. Pour une commande déjà expédiée,
+le montant est soldé mais le stock ne revient pas automatiquement : il faut
+vérifier le retour physique avant un ajustement manuel tracé. Ce fonctionnement
+ne réalise ni paiement ni remboursement réel.
+
+Sur une base existante, sauvegarder et vérifier le schéma et les privilèges,
+puis tester d’abord sur une copie isolée. La colonne de montant initial nécessite
+la migration `001` si elle manque. Les migrations ciblées `002_historique_lisible.sql`
+et `003_statut_protege.sql` remplacent respectivement deux déclencheurs d’historique
+et la procédure de changement de statut. Leur DDL entraîne des commits implicites :
+prévoir une fenêtre sans écritures et vérifier les objets après installation.
+La procédure générique SQL refuse désormais l’annulation directe ; utiliser le
+parcours applicatif administrateur ou `sp_cancel_order` pour une annulation client.
+Les anciens commentaires génériques correspondant au format connu sont rendus lisibles à l’affichage sans
+modifier les archives ; les anciens montants inconnus ne sont pas inventés.
+Il n’y a pas eu de migration sur une base réelle. Les coordonnées légales restent
+à fournir et à vérifier ; le contact est un formulaire de démonstration sans envoi
+de courrier. Le pied sombre et l’image de repli sont conservés volontairement :
+ils rendent l’ancien mail périmé, sans être des erreurs fonctionnelles.

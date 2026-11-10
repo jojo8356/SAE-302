@@ -802,6 +802,16 @@ body > main {
     margin-bottom: var(--e-4);
 }
 
+.filtres-prix {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--e-2);
+}
+.filtres-prix input { width: 100%; min-width: 0; }
+@media (max-width: 22em) {
+    .filtres-prix { grid-template-columns: minmax(0, 1fr); }
+}
+
 .panneau-filtres label {
     display: block;
     font-size: var(--t-sm);

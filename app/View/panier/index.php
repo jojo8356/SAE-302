@@ -81,7 +81,7 @@ foreach ($recap['articles'] as $ligne) {
     <div class="recap">
         <h2>Récapitulatif</h2>
         <dl>
-            <dt>Sous-total</dt>
+            <dt>Sous-total (marchandises TTC)</dt>
             <dd><?= euros($recap['sous_total']) ?></dd>
             <dt>Frais de port</dt>
             <dd><?= euros($recap['frais_port']) ?></dd>

@@ -140,7 +140,7 @@ $check(
         && str_contains($tableau, '>Retirer</button>')
 );
 $check('récapitulatif présent hors du tableau avec libellés et montants',
-    str_contains($html, '<div class="recap">') && str_contains($html, '<dt>Sous-total</dt>')
+    str_contains($html, '<div class="recap">') && str_contains($html, '<dt>Sous-total (marchandises TTC)</dt>')
         && str_contains($html, '<dt>Frais de port</dt>') && str_contains($html, '<dt><strong>Total TTC</strong></dt>')
         && str_contains($html, '154,80 €') && str_contains($html, '4,90 €') && str_contains($html, '159,70 €'));
 $check('motif du port affiché dans le récapitulatif', str_contains($html, 'offerts dès 80,00 € de marchandises'));

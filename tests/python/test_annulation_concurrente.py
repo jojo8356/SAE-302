@@ -27,8 +27,8 @@ class AnnulationConcurrente(unittest.TestCase):
                               env=self.env, cwd=ROOT, capture_output=True, text=True, timeout=30, check=True)
         return json.loads(proc.stdout)
 
-    def concurrents(self, ids, clients):
-        processus = [subprocess.Popen([PHP, str(WORKER), 'cancel', str(self.path), str(identifiant), str(client), str(i)],
+    def concurrents(self, ids, clients, actions=None):
+        processus = [subprocess.Popen([PHP, str(WORKER), (actions or ['cancel'] * len(ids))[i], str(self.path), str(identifiant), str(client), str(i)],
                                       cwd=ROOT, env=self.env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                      for i, (identifiant, client) in enumerate(zip(ids, clients))]
         try:
@@ -68,6 +68,16 @@ class AnnulationConcurrente(unittest.TestCase):
         self.assertEqual(commande['statut'], 'ANNULEE')
         self.assertEqual(float(commande['montant_total']), 0)
         self.assertAlmostEqual(float(commande['montant_avant_annulation']), float(ordre['montant']), places=2)
+        self.verifier_historique(etat, identifiant, 1)
+
+    def test_admin_et_client_ne_peuvent_annuler_deux_fois_la_meme_commande(self):
+        ordre = self.fixture['commandes'][0]
+        identifiant = int(ordre['id_commande'])
+        client = self.fixture['client']
+        resultats = self.concurrents([identifiant, identifiant], [client, client], ['cancel-admin', 'cancel'])
+        self.assertCountEqual([r['resultat'] for r in resultats], ['OK', 'COMMANDE_NON_ANNULABLE'])
+        etat = self.appel('etat', self.fixture['produit'])
+        self.assertEqual(int(etat['stock']), self.fixture['stock_initial'] - 1)
         self.verifier_historique(etat, identifiant, 1)
 
     def test_annulations_de_deux_commandes_partageant_le_stock(self):

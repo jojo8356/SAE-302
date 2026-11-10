@@ -49,7 +49,7 @@ if ($argv[1] === 'hold') {
     $store->rollback();
     exit(0);
 }
-if ($argv[1] === 'cancel' && count($argv) === 6) {
+if (in_array($argv[1], ['cancel', 'cancel-admin'], true) && count($argv) === 6) {
     $commande = (int) $argv[3];
     $client = (int) $argv[4];
     $numero = (int) $argv[5];
@@ -67,7 +67,12 @@ if ($argv[1] === 'cancel' && count($argv) === 6) {
         clearstatcache();
     }
     try {
-        echo json_encode(['resultat' => 'OK', 'valeur' => $repo->cancelOrder($commande, $client)], JSON_THROW_ON_ERROR);
+        if ($argv[1] === 'cancel-admin') {
+            $repo->updateOrderStatus($commande, 'ANNULEE', 'Test concurrent', 1, 'ADMIN');
+            echo json_encode(['resultat' => 'OK'], JSON_THROW_ON_ERROR);
+        } else {
+            echo json_encode(['resultat' => 'OK', 'valeur' => $repo->cancelOrder($commande, $client)], JSON_THROW_ON_ERROR);
+        }
     } catch (BusinessError $erreur) {
         echo json_encode(['resultat' => $erreur->businessCode], JSON_THROW_ON_ERROR);
     }

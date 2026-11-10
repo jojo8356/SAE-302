@@ -393,3 +393,11 @@ bash tests/security/controles.sh       # 10/10 conformes
 bash -n scripts/{load_db,run_sql_tests,gen_volumes}.sh
 ls scripts/build-docs.sh docs/diagrams/render.sh tests/perf/mesurer.sh   # → introuvables
 ```
+
+### Audit de l'ancien mail — corrections en cours
+- [x] Annulation administrateur : confirmation sans JavaScript, montant et stock ; pour une commande expédiée, aucun retour de stock automatique ; verrouillage SQL des commandes et produits pour ces parcours.
+- [ ] Rendre l'historique SQL lisible et clarifier les libellés panier/quantités.
+- [x] Tests JSON et SQL ajoutés ; migrations SQL ciblées et limites documentées. [!] Les identités et coordonnées légales restent à renseigner ; aucune migration ni revue sur LineServ. Les visuels de repli et le pied sombre sont conservés : le mail doit être actualisé.
+
+- [x] Suite PHP-WASM hors SQL/E2E : verte (dont PHPUnit 43/43, responsive contractuel 54, design 71) ; annulation historique 17/17 et Mes commandes 14/14.
+- [ ] Vérifier les nouveaux jobs natifs MariaDB, concurrence JSON et Chromium en CI après le push ; aucune garantie sur tous les appareils ou anciennes bases.
