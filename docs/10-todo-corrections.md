@@ -488,6 +488,6 @@ ls scripts/build-docs.sh docs/diagrams/render.sh tests/perf/mesurer.sh   # → i
 ### Documentation d’architecture et de stack
 - [x] `ARCHITECTURE.md` à la racine : documenter l’entrée HTTP, le routeur et ses gardes, les couches contrôleurs/repositories/vues, le parcours d’une requête, les règles métier, les deux pilotes de stockage, la sécurité, les tests et les limites sans présenter le SQL ou un déploiement comme validé sans preuve.
 - [x] `STACK.md` à la racine : recenser les langages, prérequis runtime, stockage SQL optionnel et outils de test/génération documentaire en distinguant leurs usages ; s’appuyer sur `composer.json`, `package.json`, `package-lock.json`, `requirements-docs.txt` et les workflows CI.
-- [x] Ajouter les liens vers ces deux documents dans la table de documentation du `README.md`.
+- [x] Ajouter les liens vers ces deux documents dans la table de documentation du `README.md` et conserver le repère `**Cadre**` (SAE — BUT Informatique (BUT2)) requis par le contrôle E2E des mentions légales.
 - [!] Comparaison au `main` GitLab étudiant : aucun `fetch` IUT ni aucune synchronisation GitLab effectués dans cette passe. Les commandes de comparaison doivent utiliser des refspecs explicites et préserver les branches/fichiers locaux ; aucun push sur `dev` n’est autorisé à ce stade.
 

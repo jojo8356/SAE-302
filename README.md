@@ -4,6 +4,8 @@
 
 > **MiniShop** est une application Web de boutique en ligne réalisée dans un cadre pédagogique : catalogue, panier, commandes et back-office. Le projet est développé en **PHP** et propose un stockage JSON par défaut ainsi qu’un pilote SQL via PDO.
 
+> **Cadre** — SAE — BUT Informatique (BUT2), Université Côte d'Azur.
+
 > **Périmètre : maquette scolaire.** Les paiements et les livraisons sont simulés. Le formulaire de contact n’envoie pas de courriel. Le projet n’est pas destiné à traiter de vraies ventes ni à être déployé tel quel en production.
 
 ## Fonctionnalités
