@@ -129,6 +129,8 @@ Un scénario ne doit être marqué comme joué qu’après son exécution réell
 |---|---|
 | [Cahier des charges](docs/01-cahier-des-charges-MiniShop.md) | Besoin, exigences fonctionnelles et règles métier |
 | [Tests et validation](docs/02-document-tests-validation.md) | Stratégie, résultats et protocole de recette |
+| [Architecture logicielle](ARCHITECTURE.md) | Couches, parcours HTTP, règles métier, persistance, sécurité, tests et limites |
+| [Stack technique](STACK.md) | Langages, prérequis, bibliothèques et outils par contexte d’utilisation |
 | [Conception de la base](docs/04-conception-bd-et-sql.md) | Modèle de données et choix SQL |
 | [Stratégie de tests](docs/11-strategie-tests.md) | Périmètre et limites des tests automatisés |
 | [Étude de design](docs/DA.md) | Analyse concurrentielle et direction visuelle |

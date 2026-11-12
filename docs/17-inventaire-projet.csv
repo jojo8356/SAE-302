@@ -13,7 +13,9 @@ chemin,categorie,controle_structurel
 .tools/build_doc04_html.py,Outils et intégration continue,"Présence, non-vide, syntaxe Python"
 .tools/build_todolist.py,Outils et intégration continue,"Présence, non-vide, syntaxe Python"
 .tools/build_wbs.py,Outils et intégration continue,"Présence, non-vide, syntaxe Python"
+ARCHITECTURE.md,Documentation,Présence et non-vide uniquement
 README.md,Configuration et fichiers racine,Présence et non-vide uniquement
+STACK.md,Documentation,Présence et non-vide uniquement
 app/Config/Database.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Config/DbConnexion.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Config/Env.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
