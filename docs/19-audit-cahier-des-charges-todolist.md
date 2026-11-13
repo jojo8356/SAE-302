@@ -26,7 +26,7 @@ Ces statuts évaluent les **86 tâches de la WBS**, pas tout le travail ultérie
 
 ### Preuve externe fournie par l’utilisateur — clone IUT
 
-Le relevé terminal communiqué montre `origin` configuré sur `https://iut-git.unice.fr/but2_s302/s302.git` et une requête `git ls-remote --heads origin` réussie. Les références visibles sont `chahd`, `dev`, `pj509414/dev` (SHA `bcca4d1d527b2ef859295a44dd1c65134aa93ab5`) et `pj509414/poc-auth-jwt` ; aucune référence `main` n’apparaît dans cette sortie. Cela prouve que le dépôt existe et est lisible depuis ce clone, mais pas les invitations, les règles de protection ni l’envoi du courriel.
+Le relevé terminal communiqué montre `origin` configuré sur `https://iut-git.unice.fr/but2_s302/s302.git` et une requête `git ls-remote --heads origin` réussie. Les références visibles sont `chahd`, `dev`, `pj509414/dev` (SHA `bcca4d1d527b2ef859295a44dd1c65134aa93ab5`) et `pj509414/poc-auth-jwt` ; aucune référence `main` n’apparaît dans cette sortie. Cela prouve que le dépôt existe et est lisible depuis ce clone. L’utilisateur indique que les invitations sont bonnes ; aucune capture ou sortie GitLab ne les vérifie indépendamment. La visibilité privée, la protection de branche et l’envoi du courriel restent à confirmer.
 
 ### Vérifications rejouées dans cette sandbox
 
@@ -58,7 +58,7 @@ Les 200 scénarios des fiches de recette restent au statut `NON JOUÉ` dans le C
 
 | ID | État audité | Constat et preuve |
 |---|---|---|
-| `D1-L1-01` | `PARTIEL` | Relevé fourni par l’utilisateur : `origin` pointe vers le projet IUT et `git ls-remote` confirme son accessibilité ainsi que plusieurs branches (aucun `main` visible dans la sortie). La liste des membres/invitations, la protection de branche et le courriel de composition restent à vérifier dans GitLab et la messagerie. |
+| `D1-L1-01` | `PARTIEL` | Relevé fourni : dépôt IUT accessible, branches visibles mais aucun `main` dans la sortie. L’utilisateur confirme que les invitations sont bonnes. La visibilité privée, la règle « pas de push direct » sur `main`, la désactivation du squash, la suppression automatique des branches source et le courriel de composition restent à confirmer. |
 | `D1-L1-02` | `OK*` | `app/` et `public/` existent et sont peuplés ; le besoin d’un squelette vide est dépassé. |
 | `D1-L1-03` | `PARTIEL` | Le README décrit prérequis et installation, mais pas la composition et les rôles d’équipe demandés. Aucun nom/rôle n’est inventé pour compléter ce champ. |
 | `D1-L1-04` | `[!]` | L’issue GitLab épinglée ne peut pas être vérifiée depuis le dépôt GitHub. |
