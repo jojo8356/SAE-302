@@ -12,11 +12,12 @@
 
 | Statut d’audit | Nombre sur 86 | Sens |
 |---|---:|---|
-| `OK*` | 55 | Livrable présent ou confirmation humaine fournie, avec preuve repérée dans le dépôt/la CI ou par l’utilisateur. **Ce n’est pas une certification absolue** ; le périmètre des preuves CI et les éléments déclaratifs sont explicités ci-dessous. |
+| `OK` | 1 | Critère de fin explicite de la WBS satisfait, avec preuve directe du livrable, pour le périmètre précis de la tâche. |
+| `OK*` | 54 | Livrable présent ou confirmation humaine fournie, avec preuve repérée dans le dépôt/la CI ou par l’utilisateur. **Ce n’est pas une certification absolue** ; le périmètre des preuves CI et les éléments déclaratifs sont explicités ci-dessous. |
 | `PARTIEL` | 20 | Une partie existe, mais un critère, une intégration, une preuve ou une cohérence reste à résoudre. |
 | `ÉCART` | 6 | Écart explicite entre la tâche/contrainte du CDC et l’application présente. |
 | `[!]` | 5 | Tâche humaine, externe, mesure cible ou état impossible à vérifier depuis ce checkout. |
-| **Total** | **86** | Les tâches non `OK*` empêchent de conclure à une réalisation à 100 %. |
+| **Total** | **86** | Les tâches `PARTIEL`, `ÉCART` et `[!]` restent inachevées ; les réserves des `OK*` sont précisées dans les constats. |
 
 Ces statuts évaluent les **86 tâches de la WBS**, pas tout le travail ultérieur. Les ajouts ultérieurs (langue/fuseau, informations légales, contact, conservation, etc.) ne figurent pas correctement dans cette WBS et doivent eux aussi être rattachés à des exigences ou à une liste d’évolutions.
 
@@ -56,7 +57,7 @@ Les 200 scénarios des fiches de recette restent au statut `NON JOUÉ` dans le C
 
 ## 3. Revue tâche par tâche — les 86 identifiants de `docs/06-todolist.md`
 
-`OK*` signifie « preuve d’un livrable, d’une suite ou confirmation humaine fournie », pas « tous les environnements, critères métier et vérifications humaines sont certifiés ». Une confirmation déclarative de l’utilisateur est distinguée d’une vérification indépendante. Les raisons données priment sur le statut historique de la todolist.
+`OK` signifie que le critère de fin explicite de la WBS est satisfait, avec la preuve relevée, pour le périmètre précis de la tâche. `OK*` signifie « preuve d’un livrable, d’une suite ou confirmation humaine fournie », sans certifier tous les environnements, critères métier et vérifications humaines. Une confirmation déclarative de l’utilisateur est distinguée d’une vérification indépendante. Les raisons données priment sur le statut historique de la todolist.
 
 ### D1 — Pilotage, dépôt et rendu
 
@@ -65,7 +66,7 @@ Les 200 scénarios des fiches de recette restent au statut `NON JOUÉ` dans le C
 | `D1-L1-01` | `OK*` | Le sujet officiel (PDF fourni, p. 8) demande le courriel de composition, la communication de l’adresse GitLab et le partage de l’accès avec l’enseignante. L’utilisateur confirme avoir envoyé le courriel proposé, avec la composition du groupe et l’adresse du dépôt ; la capture « Membres » montre l’enseignante comme membre directe `Reporter`, et `git ls-remote` confirme que le dépôt est lisible. L’envoi est attesté par l’utilisateur, mais n’a pas été vérifié indépendamment dans la boîte d’envoi. Le privé, la protection de `main`, le squash et la suppression des branches source sont des ajouts de la WBS/annexe, pas des exigences du PDF officiel. |
 | `D1-L1-02` | `OK*` | `app/` et `public/` existent et sont peuplés ; le besoin d’un squelette vide est dépassé. |
 | `D1-L1-03` | `OK*` | Le README à la racine présente désormais les deux membres nommés et leurs responsabilités opérationnelles A/B, d’après l’adaptation à deux personnes de `docs/06-todolist.md`, en distinguant ces rôles des permissions GitLab (`Owner` pour Johan Polsinelli, `Developer` pour Chahd Gouiaa). L’enseignante NGUYEN Thanh-Phuong (`Reporter`) est indiquée séparément. Le livrable est présent ; sa lecture effective par chaque membre n’est pas vérifiable depuis le dépôt. |
-| `D1-L1-04` | `OK*` | La capture fournie montre l’issue GitLab `s302#2` créée avec les cinq livrables du barème et les pénalités §16.2. Elle satisfait la définition de fin de la WBS (« issue créée : 5 livrables + pénalités suivis »). Le menu Work Items visible dans la capture ne propose pas l’action « Épingler » ; l’épinglage distinct n’est donc pas revendiqué. |
+| `D1-L1-04` | `OK` | La capture utilisateur montre l’issue GitLab `s302#2` créée avec les cinq livrables du barème et les pénalités §16.2 ; cela satisfait la définition de fin explicite de la WBS (« issue créée : 5 livrables + pénalités suivis »). L’épinglage n’est pas confirmé par la capture et n’est pas revendiqué ; ce `OK` porte sur ce critère de fin. |
 | `D1-L1-05` | `PARTIEL` | Charte/annexe GitLab et modèles de MR présents ; l’usage effectif des MR et les revues croisées ne sont pas prouvés par ces fichiers. |
 | `D1-L1-06` | `PARTIEL` | `.gitlab-ci.yml` existe, mais aucune exécution GitLab n’est attestée ici. La CI GitHub est une autre chaîne et ne prouve pas le pipeline IUT. |
 | `D1-L1-07` | `[!]` | Réunion de cadrage et décisions d’équipe : aucune preuve de compte rendu ou de validation humaine. |
