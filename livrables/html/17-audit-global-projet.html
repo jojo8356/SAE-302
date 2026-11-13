@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="SAÉ 302 — MiniShop : Rapport d’audit global du projet#">
+<title>Rapport d’audit global du projet# — MiniShop</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --papier: #fbfaf7;
+  --carte: #ffffff;
+  --trait: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-clair: #dbeafe;
+  --code: #f1f5f9;
+  --mesure: 72ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
+    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
+    --accent-clair: #1e3a8a; --code: #16223a;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  max-width: calc(var(--mesure) + 6rem);
+  background: var(--papier);
+  color: var(--encre);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
+h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
+p, li { max-width: var(--mesure); }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+}
+pre {
+  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
+  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.35rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+thead th { background: var(--accent-clair); }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
+img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li input[type="checkbox"] { margin-right: 0.4rem; }
+.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
+.toc > ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1rem; }
+footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+@media print {
+  :root { --papier: #fff; --carte: #fff; }
+  @page { size: A4; margin: 18mm 16mm; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#constats-corriges">Constats corrigés</a><ul>
+<li><a href="#alternatives-dimage-et-aide-cli">Alternatives d’image et aide CLI</a></li>
+<li><a href="#accesseur-de-code-derreur-sql-supprime">Accesseur de code d’erreur SQL supprimé</a></li>
+<li><a href="#accesseur-de-verification-env-supprime">Accesseur de vérification .env supprimé</a></li>
+</ul>
+</li>
+<li><a href="#couverture-par-famille">Couverture par famille</a></li>
+<li><a href="#validation-ci">Validation CI</a></li>
+<li><a href="#controles-automatises-disponibles">Contrôles automatisés disponibles</a></li>
+<li><a href="#risques-restants-et-auto-evaluation">Risques restants et auto-évaluation</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="rapport-daudit-global-du-projet">Rapport d’audit global du projet<a class="headerlink" href="#rapport-daudit-global-du-projet" title="Permanent link">#</a></h1>
+<p><strong>Date de rédaction initiale :</strong> 28 octobre 2026 · <strong>Périmètre de l’inventaire actualisé :</strong> fichiers versionnés du checkout courant, pas la copie locale ni les fichiers ignorés de l’utilisateur. <a href="17-inventaire-projet.csv">Inventaire exhaustif des chemins</a> · <a href="16-audit-code-mort.html">Revue initiale du code potentiellement inutilisé</a> · <a href="10-todo-corrections.html">Todolist</a>.</p>
+<p>L’inventaire couvre <strong>537 chemins versionnés</strong> dans le périmètre révisé : 498 au SHA de base audité (<code>b54ab9833eb5e7d5116a21a1f21cb3b7c845eb31</code>), moins <code>.gitlab-ci.yml</code>, plus quatre rapports (<code>docs/19</code>–<code>docs/22</code>) et 36 rendus HTML/PDF/DOCX ajoutés pour les documents qui n’avaient pas encore ces formats versionnés. Le total précédent de <strong>402</strong> ne correspondait pas au CSV exhaustif ni au nombre de chemins retournés par <code>git ls-tree</code>; il est remplacé. Le contrôle structurel confirme la présence et la non-vacuité des fichiers suivis, sans certifier leur contenu.</p>
+<p>Cet audit combine un inventaire automatisé de tout le dépôt et une revue manuelle ciblée sur les anomalies et risques découverts. Il <strong>ne démontre pas l’absence de tous les défauts</strong> et n’est pas une lecture fonctionnelle ligne par ligne de chaque livrable. L’inventaire indique des contrôles de structure, pas une certification du contenu.</p>
+<h2 id="constats-corriges">Constats corrigés<a class="headerlink" href="#constats-corriges" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Élément</th>
+<th>Problème et correction</th>
+<th>Vérification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Journal JSON</td>
+<td><code>tail(0)</code> retournait tout le journal, une limite négative donnait un résultat incohérent. Une limite ≤ 0 renvoie <code>[]</code>. La doc n’affirme plus qu’un écran back-office le consulte.</td>
+<td>Tests sur journal temporaire : absent, zéro, négatif, ordre, limites et ligne JSON invalide.</td>
+</tr>
+<tr>
+<td>Provisionnement SQL</td>
+<td>Les générateurs publics concaténaient des noms ou un mot de passe non validés. Ils refusent maintenant les identifiants dangereux ; le mot de passe doit provenir de <code>DbProvision::motDePasse()</code> (32 hexadécimaux). Le provisioning vérifie aussi la présence de <code>sudo</code> avant création du fichier temporaire.</td>
+<td>Tests de génération seule avec entrées d’injection, sans exécuter SQL ni sudo.</td>
+</tr>
+<tr>
+<td>E2E</td>
+<td>La photographie/restauration pouvait écraser des modifications concurrentes ou échouer après interruption. L’E2E crée son jeu de démonstration dans le FS PHP-WASM uniquement : pas de chargement ni rapatriement du dossier <code>data/</code> hôte. L’ancien utilitaire est conservé mais avertit de son danger.</td>
+<td>303 contrôles HTTP WASM réussis en copie jetable contenant trois fichiers hôte témoins inchangés. Pas de navigateur.</td>
+</tr>
+<tr>
+<td>Tests SQL</td>
+<td>L’ancien test supprimait silencieusement sa cible, y compris une base existante ou celle de l’application si configurée comme cible. Il refuse <code>DB_NAME</code>, crée une base absente atomiquement, et n’autorise une réinitialisation qu’avec l’option explicite <code>--reinitialiser-base-existante</code>.</td>
+<td>Garde-fous, intégration et 29 scénarios réussis sur le serveur MySQL jetable de la CI du commit <code>796aada</code>. Aucun serveur SQL local n’a été touché.</td>
+</tr>
+<tr>
+<td>Tests nouveautés SQL</td>
+<td>Le test partagé effectuait deux mises à jour sans condition, refusées par le pilote SQL. Il utilise désormais une condition explicite sur la clé primaire, sans supprimer la protection du pilote.</td>
+<td>Cas JSON rejoué localement ; validation MySQL en CI sur base jetable.</td>
+</tr>
+<tr>
+<td>Contrat HTTP</td>
+<td>Un test affirmait tester « 403/500 » en cherchant seulement <code>page404</code> ou <code>erreur</code>. Il vérifie désormais le code et la vue 500 ; la garde SUPER déclenche désormais une réponse 403 et la page dédiée ; les visiteurs non connectés restent redirigés vers la connexion.</td>
+<td>309 contrôles E2E WASM ; tests HTTP natifs ajoutés en CI. Contrat 500 statique, pas une injection d’erreur 500 réelle.</td>
+</tr>
+<tr>
+<td>Git / sécurité</td>
+<td>Les variantes <code>.env.*</code>, certificats P12/PFX et clés privées usuelles sont ignorés, sauf le modèle <code>.env.example</code> à la racine. Le scan reconnaît les worktrees Git (<code>.git</code> fichier) et les PFX.</td>
+<td>Test d’ignore en dépôt temporaire ; scan complet exécuté depuis un worktree temporaire ; scan et autotest sécurité. Les règles <code>.gitignore</code> n’enlèvent pas un secret déjà suivi ni dans l’historique.</td>
+</tr>
+<tr>
+<td>Test des montants</td>
+<td>Le seed JSON ne contient pas de commande : le test des montants parcourait des listes vides sans assertion. Il crée maintenant deux commandes réelles de montants différents et vérifie explicitement les lignes et totaux.</td>
+<td>Exécuteur PHPUnit local ; validation native par CI.</td>
+</tr>
+<tr>
+<td>PHPUnit natif</td>
+<td>Le commentaire du fichier <code>phpunit.xml</code> contenait <code>--</code>, interdit en XML : PHPUnit arrêtait avant les tests. Commentaire corrigé et contrôle XML structurel ajouté.</td>
+<td>Validation PHPUnit natif en CI ; exécuteur local WASM ne lit pas ce XML.</td>
+</tr>
+<tr>
+<td>Chargeur SQL CLI</td>
+<td><code>scripts/load_db.php</code> appelait récursivement son propre gestionnaire d’erreur quand <code>STDERR</code> existe ; il écrit maintenant sur <code>STDERR</code>.</td>
+<td>Test natif d’un nom de base invalide, sans connexion SQL ni écriture.</td>
+</tr>
+<tr>
+<td>CI GitHub Actions</td>
+<td>Le workflow <code>.github/workflows/ci.yml</code> porte les contrôles SQL/PHPUnit et les suites isolées ; aucun fichier/configuration de CI GitLab n’est conservé dans le périmètre courant. Le style reste explicitement non bloquant selon le workflow.</td>
+<td>Les runs cités dans ce rapport sont des résultats GitHub Actions sur les commits indiqués ; ils ne prouvent ni un pipeline GitLab IUT ni l’approbation d’une MR GitLab.</td>
+</tr>
+<tr>
+<td>11 candidats</td>
+<td>Analyse détaillée dans <code>docs/16-audit-code-mort.md</code>. <code>Filter::isNotNull</code>, <code>Journal::tail</code>, <code>JsonTable::isDirty</code> ont des tests ; <code>sudoDisponible</code> est réellement utilisé. <code>page403</code> est appelée ; <code>withStore</code>, <code>dsnUtilise</code>, <code>codeDerniereErreur</code> et <code>EnvFile::existe</code> ont été retirées sur demande ; <code>comptesDemo</code> est appelée par la nouvelle aide CLI et <code>$nom</code> a été remplacé par une alternative de visuel. Aucune des alertes initiales ne reste dans le référentiel ; cela ne prouve pas l’absence de code inutilisé.</td>
+<td><code>for()</code> est conservée et testée ; tout consommateur externe de <code>withStore()</code> doit migrer vers <code>CommandeRepository::for($store)</code>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="alternatives-dimage-et-aide-cli">Alternatives d’image et aide CLI<a class="headerlink" href="#alternatives-dimage-et-aide-cli" title="Permanent link">#</a></h3>
+<p><code>visuel_produit($url, $alternative, $largeur, $hauteur)</code> reçoit une <code>AlternativeImage</code> : utiliser <code>new \App\View\Image\AlternativeDecorative()</code> pour une image décorative ou <code>new \App\View\Image\AlternativeInformative($description)</code> pour une image informative. La description est obligatoire et échappée. Les anciennes signatures avec le nom en deuxième position doivent être adaptées ; les cartes conservent <code>alt=""</code>. La fiche identifie le visuel comme indicatif, mais ne décrit pas son apparence. Le choix de la stratégie est explicite à l’exécution.</p>
+<p><code>php scripts/aide.php --help</code> est une aide en lecture seule. <code>--comptes-demo</code> affiche les identifiants initiaux du seed JSON, potentiellement absents ou modifiés localement ; le script refuse l’accès HTTP et ne vérifie ni n’initialise la base. Ne pas laisser les comptes de démo actifs sur une instance accessible sans protection.</p>
+<h3 id="accesseur-de-code-derreur-sql-supprime">Accesseur de code d’erreur SQL supprimé<a class="headerlink" href="#accesseur-de-code-derreur-sql-supprime" title="Permanent link">#</a></h3>
+<p><code>DbInstaller::codeDerniereErreur()</code> a été retirée sur demande. Le code privé reste exploité par <code>refusIdentifiants()</code> et par les diagnostics d’installation. Un test sans serveur injecte les codes 1045, 1698, 2002 et 0 pour vérifier leur classement ; il ne simule pas une connexion PDO réelle. <a href="https://github.com/jojo8356/SAE-302/actions/runs/40838583689">CI du commit <code>4860daa</code> verte</a>, y compris PHP natif 8.2/8.5 et MySQL 8 jetable. La méthode était publique : les appels externes éventuels doivent être adaptés.</p>
+<h3 id="accesseur-de-verification-env-supprime">Accesseur de vérification <code>.env</code> supprimé<a class="headerlink" href="#accesseur-de-verification-env-supprime" title="Permanent link">#</a></h3>
+<p><code>EnvFile::existe()</code> a été retirée sur demande. <code>initialiser()</code> vérifie toujours elle-même l’existence du fichier avant toute écriture. Des tests utilisent un fichier temporaire pour contrôler création et non-écrasement. <a href="https://github.com/jojo8356/SAE-302/actions/runs/40843062586">CI du commit <code>690a2fe</code> verte</a>, dont PHP natif 8.2/8.5 et MySQL 8 jetable. Les appels externes à la méthode supprimée doivent être adaptés. Le scanner ne relève plus de candidat dans son périmètre, ce qui ne prouve pas l’absence de code inutilisé.</p>
+<h2 id="couverture-par-famille">Couverture par famille<a class="headerlink" href="#couverture-par-famille" title="Permanent link">#</a></h2>
+<ul>
+<li><code>app/</code>, <code>public/</code> : inventaire détaillé des 120 fichiers dans <code>docs/16-audit-code-mort.md</code>, revue ciblée des 11 candidats, contrats PHP, sécurité, parcours HTTP WASM. Le rendu visuel réel et tous les chemins ne sont pas démontrés.</li>
+<li><code>scripts/</code>, <code>tests/</code>, CI et configuration racine : examen ciblé des runners, du provisionnement, de l’E2E, des tests SQL et des garde-fous Git ; syntaxe des scripts couverte par les contrôles ci-dessous. Certains outils d’installation, sauvegarde, déploiement, capture et performance peuvent modifier des données : usage sur environnement isolé, après lecture de leurs options.</li>
+<li><code>sql/</code>, <code>tests/sql/</code> : fichiers inventoriés, scénarios et appels dangereux examinés. Les SQL directs peuvent réinitialiser leurs bases. La campagne SQL réelle n’a pas été lancée dans cette sandbox ; voir le résultat de la CI MySQL isolée, qui ne remplace pas MariaDB ni LineServ.</li>
+<li><code>data/</code>, <code>uploads/</code>, ressources : fichiers inventoriés, JSON et SVG analysés structurellement. Les données de démo ne doivent pas être utilisées comme comptes actifs en production. Aucun contenu de compte n’est reproduit ici ; fichiers locaux ignorés et non suivis hors périmètre.</li>
+<li><code>docs/</code>, <code>livrables/</code>, <code>artefacts/</code>, <code>.tools/</code>, <code>.gitlab/</code> : inventaire et contrôles de structure applicables, documentation des risques et rapports mis à jour. Les documents bureautiques sont testés comme archives ZIP, <strong>pas</strong> relus intégralement ni validés par affichage ; PDF, images, diagrammes et livrables ne sont pas tous contrôlés visuellement.</li>
+</ul>
+<h2 id="validation-ci">Validation CI<a class="headerlink" href="#validation-ci" title="Permanent link">#</a></h2>
+<p><a href="https://github.com/jojo8356/SAE-302/actions/runs/40759093253">CI GitHub historique du commit <code>796aada</code></a> : succès des suites isolées en PHP natif 8.2 et 8.5, des contrôles de sécurité, du véritable PHPUnit, des 303 contrôles E2E WASM et de MySQL 8 isolé (29 scénarios, intégration et garde-fous). Le contrôle de style reste non bloquant. Cette validation est antérieure au branchement de la page 403 ; la CI du nouveau commit doit être vérifiée séparément. Elle ne couvre ni MariaDB ni navigateur réel.</p>
+<p><strong>Page 403 — validation du commit <code>01cc0fa</code> :</strong> <a href="https://github.com/jojo8356/SAE-302/actions/runs/40773408401">CI verte</a>, y compris les parcours HTTP natifs sur PHP 8.2 et 8.5, l’E2E WASM isolé, PHPUnit, sécurité et MySQL 8 jetable. Le test natif utilise un serveur et des données temporaires ; le rendu dans un navigateur et sur LineServ reste à vérifier.</p>
+<p><strong>Suppression de <code>withStore</code> — validation du commit <code>839e311</code> :</strong> <a href="https://github.com/jojo8356/SAE-302/actions/runs/40775475513">CI verte</a>, dont PHPUnit natif, suites PHP 8.2/8.5, E2E WASM et MySQL 8 jetable. La migration éventuelle des appels extérieurs reste à la charge de leurs utilisateurs.</p>
+<p><strong>Aide CLI et alternatives d’image — validation du commit <code>30b4c8a</code> :</strong> <a href="https://github.com/jojo8356/SAE-302/actions/runs/40835999534">CI verte</a> en PHP natif 8.2/8.5, avec tests CLI en copie jetable et refus HTTP, PHPUnit, sécurité, E2E WASM et MySQL 8 jetable. Le rendu et la pertinence des descriptions restent à valider sur navigateur et contenus réels.</p>
+<h2 id="controles-automatises-disponibles">Contrôles automatisés disponibles<a class="headerlink" href="#controles-automatises-disponibles" title="Permanent link">#</a></h2>
+<p><code>tests/python/test_audit_structurel.py</code> prend la liste <code>git ls-files</code> et vérifie présence/non-vide, synchronisation de l’inventaire CSV, compilation Python sans exécution, analyse JSON, XML et SVG, intégrité interne ZIP des formats bureautiques, <code>bash -n</code> et <code>node --check</code> si présents. Il ne vérifie ni le comportement ni la qualité visuelle, et n’ouvre pas les fichiers ignorés. Les scripts PHP sont analysés séparément par <code>scripts/verifier_deprecations.py</code> et la CI.</p>
+<ul>
+<li>Sandbox : suites isolées PHP-WASM 8.2 vertes, dont 43 tests PHPUnit avec l’exécuteur local ; analyse PHP-WASM 8.5.10 sur 10 fichiers PHP modifiés sans erreur de syntaxe ou dépréciation détectée. Le code de retour WASM n’est pas une preuve native ; diagnostics examinés et CI native nécessaire.</li>
+<li>E2E : 309 vérifications réussies sans navigateur, données témoins inchangées. Security scan : 10 contrôles et autotest conformes. Tests structurels Python conformes.</li>
+<li>PHP natif, navigateur réel/WAVE, MariaDB et LineServ : <strong>non joués dans cette sandbox</strong>. La CI éventuelle utilise MySQL 8, pas MariaDB. Les anciennes campagnes ou mesures datées des autres documents restent historiques.</li>
+</ul>
+<h2 id="risques-restants-et-auto-evaluation">Risques restants et auto-évaluation<a class="headerlink" href="#risques-restants-et-auto-evaluation" title="Permanent link">#</a></h2>
+<ol>
+<li>La page 403 est branchée pour le refus SUPER ; l’intégration navigateur réelle reste à vérifier. La suppression de <code>withStore</code> est une rupture pour les usages externes éventuels : remplacer <code>$depot-&gt;withStore($store)</code> par <code>CommandeRepository::for($store)</code>. <code>dsnUtilise</code>, <code>codeDerniereErreur</code> et <code>EnvFile::existe</code> ont été supprimées et la signature de <code>visuel_produit</code> a changé : les appels externes doivent être adaptés. La fiche identifie le visuel comme indicatif ; ce libellé ne décrit pas ses caractéristiques visuelles et doit être revu avec les contenus réels.</li>
+<li>L’option SQL de réinitialisation détruit volontairement sa cible. La comparaison avec <code>DB_NAME</code> ne protège pas les autres bases, alias, droits ou concurrents ; le harnais shell SQL direct ne possède pas cette protection. Utiliser exclusivement un serveur jetable et sauvegarder.</li>
+<li>Les données de démonstration versionnées, les journaux et les fonctions d’installation imposent une vérification de configuration et de sécurité avant mise en ligne. Aucun examen de l’historique complet ni des secrets hors index n’est revendiqué.</li>
+<li>Lors de la préparation des tests facultatifs PHP-WASM, l’audit npm a signalé <strong>9 vulnérabilités</strong> (dont 5 élevées) dans l’outillage Node et ses dépendances, notamment <code>@php-wasm/node</code>. Ce n’est pas une analyse de l’application PHP en production ; la mise à niveau majeure n’a pas été entreprise dans cette correction. Ne pas exposer les outils de développement sur Internet ; examiner et mettre à jour ces dépendances dans une tâche dédiée.</li>
+<li>Les contrôles lexicaux, de syntaxe et de conteneur ne remplacent ni audit de sécurité complet, ni revue métier, ni tests navigateur, ni campagne de recette sur l’hébergement. Les inclusions dynamiques et consommateurs externes peuvent échapper au scanner.</li>
+</ol>
+<p><strong>Auto-évaluation :</strong> points forts : corrections étayées par régressions isolées et nouveaux garde-fous bloquants ; faiblesses : revue manuelle ciblée plutôt qu’exhaustive, SQL et navigateur non disponibles localement, pas de garantie sur les environnements externes. À compléter par une recette réelle sur serveur MariaDB jetable puis sur l’hébergement cible.</p>
+<footer class="doc">
+  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/17-audit-global-projet.md</code>
+  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+</footer>
+</main>
+</body>
+</html>

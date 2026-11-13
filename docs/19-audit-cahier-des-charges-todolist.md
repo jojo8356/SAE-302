@@ -1,6 +1,6 @@
 # Audit de conformité — cahier des charges, todolist et preuves
 
-**Révision examinée :** `b54ab9833eb5e7d5116a21a1f21cb3b7c845eb31` (`main`, base de la branche Arena courante). Les dates des documents et des exécutions CI sont rapportées telles qu’enregistrées ; aucune date de coupure non documentée n’est utilisée pour les ordonner.
+**Révision examinée :** base `b54ab9833eb5e7d5116a21a1f21cb3b7c845eb31` (`main`) et révision documentaire courante. Les exécutions antérieures sont distinguées des décisions et attestations utilisateur ; aucune vérification du dépôt IUT n’a été effectuée.
 
 > **Conclusion courte : non, la todolist n’est ni à jour ni suffisamment complète pour affirmer que toutes ses tâches sont achevées à 100 %.** L’application et les livrables sont bien présents, et de nombreuses vérifications automatisées existent. Il reste toutefois des écarts d’implémentation à une exigence explicite du CDC, des tests humains non joués, des mesures et actions externes non prouvées, ainsi que des incohérences de comptage et de dates entre documents.
 >
@@ -8,18 +8,18 @@
 
 ## 1. Périmètre et verdict global
 
-`docs/06-todolist.md` est une version 1.1 arrêtée au **23 septembre 2026**. Ses 86 identifiants WBS uniques sont bien présents, mais ses statuts et ses totaux ne décrivent plus ce checkout : elle annonce encore **0/146 h** pour l’application alors que `app/`, `public/`, les contrôleurs, les vues, les scripts et les tests sont livrés. Elle laisse aussi à faire des scripts qui existent déjà.
+`docs/06-todolist.md` a été régénérée en version 1.2 : les 85 tâches actuelles de la WBS totalisent 358 h planifiées. Après actualisation des attestations/preuves D1-L1-01/04/05/07, le suivi compte 37 tâches terminées, 8 partielles et 40 à faire ; 165 h sont déclarées acquises et 193 h restantes. Pour toutes les autres tâches, les états et métriques MariaDB restent ceux de la photographie historique du 23/09/2026, non rejouée pendant cette révision.
 
-| Statut d’audit | Nombre sur 86 | Sens |
+| Statut d’audit | Nombre sur 85 | Sens |
 |---|---:|---|
-| `OK` | 1 | Critère de fin explicite de la WBS satisfait, avec preuve directe du livrable, pour le périmètre précis de la tâche. |
+| `OK` | 3 | Critère de fin explicite satisfait pour le périmètre documentaire ou événement attesté, sans élargir la portée de la preuve. |
 | `OK*` | 54 | Livrable présent ou confirmation humaine fournie, avec preuve repérée dans le dépôt/la CI ou par l’utilisateur. **Ce n’est pas une certification absolue** ; le périmètre des preuves CI et les éléments déclaratifs sont explicités ci-dessous. |
-| `PARTIEL` | 20 | Une partie existe, mais un critère, une intégration, une preuve ou une cohérence reste à résoudre. |
+| `PARTIEL` | 18 | Une partie existe, mais un critère, une intégration, une preuve ou une cohérence reste à résoudre. |
 | `ÉCART` | 6 | Écart explicite entre la tâche/contrainte du CDC et l’application présente. |
-| `[!]` | 5 | Tâche humaine, externe, mesure cible ou état impossible à vérifier depuis ce checkout. |
-| **Total** | **86** | Les tâches `PARTIEL`, `ÉCART` et `[!]` restent inachevées ; les réserves des `OK*` sont précisées dans les constats. |
+| `[!]` | 4 | Tâche humaine, externe, mesure cible ou état impossible à vérifier depuis ce checkout. |
+| **Total** | **85** | Les tâches `PARTIEL`, `ÉCART` et `[!]` restent inachevées ; les réserves des `OK*` sont précisées dans les constats. |
 
-Ces statuts évaluent les **86 tâches de la WBS**, pas tout le travail ultérieur. Les ajouts ultérieurs (langue/fuseau, informations légales, contact, conservation, etc.) ne figurent pas correctement dans cette WBS et doivent eux aussi être rattachés à des exigences ou à une liste d’évolutions.
+Ces statuts évaluent les **85 tâches de la WBS courante**, pas tout le travail ultérieur. Les ajouts ultérieurs (langue/fuseau, informations légales, contact, conservation, etc.) ne figurent pas correctement dans cette WBS et doivent eux aussi être rattachés à des exigences ou à une liste d’évolutions.
 
 **Datation des preuves :** plusieurs sources du dépôt portent le 28/10/2026 ; les runs CI cités sont horodatés des 12 et 13/11/2026. Ces dates sont retranscrites depuis leurs métadonnées. Elles ne permettent pas, à elles seules, de fixer une date de coupure pour l’audit ni de réconcilier les divergences de branches relevées ci-dessous.
 
@@ -55,7 +55,7 @@ Après l’ajout de ce rapport, la CI a échoué dans les deux jobs « suites is
 
 Les 200 scénarios des fiches de recette restent au statut `NON JOUÉ` dans le CSV. La campagne responsive multi-largeurs **n’est pas** à réintroduire dans les fiches manuelles : selon la décision projet, elle relève des tests automatisés, où des contrôles Chromium sont prévus. Les essais sur hébergement réel, mesures de performance cible, restauration chronométrée, validation pédagogique et répétitions de soutenance ne sont pas démontrés ici.
 
-## 3. Revue tâche par tâche — les 86 identifiants de `docs/06-todolist.md`
+## 3. Revue tâche par tâche — les 85 identifiants de `docs/06-todolist.md`
 
 `OK` signifie que le critère de fin explicite de la WBS est satisfait, avec la preuve relevée, pour le périmètre précis de la tâche. `OK*` signifie « preuve d’un livrable, d’une suite ou confirmation humaine fournie », sans certifier tous les environnements, critères métier et vérifications humaines. Une confirmation déclarative de l’utilisateur est distinguée d’une vérification indépendante. Les raisons données priment sur le statut historique de la todolist.
 
@@ -65,13 +65,12 @@ Les 200 scénarios des fiches de recette restent au statut `NON JOUÉ` dans le C
 |---|---|---|
 | `D1-L1-01` | `OK*` | Le sujet officiel (PDF fourni, p. 8) demande le courriel de composition, la communication de l’adresse GitLab et le partage de l’accès avec l’enseignante. L’utilisateur confirme avoir envoyé le courriel proposé, avec la composition du groupe et l’adresse du dépôt ; la capture « Membres » montre l’enseignante comme membre directe `Reporter`, et `git ls-remote` confirme que le dépôt est lisible. L’envoi est attesté par l’utilisateur, mais n’a pas été vérifié indépendamment dans la boîte d’envoi. Le privé, la protection de `main`, le squash et la suppression des branches source sont des ajouts de la WBS/annexe, pas des exigences du PDF officiel. |
 | `D1-L1-02` | `OK*` | `app/` et `public/` existent et sont peuplés ; le besoin d’un squelette vide est dépassé. |
-| `D1-L1-03` | `OK*` | Le README à la racine présente désormais les deux membres nommés et leurs responsabilités opérationnelles A/B, d’après l’adaptation à deux personnes de `docs/06-todolist.md`, en distinguant ces rôles des permissions GitLab (`Owner` pour Johan Polsinelli, `Developer` pour Chahd Gouiaa). L’enseignante NGUYEN Thanh-Phuong (`Reporter`) est indiquée séparément. Le livrable est présent ; sa lecture effective par chaque membre n’est pas vérifiable depuis le dépôt. |
+| `D1-L1-03` | `OK*` | Le README présente les deux membres nommés et les permissions GitLab indiquées (`Owner` pour Johan Polsinelli, `Developer` pour Chahd Gouiaa), séparément des lettres A/B/C du RACI. Aucune correspondance nominative A/B/C n’est affirmée. L’enseignante NGUYEN Thanh-Phuong (`Reporter`) est indiquée séparément. Le livrable est présent ; sa lecture effective par chaque membre n’est pas vérifiable depuis le dépôt. |
 | `D1-L1-04` | `OK` | La capture utilisateur montre l’issue GitLab `s302#2` créée avec les cinq livrables du barème et les pénalités §16.2 ; cela satisfait la définition de fin explicite de la WBS (« issue créée : 5 livrables + pénalités suivis »). L’épinglage n’est pas confirmé par la capture et n’est pas revendiqué ; ce `OK` porte sur ce critère de fin. |
-| `D1-L1-05` | `PARTIEL` | Charte/annexe GitLab et modèles de MR présents ; l’usage effectif des MR et les revues croisées ne sont pas prouvés par ces fichiers. |
-| `D1-L1-06` | `PARTIEL` | `.gitlab-ci.yml` existe, mais aucune exécution GitLab n’est attestée ici. La CI GitHub est une autre chaîne et ne prouve pas le pipeline IUT. |
-| `D1-L1-07` | `[!]` | Réunion de cadrage et décisions d’équipe : aucune preuve de compte rendu ou de validation humaine. |
-| `D1-L15-01` | `PARTIEL` | `scripts/deploy.php` est présent ; un déploiement réel avec vérification des comptes/hashes sur la cible n’est pas prouvé. |
-| `D1-L15-02` | `OK*` | README final présent ; `scripts/build-docs.sh` et l’aide des comptes de démonstration existent. La composition et la répartition opérationnelle A/B sont maintenant indiquées dans le README. |
+| `D1-L1-05` | `OK` | La charte versionnée `docs/20-charte-gitlab-revues-croisees.md` et les modèles MR livrent le critère documentaire demandé. Ce `OK` valide uniquement la documentation ; aucune utilisation réelle de MR ni revue croisée n’est prouvée. |
+| `D1-L1-07` | `OK` | L’utilisateur atteste la réunion de vérification de l’audit et de validation simple du 13/11/2026 ; le compte rendu `docs/21-compte-rendu-reunion-audit-2026-11-13.md` consigne les choix communiqués. Aucun participant ou validation individuelle n’est inventé ; l’événement n’a pas été vérifié indépendamment. |
+| `D1-L15-01` | `PARTIEL` | `scripts/deploy.php` est présent et la procédure de validation staging-only est documentée dans `docs/22-procedure-validation-staging.md`. Elle n’a pas été exécutée ; aucun déploiement ni accès à une base de production n’est revendiqué. |
+| `D1-L15-02` | `OK*` | README final présent ; `scripts/build-docs.sh` et l’aide des comptes de démonstration existent. La composition et les permissions GitLab sont indiquées séparément du RACI ; aucune correspondance nominative A/B/C n’est inventée. |
 | `D1-L15-03` | `[!]` | Aucun tag n’est présent dans les références de ce checkout ; nettoyage et tag final sur le dépôt IUT non vérifiables sans accès/demande explicite. |
 
 ### D2 — Cahier des charges et UML
@@ -79,7 +78,7 @@ Les 200 scénarios des fiches de recette restent au statut `NON JOUÉ` dans le C
 | ID | État audité | Constat et preuve |
 |---|---|---|
 | `D2-L2-01` | `PARTIEL` | §1–§2 existent, mais les dates et les affirmations d’état ne sont pas réconciliées entre les documents (voir §5). |
-| `D2-L2-02` | `PARTIEL` | Le README et la capture GitLab identifient désormais les deux étudiants (Johan Polsinelli et Chahd Gouiaa) ; la todolist à deux personnes précise leur répartition opérationnelle A/B. Le CDC/WBS initial conserve toutefois un RACI à trois personnes, et les charges/plans restent contradictoires : réconcilier ces documents. |
+| `D2-L2-02` | `PARTIEL` | Le README et la capture GitLab identifient les deux étudiants (Johan Polsinelli et Chahd Gouiaa), avec leurs permissions séparées du RACI. La todolist conserve des lettres A/B de planification, sans correspondance nominative établie. Le CDC/WBS initial conserve un RACI à trois personnes et des charges/plans contradictoires : réconcilier ces documents avant d’attribuer les lettres. |
 | `D2-L2-03` | `PARTIEL` | Matrice fonctionnelle présente, mais le CDC, les annexes de tests et les nouvelles fonctionnalités ne forment pas encore une trace unique et sans contradictions. |
 | `D2-L2-04` | `PARTIEL` | Contraintes écrites, mais le CDC présente MySQL/PDO comme contrainte alors que le README et `StorageDriver` indiquent JSON par défaut et SQL optionnel / en migration. |
 | `D2-L2-05` | `PARTIEL` | Mesures de sécurité détaillées, mais la numérotation SEC et les preuves ne sont pas alignées partout ; SEC-14 est notamment cité sans fiche de contrôle dédiée. |
@@ -187,16 +186,16 @@ Cela contredit notamment les critères du CDC CT-02/CT-03 et les tâches D4-L9-0
 
 ## 5. Incohérences à corriger dans le CDC et la todolist
 
-1. **Comptage des tâches :** l’en-tête de `docs/06` annonce « 86 tâches terminées, 14 partielles, 34 à faire », soit **134** statuts, alors que le tableau détaillé contient 86 identifiants uniques.
-2. **Heures :** l’en-tête indique 169 h faites / 191 h restantes ; §1.1 indique 162 h / 198 h. Les heures restantes par personne font 93 + 105 = 198, tandis que §8 donne 95 + 97 = 192. Les heures ne se réconcilient donc pas.
+1. **Comptage des tâches — corrigé :** `docs/06` a été régénérée à 85 identifiants ; après actualisation explicite de D1-L1-01/04/05/07, ses statuts détaillés comptent 37 terminées, 8 partielles et 40 à faire (85 au total).
+2. **Heures — réconciliées pour le suivi révisé :** 358 h planifiées = 165 h acquises + 193 h restantes (46,1 % faites). La ventilation par personne et division est générée depuis les mêmes tâches ; les anciennes valeurs 169/191 et 162/198 ne sont plus reprises comme état courant.
 3. **Progression D4 périmée :** `docs/06` affiche encore 0/146 h et 0 %, malgré l’application complète présente. `scripts/load_db.sh`, `tests/security/controles.sh` et le diaporama existent également alors que leurs lignes sont encore « à faire »/« partiel ».
-4. **Équipe :** le README identifie maintenant Johan Polsinelli et Chahd Gouiaa et explicite la répartition A/B de l’équipe à deux de `docs/06`. `docs/05` et §13 du CDC planifient encore 3 développeurs / 360 h ; `docs/06` passe à 2 sans recalculer les 360 h ni réconcilier ses tableaux de charge. Il reste à harmoniser la RACI initiale et les charges ; la composition réelle n’est plus à supposer.
+4. **Équipe :** la WBS et le CDC conservent un modèle de charge A/B/C à trois personnes, tandis que d’autres documents décrivent une équipe de deux. La présente révision ne déduit pas de correspondance entre A/B/C, permissions GitLab et identités ; une rebaselining d’équipe distincte reste nécessaire.
 5. **Exigences non fonctionnelles :** §4.2 et l’annexe 17.3 du CDC annoncent `ENF-01…ENF-16`, alors que `docs/annexes/annexe-enf.md` contient `ENF-01…ENF-22`.
 6. **Sécurité :** `SEC-14` est cité dans §8.9, mais n’a pas de fiche dédiée dans la séquence §8.1–§8.7 ni de test identifié dans la stratégie de tests. Clarifier si cet identifiant est une exigence, puis lui attribuer un contrôle.
 7. **Règles métier :** §6.1 annonce 8 règles complémentaires, puis l’encadré en annonce 9 ; `RB-09` et `RB-12…RB-20` représentent dix identifiants. Le partage « imposées / ajoutées » doit être recalculé.
 8. **Séquences UML :** cinq PNG/sources de séquence sont présents, mais le pointage §1.7 affirme six diagrammes rendus. Le minimum de quatre est satisfait ; c’est le compte annoncé et les deux diagrammes bonus qui sont à mettre en cohérence.
 9. **Dates/branche :** le CDC §16.4, `docs/10-todo-corrections.md` et `docs/17-audit-global-projet.md` portent des références au 28/10/2026 ; `docs/10` nomme aussi une autre branche (`arena/6e1d3706-sae-302`). Les exécutions CI consultées sont horodatées des 12 et 13/11/2026. Ces dates sont retranscrites comme métadonnées et ne servent pas à imposer une coupure chronologique non justifiée ; leur provenance et leur correspondance avec les branches restent à réconcilier.
-10. **Inventaire global (corrigé dans le présent suivi) :** `docs/17-audit-global-projet.md` annonçait 402 fichiers, alors que le CSV exhaustif et `git ls-tree` recensent 498 chemins au SHA audité. L’ajout de ce rapport porte le checkout courant à 499 fichiers ; le résumé global et l’inventaire ont été mis en cohérence.
+10. **Inventaire global (actualisé) :** le SHA de base contient 498 chemins. La révision retire `.gitlab-ci.yml`, ajoute quatre rapports (`docs/19` à `docs/22`) et 36 rendus HTML/PDF/DOCX manquants, soit 537 chemins versionnés ; `docs/17-inventaire-projet.csv` répertorie ces chemins sans doublon.
 11. **Source officielle hors dépôt :** `sujetSAE.pdf` n’est toujours pas suivi dans le checkout, mais la pièce jointe fournie par l’utilisateur a permis de vérifier le point GitLab (p. 8–9). Elle demande l’accès GitLab partagé et le courriel de composition, sans exiger la visibilité privée ni la protection de `main` ; garder cette source jointe au dossier de rendu si le pointage doit être reproductible.
 
 ## 6. Éléments de travail absents de la todolist d’origine
@@ -215,10 +214,10 @@ Ces éléments peuvent être **déjà livrés** dans le code et les tests : leur
 ## 7. Prochaines actions recommandées
 
 1. Traiter en priorité l’écart **JSON / PDO / procédures stockées** et décider si le CDC reste contractuel sur l’exécution MySQL par l’application.
-2. Rebaser `docs/06-todolist.md` sur le code/test actuels, conserver les anciennes heures uniquement comme estimation historique et ajouter séparément les évolutions post-WBS.
-3. Réconcilier les nombres, identifiants et dates des documents listés au §5 ; ne cocher que ce qui a une preuve datée et reproductible.
+2. `docs/06-todolist.md` a été régénérée avec 85 tâches et les totaux cohérents ; conserver ses mesures SQL datées comme historiques, et tracer séparément les évolutions post-WBS encore absentes.
+3. Les nombres WBS/todolist, la date du compte rendu et les références CI ont été révisés ici ; les autres identifiants, dates et preuves listés au §5 restent à vérifier avant toute nouvelle clôture.
 4. Garder `[!]` pour les 200 scénarios manuels tant que l’équipe ne les a pas exécutés ; ne pas marquer « recette 100 % » sur la seule base de la CI.
 5. Planifier sur environnement isolé les tests de performance, la charge SQL, l’installation/restauration et le contrôle de déploiement ; conserver les sorties comme preuves.
 6. Faire attester séparément les tâches GitLab restantes, la validation pédagogique et les répétitions de soutenance. L’utilisateur confirme l’envoi du courriel de composition ; le dépôt IUT n’a pas été interrogé dans cet audit.
 
-**Aucune modification du code applicatif n’a été faite pendant cet audit.** Ce document formalise les constats sans modifier artificiellement les statuts historiques de `docs/06-todolist.md`.
+**Aucune modification du code applicatif n’a été faite pendant cet audit.** `docs/06-todolist.md` a été actualisée uniquement pour reprendre les attestations/preuves explicitement disponibles pour D1-L1-01/04/05/07 ; les autres statuts historiques ne sont pas reclassés et aucune vérification non effectuée n’est revendiquée.

@@ -444,17 +444,17 @@ Le tableau relie chaque fichier aux parties du présent document qui l'analysent
 
 | Fichier | Contenu | Rattaché à | Lignes |
 |---|---|---|---:|
-| [`sql/01_minishop_schema.sql`](../sql/01_minishop_schema.sql) | DDL : 8 tables, 3 vues, index FULLTEXT + jeu de données de référence (4 catégories, 36 produits, 3 clients, 1 admin, hashes `password_hash()`, table `parametre`) | A.1 · A.2 · A.4 · A.5 | 313 |
-| [`sql/02_minishop_procedures.sql`](../sql/02_minishop_procedures.sql) | directive `DELIMITER` + 1 fonction (`fn_param`) + 17 procédures stockées | B.1 · B.2 · B.3 | 841 |
-| [`sql/03_minishop_triggers.sql`](../sql/03_minishop_triggers.sql) | directive `DELIMITER` + 16 déclencheurs (blocs A stock, B prix/immuabilité, C catégories, D commandes/historique) | C.1 · C.2 · C.3 | 298 |
+| [`sql/01_minishop_schema.sql`](../sql/01_minishop_schema.sql) | DDL : 8 tables, 3 vues, index FULLTEXT + jeu de données de référence (4 catégories, 12 produits, 3 clients, 1 admin, hashes `password_hash()`, table `parametre`) | A.1 · A.2 · A.4 · A.5 | 344 |
+| [`sql/02_minishop_procedures.sql`](../sql/02_minishop_procedures.sql) | directive `DELIMITER` + 1 fonction (`fn_param`) + 17 procédures stockées | B.1 · B.2 · B.3 | 867 |
+| [`sql/03_minishop_triggers.sql`](../sql/03_minishop_triggers.sql) | directive `DELIMITER` + 16 déclencheurs (blocs A stock, B prix/immuabilité, C catégories, D commandes/historique) | C.1 · C.2 · C.3 | 315 |
 | [`sql/04_minishop_demo.sql`](../sql/04_minishop_demo.sql) | 4 commandes de démonstration créées **par `CALL` des procédures** (déclencheurs réellement exécutés) | A.5 | 46 |
 | [`tests/sql/fixture.sql`](../tests/sql/fixture.sql) | jeu de données des tests (état de référence mémorisé dans `stock_initial`) | C.3 · doc 02 | 105 |
 | [`tests/sql/manifest.txt`](../tests/sql/manifest.txt) | manifeste des 29 tests SQL (résultat attendu par test) | C.3 · doc 02 | 38 |
-| [`tests/perf/mesurer.sh`](../tests/perf/mesurer.sh) | protocole de mesure p95 HTTP (`ENF-01`) | doc 02 §5 | 19 |
+| [`tests/perf/mesurer.sh`](../tests/perf/mesurer.sh) | protocole de mesure p95 HTTP (`ENF-01`) | doc 02 §5 | 83 |
 | [`tests/perf/mesurer_sql.sh`](../tests/perf/mesurer_sql.sh) | mesure côté base : plans d'exécution, p95, coût d'une écriture métier | A.3 · doc 02 §5 | 101 |
-| [`scripts/gen_volumes.sh`](../scripts/gen_volumes.sh) | générateur de volumétrie (200 produits / 1 000 commandes via les procédures) | doc 02 §5 | 104 |
-| [`.gitlab-ci.yml`](../.gitlab-ci.yml) | chaîne CI : 6 jobs alignés sur le barème (lint, sécurité, tests SQL, unitaires, diagrammes) ; **pas de re-run après un merge dont la MR était verte** | CDC §14.2 | 114 |
-| [`.gitignore`](../.gitignore) | secrets hors dépôt (`app/Config/env.php`), artefacts régénérables | CDC §14.1 règle 7 | 35 |
+| [`scripts/gen_volumes.sh`](../scripts/gen_volumes.sh) | générateur de volumétrie (200 produits / 1 000 commandes via les procédures) | doc 02 §5 | 25 |
+| [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) | workflow CI GitHub Actions du dépôt ; il ne prouve pas un pipeline GitLab IUT | CDC §14.2 | 873 |
+| [`.gitignore`](../.gitignore) | secrets hors dépôt (`app/Config/env.php`), artefacts régénérables | CDC §14.1 règle 7 | 64 |
 
 **Rejeu complet** (le 01 crée la base et fait `USE` ; 02 et 03 contiennent la directive `DELIMITER` ;
 03 et 04 supposent les objets des étapes précédentes) :

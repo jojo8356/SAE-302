@@ -10,7 +10,7 @@
 #   - "OK"             : le fichier SQL doit reussir (code 0) ; on
 #                        surligne en PASS toute ligne rendue par le
 #                        SELECT 'PASS…' / 'FAIL…' du test.
-# Variables d'environnement (compatibles avec la CI .gitlab-ci.yml) :
+# Variables d'environnement utilisées par le harnais SQL et GitHub Actions :
 #   DB_HOST (defaut mysql)
 #   DB_USER (defaut root)
 #   DB_PASS (defaut '')

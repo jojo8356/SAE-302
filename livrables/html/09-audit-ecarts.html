@@ -112,6 +112,7 @@ vérifiable par la commande citée. Les points sont classés par impact sur le b
 (i spécification 20 · ii base de données 20 · iii application 30 · iv soutenance 10 · v GitLab 10).</p>
 <p><strong>Méthode.</strong> Audit statique du dépôt + exécution réelle de <code>node scripts/run-all-tests.mjs</code>
 et <code>bash tests/security/controles.sh</code> le 23/10/2026.</p>
+<p><strong>Note de portée (révision du 23/10/2026).</strong> Les références à <code>.gitlab-ci.yml</code>, aux jobs GitLab et à une « cible notée » ci-dessous décrivent l’état antérieur examiné par cet audit. La configuration GitLab CI et son exigence ont depuis été retirées du CDC ; la CI GitHub Actions est distincte et ne prouve pas un pipeline GitLab.</p>
 </blockquote>
 <h2 id="0-synthese">0. Synthèse<a class="headerlink" href="#0-synthese" title="Permanent link">#</a></h2>
 <p><strong>Statut vérifié le 23/10/2026</strong> (les détails et les commandes de preuve sont dans <code>10-todo-corrections.md</code>).</p>
@@ -152,7 +153,7 @@ et <code>bash tests/security/controles.sh</code> le 23/10/2026.</p>
 <td><strong>Rendus non produits</strong> : PDF/DOCX, diaporama, vidéo</td>
 <td style="text-align: right;">🟠 fort</td>
 <td>i, ii, iv</td>
-<td>🔴 <strong>inchangé</strong> — <code>livrables/</code> n'existe pas ; <code>md_to_pdf.py</code> n'a jamais été exécuté sur les documents.</td>
+<td>🟢 <strong>corrigé</strong> — <code>bash scripts/build-docs.sh</code> produit 58 rendus : <code>livrables/html</code> (19, autonomes), <code>livrables/pdf</code> (19), <code>livrables/docx</code> (19), <code>livrables/minishop-soutenance.pptx</code> (12 diapositives) + index. Seule la vidéo de secours reste impossible ici.</td>
 </tr>
 <tr>
 <td>E</td>
@@ -185,7 +186,7 @@ et <code>bash tests/security/controles.sh</code> le 23/10/2026.</p>
 </tbody>
 </table>
 <p><strong>Vert et vérifié</strong> : <code>node scripts/run-all-tests.mjs</code> → linter 0 violation / 86 fichiers, moteur 98/98,
-règles 108/108, fonctionnalités OK, design 28/28, PHPUnit 34/34, E2E 180/180 ;
+règles 108/108, fonctionnalités OK, design 28/28, PHPUnit 34/34, E2E 185/185 ;
 <code>bash tests/security/controles.sh</code> → 10/10 + auto-test.</p>
 <hr />
 <h2 id="a-fichiers-references-mais-absents-bloquant">A. Fichiers référencés mais absents — 🔴 bloquant<a class="headerlink" href="#a-fichiers-references-mais-absents-bloquant" title="Permanent link">#</a></h2>
@@ -224,12 +225,12 @@ affirmations du CDC sont fausses par construction.</p>
 <tr>
 <td><code>scripts/build-docs.sh</code></td>
 <td>README « Documents et rendus », CDC, doc <code>06</code>, <code>annexe-sql.md</code></td>
-<td>Aucun rendu documentaire ne peut être produit par le dépôt</td>
+<td>✅ présent — 20 sources × 3 formats + diaporama, ~25 s, aucune ressource réseau</td>
 </tr>
 <tr>
 <td><code>dist/**</code> (<code>.docx</code>, <code>html/</code>) et <code>livrables/**</code></td>
 <td>README (deux sections), CDC, doc <code>03</code></td>
-<td>Les rendus « images intégrées, lisibles hors ligne » <strong>n'existent pas</strong></td>
+<td>✅ <code>livrables/</code> versionné (html + pdf + docx + pptx + index) ; <code>dist/</code> reste l'artefact régénérable hors Git</td>
 </tr>
 <tr>
 <td><code>public/css/</code>, <code>public/js/panier.js</code>, <code>public/img/</code></td>
@@ -354,11 +355,11 @@ et le doc de tests (aujourd'hui le CDC affirme le contraire).</p>
 </tr>
 <tr>
 <td><code>livrables/*.docx</code> + <code>livrables/html/*.html</code> (README)</td>
-<td><strong>dossier absent</strong></td>
+<td>✅ 19 documents dans chaque format</td>
 </tr>
 <tr>
 <td><code>dist/</code> régénérable par <code>scripts/build-docs.sh</code></td>
-<td>script absent, <code>pandoc</code> non installé ici ; <code>artefacts/*.html</code> existe (7 fichiers) mais n'est <strong>pas</strong> ce que le README décrit</td>
+<td>✅ script présent, <strong>sans pandoc</strong> (markdown + fpdf2 + python-docx + python-pptx) ; <code>dist/</code> reste hors Git</td>
 </tr>
 </tbody>
 </table>
@@ -509,7 +510,7 @@ et le doc de tests (aujourd'hui le CDC affirme le contraire).</p>
 <li><strong>Rejouer les 32 commits sur le vrai GitLab</strong> (doc <code>08</code> + <code>scripts/rejeu_gitlab.py</code>), créer les tags
    <code>v0-cadrage</code>→<code>v5-rendu</code>, renseigner les <strong>vrais noms/emails</strong> dans le README et le CDC, remplacer les URL
    <code>example.com</code>. <em>(≈ 1 j)</em></li>
-<li><strong>Produire les rendus</strong> : PDF/DOCX des 5 documents, diaporama 12 slides, <code>livrables/</code>. <em>(≈ 0,5 j)</em></li>
+<li>~~<strong>Produire les rendus</strong> : PDF/DOCX, diaporama 12 slides, <code>livrables/</code>.~~ <strong>fait</strong> — <code>bash scripts/build-docs.sh</code>.</li>
 <li><strong>Compléter le PV de recette</strong> du doc <code>02</code> : passer les 33 <code>F-xx</code> en « exécuté/conforme » avec captures,
    ajouter les 10 tests de sécurité et les 2 tests d'installation. <em>(≈ 0,5 j)</em></li>
 <li><strong>Interface minimale</strong> : une feuille de style (contraste/focus), <code>panier.js</code> + endpoint JSON, <code>aria-live</code>. <em>(2–3 j)</em></li>

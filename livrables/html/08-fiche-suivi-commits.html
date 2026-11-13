@@ -143,6 +143,7 @@ chacun avec un message de commit prêt à copier-coller et un périmètre de fic
 Cette fiche et le script <code>scripts/rejeu_gitlab.py</code> sont générés du <strong>même plan</strong> :
 ils ne peuvent pas diverger. Le script vérifie en fin de parcours que la couverture
 des fichiers est exacte (aucun oublié, aucun doublon).</p>
+<p><strong>Note de portée (23/10/2026).</strong> Cette fiche et <code>scripts/rejeu_gitlab.py</code> sont un plan de rejeu proposé, pas une preuve d’historique GitLab réalisé ; ne pas l’exécuter ni le pousser vers le dépôt IUT sans demande explicite. Les entrées É5 (86 tâches) et É27 (GitLab CI) décrivent l’ancien périmètre prévu : la WBS courante compte 85 tâches et la CI GitLab a été retirée. Elles ne sont pas des exigences actives.</p>
 </blockquote>
 <h2 id="1-mode-demploi-express">1. Mode d'emploi express<a class="headerlink" href="#1-mode-demploi-express" title="Permanent link">#</a></h2>
 <pre><code class="language-bash"># 1) Créer sur GitLab le projet vide « minishop-sae » (NE PAS cocher « Initialize with a README »)
@@ -747,7 +748,7 @@ MESSAGE
 git commit -F- &lt;&lt;'MESSAGE'
 ci: chaîne GitLab CI (6 jobs) + miroir GitHub Actions (CT-09)
 
-Jobs : syntaxe PHP, schéma rejouable, 28 tests SQL, tests PHP (moteur + règles), génération des documents. Un pipeline vert prouve que les critères du barème sont tenus ; un job rouge bloque le merge.
+Jobs : syntaxe PHP, schéma rejouable, 29 tests SQL, tests PHP (moteur + règles), génération des documents. Un pipeline vert prouve que les critères du barème sont tenus ; un job rouge bloque le merge.
 
 Cible de notation : GitLab CI (ce fichier). Le workflow GitHub Actions est le miroir de développement, maintenu synchrone.
 MESSAGE

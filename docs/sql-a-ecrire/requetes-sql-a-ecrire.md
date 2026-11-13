@@ -838,7 +838,7 @@ Non prévu par le CDC → à ne pas implémenter.
 #### Q-INST-02 — Vérifier que l'administrateur de seed est présent (CI)
 | Champ | Valeur |
 |---|---|
-| **Écran** | `.gitlab-ci.yml` job `seed` |
+| **Écran** | chargement du seed par le workflow GitHub Actions |
 | **Question** | Compter les lignes insérées dans chaque table après `scripts/load_db.sh`. |
 | **Type** | `SELECT COUNT(*) FROM <table>;` sur les 8 tables — déjà implémenté dans `load_db.sh` (à terminer, cf. tâche D3-L5-05 dans la todolist). |
 

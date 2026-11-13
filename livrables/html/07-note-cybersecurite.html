@@ -476,7 +476,7 @@ public static function verifier(): void
 </tr>
 <tr>
 <td><strong>Attaques testées</strong></td>
-<td>E2E T12 : <code>/../etc/passwd</code>, <code>/produit/../../etc/passwd</code>, <code>/%2e%2e/%2e%2e/etc/passwd</code>, <code>/.git/config</code>, <code>/sql/01-minishop-schema.sql</code>, <code>/app/Config/env.php</code>, <code>/var/log/application.log</code>, <code>/phpinfo.php</code> → <strong>tous 404</strong> ; vérification des 4 en-têtes défensifs</td>
+<td>E2E T12 : <code>/../etc/passwd</code>, <code>/produit/../../etc/passwd</code>, <code>/%2e%2e/%2e%2e/etc/passwd</code>, <code>/.git/config</code>, <code>/sql/01_minishop_schema.sql</code>, <code>/app/Config/env.php</code>, <code>/var/log/application.log</code>, <code>/phpinfo.php</code> → <strong>tous 404</strong> ; vérification des 4 en-têtes défensifs</td>
 </tr>
 <tr>
 <td><strong>Défense</strong></td>
@@ -682,7 +682,7 @@ public static function exigeSuper(): array
 <ul>
 <li>Toute écriture du moteur est tracée en JSONL (<code>var/journal/db.jsonl</code>) : <code>{at, op, table, pk, actor: {id, role, nom}, old, new}</code> — <strong>qui</strong> a fait <strong>quoi</strong>, avec avant/après.</li>
 <li>La piste des statuts de commande (RB-11) est requêtable et affichée au back-office (<code>order_status_history</code>, transition + auteur + commentaire).</li>
-<li>Jamais de mot de passe ni de hash dans les journaux (données non loggées par conception : seules les lignes de tables passent, et <code>mot_de_passe_hash</code> n'est journalisé qu'en <code>old/new</code> lors d'un changement — à masquer si besoin, cf. §6).</li>
+<li>Les nouvelles entrées JSON de comptes client et administrateur sont limitées aux métadonnées de compte : les condensats, noms et e-mails ne figurent plus dans leurs instantanés <code>old/new</code>. Les anciennes entrées, les autres catégories, les noms d’acteurs administrateurs et les journaux ou sauvegardes externes doivent encore être examinés ; aucune suppression rétrospective n’a été effectuée.</li>
 </ul>
 <h3 id="44-validation-des-entrees-en-profondeur-sec-02">4.4 Validation des entrées en profondeur (SEC-02)<a class="headerlink" href="#44-validation-des-entrees-en-profondeur-sec-02" title="Permanent link">#</a></h3>
 <ul>

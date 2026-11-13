@@ -98,7 +98,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </li>
 <li><a href="#4-niveau-3-les-16-lots">4. Niveau 3 — les 16 lots</a></li>
 <li><a href="#5-niveau-4-les-taches-individuelles-division-par-division">5. Niveau 4 — les tâches individuelles, division par division</a><ul>
-<li><a href="#d1-pilotage-depot-gitlab-integration-24-h-resp-a-bareme-v-contribution-gitlab-readme-10-pts-individuel">D1 — Pilotage, dépôt GitLab &amp; intégration (24 h · resp. A · barème v — contribution GitLab + README (10 pts, individuel))</a></li>
+<li><a href="#d1-pilotage-depot-gitlab-collaboration-22-h-resp-a-bareme-v-contribution-gitlab-readme-10-pts-individuel">D1 — Pilotage, dépôt GitLab &amp; collaboration (22 h · resp. A · barème v — contribution GitLab + README (10 pts, individuel))</a></li>
 <li><a href="#d2-document-de-specification-du-systeme-54-h-resp-a-c-bareme-i-20-points">D2 — Document de spécification du système (54 h · resp. A + C · barème i — 20 points)</a></li>
 <li><a href="#d3-conception-de-la-base-de-donnees-sql-98-h-resp-b-bareme-ii-20-points">D3 — Conception de la base de données &amp; SQL (98 h · resp. B · barème ii — 20 points)</a></li>
 <li><a href="#d4-application-web-php-mysql-pdo-146-h-resp-a-c-bareme-iii-30-points-avec-d5">D4 — Application Web PHP / MySQL / PDO (146 h · resp. A + C · barème iii — 30 points (avec D5))</a></li>
@@ -141,7 +141,7 @@ estimation <em>bottom-up</em> de chaque tâche individuelle, plan de charge par 
 </tr>
 <tr>
 <td><strong>Effort total</strong></td>
-<td><strong>360 h = 3 × 120 h</strong> (estimation <em>bottom-up</em> : la somme des 86 tâches de niveau 4) · calendrier <strong>S1 → S12</strong></td>
+<td><strong>358 h planifiées</strong>, sous la capacité nominale de 360 h (3 × 120 h) ; somme des 85 tâches de niveau 4 · calendrier <strong>S1 → S12</strong></td>
 </tr>
 <tr>
 <td><strong>Divisions (niveau 2)</strong></td>
@@ -153,7 +153,7 @@ estimation <em>bottom-up</em> de chaque tâche individuelle, plan de charge par 
 </tr>
 <tr>
 <td><strong>Tâches (niveau 4)</strong></td>
-<td><strong>86 tâches individuelles</strong> — chacune est assignable, estimable et vérifiable (règle d'arrêt WBS)</td>
+<td><strong>85 tâches individuelles</strong> — chacune est assignable, estimable et vérifiable (règle d'arrêt WBS)</td>
 </tr>
 <tr>
 <td><strong>Documents liés</strong></td>
@@ -161,7 +161,7 @@ estimation <em>bottom-up</em> de chaque tâche individuelle, plan de charge par 
 </tr>
 <tr>
 <td><strong>Version</strong></td>
-<td>1.0 — 23 septembre 2026</td>
+<td>1.1 — 23 octobre 2026 (révision de périmètre)</td>
 </tr>
 </tbody>
 </table>
@@ -195,7 +195,7 @@ estimation <em>bottom-up</em> de chaque tâche individuelle, plan de charge par 
 <tr>
 <td><strong>4</strong></td>
 <td>les <strong>tâches individuelles</strong></td>
-<td><strong>86 tâches</strong>, estimées en heures et assignées à A, B ou C</td>
+<td><strong>85 tâches</strong>, estimées en heures et assignées à A, B ou C</td>
 </tr>
 </tbody>
 </table>
@@ -207,9 +207,8 @@ estimation <em>bottom-up</em> de chaque tâche individuelle, plan de charge par 
 C'est l'inverse d'une estimation globale « au doigt mouillé » : chaque heure du total projet remonte d'une tâche nommée.</p>
 <p><strong>Identification</strong> : <code>D&lt;n&gt;-L&lt;lot&gt;-&lt;nn&gt;</code> (ex. <code>D3-L6-04</code>). Chaque tâche devient une <strong>issue GitLab</strong> portant ce titre
 (cf. §10), ce qui relie WBS, barème et trace de contribution individuelle.</p>
-<p><strong>Note de version</strong> — les charges par lot du CDC §13.3 ont été <strong>réconciliées</strong> avec cette estimation bottom-up
-(la première mouture totalisait 402 h de lots contre 362 h annoncées, et la charge C dépassait le plafond affiché) ;
-le CDC corrigé et la WBS affichent désormais le même total : <strong>360 h = 3 × 120 h</strong> (§13.2 du CDC).</p>
+<p><strong>Note de version</strong> — le 23 octobre 2026, le livrable GitLab CI (2 h) a été retiré du périmètre à la demande de l'équipe ;
+la charge révisée est de 358 h pour 85 tâches, dans une capacité nominale de 360 h. Les autres écarts historiques de charge restent hors de ce rebaselining.</p>
 <hr />
 <h2 id="2-niveau-1-le-projet">2. Niveau 1 — le projet<a class="headerlink" href="#2-niveau-1-le-projet" title="Permanent link">#</a></h2>
 <p><strong>MiniShop</strong> : un site e-commerce (catalogue, panier, commandes) + un back-office (produits, catégories, stocks, commandes)
@@ -237,11 +236,11 @@ document de tests et dépôt GitLab avec contribution régulière.</p>
 <tbody>
 <tr>
 <td><strong>D1</strong></td>
-<td>Pilotage, dépôt GitLab &amp; intégration</td>
+<td>Pilotage, dépôt GitLab &amp; collaboration</td>
 <td>barème v — contribution GitLab + README (10 pts, individuel)</td>
 <td>A</td>
 <td>L1 + L15</td>
-<td style="text-align: right;"><strong>24 h</strong></td>
+<td style="text-align: right;"><strong>22 h</strong></td>
 </tr>
 <tr>
 <td><strong>D2</strong></td>
@@ -289,17 +288,17 @@ document de tests et dépôt GitLab avec contribution régulière.</p>
 <td></td>
 <td></td>
 <td>16 lots</td>
-<td style="text-align: right;"><strong>360 h</strong></td>
+<td style="text-align: right;"><strong>358 h</strong></td>
 </tr>
 </tbody>
 </table>
 <h3 id="arborescence-wbs-niveaux-1-3">Arborescence WBS (niveaux 1 → 3)<a class="headerlink" href="#arborescence-wbs-niveaux-1-3" title="Permanent link">#</a></h3>
 <!--ARBRE_WBS-->
 
-<pre><code class="language-text">MiniShop — 360 h · 3 développeurs · 12 semaines (S1→S12)
+<pre><code class="language-text">MiniShop — 358 h · 3 développeurs · 12 semaines (S1→S12)
 │
-├── D1 Pilotage, dépôt GitLab &amp; intégration — 24 h · resp. A · [barème v — contribution GitLab + README (10 pts, individuel)]
-│   ├── L1 Cadrage, relecture du sujet, grille de conformité, squelette du dépôt, README (16 h · A · S1)
+├── D1 Pilotage, dépôt GitLab &amp; collaboration — 22 h · resp. A · [barème v — contribution GitLab + README (10 pts, individuel)]
+│   ├── L1 Cadrage, relecture du sujet, grille de conformité, squelette du dépôt, README (14 h · A · S1)
 │   └── L15 Mise en ligne de démo, deploy.php, README final, arborescence propre (8 h · A · S11)
 ├── D2 Document de spécification du système — 54 h · resp. A + C · [barème i — 20 points]
 │   ├── L2 CDC : présentation, objectifs, acteurs, fonctionnalités (26 h · A + C · S1/S2)
@@ -343,7 +342,7 @@ le niveau 4 — le travail lui-même — est détaillé section 5.</em></p>
 <td>D1</td>
 <td>A</td>
 <td>S1</td>
-<td style="text-align: right;">16 h</td>
+<td style="text-align: right;">14 h</td>
 </tr>
 <tr>
 <td><strong>L2</strong></td>
@@ -471,7 +470,7 @@ le niveau 4 — le travail lui-même — est détaillé section 5.</em></p>
 <td></td>
 <td></td>
 <td>S1→S12</td>
-<td style="text-align: right;"><strong>360 h</strong></td>
+<td style="text-align: right;"><strong>358 h</strong></td>
 </tr>
 </tbody>
 </table>
@@ -480,8 +479,8 @@ le niveau 4 — le travail lui-même — est détaillé section 5.</em></p>
 <p><em>Lecture : chaque table liste les tâches du lot, leur responsable (A/B/C), la charge estimée en heures,
 la <strong>définition de fini</strong> (livrable observable) et les dépendances (tâches ou lots préalables).
 La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong>remonte</strong> — rien n'est ajouté au niveau lot qui ne vienne d'une tâche.</em></p>
-<h3 id="d1-pilotage-depot-gitlab-integration-24-h-resp-a-bareme-v-contribution-gitlab-readme-10-pts-individuel">D1 — Pilotage, dépôt GitLab &amp; intégration (24 h · resp. A · barème v — contribution GitLab + README (10 pts, individuel))<a class="headerlink" href="#d1-pilotage-depot-gitlab-integration-24-h-resp-a-bareme-v-contribution-gitlab-readme-10-pts-individuel" title="Permanent link">#</a></h3>
-<h4 id="lot-l1-cadrage-relecture-du-sujet-grille-de-conformite-squelette-du-depot-readme-16-h-a-s1">Lot L1 — Cadrage, relecture du sujet, grille de conformité, squelette du dépôt, README (16 h · A · S1)<a class="headerlink" href="#lot-l1-cadrage-relecture-du-sujet-grille-de-conformite-squelette-du-depot-readme-16-h-a-s1" title="Permanent link">#</a></h4>
+<h3 id="d1-pilotage-depot-gitlab-collaboration-22-h-resp-a-bareme-v-contribution-gitlab-readme-10-pts-individuel">D1 — Pilotage, dépôt GitLab &amp; collaboration (22 h · resp. A · barème v — contribution GitLab + README (10 pts, individuel))<a class="headerlink" href="#d1-pilotage-depot-gitlab-collaboration-22-h-resp-a-bareme-v-contribution-gitlab-readme-10-pts-individuel" title="Permanent link">#</a></h3>
+<h4 id="lot-l1-cadrage-relecture-du-sujet-grille-de-conformite-squelette-du-depot-readme-14-h-a-s1">Lot L1 — Cadrage, relecture du sujet, grille de conformité, squelette du dépôt, README (14 h · A · S1)<a class="headerlink" href="#lot-l1-cadrage-relecture-du-sujet-grille-de-conformite-squelette-du-depot-readme-14-h-a-s1" title="Permanent link">#</a></h4>
 <table>
 <thead>
 <tr>
@@ -520,7 +519,7 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 </tr>
 <tr>
 <td><code>D1-L1-04</code></td>
-<td>Grille de conformité au barème (CDC §16) épinglée en issue GitLab</td>
+<td>Grille de conformité au barème (CDC §16) suivie dans une issue GitLab</td>
 <td>A</td>
 <td style="text-align: right;">3</td>
 <td>issue créée : 5 livrables + pénalités suivis</td>
@@ -531,31 +530,23 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 <td>Charte GitLab : branches, MR croisées, commits conventionnels, 1 issue par UC/EF</td>
 <td>A</td>
 <td style="text-align: right;">2</td>
-<td>wiki + modèle de MR (annexe 17.9)</td>
+<td>charte versionnée dans docs/20 + modèles de MR dans .gitlab/merge_request_templates/</td>
 <td>01</td>
 </tr>
 <tr>
-<td><code>D1-L1-06</code></td>
-<td>CI v0 : .gitlab-ci.yml avec job php-lint</td>
-<td>A</td>
-<td style="text-align: right;">2</td>
-<td>pipeline vert sur un commit vide</td>
-<td>02</td>
-</tr>
-<tr>
 <td><code>D1-L1-07</code></td>
-<td>Réunion de cadrage : relecture du sujet ligne à ligne, périmètre, règle de repli groupe de 2</td>
+<td>Réunion de vérification de l'audit complet et de validation simple</td>
 <td>A</td>
 <td style="text-align: right;">2</td>
-<td>compte-rendu dans le wiki du dépôt</td>
+<td>compte rendu versionné dans docs/21-compte-rendu-reunion-audit-2026-11-13.md</td>
 <td>—</td>
 </tr>
 <tr>
 <td></td>
 <td><strong>Sous-total L1</strong></td>
 <td></td>
-<td style="text-align: right;"><strong>16</strong></td>
-<td>répartition : A 16 h</td>
+<td style="text-align: right;"><strong>14</strong></td>
+<td>répartition : A 14 h</td>
 <td></td>
 </tr>
 </tbody>
@@ -575,10 +566,10 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 <tbody>
 <tr>
 <td><code>D1-L15-01</code></td>
-<td>scripts/deploy.php : hashes aléatoires, emails de démo régénérés</td>
+<td>scripts/deploy.php : renouveler les hashes de démo et les emails .invalid ; procédure docs/22 à suivre en staging</td>
 <td>A</td>
 <td style="text-align: right;">3</td>
-<td>démo reinstallable en 1 commande, SEC-10 respecté</td>
+<td>validation sur staging isolé : comptes et hashes contrôlés sans exposer de données sensibles</td>
 <td>L14</td>
 </tr>
 <tr>
@@ -1075,10 +1066,10 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 </tr>
 <tr>
 <td><code>D4-L8-05</code></td>
-<td>CI complète (6 jobs) + app/Config/env.example.php (jamais de secret versionné)</td>
+<td>CI GitHub Actions + app/Config/env.example.php (jamais de secret versionné)</td>
 <td>A</td>
 <td style="text-align: right;">4</td>
-<td>pipeline vert bloque un merge en échec</td>
+<td>contrôles GitHub Actions verts sur le commit vérifié</td>
 <td>01</td>
 </tr>
 <tr>
@@ -1556,23 +1547,23 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 <tbody>
 <tr>
 <td>Tâches (niveau 4)</td>
-<td>86 tâches individuelles estimées</td>
-<td style="text-align: right;"><strong>360 h</strong></td>
+<td>85 tâches individuelles estimées</td>
+<td style="text-align: right;"><strong>358 h</strong></td>
 </tr>
 <tr>
 <td>Lots (niveau 3)</td>
 <td>16 lots (L1→L16), sous-totaux des tâches</td>
-<td style="text-align: right;">360 h</td>
+<td style="text-align: right;">358 h</td>
 </tr>
 <tr>
 <td>Divisions (niveau 2)</td>
-<td>6 divisions : D1 24 h · D2 54 h · D3 98 h · D4 146 h · D5 24 h · D6 14 h</td>
-<td style="text-align: right;">360 h</td>
+<td>6 divisions : D1 22 h · D2 54 h · D3 98 h · D4 146 h · D5 24 h · D6 14 h</td>
+<td style="text-align: right;">358 h</td>
 </tr>
 <tr>
 <td>Projet (niveau 1)</td>
 <td>3 personnes × ~120 h sur 12 semaines</td>
-<td style="text-align: right;"><strong>360 h</strong></td>
+<td style="text-align: right;"><strong>358 h</strong></td>
 </tr>
 </tbody>
 </table>
@@ -1591,17 +1582,17 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 <tbody>
 <tr>
 <td><strong>A</strong></td>
-<td>chef de projet, back-office, intégration/CI</td>
+<td>chef de projet, back-office, intégration GitHub Actions</td>
+<td style="text-align: right;">120 h</td>
+<td style="text-align: right;">33.5%</td>
 <td style="text-align: right;">122 h</td>
-<td style="text-align: right;">34%</td>
-<td style="text-align: right;">122 h</td>
-<td>✅ au plafond</td>
+<td>✅</td>
 </tr>
 <tr>
 <td><strong>B</strong></td>
 <td>modèle et base de données, tests SQL</td>
 <td style="text-align: right;">117 h</td>
-<td style="text-align: right;">32%</td>
+<td style="text-align: right;">32.7%</td>
 <td style="text-align: right;">122 h</td>
 <td>✅</td>
 </tr>
@@ -1609,17 +1600,17 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 <td><strong>C</strong></td>
 <td>présentation, sécurité, JS, tests</td>
 <td style="text-align: right;">121 h</td>
-<td style="text-align: right;">34%</td>
+<td style="text-align: right;">33.8%</td>
 <td style="text-align: right;">122 h</td>
 <td>✅</td>
 </tr>
 <tr>
 <td></td>
 <td><strong>Total</strong></td>
-<td style="text-align: right;"><strong>360 h</strong></td>
+<td style="text-align: right;"><strong>358 h</strong></td>
 <td style="text-align: right;">100 %</td>
 <td style="text-align: right;">3 × 122 h</td>
-<td>équilibré (écart max 5 h)</td>
+<td>équilibré (écart max 4 h)</td>
 </tr>
 </tbody>
 </table>
@@ -1651,7 +1642,7 @@ Valeurs arrondies à l'heure.</em></p>
 <tbody>
 <tr>
 <td><strong>A</strong></td>
-<td style="text-align: right;">23</td>
+<td style="text-align: right;">21</td>
 <td style="text-align: right;">7</td>
 <td style="text-align: right;">4</td>
 <td style="text-align: right;">0</td>
@@ -1663,7 +1654,7 @@ Valeurs arrondies à l'heure.</em></p>
 <td style="text-align: right;">5</td>
 <td style="text-align: right;">13</td>
 <td style="text-align: right;">4</td>
-<td style="text-align: right;"><strong>122</strong></td>
+<td style="text-align: right;"><strong>120</strong></td>
 </tr>
 <tr>
 <td><strong>B</strong></td>
@@ -1699,7 +1690,7 @@ Valeurs arrondies à l'heure.</em></p>
 </tr>
 <tr>
 <td><strong>Équipe</strong></td>
-<td style="text-align: right;"><strong>29</strong></td>
+<td style="text-align: right;"><strong>27</strong></td>
 <td style="text-align: right;"><strong>27</strong></td>
 <td style="text-align: right;"><strong>42</strong></td>
 <td style="text-align: right;"><strong>20</strong></td>
@@ -1711,7 +1702,7 @@ Valeurs arrondies à l'heure.</em></p>
 <td style="text-align: right;"><strong>36</strong></td>
 <td style="text-align: right;"><strong>20</strong></td>
 <td style="text-align: right;"><strong>14</strong></td>
-<td style="text-align: right;"><strong>360</strong></td>
+<td style="text-align: right;"><strong>358</strong></td>
 </tr>
 </tbody>
 </table>
@@ -1725,7 +1716,7 @@ Trois parades, revues chaque vendredi (CDC §13.5) : (i) les tâches amont des l
 
 <pre><code class="language-text">Lot |  S1  |  S2  |  S3  |  S4  |  S5  |  S6  |  S7  |  S8  |  S9  | S10  | S11  | S12 
 ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----
-L1   |  ██  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·    16 h  A
+L1   |  ██  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·    14 h  A
 L2   |  ██  |  ██  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·    26 h  A + C
 L3   |   ·  |  ██  |  ██  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·    28 h  B + C
 L4   |   ·  |   ·  |  ██  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·    28 h  B (+ relecture A)
@@ -1778,8 +1769,8 @@ Trois dates sont figées par le calendrier pédagogique : S2, S10, S12.</p>
 <tbody>
 <tr>
 <td>Charge de production</td>
-<td>360 h × 60 €/h (indice pédagogique théorique)</td>
-<td style="text-align: right;">21 600 € théoriques</td>
+<td>358 h × 60 €/h (indice pédagogique théorique)</td>
+<td style="text-align: right;">21 480 € théoriques</td>
 </tr>
 <tr>
 <td>Licences, hébergement, données</td>
@@ -1799,24 +1790,22 @@ Trois dates sont figées par le calendrier pédagogique : S2, S10, S12.</p>
 <h2 id="10-exploitation-dans-gitlab-la-wbs-devient-le-tableau-du-projet">10. Exploitation dans GitLab (la WBS devient le tableau du projet)<a class="headerlink" href="#10-exploitation-dans-gitlab-la-wbs-devient-le-tableau-du-projet" title="Permanent link">#</a></h2>
 <ol>
 <li><strong>Une issue par tâche de niveau 4</strong> : titre <code>[(D3-L6-04)] sp_create_order, sp_add_order_line…</code> ;
-   description = définition de fini + dépendances ; 86 issues créées dès S1 (bulk import CSV).</li>
+   description = définition de fini + dépendances ; 85 issues à suivre au total (bulk import CSV).</li>
 <li><strong>Labels</strong> : <code>D1</code>…<code>D6</code> (couleur de division), <code>L1</code>…<code>L16</code>, <code>A</code>/<code>B</code>/<code>C</code>, <code>jalon-J1</code>…<code>jalon-J6</code>.</li>
 <li><strong>Board</strong> : colonnes <em>À faire → En cours → En revue (MR) → Fermé</em> ; une colonne par jalon en vue <em>Listes de jalons</em>.</li>
 <li><strong>MR</strong> : une MR par lot minimum, <strong>mergée par un autre développeur que l'auteur</strong> (auto-merge interdit) ;
-   la CI doit être verte (6 jobs, dont base-tests = 29/29).</li>
+   les contrôles GitHub Actions doivent être verts sur le commit vérifié ; aucun pipeline GitLab n'est revendiqué.</li>
 <li><strong>Suivi individuel</strong> (barème v) : <code>git shortlog -sne main</code> doit montrer 3 auteurs &gt; 20 commits ;
    la répartition cible par zone (B ≈ 45 % de <code>sql/</code>, A ≈ 40 % de <code>app/Controller/</code>, C ≈ 45 % de <code>app/View/</code> et <code>public/js/</code>)
    est celle du CDC §14.3 ; chacun garde ≥ 5 commits dans les trois zones.</li>
 </ol>
 <hr />
 <h2 id="11-gouvernance-definition-de-termine-et-regle-de-repli">11. Gouvernance : définition de « terminé » et règle de repli<a class="headerlink" href="#11-gouvernance-definition-de-termine-et-regle-de-repli" title="Permanent link">#</a></h2>
-<p><strong>Une tâche de niveau 4 est fermée seulement si :</strong></p>
-<ul>
-<li>sa <strong>définition de fini</strong> est observée (colonne dédiée dans chaque table du §5) ;</li>
-<li>le code ou le document passe la <strong>CI</strong> (php-lint, 29 tests SQL, contrôles de sécurité, rendu des diagrammes) ;</li>
-<li>une <strong>autre personne</strong> a relu la MR (revue croisée systématique) ;</li>
-<li>la <strong>documentation</strong> liée (CDC, doc de conception, doc de tests, README) est mise à jour dans la même MR.</li>
-</ul>
+<p><strong>Une tâche de niveau 4 est fermée lorsque sa définition de fini est observée</strong> (colonne dédiée au §5) et que les preuves annoncées correspondent réellement au livrable.
+Pour un changement traité par MR, consigner la revue croisée et, lorsqu'applicable, le statut CI du commit ; ces éléments ne sont pas inférés de la seule présence de la charte ou des modèles.
+Le critère documentaire de <code>D1-L1-05</code> porte uniquement sur la charte versionnée et les modèles de MR ; il ne certifie pas l'usage effectif des MR ni des revues croisées.
+La CI automatisée du dépôt est GitHub Actions (<code>.github/workflows/ci.yml</code>) ; elle ne constitue pas une preuve de pipeline GitLab IUT.
+La documentation liée (CDC, conception, tests, README) est mise à jour avec le livrable concerné.</p>
 <p><strong>Règle de repli si groupe de 2</strong> (CDC §13.3) — la WBS se réduit ainsi, sans supprimer une exigence pénalisée :</p>
 <table>
 <thead>
@@ -1850,12 +1839,12 @@ Trois dates sont figées par le calendrier pédagogique : S2, S10, S12.</p>
 <tr>
 <td><strong>Total repli</strong></td>
 <td></td>
-<td style="text-align: right;"><strong>≈ −36 h → 324 h pour 2 personnes (~160 h chacune, périmètre validé en S1)</strong></td>
+<td style="text-align: right;"><strong>≈ −36 h → 322 h pour 2 personnes (estimation révisée)</strong></td>
 </tr>
 </tbody>
 </table>
 <hr />
-<p><em>WBS MiniShop v1.0 — document généré depuis la même source de données que le CDC §13.3 (charges réconciliées) ;
+<p><em>WBS MiniShop v1.1 — document généré depuis la même source de données que le CDC §13.3 ;
 méthode : structure de découpage en 4 niveaux, estimation bottom-up, plan de charge, Gantt, chemin critique.</em></p>
 <footer class="doc">
   <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/05-wbs-projet.md</code>

@@ -7,6 +7,9 @@
 > **Dernière vérification :** 2026-10-28 · branche `arena/6e1d3706-sae-302`.
 > Cette version remplace la précédente, qui cochait des livrables **absents du dépôt** (voir §8).
 
+> **Note de portée (révision du 23/10/2026).** Ce suivi conserve des constats historiques. La tâche/configuration GitLab CI a été retirée du périmètre courant ; ses références ci-dessous ne sont pas des exigences actives. La CI GitHub Actions reste séparée et ne vaut pas preuve d’un pipeline GitLab.
+
+
 ---
 
 ## 0. Bloquants — installation, CI, base
@@ -29,7 +32,7 @@
 - [x] `tests/perf/mesurer.sh` — présent (+ `mesurer_sql.sh`).
 - [x] `.gitlab/merge_request_templates/{Lot,Bugfix,Docs,Release}.md` — présents.
 - [x] **PHPUnit** — `composer.json` (`phpunit/phpunit ^11`), `phpunit.xml`, `tests/phpunit/` (6 classes, 34 tests) + runner hors ligne.
-- [ ] CI GitLab — `base-tests` et `unit` ont désormais leurs scripts, mais le job `docs` échoue encore (`render.sh` absent) ; aucun pipeline n'a été exécuté ici.
+- [~] CI GitLab — configuration et exigence retirées du périmètre le 23/10/2026 ; les constats historiques de jobs incomplets ci-dessous ne décrivent plus une exigence à réaliser. La CI GitHub Actions reste séparée.
 - [ ] CI GitHub — le job `unit` reste tolérant : aucun PHPUnit réel n'a été joué dans cette sandbox.
 - [x] `var/.gitkeep` — présent.
 

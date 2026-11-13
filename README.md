@@ -1,6 +1,6 @@
 # MiniShop
 
-[![CI GitHub Actions](https://github.com/jojo8356/SAE-302/actions/workflows/ci.yml/badge.svg)](https://github.com/jojo8356/SAE-302/actions/workflows/ci.yml) [![Pipeline GitLab](https://iut-git.unice.fr/but2_s302/s302/badges/main/pipeline.svg)](https://iut-git.unice.fr/but2_s302/s302/-/pipelines)
+[![CI GitHub Actions](https://github.com/jojo8356/SAE-302/actions/workflows/ci.yml/badge.svg)](https://github.com/jojo8356/SAE-302/actions/workflows/ci.yml)
 
 > **MiniShop** est une application Web de boutique en ligne réalisée dans un cadre pédagogique : catalogue, panier, commandes et back-office. Le projet est développé en **PHP** et propose un stockage JSON par défaut ainsi qu’un pilote SQL via PDO.
 
@@ -8,16 +8,16 @@
 
 > **Périmètre : maquette scolaire.** Les paiements et les livraisons sont simulés. Le formulaire de contact n’envoie pas de courriel. Le projet n’est pas destiné à traiter de vraies ventes ni à être déployé tel quel en production.
 
-## Équipe et responsabilités
+## Équipe, responsabilités et accès
 
-Le groupe de réalisation comprend deux étudiants. La répartition opérationnelle A/B ci-dessous reprend l’adaptation à deux développeurs de [`docs/06-todolist.md`](docs/06-todolist.md). Les responsabilités du projet et les permissions GitLab sont indiquées séparément.
+Le groupe de réalisation comprend deux étudiants. Les permissions du dépôt GitLab IUT sont présentées séparément des responsabilités de planification.
 
-| Membre | Responsabilités du projet (RACI) | Accès au dépôt GitLab IUT |
-|---|---|---|
-| **Johan Polsinelli** | **A — pilotage et intégration** : dépôt/CI, backend et base de données, tests, déploiement et support de soutenance ; `R/A` sur ses lots, `C` sur les lots de B. | `Owner` |
-| **Chahd Gouiaa** | **B — développement applicatif** : front-office, vues, sécurité, JavaScript et répétitions ; `R/A` sur ses lots, `C` sur les lots de A. | `Developer` |
+| Membre | Accès au dépôt GitLab IUT |
+|---|---|
+| **Johan Polsinelli** | `Owner` |
+| **Chahd Gouiaa** | `Developer` |
 
-Les deux membres réalisent des relectures croisées des MR (`R`). `R` = réalise, `A` = assume la responsabilité finale, `C` = consulté. Les lettres A/B désignent la répartition opérationnelle de l’équipe à deux ; elles ne sont pas les permissions GitLab. Le CDC initial prévoit trois personnes (`docs/01-cahier-des-charges-MiniShop.md`, §3.3) : cette répartition explicite l’adaptation au groupe réel de deux indiqué dans la todolist.
+La WBS et la todolist utilisent des lettres A/B/C pour les responsabilités de projet et le RACI. Aucune correspondance entre ces lettres et les personnes nommées n’est établie dans ce README. Les permissions GitLab (`Owner`, `Developer`) ne sont pas des rôles RACI. La charte [`docs/20-charte-gitlab-revues-croisees.md`](docs/20-charte-gitlab-revues-croisees.md) décrit le processus de revue attendu ; ce README n’atteste pas que des MR ou des revues croisées ont déjà eu lieu.
 
 **Encadrement** — NGUYEN Thanh-Phuong, enseignante référente, est membre directe du projet GitLab IUT avec le rôle `Reporter` ; elle ne fait pas partie du groupe étudiant.
 
@@ -39,7 +39,7 @@ Les décisions d’interface s’appuient sur l’étude de design de [`docs/DA.
 | Stockage par défaut | Fichiers JSON, sans serveur de base de données |
 | Stockage SQL optionnel | MySQL **8.0.16+** ou MariaDB **10.6+**, via PDO (`pdo_mysql`) |
 | Base de données | Schéma relationnel, procédures stockées, déclencheurs et migrations dans `sql/` |
-| Tests | Suites PHP et Python ; contrôles complémentaires dans les pipelines GitHub Actions et GitLab CI |
+| Tests | Suites PHP et Python ; contrôles complémentaires dans GitHub Actions |
 
 Le pilote JSON est celui utilisé par défaut. Le mode SQL est sélectionné dans `.env` avec `STORAGE_DRIVER=sql`. Les secrets et réglages propres à une machine doivent rester dans `.env`, qui n’est pas destiné à être versionné ; seul le modèle `.env.example` est suivi par Git. **Node.js et npm ne sont pas nécessaires pour lancer l’application.**
 
@@ -129,7 +129,7 @@ php scripts/run-all-tests.php
 
 L’intégration SQL nécessite un serveur de test isolé : elle crée et supprime une base dédiée. L’E2E PHP-WASM et certains tests JavaScript ne sont exécutés que si leurs outils optionnels sont présents. Vérifier le résumé final du runner pour distinguer les tests **joués**, **non joués** et **en échec**. Ne jamais lancer de tests SQL contre une base de données contenant des informations à conserver.
 
-Les workflows automatisés sont définis dans [`ci.yml`](.github/workflows/ci.yml) et [`.gitlab-ci.yml`](.gitlab-ci.yml). Ils couvrent notamment la syntaxe PHP, les suites de tests, des contrôles de sécurité, SQL sur bases jetables et des vérifications responsive en navigateur.
+Le workflow automatisé du dépôt est défini dans [`ci.yml`](.github/workflows/ci.yml). Il couvre notamment la syntaxe PHP, les suites de tests, des contrôles de sécurité, SQL sur bases jetables et des vérifications responsive en navigateur. Cette CI GitHub ne constitue pas une preuve de pipeline GitLab IUT.
 
 ### Recette manuelle
 

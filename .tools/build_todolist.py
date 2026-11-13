@@ -1,25 +1,26 @@
 # -*- coding: utf-8 -*-
-"""Génère la todolist projet MiniShop : docs/06-todolist.md + artefacts/06-todolist.html
-Statuts RÉELS au 23/09/2026 (vérifiés dans le workspace), séparation
-tâches dépendantes (chaîne de l'application) vs tâches asynchrones (prêtes maintenant)."""
+"""Génère la todolist MiniShop (Markdown + HTML dans le dépôt).
+Les mesures de septembre restent une photographie historique ; les changements de périmètre
+et validations attestées sont explicitement datés dans le document généré."""
 import pathlib, re, markdown
 
-DOCS = pathlib.Path("/home/user/docs")
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+DOCS = ROOT / "docs"
 OUT_MD = DOCS / "06-todolist.md"
-OUT_HTML = pathlib.Path("/home/user/artefacts/06-todolist.html")
-DATE = "23 septembre 2026"
+OUT_HTML = ROOT / "artefacts" / "06-todolist.html"
+SCOPE_DATE = "23 octobre 2026"
+MEETING_DATE = "13 novembre 2026"
 
 # (id, libellé, resp, h_rest, statut, deps, prio, note_async)
-# statut : "F" fait · "P" partiel · "T" à faire  |  async : "" = dépendante, "ASYNC" = prête maintenant
+# statut : "F" fait · "P" partiel · "T" à faire  |  async = classification du graphe de référence, pas disponibilité actuelle
 T = {
  "L1": [
-  ("D1-L1-01","Créer le dépôt GitLab privé, inviter l'équipe + enseignante, protéger main, envoyer le courriel « Composition SAE »","A",2,"T","—","P1","ASYNC"),
+  ("D1-L1-01","Créer le dépôt GitLab privé, inviter l'équipe + enseignante, protéger main, envoyer le courriel « Composition SAE »","A",0,"F","—","—","ASYNC"),
   ("D1-L1-02","Compléter le squelette : arborescence app/ + public/ vides (.gitkeep) — le reste (docs/sql/tests/scripts) est en place","A",1,"P","D1-L1-01","P2","ASYNC"),
   ("D1-L1-03","README v0 (prérequis, installation cible, membres et rôles)","A",0,"F","—","—",""),
-  ("D1-L1-04","Épingler la grille de conformité du barème en issue GitLab (contenu déjà rédigé : CDC §16)","A",1,"P","D1-L1-01","P2","ASYNC"),
-  ("D1-L1-05","Charte GitLab : branches, MR croisées, commits conventionnels, 1 issue par UC/EF","A",0,"F","—","—",""),
-  ("D1-L1-06","Chaîne CI (.gitlab-ci.yml, 6 jobs) — fichier livré ; s'exécutera au premier push","A",0,"F","—","—",""),
-  ("D1-L1-07","Réunion de cadrage : relecture du sujet ligne à ligne, périmètre, règle de repli groupe de 2","A",2,"T","—","P3","ASYNC"),
+  ("D1-L1-04","Issue GitLab de conformité renseignée : cinq livrables et pénalités du barème (CDC §16)","A",0,"F","D1-L1-01","—",""),
+  ("D1-L1-05","Charte GitLab : branches, MR croisées, commits conventionnels, 1 issue par UC/EF (docs/20)","A",0,"F","—","—",""),
+  ("D1-L1-07","Réunion de vérification de l'audit complet et de validation simple (compte rendu docs/21-compte-rendu-reunion-audit-2026-11-13.md)","A",0,"F","—","—",""),
  ],
  "L2": [
   ("D2-L2-01","Rédiger §1 Présentation + §2 Objectifs","A",0,"F","—","—",""),
@@ -73,7 +74,7 @@ T = {
   ("D4-L8-02","app/Config/Database.php : PDO, EXCEPTION, EMULATE_PREPARES = false","A",3,"T","D4-L8-01","P1",""),
   ("D4-L8-03","Gabarit de vues + layout + helper d'échappement systématique","A",4,"T","D4-L8-01","P1",""),
   ("D4-L8-04","app/Security : AuthMiddleware, sessions durcies, jetons CSRF","A",6,"T","D4-L8-02","P1",""),
-  ("D4-L8-05","CI complète activée + app/Config/env.example.php + public/install.php (annoncés par sql/01 et le README)","A",4,"T","D4-L8-04","P1",""),
+  ("D4-L8-05","CI GitHub Actions complète + app/Config/env.example.php + public/install.php (annoncés par sql/01 et le README)","A",4,"T","D4-L8-04","P1",""),
  ],
  "L9": [
   ("D4-L9-01","UC-01 Catalogue : v_catalogue + pagination (12 par défaut, borne 60)","C",6,"T","L8","P1",""),
@@ -104,7 +105,7 @@ T = {
   ("D4-L12-02","Autorisation : contrôle d'appartenance, 404 sur id étranger (IDOR)","C",5,"T","L9;L10","P1",""),
   ("D4-L12-03","Échappement systématique : revue des vues","C",4,"T","L9;L10;L11","P1",""),
   ("D4-L12-04","En-têtes durcis, cookie HttpOnly/SameSite, erreurs génériques","C",3,"T","L9","P2",""),
-  ("D4-L12-05","Écrire tests/security/controles.sh (10 contrôles) : le script SE PRÉPARE MAINTENANT, son « vert » attend l'application","C",4,"T","—","P1","ASYNC*"),
+  ("D4-L12-05","Écrire tests/security/controles.sh (10 contrôles) : préparation indépendante, validation liée à l'application","C",4,"T","—","P1","ASYNC*"),
  ],
  "L13": [
   ("D4-L13-01","JS panier : badge, MAJ AJAX, repli sans JS","C",5,"T","D4-L10-03","P2",""),
@@ -116,12 +117,12 @@ T = {
   ("D5-L14-01","Doc de tests : dispositif, stratégie, niveaux (doc 02 §1–§2)","B",0,"F","—","—",""),
   ("D5-L14-02","Rejouer les 29 tests SQL via le harnais + rapport final","B",4,"T","D3-L6-06;D3-L6-07;D3-L7-05","P1",""),
   ("D5-L14-03","Cas fonctionnels F-01…F-31 : exécution + preuves","B",3,"T","L9;L10;L11","P1",""),
-  ("D5-L14-04","Concurrence : écrire reserver.sh (script dès maintenant), exécuter 20/12 après L10","B",3,"T","D4-L10-04","P1","ASYNC*"),
+  ("D5-L14-04","Concurrence : préparer reserver.sh ; exécuter 20/12 après L10","B",3,"T","D4-L10-04","P1","ASYNC*"),
   ("D5-L14-05","Matrice de traçabilité exigence → test + PV de recette à jour","A",3,"P","D5-L14-02;D5-L14-03","P1",""),
-  ("D5-L14-06","Performance p95 < 500 ms : partie base seule MESURABLE MAINTENANT (mesurer_sql.sh), partie HTTP après L9","A",5,"T","L9;L10;L11","P2","ASYNC*"),
+  ("D5-L14-06","Performance p95 < 500 ms : mesure SQL via mesurer_sql.sh ; mesure HTTP après L9","A",5,"T","L9;L10;L11","P2","ASYNC*"),
  ],
  "L15": [
-  ("D1-L15-01","scripts/deploy.sh : hashes aléatoires, emails de démo régénérés","A",3,"T","L11","P2",""),
+  ("D1-L15-01","scripts/deploy.php : renouveler les hashes de démo et les emails .invalid ; procédure docs/22 à suivre en staging seulement","A",3,"T","L11","P2",""),
   ("D1-L15-02","README final : statut réel de l'application, wrapper build-docs.sh (ou pointer .tools), comptes","A",1,"P","D1-L15-01","P2",""),
   ("D1-L15-03","Nettoyage de l'arborescence + tag v1.0-rendu","A",2,"T","D1-L15-02","P1",""),
  ],
@@ -139,12 +140,12 @@ LOT_NOM = {
  "L13":"JavaScript client","L14":"Tests & validation","L15":"Démo en ligne & rendu","L16":"Soutenance"}
 DIV_LOTS = {"D1":["L1","L15"],"D2":["L2","L3"],"D3":["L4","L5","L6","L7"],
             "D4":["L8","L9","L10","L11","L12","L13"],"D5":["L14"],"D6":["L16"]}
-DIV_NOM = {"D1":"Pilotage, dépôt GitLab & intégration","D2":"Document de spécification du système",
+DIV_NOM = {"D1":"Pilotage, dépôt GitLab & collaboration","D2":"Document de spécification du système",
            "D3":"Conception de la base de données & SQL","D4":"Application Web PHP / MySQL / PDO",
            "D5":"Tests & validation","D6":"Soutenance"}
 COULEURS = {"D1":"#64748b","D2":"#7c2d12","D3":"#b45309","D4":"#15803d","D5":"#b91c1c","D6":"#6d28d9"}
 
-LOT_H = {"L1":16,"L2":26,"L3":28,"L4":28,"L5":20,"L6":30,"L7":20,"L8":22,"L9":32,"L10":28,"L11":30,"L12":20,"L13":14,"L14":24,"L15":8,"L16":14}
+LOT_H = {"L1":14,"L2":26,"L3":28,"L4":28,"L5":20,"L6":30,"L7":20,"L8":22,"L9":32,"L10":28,"L11":30,"L12":20,"L13":14,"L14":24,"L15":8,"L16":14}
 
 # ---------- calculs + assertions ----------
 REST = 0 ; FAIT = 0
@@ -173,8 +174,8 @@ for lot, tasks in T.items():
         if h: continue
 for r in "ABC":
     pass
-# charge faite par personne = (charge WBS par personne) - restante ; charge WBS : A122 B117 C121 (WBS §6.2)
-WBS_PERS = {"A":122,"B":117,"C":121}
+# charge faite par personne = (charge WBS par personne) - restante ; charge WBS révisée : A120 B117 C121 (WBS §6.2)
+WBS_PERS = {"A":120,"B":117,"C":121}
 for lot, tasks in T.items():
     for (tid, lbl, r, h, st, dep, prio, async_) in tasks:
         pass
@@ -188,12 +189,17 @@ for lot, tasks in T.items():
 for r in "ABC": PERS_FAIT[r] = WBS_PERS[r] - PERS_REST[r]
 FAIT = sum(PERS_FAIT.values())
 TOTAL = FAIT + REST
-assert TOTAL == 360, TOTAL
-assert (PERS_REST["A"], PERS_REST["B"], PERS_REST["C"]) == (84, 17, 97), (PERS_REST["A"], PERS_REST["B"], PERS_REST["C"])
-assert sum(DIV_REST.values()) == REST == 198
-assert sum(DIV_FAIT.values()) == FAIT == 162
-assert PERS_FAIT == {"A":38,"B":100,"C":24}, PERS_FAIT
+assert TOTAL == 358, TOTAL
+assert (PERS_REST["A"], PERS_REST["B"], PERS_REST["C"]) == (79, 17, 97), (PERS_REST["A"], PERS_REST["B"], PERS_REST["C"])
+assert sum(DIV_REST.values()) == REST == 193
+assert sum(DIV_FAIT.values()) == FAIT == 165
+assert PERS_FAIT == {"A":41,"B":100,"C":24}, PERS_FAIT
 
+N_TASKS = sum(len(tasks) for tasks in T.values())
+COUNTS = {status: sum(1 for tasks in T.values() for task in tasks if task[4] == status) for status in ("F", "P", "T")}
+ASYNC_BY_PERSON = {person: sum(row[3] for row in ASYNC_TASKS if row[2] == person) for person in "ABC"}
+ASYNC_H = sum(ASYNC_BY_PERSON.values())
+assert N_TASKS == 85 and sum(COUNTS.values()) == N_TASKS, (N_TASKS, COUNTS)
 BADGE = {"F":"✅","P":"🟡","T":"⬜"}
 STATUT_NOM = {"F":"fait","P":"partiel","T":"à faire"}
 
@@ -201,24 +207,25 @@ STATUT_NOM = {"F":"fait","P":"partiel","T":"à faire"}
 # MARKDOWN
 # =====================================================================
 md = [] ; A = md.append
-A("# MiniShop — Todolist projet : tâches dépendantes et tâches asynchrones")
+A("# MiniShop — Todolist projet : suivi de base et planification historique")
 A("")
-A(f"**État réel arrêté au {DATE}** (vérifié dans le dépôt et sur la base MariaDB 11.8.6), croisé avec la WBS")
-A("(`docs/05-wbs-projet.md`) : les 86 tâches y sont reprises avec leur statut, puis classées en")
-A("**tâches dépendantes** (l'ordre est imposé) et **tâches asynchrones** (aucune attente, démarrage immédiat possible, en parallèle).")
+A(f"**Périmètre :** révision du {SCOPE_DATE} ; le livrable CI GitLab est retiré et la WBS compte désormais {N_TASKS} tâches. **D1-L1-01** est `OK*` sur attestation utilisateur de l'envoi du courriel (la boîte d'envoi n'a pas été vérifiée indépendamment) ; **D1-L1-07** est terminée sur attestation utilisateur, réunion datée du {MEETING_DATE}.")
+A("Le statut **D1-L1-04** porte sur l'issue contenant les cinq livrables et pénalités ; l'épinglage n'est pas attesté et n'est pas requis par ce critère. **D1-L1-05** est terminé sur le livrable documentaire uniquement : l'usage réel de MR/revues croisées n'est pas démontré.")
+A("Les états non révisés restent ceux de la photographie du 23/09/2026 ; les statuts D1-L1-01/04/05/07 sont actualisés uniquement selon les attestations ou preuves décrites ici et dans l'audit docs/19. Les mesures MariaDB sont historiques et n'ont pas été rejouées. Les catégories dépendantes/asynchrones, le graphe et les plans S6 ci-dessous décrivent le planning de base à cette date : ils ne valent ni état d'exécution ni priorité actuelle. Revalider les dépendances, les statuts et les disponibilités avant toute action. La todolist comprend les tâches de la WBS révisée, classées en")
+A("**tâches dépendantes** (ordre prévu dans le graphe) et **tâches asynchrones** (aucune dépendance restante identifiée dans la photographie de référence ; cela ne signifie pas qu'elles sont disponibles aujourd'hui).")
 A("")
 A("| | |")
 A("|---|---|")
-A("| **Avancement global** | **162 h faites / 360 h (45 %)** — 84 tâches terminées ou soldées, 14 partielles, 36 à faire |")
-A(f"| **Reste à faire** | **{REST} h** : application Web 146 h (le gros du reste), tests 18 h, pilotage 12 h, soutenance 9 h, BD 9 h, UML 4 h |")
-A("| **Prêtes MAINTENANT (asynchrones)** | **~40 h de travail immédiatement disponible**, répartissables en parallèle entre A, B et C sans aucun blocage |")
-A("| **Chaîne dépendante** | L8 → L9 → L10 → L11 → L12 → L14 → L15 → L16 (l'application), jalons J3→J6 |")
-A("| **Documents liés** | `docs/05-wbs-projet.md` (détail des tâches et charges) · `docs/01` §13.4 (jalons) · `README.md` (état du dépôt) |")
-A("| **Version** | 1.0 — " + DATE + " |")
+A(f"| **Avancement global** | **{FAIT} h faites / {TOTAL} h planifiées ({FAIT/TOTAL:.0%})** — {COUNTS['F']} terminées, {COUNTS['P']} partielles, {COUNTS['T']} à faire ({N_TASKS} tâches) |")
+A(f"| **Reste à faire** | **{REST} h estimées**, dont 146 h pour l'application Web ; les autres postes restent issus de la photographie historique |")
+A(f"| **Backlog asynchrone du plan de base** | **{ASYNC_H} h** classées sans dépendance restante dans la photographie du 23/09 ; statuts et disponibilité à revérifier |")
+A("| **Chaîne planifiée** | L8 → L9 → L10 → L11 → L12 → L14 → L15 → L16 ; jalons du planning de base à revalider |")
+A("| **Documents liés** | `docs/05-wbs-projet.md` (WBS) · `docs/20-charte-gitlab-revues-croisees.md` · `docs/21-compte-rendu-reunion-audit-2026-11-13.md` · `docs/22-procedure-validation-staging.md` |")
+A("| **Version** | 1.2 — périmètre du 23 octobre, validation attestée le 13 novembre 2026 |")
 A("")
 A("---")
 A("")
-A("## 1. État d'avancement (mesuré, pas déclaré)")
+A("## 1. État d'avancement (statuts documentés ; mesures techniques datées séparément)")
 A("")
 A("### 1.1 Par division")
 A("")
@@ -227,75 +234,72 @@ A("|---|---:|---:|---:|---|")
 for d in ["D1","D2","D3","D4","D5","D6"]:
     tot = sum(LOT_H[l] for l in DIV_LOTS[d])
     A(f"| **{d} — {DIV_NOM[d]}** | {tot} h | {DIV_FAIT[d]} h | {DIV_REST[d]} h | {'█'*round(DIV_FAIT[d]/tot*20)}{'░'*(20-round(DIV_FAIT[d]/tot*20))} {DIV_FAIT[d]/tot:.0%} |")
-A(f"| **Total** | **360 h** | **{FAIT} h** | **{REST} h** | **45 %** |")
+A(f"| **Total** | **{TOTAL} h** | **{FAIT} h** | **{REST} h** | **{FAIT/TOTAL:.0%}** |")
 A("")
-A("### 1.2 Par personne (chargé vs restant)")
+A("### 1.2 Répartition par rôle de planification (A/B/C ; aucune correspondance nominative établie)")
 A("")
-A("| Pers. | Charge WBS | Reste | Fait | Remarque |")
+A("| Rôle | Charge WBS | Reste | Fait | Remarque (photographie du 23/09) |")
 A("|---|---:|---:|---:|---|")
-A(f"| **A** | 122 h | {PERS_REST['A']} h | {PERS_FAIT['A']} h | porte la chaîne critique (socle + panier/commande + back-office) ; les pilotes async (GitLab, slides) sont légers, à faire en début de semaine |")
-A(f"| **B** | 117 h | **{PERS_REST['B']} h seulement** | {PERS_FAIT['B']} h | la base est **terminée et validée** ; B est la ressource libre de la période → absorbe du C (revues des MR d'A) et les tests |")
-A(f"| **C** | 121 h | {PERS_REST['C']} h | {PERS_FAIT['C']} h | le front-office + sécurité + JS pèsent sur C : **prioriser les MR croisées avec A sur L8** pour démarrer |")
+A(f"| **A** | 120 h | {PERS_REST['A']} h | {PERS_FAIT['A']} h | rôle de planification chargé du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |")
+A(f"| **B** | 117 h | {PERS_REST['B']} h | {PERS_FAIT['B']} h | rôle de planification base de données/tests ; états et disponibilité après la photographie non revérifiés |")
+A(f"| **C** | 121 h | {PERS_REST['C']} h | {PERS_FAIT['C']} h | rôle de planification front-office/sécurité/JS ; disponibilité et attribution nominative non établies |")
 A("")
-A("> **Lecture clé** : le reste du projet est concentré sur **une seule chaîne** (D4, 146 h). Tout le jeu")
-A("> consiste à démarrer L8 **immédiatement** (il n'attend plus rien) pendant que B solde les 17 h qui lui restent")
-A("> et que chacun prend sa part du **backlog asynchrone** (§2) — c'est le seul levier pour tenir S6→S12.")
+A("> **Lecture de la photographie** : le reste du projet était concentré sur D4 (146 h) et une chaîne L8→L16.")
+A("> Cette vue du 23/09 ne décrit pas l'avancement actuel ; les priorités et le plan S6→S12 doivent être réévalués avant utilisation.")
 A("")
 A("**Légende des statuts utilisés partout ci-dessous :** ✅ fait (0 h restante) · 🟡 partiel (reste chiffré) · ⬜ à faire ·")
-A("**`ASYNC`** = aucune dépendance non satisfaite → démarrage immédiat possible · **`ASYNC*`** = la *préparation* est")
-A("immédiate (écrire le script), l'*exécution utile* attend un lot de la chaîne.")
+A("**`ASYNC`** = aucune dépendance restante identifiée dans le graphe de référence · **`ASYNC*`** = la *préparation* était classée")
+A("indépendante, tandis que l'exécution utile attend un lot de la chaîne. Ces étiquettes ne prouvent pas une disponibilité actuelle.")
+A("**`✅*` pour D1-L1-01 :** statut `OK*` selon l'attestation utilisateur d'envoi du courriel ; aucune vérification indépendante de la boîte d'envoi n'est revendiquée (voir `docs/19`).")
 A("")
 A("---")
 A("")
-A("## 2. ⚡ TÂCHES NON DÉPENDANTES — le backlog asynchrone (à prendre sans attendre)")
+A("## 2. Classification asynchrone du plan de base — photographie du 23/09/2026")
 A("")
-A("Ces tâches **ne dépendent d'aucune tâche restante** : elles peuvent être exécutées **en parallèle**, dans n'importe")
-A("quel ordre, par des personnes différentes, pendant que la chaîne de l'application (§3) avance. C'est le travail à")
-A("enfiler dès aujourd'hui — idéalement **cette semaine (S6)**, en tête de chaque journée avant les lots de chaîne.")
+A("Dans le graphe de dépendances de la photographie du 23/09, ces tâches ne dépendent d'aucune tâche restante : elles pouvaient être préparées en parallèle.")
+A("Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évoluer. Vérifier chaque tâche et ses prérequis dans le dépôt avant de la reprendre.")
 A("")
-A("| # | ID | Tâche | Pers. | h | Priorité | Pourquoi c'est prêt maintenant |")
+A("| # | ID | Tâche | Rôle | h | Priorité | Motif de la classification dans la photographie |")
 A("|---|---|---|---|---:|---|---|")
 async_sorted = sorted(ASYNC_TASKS, key=lambda t: ({"A":0,"B":1,"C":2}[t[2]], -t[3]))
 for i, (tid, lbl, r, h, prio, mark) in enumerate(async_sorted, 1):
     pourquoi = {
-      "D1-L1-01":"aucun prérequis technique (10 min d'admin GitLab) mais **tout le reste en dépend** → le traiter en premier",
-      "D1-L1-02":"les dossiers docs/ sql/ tests/ scripts/ existent déjà",
-      "D1-L1-04":"la grille est déjà rédigée (CDC §16.2), il ne reste qu'à l'épingler",
-      "D1-L1-07":"pure décision d'équipe, aucun artefact requis",
-      "D2-L3-06":"les 14 PNG existent ; il ne manque que les sources et le script de rendu",
-      "D3-L5-05":"les 4 fichiers sql/ sont **corrigés et validés** (campagne du 23/09) — le script n'est qu'un enrubannage",
-      "D3-L6-06":"le manifeste (attendu par test) et la fixture sont déjà livrés",
-      "D3-L6-07":"idem + run_tests.sh s'écrit contre le manifeste",
-      "D3-L7-05":"la campagne a déjà été **exécutée pour de vrai** (rapport versionné) — il reste à la rendre rejouable",
-      "D4-L8-01":"ses seules dépendances (spec UML, règles, SQL) sont **toutes FAITES**",
-      "D6-L16-01":"le déroulé minute par minute (docs/03) est écrit : les slides n'attendent que lui",
-      "D4-L12-05":"les 10 contrôles sont spécifiés (CDC §15.3) : le grep-script s'écrit sans l'app",
-      "D5-L14-04":"le scénario de charge (20/12) est défini : le script s'écrit sans l'app",
-      "D5-L14-06":"mesurer_sql.sh est livré et la base est chargée → mesure base seule immédiate",
+      "D1-L1-01":"le plan de base l'identifiait comme préalable aux tâches de dépôt ; la preuve utilisateur de l'envoi est distinguée dans l'audit docs/19",
+      "D1-L1-02":"les dossiers docs/, sql/, tests/ et scripts/ étaient indiqués comme déjà présents dans la photographie",
+      "D1-L1-04":"l'issue atteste le suivi des cinq livrables et pénalités ; l'épinglage n'est pas revendiqué",
+      "D1-L1-07":"réunion attestée par l'utilisateur ; compte rendu daté du 13/11/2026, sans noms de participants inventés",
+      "D2-L3-06":"constat du 23/09 : les PNG existaient ; les sources et le script de rendu étaient alors signalés manquants (voir les corrections ultérieures de l'audit)",
+      "D3-L5-05":"le rapport de la campagne du 23/09 indiquait les quatre fichiers SQL corrigés ; cela ne remplace pas un contrôle actuel",
+      "D3-L6-06":"le manifeste et la fixture étaient signalés présents dans la photographie",
+      "D3-L6-07":"le manifeste et la fixture étaient signalés présents dans la photographie",
+      "D3-L7-05":"un rapport versionné consigne la campagne historique ; la procédure de rejeu et son état doivent être vérifiés séparément",
+      "D4-L8-01":"les dépendances étaient marquées faites dans la photographie ; leur état n'a pas été revérifié dans cette liste",
+      "D6-L16-01":"docs/03 était déjà présent dans la photographie ; le statut des diapositives est à vérifier dans la todolist",
+      "D4-L12-05":"le plan considérait la préparation du script séparément ; contrôles et application ont depuis évolué",
+      "D5-L14-04":"le scénario de charge était défini dans la planification ; vérifier l'état actuel du harnais",
+      "D5-L14-06":"la mesure SQL seule était séparée de la mesure HTTP dans le plan ; ni la base ni les mesures n'ont été rejouées ici",
     }.get(tid, "dépendances déjà satisfaites")
     A(f"| {i} | `{tid}` | {lbl} | {r} | {h} | {prio} | {pourquoi} |")
 A("")
-A("**Total backlog asynchrone : ~40 h** (A 36 h — dont le lot L8 de 22 h qui est la *porte d'entrée de la chaîne* —,")
-A("B 7 h, C 4 h + les préparations `ASYNC*`).")
+A(f"**Total backlog asynchrone : {ASYNC_H} h** (A {ASYNC_BY_PERSON['A']} h, B {ASYNC_BY_PERSON['B']} h, C {ASYNC_BY_PERSON['C']} h, préparations `ASYNC*` incluses).")
 A("")
-A("**Trois façons de croiser les bras entre personnes** (règle des ≥ 5 commits par zone, WBS §10) :")
+A("**Pistes de parallélisation du plan de référence** (règle des ≥ 5 commits par zone, WBS §10 ; aucune disponibilité actuelle n'est affirmée) :")
 A("")
-A("1. **B aide A sur L8** : B connaît `fn_param`, les codes retour (`STOCK_INSUFFISANT`…) et les signatures des")
-A("   17 procédures mieux que quiconque → c'est B qui rédige les stubs d'appel du `CommandeRepository`.")
-A("2. **C relit chaque MR de L8** (revue croisée obligatoire de toute façon) → C prépare L9/L12 en lisant le socle.")
-A("3. **A prend les 4 h de slides** (L16-01) en fin de semaine creuse : tâche isolée, aucun conflit de merge.")
+A("1. **B peut contribuer au socle L8** selon les rôles de planification ; les lettres ne sont pas rattachées à des personnes nommées ici.")
+A("2. **Une revue distincte de l'auteur est prévue par la charte** ; cette proposition ne prouve pas qu'une MR ou une revue ait eu lieu.")
+A("3. **Le rôle A peut prendre en charge les slides** dans le scénario de base ; à réattribuer après confirmation de l'équipe.")
 A("")
 A("---")
 A("")
 A("## 3. ⛓️ TÂCHES DÉPENDANTES — la chaîne de l'application (l'ordre est imposé)")
 A("")
-A("Une tâche de cette section **ne peut pas commencer** avant que ses dépendances soient ✅. La chaîne critique est :")
+A("Dans le graphe de référence, les tâches de cette section attendent leurs dépendances ; la chaîne critique prévue est :")
 A("")
 A("> **L8 (socle) → L9 (front-office) → L10 (panier/commande) → L11 (back-office) → L12 (sécurité) → L14 (tests) → L15 (rendu) → L16 (répétition)**")
 A("")
 A("| Ordre | Lot | h | Ne peut démarrer qu'après | Débloque | Jalon à l'arrivée |")
 A("|---|---|---:|---|---|---|")
-A("| 1 | **L8** socle applicatif (routeur, PDO, vues, auth/CSRF, CI active) | 22 | — (déps déjà ✅) → ****`ASYNC`** | L9, L10, L11, L12 | page d'accueil servie (S6) |")
+A("| 1 | **L8** socle applicatif (routeur, PDO, vues, auth/CSRF, CI GitHub Actions) | 22 | — dans le plan de base | L9, L10, L11, L12 | page d'accueil servie (jalon S6 prévu) |")
 A("| 2 | **L9** front-office (catalogue, recherche, fiche, compte, connexion) | 32 | L8 ; 04/05 après L8-04 | L10 (partiellement), L12 | **J3** parcours visiteur (S7) |")
 A("| 3 | **L10** panier + commande (session, UC-06/07/08/09) | 28 | L8 ; écrans après L10-02/04 | L13, L14-03/04 | commande de démo dans l'app (S8) |")
 A("| 4 | **L11** back-office (produits, catégories, stocks, commandes, statuts) | 30 | L8-04 (auth admin) ; vues après L11-02..04 | L12, L14-03, L15-01 | **J4** parcours admin (S9) |")
@@ -320,10 +324,10 @@ A("")
 A("## 4. Graphe de dépendances (vue synthétique)")
 A("")
 A("```text")
-A(" ASYNC (immédiat, en parallèle)          CHAÎNE DÉPENDANTE (séquentielle)")
+A(" ASYNC (classification du plan de base)  CHAÎNE DÉPENDANTE (ordre planifié)")
 A(" ─────────────────────────────          ─────────────────────────────────")
-A(" D1-L1-01 GitLab (2h) ──┐               L8 socle (22h, A) ──┬─> L9 front (32h, C) ──┬─> L10 panier/cmd (28h, A+C)")
-A(" D1-L1-02/04/07 (5h)    │                                   │                       │        │")
+A(" D1-L1-01 GitLab (2h, photo) ──┐        L8 socle (22h, A) ──┬─> L9 front (32h, C) ──┬─> L10 panier/cmd (28h, A+C)")
+A(" D1-L1-02/04/07 (5h, photo)│                                │                       │        │")
 A(" D2-L3-06 puml (4h, B)  ├─ tout cela tourne                │                       │        └─> L13 JS (14h, C)")
 A(" D3-L5-05 load_db (3h,B)│   EN PARALLÈLE                   ├─> L11 back (30h, A+C) ┘")
 A(" D3-L6-06/07 tNN (4h,A) │   de la chaîne ────────────────> │")
@@ -334,7 +338,7 @@ A("```")
 A("")
 A("---")
 A("")
-A("## 5. Détail complet — les 86 tâches avec leur statut réel")
+A("## 5. Détail complet — les 85 tâches de la WBS et leur statut de suivi")
 A("")
 for d in ["D1","D2","D3","D4","D5","D6"]:
     tot = sum(LOT_H[l] for l in DIV_LOTS[d])
@@ -349,29 +353,29 @@ for d in ["D1","D2","D3","D4","D5","D6"]:
         A("| ID | Tâche | Pers. | h rest. | Statut | Dépend de | Prio |")
         A("|---|---|---|---:|---|---|---|")
         for (tid, lbl, r, h, st, dep, prio, mark) in tasks:
-            badge = BADGE[st] + (" `ASYNC`" if mark.startswith("ASYNC") else "")
+            badge = BADGE[st] + ("*" if tid == "D1-L1-01" else "") + (" `ASYNC`" if mark.startswith("ASYNC") else "")
             A(f"| `{tid}` | {lbl} | {r} | {h} | {badge} | {dep} | {prio} |")
         A("")
     A("")
 A("---")
 A("")
-A("## 6. Déclencheurs : « quand X se termine → Y démarre »")
+A("## 6. Déclencheurs du plan de base (à recalibrer)")
 A("")
 A("| Événement déclencheur | Tâches débloquées |")
 A("|---|---|")
-A("| **D1-L1-01** dépôt GitLab créé (aujourd'hui) | tout le workflow MR/issues ; D1-L1-02, D1-L1-04 |")
+A("| **D1-L1-01** dépôt GitLab créé (précondition du plan de base) | workflow MR/issues ; D1-L1-02, D1-L1-04 |")
 A("| **L8-01** routeur OK | L8-02/03 (PDO, vues) |")
 A("| **L8-04** middleware auth/CSRF OK | L9-04/05 (compte, connexion) · L11-01 (admin) |")
-A("| **L8 complet** (jalon S6) | L9-01..03, L10-01/02, L11-02..04 → **la chaîne se met à couler** |")
+A("| **L8 complet** (jalon S6 prévu) | L9-01..03, L10-01/02, L11-02..04 |")
 A("| **L9-01..03** catalogue/fiche OK | L10-01 (le panier référence la fiche) |")
 A("| **L10-04** CommandeController OK | L10-05/06 (écrans), L13 (JS panier), L14-04 (exécution reserver.sh) |")
-A("| **L11 complet** (J4) | L12 en mode validation, L14-03 (F-tests), L15-01 (deploy.sh) |")
+A("| **L11 complet** (J4 prévu) | L12 en mode validation, L14-03 (F-tests), L15-01 (deploy.php) |")
 A("| **L12 complet** (S-01…S-08 vert) | L14-03/05 (recette finale), L15 (rendu) |")
 A("| **L15-03** tag `v1.0-rendu` | L16-03 (répétitions sur la démo figée) |")
 A("")
 A("---")
 A("")
-A("## 7. Cette semaine (S6) — le plan d'action immédiat")
+A("## 7. Exemple de plan S6 de la photographie — non exécuté, à replanifier")
 A("")
 A("| Jour | A | B | C |")
 A("|---|---|---|---|")
@@ -379,15 +383,14 @@ A("| **J1** | `D1-L1-01` GitLab + push de ce qui existe (2 h) | `D3-L5-05` load_
 A("| **J2** | `D4-L8-01` routeur (5 h) | `D2-L3-06` puml + render.sh (4 h) | revue MR routeur + stubs vues |")
 A("| **J3** | `D4-L8-02` Database PDO (3 h) | `D3-L6-06/07` + `D3-L7-05` tNN (6 h) | `D4-L12-05` controles.sh (4 h) |")
 A("| **J4** | `D4-L8-03` vues + échappement (4 h) | `D5-L14-06` mesure perf base seule + rapport | revue MR + prépa L9-01 |")
-A("| **J5** | `D4-L8-04` auth/CSRF (6 h, déborde S7 si besoin) | aide A : stubs CommandeRepository (B est libre !) | `D1-L1-04` grille issue + `D1-L1-07` cadrage |")
+A("| **J5** | `D4-L8-04` auth/CSRF (6 h, déborde S7 si besoin) | aide sur les stubs CommandeRepository (rôle B dans le plan) | vérifier les preuves de recette ; `D1-L1-07` a déjà été consignée le 13/11 selon l'attestation utilisateur |")
 A("")
-A("**Objectif de fin de semaine : L8 terminé, harnais de tests prêt, dépôt vivant (≥ 1 commit/pers./jour)** —")
-A("la chaîne critique peut alors couler sans attendre pendant 6 semaines jusqu'à J6.")
+A("**Objectif du plan historique : L8 terminé et harnais de tests prêt.** Ce plan n'atteste ni l'exécution des tâches ni des commits et doit être replanifié avant tout usage.")
+A("Dans le scénario historique, L8 devait débloquer la chaîne jusqu'au jalon J6 ; ce calendrier ne doit pas être repris sans replanification.")
 A("")
 A("---")
 A("")
-A("*Todolist MiniShop v1.0 — statuts mesurés dans le dépôt et sur la base (campagne SQL du 23/09,")
-A("rapport `tests/sql/rapport_tests_sql.md`) ; charges issues de la WBS `docs/05` (360 h, répartition A 122 / B 117 / C 121).*")
+A("*Todolist MiniShop v1.2 — états autres que D1-L1-01/04/05/07 issus de la photographie du 23/09/2026, non revérifiés ici ; périmètre WBS révisé au 23/10/2026 ; D1-L1-01 : envoi attesté par l'utilisateur (boîte d'envoi non vérifiée) ; D1-L1-04 : preuve de l'issue et des cinq livrables ; D1-L1-05 : livrable documentaire uniquement ; D1-L1-07 : réunion du 13/11/2026 attestée, sans prétendre à des vérifications externes. Charge WBS : 358 h (A 120 / B 117 / C 121).*")
 
 OUT_MD.write_text("\n".join(md), encoding="utf-8")
 print(f"OK MD : {OUT_MD} ({len(md)} lignes) — restant {REST} h, fait {FAIT} h, async {len(ASYNC_TASKS)} tâches")
@@ -401,7 +404,7 @@ EXTRA = """
 .bar { font-family:monospace; letter-spacing:0; }
 """
 html = markdown.markdown(text, extensions=["tables","fenced_code"], output_format="html5")
-HTML_CSS = pathlib.Path("/home/user/.tools/build_doc04_html.py").read_text(encoding="utf-8")
+HTML_CSS = (ROOT / ".tools" / "build_doc04_html.py").read_text(encoding="utf-8")
 css = re.search(r'CSS = """(.*?)"""', HTML_CSS, re.S).group(1) + EXTRA
 page = f"""<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">

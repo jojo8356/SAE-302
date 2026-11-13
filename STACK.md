@@ -97,7 +97,7 @@ Python **3.10+** est indiqué dans `requirements-docs.txt` pour les outils de g�
 | Outil / environnement | Version configurée dans le dépôt | Rôle et périmètre |
 |---|---|---|
 | GitHub Actions | `.github/workflows/ci.yml` | Automatisation des contrôles et tests du dépôt GitHub. Certains jobs utilisent PHP 8.2/8.5, Node 22, MySQL 8.0 ou MariaDB 11.8 selon la campagne. |
-| GitLab CI | `.gitlab-ci.yml` | Pipeline de validation sur GitLab ; il configure notamment PHP 8.2, MySQL 8.0 et les jobs de tests/documents décrits dans le YAML. |
+| Collaboration GitLab | Dépôt GitLab IUT (issues et MR) | Aucune configuration CI GitLab dans le périmètre courant ; l’intégration continue GitHub est décrite à la ligne précédente. |
 | Client MySQL/MariaDB | Client `mysql` ou `mariadb` selon le script | Nécessaire à certains tests SQL et scripts Shell de test ; pas au fonctionnement JSON normal. Les tests d’intégration SQL demandent aussi le serveur et `pdo_mysql`. |
 | PlantUML | JAR **1.2024.0** ; Java **17** dans la CI documentaire | Régénérer les diagrammes PNG depuis `docs/diagrams/src/*.puml`. Les images PNG sont déjà versionnées ; Java/PlantUML ne sont pas requis par l’application. |
 | Git | Version fournie par l’environnement | Historique du code, certains contrôles structurels et opérations de dépôt. |

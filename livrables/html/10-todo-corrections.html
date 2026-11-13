@@ -137,6 +137,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li><a href="#mentions-legales-de-la-maquette-etudiante-point-20">Mentions légales de la maquette étudiante (point 20)</a></li>
 <li><a href="#harmonisation-et-completude-des-tests-automatises-23-octobre-2026">Harmonisation et complétude des tests automatisés (23 octobre 2026)</a></li>
 <li><a href="#refonte-et-allegement-des-suites-de-tests-manuels-23-octobre-2026">Refonte et allègement des suites de tests manuels (23 octobre 2026)</a></li>
+<li><a href="#documentation-darchitecture-et-de-stack">Documentation d’architecture et de stack</a></li>
 </ul>
 </li>
 </ul>
@@ -149,6 +150,7 @@ Légende : <code>[x]</code> fait <strong>et vérifié sur disque</strong> · <co
 Chaque ligne indique le fichier concerné et la commande qui permet de le constater.</p>
 <p><strong>Dernière vérification :</strong> 2026-10-28 · branche <code>arena/6e1d3706-sae-302</code>.
 Cette version remplace la précédente, qui cochait des livrables <strong>absents du dépôt</strong> (voir §8).</p>
+<p><strong>Note de portée (révision du 23/10/2026).</strong> Ce suivi conserve des constats historiques. La tâche/configuration GitLab CI a été retirée du périmètre courant ; ses références ci-dessous ne sont pas des exigences actives. La CI GitHub Actions reste séparée et ne vaut pas preuve d’un pipeline GitLab.</p>
 </blockquote>
 <hr />
 <h2 id="0-bloquants-installation-ci-base">0. Bloquants — installation, CI, base<a class="headerlink" href="#0-bloquants-installation-ci-base" title="Permanent link">#</a></h2>
@@ -171,7 +173,7 @@ Cette version remplace la précédente, qui cochait des livrables <strong>absent
 <li>✅ <code>tests/perf/mesurer.sh</code> — présent (+ <code>mesurer_sql.sh</code>).</li>
 <li>✅ <code>.gitlab/merge_request_templates/{Lot,Bugfix,Docs,Release}.md</code> — présents.</li>
 <li>✅ <strong>PHPUnit</strong> — <code>composer.json</code> (<code>phpunit/phpunit ^11</code>), <code>phpunit.xml</code>, <code>tests/phpunit/</code> (6 classes, 34 tests) + runner hors ligne.</li>
-<li>☐ CI GitLab — <code>base-tests</code> et <code>unit</code> ont désormais leurs scripts, mais le job <code>docs</code> échoue encore (<code>render.sh</code> absent) ; aucun pipeline n'a été exécuté ici.</li>
+<li>◐ CI GitLab — configuration et exigence retirées du périmètre le 23/10/2026 ; les constats historiques de jobs incomplets ci-dessous ne décrivent plus une exigence à réaliser. La CI GitHub Actions reste séparée.</li>
 <li>☐ CI GitHub — le job <code>unit</code> reste tolérant : aucun PHPUnit réel n'a été joué dans cette sandbox.</li>
 <li>✅ <code>var/.gitkeep</code> — présent.</li>
 </ul>
@@ -769,6 +771,13 @@ ls scripts/build-docs.sh docs/diagrams/render.sh tests/perf/mesurer.sh   # → i
 <li>mentions légales étudiantes LCEN art. 6, III, 2 avec co-éditeurs Johan Polsinelli &amp; Chahd Gouiaa et hébergeur IUT (<code>TCX-18</code>), politique de conservation à <code>24 mois</code> et outils CLI <code>purger_comptes.php</code>, <code>nettoyage_donnees.php</code>, <code>archive_restreinte.php</code> sur copie jetable (<code>TCX-17</code>), minimisation des traces <code>Journal.php</code> et transparence <code>/confidentialite</code> &amp; <code>/500</code> (<code>TCX-24</code>).</li>
 <li>✅ <strong>Retrait du responsive des documents et consignes manuels connexes</strong> : suppression des 9 scénarios responsive manuels (<code>TC01-09</code>, <code>TC06-11</code>, <code>TC07-13</code>, <code>TC08-09</code>, <code>TC10-12</code>, <code>TC11-09</code>, <code>TC12-10</code>, <code>TC13-11</code>, <code>TCX-13</code>), retrait du point « Responsive — toutes les pages » dans <code>docs/15-email-recette-lineserv.md</code>, allègement de la checklist §7 et marquage hors campagne du §8 dans <code>docs/14-guide-lineserv.md</code>, passage de <code>F-39/40/41/46/47</code> en couverture 100 % automatisée dans <code>docs/02-document-tests-validation.md</code> (+ régénération HTML/PDF/DOCX), mise à jour de <code>docs/11-strategie-tests.md</code> et ajout d’un 46e contrôle garde-fou dans <code>scripts/verifier_fiches_uc.py</code> interdisant le retour des balayages multi-largeurs dans les scénarios manuels.</li>
 <li>[!] Auto-évaluation : aucun résultat d’exécution humaine, testeur, date ni mesure serveur n’est inventé — les <strong>200 lignes</strong> de <code>docs/13-suivi-recette-uc.csv</code> demeurent honnêtement à <code>NON JOUÉ</code>, et l’absence de campagne manuelle responsive sur téléphones physiques est explicitement documentée comme limite assumée compensée par la CI Chromium.</li>
+</ul>
+<h3 id="documentation-darchitecture-et-de-stack">Documentation d’architecture et de stack<a class="headerlink" href="#documentation-darchitecture-et-de-stack" title="Permanent link">#</a></h3>
+<ul>
+<li>✅ <code>ARCHITECTURE.md</code> à la racine : documenter l’entrée HTTP, le routeur et ses gardes, les couches contrôleurs/repositories/vues, le parcours d’une requête, les règles métier, les deux pilotes de stockage, la sécurité, les tests et les limites sans présenter le SQL ou un déploiement comme validé sans preuve.</li>
+<li>✅ <code>STACK.md</code> à la racine : recenser les langages, prérequis runtime, stockage SQL optionnel et outils de test/génération documentaire en distinguant leurs usages ; s’appuyer sur <code>composer.json</code>, <code>package.json</code>, <code>package-lock.json</code>, <code>requirements-docs.txt</code> et les workflows CI.</li>
+<li>✅ Ajouter les liens vers ces deux documents dans la table de documentation du <code>README.md</code> et conserver le repère <code>**Cadre**</code> (SAE — BUT Informatique (BUT2)) requis par le contrôle E2E des mentions légales.</li>
+<li>[!] Comparaison au <code>main</code> GitLab étudiant : aucun <code>fetch</code> IUT ni aucune synchronisation GitLab effectués dans cette passe. Les commandes de comparaison doivent utiliser des refspecs explicites et préserver les branches/fichiers locaux ; aucun push sur <code>dev</code> n’est autorisé à ce stade.</li>
 </ul>
 <footer class="doc">
   <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/10-todo-corrections.md</code>

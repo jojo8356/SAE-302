@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="SAÉ 302 — MiniShop : Audit de conformité — cahier des charges, todolist et preuves#">
+<title>Audit de conformité — cahier des charges, todolist et preuves# — MiniShop</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --papier: #fbfaf7;
+  --carte: #ffffff;
+  --trait: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-clair: #dbeafe;
+  --code: #f1f5f9;
+  --mesure: 72ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
+    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
+    --accent-clair: #1e3a8a; --code: #16223a;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  max-width: calc(var(--mesure) + 6rem);
+  background: var(--papier);
+  color: var(--encre);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
+h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
+p, li { max-width: var(--mesure); }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+}
+pre {
+  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
+  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.35rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+thead th { background: var(--accent-clair); }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
+img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li input[type="checkbox"] { margin-right: 0.4rem; }
+.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
+.toc > ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1rem; }
+footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+@media print {
+  :root { --papier: #fff; --carte: #fff; }
+  @page { size: A4; margin: 18mm 16mm; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#1-perimetre-et-verdict-global">1. Périmètre et verdict global</a></li>
+<li><a href="#2-verifications-effectuees-et-limites">2. Vérifications effectuées et limites</a><ul>
+<li><a href="#preuve-externe-fournie-par-lutilisateur-clone-iut">Preuve externe fournie par l’utilisateur — clone IUT</a></li>
+<li><a href="#source-officielle-fournie-par-lutilisateur-sujetsaepdf">Source officielle fournie par l’utilisateur — sujetSAE.pdf</a></li>
+<li><a href="#verifications-rejouees-dans-cette-sandbox">Vérifications rejouées dans cette sandbox</a></li>
+<li><a href="#execution-complete-impossible-localement">Exécution complète impossible localement</a></li>
+<li><a href="#resultat-humain-cible-reelle">Résultat humain / cible réelle</a></li>
+</ul>
+</li>
+<li><a href="#3-revue-tache-par-tache-les-85-identifiants-de-docs06-todolistmd">3. Revue tâche par tâche — les 85 identifiants de docs/06-todolist.md</a><ul>
+<li><a href="#d1-pilotage-depot-et-rendu">D1 — Pilotage, dépôt et rendu</a></li>
+<li><a href="#d2-cahier-des-charges-et-uml">D2 — Cahier des charges et UML</a></li>
+<li><a href="#d3-conception-de-donnees-et-sql">D3 — Conception de données et SQL</a></li>
+<li><a href="#d4-application-web">D4 — Application web</a></li>
+<li><a href="#d5-tests-et-validation">D5 — Tests et validation</a></li>
+<li><a href="#d6-soutenance">D6 — Soutenance</a></li>
+</ul>
+</li>
+<li><a href="#4-ecart-majeur-entre-le-cdc-et-la-realisation">4. Écart majeur entre le CDC et la réalisation</a></li>
+<li><a href="#5-incoherences-a-corriger-dans-le-cdc-et-la-todolist">5. Incohérences à corriger dans le CDC et la todolist</a></li>
+<li><a href="#6-elements-de-travail-absents-de-la-todolist-dorigine">6. Éléments de travail absents de la todolist d’origine</a></li>
+<li><a href="#7-prochaines-actions-recommandees">7. Prochaines actions recommandées</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="audit-de-conformite-cahier-des-charges-todolist-et-preuves">Audit de conformité — cahier des charges, todolist et preuves<a class="headerlink" href="#audit-de-conformite-cahier-des-charges-todolist-et-preuves" title="Permanent link">#</a></h1>
+<p><strong>Révision examinée :</strong> base <code>b54ab9833eb5e7d5116a21a1f21cb3b7c845eb31</code> (<code>main</code>) et révision documentaire courante. Les exécutions antérieures sont distinguées des décisions et attestations utilisateur ; aucune vérification du dépôt IUT n’a été effectuée.</p>
+<blockquote>
+<p><strong>Conclusion courte : non, la todolist n’est ni à jour ni suffisamment complète pour affirmer que toutes ses tâches sont achevées à 100 %.</strong> L’application et les livrables sont bien présents, et de nombreuses vérifications automatisées existent. Il reste toutefois des écarts d’implémentation à une exigence explicite du CDC, des tests humains non joués, des mesures et actions externes non prouvées, ainsi que des incohérences de comptage et de dates entre documents.</p>
+<p>Ce rapport audite les fichiers versionnés de ce checkout et ne consulte pas directement le dépôt IUT. Les éléments externes rapportés sont distingués selon leur provenance ; ils ne présument pas l’état du clone local de l’utilisateur et ne transforment pas une tâche externe ou humaine en tâche accomplie sans preuve.</p>
+</blockquote>
+<h2 id="1-perimetre-et-verdict-global">1. Périmètre et verdict global<a class="headerlink" href="#1-perimetre-et-verdict-global" title="Permanent link">#</a></h2>
+<p><code>docs/06-todolist.md</code> a été régénérée en version 1.2 : les 85 tâches actuelles de la WBS totalisent 358 h planifiées. Après actualisation des attestations/preuves D1-L1-01/04/05/07, le suivi compte 37 tâches terminées, 8 partielles et 40 à faire ; 165 h sont déclarées acquises et 193 h restantes. Pour toutes les autres tâches, les états et métriques MariaDB restent ceux de la photographie historique du 23/09/2026, non rejouée pendant cette révision.</p>
+<table>
+<thead>
+<tr>
+<th>Statut d’audit</th>
+<th style="text-align: right;">Nombre sur 85</th>
+<th>Sens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OK</code></td>
+<td style="text-align: right;">3</td>
+<td>Critère de fin explicite satisfait pour le périmètre documentaire ou événement attesté, sans élargir la portée de la preuve.</td>
+</tr>
+<tr>
+<td><code>OK*</code></td>
+<td style="text-align: right;">54</td>
+<td>Livrable présent ou confirmation humaine fournie, avec preuve repérée dans le dépôt/la CI ou par l’utilisateur. <strong>Ce n’est pas une certification absolue</strong> ; le périmètre des preuves CI et les éléments déclaratifs sont explicités ci-dessous.</td>
+</tr>
+<tr>
+<td><code>PARTIEL</code></td>
+<td style="text-align: right;">18</td>
+<td>Une partie existe, mais un critère, une intégration, une preuve ou une cohérence reste à résoudre.</td>
+</tr>
+<tr>
+<td><code>ÉCART</code></td>
+<td style="text-align: right;">6</td>
+<td>Écart explicite entre la tâche/contrainte du CDC et l’application présente.</td>
+</tr>
+<tr>
+<td><code>[!]</code></td>
+<td style="text-align: right;">4</td>
+<td>Tâche humaine, externe, mesure cible ou état impossible à vérifier depuis ce checkout.</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td style="text-align: right;"><strong>85</strong></td>
+<td>Les tâches <code>PARTIEL</code>, <code>ÉCART</code> et <code>[!]</code> restent inachevées ; les réserves des <code>OK*</code> sont précisées dans les constats.</td>
+</tr>
+</tbody>
+</table>
+<p>Ces statuts évaluent les <strong>85 tâches de la WBS courante</strong>, pas tout le travail ultérieur. Les ajouts ultérieurs (langue/fuseau, informations légales, contact, conservation, etc.) ne figurent pas correctement dans cette WBS et doivent eux aussi être rattachés à des exigences ou à une liste d’évolutions.</p>
+<p><strong>Datation des preuves :</strong> plusieurs sources du dépôt portent le 28/10/2026 ; les runs CI cités sont horodatés des 12 et 13/11/2026. Ces dates sont retranscrites depuis leurs métadonnées. Elles ne permettent pas, à elles seules, de fixer une date de coupure pour l’audit ni de réconcilier les divergences de branches relevées ci-dessous.</p>
+<h2 id="2-verifications-effectuees-et-limites">2. Vérifications effectuées et limites<a class="headerlink" href="#2-verifications-effectuees-et-limites" title="Permanent link">#</a></h2>
+<h3 id="preuve-externe-fournie-par-lutilisateur-clone-iut">Preuve externe fournie par l’utilisateur — clone IUT<a class="headerlink" href="#preuve-externe-fournie-par-lutilisateur-clone-iut" title="Permanent link">#</a></h3>
+<p>Le relevé terminal communiqué montre <code>origin</code> configuré sur <code>https://iut-git.unice.fr/but2_s302/s302.git</code> et une requête <code>git ls-remote --heads origin</code> réussie. Les références visibles sont <code>chahd</code>, <code>dev</code>, <code>pj509414/dev</code> (SHA <code>bcca4d1d527b2ef859295a44dd1c65134aa93ab5</code>) et <code>pj509414/poc-auth-jwt</code> ; aucune référence <code>main</code> n’apparaît dans cette sortie. Cela prouve que le dépôt existe et est lisible depuis ce clone. La capture GitLab « Membres » fournie montre l’enseignante NGUYEN Thanh-Phuong comme membre direct avec le rôle <code>Reporter</code>, et Chahd comme <code>Developer</code> hérité du groupe ; elle confirme l’accès de l’enseignante au projet. L’utilisateur confirme avoir envoyé le courriel de composition rédigé dans la conversation, qui comprenait l’adresse GitLab ; cette confirmation n’a pas été vérifiée indépendamment dans la boîte d’envoi.</p>
+<h3 id="source-officielle-fournie-par-lutilisateur-sujetsaepdf">Source officielle fournie par l’utilisateur — <code>sujetSAE.pdf</code><a class="headerlink" href="#source-officielle-fournie-par-lutilisateur-sujetsaepdf" title="Permanent link">#</a></h3>
+<p>Le PDF officiel joint a été lu pour vérifier le critère GitLab. À la <strong>page 8</strong>, il demande d’envoyer par courriel la composition du groupe à <code>thanh-phuong.nguyen@univ-cotedazur.fr</code> avec l’objet <code>Composition SAE</code>, puis de communiquer l’adresse GitLab et de partager l’accès avec l’enseignante. La page 9 demande une contribution régulière sur GitLab et un README d’installation. Le PDF ne demande pas de dépôt privé, ne mentionne pas de branche <code>main</code> protégée, de blocage du push direct, de squash ou de suppression automatique de branche source. La mention « pages privées » à la page 5 concerne les pages de l’application, pas la visibilité du dépôt. Le privé et les règles de branche figurant dans la WBS/annexe GitLab sont donc des choix ajoutés par les documents de projet, pas des exigences vérifiées du sujet officiel.</p>
+<h3 id="verifications-rejouees-dans-cette-sandbox">Vérifications rejouées dans cette sandbox<a class="headerlink" href="#verifications-rejouees-dans-cette-sandbox" title="Permanent link">#</a></h3>
+<ul>
+<li><code>bash tests/security/controles.sh</code> : <strong>10/10</strong> contrôles statiques réussis.</li>
+<li><code>node scripts/wasm_verdict.mjs</code> : <strong>9/9</strong> cas du calcul de verdict réussis.</li>
+<li><code>node --check</code> : <strong>41</strong> fichiers JavaScript/ES modules sans erreur de syntaxe.</li>
+<li><code>bash -n</code> : <strong>13</strong> scripts shell sans erreur de syntaxe.</li>
+<li>Suite Python complète rejouée après correction de l’inventaire : <strong>43 tests</strong>, dont <strong>22 réussis</strong> et <strong>21 sautés</strong> faute de PHP natif ou de ses extensions POSIX. Le comptage inclut désormais la suite structurelle et le nouvel audit.</li>
+<li><code>python3 scripts/verifier_fiches_uc.py</code> : <strong>46 contrôles documentaires</strong> réussis ; 14 UC, 164 scénarios, 36 couples de transitions, 200 entrées de suivi.</li>
+<li><code>docs/13-suivi-recette-uc.csv</code> : <strong>200 lignes</strong>, toutes au statut <code>NON JOUÉ</code>, aucun identifiant dupliqué.</li>
+</ul>
+<h3 id="execution-complete-impossible-localement">Exécution complète impossible localement<a class="headerlink" href="#execution-complete-impossible-localement" title="Permanent link">#</a></h3>
+<p>Dans cette sandbox, <code>php</code>, <code>composer</code>, <code>mysql</code>, <code>mariadb</code>, <code>node_modules/</code> et <code>vendor/</code> sont absents. Je n’ai donc pas prétendu rejouer les suites PHP, PHPUnit, l’E2E PHP-WASM, les tests navigateur ou SQL localement et je n’ai installé aucune dépendance.</p>
+<p>GitHub Actions fournit un enregistrement <strong>15/15 jobs réussis</strong> pour le SHA de base audité, incluant MySQL 8, MariaDB 11.8, PHP, PHPUnit, sécurité, E2E et Chromium : <a href="https://github.com/jojo8356/SAE-302/actions/runs/43200590421">run 43200590421</a> (horodatage API : <strong>12/11/2026</strong> ; commit également horodaté du 12/11).</p>
+<p>Après l’ajout de ce rapport, la CI a échoué dans les deux jobs « suites isolées » PHP 8.2 et 8.5, les <strong>13 autres jobs ayant réussi</strong> : <a href="https://github.com/jojo8356/SAE-302/actions/runs/43394472738">run 43394472738</a> (horodatage API : <strong>13/11/2026</strong>). J’ai reproduit localement un échec de <code>tests/python/test_audit_structurel.py</code> : le rapport nouvellement versionné manquait dans <code>docs/17-inventaire-projet.csv</code>. Après ajout à l’inventaire et mise à jour de son résumé, la suite Python complète repasse localement (43 tests, 21 ignorés). Le run de suivi sur le SHA corrigé <code>dc527d34b8962572ae64f58578967cc081c14a0c</code> est ensuite vert <strong>15/15 jobs</strong> : <a href="https://github.com/jojo8356/SAE-302/actions/runs/43395560490">run 43395560490</a>. Le journal détaillé du run en échec n’est pas accessible depuis cette sandbox (réponse EOF du service de logs) ; je ne peux donc pas confirmer que le défaut reproduit explique à lui seul les deux jobs initiaux.</p>
+<h3 id="resultat-humain-cible-reelle">Résultat humain / cible réelle<a class="headerlink" href="#resultat-humain-cible-reelle" title="Permanent link">#</a></h3>
+<p>Les 200 scénarios des fiches de recette restent au statut <code>NON JOUÉ</code> dans le CSV. La campagne responsive multi-largeurs <strong>n’est pas</strong> à réintroduire dans les fiches manuelles : selon la décision projet, elle relève des tests automatisés, où des contrôles Chromium sont prévus. Les essais sur hébergement réel, mesures de performance cible, restauration chronométrée, validation pédagogique et répétitions de soutenance ne sont pas démontrés ici.</p>
+<h2 id="3-revue-tache-par-tache-les-85-identifiants-de-docs06-todolistmd">3. Revue tâche par tâche — les 85 identifiants de <code>docs/06-todolist.md</code><a class="headerlink" href="#3-revue-tache-par-tache-les-85-identifiants-de-docs06-todolistmd" title="Permanent link">#</a></h2>
+<p><code>OK</code> signifie que le critère de fin explicite de la WBS est satisfait, avec la preuve relevée, pour le périmètre précis de la tâche. <code>OK*</code> signifie « preuve d’un livrable, d’une suite ou confirmation humaine fournie », sans certifier tous les environnements, critères métier et vérifications humaines. Une confirmation déclarative de l’utilisateur est distinguée d’une vérification indépendante. Les raisons données priment sur le statut historique de la todolist.</p>
+<h3 id="d1-pilotage-depot-et-rendu">D1 — Pilotage, dépôt et rendu<a class="headerlink" href="#d1-pilotage-depot-et-rendu" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>État audité</th>
+<th>Constat et preuve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>D1-L1-01</code></td>
+<td><code>OK*</code></td>
+<td>Le sujet officiel (PDF fourni, p. 8) demande le courriel de composition, la communication de l’adresse GitLab et le partage de l’accès avec l’enseignante. L’utilisateur confirme avoir envoyé le courriel proposé, avec la composition du groupe et l’adresse du dépôt ; la capture « Membres » montre l’enseignante comme membre directe <code>Reporter</code>, et <code>git ls-remote</code> confirme que le dépôt est lisible. L’envoi est attesté par l’utilisateur, mais n’a pas été vérifié indépendamment dans la boîte d’envoi. Le privé, la protection de <code>main</code>, le squash et la suppression des branches source sont des ajouts de la WBS/annexe, pas des exigences du PDF officiel.</td>
+</tr>
+<tr>
+<td><code>D1-L1-02</code></td>
+<td><code>OK*</code></td>
+<td><code>app/</code> et <code>public/</code> existent et sont peuplés ; le besoin d’un squelette vide est dépassé.</td>
+</tr>
+<tr>
+<td><code>D1-L1-03</code></td>
+<td><code>OK*</code></td>
+<td>Le README présente les deux membres nommés et les permissions GitLab indiquées (<code>Owner</code> pour Johan Polsinelli, <code>Developer</code> pour Chahd Gouiaa), séparément des lettres A/B/C du RACI. Aucune correspondance nominative A/B/C n’est affirmée. L’enseignante NGUYEN Thanh-Phuong (<code>Reporter</code>) est indiquée séparément. Le livrable est présent ; sa lecture effective par chaque membre n’est pas vérifiable depuis le dépôt.</td>
+</tr>
+<tr>
+<td><code>D1-L1-04</code></td>
+<td><code>OK</code></td>
+<td>La capture utilisateur montre l’issue GitLab <code>s302#2</code> créée avec les cinq livrables du barème et les pénalités §16.2 ; cela satisfait la définition de fin explicite de la WBS (« issue créée : 5 livrables + pénalités suivis »). L’épinglage n’est pas confirmé par la capture et n’est pas revendiqué ; ce <code>OK</code> porte sur ce critère de fin.</td>
+</tr>
+<tr>
+<td><code>D1-L1-05</code></td>
+<td><code>OK</code></td>
+<td>La charte versionnée <code>docs/20-charte-gitlab-revues-croisees.md</code> et les modèles MR livrent le critère documentaire demandé. Ce <code>OK</code> valide uniquement la documentation ; aucune utilisation réelle de MR ni revue croisée n’est prouvée.</td>
+</tr>
+<tr>
+<td><code>D1-L1-07</code></td>
+<td><code>OK</code></td>
+<td>L’utilisateur atteste la réunion de vérification de l’audit et de validation simple du 13/11/2026 ; le compte rendu <code>docs/21-compte-rendu-reunion-audit-2026-11-13.md</code> consigne les choix communiqués. Aucun participant ou validation individuelle n’est inventé ; l’événement n’a pas été vérifié indépendamment.</td>
+</tr>
+<tr>
+<td><code>D1-L15-01</code></td>
+<td><code>PARTIEL</code></td>
+<td><code>scripts/deploy.php</code> est présent et la procédure de validation staging-only est documentée dans <code>docs/22-procedure-validation-staging.md</code>. Elle n’a pas été exécutée ; aucun déploiement ni accès à une base de production n’est revendiqué.</td>
+</tr>
+<tr>
+<td><code>D1-L15-02</code></td>
+<td><code>OK*</code></td>
+<td>README final présent ; <code>scripts/build-docs.sh</code> et l’aide des comptes de démonstration existent. La composition et les permissions GitLab sont indiquées séparément du RACI ; aucune correspondance nominative A/B/C n’est inventée.</td>
+</tr>
+<tr>
+<td><code>D1-L15-03</code></td>
+<td><code>[!]</code></td>
+<td>Aucun tag n’est présent dans les références de ce checkout ; nettoyage et tag final sur le dépôt IUT non vérifiables sans accès/demande explicite.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="d2-cahier-des-charges-et-uml">D2 — Cahier des charges et UML<a class="headerlink" href="#d2-cahier-des-charges-et-uml" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>État audité</th>
+<th>Constat et preuve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>D2-L2-01</code></td>
+<td><code>PARTIEL</code></td>
+<td>§1–§2 existent, mais les dates et les affirmations d’état ne sont pas réconciliées entre les documents (voir §5).</td>
+</tr>
+<tr>
+<td><code>D2-L2-02</code></td>
+<td><code>PARTIEL</code></td>
+<td>Le README et la capture GitLab identifient les deux étudiants (Johan Polsinelli et Chahd Gouiaa), avec leurs permissions séparées du RACI. La todolist conserve des lettres A/B de planification, sans correspondance nominative établie. Le CDC/WBS initial conserve un RACI à trois personnes et des charges/plans contradictoires : réconcilier ces documents avant d’attribuer les lettres.</td>
+</tr>
+<tr>
+<td><code>D2-L2-03</code></td>
+<td><code>PARTIEL</code></td>
+<td>Matrice fonctionnelle présente, mais le CDC, les annexes de tests et les nouvelles fonctionnalités ne forment pas encore une trace unique et sans contradictions.</td>
+</tr>
+<tr>
+<td><code>D2-L2-04</code></td>
+<td><code>PARTIEL</code></td>
+<td>Contraintes écrites, mais le CDC présente MySQL/PDO comme contrainte alors que le README et <code>StorageDriver</code> indiquent JSON par défaut et SQL optionnel / en migration.</td>
+</tr>
+<tr>
+<td><code>D2-L2-05</code></td>
+<td><code>PARTIEL</code></td>
+<td>Mesures de sécurité détaillées, mais la numérotation SEC et les preuves ne sont pas alignées partout ; SEC-14 est notamment cité sans fiche de contrôle dédiée.</td>
+</tr>
+<tr>
+<td><code>D2-L2-06</code></td>
+<td><code>PARTIEL</code></td>
+<td>La relecture croisée et le pointage des pénalités ne disposent pas d’une preuve de revue ; des contradictions documentaires demeurent.</td>
+</tr>
+<tr>
+<td><code>D2-L3-01</code></td>
+<td><code>OK*</code></td>
+<td>Les trois vues de diagrammes de cas d’utilisation sont présentes sous <code>docs/diagrams/</code>.</td>
+</tr>
+<tr>
+<td><code>D2-L3-02</code></td>
+<td><code>OK*</code></td>
+<td>Les 14 UC et descriptions sont documentés ; le vérificateur documentaire passe 46 contrôles. Cela valide la structure des fiches, pas leur exécution manuelle.</td>
+</tr>
+<tr>
+<td><code>D2-L3-03</code></td>
+<td><code>OK*</code></td>
+<td>Diagramme de classes et justifications documentés et rendus.</td>
+</tr>
+<tr>
+<td><code>D2-L3-04</code></td>
+<td><code>PARTIEL</code></td>
+<td>RB-01…RB-20 sont écrites, mais les nombres de règles complémentaires annoncés dans le CDC ne concordent pas avec les identifiants listés.</td>
+</tr>
+<tr>
+<td><code>D2-L3-05</code></td>
+<td><code>PARTIEL</code></td>
+<td>Cinq séquences sont présentes. C’est supérieur au minimum sujet de quatre et au nombre demandé dans cette tâche, mais le CDC prétend ailleurs en livrer six (annulation et back-office inclus) : il faut corriger la déclaration ou ajouter les diagrammes manquants.</td>
+</tr>
+<tr>
+<td><code>D2-L3-06</code></td>
+<td><code>OK*</code></td>
+<td>Sources <code>.puml</code> et <code>docs/diagrams/render.sh</code> présents ; le job PlantUML existe dans la CI.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="d3-conception-de-donnees-et-sql">D3 — Conception de données et SQL<a class="headerlink" href="#d3-conception-de-donnees-et-sql" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>État audité</th>
+<th>Constat et preuve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>D3-L4-01</code></td>
+<td><code>OK*</code></td>
+<td>MCD et rendu présents.</td>
+</tr>
+<tr>
+<td><code>D3-L4-02</code></td>
+<td><code>OK*</code></td>
+<td>Tableau des cardinalités et justifications présent dans le CDC et la conception BD.</td>
+</tr>
+<tr>
+<td><code>D3-L4-03</code></td>
+<td><code>OK*</code></td>
+<td>MLD et vues documentés ; scripts SQL présents.</td>
+</tr>
+<tr>
+<td><code>D3-L4-04</code></td>
+<td><code>OK*</code></td>
+<td>Dépendances fonctionnelles et analyse 1FN/2FN/3FN documentées.</td>
+</tr>
+<tr>
+<td><code>D3-L4-05</code></td>
+<td><code>OK*</code></td>
+<td>Clés, redondances et requêtes de preuve documentées. L’exécution locale SQL n’était pas possible dans cette sandbox.</td>
+</tr>
+<tr>
+<td><code>D3-L4-06</code></td>
+<td><code>[!]</code></td>
+<td>Relecture croisée humaine du document de conception non démontrable par le seul dépôt.</td>
+</tr>
+<tr>
+<td><code>D3-L5-01</code></td>
+<td><code>OK*</code></td>
+<td>DDL présent ; chargement SQL et job MySQL sont définis dans la CI.</td>
+</tr>
+<tr>
+<td><code>D3-L5-02</code></td>
+<td><code>OK*</code></td>
+<td>FK, contraintes et index dans le schéma ; contrôles SQL prévus dans la suite.</td>
+</tr>
+<tr>
+<td><code>D3-L5-03</code></td>
+<td><code>OK*</code></td>
+<td>Les vues sont définies et couvertes par les tests SQL (<code>T-27</code>).</td>
+</tr>
+<tr>
+<td><code>D3-L5-04</code></td>
+<td><code>OK*</code></td>
+<td>Seed et données de démonstration présents dans les scripts ; compteurs contrôlés par le chargeur/tests.</td>
+</tr>
+<tr>
+<td><code>D3-L5-05</code></td>
+<td><code>OK*</code></td>
+<td><code>scripts/load_db.sh</code> existe et est appelé dans le workflow SQL. La tâche restait pourtant <code>⬜</code> dans la todolist.</td>
+</tr>
+<tr>
+<td><code>D3-L6-01</code></td>
+<td><code>OK*</code></td>
+<td>Fonction et procédures de compte présentes dans <code>sql/02_minishop_procedures.sql</code> ; couverture SQL associée.</td>
+</tr>
+<tr>
+<td><code>D3-L6-02</code></td>
+<td><code>OK*</code></td>
+<td><code>sp_search_products</code> présent ; recherche et tests de catalogue présents.</td>
+</tr>
+<tr>
+<td><code>D3-L6-03</code></td>
+<td><code>OK*</code></td>
+<td>Procédures produit, catégorie et stock présentes dans le SQL livré.</td>
+</tr>
+<tr>
+<td><code>D3-L6-04</code></td>
+<td><code>OK*</code></td>
+<td>Procédures de commande présentes dans le SQL livré. Réserve d’intégration applicative en D4.</td>
+</tr>
+<tr>
+<td><code>D3-L6-05</code></td>
+<td><code>OK*</code></td>
+<td>Procédures de statut, annulation, rapport et frais de port présentes.</td>
+</tr>
+<tr>
+<td><code>D3-L6-06</code></td>
+<td><code>OK*</code></td>
+<td>Fichiers SQL <code>T-01</code>…<code>T-12</code> présents.</td>
+</tr>
+<tr>
+<td><code>D3-L6-07</code></td>
+<td><code>OK*</code></td>
+<td>Harnais et tests SQL <code>T-25</code>…<code>T-29</code> présents.</td>
+</tr>
+<tr>
+<td><code>D3-L7-01</code></td>
+<td><code>OK*</code></td>
+<td>Triggers de ligne de commande présents et associés aux scénarios SQL.</td>
+</tr>
+<tr>
+<td><code>D3-L7-02</code></td>
+<td><code>OK*</code></td>
+<td>Triggers produit/catégorie présents et associés aux scénarios SQL.</td>
+</tr>
+<tr>
+<td><code>D3-L7-03</code></td>
+<td><code>OK*</code></td>
+<td>Triggers de commande et d’historique présents.</td>
+</tr>
+<tr>
+<td><code>D3-L7-04</code></td>
+<td><code>OK*</code></td>
+<td>Documentation des 16 triggers présente.</td>
+</tr>
+<tr>
+<td><code>D3-L7-05</code></td>
+<td><code>OK*</code></td>
+<td>Tests directs <code>T-13</code>…<code>T-24</code> présents dans la suite complète.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="d4-application-web">D4 — Application web<a class="headerlink" href="#d4-application-web" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>État audité</th>
+<th>Constat et preuve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>D4-L8-01</code></td>
+<td><code>OK*</code></td>
+<td>Front controller et routeur présents ; tests de routes disponibles.</td>
+</tr>
+<tr>
+<td><code>D4-L8-02</code></td>
+<td><code>OK*</code></td>
+<td>Configuration PDO et options centralisées présentes. La connexion SQL de la sandbox n’est pas disponible.</td>
+</tr>
+<tr>
+<td><code>D4-L8-03</code></td>
+<td><code>OK*</code></td>
+<td>Layout, vues et helper d’échappement présents ; contrôles statiques de vues disponibles.</td>
+</tr>
+<tr>
+<td><code>D4-L8-04</code></td>
+<td><code>OK*</code></td>
+<td>Authentification, sessions et CSRF présents ; contrôles sécurité automatisés.</td>
+</tr>
+<tr>
+<td><code>D4-L8-05</code></td>
+<td><code>PARTIEL</code></td>
+<td>Exemple <code>.env.php</code> et CI présents, mais <code>public/install.php</code> n’existe pas ; l’installation est portée par <code>scripts/db_init.php</code>/<code>run.sh</code>. Ce choix peut être préférable, mais la tâche doit être corrigée explicitement plutôt que cochée telle quelle.</td>
+</tr>
+<tr>
+<td><code>D4-L9-01</code></td>
+<td><code>OK*</code></td>
+<td>Catalogue, pagination et tests correspondants présents.</td>
+</tr>
+<tr>
+<td><code>D4-L9-02</code></td>
+<td><code>OK*</code></td>
+<td>Recherche/filtres/tri avec validation serveur et tests présents.</td>
+</tr>
+<tr>
+<td><code>D4-L9-03</code></td>
+<td><code>OK*</code></td>
+<td>Fiche produit, visibilité et contrôles de stock présents.</td>
+</tr>
+<tr>
+<td><code>D4-L9-04</code></td>
+<td><code>ÉCART</code></td>
+<td>Le contrôleur/repository crée un compte via le magasin générique ; aucun appel applicatif à <code>sp_create_account</code> n’est trouvé.</td>
+</tr>
+<tr>
+<td><code>D4-L9-05</code></td>
+<td><code>ÉCART</code></td>
+<td>La connexion lit le magasin via le repository ; aucun appel applicatif à <code>sp_get_credentials</code> n’est trouvé.</td>
+</tr>
+<tr>
+<td><code>D4-L9-06</code></td>
+<td><code>PARTIEL</code></td>
+<td>Parcours et tests automatisés présents, mais le parcours complet n’est pas consigné comme recette humaine ; la configuration par défaut est JSON, pas la chaîne SQL imposée par le CDC.</td>
+</tr>
+<tr>
+<td><code>D4-L10-01</code></td>
+<td><code>OK*</code></td>
+<td>Panier de session, calculs serveur et tests présents.</td>
+</tr>
+<tr>
+<td><code>D4-L10-02</code></td>
+<td><code>OK*</code></td>
+<td>Contrôles serveur de disponibilité avant ajout présents et testés.</td>
+</tr>
+<tr>
+<td><code>D4-L10-03</code></td>
+<td><code>OK*</code></td>
+<td>Vues panier/récapitulatif/badge présents et couverts par les tests UI/HTTP.</td>
+</tr>
+<tr>
+<td><code>D4-L10-04</code></td>
+<td><code>ÉCART</code></td>
+<td>Le parcours applicatif de création de commande ne passe pas par <code>sp_create_order_from_basket</code> ; le repository réalise les opérations via le magasin.</td>
+</tr>
+<tr>
+<td><code>D4-L10-05</code></td>
+<td><code>PARTIEL</code></td>
+<td>Écrans et tests existent, mais le chemin applicatif SQL/procédure exigé n’est pas démontré de bout en bout.</td>
+</tr>
+<tr>
+<td><code>D4-L10-06</code></td>
+<td><code>PARTIEL</code></td>
+<td>Historique/annulation et tests existent, mais les routes de l’application ne démontrent pas l’appel à la procédure SQL prévue ; les scénarios humains restent non joués.</td>
+</tr>
+<tr>
+<td><code>D4-L11-01</code></td>
+<td><code>OK*</code></td>
+<td>Authentification et rôles administratifs présents, avec contrôles d’accès.</td>
+</tr>
+<tr>
+<td><code>D4-L11-02</code></td>
+<td><code>ÉCART</code></td>
+<td>Les opérations produit de l’application passent par le repository/store ; aucun appel applicatif à <code>sp_save_product</code>/<code>sp_delete_product</code> n’est trouvé.</td>
+</tr>
+<tr>
+<td><code>D4-L11-03</code></td>
+<td><code>ÉCART</code></td>
+<td>Les opérations catégorie/stock de l’application passent par le repository/store ; appels à <code>sp_save_category</code>/<code>sp_adjust_stock</code> non trouvés.</td>
+</tr>
+<tr>
+<td><code>D4-L11-04</code></td>
+<td><code>ÉCART</code></td>
+<td>Les changements de commande utilisent le magasin/repository ; appel applicatif à <code>sp_update_order_status</code> non trouvé.</td>
+</tr>
+<tr>
+<td><code>D4-L11-05</code></td>
+<td><code>OK*</code></td>
+<td>Vues back-office et tests de tableaux/formulaires présents.</td>
+</tr>
+<tr>
+<td><code>D4-L11-06</code></td>
+<td><code>PARTIEL</code></td>
+<td>Parcours admin automatisé et interfaces présents ; aucune preuve de démonstration/recette humaine complète n’est inscrite au suivi.</td>
+</tr>
+<tr>
+<td><code>D4-L12-01</code></td>
+<td><code>OK*</code></td>
+<td>Vérification CSRF sur les mutations, testée par les contrôles sécurité et tests HTTP.</td>
+</tr>
+<tr>
+<td><code>D4-L12-02</code></td>
+<td><code>OK*</code></td>
+<td>Contrôle d’appartenance/IDOR présent et testé.</td>
+</tr>
+<tr>
+<td><code>D4-L12-03</code></td>
+<td><code>OK*</code></td>
+<td>Échappement des vues contrôlé par le scanner statique et les tests.</td>
+</tr>
+<tr>
+<td><code>D4-L12-04</code></td>
+<td><code>OK*</code></td>
+<td>En-têtes, cookies et erreurs génériques sont contrôlés par les tests disponibles.</td>
+</tr>
+<tr>
+<td><code>D4-L12-05</code></td>
+<td><code>OK*</code></td>
+<td><code>tests/security/controles.sh</code> existe et ses <strong>10/10</strong> contrôles viennent d’être rejoués avec succès localement. La todolist le laissait encore à faire.</td>
+</tr>
+<tr>
+<td><code>D4-L13-01</code></td>
+<td><code>OK*</code></td>
+<td>JavaScript panier/AJAX présent, avec tests DOM/HTTP annoncés.</td>
+</tr>
+<tr>
+<td><code>D4-L13-02</code></td>
+<td><code>OK*</code></td>
+<td>Validation côté client présente ; la validation serveur demeure la source d’autorité.</td>
+</tr>
+<tr>
+<td><code>D4-L13-03</code></td>
+<td><code>OK*</code></td>
+<td>Labels, annonces et comportements clavier/focus couverts par les contrats disponibles.</td>
+</tr>
+<tr>
+<td><code>D4-L13-04</code></td>
+<td><code>OK*</code></td>
+<td>Repli sans JavaScript spécifié et automatisé ; ne pas le confondre avec une recette manuelle non jouée.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="d5-tests-et-validation">D5 — Tests et validation<a class="headerlink" href="#d5-tests-et-validation" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>État audité</th>
+<th>Constat et preuve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>D5-L14-01</code></td>
+<td><code>PARTIEL</code></td>
+<td>Docs de stratégie et de recette présents, mais des affirmations de complétude/date et de nombres doivent être réconciliées.</td>
+</tr>
+<tr>
+<td><code>D5-L14-02</code></td>
+<td><code>OK*</code></td>
+<td>29 scénarios SQL existent ; le run CI du SHA de base inclut les jobs MySQL/MariaDB verts (§2).</td>
+</tr>
+<tr>
+<td><code>D5-L14-03</code></td>
+<td><code>PARTIEL</code></td>
+<td>Couverture automatisée élargie au-delà de F-01…F-31 ; cependant les 200 scénarios manuels restent <code>NON JOUÉ</code>, donc « exécution + preuves » n’est pas intégralement achevé.</td>
+</tr>
+<tr>
+<td><code>D5-L14-04</code></td>
+<td><code>PARTIEL</code></td>
+<td><code>tests/charge/reserver.sh</code> existe et le stress JSON est couvert ; l’essai HTTP/SQL 20 demandes sur 12 unités reste à exécuter sur une base isolée/cible.</td>
+</tr>
+<tr>
+<td><code>D5-L14-05</code></td>
+<td><code>PARTIEL</code></td>
+<td>Matrice de traçabilité présente ; PV non signé et campagne manuelle non renseignée.</td>
+</tr>
+<tr>
+<td><code>D5-L14-06</code></td>
+<td><code>[!]</code></td>
+<td>Les scripts de mesure sont présents, mais p95 HTTP/SQL sur la volumétrie et la machine cible n’est pas prouvé ici. Ne pas reprendre les chiffres historiques du CDC comme mesure actuelle sans rapport rejouable.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="d6-soutenance">D6 — Soutenance<a class="headerlink" href="#d6-soutenance" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>État audité</th>
+<th>Constat et preuve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>D6-L16-01</code></td>
+<td><code>OK*</code></td>
+<td>Le support existe : <code>docs/12-diaporama-soutenance.md</code> et <code>livrables/minishop-soutenance.pptx</code> (ainsi que PDF/DOCX). La todolist le laissait partiel.</td>
+</tr>
+<tr>
+<td><code>D6-L16-02</code></td>
+<td><code>OK*</code></td>
+<td>Trame et questions/réponses présentes dans <code>docs/03-support-soutenance.md</code>.</td>
+</tr>
+<tr>
+<td><code>D6-L16-03</code></td>
+<td><code>[!]</code></td>
+<td>Les deux répétitions chronométrées avec la démo réelle ne sont pas attestées.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-ecart-majeur-entre-le-cdc-et-la-realisation">4. Écart majeur entre le CDC et la réalisation<a class="headerlink" href="#4-ecart-majeur-entre-le-cdc-et-la-realisation" title="Permanent link">#</a></h2>
+<p>Le point bloquant le plus important n’est pas l’absence des procédures SQL : elles sont dans <code>sql/02_minishop_procedures.sql</code>. C’est <strong>leur non-raccordement à l’application</strong> :</p>
+<ol>
+<li><code>app/Model/Data/StorageDriver.php</code> déclare <code>JSON</code> comme <code>DEFAULT</code> et décrit SQL comme cible de migration ; le README confirme JSON par défaut et SQL optionnel.</li>
+<li>Une recherche des appels applicatifs <code>callProcedure()</code>, <code>appeler()</code> et <code>CALL sp_…</code> ne trouve que les méthodes définies dans <code>SqlStore</code> et des appels du générateur de volumétrie ; aucun appel de procédure par les repositories applicatifs n’est présent.</li>
+<li><code>tests/php/sql_integration.php</code> valide des procédures/triggers et certaines intégrations <code>SqlStore</code>, mais le parcours HTTP/E2E principal est initialisé sur un magasin JSON. Cela <strong>ne prouve pas</strong> l’application complète en mode PDO/MySQL exécutant les procédures demandées.</li>
+</ol>
+<p>Cela contredit notamment les critères du CDC CT-02/CT-03 et les tâches D4-L9-04/05, D4-L10-04 et D4-L11-02/03/04, ainsi que les affirmations de §16.2 selon lesquelles les procédures sont effectivement appelées par l’application. Il faut soit raccorder réellement ces procédures et ajouter une recette applicative SQL de bout en bout, soit faire valider une modification formelle du CDC. Les seuls tests SQL de la base ne suffisent pas pour cocher ces tâches à 100 %.</p>
+<h2 id="5-incoherences-a-corriger-dans-le-cdc-et-la-todolist">5. Incohérences à corriger dans le CDC et la todolist<a class="headerlink" href="#5-incoherences-a-corriger-dans-le-cdc-et-la-todolist" title="Permanent link">#</a></h2>
+<ol>
+<li><strong>Comptage des tâches — corrigé :</strong> <code>docs/06</code> a été régénérée à 85 identifiants ; après actualisation explicite de D1-L1-01/04/05/07, ses statuts détaillés comptent 37 terminées, 8 partielles et 40 à faire (85 au total).</li>
+<li><strong>Heures — réconciliées pour le suivi révisé :</strong> 358 h planifiées = 165 h acquises + 193 h restantes (46,1 % faites). La ventilation par personne et division est générée depuis les mêmes tâches ; les anciennes valeurs 169/191 et 162/198 ne sont plus reprises comme état courant.</li>
+<li><strong>Progression D4 périmée :</strong> <code>docs/06</code> affiche encore 0/146 h et 0 %, malgré l’application complète présente. <code>scripts/load_db.sh</code>, <code>tests/security/controles.sh</code> et le diaporama existent également alors que leurs lignes sont encore « à faire »/« partiel ».</li>
+<li><strong>Équipe :</strong> la WBS et le CDC conservent un modèle de charge A/B/C à trois personnes, tandis que d’autres documents décrivent une équipe de deux. La présente révision ne déduit pas de correspondance entre A/B/C, permissions GitLab et identités ; une rebaselining d’équipe distincte reste nécessaire.</li>
+<li><strong>Exigences non fonctionnelles :</strong> §4.2 et l’annexe 17.3 du CDC annoncent <code>ENF-01…ENF-16</code>, alors que <code>docs/annexes/annexe-enf.md</code> contient <code>ENF-01…ENF-22</code>.</li>
+<li><strong>Sécurité :</strong> <code>SEC-14</code> est cité dans §8.9, mais n’a pas de fiche dédiée dans la séquence §8.1–§8.7 ni de test identifié dans la stratégie de tests. Clarifier si cet identifiant est une exigence, puis lui attribuer un contrôle.</li>
+<li><strong>Règles métier :</strong> §6.1 annonce 8 règles complémentaires, puis l’encadré en annonce 9 ; <code>RB-09</code> et <code>RB-12…RB-20</code> représentent dix identifiants. Le partage « imposées / ajoutées » doit être recalculé.</li>
+<li><strong>Séquences UML :</strong> cinq PNG/sources de séquence sont présents, mais le pointage §1.7 affirme six diagrammes rendus. Le minimum de quatre est satisfait ; c’est le compte annoncé et les deux diagrammes bonus qui sont à mettre en cohérence.</li>
+<li><strong>Dates/branche :</strong> le CDC §16.4, <code>docs/10-todo-corrections.md</code> et <code>docs/17-audit-global-projet.md</code> portent des références au 28/10/2026 ; <code>docs/10</code> nomme aussi une autre branche (<code>arena/6e1d3706-sae-302</code>). Les exécutions CI consultées sont horodatées des 12 et 13/11/2026. Ces dates sont retranscrites comme métadonnées et ne servent pas à imposer une coupure chronologique non justifiée ; leur provenance et leur correspondance avec les branches restent à réconcilier.</li>
+<li><strong>Inventaire global (actualisé) :</strong> le SHA de base contient 498 chemins. La révision retire <code>.gitlab-ci.yml</code>, ajoute quatre rapports (<code>docs/19</code> à <code>docs/22</code>) et 36 rendus HTML/PDF/DOCX manquants, soit 537 chemins versionnés ; <code>docs/17-inventaire-projet.csv</code> répertorie ces chemins sans doublon.</li>
+<li><strong>Source officielle hors dépôt :</strong> <code>sujetSAE.pdf</code> n’est toujours pas suivi dans le checkout, mais la pièce jointe fournie par l’utilisateur a permis de vérifier le point GitLab (p. 8–9). Elle demande l’accès GitLab partagé et le courriel de composition, sans exiger la visibilité privée ni la protection de <code>main</code> ; garder cette source jointe au dossier de rendu si le pointage doit être reproductible.</li>
+</ol>
+<h2 id="6-elements-de-travail-absents-de-la-todolist-dorigine">6. Éléments de travail absents de la todolist d’origine<a class="headerlink" href="#6-elements-de-travail-absents-de-la-todolist-dorigine" title="Permanent link">#</a></h2>
+<p>La todolist reprend la WBS de septembre, pas le périmètre effectivement ajouté ensuite. Il faut au minimum créer des entrées traçables (avec exigences, test et état) pour :</p>
+<ul>
+<li>préférences FR/EN et fuseau local, affichage/stockage UTC ;</li>
+<li>formulaire Contact et pages d’information/légales correspondant au périmètre de maquette ;</li>
+<li>responsive automatisé et tableaux mobiles étiquetés ;</li>
+<li>conservation, rétention, nettoyage/archives et isolation sûre des tests ;</li>
+<li>nouveautés/dates produits, alternatives de visuels et non-régression d’accessibilité ;</li>
+<li>revue de sécurité/test infrastructure, parcours E2E et migration MariaDB.</li>
+</ul>
+<p>Ces éléments peuvent être <strong>déjà livrés</strong> dans le code et les tests : leur absence de la todolist signifie que la liste n’est pas exhaustive, pas qu’il faut les re-développer. La partie responsive reste à suivre uniquement dans les tests automatisés, conformément à la décision projet.</p>
+<h2 id="7-prochaines-actions-recommandees">7. Prochaines actions recommandées<a class="headerlink" href="#7-prochaines-actions-recommandees" title="Permanent link">#</a></h2>
+<ol>
+<li>Traiter en priorité l’écart <strong>JSON / PDO / procédures stockées</strong> et décider si le CDC reste contractuel sur l’exécution MySQL par l’application.</li>
+<li><code>docs/06-todolist.md</code> a été régénérée avec 85 tâches et les totaux cohérents ; conserver ses mesures SQL datées comme historiques, et tracer séparément les évolutions post-WBS encore absentes.</li>
+<li>Les nombres WBS/todolist, la date du compte rendu et les références CI ont été révisés ici ; les autres identifiants, dates et preuves listés au §5 restent à vérifier avant toute nouvelle clôture.</li>
+<li>Garder <code>[!]</code> pour les 200 scénarios manuels tant que l’équipe ne les a pas exécutés ; ne pas marquer « recette 100 % » sur la seule base de la CI.</li>
+<li>Planifier sur environnement isolé les tests de performance, la charge SQL, l’installation/restauration et le contrôle de déploiement ; conserver les sorties comme preuves.</li>
+<li>Faire attester séparément les tâches GitLab restantes, la validation pédagogique et les répétitions de soutenance. L’utilisateur confirme l’envoi du courriel de composition ; le dépôt IUT n’a pas été interrogé dans cet audit.</li>
+</ol>
+<p><strong>Aucune modification du code applicatif n’a été faite pendant cet audit.</strong> <code>docs/06-todolist.md</code> a été actualisée uniquement pour reprendre les attestations/preuves explicitement disponibles pour D1-L1-01/04/05/07 ; les autres statuts historiques ne sont pas reclassés et aucune vérification non effectuée n’est revendiquée.</p>
+<footer class="doc">
+  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/19-audit-cahier-des-charges-todolist.md</code>
+  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+</footer>
+</main>
+</body>
+</html>

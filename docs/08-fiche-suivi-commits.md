@@ -6,6 +6,8 @@
 > Cette fiche et le script `scripts/rejeu_gitlab.py` sont générés du **même plan** :
 > ils ne peuvent pas diverger. Le script vérifie en fin de parcours que la couverture
 > des fichiers est exacte (aucun oublié, aucun doublon).
+>
+> **Note de portée (23/10/2026).** Cette fiche et `scripts/rejeu_gitlab.py` sont un plan de rejeu proposé, pas une preuve d’historique GitLab réalisé ; ne pas l’exécuter ni le pousser vers le dépôt IUT sans demande explicite. Les entrées É5 (86 tâches) et É27 (GitLab CI) décrivent l’ancien périmètre prévu : la WBS courante compte 85 tâches et la CI GitLab a été retirée. Elles ne sont pas des exigences actives.
 
 ## 1. Mode d'emploi express
 

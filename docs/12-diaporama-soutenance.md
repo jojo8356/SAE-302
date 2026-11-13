@@ -72,7 +72,7 @@
 - **Intégration PHP** : moteur JSON, règles de gestion, unitaires, fonctionnalités UC-01 → UC-14
 - **Contrats** : design system (28 vérifications) et responsive (48 vérifications)
 - **E2E HTTP** : 185 vérifications sur l'application complète (cookies, CSRF, refus)
-- **CI** : GitHub Actions (6 jobs) et pipeline GitLab équivalent
+- **CI** : GitHub Actions (`.github/workflows/ci.yml`) ; aucun pipeline GitLab équivalent n’est revendiqué
 > `npm run test:all` ▶ tout doit être vert avant chaque commit.
 
 ---

@@ -1,43 +1,17 @@
-# MiniShop — CI GitHub Actions (dev) — adaptation de .gitlab-ci.yml pour GitHub
-# Contexte : GitLab reste la cible de prod (barème CT-09, §14.2), mais le dev
-# avant la prod se fait sur GitHub. Ce workflow reproduit 1:1 les 6 jobs GitLab,
-# plus un 7e propre à GitHub (dev-router, matrice Linux+Windows — tests/php/dev_router_test.php)
-# en syntaxe GitHub Actions, avec les mêmes garanties : syntaxe PHP bloquante,
-# 29 tests SQL, contrôles sécurité, PlantUML.
+# MiniShop — CI GitHub Actions du dépôt
+# GitLab reste le dépôt de collaboration (issues et MR). Cette configuration ne lance
+# que les contrôles GitHub Actions et ne constitue pas une preuve de pipeline GitLab IUT.
+# Les commandes, environnements et critères de chaque contrôle sont définis par les jobs ci-dessous.
 #
-# Déclenchement : push et PR sur main / arena/* / dev / develop (interruptible).
-# Concurrence : annule le run précédent sur la même branche (comme GitLab interruptible).
-# Images : php:8.2, mysql:8.0, openjdk:17 — identiques à .gitlab-ci.yml
+# Déclenchement : push et PR sur les branches déclarées plus bas, ou lancement manuel.
+# Concurrence : un nouveau run annule le précédent sur la même référence GitHub.
+# Images et services : versions précisées par chaque job de ce workflow.
 #
-# Correspondance GitLab → GitHub :
-#   stages [validate, db, test, docs] → jobs avec `needs:`
-#   php-lint (validate, image php:8.2-cli) → job php-lint (setup-php 8.2)
-#   style (validate, allow_failure) → job style (continue-on-error: true)
-#   security-scan (alpine, tests/security/controles.sh) → job security-scan (même script + --selftest ;
-#                                                          fallback grep dégradé seulement si le script manque)
-#   base-tests (db, mysql:8.0 service, load_db.sh + run_sql_tests.sh) → job db-tests (services mysql:8.0, fallback SQL direct si scripts absents)
-#   unit (test, php:8.2 + mysql service, composer + phpunit) → job unit (setup-php + composer + phpunit, skip si pas de composer.json)
-#   docs (openjdk, plantuml.jar + render.sh) → job docs (setup-java 17 + plantuml)
-#
-# Usage local (act) : `act -j php-lint` ou `gh workflow run ci.yml`
-#
-# Règle de re-run (CDC §14.2, annexe 17.9 §7) : si le run de la PR est VERT avant le merge,
-# aucun re-run n'est nécessaire après le merge. GitHub Actions exécute déjà le workflow
-# `pull_request` sur le commit de fusion (`refs/pull/<n>/merge`) : le run déclenché sur main
-# après le merge rejoue les mêmes 6 jobs sur le même arbre de fichiers — c'est un relais de
-# traçabilité (badge main), pas une vérification. On ne relance donc jamais « Re-run jobs » /
-# `gh run rerun` dans ce cas ; seules exceptions : main a avancé, run annulé
-# (concurrency/cancel-in-progress), correction déjà poussée (le push relance seul), panne
-# d'infrastructure (alors `gh run rerun <id> --failed`, une fois).
+# Usage local facultatif (act) : `act -j php-lint` ou `gh workflow run ci.yml`.
 
-name: CI — MiniShop (dev/GitHub)
-
-# Nom lisible du run : met en évidence qu'un run post-merge est un simple relais
-# (déjà validé en PR) — aucune action attendue de la part de l'équipe.
+name: CI — MiniShop (GitHub Actions)
 run-name: >-
-  ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') &&
-      format('post-merge — relais de traçabilité, déjà validé en PR : aucun re-run nécessaire — {0}', github.sha) ||
-      format('{0} — {1}', github.event_name, github.ref_name) }}
+  ${{ format('{0} — {1}', github.event_name, github.ref_name) }}
 
 on:
   push:
@@ -51,7 +25,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Variables communes (comme .gitlab-ci.yml `variables:`)
+  # Variables communes aux jobs GitHub Actions
   DB_TEST: minishop_test
   MYSQL_DATABASE: minishop_test
   DB_HOST: 127.0.0.1
@@ -61,7 +35,7 @@ env:
 jobs:
   # -----------------------------------------------------------------
   # 1. Syntaxe PHP : 100 % des fichiers doivent être valides (§11.3 PRÉ-3).
-  #    Bloquant — reproduit `php-lint` GitLab.
+  #    Bloquant — contrôle de syntaxe PHP du dépôt.
   # -----------------------------------------------------------------
   php-lint:
     name: php-lint (validate)
@@ -388,7 +362,7 @@ jobs:
             pear install -f PHP_CodeSniffer 2>/dev/null || composer global require squizlabs/php_codesniffer --no-interaction || true
           fi
           phpcs --standard=PSR12 --report=summary app public || true
-          echo "style : non bloquant (GitLab allow_failure: true)"
+          echo "style : non bloquant (continue-on-error configuré sur ce job GitHub)"
 
   # -----------------------------------------------------------------
   # 3. Contrôles statiques de sécurité : 10 grep bloquants
@@ -521,13 +495,13 @@ jobs:
           echo "== Vérif SQL présents =="
           ls -lh sql/
           if [ -f scripts/load_db.sh ]; then
-            echo "→ scripts/load_db.sh présent (GitLab originel)"
+            echo "→ scripts/load_db.sh présent — chargement via le job GitHub"
             chmod +x scripts/load_db.sh
             DB=minishop DB_NAME=minishop DB_HOST=127.0.0.1 DB_USER=root DB_PASS="" ./scripts/load_db.sh
             DB=minishop_test DB_NAME=minishop_test DB_HOST=127.0.0.1 DB_USER=root DB_PASS="" ./scripts/load_db.sh
           else
-            echo "→ scripts/load_db.sh absent — fallback chargement direct (GitHub dev)"
-            # Crée les deux bases (prod seed + test)
+            echo "→ scripts/load_db.sh absent — fallback de chargement dans le service SQL de test GitHub"
+            # Crée les bases de démonstration et de test dans le service SQL jetable du job.
             mysql -h 127.0.0.1 -u root -e "CREATE DATABASE IF NOT EXISTS minishop CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
             mysql -h 127.0.0.1 -u root -e "CREATE DATABASE IF NOT EXISTS minishop_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
             for DB in minishop minishop_test; do
@@ -582,7 +556,7 @@ jobs:
               cat tests/sql/rapport_tests_sql.md
             fi
             # Si le harnais manque, on ne fail pas la CI dev — le vrai harnais sera livré lot L8-13
-            echo "ℹ run_sql_tests.sh absent : OK en dev GitHub (bloquant en GitLab prod quand livré)"
+            echo "ℹ Harnais SQL absent : contrôles réduits au diagnostic de schéma pour ce job."
           fi
 
       - name: Setup PHP pour l'intégration SQL

@@ -7,12 +7,12 @@ estimation *bottom-up* de chaque tâche individuelle, plan de charge par personn
 |---|---|
 | **Projet** | MiniShop — site e-commerce avec back-office (SAE — BUT Informatique / L3, Université Côte d'Azur) |
 | **Équipe** | 3 développeurs : **A** chef de projet & back-office · **B** modèle & base de données · **C** présentation, sécurité & tests |
-| **Effort total** | **360 h = 3 × 120 h** (estimation *bottom-up* : la somme des 86 tâches de niveau 4) · calendrier **S1 → S12** |
+| **Effort total** | **358 h planifiées**, sous la capacité nominale de 360 h (3 × 120 h) ; somme des 85 tâches de niveau 4 · calendrier **S1 → S12** |
 | **Divisions (niveau 2)** | 6 — alignées une à une sur les 5 lignes du barème + la gestion de projet |
 | **Lots (niveau 3)** | 16 (L1→L16, identiques au CDC §13.3, charges réconciliées) |
-| **Tâches (niveau 4)** | **86 tâches individuelles** — chacune est assignable, estimable et vérifiable (règle d'arrêt WBS) |
+| **Tâches (niveau 4)** | **85 tâches individuelles** — chacune est assignable, estimable et vérifiable (règle d'arrêt WBS) |
 | **Documents liés** | `docs/01-cahier-des-charges-MiniShop.md` (§13.3/§13.4) · `docs/02-document-tests-validation.md` · `docs/03-support-soutenance.md` · `docs/04-conception-bd-et-sql.md` · `README.md` |
-| **Version** | 1.0 — 23 septembre 2026 |
+| **Version** | 1.1 — 23 octobre 2026 (révision de périmètre) |
 
 ---
 
@@ -25,7 +25,7 @@ La **Work Breakdown Structure** (structure de découpage de projet, ou organigra
 | **1** | le projet (produit final) | MiniShop : boutique + back-office + dossier de conception et de validation |
 | **2** | les **divisions** = livrables majeurs | 6 divisions D1→D6, une par ligne du barème (+ pilotage) |
 | **3** | les **lots** = sous-livrables | 16 lots L1→L16 (reprend le CDC §13.3) |
-| **4** | les **tâches individuelles** | **86 tâches**, estimées en heures et assignées à A, B ou C |
+| **4** | les **tâches individuelles** | **85 tâches**, estimées en heures et assignées à A, B ou C |
 
 **Règle d'arrêt** (jusqu'où descendre) : on ne descend pas plus bas que le niveau 4, car chaque tâche y satisfait les trois critères de la méthode —
 1. **assignable** à une ou plusieurs ressources (colonne *Resp.*),
@@ -38,9 +38,8 @@ C'est l'inverse d'une estimation globale « au doigt mouillé » : chaque heure 
 **Identification** : `D<n>-L<lot>-<nn>` (ex. `D3-L6-04`). Chaque tâche devient une **issue GitLab** portant ce titre
 (cf. §10), ce qui relie WBS, barème et trace de contribution individuelle.
 
-**Note de version** — les charges par lot du CDC §13.3 ont été **réconciliées** avec cette estimation bottom-up
-(la première mouture totalisait 402 h de lots contre 362 h annoncées, et la charge C dépassait le plafond affiché) ;
-le CDC corrigé et la WBS affichent désormais le même total : **360 h = 3 × 120 h** (§13.2 du CDC).
+**Note de version** — le 23 octobre 2026, le livrable GitLab CI (2 h) a été retiré du périmètre à la demande de l'équipe ;
+la charge révisée est de 358 h pour 85 tâches, dans une capacité nominale de 360 h. Les autres écarts historiques de charge restent hors de ce rebaselining.
 
 ---
 
@@ -61,23 +60,23 @@ spécification, sa base conçue et normalisée (3FN), son application testée et
 
 | Div. | Division (livrable majeur) | Point du barème | Resp. | Lots | Charge |
 |---|---|---|---|---|---:|
-| **D1** | Pilotage, dépôt GitLab & intégration | barème v — contribution GitLab + README (10 pts, individuel) | A | L1 + L15 | **24 h** |
+| **D1** | Pilotage, dépôt GitLab & collaboration | barème v — contribution GitLab + README (10 pts, individuel) | A | L1 + L15 | **22 h** |
 | **D2** | Document de spécification du système | barème i — 20 points | A + C | L2 + L3 | **54 h** |
 | **D3** | Conception de la base de données & SQL | barème ii — 20 points | B | L4 + L5 + L6 + L7 | **98 h** |
 | **D4** | Application Web PHP / MySQL / PDO | barème iii — 30 points (avec D5) | A + C | L8 + L9 + L10 + L11 + L12 + L13 | **146 h** |
 | **D5** | Tests & validation (document de tests) | barème iii — −3 pts si le document manque | B + A | L14 | **24 h** |
 | **D6** | Soutenance (15 min + questions) | barème iv — 10 points | A + B + C | L16 | **14 h** |
-| | **Total projet** | | | 16 lots | **360 h** |
+| | **Total projet** | | | 16 lots | **358 h** |
 
 ### Arborescence WBS (niveaux 1 → 3)
 
 <!--ARBRE_WBS-->
 
 ```text
-MiniShop — 360 h · 3 développeurs · 12 semaines (S1→S12)
+MiniShop — 358 h · 3 développeurs · 12 semaines (S1→S12)
 │
-├── D1 Pilotage, dépôt GitLab & intégration — 24 h · resp. A · [barème v — contribution GitLab + README (10 pts, individuel)]
-│   ├── L1 Cadrage, relecture du sujet, grille de conformité, squelette du dépôt, README (16 h · A · S1)
+├── D1 Pilotage, dépôt GitLab & collaboration — 22 h · resp. A · [barème v — contribution GitLab + README (10 pts, individuel)]
+│   ├── L1 Cadrage, relecture du sujet, grille de conformité, squelette du dépôt, README (14 h · A · S1)
 │   └── L15 Mise en ligne de démo, deploy.php, README final, arborescence propre (8 h · A · S11)
 ├── D2 Document de spécification du système — 54 h · resp. A + C · [barème i — 20 points]
 │   ├── L2 CDC : présentation, objectifs, acteurs, fonctionnalités (26 h · A + C · S1/S2)
@@ -109,7 +108,7 @@ le niveau 4 — le travail lui-même — est détaillé section 5.*
 
 | Lot | Contenu | Div. | Resp. | Semaines | Charge |
 |---|---|---|---|---|---:|
-| **L1** | Cadrage, relecture du sujet, grille de conformité, squelette du dépôt, README | D1 | A | S1 | 16 h |
+| **L1** | Cadrage, relecture du sujet, grille de conformité, squelette du dépôt, README | D1 | A | S1 | 14 h |
 | **L2** | CDC : présentation, objectifs, acteurs, fonctionnalités | D2 | A + C | S1/S2 | 26 h |
 | **L3** | Diagrammes UML (cas, classes, séquences) + règles métier formalisées | D2 | B + C | S2/S3 | 28 h |
 | **L4** | MCD → MLD → normalisation, jeu de données | D3 | B (+ relecture A) | S3 | 28 h |
@@ -125,7 +124,7 @@ le niveau 4 — le travail lui-même — est détaillé section 5.*
 | **L14** | Tests & validation : harnais, 29 tests SQL, cas fonctionnels, plan de recette, doc | D5 | B + A | S10/S11 | 24 h |
 | **L15** | Mise en ligne de démo, deploy.php, README final, arborescence propre | D1 | A | S11 | 8 h |
 | **L16** | Soutenance : support, trame, répétitions chronométrées, questions anticipées | D6 | A + B + C | S12 | 14 h |
-| | **Total** | | | S1→S12 | **360 h** |
+| | **Total** | | | S1→S12 | **358 h** |
 
 ---
 
@@ -135,26 +134,25 @@ le niveau 4 — le travail lui-même — est détaillé section 5.*
 la **définition de fini** (livrable observable) et les dépendances (tâches ou lots préalables).
 La ligne de sous-total de chaque lot redonne la charge du lot : la somme **remonte** — rien n'est ajouté au niveau lot qui ne vienne d'une tâche.*
 
-### D1 — Pilotage, dépôt GitLab & intégration (24 h · resp. A · barème v — contribution GitLab + README (10 pts, individuel))
+### D1 — Pilotage, dépôt GitLab & collaboration (22 h · resp. A · barème v — contribution GitLab + README (10 pts, individuel))
 
-#### Lot L1 — Cadrage, relecture du sujet, grille de conformité, squelette du dépôt, README (16 h · A · S1)
+#### Lot L1 — Cadrage, relecture du sujet, grille de conformité, squelette du dépôt, README (14 h · A · S1)
 
 | ID | Tâche individuelle | Resp. | h | Définition de fini | Dépend de |
 |---|---|---|---:|---|---|
 | `D1-L1-01` | Ouvrir le dépôt privé GitLab, inviter les 3 développeurs et l'enseignante (Reporter), protéger main, désactiver le squash | A | 2 | accès effectifs + courriel « Composition SAE » envoyé | — |
 | `D1-L1-02` | Squelette du dépôt : arborescence app/ public/ sql/ tests/ docs/ scripts/ + .gitignore | A | 2 | arborescence conforme au CDC §9.2 | 01 |
 | `D1-L1-03` | README v0 : prérequis, installation cible, membres et rôles (RACI) | A | 3 | README visible à la racine, lu par les 3 membres | 02 |
-| `D1-L1-04` | Grille de conformité au barème (CDC §16) épinglée en issue GitLab | A | 3 | issue créée : 5 livrables + pénalités suivis | 01 |
-| `D1-L1-05` | Charte GitLab : branches, MR croisées, commits conventionnels, 1 issue par UC/EF | A | 2 | wiki + modèle de MR (annexe 17.9) | 01 |
-| `D1-L1-06` | CI v0 : .gitlab-ci.yml avec job php-lint | A | 2 | pipeline vert sur un commit vide | 02 |
-| `D1-L1-07` | Réunion de cadrage : relecture du sujet ligne à ligne, périmètre, règle de repli groupe de 2 | A | 2 | compte-rendu dans le wiki du dépôt | — |
-| | **Sous-total L1** | | **16** | répartition : A 16 h | |
+| `D1-L1-04` | Grille de conformité au barème (CDC §16) suivie dans une issue GitLab | A | 3 | issue créée : 5 livrables + pénalités suivis | 01 |
+| `D1-L1-05` | Charte GitLab : branches, MR croisées, commits conventionnels, 1 issue par UC/EF | A | 2 | charte versionnée dans docs/20 + modèles de MR dans .gitlab/merge_request_templates/ | 01 |
+| `D1-L1-07` | Réunion de vérification de l'audit complet et de validation simple | A | 2 | compte rendu versionné dans docs/21-compte-rendu-reunion-audit-2026-11-13.md | — |
+| | **Sous-total L1** | | **14** | répartition : A 14 h | |
 
 #### Lot L15 — Mise en ligne de démo, deploy.php, README final, arborescence propre (8 h · A · S11)
 
 | ID | Tâche individuelle | Resp. | h | Définition de fini | Dépend de |
 |---|---|---|---:|---|---|
-| `D1-L15-01` | scripts/deploy.php : hashes aléatoires, emails de démo régénérés | A | 3 | démo reinstallable en 1 commande, SEC-10 respecté | L14 |
+| `D1-L15-01` | scripts/deploy.php : renouveler les hashes de démo et les emails .invalid ; procédure docs/22 à suivre en staging | A | 3 | validation sur staging isolé : comptes et hashes contrôlés sans exposer de données sensibles | L14 |
 | `D1-L15-02` | README final : installation 5 commandes, comptes, tests, sauvegarde | A | 3 | un tiers installe et lance en ≤ 15 min (ENF-13) | 01 |
 | `D1-L15-03` | Nettoyage de l'arborescence + tag v1.0-rendu | A | 2 | shortlog équilibré, tag posé, MR mergées | 02 |
 | | **Sous-total L15** | | **8** | répartition : A 8 h | |
@@ -208,7 +206,7 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme **remon
 | `D3-L5-01` | DDL : 8 tables, types, CHECK (RB-02/03/05), InnoDB utf8mb4 | B | 6 | sql/01 charge sans erreur sur MySQL 8 et MariaDB 11 | L4 |
 | `D3-L5-02` | Clés étrangères (CASCADE/RESTRICT au bon endroit) + index (FULLTEXT, filtres) | B | 4 | plans d'exécution justifiant chaque index | 01 |
 | `D3-L5-03` | 3 vues : v_etat_stock, v_catalogue, v_commandes_client | B | 4 | vues créées et comptées par load_db.sh | 01 |
-| `D3-L5-04` | Seed : 4 catégories, 36 produits (3 ruptures, 1 masqué), 3 clients (password_hash), 1 admin | B | 3 | jeu de démonstration RB-04/RB-19 jouable | 01 |
+| `D3-L5-04` | Seed : 4 catégories, 12 produits (1 rupture, 1 masqué), 3 clients (password_hash), 1 admin | B | 3 | jeu de démonstration RB-04/RB-19 jouable | 01 |
 | `D3-L5-05` | scripts/load_db.sh : chargement 01→04 + comptages de contrôle | B | 3 | sortie « base chargée, procédures ≥ 5, déclencheurs ≥ 5 » | 02–04 |
 | | **Sous-total L5** | | **20** | répartition : B 20 h | |
 
@@ -247,7 +245,7 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme **remon
 | `D4-L8-02` | app/Config/Database.php : PDO, ERRMODE_EXCEPTION, EMULATE_PREPARES = false | A | 3 | connexion centralisée, aucune requête hors repository | 01 |
 | `D4-L8-03` | Gabarit de vues + layout + helper d'échappement systématique | A | 4 | toute variable passe par htmlspecialchars($v, ENT_QUOTES…) | 01 |
 | `D4-L8-04` | app/Security : AuthMiddleware, sessions durcies, jetons CSRF | A | 6 | pages privées inaccessibles sans session, CSRF vérifié | 02 |
-| `D4-L8-05` | CI complète (6 jobs) + app/Config/env.example.php (jamais de secret versionné) | A | 4 | pipeline vert bloque un merge en échec | 01 |
+| `D4-L8-05` | CI GitHub Actions + app/Config/env.example.php (jamais de secret versionné) | A | 4 | contrôles GitHub Actions verts sur le commit vérifié | 01 |
 | | **Sous-total L8** | | **22** | répartition : A 22 h | |
 
 #### Lot L9 — Front-office : catalogue, recherche, fiche, inscription, connexion (32 h · C · S7)
@@ -343,19 +341,19 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme **remon
 
 | Niveau | Détail | Charge |
 |---|---|---:|
-| Tâches (niveau 4) | 86 tâches individuelles estimées | **360 h** |
-| Lots (niveau 3) | 16 lots (L1→L16), sous-totaux des tâches | 360 h |
-| Divisions (niveau 2) | 6 divisions : D1 24 h · D2 54 h · D3 98 h · D4 146 h · D5 24 h · D6 14 h | 360 h |
-| Projet (niveau 1) | 3 personnes × ~120 h sur 12 semaines | **360 h** |
+| Tâches (niveau 4) | 85 tâches individuelles estimées | **358 h** |
+| Lots (niveau 3) | 16 lots (L1→L16), sous-totaux des tâches | 358 h |
+| Divisions (niveau 2) | 6 divisions : D1 22 h · D2 54 h · D3 98 h · D4 146 h · D5 24 h · D6 14 h | 358 h |
+| Projet (niveau 1) | 3 personnes × ~120 h sur 12 semaines | **358 h** |
 
 ### 6.2 Charge par personne (pas de sur-allocation)
 
 | Personne | Rôle (RACI CDC §3.3) | Charge | Part | Plafond | Verdict |
 |---|---|---:|---:|---:|---|
-| **A** | chef de projet, back-office, intégration/CI | 122 h | 34% | 122 h | ✅ au plafond |
-| **B** | modèle et base de données, tests SQL | 117 h | 32% | 122 h | ✅ |
-| **C** | présentation, sécurité, JS, tests | 121 h | 34% | 122 h | ✅ |
-| | **Total** | **360 h** | 100 % | 3 × 122 h | équilibré (écart max 5 h) |
+| **A** | chef de projet, back-office, intégration GitHub Actions | 120 h | 33.5% | 122 h | ✅ |
+| **B** | modèle et base de données, tests SQL | 117 h | 32.7% | 122 h | ✅ |
+| **C** | présentation, sécurité, JS, tests | 121 h | 33.8% | 122 h | ✅ |
+| | **Total** | **358 h** | 100 % | 3 × 122 h | équilibré (écart max 4 h) |
 
 Chaque personne porte sa division principale **et** intervient dans les deux autres
 (ex. : A relit le document de conception D3 et exécute des tests SQL ; B rédige des questions de soutenance ;
@@ -368,10 +366,10 @@ Valeurs arrondies à l'heure.*
 
 | Semaine | S1 | S2 | S3 | S4 | S5 | S6 | S7 | S8 | S9 | S10 | S11 | S12 | **Total** |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| **A** | 23 | 7 | 4 | 0 | 10 | 24 | 0 | 14 | 18 | 5 | 13 | 4 | **122** |
+| **A** | 21 | 7 | 4 | 0 | 10 | 24 | 0 | 14 | 18 | 5 | 13 | 4 | **120** |
 | **B** | 0 | 8 | 32 | 20 | 30 | 8 | 0 | 0 | 0 | 7 | 7 | 5 | **117** |
 | **C** | 6 | 12 | 6 | 0 | 0 | 0 | 32 | 14 | 22 | 24 | 0 | 5 | **121** |
-| **Équipe** | **29** | **27** | **42** | **20** | **40** | **32** | **32** | **28** | **40** | **36** | **20** | **14** | **360** |
+| **Équipe** | **27** | **27** | **42** | **20** | **40** | **32** | **32** | **28** | **40** | **36** | **20** | **14** | **358** |
 
 **Pics assumés et anticipés** : S3 (B ≈ 32 h, lot L4 MCD/MLD), S5 (B ≈ 30 h, procédures), S7 (C = 32 h, front-office), S9 (équipe 40 h, back-office + sécurité).
 Trois parades, revues chaque vendredi (CDC §13.5) : (i) les tâches amont des lots critiques démarrent dès la quinzaine précédente,
@@ -387,7 +385,7 @@ Trois parades, revues chaque vendredi (CDC §13.5) : (i) les tâches amont des l
 ```text
 Lot |  S1  |  S2  |  S3  |  S4  |  S5  |  S6  |  S7  |  S8  |  S9  | S10  | S11  | S12 
 ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----
-L1   |  ██  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·    16 h  A
+L1   |  ██  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·    14 h  A
 L2   |  ██  |  ██  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·    26 h  A + C
 L3   |   ·  |  ██  |  ██  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·    28 h  B + C
 L4   |   ·  |   ·  |  ██  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·    28 h  B (+ relecture A)
@@ -438,7 +436,7 @@ L1 ── L2 ── L3 ── L4 ── L5 ── L6 ── L7 ── L8 ── 
 
 | Poste | Base | Valeur |
 |---|---|---:|
-| Charge de production | 360 h × 60 €/h (indice pédagogique théorique) | 21 600 € théoriques |
+| Charge de production | 358 h × 60 €/h (indice pédagogique théorique) | 21 480 € théoriques |
 | Licences, hébergement, données | tout open source / poste personnel | 0 € |
 | **Budget externe réel** | | **0 €** |
 
@@ -450,11 +448,11 @@ Le suivi réel se fait en **heures** : la table §6.3 est pointée chaque vendre
 ## 10. Exploitation dans GitLab (la WBS devient le tableau du projet)
 
 1. **Une issue par tâche de niveau 4** : titre `[(D3-L6-04)] sp_create_order, sp_add_order_line…` ;
-   description = définition de fini + dépendances ; 86 issues créées dès S1 (bulk import CSV).
+   description = définition de fini + dépendances ; 85 issues à suivre au total (bulk import CSV).
 2. **Labels** : `D1`…`D6` (couleur de division), `L1`…`L16`, `A`/`B`/`C`, `jalon-J1`…`jalon-J6`.
 3. **Board** : colonnes *À faire → En cours → En revue (MR) → Fermé* ; une colonne par jalon en vue *Listes de jalons*.
 4. **MR** : une MR par lot minimum, **mergée par un autre développeur que l'auteur** (auto-merge interdit) ;
-   la CI doit être verte (6 jobs, dont base-tests = 29/29).
+   les contrôles GitHub Actions doivent être verts sur le commit vérifié ; aucun pipeline GitLab n'est revendiqué.
 5. **Suivi individuel** (barème v) : `git shortlog -sne main` doit montrer 3 auteurs > 20 commits ;
    la répartition cible par zone (B ≈ 45 % de `sql/`, A ≈ 40 % de `app/Controller/`, C ≈ 45 % de `app/View/` et `public/js/`)
    est celle du CDC §14.3 ; chacun garde ≥ 5 commits dans les trois zones.
@@ -463,12 +461,11 @@ Le suivi réel se fait en **heures** : la table §6.3 est pointée chaque vendre
 
 ## 11. Gouvernance : définition de « terminé » et règle de repli
 
-**Une tâche de niveau 4 est fermée seulement si :**
-
-- sa **définition de fini** est observée (colonne dédiée dans chaque table du §5) ;
-- le code ou le document passe la **CI** (php-lint, 29 tests SQL, contrôles de sécurité, rendu des diagrammes) ;
-- une **autre personne** a relu la MR (revue croisée systématique) ;
-- la **documentation** liée (CDC, doc de conception, doc de tests, README) est mise à jour dans la même MR.
+**Une tâche de niveau 4 est fermée lorsque sa définition de fini est observée** (colonne dédiée au §5) et que les preuves annoncées correspondent réellement au livrable.
+Pour un changement traité par MR, consigner la revue croisée et, lorsqu'applicable, le statut CI du commit ; ces éléments ne sont pas inférés de la seule présence de la charte ou des modèles.
+Le critère documentaire de `D1-L1-05` porte uniquement sur la charte versionnée et les modèles de MR ; il ne certifie pas l'usage effectif des MR ni des revues croisées.
+La CI automatisée du dépôt est GitHub Actions (`.github/workflows/ci.yml`) ; elle ne constitue pas une preuve de pipeline GitLab IUT.
+La documentation liée (CDC, conception, tests, README) est mise à jour avec le livrable concerné.
 
 **Règle de repli si groupe de 2** (CDC §13.3) — la WBS se réduit ainsi, sans supprimer une exigence pénalisée :
 
@@ -478,9 +475,9 @@ Le suivi réel se fait en **heures** : la table §6.3 est pointée chaque vendre
 | L8 simplifié (table de routes minimale, pas de routeur maison) | `D4-L8-01` réduite | −3 h |
 | `EF-ADM-09` (indicateurs) et `EF-ADM-10` (comptes admin) non livrés | `D4-L11-04` réduite | −2 h |
 | Procédures réduites à 8, triggers à 8 (en gardant TRG-A1/A2/A3, B2, B5, D1, D4) | `D3-L6-*` et `D3-L7-*` allégées | −25 h |
-| **Total repli** | | **≈ −36 h → 324 h pour 2 personnes (~160 h chacune, périmètre validé en S1)** |
+| **Total repli** | | **≈ −36 h → 322 h pour 2 personnes (estimation révisée)** |
 
 ---
 
-*WBS MiniShop v1.0 — document généré depuis la même source de données que le CDC §13.3 (charges réconciliées) ;
+*WBS MiniShop v1.1 — document généré depuis la même source de données que le CDC §13.3 ;
 méthode : structure de découpage en 4 niveaux, estimation bottom-up, plan de charge, Gantt, chemin critique.*

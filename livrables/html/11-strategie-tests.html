@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="SAÉ 302 — MiniShop : 11 — Stratégie de tests#">
+<title>11 — Stratégie de tests# — MiniShop</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --papier: #fbfaf7;
+  --carte: #ffffff;
+  --trait: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-clair: #dbeafe;
+  --code: #f1f5f9;
+  --mesure: 72ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
+    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
+    --accent-clair: #1e3a8a; --code: #16223a;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  max-width: calc(var(--mesure) + 6rem);
+  background: var(--papier);
+  color: var(--encre);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
+h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
+p, li { max-width: var(--mesure); }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+}
+pre {
+  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
+  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.35rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+thead th { background: var(--accent-clair); }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
+img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li input[type="checkbox"] { margin-right: 0.4rem; }
+.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
+.toc > ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1rem; }
+footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+@media print {
+  :root { --papier: #fff; --carte: #fff; }
+  @page { size: A4; margin: 18mm 16mm; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#1-le-principe-la-pyramide-appliquee-pour-de-vrai">1. Le principe : la pyramide, appliquée pour de vrai</a></li>
+<li><a href="#2-les-trois-natures-de-test-et-ce-quelles-distinguent">2. Les trois natures de test, et ce qu'elles distinguent</a><ul>
+<li><a href="#21-tests-de-regles-etage-3-le-moteur-sans-http">2.1 Tests de règles (étage 3) — le moteur, sans HTTP</a></li>
+<li><a href="#22-tests-dintegration-sql-etage-5-la-seule-preuve-que-le-sql-fonctionne">2.2 Tests d'intégration SQL (étage 5) — la seule preuve que le SQL fonctionne</a></li>
+<li><a href="#23-tests-de-bout-en-bout-etage-6-ce-que-lutilisateur-voit">2.3 Tests de bout en bout (étage 6) — ce que l'utilisateur voit</a></li>
+</ul>
+</li>
+<li><a href="#3-les-tests-de-contrat-la-partie-qui-attrape-ce-que-les-autres-laissent-passer">3. Les tests de contrat — la partie qui attrape ce que les autres laissent passer</a></li>
+<li><a href="#4-ce-qui-nest-pas-joue-en-sandbox-et-pourquoi-cest-ecrit">4. Ce qui n'est pas joué en sandbox, et pourquoi c'est écrit</a></li>
+<li><a href="#5-la-couverture-mesuree-honnetement">5. La couverture, mesurée honnêtement</a></li>
+<li><a href="#6-le-harnais-se-verifie-lui-meme">6. Le harnais se vérifie lui-même</a></li>
+<li><a href="#7-comment-on-lance-tout">7. Comment on lance tout</a></li>
+<li><a href="#8-auto-evaluation">8. Auto-évaluation</a></li>
+<li><a href="#information-juridique-mentions-legales-lcen-et-protection-des-donnees">Information juridique, mentions légales LCEN et protection des données</a></li>
+<li><a href="#dates-utc-fuseau-horaire-local-et-traduction-integrale-fr-en">Dates UTC, fuseau horaire local et traduction intégrale FR ↔ EN</a></li>
+<li><a href="#depreciations-php-et-isolation-des-tests">Dépréciations PHP et isolation des tests</a></li>
+<li><a href="#code-potentiellement-inutilise-et-inventaire-applicatif">Code potentiellement inutilisé et inventaire applicatif</a></li>
+<li><a href="#page-403-et-roles-administrateurs">Page 403 et rôles administrateurs</a></li>
+<li><a href="#articulation-avec-les-suites-de-tests-manuels-docs13-">Articulation avec les suites de tests manuels (docs/13-*)</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="11-strategie-de-tests">11 — Stratégie de tests<a class="headerlink" href="#11-strategie-de-tests" title="Permanent link">#</a></h1>
+<p>Ce document ne remplace pas le <a href="02-document-tests-validation.html">document de tests et de validation</a> (cas détaillés, registre d'anomalies, PV de recette) : il explique <strong>comment</strong> la vérification est construite, <strong>pourquoi</strong> à ce niveau-là, et <strong>ce qu'elle ne prouve pas</strong>. C'est le document qu'on lit quand on se demande « vos tests, ils servent à quoi ? ».</p>
+<h2 id="1-le-principe-la-pyramide-appliquee-pour-de-vrai">1. Le principe : la pyramide, appliquée pour de vrai<a class="headerlink" href="#1-le-principe-la-pyramide-appliquee-pour-de-vrai" title="Permanent link">#</a></h2>
+<p>La pyramide des tests est souvent citée puis contredite par les chiffres. Voici les nôtres, mesurés sur la révision courante (<code>node scripts/run-all-tests.mjs</code>).</p>
+<table>
+<thead>
+<tr>
+<th>Étage</th>
+<th>Nature</th>
+<th>Suite</th>
+<th>Volume</th>
+<th>Durée</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Analyse statique &amp; audits documentaires</td>
+<td><code>scripts/strict_types_lint.php</code> (<code>declare_strict_types</code>, types natifs complets, zéro ternaire) + <code>tests/security/controles.sh</code> (10 contrôles + autotest) + <code>scripts/verifier_fiches_uc.py</code> + <code>tests/python/test_audit_structurel.py</code> + autotest <code>scripts/wasm_verdict.mjs</code></td>
+<td><strong>158 fichiers</strong> PHP lintés, 0 violation · <strong>10/10</strong> contrôles sécurité · <strong>46</strong> contrôles fiches manuelles (<code>164</code> scénarios + <code>36</code> couples)</td>
+<td>&lt; 2 s</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Unitaires purs</td>
+<td><code>tests/php/unit_tests.php</code> + <code>tests/phpunit/**</code> (9 classes : <code>Text</code>, <code>Filter</code>, <code>Prix</code>, <code>Triggers</code>, <code>JsonStore</code>, <code>SecurityContract</code>, <code>AlternativeImage</code>, <code>JournalEtTable</code>, <code>ConservationEtFuseau</code>)</td>
+<td>suite PHP unitaire + <strong>50</strong> tests PHPUnit 11</td>
+<td>~ 6 s</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Contrats statiques &amp; métier ciblés</td>
+<td><code>contract_http.php</code>, <code>css_contract.php</code>, <code>responsive_contract.php</code> + 31 suites spécialisées <code>tests/php/*_test.php</code> (confirmations 2 étapes, historique annulation, doublons catégories, défaut stock <code>DELTA</code>, mentions LCEN, heure UTC/DST, rétention 24 mois, nettoyage, visuels, alignements…)</td>
+<td><strong>42 suites PHP</strong> exécutées sous PHP 8.2 et PHP 8.5 sans dépréciation</td>
+<td>~ 15 s</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Règles de gestion sur le moteur</td>
+<td><code>tests/php/run_tests.php</code> (<code>T-01</code> → <code>T-29</code> du CDC §6), <code>tests/php/engine_smoke.php</code>, <code>tests/php/json_concurrency_stress.php</code></td>
+<td><strong>29/29</strong> scénarios + contrôles moteur + stress concurrent JSON</td>
+<td>~ 10 s</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Fonctionnalités via dépôts &amp; fixtures isolées</td>
+<td><code>tests/php/features_test.php</code> (UC-01 → UC-14), <code>catalogue_stock_test.php</code>, <code>nouveautes_test.php</code> (magasins temporaires dédiés, <code>data/minishop</code> jamais lu ni modifié)</td>
+<td><strong>7 656+</strong> cas catalogue + parcours UC complets</td>
+<td>~ 8 s</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Intégration SQL réelle &amp; migrations</td>
+<td><code>tests/php/sql_integration.php</code> (<code>tests/sql/run_tests.sh</code> + étape 6 PDO : <code>sp_cancel_order</code>, <code>ANNULATION_VIA_PARCOURS_DEDIE</code>, <code>EXPEDIEE</code> sans retour stock, UTC <code>+00:00</code>, <code>revenueReport</code>, <code>RetentionComptes</code>) + <code>tests/php/migration_mariadb_test.php</code></td>
+<td><strong>29</strong> scénarios SQL + étape 6 + migrations sur <strong>MySQL 8.0</strong> et <strong>MariaDB 11.8</strong></td>
+<td>~ 30 s</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Parcours HTTP E2E, DOM bilingue FR↔EN &amp; CLI Python</td>
+<td><code>scripts/wasm-e2e.mjs</code> + 23 suites <code>scripts/ui-e2e-*.mjs</code> + <code>tests/node/preferences_test.mjs</code> + <code>tests/node/e2e_isolation.mjs</code> + <code>tests/python/test_{retention_cli,nettoyage_cli,archive_restreinte,preparer_sql_lineserv,auth_403_http}.py</code></td>
+<td><strong>338</strong> contrôles HTTP E2E isolés + <strong>48 vues</strong> <code>FR -&gt; EN -&gt; FR</code> &amp; <strong>44 erreurs</strong> métier + AJAX <code>panier.js</code></td>
+<td>~ 90 s</td>
+</tr>
+<tr>
+<td>6 bis</td>
+<td>Navigateur réel headless (CI)</td>
+<td><code>tests/node/responsive_navigateur.mjs</code> (Playwright Chromium : 320, 375 et 1440 px, français et anglais, avec et sans JavaScript)</td>
+<td>cartes <code>data-label</code>, pages légales FR/EN, panier AJAX EN, annulation admin <code>EXPEDIEE</code> sans JS</td>
+<td>~ 45 s</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Performance &amp; volumétrie</td>
+<td><code>scripts/capture_perf.sh</code> → <code>gen_volumes.sh</code> + <code>tests/perf/mesurer_sql.sh</code></td>
+<td>5 requêtes types + <code>EXPLAIN</code> + p95 de la recherche</td>
+<td>~ 60 s</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Suites de recette manuelle humaine</td>
+<td><a href="13-fiches-recette-uc.html"><code>docs/13-fiches-recette-uc.md</code></a> + <a href="13-suivi-recette-uc.csv"><code>docs/13-suivi-recette-uc.csv</code></a> + <a href="14-guide-lineserv.html"><code>docs/14-guide-lineserv.md</code></a></td>
+<td><strong>164 scénarios</strong> (<code>UC-01..14</code> + <code>TCX-01..24</code>, hors responsive multi-largeurs) + <strong>36 couples</strong> = <strong>200 lignes <code>NON JOUÉ</code></strong></td>
+<td>campagne humaine</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total</strong> : les volumes détaillés figurent ci-dessus ; les scénarios catalogue varient avec le nombre de produits. La matrice catalogue MariaDB reste à jouer.</p>
+<p>Pourquoi cette forme, et pas 400 tests unitaires avec des doublures partout : l'essentiel du sujet est une <strong>base de données</strong> (8 entités, 17 procédures, 16 déclencheurs, 1 fonction, 3 vues). Un test unitaire avec un <code>PDO</code> simulé prouverait que le PHP appelle bien une chaîne de caractères — c'est-à-dire rien. Les règles de gestion (stock, immutabilité du prix, transitions de statut, total recalculé) sont donc vérifiées <strong>là où elles vivent réellement</strong> : étage 3 sur le moteur, étage 5 sur MariaDB. La pyramide est respectée dans son esprit (beaucoup de tests rapides en bas) mais son sommet est anormalement lourd, et c'est assumé : c'est le sujet.</p>
+<h2 id="2-les-trois-natures-de-test-et-ce-quelles-distinguent">2. Les trois natures de test, et ce qu'elles distinguent<a class="headerlink" href="#2-les-trois-natures-de-test-et-ce-quelles-distinguent" title="Permanent link">#</a></h2>
+<h3 id="21-tests-de-regles-etage-3-le-moteur-sans-http">2.1 Tests de règles (étage 3) — le moteur, sans HTTP<a class="headerlink" href="#21-tests-de-regles-etage-3-le-moteur-sans-http" title="Permanent link">#</a></h3>
+<p><code>tests/php/run_tests.php</code> exécute les 29 scénarios T-01 → T-29 du cahier des charges sur <code>app/Model/Data/JsonStore.php</code>, qui réimplémente contraintes, déclencheurs et transactions. L'intérêt n'est pas de « tester du JSON » mais de <strong>vérifier la règle indépendamment de l'application</strong> : aucun contrôleur n'est instancié, aucune session n'existe. Si quelqu'un contourne le formulaire, la règle tient encore.</p>
+<p><code>tests/php/engine_smoke.php</code> (44 contrôles) vérifie les <strong>hypothèses de cette réimplémentation</strong> : que les deux pilotes (<code>JSON</code> et <code>SQL</code>) exposent la même API, que <code>SqlStore</code> n'ouvre pas de connexion sans PDO, qu'il n'assemble aucune requête par concaténation, que <code>LIKE</code> ignore casse et accents. Sans cet étage, un test de règle vert sur JSON pourrait passer sur un moteur qui ne se comporte pas pareil.</p>
+<h3 id="22-tests-dintegration-sql-etage-5-la-seule-preuve-que-le-sql-fonctionne">2.2 Tests d'intégration SQL (étage 5) — la seule preuve que le SQL fonctionne<a class="headerlink" href="#22-tests-dintegration-sql-etage-5-la-seule-preuve-que-le-sql-fonctionne" title="Permanent link">#</a></h3>
+<p><code>tests/php/sql_integration.php</code> est une <strong>enveloppe mince</strong> autour de <code>tests/sql/run_tests.sh</code> (qui existait déjà) : il crée une base dédiée <code>minishop_test</code>, y charge <code>sql/01</code> → <code>sql/04</code>, teste également le repository sur <code>SqlStore</code> et la procédure de recherche, joue les 29 scénarios, puis <strong>supprime la base</strong>.</p>
+<p>Depuis l’audit global, cette enveloppe refuse par défaut une base existante et refuse toujours le nom <code>DB_NAME</code> configuré. <code>--reinitialiser-base-existante</code> autorise explicitement la suppression : serveur de test jetable uniquement. La protection du nom ne détecte pas les bases utilisées par d’autres applications. Le harnais shell appelé directement ne bénéficie pas de ces garde-fous.</p>
+<p>Le mot « mince » est important : réécrire les 29 cas en PHP aurait produit deux jeux de tests qui divergent au premier changement de schéma. Le harnais shell est la référence ; le PHP n'ajoute que l'isolation.</p>
+<p>L'isolation est le point délicat : <code>tests/sql/fixture.sql</code> réinitialise l'état <strong>avant chaque scénario</strong> — lancée sur la base de développement, la campagne effacerait les commandes de démonstration. L'enveloppe refuse le nom de base applicative configuré ; cela ne protège pas les bases des autres applications. <code>--garder</code> permet d'inspecter le résultat.</p>
+<p>Un détail découvert sur la machine de recette : le compte applicatif <code>minishop</code> n'a volontairement de droits que sur <code>minishop.*</code> (moindre privilège), donc <code>CREATE DATABASE minishop_test</code> est refusé — <code>1044 Access denied</code>. Ce n'est pas un bug du test, c'est la politique de droits qui fonctionne. La base annexe s'ouvre donc <strong>explicitement</strong>, par <code>php scripts/db_init.php --test-db</code> : elle crée <code>minishop_test</code> et y accorde les droits, <strong>sans</strong> toucher au mot de passe du compte ni élargir quoi que ce soit sur la base de production. Le test, lui, ne demande jamais <code>sudo</code> de lui-même. Puisque cette commande crée une base existante, le test la refuse ensuite par défaut ; sa réinitialisation exige l’option destructive explicitée ci-dessus, après vérification et uniquement sur serveur jetable.</p>
+<p>Dégradation : sans client <code>mariadb</code>/<code>mysql</code> dans le <code>PATH</code>, ou sans serveur joignable, le test annonce <strong>NON JOUÉ</strong> et sort en code 2. <code>scripts/run-all-tests.mjs</code> distingue ce cas d'un échec — un test qu'on ne peut pas jouer doit le dire, pas mentir en vert ni échouer pour de mauvaises raisons.</p>
+<h3 id="23-tests-de-bout-en-bout-etage-6-ce-que-lutilisateur-voit">2.3 Tests de bout en bout (étage 6) — ce que l'utilisateur voit<a class="headerlink" href="#23-tests-de-bout-en-bout-etage-6-ce-que-lutilisateur-voit" title="Permanent link">#</a></h3>
+<p><code>scripts/e2e.mjs</code> exécute le parcours WASM : les requêtes passent par le front controller dans le runtime PHP-WASM, sans navigateur ni serveur HTTP réel. Il vérifie les codes HTTP, le contenu des pages, les jetons CSRF et la persistance dans le magasin JSON. 268 vérifications couvrant inscription, connexion, recherche, panier, commande, suivi, administration.</p>
+<p>Depuis l’audit global, <strong>le test ne charge pas les données de l’hôte</strong> : il initialise et modifie uniquement un système de fichiers PHP-WASM jetable, sans rapatriement ni restauration. Le test <code>tests/node/e2e_isolation.mjs</code> vérifie en copie temporaire que les fichiers hôte factices restent inchangés.</p>
+<h2 id="3-les-tests-de-contrat-la-partie-qui-attrape-ce-que-les-autres-laissent-passer">3. Les tests de contrat — la partie qui attrape ce que les autres laissent passer<a class="headerlink" href="#3-les-tests-de-contrat-la-partie-qui-attrape-ce-que-les-autres-laissent-passer" title="Permanent link">#</a></h2>
+<p>Trois suites tournent <strong>sans exécuter l'application</strong>. Elles sont rapides, et elles attrapent une catégorie de défaut que ni les tests unitaires ni l'E2E ne voient : la <strong>cohérence entre deux artefacts écrits séparément</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Suite</th>
+<th>Ce qu'elle garantit</th>
+<th>Exemple de défaut attrapé</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>contract_http.php</code> (27)</td>
+<td>Chaque lien et chaque <code>action=</code> d'une vue pointe vers une route <strong>déclarée</strong> ; toute route <code>/admin/*</code> porte une garde ; aucune écriture en <code>GET</code> ; les en-têtes de sécurité sont émis</td>
+<td>un <code>&lt;a href="/commande/suivi"&gt;</code> après renommage de la route ; une route d'administration sans <code>exigerAdmin()</code></td>
+</tr>
+<tr>
+<td><code>css_contract.php</code> (69)</td>
+<td>Les jetons du design system sont réellement définis et utilisés ; les contrastes calculés passent AA ; la CSP n'autorise pas d'origine externe</td>
+<td>une couleur écrite en dur qui contourne le jeton ; un <code>style=</code> inline bloqué par la CSP</td>
+</tr>
+<tr>
+<td><code>responsive_contract.php</code> (50)</td>
+<td>La mise en page tient de 320 px à 1536 px (WCAG 1.4.10) : pas de largeur fixe, tableaux en conteneur défilant, cibles tactiles ≥ 24 px</td>
+<td>une grille <code>min-width: 900px</code> qui provoque un défilement horizontal sur mobile</td>
+</tr>
+</tbody>
+</table>
+<p>Ces tests sont <strong>statiques</strong> : ils analysent les fichiers. C'est une limite réelle (aucune validation de navigateur dans ces trois scripts), compensée en CI par <code>tests/node/responsive_navigateur.mjs</code> sous Chromium headless (320, 375 et 1440 px) — l'équipe ayant choisi de retirer les campagnes responsive multi-largeurs des suites manuelles (trop longues à dérouler à la main).</p>
+<h2 id="4-ce-qui-nest-pas-joue-en-sandbox-et-pourquoi-cest-ecrit">4. Ce qui n'est pas joué en sandbox, et pourquoi c'est écrit<a class="headerlink" href="#4-ce-qui-nest-pas-joue-en-sandbox-et-pourquoi-cest-ecrit" title="Permanent link">#</a></h2>
+<p>La sandbox de développement n'a ni PHP natif, ni MySQL, ni navigateur. Elle exécute les suites PHP via un runtime WASM (<code>scripts/wasm_run.mjs</code>, <code>@php-wasm/node</code>), ce qui suffit pour les étages 0 à 4 et 6.</p>
+<table>
+<thead>
+<tr>
+<th>Suite</th>
+<th>Sandbox</th>
+<th>Machine avec MariaDB</th>
+<th>Conséquence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Étages 0–4, 6 (PHP + E2E)</td>
+<td>✅ joués</td>
+<td>✅ joués</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>sql_integration.php</code> (étage 5)</td>
+<td>⏭ NON JOUÉ (<code>exec</code> indisponible)</td>
+<td>✅ joué</td>
+<td>joué sur la machine de l'équipe, résultat consigné</td>
+</tr>
+<tr>
+<td><code>coverage.php</code></td>
+<td>⏭ NON JOUÉ (lance des processus enfants)</td>
+<td>✅ joué</td>
+<td>voir §6</td>
+</tr>
+<tr>
+<td><code>capture_perf.sh</code> (étage 7)</td>
+<td>⏭ NON JOUÉ (pas de serveur)</td>
+<td>✅ joué</td>
+<td>mesures consignées dans <code>tests/perf/dernieres_mesures.txt</code></td>
+</tr>
+<tr>
+<td>Navigateur réel, lecteur d'écran</td>
+<td>⏭ NON JOUÉ</td>
+<td>partiellement</td>
+<td>vérifications manuelles, §5 du doc de tests</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Règle tenue</strong> : un test non jouable annonce « NON JOUÉ » et sort en code 2 ; il n'est jamais présenté comme vert. Une case cochée sans résultat derrière est un mensonge qui se paie en soutenance.</p>
+<h2 id="5-la-couverture-mesuree-honnetement">5. La couverture, mesurée honnêtement<a class="headerlink" href="#5-la-couverture-mesuree-honnetement" title="Permanent link">#</a></h2>
+<p><code>scripts/coverage.php</code> ne mesure <strong>pas</strong> la couverture de lignes : elle exigerait Xdebug ou PCOV, c'est-à-dire une dépendance à installer pour noter le projet (contraire à <code>ENF-20</code>). Il mesure ce qui est vérifiable sans rien installer : <strong>quels fichiers de <code>app/</code> sont chargés par au moins une suite</strong>.</p>
+<p>Un fichier jamais chargé n'est pas « mal couvert », il n'est <strong>jamais exécuté</strong> : aucune suite ne peut détecter sa régression. C'est le bon signal pour repérer du code mort.</p>
+<pre><code class="language-bash">php scripts/coverage.php              # tableau par suite + pourcentage
+php scripts/coverage.php --liste      # fichiers jamais chargés
+php scripts/coverage.php --min=80     # échoue sous 80 % (CI)
+</code></pre>
+<p>Ce que cette mesure ne dit pas, et qu'il faut dire à sa place : un fichier chargé n'est pas un fichier correctement exercé ; les vues (<code>app/View</code>) ne sont chargées qu'à l'affichage, donc leur couverture par les suites PHP est structurellement faible — c'est l'E2E qui les exerce, et il n'entre pas dans ce calcul.</p>
+<h2 id="6-le-harnais-se-verifie-lui-meme">6. Le harnais se vérifie lui-même<a class="headerlink" href="#6-le-harnais-se-verifie-lui-meme" title="Permanent link">#</a></h2>
+<p>Un dispositif de test qui ne peut pas échouer ne prouve rien. C'est arrivé, et c'est écrit ici parce que le défaut était invisible.</p>
+<p>En mode PHP-WASM, <code>scripts/wasm_run.mjs</code> propageait <code>result.exitCode</code>. Cette valeur ne vient pas du CLI mais du gestionnaire de <strong>requêtes</strong> PHP. Mesures sur ce dépôt :</p>
+<table>
+<thead>
+<tr>
+<th>Script</th>
+<th><code>exitCode</code> renvoyé</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>terminé normalement</td>
+<td><strong>1</strong></td>
+</tr>
+<tr>
+<td><code>exit(0)</code> / <code>exit(1)</code> / <code>exit(3)</code></td>
+<td><strong>0</strong></td>
+</tr>
+<tr>
+<td>exception non attrapée (erreur fatale)</td>
+<td><strong>0</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Autrement dit : dans la sandbox, <code>run-all-tests.mjs</code> comptait les échecs comme des succès. Le verdict est maintenant calculé sur des signaux observables (<code>scripts/wasm_verdict.mjs</code>) :</p>
+<ul>
+<li>erreur fatale ou de syntaxe PHP → 255 ;</li>
+<li>au moins un marqueur « ❌ » dans la sortie → 1 (les suites de ce dépôt n'emploient ce marqueur que sur un contrôle en échec) ;</li>
+<li>« NON JOUÉ » et aucun « ✅ » → 2 ;</li>
+<li>sinon → 0.</li>
+</ul>
+<p>Ce module porte son <strong>autotest de 7 cas</strong>, branché en tête de <code>run-all-tests.mjs</code>. Sans lui, une régression du verdict rendrait à nouveau toutes les suites vertes par construction — et c'est exactement le genre de panne qui ne se voit jamais, puisqu'elle produit un résultat rassurant.</p>
+<p>Vérification de bout en bout : une suite volontairement sabotée fait sortir <code>run-all-tests.mjs</code> en <strong>1</strong> ; restaurée, en <strong>0</strong>.</p>
+<h2 id="7-comment-on-lance-tout">7. Comment on lance tout<a class="headerlink" href="#7-comment-on-lance-tout" title="Permanent link">#</a></h2>
+<pre><code class="language-bash"># tout, dans l'ordre, arrêt au premier échec
+node scripts/run-all-tests.mjs        # sandbox (PHP-WASM)
+php scripts/run-all-tests.php         # machine avec PHP natif
+
+# une suite
+node scripts/wasm_run.mjs tests/php/run_tests.php
+php tests/php/run_tests.php
+
+# SQL et performance : uniquement sur un serveur de test jetable.
+# L'intégration refuse une base déjà existante par défaut ; voir la section 2.2.
+# Les outils SQL et de performance directs peuvent réinitialiser leurs cibles.
+</code></pre>
+<h2 id="8-auto-evaluation">8. Auto-évaluation<a class="headerlink" href="#8-auto-evaluation" title="Permanent link">#</a></h2>
+<p><strong>Ce qui tient.</strong> Les 29 règles de gestion sont vérifiées deux fois — sur le moteur et sur MariaDB — et 15 des 29 scénarios SQL contournent volontairement l'application pour prouver que la règle ne dépend pas du code PHP. Les parcours utilisateur sont exercés en HTTP réel, pas en appel de méthode. Les tests de contrat couvrent une zone (liens, CSP, responsive) que la pyramide classique laisse vide.</p>
+<p><strong>Ce qui ne tient pas, et qu'on assume.</strong></p>
+<ol>
+<li><strong>Pas de couverture de lignes.</strong> Assumé pour ne pas ajouter de dépendance ; le substitut (fichiers chargés) est plus faible et le dit.</li>
+<li><strong>Les tests de contrat sont statiques.</strong> Une expression régulière sur un gabarit n'est pas un navigateur : un lien construit dynamiquement échappe au contrôle (la suite l'annonce, elle ne le juge pas).</li>
+<li><strong>Pas d'accessibilité automatisée.</strong> Contrastes et cibles tactiles sont calculés ; la navigation au lecteur d'écran reste manuelle.</li>
+<li><strong>Le harnais de tests a menti pendant un temps.</strong> Les campagnes « tout est vert » conduites en sandbox avant la correction du §6 ne prouvaient rien sur les codes de sortie. Les suites ont ensuite été rejouées, et le harnais se vérifie désormais lui-même à chaque exécution. Le point est signalé ici plutôt que corrigé en silence : un rapport de tests qui a été faux une fois doit le dire.</li>
+<li><strong>Pas de test de charge HTTP.</strong> <code>C-01</code> simule 20 réservations concurrentes sur la base ; l'application sous charge réelle n'est pas mesurée.</li>
+<li><strong>La campagne SQL dépend de l'environnement.</strong> Elle n'est pas exécutable en sandbox ; elle a été jouée sur la machine de l'équipe, et le rapport <code>tests/sql/rapport_tests_sql.md</code> en est la trace.</li>
+</ol>
+<p>Un défaut trouvé par ces tests et <strong>non corrigé</strong> est documenté plutôt que masqué : l'agrégation <code>sp_revenue_report</code> reste en <code>ALL</code> (anomalie A-08, 17 ms mesurées, sous le seuil <code>ENF-01</code>) — corriger aurait ajouté un index de couverture non justifié par la volumétrie retenue.</p>
+<h2 id="information-juridique-mentions-legales-lcen-et-protection-des-donnees">Information juridique, mentions légales LCEN et protection des données<a class="headerlink" href="#information-juridique-mentions-legales-lcen-et-protection-des-donnees" title="Permanent link">#</a></h2>
+<p><code>tests/php/information_juridique_test.php</code> et <code>tests/php/mentions_legales_test.php</code> vérifient les contrats statiques de navigation, contenu, cookies/stockage local (<code>sessionStorage</code> et <code>document.cookie</code> interdits dans <code>public/js/*.js</code>), mentions légales étudiantes conformes à l'article 6, III, 2 de la LCEN (Point 20 : co-éditeurs Johan Polsinelli et Chahd Gouiaa, hébergeur IUT <code>linserv-info-01.campus.unice.fr</code>), information précontractuelle et design ; ces contrôles ne constituent pas un avis juridique.
+Le parcours <code>scripts/wasm-e2e.mjs</code> (338 vérifications, sections T1 à T15) et <code>scripts/ui-e2e-mentions.mjs</code> testent les 12 pages d'information/légales, <code>/preferences</code> sans compte ni traceur, l'encadré de garanties rendu, l'avertissement de rétractation, le cookie de session observé et le contact (réussite, message de plus de 500 caractères, erreur d'écriture, CSRF et XSS). Les données de test restent isolées dans un magasin temporaire dédié. Détails et réserves dans <code>docs/12-information-juridique.md</code>.</p>
+<h2 id="dates-utc-fuseau-horaire-local-et-traduction-integrale-fr-en">Dates UTC, fuseau horaire local et traduction intégrale FR ↔ EN<a class="headerlink" href="#dates-utc-fuseau-horaire-local-et-traduction-integrale-fr-en" title="Permanent link">#</a></h2>
+<ul>
+<li><code>tests/php/date_ajout_test.php</code>, <code>tests/php/heure_test.php</code> et <code>tests/phpunit/ConservationEtFuseauTest.php</code> vérifient le stockage UTC de bout en bout (<code>SET time_zone = '+00:00'</code> sur PDO), les conversions <code>Europe/Paris</code> et fuseaux IANA (dont jours de bascule DST de 23 h et 25 h), ainsi que les bornes UTC des filtres <code>/admin/commandes</code> et du tableau de bord <code>/admin</code>.</li>
+<li><code>tests/node/preferences_test.mjs</code> exerce dans JSDOM la page <code>/preferences</code> (choix manuel, géolocalisation locale CC0 <code>tz-lookup.js</code> sans requête réseau externe ni coordonnée stockée, <code>localStorage</code> indisponible, réinitialisation), l'aller-retour complet <code>FR -&gt; EN -&gt; FR</code> sans perte sur les <strong>48 vues</strong> de l'application, la traduction des <strong>44 erreurs métier</strong> (<code>BusinessError</code>) et le comportement anglais de <code>panier.js</code> (<code>Adding…</code>, <code>Cart, 1 item</code> / <code>2 items</code>).</li>
+<li><code>tests/node/responsive_navigateur.mjs</code> valide dans un vrai Chromium headless (en CI, job <code>responsive-browser</code>) les largeurs <strong>320, 375 et 1440 px</strong> en français et en anglais, avec et sans JavaScript : absence de débordement horizontal, cartes mobiles étiquetées <code>data-label</code> sur les tableaux d'administration, pages légales EN, annonce AJAX du panier EN et confirmation d'annulation admin sans JS d'une commande <code>EXPEDIEE</code>.</li>
+</ul>
+<h2 id="depreciations-php-et-isolation-des-tests">Dépréciations PHP et isolation des tests<a class="headerlink" href="#depreciations-php-et-isolation-des-tests" title="Permanent link">#</a></h2>
+<ul>
+<li><code>python3 scripts/verifier_deprecations.py</code> lance <code>php -l</code> sur les fichiers PHP du code applicatif, des scripts et des suites, avec toutes les erreurs affichées. Il relève aussi un <code>Deprecated</code> même si PHP rend le code 0. Syntaxe et dépréciations sont vérifiées avec <strong>le PHP CLI réellement lancé</strong>, pas avec une version théorique. Il n'exécute pas les fichiers ni les dépendances externes.</li>
+<li>Les runners des suites PHP chargent <code>tests/php/deprecations_bootstrap.php</code> : <code>E_DEPRECATED</code> et <code>E_USER_DEPRECATED</code> sont signalés même sous <code>@</code>, et un marqueur fait échouer la suite. Cela ne couvre que le code réellement exécuté et peut être contourné si ce code remplace le gestionnaire d'erreur. Les parcours E2E HTTP et les fichiers exécutés directement hors runner n'y sont pas inclus.</li>
+<li>Pour éviter la base et les données E2E, utiliser <code>php scripts/run-all-tests.php --sans-sql --sans-e2e</code>. Python 3 et PHP CLI 8.2+ avec <code>mbstring</code> sont requis ; ni npm ni MariaDB ne sont requis pour ce mode. Sans options, SQL crée puis supprime une base de test et refuse les bases déjà existantes par défaut ; serveur isolé obligatoire. L’E2E ne modifie plus <code>data/</code> sur l’hôte.</li>
+<li>En l'absence de PHP CLI natif, le runner Node/WASM annonce l'analyse de compilation NON JOUÉE. Le garde d'exécution y utilise PHP-WASM 8.2 ; cela ne démontre rien sur les dépréciations apparues dans PHP 8.4/8.5. Rejouer avec le PHP de l'hébergeur et celui du serveur web ; les tests n'analysent ni JavaScript/CSS ni bibliothèques externes.</li>
+<li>Les autotests couvrent notamment un faux compilateur qui renvoie 0 malgré un <code>Deprecated</code>, une erreur de syntaxe, PHP absent, un dossier vide, les liens symboliques, une dépréciation utilisateur masquée et la réécriture du schéma de démo dans une <strong>copie temporaire</strong>. Aucun serveur SQL n'est contacté par ces autotests.</li>
+</ul>
+<h2 id="code-potentiellement-inutilise-et-inventaire-applicatif">Code potentiellement inutilisé et inventaire applicatif<a class="headerlink" href="#code-potentiellement-inutilise-et-inventaire-applicatif" title="Permanent link">#</a></h2>
+<p><code>scripts/code_mort.php</code> inspecte les tokens des PHP de <code>app/</code> et <code>public/</code> ; il cherche des références dans ces dossiers ainsi que dans les scripts et tests PHP. Il signale les paramètres non cités, les variables locales écrites une seule fois et les fonctions/méthodes sans autre mention textuelle. Ces signaux sont <strong>à examiner</strong>, pas des preuves de code mort. Les appels dynamiques, l’héritage, la réflexion, les API externes et certains modes de lecture indirecte rendent l’analyse nécessairement incomplète ; JS/CSS/SQL et variables globales ne sont pas analysés de cette façon.</p>
+<p>La commande normale compare les candidats au référentiel <code>scripts/code_mort_reference.json</code> : un nouvel indice ou un indice disparu échoue jusqu’à examen et mise à jour du référentiel. <code>--rapport</code> affiche les candidats connus et <code>--json</code> les exporte. Les tests couvrent des exemples positifs, négatifs, appels de callback, propriété promue, référence à une propriété statique, lectures indirectes, ainsi qu’un scénario CLI natif dans une copie temporaire. L’inventaire <code>docs/16-audit-code-mort.md</code> documente chaque fichier versionné de <code>app/</code> et <code>public/</code> ; son test vérifie la liste et les fichiers de zéro octet, pas que le rôle décrit reste correct après toute modification.</p>
+<h2 id="page-403-et-roles-administrateurs">Page 403 et rôles administrateurs<a class="headerlink" href="#page-403-et-roles-administrateurs" title="Permanent link">#</a></h2>
+<p>Un administrateur connecté sans le rôle SUPER reçoit désormais un statut HTTP 403 et la page « Accès refusé » ; un visiteur non connecté est toujours redirigé vers <code>/admin/connexion</code>. Les routes GET et POST sont protégées avant l’action, y compris avec un jeton CSRF valide. Les parcours E2E WASM incluent l’absence de mutation et l’accès SUPER. La CI exécute également <code>tests/python/test_auth_403_http.py</code> sur un serveur PHP natif et des données <strong>temporaires</strong>, sans SQL ; ce test est annoncé ignoré si PHP est absent. Ces tests ne remplacent pas une vérification dans un navigateur réel.</p>
+<h2 id="articulation-avec-les-suites-de-tests-manuels-docs13-">Articulation avec les suites de tests manuels (<code>docs/13-*</code>)<a class="headerlink" href="#articulation-avec-les-suites-de-tests-manuels-docs13-" title="Permanent link">#</a></h2>
+<p>Même avec <strong>15 jobs CI automatisés</strong>, une campagne humaine reste indispensable sur ordinateur pour valider :
+1. les parcours métier complets, la navigation au clavier et les confirmations explicites en deux étapes (avec et sans JavaScript) dans un navigateur réel ;
+2. l'expérience réelle de la boîte de dialogue navigateur de permission de géolocalisation sur <code>/preferences</code> et la qualité linguistique perçue des pages traduites en anglais ;
+3. l'hébergement cible <strong>LineServ</strong> (sous-dossier éventuel, séparation des fichiers privés, import phpMyAdmin sur base dédiée, absence de scripts de développement exposés).</p>
+<p><strong>Périmètre volontairement exclu du manuel :</strong> les tests responsive multi-largeurs (<code>320/375/768/1440 px</code>, cartes mobiles <code>data-label</code>, portrait/paysage téléphone) ont été retirés des suites manuelles car trop longs à exécuter sur l'ensemble des vues ; ils reposent désormais exclusivement sur les suites automatisées (<code>tests/php/responsive_contract.php</code> et <code>tests/node/responsive_navigateur.mjs</code>). L'absence de validation humaine exhaustive sur téléphones physiques est assumée et documentée.</p>
+<p>L'ensemble des vérifications humaines retenues est formalisé dans <a href="13-fiches-recette-uc.html"><code>docs/13-fiches-recette-uc.md</code></a> (<strong>164 scénarios</strong> sur <code>UC-01</code> à <code>UC-14</code> et <code>TCX-01</code> à <code>TCX-24</code>, plus les <strong>36 couples</strong> de la matrice <code>RB-11</code>) et son journal <a href="13-suivi-recette-uc.csv"><code>docs/13-suivi-recette-uc.csv</code></a> (<strong>200 lignes</strong> initialisées à <code>NON JOUÉ</code>). L'intégrité structurelle et la synchronisation de ces deux fichiers avec le code (<code>Triggers::TRANSITIONS</code>, routes, fichiers cités et absence de retour des scénarios responsive manuels) sont vérifiées automatiquement par <code>python3 scripts/verifier_fiches_uc.py</code> dans les orchestrateurs de tests et en CI.</p>
+<footer class="doc">
+  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/11-strategie-tests.md</code>
+  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+</footer>
+</main>
+</body>
+</html>

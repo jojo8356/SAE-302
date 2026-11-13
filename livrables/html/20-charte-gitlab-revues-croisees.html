@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="SAÉ 302 — MiniShop : Charte GitLab — branches, merge requests et revues croisées#">
+<title>Charte GitLab — branches, merge requests et revues croisées# — MiniShop</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --papier: #fbfaf7;
+  --carte: #ffffff;
+  --trait: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-clair: #dbeafe;
+  --code: #f1f5f9;
+  --mesure: 72ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
+    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
+    --accent-clair: #1e3a8a; --code: #16223a;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  max-width: calc(var(--mesure) + 6rem);
+  background: var(--papier);
+  color: var(--encre);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
+h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
+p, li { max-width: var(--mesure); }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+}
+pre {
+  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
+  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.35rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+thead th { background: var(--accent-clair); }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
+img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li input[type="checkbox"] { margin-right: 0.4rem; }
+.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
+.toc > ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1rem; }
+footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+@media print {
+  :root { --papier: #fff; --carte: #fff; }
+  @page { size: A4; margin: 18mm 16mm; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#1-principes">1. Principes</a></li>
+<li><a href="#2-issues-et-decoupage-du-travail">2. Issues et découpage du travail</a></li>
+<li><a href="#3-branches-et-commits">3. Branches et commits</a></li>
+<li><a href="#4-preparation-et-ouverture-dune-mr">4. Préparation et ouverture d’une MR</a></li>
+<li><a href="#5-revue-croisee">5. Revue croisée</a></li>
+<li><a href="#6-ci-et-limites-de-preuve">6. CI et limites de preuve</a></li>
+<li><a href="#7-registre-de-preuves-de-mr-et-de-revues">7. Registre de preuves de MR et de revues</a></li>
+<li><a href="#8-fermeture-de-la-tache-documentaire">8. Fermeture de la tâche documentaire</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="charte-gitlab-branches-merge-requests-et-revues-croisees">Charte GitLab — branches, merge requests et revues croisées<a class="headerlink" href="#charte-gitlab-branches-merge-requests-et-revues-croisees" title="Permanent link">#</a></h1>
+<p><strong>Version :</strong> 1.0 — 23 octobre 2026
+<strong>Portée :</strong> règles documentaires de collaboration GitLab et modèle de registre. Ce fichier décrit le processus attendu ; il ne constitue pas, à lui seul, une preuve que des MR ou des revues ont effectivement eu lieu.</p>
+<h2 id="1-principes">1. Principes<a class="headerlink" href="#1-principes" title="Permanent link">#</a></h2>
+<ul>
+<li>Une issue GitLab décrit un besoin identifiable : tâche WBS, exigence fonctionnelle <code>EF-*</code>, règle métier ou anomalie.</li>
+<li>Une merge request (MR) lie le travail à son issue, expose les changements et donne lieu à une revue par une autre personne que l’auteur.</li>
+<li>Les rôles de travail A/B dans le README sont des responsabilités de projet ; ils ne déterminent ni les permissions GitLab ni l’identité de l’auteur ou du relecteur.</li>
+<li>Le dépôt et les MR restent sur GitLab IUT. Le workflow GitHub Actions est une chaîne distincte : son résultat ne prouve pas l’existence d’un pipeline GitLab.</li>
+<li>Aucun nom, identifiant de MR, approbation ou résultat de revue n’est supposé dans ce document. Les exemples ci-dessous sont des consignes ou des champs à renseigner, pas des événements passés.</li>
+</ul>
+<h2 id="2-issues-et-decoupage-du-travail">2. Issues et découpage du travail<a class="headerlink" href="#2-issues-et-decoupage-du-travail" title="Permanent link">#</a></h2>
+<ol>
+<li>Créer ou réutiliser une issue pour l’exigence, la tâche ou le défaut concerné.</li>
+<li>Donner à l’issue un titre court et un périmètre vérifiable ; ajouter les critères d’acceptation, dépendances et preuves attendues.</li>
+<li>Lier la MR à l’issue et la fermer uniquement après la revue et la vérification des critères.</li>
+<li>Éviter de mélanger dans une même MR des lots indépendants ; signaler explicitement toute exception nécessaire.</li>
+</ol>
+<h2 id="3-branches-et-commits">3. Branches et commits<a class="headerlink" href="#3-branches-et-commits" title="Permanent link">#</a></h2>
+<p>Noms indicatifs, à adapter à l’identifiant réel de l’issue :</p>
+<pre><code class="language-text">feat/&lt;id&gt;-&lt;sujet&gt;     nouvelle fonctionnalité
+fix/&lt;id&gt;-&lt;sujet&gt;      correction
+security/&lt;id&gt;-&lt;sujet&gt; changement lié à la sécurité
+test/&lt;id&gt;-&lt;sujet&gt;     tests
+
+docs/&lt;id&gt;-&lt;sujet&gt;    documentation
+</code></pre>
+<p>Convention de commit :</p>
+<pre><code class="language-text">&lt;type&gt;(&lt;périmètre&gt;): &lt;résumé à l’impératif&gt;
+</code></pre>
+<p>Types conseillés : <code>feat</code>, <code>fix</code>, <code>security</code>, <code>test</code>, <code>docs</code>, <code>refactor</code> et <code>chore</code>. Les messages doivent décrire le changement sans contenir de secret, de donnée personnelle réelle ou de mot de passe.</p>
+<h2 id="4-preparation-et-ouverture-dune-mr">4. Préparation et ouverture d’une MR<a class="headerlink" href="#4-preparation-et-ouverture-dune-mr" title="Permanent link">#</a></h2>
+<p>L’auteur utilise le modèle adapté dans <a href="../.gitlab/merge_request_templates/"><code>.gitlab/merge_request_templates/</code></a> et fournit :</p>
+<ul>
+<li>l’issue et les exigences concernées ;</li>
+<li>un résumé des changements et des limites connues ;</li>
+<li>les tests exécutés, leur commande et le résultat réellement observé ;</li>
+<li>les captures ou autres preuves utiles, expurgées de toute donnée sensible ;</li>
+<li>les migrations, changements de configuration et impacts documentaires éventuels.</li>
+</ul>
+<p>Avant de demander une revue, l’auteur vérifie le diff, supprime les secrets et données temporaires, et s’assure que les cases du modèle correspondent aux contrôles réellement exécutés. Une case non exécutée reste décochée.</p>
+<h2 id="5-revue-croisee">5. Revue croisée<a class="headerlink" href="#5-revue-croisee" title="Permanent link">#</a></h2>
+<p>Le relecteur doit être distinct de l’auteur. Il vérifie au minimum :</p>
+<ol>
+<li>la correspondance avec l’issue et les critères d’acceptation ;</li>
+<li>les chemins nominaux et les cas d’échec importants ;</li>
+<li>les contrôles serveur, l’autorisation, le CSRF, l’échappement et les requêtes SQL touchés ;</li>
+<li>les tests et preuves déclarés, sans confondre contrôle statique, test automatisé et recette humaine ;</li>
+<li>la documentation, les secrets, les données de test et les éventuelles régressions d’interface/accessibilité.</li>
+</ol>
+<p>Le relecteur consigne les commentaires dans la MR. L’auteur répond, corrige si nécessaire et marque les fils résolus après traitement. La MR ne peut être considérée comme revue tant que les commentaires bloquants ne sont pas résolus et que l’approbation du pair n’est pas visible ou consignée.</p>
+<h2 id="6-ci-et-limites-de-preuve">6. CI et limites de preuve<a class="headerlink" href="#6-ci-et-limites-de-preuve" title="Permanent link">#</a></h2>
+<p>La CI versionnée du projet est <a href="../.github/workflows/ci.yml">GitHub Actions</a>. Le fichier <code>.gitlab-ci.yml</code> a été retiré du périmètre du projet le 23 octobre 2026. En conséquence :</p>
+<ul>
+<li>un résultat GitHub Actions démontre uniquement l’exécution de cette chaîne sur son commit ;</li>
+<li>il ne démontre pas qu’un pipeline GitLab IUT a tourné ou qu’une MR GitLab a été approuvée ;</li>
+<li>le registre ci-dessous doit distinguer la revue GitLab de tout résultat CI GitHub associé.</li>
+</ul>
+<h2 id="7-registre-de-preuves-de-mr-et-de-revues">7. Registre de preuves de MR et de revues<a class="headerlink" href="#7-registre-de-preuves-de-mr-et-de-revues" title="Permanent link">#</a></h2>
+<p>À compléter uniquement avec des références réelles visibles dans GitLab. Une ligne vide ou le présent modèle ne prouve aucune MR.</p>
+<table>
+<thead>
+<tr>
+<th>Issue</th>
+<th>MR (ID/lien)</th>
+<th>Auteur</th>
+<th>Relecteur distinct</th>
+<th>Date de revue</th>
+<th>Commentaires bloquants résolus</th>
+<th>Approbation/merge visible</th>
+<th>CI (plateforme et lien)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>À renseigner</td>
+<td>À renseigner</td>
+<td>À renseigner</td>
+<td>À renseigner</td>
+<td>À renseigner</td>
+<td>À renseigner</td>
+<td>À renseigner</td>
+<td>À renseigner</td>
+</tr>
+</tbody>
+</table>
+<p>Pour chaque MR, conserver les éléments vérifiables : identifiant ou URL, issue liée, approbation/revue, fils de discussion résolus et commit de fusion. Ne pas recopier de secrets ou de données personnelles dans le registre.</p>
+<h2 id="8-fermeture-de-la-tache-documentaire">8. Fermeture de la tâche documentaire<a class="headerlink" href="#8-fermeture-de-la-tache-documentaire" title="Permanent link">#</a></h2>
+<p>Le livrable documentaire est constitué de cette charte versionnée et des modèles présents dans <code>.gitlab/merge_request_templates/</code>. Cela valide la <strong>documentation du processus</strong> ; cela ne valide pas l’utilisation effective de MR, la tenue de revues croisées ou une exécution CI GitLab. Ces éléments ne pourront être attestés qu’avec des références réelles de MR et de revues.</p>
+<footer class="doc">
+  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/20-charte-gitlab-revues-croisees.md</code>
+  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+</footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,957 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="SAÉ 302 — MiniShop : Audit des fichiers applicatifs et du code potentiellement inutilisé#">
+<title>Audit des fichiers applicatifs et du code potentiellement inutilisé# — MiniShop</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --papier: #fbfaf7;
+  --carte: #ffffff;
+  --trait: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-clair: #dbeafe;
+  --code: #f1f5f9;
+  --mesure: 72ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
+    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
+    --accent-clair: #1e3a8a; --code: #16223a;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  max-width: calc(var(--mesure) + 6rem);
+  background: var(--papier);
+  color: var(--encre);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
+h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
+p, li { max-width: var(--mesure); }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+}
+pre {
+  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
+  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.35rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+thead th { background: var(--accent-clair); }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
+img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li input[type="checkbox"] { margin-right: 0.4rem; }
+.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
+.toc > ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1rem; }
+footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+@media print {
+  :root { --papier: #fff; --carte: #fff; }
+  @page { size: A4; margin: 18mm 16mm; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#perimetre-et-methode">Périmètre et méthode</a></li>
+<li><a href="#resultats-et-decisions">Résultats et décisions</a><ul>
+<li><a href="#candidats-restants-a-trier">Candidats restants à trier</a></li>
+</ul>
+</li>
+<li><a href="#inventaire-fichier-par-fichier">Inventaire fichier par fichier</a></li>
+<li><a href="#ajouts-de-main-a-examiner-lors-de-lintegration">Ajouts de main à examiner lors de l’intégration</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="audit-des-fichiers-applicatifs-et-du-code-potentiellement-inutilise">Audit des fichiers applicatifs et du code potentiellement inutilisé<a class="headerlink" href="#audit-des-fichiers-applicatifs-et-du-code-potentiellement-inutilise" title="Permanent link">#</a></h1>
+<h2 id="perimetre-et-methode">Périmètre et méthode<a class="headerlink" href="#perimetre-et-methode" title="Permanent link">#</a></h2>
+<p>Inventaire de <strong>tous les fichiers versionnés sous <code>app/</code> et <code>public/</code></strong> à la date de l’audit : code PHP, vues, CSS, JS, configuration serveur, police et images. Ce périmètre couvre l’application livrée et ses outils publics ; ce premier inventaire détaillé reste limité à <code>app/</code> et <code>public/</code> ; le <a href="17-audit-global-projet.html">rapport global</a> étend ensuite les contrôles à tout le dépôt. Ces dossiers ont aussi servi à retrouver des références. Aucune donnée de compte n’est affichée ici.</p>
+<p>Les références sont des <strong>indices textuels</strong> et non une preuve d’exécution : autoload, routes, includes, appels dynamiques, liens directs et données SQL peuvent activer un fichier sans mention littérale. Le nombre <code>fonctions</code> compte les fonctions/méthodes nommées <strong>ayant un corps</strong>, détectées avec <code>token_get_all</code> ; il ne compte ni les signatures d’interface, ni les fermetures anonymes, ni les méthodes héritées. Un faible nombre ne signifie pas qu’un fichier est inutile. Ta copie locale peut comporter d’autres fichiers ou modifications non présents dans cet audit.</p>
+<h2 id="resultats-et-decisions">Résultats et décisions<a class="headerlink" href="#resultats-et-decisions" title="Permanent link">#</a></h2>
+<ul>
+<li><strong>0 fichier de zéro octet</strong> dans ce périmètre au moment de l’audit.</li>
+<li>Lors du premier audit : <strong>93 fichiers PHP</strong>, dont <strong>45 sans fonction nommée avec corps</strong> ; 37 sont des vues. Les autres sont trois classes d’exception vides héritées, un document PHP, une interface à signatures, un modèle de configuration, le bootstrap et le contrôleur frontal. Ils ont chacun un rôle expliqué ci-dessous.</li>
+<li><strong>Quatre PHP avec une ou deux fonctions nommées</strong> : <code>DashboardController.php</code> (une action), <code>ParametreAdminController.php</code> et <code>StockAdminController.php</code> (deux actions chacun), <code>BusinessError.php</code> (constructeur et message). Petites responsabilités ne signifie pas code mort.</li>
+<li>Les exceptions <code>QueryError</code>, <code>SchemaError</code>, <code>ConstraintError</code> n’ont pas de méthodes propres : leur type et l’héritage servent aux <code>throw</code>/<code>catch</code> et à l’autoload. <code>StoreInterface.php</code> a des signatures, mais leurs corps résident dans les pilotes.</li>
+<li><code>Errors.php</code> est documentaire, pas une classe ; son commentaire disant que SQL était seulement futur a été corrigé. <code>env.example.php</code> est un ancien modèle compatible, non la configuration secrète courante.</li>
+<li>La méthode privée <code>JsonStore::maxPk</code> n’avait aucun appel trouvé et a été retirée. Dans <code>JsonStore::find</code>, une variable sans lecture a été retirée <strong>en conservant</strong> <code>Schema::table($table)</code> : cet appel valide la table et peut lever une erreur ; un test protège cet effet.</li>
+<li><code>HomeController::page403</code> est désormais appelée lors du refus d’un administrateur connecté sans le rôle SUPER ; le contrôleur frontal émet un véritable statut 403. La redirection des visiteurs vers la connexion est conservée.</li>
+<li><code>logo.svg</code> et <code>logo-mark.svg</code> apparaissent dans la DA et les tests mais aucune inclusion n’a été trouvée dans les vues ; ce sont des variantes d’identité, conservées. Le favicon est utilisé. Une URL directe ou un usage externe n’est pas exclu.</li>
+<li>Les classes/outils SQL et de volumétrie ne sont pas forcément sur le parcours Web normal : par exemple <code>VolumetryGenerator</code> est utilisé par <code>scripts/gen_volumes_cli.php</code>. Ne pas confondre « non utilisé sur une page » et « inutile ».</li>
+</ul>
+<h3 id="candidats-restants-a-trier">Candidats restants à trier<a class="headerlink" href="#candidats-restants-a-trier" title="Permanent link">#</a></h3>
+<p>Réexamen des <strong>11 alertes initiales</strong> : le référentiel <code>scripts/code_mort_reference.json</code> en contient désormais <strong>0</strong>. Trois disparaissent de l’analyse parce que des tests les citent, sans preuve d’usage applicatif ; <code>sudoDisponible</code> est maintenant utilisé par le provisionnement, <code>page403</code> par le contrôleur frontal. <code>withStore</code>, <code>dsnUtilise</code>, <code>codeDerniereErreur</code> et <code>EnvFile::existe</code> ont été supprimées sur demande ; <code>comptesDemo</code> est utilisée par la CLI et le paramètre inutilisé de <code>visuel_produit</code> remplacé par une alternative explicite. Ce ne sont pas des preuves de code mort. Un nouvel indice fait échouer le contrôle ; les indices disparus doivent aussi être retirés du référentiel après revue. Les candidats connus restent affichables avec <code>php scripts/code_mort.php --rapport</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Candidat</th>
+<th>Observation et décision prudente</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DbConnexion::dsnUtilise</code></td>
+<td>Accesseur et état supprimés sur demande ; construction du DSN et diagnostic de socket conservés. Rupture possible pour des appels externes.</td>
+</tr>
+<tr>
+<td><code>HomeController::page403</code></td>
+<td>Désormais appelée par le contrôleur frontal après un refus d’accès : statut 403 réel pour un gestionnaire, redirection de connexion conservée pour un visiteur.</td>
+</tr>
+<tr>
+<td><code>Filter::isNotNull</code></td>
+<td>Conservé ; test réel côté JSON ajouté. Cette référence de test ne démontre pas un usage en production.</td>
+</tr>
+<tr>
+<td><code>Journal::tail</code></td>
+<td>Conservé ; limites zéro/négative corrigées et testées sur un fichier temporaire. La documentation ne prétend plus qu’un écran back-office le consulte.</td>
+</tr>
+<tr>
+<td><code>JsonTable::isDirty</code></td>
+<td>Conservé ; transition sale/propre après persistance testée. Référence de test seulement.</td>
+</tr>
+<tr>
+<td><code>Seed::comptesDemo</code></td>
+<td>Utilisée par <code>php scripts/aide.php --comptes-demo</code> ; accès CLI seulement et lecture seule. Comptes initiaux pouvant avoir été modifiés.</td>
+</tr>
+<tr>
+<td><code>CommandeRepository::withStore</code></td>
+<td>Supprimée sur demande : aucun appel trouvé dans les sources versionnées ; la fabrique statique <code>for</code> est conservée et testée. <strong>Rupture d’API</strong> : remplacer tout appel externe <code>$depot-&gt;withStore($store)</code> par <code>CommandeRepository::for($store)</code>.</td>
+</tr>
+<tr>
+<td><code>visuel_produit($nom)</code></td>
+<td>Paramètre supprimé ; la vue transmet maintenant une implémentation d’<code>AlternativeImage</code>. Cartes décoratives ; fiche avec identification du visuel indicatif. Signature modifiée : tout appel externe doit être adapté.</td>
+</tr>
+<tr>
+<td><code>DbInstaller::codeDerniereErreur</code></td>
+<td>Accesseur supprimé sur demande ; le code interne et <code>refusIdentifiants()</code> sont conservés et le classement des codes est testé sans SQL. Des appels externes éventuels à cet accesseur doivent être adaptés.</td>
+</tr>
+<tr>
+<td><code>DbProvision::sudoDisponible</code></td>
+<td>Désormais appelée avant d’écrire le fichier et lancer <code>sudo</code> ; diagnostic précoce si sudo manque.</td>
+</tr>
+<tr>
+<td><code>EnvFile::existe</code></td>
+<td>Accesseur supprimé sur demande ; <code>initialiser()</code> conserve sa propre vérification avant création, testée sur fichiers temporaires. Des appels externes éventuels doivent être adaptés.</td>
+</tr>
+</tbody>
+</table>
+<p>Le contrôle détecte les paramètres non cités et certaines variables locales <strong>écrites une seule fois</strong>, ainsi que les noms de fonctions/méthodes sans autre mention textuelle. Il ne prouve ni l’atteignabilité ni l’absence d’utilisation : références indirectes, portée, héritage, récursion, <code>include</code>, <code>compact</code>, variables dynamiques, réflexion, dépendances et appels externes limitent le résultat. Il ne détecte pas toutes les écritures répétées sans lecture, les variables au niveau fichier ou le code mort CSS/JS/SQL. Aucune suppression automatique.</p>
+<h2 id="inventaire-fichier-par-fichier">Inventaire fichier par fichier<a class="headerlink" href="#inventaire-fichier-par-fichier" title="Permanent link">#</a></h2>
+<p>Tailles en octets historiques mesurées lors du premier audit (<code>870dda5</code>) ; les fichiers ont pu être modifiés depuis. L’exception d’accès refusé a été ajoutée ensuite. <code>—</code> : fichier non PHP. Les références listées sont des exemples, pas une liste exhaustive.</p>
+<table>
+<thead>
+<tr>
+<th>Fichier</th>
+<th style="text-align: right;">Octets</th>
+<th style="text-align: right;">Fonctions avec corps</th>
+<th>Rôle et indice d’utilisation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>app/View/Image/AlternativeImage.php</code></td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">0</td>
+<td>Contrat de texte alternatif des visuels produit.</td>
+</tr>
+<tr>
+<td><code>app/View/Image/AlternativeDecorative.php</code></td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">1</td>
+<td>Alternative vide pour les images décoratives des cartes.</td>
+</tr>
+<tr>
+<td><code>app/View/Image/AlternativeInformative.php</code></td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">2</td>
+<td>Texte alternatif non vide pour la fiche produit.</td>
+</tr>
+<tr>
+<td><code>app/Config/Database.php</code></td>
+<td style="text-align: right;">6905</td>
+<td style="text-align: right;">10</td>
+<td>Choix du magasin JSON/SQL et lecture de la configuration. Références : <code>app/Config/DbConnexion.php</code>, <code>app/Controller/Admin/CategorieAdminController.php</code>, <code>app/Controller/Admin/CommandeAdminController.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Config/DbConnexion.php</code></td>
+<td style="text-align: right;">14077</td>
+<td style="text-align: right;">17</td>
+<td>Connexion PDO, DSN, options et repli socket. Références : <code>app/Model/Data/SqlStore.php</code>, <code>app/Tools/DbInstaller.php</code>, <code>docs/10-todo-corrections.md</code>….</td>
+</tr>
+<tr>
+<td><code>app/Config/Env.php</code></td>
+<td style="text-align: right;">6736</td>
+<td style="text-align: right;">11</td>
+<td>Lecteur et cache de configuration .env ; la classe Env n’est pas le fichier secret env.php. Références : <code>app/Config/Database.php</code>, <code>app/Config/env.example.php</code>, <code>app/Tools/EnvFile.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Config/env.example.php</code></td>
+<td style="text-align: right;">1607</td>
+<td style="text-align: right;">0</td>
+<td>Ancien modèle de configuration PHP, conservé pour compatibilité ; la configuration recommandée est .env. Modèle à copier en env.php pour les anciennes configurations ; pas chargé directement.</td>
+</tr>
+<tr>
+<td><code>app/Controller/Admin/CategorieAdminController.php</code></td>
+<td style="text-align: right;">2845</td>
+<td style="text-align: right;">4</td>
+<td>Gestion des catégories. Références : <code>public/index.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/Controller/Admin/CommandeAdminController.php</code></td>
+<td style="text-align: right;">5062</td>
+<td style="text-align: right;">3</td>
+<td>Gestion des commandes et de leurs statuts. Références : <code>public/index.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/Controller/Admin/DashboardController.php</code></td>
+<td style="text-align: right;">1857</td>
+<td style="text-align: right;">1</td>
+<td>Tableau de bord administratif : un seul point d’entrée. Références : <code>public/index.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/Controller/Admin/EquipeAdminController.php</code></td>
+<td style="text-align: right;">3712</td>
+<td style="text-align: right;">3</td>
+<td>Administration des comptes de l’équipe. Références : <code>public/index.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/Controller/Admin/ParametreAdminController.php</code></td>
+<td style="text-align: right;">2914</td>
+<td style="text-align: right;">2</td>
+<td>Consultation et modification des paramètres métier. Références : <code>public/index.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/Controller/Admin/ProduitAdminController.php</code></td>
+<td style="text-align: right;">5421</td>
+<td style="text-align: right;">8</td>
+<td>Création et modification des produits. Références : <code>public/index.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/Controller/Admin/StockAdminController.php</code></td>
+<td style="text-align: right;">3487</td>
+<td style="text-align: right;">2</td>
+<td>État et ajustements de stock. Références : <code>public/index.php</code>, <code>docs/09-audit-ecarts.md</code>.</td>
+</tr>
+<tr>
+<td><code>app/Controller/ApiController.php</code></td>
+<td style="text-align: right;">5723</td>
+<td style="text-align: right;">9</td>
+<td>API JSON du panier, avec contrôles et CSRF. Références : <code>app/Security/Csrf.php</code>, <code>public/index.php</code>, <code>docs/10-todo-corrections.md</code>.</td>
+</tr>
+<tr>
+<td><code>app/Controller/AuthController.php</code></td>
+<td style="text-align: right;">5273</td>
+<td style="text-align: right;">8</td>
+<td>Inscription, connexions et déconnexion. Références : <code>public/index.php</code>, <code>docs/02-document-tests-validation.md</code>, <code>docs/07-note-cybersecurite.md</code>….</td>
+</tr>
+<tr>
+<td><code>app/Controller/CatalogueController.php</code></td>
+<td style="text-align: right;">3665</td>
+<td style="text-align: right;">4</td>
+<td>Catalogue, recherche, filtres et fiche produit. Références : <code>public/index.php</code>, <code>docs/02-document-tests-validation.md</code>, <code>docs/08-fiche-suivi-commits.md</code>.</td>
+</tr>
+<tr>
+<td><code>app/Controller/CommandeController.php</code></td>
+<td style="text-align: right;">5319</td>
+<td style="text-align: right;">6</td>
+<td>Validation, détail et annulation de commandes client. Références : <code>public/index.php</code>, <code>docs/01-cahier-des-charges-MiniShop.md</code>, <code>docs/02-document-tests-validation.md</code>….</td>
+</tr>
+<tr>
+<td><code>app/Controller/CompteController.php</code></td>
+<td style="text-align: right;">3711</td>
+<td style="text-align: right;">3</td>
+<td>Profil client et mot de passe. Références : <code>public/index.php</code>, <code>docs/02-document-tests-validation.md</code>, <code>docs/08-fiche-suivi-commits.md</code>.</td>
+</tr>
+<tr>
+<td><code>app/Controller/Controller.php</code></td>
+<td style="text-align: right;">3136</td>
+<td style="text-align: right;">9</td>
+<td>Base commune : rendu, messages, validation CSRF et lecture des entrées. Références : <code>app/Controller/Admin/CategorieAdminController.php</code>, <code>app/Controller/Admin/CommandeAdminController.php</code>, <code>app/Controller/Admin/DashboardController.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Controller/HomeController.php</code></td>
+<td style="text-align: right;">5712</td>
+<td style="text-align: right;">17</td>
+<td>Accueil, pages informatives/légales et formulaire de contact. Références : <code>app/Controller/CatalogueController.php</code>, <code>app/Router.php</code>, <code>public/index.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Controller/PanierController.php</code></td>
+<td style="text-align: right;">1912</td>
+<td style="text-align: right;">5</td>
+<td>Parcours panier HTML sans dépendre de JavaScript. Références : <code>public/index.php</code>, <code>docs/01-cahier-des-charges-MiniShop.md</code>, <code>docs/02-document-tests-validation.md</code>….</td>
+</tr>
+<tr>
+<td><code>app/Model/Data/BusinessError.php</code></td>
+<td style="text-align: right;">5928</td>
+<td style="text-align: right;">2</td>
+<td>Exception métier avec code et traduction en message humain. Références : <code>app/Controller/Admin/CategorieAdminController.php</code>, <code>app/Controller/Admin/CommandeAdminController.php</code>, <code>app/Controller/Admin/EquipeAdminController.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Model/Data/ConstraintError.php</code></td>
+<td style="text-align: right;">426</td>
+<td style="text-align: right;">0</td>
+<td>Type d’exception d’intégrité ; classe vide héritant de RuntimeException. Références : <code>app/Model/Data/Errors.php</code>, <code>app/Model/Data/JsonStore.php</code>, <code>app/Model/Data/SqlStore.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Model/Data/Errors.php</code></td>
+<td style="text-align: right;">1171</td>
+<td style="text-align: right;">0</td>
+<td>Documentation de la taxonomie des exceptions ; ne contient volontairement pas de classe. Documentation citée dans les exceptions ; pas de chargement applicatif trouvé.</td>
+</tr>
+<tr>
+<td><code>app/Model/Data/Filter.php</code></td>
+<td style="text-align: right;">3459</td>
+<td style="text-align: right;">14</td>
+<td>Construction de filtres et tris pour le contrat de stockage. Références : <code>app/Controller/Admin/CommandeAdminController.php</code>, <code>app/Controller/Admin/DashboardController.php</code>, <code>app/Controller/Admin/EquipeAdminController.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Model/Data/Journal.php</code></td>
+<td style="text-align: right;">2769</td>
+<td style="text-align: right;">4</td>
+<td>Journal JSONL des opérations ; méthode de lecture sans écran de consultation branché. Références : <code>app/Model/Data/JsonStore.php</code>, <code>app/View/home/apropos.php</code>, <code>public/gen_volumes.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Model/Data/JsonStore.php</code></td>
+<td style="text-align: right;">30823</td>
+<td style="text-align: right;">44</td>
+<td>Stockage JSON, requêtes, contraintes et transactions. Références : <code>app/Config/Database.php</code>, <code>app/Model/Data/Schema.php</code>, <code>app/Model/Data/SqlStore.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Model/Data/JsonTable.php</code></td>
+<td style="text-align: right;">5990</td>
+<td style="text-align: right;">16</td>
+<td>Table JSON : données, index, persistance et état de modification. Références : <code>app/Model/Data/JsonStore.php</code>, <code>docs/08-fiche-suivi-commits.md</code>, <code>scripts/code_mort_reference.json</code>.</td>
+</tr>
+<tr>
+<td><code>app/Model/Data/QueryError.php</code></td>
+<td style="text-align: right;">406</td>
+<td style="text-align: right;">0</td>
+<td>Type d’exception de requête incorrecte ; classe vide héritant de RuntimeException. Références : <code>app/Model/Data/Errors.php</code>, <code>app/Model/Data/JsonStore.php</code>, <code>docs/07-note-cybersecurite.md</code>….</td>
+</tr>
+<tr>
+<td><code>app/Model/Data/Schema.php</code></td>
+<td style="text-align: right;">12118</td>
+<td style="text-align: right;">4</td>
+<td>Description des tables, colonnes, clés et contraintes. Références : <code>app/Model/Data/Errors.php</code>, <code>app/Model/Data/JsonStore.php</code>, <code>app/Model/Data/SchemaError.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Model/Data/SchemaError.php</code></td>
+<td style="text-align: right;">413</td>
+<td style="text-align: right;">0</td>
+<td>Type d’exception de schéma inconnu ; classe vide héritant de RuntimeException. Références : <code>app/Model/Data/Errors.php</code>, <code>app/Model/Data/Schema.php</code>, <code>docs/08-fiche-suivi-commits.md</code>….</td>
+</tr>
+<tr>
+<td><code>app/Model/Data/Seed.php</code></td>
+<td style="text-align: right;">12280</td>
+<td style="text-align: right;">4</td>
+<td>Données de démonstration et initialisation du magasin JSON. Références : <code>docs/05-wbs-projet.md</code>, <code>docs/06-todolist.md</code>, <code>docs/08-fiche-suivi-commits.md</code>….</td>
+</tr>
+<tr>
+<td><code>app/Model/Data/SqlStore.php</code></td>
+<td style="text-align: right;">25378</td>
+<td style="text-align: right;">35</td>
+<td>Implémentation du stockage SQL/PDO ; choix alternatif à JSON. Références : <code>app/Config/Database.php</code>, <code>app/Config/DbConnexion.php</code>, <code>app/Model/Data/Errors.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Model/Data/StorageDriver.php</code></td>
+<td style="text-align: right;">2064</td>
+<td style="text-align: right;">3</td>
+<td>Énumération et sélection des pilotes JSON et SQL. Références : <code>app/Config/Database.php</code>, <code>app/Config/env.example.php</code>, <code>app/Model/Data/BusinessError.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Model/Data/StoreInterface.php</code></td>
+<td style="text-align: right;">6374</td>
+<td style="text-align: right;">0</td>
+<td>Contrat de stockage : signatures abstraites sans corps, implémentées par les pilotes. Références : <code>app/Config/Database.php</code>, <code>app/Model/Data/Filter.php</code>, <code>app/Model/Data/JsonStore.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Model/Data/Text.php</code></td>
+<td style="text-align: right;">6548</td>
+<td style="text-align: right;">5</td>
+<td>Pliage de texte, comparaison et génération de slugs. Références : <code>app/Model/Data/JsonStore.php</code>, <code>app/Model/Data/Triggers.php</code>, <code>app/Repository/CategorieRepository.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Model/Data/Triggers.php</code></td>
+<td style="text-align: right;">14972</td>
+<td style="text-align: right;">3</td>
+<td>Déclencheurs et invariants métier du pilote JSON. Références : <code>app/Controller/Admin/CommandeAdminController.php</code>, <code>app/Model/Data/BusinessError.php</code>, <code>app/Model/Data/JsonStore.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Model/Data/Views.php</code></td>
+<td style="text-align: right;">5105</td>
+<td style="text-align: right;">5</td>
+<td>Vues calculées du catalogue, des stocks et des commandes. Références : <code>app/Controller/Admin/CommandeAdminController.php</code>, <code>app/Controller/Admin/StockAdminController.php</code>, <code>app/Controller/CatalogueController.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Model/PanierSession.php</code></td>
+<td style="text-align: right;">6462</td>
+<td style="text-align: right;">12</td>
+<td>Panier en session ; AuthSession, classe interne au même fichier, délègue l’ouverture de session. Références : <code>app/Controller/ApiController.php</code>, <code>app/Controller/CommandeController.php</code>, <code>app/Controller/PanierController.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Repository/CategorieRepository.php</code></td>
+<td style="text-align: right;">3943</td>
+<td style="text-align: right;">6</td>
+<td>Accès et règles métier des catégories. Références : <code>app/Controller/Admin/CategorieAdminController.php</code>, <code>app/Controller/Admin/ProduitAdminController.php</code>, <code>app/Controller/CatalogueController.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Repository/ClientRepository.php</code></td>
+<td style="text-align: right;">5125</td>
+<td style="text-align: right;">8</td>
+<td>Comptes clients et identifiants. Références : <code>app/Controller/AuthController.php</code>, <code>app/Controller/CommandeController.php</code>, <code>app/Controller/CompteController.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Repository/CommandeRepository.php</code></td>
+<td style="text-align: right;">18042</td>
+<td style="text-align: right;">14</td>
+<td>Commandes, lignes, transitions et règles métier. Références : <code>app/Controller/Admin/CommandeAdminController.php</code>, <code>app/Controller/Admin/DashboardController.php</code>, <code>app/Controller/CommandeController.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Repository/ParametreRepository.php</code></td>
+<td style="text-align: right;">3110</td>
+<td style="text-align: right;">6</td>
+<td>Paramètres et calcul des frais de port. Références : <code>app/Controller/Admin/ParametreAdminController.php</code>, <code>app/Controller/Admin/ProduitAdminController.php</code>, <code>app/Model/PanierSession.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Repository/ProduitRepository.php</code></td>
+<td style="text-align: right;">11040</td>
+<td style="text-align: right;">11</td>
+<td>Recherche, produits et ajustements de stock. Références : <code>app/Controller/Admin/DashboardController.php</code>, <code>app/Controller/Admin/ProduitAdminController.php</code>, <code>app/Controller/Admin/StockAdminController.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Router.php</code></td>
+<td style="text-align: right;">3089</td>
+<td style="text-align: right;">4</td>
+<td>Associe routes, paramètres, gardes et contrôleurs ; affiche la 404. Références : <code>public/index.php</code>, <code>docs/01-cahier-des-charges-MiniShop.md</code>, <code>docs/07-note-cybersecurite.md</code>….</td>
+</tr>
+<tr>
+<td><code>app/Security/AccesRefuse.php</code></td>
+<td style="text-align: right;">207</td>
+<td style="text-align: right;">0</td>
+<td>Exception de contrôle d’accès : levée par la garde SUPER et traitée par le contrôleur frontal en réponse HTTP 403.</td>
+</tr>
+<tr>
+<td><code>app/Security/Auth.php</code></td>
+<td style="text-align: right;">10330</td>
+<td style="text-align: right;">16</td>
+<td>Session, authentification et gardes de rôles. Références : <code>app/Controller/Admin/CategorieAdminController.php</code>, <code>app/Controller/Admin/CommandeAdminController.php</code>, <code>app/Controller/Admin/DashboardController.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Security/Csrf.php</code></td>
+<td style="text-align: right;">1906</td>
+<td style="text-align: right;">4</td>
+<td>Génération et vérification des jetons CSRF. Références : <code>app/Controller/Admin/CategorieAdminController.php</code>, <code>app/Controller/Admin/CommandeAdminController.php</code>, <code>app/Controller/Admin/EquipeAdminController.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Security/xss.php</code></td>
+<td style="text-align: right;">9276</td>
+<td style="text-align: right;">15</td>
+<td>Helpers d’échappement, formatage, icônes et visuels. Références : <code>app/bootstrap.php</code>, <code>docs/01-cahier-des-charges-MiniShop.md</code>, <code>docs/07-note-cybersecurite.md</code>….</td>
+</tr>
+<tr>
+<td><code>app/Service/NettoyageJournaux.php</code></td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">4</td>
+<td>Verrou partagé des écritures JSONL et rotation par date, utilisée par le formulaire, le journal et la CLI.</td>
+</tr>
+<tr>
+<td><code>app/Service/NettoyageSauvegardes.php</code></td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">1</td>
+<td>Rotation limitée au dossier dédié de sauvegardes identifiées, utilisée par la CLI.</td>
+</tr>
+<tr>
+<td><code>app/Service/RetentionComptes.php</code></td>
+<td style="text-align: right;">4184</td>
+<td style="text-align: right;">1</td>
+<td>Traitement conservateur des comptes inactifs, appelé par la commande CLI de maintenance.</td>
+</tr>
+<tr>
+<td><code>app/Tools/DbInstaller.php</code></td>
+<td style="text-align: right;">17780</td>
+<td style="text-align: right;">28</td>
+<td>Outil d’installation et inventaire SQL, utilisé par les scripts de développement. Références : <code>app/Config/DbConnexion.php</code>, <code>docs/10-todo-corrections.md</code>, <code>scripts/code_mort_reference.json</code>….</td>
+</tr>
+<tr>
+<td><code>app/Tools/DbProvision.php</code></td>
+<td style="text-align: right;">10558</td>
+<td style="text-align: right;">16</td>
+<td>Outil de provisionnement d’un compte SQL de développement. Références : <code>docs/10-todo-corrections.md</code>, <code>scripts/code_mort_reference.json</code>, <code>scripts/db_init.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Tools/EnvFile.php</code></td>
+<td style="text-align: right;">3962</td>
+<td style="text-align: right;">7</td>
+<td>Lecture/écriture ciblée du fichier de configuration local .env. Références : <code>docs/10-todo-corrections.md</code>, <code>scripts/code_mort_reference.json</code>, <code>scripts/db_init.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Tools/Revision.php</code></td>
+<td style="text-align: right;">3935</td>
+<td style="text-align: right;">5</td>
+<td>Empreinte de révision pour les outils de diagnostic. Références : <code>docs/10-todo-corrections.md</code>, <code>scripts/db_init.php</code>, <code>tests/php/unit_tests.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/Tools/SqlLoader.php</code></td>
+<td style="text-align: right;">10115</td>
+<td style="text-align: right;">5</td>
+<td>Lecture et exécution des scripts SQL dans les outils. Références : <code>app/Tools/DbInstaller.php</code>, <code>docs/10-todo-corrections.md</code>, <code>scripts/gen_volumes_cli.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Tools/VolumetryGenerator.php</code></td>
+<td style="text-align: right;">8031</td>
+<td style="text-align: right;">6</td>
+<td>Génération de volumétrie ; utilisée par scripts/gen_volumes_cli.php, pas une route de boutique. Références : <code>docs/09-audit-ecarts.md</code>, <code>scripts/gen_volumes_cli.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/admin/categories.php</code></td>
+<td style="text-align: right;">2694</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : gestion des catégories ; pas de méthode attendue. Références : <code>app/Controller/Admin/CategorieAdminController.php</code>, <code>app/View/layout.php</code>, <code>public/index.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/View/admin/commande_detail.php</code></td>
+<td style="text-align: right;">3467</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : détail et actions d’une commande admin ; pas de méthode attendue. Références : <code>app/Controller/Admin/CommandeAdminController.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/admin/commandes.php</code></td>
+<td style="text-align: right;">2598</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : liste des commandes admin ; pas de méthode attendue. Références : <code>app/Controller/Admin/CommandeAdminController.php</code>, <code>app/View/admin/commande_detail.php</code>, <code>app/View/admin/dashboard.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/View/admin/dashboard.php</code></td>
+<td style="text-align: right;">4755</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : tableau de bord ; pas de méthode attendue. Références : <code>app/Controller/Admin/DashboardController.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/admin/equipe.php</code></td>
+<td style="text-align: right;">2792</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : équipe et rôles ; pas de méthode attendue. Références : <code>app/Controller/Admin/EquipeAdminController.php</code>, <code>app/View/layout.php</code>, <code>public/index.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/View/admin/parametres.php</code></td>
+<td style="text-align: right;">2556</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : paramètres métier ; pas de méthode attendue. Références : <code>app/Controller/Admin/ParametreAdminController.php</code>, <code>app/View/layout.php</code>, <code>public/index.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/View/admin/produit_form.php</code></td>
+<td style="text-align: right;">4264</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : formulaire produit ; pas de méthode attendue. Références : <code>app/Controller/Admin/ProduitAdminController.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/admin/produits.php</code></td>
+<td style="text-align: right;">3448</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : liste et actions produits ; pas de méthode attendue. Références : <code>app/Controller/Admin/ProduitAdminController.php</code>, <code>app/View/admin/produit_form.php</code>, <code>app/View/layout.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/View/admin/stocks.php</code></td>
+<td style="text-align: right;">4329</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : stocks et ajustements ; pas de méthode attendue. Références : <code>app/Controller/Admin/StockAdminController.php</code>, <code>app/View/admin/dashboard.php</code>, <code>app/View/admin/produit_form.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/View/auth/admin_connexion.php</code></td>
+<td style="text-align: right;">1400</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : connexion administration ; pas de méthode attendue. Références : <code>app/Controller/AuthController.php</code>, <code>tests/php/css_contract.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/auth/connexion.php</code></td>
+<td style="text-align: right;">1419</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : connexion client ; pas de méthode attendue. Références : <code>app/Controller/AuthController.php</code>, <code>tests/php/css_contract.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/auth/inscription.php</code></td>
+<td style="text-align: right;">2422</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : inscription client ; pas de méthode attendue. Références : <code>app/Controller/AuthController.php</code>, <code>tests/php/css_contract.php</code>, <code>tests/php/information_juridique_test.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/catalogue/index.php</code></td>
+<td style="text-align: right;">8878</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : liste catalogue et recherche ; pas de méthode attendue. Références : <code>app/Controller/CatalogueController.php</code>, <code>tests/php/cartes_accessibilite_test.php</code>, <code>tests/php/css_contract.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/View/catalogue/produit.php</code></td>
+<td style="text-align: right;">3852</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : fiche produit ; pas de méthode attendue. Références : <code>app/Controller/CatalogueController.php</code>, <code>tests/php/css_contract.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/commande/detail.php</code></td>
+<td style="text-align: right;">3114</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : détail commande client ; pas de méthode attendue. Références : <code>app/Controller/CommandeController.php</code>, <code>tests/php/information_juridique_test.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/commande/mes.php</code></td>
+<td style="text-align: right;">1471</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : liste des commandes client ; pas de méthode attendue. Références : <code>app/Controller/CommandeController.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/commande/valider.php</code></td>
+<td style="text-align: right;">3185</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : validation de commande ; pas de méthode attendue. Références : <code>app/Controller/CommandeController.php</code>, <code>app/View/panier/index.php</code>, <code>public/index.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/View/compte/index.php</code></td>
+<td style="text-align: right;">2475</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : profil client ; pas de méthode attendue. Références : <code>app/Controller/CompteController.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/errors/403.php</code></td>
+<td style="text-align: right;">521</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : page d’accès refusé, rendue par HomeController::page403 après refus de la garde SUPER ; pas de méthode attendue.</td>
+</tr>
+<tr>
+<td><code>app/View/errors/404.php</code></td>
+<td style="text-align: right;">585</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : page introuvable ; pas de méthode attendue. Références : <code>app/Controller/HomeController.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/errors/500.php</code></td>
+<td style="text-align: right;">847</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : page d’erreur serveur ; pas de méthode attendue. Références : <code>public/index.php</code>, <code>docs/07-note-cybersecurite.md</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/home/aide.php</code></td>
+<td style="text-align: right;">1936</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : aide ; pas de méthode attendue. Références : <code>app/Controller/HomeController.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/home/apropos.php</code></td>
+<td style="text-align: right;">1852</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : à propos ; pas de méthode attendue. Références : <code>app/Controller/HomeController.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/home/categories.php</code></td>
+<td style="text-align: right;">1074</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : catégories publiques ; pas de méthode attendue. Références : <code>app/Controller/HomeController.php</code>, <code>tests/php/css_contract.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/home/cgu.php</code></td>
+<td style="text-align: right;">1090</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : conditions générales d’utilisation ; pas de méthode attendue. Références : <code>app/Controller/HomeController.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/home/cgv.php</code></td>
+<td style="text-align: right;">3695</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : conditions générales de vente ; pas de méthode attendue. Références : <code>app/Controller/HomeController.php</code>, <code>tests/php/information_juridique_test.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/home/confidentialite.php</code></td>
+<td style="text-align: right;">4687</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : confidentialité ; pas de méthode attendue. Références : <code>app/Controller/HomeController.php</code>, <code>tests/php/information_juridique_test.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/home/contact.php</code></td>
+<td style="text-align: right;">2577</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : formulaire de contact ; pas de méthode attendue. Références : <code>app/Controller/HomeController.php</code>, <code>tests/php/css_contract.php</code>, <code>tests/php/information_juridique_test.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/home/cookies.php</code></td>
+<td style="text-align: right;">3044</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : cookies ; pas de méthode attendue. Références : <code>app/Controller/HomeController.php</code>, <code>tests/php/information_juridique_test.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/home/garanties.php</code></td>
+<td style="text-align: right;">1643</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : garanties ; pas de méthode attendue. Références : <code>app/Controller/HomeController.php</code>, <code>tests/php/information_juridique_test.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/home/garanties_encadre.php</code></td>
+<td style="text-align: right;">4297</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : encadré légal inclus dans d’autres vues ; pas de méthode attendue. Références : <code>app/View/home/cgv.php</code>, <code>app/View/home/garanties.php</code>, <code>tests/php/information_juridique_test.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/home/index.php</code></td>
+<td style="text-align: right;">5443</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : accueil ; pas de méthode attendue. Références : <code>app/Controller/HomeController.php</code>, <code>tests/php/cartes_accessibilite_test.php</code>, <code>tests/php/css_contract.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/View/home/livraison.php</code></td>
+<td style="text-align: right;">1375</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : livraison ; pas de méthode attendue. Références : <code>app/Controller/HomeController.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/home/mentions_legales.php</code></td>
+<td style="text-align: right;">1630</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : mentions légales ; pas de méthode attendue. Références : <code>app/Controller/HomeController.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/home/retractation.php</code></td>
+<td style="text-align: right;">4486</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : rétractation ; pas de méthode attendue. Références : <code>app/Controller/HomeController.php</code>, <code>tests/php/information_juridique_test.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/View/layout.php</code></td>
+<td style="text-align: right;">9576</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : gabarit commun, liens CSS/JS et navigation ; pas de méthode attendue. Références : <code>app/Controller/Controller.php</code>, <code>docs/01-cahier-des-charges-MiniShop.md</code>, <code>docs/08-fiche-suivi-commits.md</code>….</td>
+</tr>
+<tr>
+<td><code>app/View/panier/index.php</code></td>
+<td style="text-align: right;">5627</td>
+<td style="text-align: right;">0</td>
+<td>Vue HTML : panier HTML ; pas de méthode attendue. Références : <code>app/Controller/PanierController.php</code>.</td>
+</tr>
+<tr>
+<td><code>app/bootstrap.php</code></td>
+<td style="text-align: right;">994</td>
+<td style="text-align: right;">0</td>
+<td>Amorce : autoload App et helpers, fuseau horaire. Références : <code>app/Model/Data/ConstraintError.php</code>, <code>app/Model/Data/QueryError.php</code>, <code>app/Model/Data/SchemaError.php</code>….</td>
+</tr>
+<tr>
+<td><code>public/.htaccess</code></td>
+<td style="text-align: right;">1408</td>
+<td style="text-align: right;">—</td>
+<td>Réécriture Apache et en-têtes ; entrée par le serveur, pas par PHP. Chargé par Apache si configuré ; aucun appel PHP attendu.</td>
+</tr>
+<tr>
+<td><code>public/css/app.css</code></td>
+<td style="text-align: right;">48961</td>
+<td style="text-align: right;">—</td>
+<td>Styles, composants et adaptations responsive du site. Références : <code>app/View/layout.php</code>, <code>docs/10-todo-corrections.md</code>, <code>docs/DA.md</code>….</td>
+</tr>
+<tr>
+<td><code>public/css/print.css</code></td>
+<td style="text-align: right;">1098</td>
+<td style="text-align: right;">—</td>
+<td>Styles dédiés à l’impression. Références : <code>app/View/layout.php</code>, <code>docs/10-todo-corrections.md</code>, <code>docs/DA.md</code>….</td>
+</tr>
+<tr>
+<td><code>public/fonts/OFL.txt</code></td>
+<td style="text-align: right;">4406</td>
+<td style="text-align: right;">—</td>
+<td>Fichier accompagnant la police locale ; pas de méthodes applicatives. Document associé à minishop-euro.woff2 ; pas chargé par le navigateur.</td>
+</tr>
+<tr>
+<td><code>public/fonts/minishop-euro.woff2</code></td>
+<td style="text-align: right;">1044</td>
+<td style="text-align: right;">—</td>
+<td>Police locale utilisée par la feuille de style. Références : <code>public/css/app.css</code>, <code>docs/10-todo-corrections.md</code>, <code>docs/DA.md</code>….</td>
+</tr>
+<tr>
+<td><code>public/gen_volumes.php</code></td>
+<td style="text-align: right;">46314</td>
+<td style="text-align: right;">9</td>
+<td>Outil HTTP de volumétrie réservé au développement ; écrit des données SQL. Références : <code>app/Tools/VolumetryGenerator.php</code>, <code>public/mesurer.php</code>, <code>docs/07-note-cybersecurite.md</code>….</td>
+</tr>
+<tr>
+<td><code>public/img/favicon.svg</code></td>
+<td style="text-align: right;">426</td>
+<td style="text-align: right;">—</td>
+<td>Icône de l’onglet déclarée dans le layout. Références : <code>app/View/layout.php</code>, <code>docs/DA.md</code>, <code>tests/php/css_contract.php</code>.</td>
+</tr>
+<tr>
+<td><code>public/img/illustration-achat.jpg</code></td>
+<td style="text-align: right;">63157</td>
+<td style="text-align: right;">—</td>
+<td>Illustration de la page d’accueil. Références : <code>app/View/home/index.php</code>, <code>docs/10-todo-corrections.md</code>, <code>docs/DA.md</code>….</td>
+</tr>
+<tr>
+<td><code>public/img/logo-mark.svg</code></td>
+<td style="text-align: right;">442</td>
+<td style="text-align: right;">—</td>
+<td>Variante compacte d’identité ; références dans la DA et les tests, pas d’inclusion trouvée dans les vues. docs/DA.md et tests/php/css_contract.php ; pas de lien trouvé dans app/ ou public/.</td>
+</tr>
+<tr>
+<td><code>public/img/logo.svg</code></td>
+<td style="text-align: right;">752</td>
+<td style="text-align: right;">—</td>
+<td>Variante horizontale d’identité ; références dans la DA et les tests, pas d’inclusion trouvée dans les vues. docs/DA.md et tests/php/css_contract.php ; pas de lien trouvé dans app/ ou public/.</td>
+</tr>
+<tr>
+<td><code>public/img/produits/aura.jpg</code></td>
+<td style="text-align: right;">38875</td>
+<td style="text-align: right;">—</td>
+<td>Visuel réutilisé pour la famille casques dans les produits de démonstration. Références : <code>app/Model/Data/Seed.php</code>, <code>data/minishop/produit.json</code>, <code>docs/annexes/annexe-sql.md</code>….</td>
+</tr>
+<tr>
+<td><code>public/img/produits/band.jpg</code></td>
+<td style="text-align: right;">20959</td>
+<td style="text-align: right;">—</td>
+<td>Visuel réutilisé pour la famille bracelets connectés dans les produits de démonstration. Références : <code>app/Model/Data/Seed.php</code>, <code>data/minishop/produit.json</code>, <code>docs/annexes/annexe-sql.md</code>….</td>
+</tr>
+<tr>
+<td><code>public/img/produits/boom.jpg</code></td>
+<td style="text-align: right;">32234</td>
+<td style="text-align: right;">—</td>
+<td>Visuel réutilisé pour la famille enceintes dans les produits de démonstration. Références : <code>app/Model/Data/Seed.php</code>, <code>data/minishop/produit.json</code>, <code>docs/annexes/annexe-sql.md</code>….</td>
+</tr>
+<tr>
+<td><code>public/img/produits/fit2.jpg</code></td>
+<td style="text-align: right;">21677</td>
+<td style="text-align: right;">—</td>
+<td>Visuel réutilisé pour la famille montres connectées dans les produits de démonstration. Références : <code>app/Model/Data/Seed.php</code>, <code>data/minishop/produit.json</code>, <code>docs/annexes/annexe-sql.md</code>….</td>
+</tr>
+<tr>
+<td><code>public/img/produits/k87.jpg</code></td>
+<td style="text-align: right;">45866</td>
+<td style="text-align: right;">—</td>
+<td>Visuel réutilisé pour la famille claviers dans les produits de démonstration. Références : <code>app/Model/Data/Seed.php</code>, <code>data/minishop/produit.json</code>, <code>docs/annexes/annexe-sql.md</code>….</td>
+</tr>
+<tr>
+<td><code>public/img/produits/power20.jpg</code></td>
+<td style="text-align: right;">15357</td>
+<td style="text-align: right;">—</td>
+<td>Visuel réutilisé pour la famille batteries dans les produits de démonstration. Références : <code>app/Model/Data/Seed.php</code>, <code>data/minishop/produit.json</code>, <code>docs/annexes/annexe-sql.md</code>….</td>
+</tr>
+<tr>
+<td><code>public/img/produits/procast.jpg</code></td>
+<td style="text-align: right;">29927</td>
+<td style="text-align: right;">—</td>
+<td>Visuel réutilisé pour la famille micros dans les produits de démonstration. Références : <code>app/Model/Data/Seed.php</code>, <code>data/minishop/produit.json</code>, <code>docs/annexes/annexe-sql.md</code>….</td>
+</tr>
+<tr>
+<td><code>public/img/produits/qhd27.jpg</code></td>
+<td style="text-align: right;">19002</td>
+<td style="text-align: right;">—</td>
+<td>Visuel réutilisé pour la famille écrans dans les produits de démonstration. Références : <code>app/Model/Data/Seed.php</code>, <code>data/minishop/produit.json</code>, <code>docs/annexes/annexe-sql.md</code>….</td>
+</tr>
+<tr>
+<td><code>public/img/produits/sac25.jpg</code></td>
+<td style="text-align: right;">33156</td>
+<td style="text-align: right;">—</td>
+<td>Visuel réutilisé pour la famille sacs dans les produits de démonstration. Références : <code>app/Model/Data/Seed.php</code>, <code>data/minishop/produit.json</code>, <code>docs/annexes/annexe-sql.md</code>….</td>
+</tr>
+<tr>
+<td><code>public/img/produits/turbox.jpg</code></td>
+<td style="text-align: right;">32649</td>
+<td style="text-align: right;">—</td>
+<td>Visuel réutilisé pour la famille ordinateurs fixes dans les produits de démonstration. Références : <code>app/Model/Data/Seed.php</code>, <code>data/minishop/produit.json</code>, <code>docs/annexes/annexe-sql.md</code>….</td>
+</tr>
+<tr>
+<td><code>public/img/produits/usbc.jpg</code></td>
+<td style="text-align: right;">48545</td>
+<td style="text-align: right;">—</td>
+<td>Visuel réutilisé pour la famille câbles dans les produits de démonstration. Références : <code>app/Model/Data/Seed.php</code>, <code>data/minishop/produit.json</code>, <code>docs/annexes/annexe-sql.md</code>….</td>
+</tr>
+<tr>
+<td><code>public/img/produits/zen14.jpg</code></td>
+<td style="text-align: right;">23727</td>
+<td style="text-align: right;">—</td>
+<td>Visuel réutilisé pour la famille ordinateurs portables dans les produits de démonstration. Références : <code>app/Model/Data/Seed.php</code>, <code>data/minishop/produit.json</code>, <code>docs/annexes/annexe-sql.md</code>….</td>
+</tr>
+<tr>
+<td><code>public/index.php</code></td>
+<td style="text-align: right;">8437</td>
+<td style="text-align: right;">0</td>
+<td>Contrôleur frontal : en-têtes, routes et gestion des erreurs. Point d’entrée HTTP / réécriture dans public/.htaccess.</td>
+</tr>
+<tr>
+<td><code>public/js/panier.js</code></td>
+<td style="text-align: right;">5740</td>
+<td style="text-align: right;">—</td>
+<td>Amélioration progressive du panier via l’API. Références : <code>app/View/layout.php</code>, <code>docs/02-document-tests-validation.md</code>, <code>docs/09-audit-ecarts.md</code>….</td>
+</tr>
+<tr>
+<td><code>public/js/ui.js</code></td>
+<td style="text-align: right;">4134</td>
+<td style="text-align: right;">—</td>
+<td>Interactions d’interface et navigation. Références : <code>app/View/layout.php</code>, <code>docs/10-todo-corrections.md</code>, <code>docs/DA.md</code>….</td>
+</tr>
+<tr>
+<td><code>public/mesurer.php</code></td>
+<td style="text-align: right;">34558</td>
+<td style="text-align: right;">3</td>
+<td>Outil HTTP de mesure des temps réservé au développement. Références : <code>app/View/home/cookies.php</code>, <code>docs/07-note-cybersecurite.md</code>, <code>docs/08-fiche-suivi-commits.md</code>….</td>
+</tr>
+</tbody>
+</table>
+<h2 id="ajouts-de-main-a-examiner-lors-de-lintegration">Ajouts de <code>main</code> à examiner lors de l’intégration<a class="headerlink" href="#ajouts-de-main-a-examiner-lors-de-lintegration" title="Permanent link">#</a></h2>
+<p>| <code>app/Tools/Heure.php</code> | 8492 | 12 | Conversion et formatage des dates UTC et Europe/Paris. |
+| <code>app/View/admin/confirmer_annulation.php</code> | 1228 | 0 | Vue de confirmation de l’annulation administrateur, rendue par <code>app/Controller/Admin/CommandeAdminController.php</code>. |
+| <code>app/View/admin/confirmer_suppression_categorie.php</code> | 740 | 0 | Vue de confirmation avant action définitive. |
+| <code>app/View/admin/confirmer_suppression_produit.php</code> | 813 | 0 | Vue de confirmation avant action définitive. |
+| <code>app/View/commande/confirmer_annulation.php</code> | 925 | 0 | Vue de confirmation avant action définitive. |
+| <code>public/img/aura.svg</code> | 684 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
+| <code>public/img/band.svg</code> | 688 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
+| <code>public/img/boom.svg</code> | 688 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
+| <code>public/img/fit2.svg</code> | 690 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
+| <code>public/img/k87.svg</code> | 686 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
+| <code>public/img/power20.svg</code> | 699 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
+| <code>public/img/procast.svg</code> | 685 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
+| <code>public/img/qhd27.svg</code> | 682 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
+| <code>public/img/sac25.svg</code> | 685 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
+| <code>public/img/turbox.svg</code> | 699 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
+| <code>public/img/usbc.svg</code> | 693 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
+| <code>public/img/zen14.svg</code> | 699 | — | Illustration SVG issue de main, conservée ; utilisation effective à vérifier. |
+| <code>public/minishop.css</code> | 15182 | — | Feuille de style issue de main ; non chargée par le layout actuel, intégration à examiner. |</p>
+<p>| <code>app/View/home/preferences.php</code> | 0 | 0 | Préférences locales de langue et de fuseau, choix manuel et géolocalisation volontaire. |
+| <code>public/js/i18n-en.js</code> | 0 | 0 | Dictionnaire et règles de traduction anglaise FR/EN de l’interface, des pages légales, du back-office et des messages dynamiques. |
+| <code>public/js/preferences.js</code> | 0 | 0 | Affichage des dates, traduction réversible FR/EN et gestion locale des préférences, avec bornes UTC des filtres. |
+| <code>public/js/tz-lookup.js</code> | 0 | 0 | Bibliothèque locale de conversion approximative des coordonnées en fuseau. |</p>
+<footer class="doc">
+  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/16-audit-code-mort.md</code>
+  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+</footer>
+</main>
+</body>
+</html>

@@ -6,7 +6,7 @@ Fichiers sources : `sql/01_minishop_schema.sql` (DDL + données), `sql/02_minish
 (protocole de mesure `ENF-01`) et `scripts/gen_volumes.sh` (jeu de mesure de volumétrie).
 
 (A→F : scripts SQL, fixture et manifeste de tests ; G→H : mesures de performance et volumétrie ;
-I→J : CI et fichiers hors dépôt.)
+I : fichiers hors dépôt.)
 Ils sont reproduits ici intégralement **depuis les fichiers réels** pour que le document rendu soit
 autoportant ; le dépôt reste la source de vérité (les régénérer : `bash "$DIR_SCRIPTS/build-docs.sh"`).
 
@@ -1925,133 +1925,11 @@ run -e "SELECT (SELECT COUNT(*) FROM produit)              AS produits,
 echo "Mesures : DB=$DB ./tests/perf/mesurer.sh   |   Retour au jeu de demo : bash "$DIR_SCRIPTS/gen_volumes.sh" --purge"
 ```
 
-## I. Chaîne d'intégration continue — `.gitlab-ci.yml`
+## Décision de périmètre CI (23 octobre 2026)
 
-_(114 lignes, copié verbatim depuis le dépôt.)_
+La configuration `.gitlab-ci.yml` a été retirée du projet et du présent cahier des charges. Le workflow conservé est GitHub Actions (`.github/workflows/ci.yml`) ; son résultat ne constitue pas une preuve de pipeline GitLab. Le contenu détaillé du workflow se trouve dans le fichier versionné, qui reste la source de vérité.
 
-```yaml
-# MiniShop — chaîne d'intégration continue (contrainte CT-09 et §14.2 du cahier des charges).
-# Chaque job répond à un critère du barème : un pipeline vert prouve que (a) le script SQL est
-# rejouable, (b) les 28 tests (règles, vues, frais de port) passent, (c) aucune règle de sécurité n'a été
-# court-circuitée dans le code PHP. Un job qui échoue bloque le merge : la pénalité devient
-# visible pendant le développement, pas au moment du rendu.
-#
-# Prod : GitLab CI (ce fichier) — cible de notation, barème §16.1.
-# Dev  : GitHub Actions (.github/workflows/ci.yml) — même 6 jobs adaptés pour GitHub
-#        (setup-php, services mysql:8.0, fallback sans load_db.sh). Les deux pipelines
-#        sont maintenus synchrones ; en dev on pousse sur GitHub, en prod on miroir vers GitLab.
-#
-# Règle de re-run (CDC §14.2, annexe 17.9 §7) : si le pipeline est VERT avant le merge
-# (statut de la MR « Pipeline passed »), aucun re-run n'est nécessaire après le merge.
-# Le pipeline post-merge rejoue les mêmes jobs sur le même arbre de fichiers (GitLab teste
-# la MR sur son merge result) : il sert de preuve/badge, pas de contrôle. On ne relance que
-# si main a avancé, si le run a été annulé, si le code a été corrigé puis poussé (le push
-# relance seul), ou après une panne d'infrastructure (un Retry, anomalie consignée A-0x).
-
-stages: [validate, db, test, docs]
-
-default:
-  interruptible: true
-
-# 1. Syntaxe PHP : 100 % des fichiers doivent être valides (§11.3 PRÉ-3).
-php-lint:
-  stage: validate
-  image: php:8.2-cli
-  script:
-    - find app public -name '*.php' -print0 | xargs -0 -n1 -P4 php -l
-
-# 2. Conventions PSR-12 : signalées, non bloquantes (ne doit jamais faire échouer une démo).
-style:
-  stage: validate
-  image: php:8.2-cli
-  allow_failure: true
-  script:
-    - "command -v phpcs >/dev/null 2>&1 || pear install -f PHP_CodeSniffer || true"
-    - "phpcs --standard=PSR12 --report=summary app public || true"
-
-# 3. Contrôles statiques de sécurité : 10 grep bloquants (interpolation SQL, échappement
-#    manquant, mot de passe en dur, session durcie, CSRF, contrôle d'appartenance).
-security-scan:
-  stage: validate
-  image: alpine:3.20
-  before_script:
-    - apk add --no-cache bash grep findutils
-  script:
-    - bash tests/security/controles.sh
-
-# 4. Base de données : chargement du schéma puis 28 tests (règles, vues, port).
-#    Porte les points « script SQL », « procédures stockées », « triggers » du barème.
-base-tests:
-  stage: db
-  image: mysql:8.0
-  services:
-    - name: mysql:8.0
-      alias: mysql
-  variables:
-    MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-    MYSQL_DATABASE: minishop_test
-    DB_HOST: mysql
-    DB_USER: root
-    DB_PASS: ""
-    DB_TEST: minishop_test
-  before_script:
-    - apt-get update -qq
-    - apt-get install -y -qq --no-install-recommends mariadb-client
-  script:
-    - ./scripts/load_db.sh
-    - ./scripts/run_sql_tests.sh
-  artifacts:
-    when: always
-    expire_in: 4 weeks
-    paths:
-      - tests/sql/rapport_tests_sql.md
-      - tests/sql/out/
-
-# 5. Tests unitaires PHP (modèles, repositories, sécurité) sur la base de test.
-unit:
-  stage: test
-  image: php:8.2-cli
-  services:
-    - name: mysql:8.0
-      alias: mysql
-  variables:
-    MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-    MYSQL_DATABASE: minishop_test
-    DB_TEST: minishop_test
-  before_script:
-    - apt-get update -qq
-    - apt-get install -y -qq --no-install-recommends mariadb-client unzip git
-    - "test -f composer.phar || (curl -sS https://getcomposer.org/installer | php)"
-    - php composer.phar install --prefer-dist --no-progress
-  script:
-    - ./vendor/bin/phpunit --testsuite app --log-junit phpunit.xml
-  artifacts:
-    when: always
-    reports:
-      junit: phpunit.xml
-
-# 6. Documentation : les diagrammes doivent se régénérer depuis leurs sources, sinon la
-#    pénalité « manque un diagramme UML » (-1) s'applique au rendu.
-docs:
-  stage: docs
-  image: openjdk:17-slim
-  before_script:
-    - apt-get update -qq && apt-get install -y -qq --no-install-recommends curl || true
-    - "test -f plantuml.jar || curl -sSL -o plantuml.jar https://github.com/plantuml/plantuml/releases/download/v1.2024.0/plantuml-1.2024.0.jar"
-  script:
-    - PLANTUML_JAR=plantuml.jar bash docs/diagrams/render.sh
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - docs/diagrams/
-```
-
-**Règle de re-run** : si le pipeline est **vert avant le merge**, aucun re-run n'est nécessaire après le
-merge — la MR est testée sur son *merge result* (GitHub Actions : `refs/pull/<n>/merge`), donc le run
-post-merge rejoue les mêmes jobs sur le même arbre de fichiers. Exceptions et tableau des six cas : **CDC
-§14.2** ; application à la charte d'équipe : **annexe 17.9 §7**.
-
-## J. Fichiers hors dépôt — `.gitignore`
+## I. Fichiers hors dépôt — `.gitignore`
 
 _(35 lignes, copié verbatim depuis le dépôt.)_
 

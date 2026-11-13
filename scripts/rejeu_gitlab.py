@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Rejoue l'historique MiniShop en 32 commits commentés vers un nouveau GitLab.
+"""Outil historique de reconstruction d'un plan MiniShop en 32 commits commentés.
+
+⚠️ Ce plan décrit un état antérieur (notamment l'ancienne CI GitLab) ; il ne constitue
+ni un journal Git constaté ni l'état courant du dépôt. La fiche générée avec `--fiche`
+reste une trace de ce plan ancien. Le mode `--dest` crée une histoire synthétique dans
+une copie distincte : ne pas l'exécuter pour fabriquer ou pousser un historique sans
+autorisation explicite.
 
 Deux usages :
   1. Générer la fiche de suivi (documentation humaine) :

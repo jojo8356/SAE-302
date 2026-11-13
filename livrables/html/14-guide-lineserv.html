@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="SAÉ 302 — MiniShop : MiniShop S302 — préparation LineServ, initialisation et recette#">
+<title>MiniShop S302 — préparation LineServ, initialisation et recette# — MiniShop</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --papier: #fbfaf7;
+  --carte: #ffffff;
+  --trait: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-clair: #dbeafe;
+  --code: #f1f5f9;
+  --mesure: 72ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
+    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
+    --accent-clair: #1e3a8a; --code: #16223a;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  max-width: calc(var(--mesure) + 6rem);
+  background: var(--papier);
+  color: var(--encre);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
+h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
+p, li { max-width: var(--mesure); }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+}
+pre {
+  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
+  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.35rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+thead th { background: var(--accent-clair); }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
+img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li input[type="checkbox"] { margin-right: 0.4rem; }
+.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
+.toc > ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1rem; }
+footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+@media print {
+  :root { --papier: #fff; --carte: #fff; }
+  @page { size: A4; margin: 18mm 16mm; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#1-decision-indispensable-avant-la-mise-en-ligne">1. Décision indispensable avant la mise en ligne</a></li>
+<li><a href="#2-informations-a-obtenir-et-a-noter">2. Informations à obtenir et à noter</a></li>
+<li><a href="#3-preparer-la-bonne-version-en-local">3. Préparer la bonne version en local</a></li>
+<li><a href="#4-acces-sftp-avec-filezilla-preparation-sans-publication">4. Accès SFTP avec FileZilla — préparation, sans publication</a></li>
+<li><a href="#5-initialiser-une-base-neuve-et-vide-avec-phpmyadmin">5. Initialiser une base neuve et vide avec phpMyAdmin</a><ul>
+<li><a href="#51-avant-limport">5.1 Avant l'import</a></li>
+<li><a href="#52-preparer-la-copie-localement">5.2 Préparer la copie localement</a></li>
+<li><a href="#53-import-par-linterface">5.3 Import par l'interface</a></li>
+</ul>
+</li>
+<li><a href="#6-configuration-applicative-apres-validation-de-larchitecture">6. Configuration applicative — après validation de l'architecture</a></li>
+<li><a href="#7-controles-sur-linstance-lineserv-avant-invitation">7. Contrôles sur l'instance LineServ avant invitation</a></li>
+<li><a href="#8-logiciels-pour-laccessibilite-et-memo-optionnel-hors-campagne">8. Logiciels pour l'accessibilité (et mémo optionnel hors campagne)</a><ul>
+<li><a href="#wave-reperer-les-problemes-daccessibilite">WAVE : repérer les problèmes d'accessibilité</a></li>
+<li><a href="#note-hors-campagne-manuelle-pourquoi-le-responsive-nest-pas-rejoue-a-la-main">Note hors campagne manuelle : pourquoi le responsive n'est pas rejoué à la main</a></li>
+</ul>
+</li>
+<li><a href="#9-documents-et-communication">9. Documents et communication</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="minishop-s302-preparation-lineserv-initialisation-et-recette">MiniShop S302 — préparation LineServ, initialisation et recette<a class="headerlink" href="#minishop-s302-preparation-lineserv-initialisation-et-recette" title="Permanent link">#</a></h1>
+<blockquote>
+<p><strong>État au moment de la rédaction : préparation, pas déploiement validé.</strong> Aucun accès au LineServ, import SQL ni test de navigateur réel sur cet hébergement n'a été effectué depuis ce dépôt. Les 173 scénarios de recette manuelle (et les 36 couples de transition, soit 209 entrées dans le journal CSV) restent <code>NON JOUÉ</code>. Avant d'envoyer un lien de test, lever les blocages du §1 et vérifier l'instance réelle.</p>
+<p>Ce guide reprend les indications communiquées pour le cours : SFTP <code>linserv-info-01.campus.unice.fr</code>, fichiers dans <code>www/</code>, URL en <code>https://linserv-info-01.campus.unice.fr/~login/…</code>, phpMyAdmin à <code>https://linserv-info-01.campus.unice.fr/phpmyadmin</code>. La disponibilité, les droits et la configuration actuels n'ont <strong>pas</strong> été vérifiés. Suivre les consignes de l'IUT si elles diffèrent.</p>
+</blockquote>
+<h2 id="1-decision-indispensable-avant-la-mise-en-ligne">1. Décision indispensable avant la mise en ligne<a class="headerlink" href="#1-decision-indispensable-avant-la-mise-en-ligne" title="Permanent link">#</a></h2>
+<p>L'exemple visé pour ce compte est <code>https://linserv-info-01.campus.unice.fr/~pj509414/s302/</code>. <strong>Ne pas considérer cette URL comme fonctionnelle ou publiée.</strong> La procédure simple d'un fichier <code>sqlconnect.php</code> de TD ne suffit pas pour cette application :</p>
+<ol>
+<li><strong>Sous-répertoire : non pris en charge en l'état.</strong> <code>public/.htaccess</code> contient <code>RewriteBase /</code>, le routeur traite le chemin depuis la racine et des liens, formulaires, scripts et redirections commencent par <code>/</code>. Depuis <code>/~pj509414/s302/</code>, ils peuvent sortir du dossier, casser les images et les routes ou rediriger ailleurs. Il faut adapter et tester le préfixe pour l'ensemble de ces usages ; ne pas simplement changer <code>RewriteBase</code>.</li>
+<li><strong>Racine publique : seul <code>public/</code> doit être servi.</strong> <code>public/index.php</code> charge <code>../app/bootstrap.php</code> et suppose que <code>app/</code> est à côté de <code>public/</code>. Copié seul dans <code>www/s302/</code>, il ne trouve donc pas l'application. Copier l'ensemble du projet dans <code>www/s302/</code> exposerait potentiellement <code>.env</code>, données, code et documents ; les protections Apache ne sont pas garanties. <strong>Ne pas le faire.</strong> Il faut une séparation validée : application et <code>.env</code> hors de <code>www/</code>, <code>public/</code> seul accessible, avec chemin de bootstrap et configuration Apache adaptés ; ou un hébergement dédié dont le DocumentRoot pointe vers <code>public/</code> et qui accepte les routes de l'application.</li>
+<li><strong>Sécurité de la recette :</strong> restreindre l'accès au site de test avant toute exposition, car les comptes du jeu SQL ont des mots de passe publics connus. L'accès SFTP ne protège pas les pages HTTP. Confirmer avec l'IUT si un contrôle d'accès est possible et comment il est appliqué. Ne pas publier un admin de démonstration accessible à tous.</li>
+<li><strong>Pré-requis à confirmer :</strong> PHP Web ≥ 8.2 avec <code>pdo_mysql</code>, <code>mbstring</code>, <code>json</code>, <code>intl</code> ; MariaDB ≥ 10.6 ou MySQL ≥ 8.0.16 ; <code>mod_rewrite</code> et <code>.htaccess</code> autorisés ; droits sur tables, vues, routines et triggers ; système de fichiers et session PHP utilisables ; base de recette autorisée. Le PHP en ligne de commande et celui du serveur web peuvent différer.</li>
+</ol>
+<p><strong>Point d'arrêt :</strong> tant que les points 1 à 4 ne sont pas levés, on peut préparer les fichiers localement et, si l'équipe y consent, initialiser une base isolée ; on ne doit pas demander à la collègue de considérer le site comme disponible. Aucune commande d'installation système, <code>sudo</code>, <code>npm install</code>, ouverture de port ou déploiement automatique n'est requise par ce guide.</p>
+<h2 id="2-informations-a-obtenir-et-a-noter">2. Informations à obtenir et à noter<a class="headerlink" href="#2-informations-a-obtenir-et-a-noter" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Élément</th>
+<th>Valeur / décision</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Compte SFTP, hôte et répertoire</td>
+<td>login étudiant ; <code>linserv-info-01.campus.unice.fr</code> ; confirmer <code>www/</code> et l'espace privé hors web</td>
+</tr>
+<tr>
+<td>URL de recette</td>
+<td><code>https://linserv-info-01.campus.unice.fr/~pj509414/s302/</code> <strong>à confirmer</strong></td>
+</tr>
+<tr>
+<td>Accès du site</td>
+<td>mécanisme réel de restriction, personnes autorisées et disponibilité réseau</td>
+</tr>
+<tr>
+<td>Configuration serveur</td>
+<td>PHP Web et extensions, réécriture, configuration UserDir, chemins et permissions</td>
+</tr>
+<tr>
+<td>Base de recette</td>
+<td>nom réellement créé ou attribué par l'IUT ; vide et distincte d'autres projets</td>
+</tr>
+<tr>
+<td>Connexion applicative</td>
+<td>hôte, port ou socket, utilisateur SQL autorisé et méthode de transmission confidentielle</td>
+</tr>
+<tr>
+<td>Stockage autorisé</td>
+<td>espace privé pour <code>.env</code> et journaux <code>var/</code>, accessible au processus PHP sans lecture publique</td>
+</tr>
+<tr>
+<td>Révision déployée</td>
+<td>identifiant Git <strong>et</strong> éventuelles modifications locales, à reporter lors du transfert</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ne jamais écrire un mot de passe ici, dans Git, dans une capture d'écran ou dans l'e-mail de recette.</strong> Ne pas supposer que les identifiants phpMyAdmin sont ceux du compte SFTP ou que <code>localhost</code>, <code>127.0.0.1</code>, le port ou le nom <code>minishop</code> conviennent.</p>
+<h2 id="3-preparer-la-bonne-version-en-local">3. Préparer la bonne version en local<a class="headerlink" href="#3-preparer-la-bonne-version-en-local" title="Permanent link">#</a></h2>
+<ol>
+<li>Dans FileZilla, le dossier local de travail de l'utilisateur est <code>/home/jojokes/Documents/BUT/Projet/s302</code>. Ne pas supprimer ni remplacer les fichiers personnels ou les modifications locales : notamment <code>PdoStore.php</code>, <code>scripts/seed_mysql.php</code>, <code>tests/perf/charge-rb18.sh</code> et <code>.githooks/</code> s'ils existent dans sa copie. Le contenu local peut différer de celui de cette branche ; le constater <strong>avant</strong> tout transfert.</li>
+<li>Relever l'état sans rien modifier :</li>
+</ol>
+<pre><code class="language-bash">cd /home/jojokes/Documents/BUT/Projet/s302
+git branch --show-current
+git rev-parse --short HEAD
+git status --short
+</code></pre>
+<p>Résultat attendu : nom de branche, identifiant court puis, éventuellement, liste de modifications. Une liste non vide signifie simplement que certains fichiers ne correspondent pas au commit : ne pas les écraser. Pas de <code>git reset</code>, <code>clean</code>, <code>checkout --</code>, <code>pull</code> ou fusion automatique dans ce guide.
+3. Vérifier que le guide et les scripts à transférer sont bien présents dans <strong>cette copie</strong>. Si ce n'est pas le cas, récupérer les changements après résolution des éventuels conflits, sans remplacer le travail local. Le commit <code>HEAD</code> seul ne décrit pas les modifications non commitées : noter aussi leur présence.
+4. Conserver une sauvegarde du projet et des données existantes selon les règles de l'équipe. Ne pas copier à l'aveugle les données locales ni les secrets vers le serveur ; une recette doit utiliser un jeu dédié fictif.</p>
+<h2 id="4-acces-sftp-avec-filezilla-preparation-sans-publication">4. Accès SFTP avec FileZilla — préparation, sans publication<a class="headerlink" href="#4-acces-sftp-avec-filezilla-preparation-sans-publication" title="Permanent link">#</a></h2>
+<ol>
+<li>Ouvrir FileZilla. Dans le gestionnaire de sites, choisir <strong>SFTP – SSH File Transfer Protocol</strong>, hôte <code>linserv-info-01.campus.unice.fr</code>, port <code>22</code> sauf indication contraire de l'IUT, identifiant étudiant et méthode d'authentification demandée par l'IUT. Vérifier l'empreinte de la clé du serveur auprès de l'IUT lors de la première connexion. Ne pas transmettre le mot de passe à un tiers.</li>
+<li>À gauche : dossier local indiqué au §3. À droite : constater l'arborescence reçue, repérer <code>www/</code> et <strong>demander quel répertoire hors <code>www/</code> est autorisé</strong> pour le projet privé. Ne rien supprimer et ne pas remplacer un dossier existant.</li>
+<li>Si l'IUT autorise cet espace, un dossier de préparation privé distinct peut être créé et les fichiers nécessaires y être copiés après validation de l'équipe. Ne pas téléverser <code>.git/</code>, <code>node_modules/</code>, <code>vendor/</code>, <code>.env</code> de la machine locale, sauvegardes, journaux ni données de travail personnelles. Conserver <code>app/</code>, <code>public/</code>, <code>.env.example</code>, les ressources indispensables et la structure du projet. Les documents et SQL restent hors web.</li>
+<li><strong>Ne pas encore copier le projet entier dans <code>www/s302/</code> ni publier le site.</strong> Une fois le sous-dossier adapté et le point d'entrée configuré, ne publier que le contenu web autorisé, sans <code>public/mesurer.php</code> ni <code>public/gen_volumes.php</code>, et tester que les fichiers privés ne sont pas accessibles. La disposition finale dépend des possibilités réelles de LineServ ; un simple glisser-déposer n'établit pas cette séparation.</li>
+<li>Les transferts suivants doivent éviter d'écraser les configurations ou données de recette. Garder une sauvegarde et faire relire le plan de mise à jour ; ne jamais réinitialiser pour mettre à jour le code.</li>
+</ol>
+<h2 id="5-initialiser-une-base-neuve-et-vide-avec-phpmyadmin">5. Initialiser une base <strong>neuve et vide</strong> avec phpMyAdmin<a class="headerlink" href="#5-initialiser-une-base-neuve-et-vide-avec-phpmyadmin" title="Permanent link">#</a></h2>
+<h3 id="51-avant-limport">5.1 Avant l'import<a class="headerlink" href="#51-avant-limport" title="Permanent link">#</a></h3>
+<ul>
+<li>Se connecter à <a href="https://linserv-info-01.campus.unice.fr/phpmyadmin">https://linserv-info-01.campus.unice.fr/phpmyadmin</a> avec le compte autorisé par l'IUT. Créer une base <strong>spécifique à S302 et à la recette</strong>, ou faire attribuer une base neuve. Si l'IUT impose un nom préfixé par le login, utiliser ce nom exact. Vérifier visuellement qu'elle est sélectionnée et qu'elle ne contient aucune table, vue, routine ni trigger ; en cas de doute, <strong>arrêter</strong>, ne pas vider la base.</li>
+<li>Le fichier original <code>sql/01_minishop_schema.sql</code> contient <code>DROP DATABASE IF EXISTS minishop</code>, <code>CREATE DATABASE</code>, <code>USE minishop</code> et <code>DROP TABLE IF EXISTS parametre</code>. Ne <strong>jamais</strong> le coller ou l'importer tel quel sur LineServ et ne pas se contenter de « copier depuis CREATE TABLE » : cela conserverait notamment le <code>DROP TABLE</code>. La copie préparée ci-dessous ne cible aucun nom de base et retire ces quatre instructions et les bascules <code>FOREIGN_KEY_CHECKS</code> inutiles pour une base vide ; ce n'est pas une migration pour base existante.</li>
+<li>Les fichiers <code>02</code> et <code>03</code> comprennent des <code>DROP … IF EXISTS</code> de routines/triggers avant leur recréation. Ils sont acceptables uniquement sur la base neuve dédiée et sélectionnée, jamais sur une base partagée ou déjà utilisée. L'import peut échouer partiellement : ne pas relancer à l'aveugle.</li>
+<li>Le schéma contient des données fictives et des comptes dont les identifiants sont publiés dans le dépôt. Ne pas activer un site HTTP accessible sans restriction avec ces comptes. La base de recette ne doit contenir aucune donnée réelle.</li>
+</ul>
+<h3 id="52-preparer-la-copie-localement">5.2 Préparer la copie localement<a class="headerlink" href="#52-preparer-la-copie-localement" title="Permanent link">#</a></h3>
+<pre><code class="language-bash">cd /home/jojokes/Documents/BUT/Projet/s302
+python3 scripts/preparer_sql_lineserv.py
+</code></pre>
+<p>Sortie attendue : <code>Copie créée : /tmp/minishop-lineserv-…/01_schema_pour_base_vide.sql</code>, suivie d'un rappel de sécurité. Le nom exact est aléatoire. Le script ne contacte aucun serveur, ne touche pas à l'original et refuse si les instructions à retirer ne correspondent plus au schéma. Il crée un dossier temporaire privé ; copier le chemin affiché pour le sélecteur de fichiers phpMyAdmin. Garder le terminal ouvert. Cette copie est une préparation, <strong>pas</strong> la preuve d'un import réussi.</p>
+<p>Vérification facultative du préparateur, sans serveur ni base :</p>
+<pre><code class="language-bash">cd /home/jojokes/Documents/BUT/Projet/s302
+python3 tests/python/test_preparer_sql_lineserv.py -v
+</code></pre>
+<p>Sortie attendue : quatre tests <code>ok</code> et <code>OK</code>. Ces tests travaillent sur des fichiers temporaires ; ils ne valident ni l'import sur phpMyAdmin ni le fonctionnement de MariaDB.</p>
+<h3 id="53-import-par-linterface">5.3 Import par l'interface<a class="headerlink" href="#53-import-par-linterface" title="Permanent link">#</a></h3>
+<ol>
+<li>Dans phpMyAdmin, cliquer sur la <strong>base de recette neuve et vide</strong>, vérifier son nom à l'écran. Onglet <strong>Importer</strong> → choisir le fichier temporaire <code>01_schema_pour_base_vide.sql</code> → format SQL → exécuter. L'import comprend les tables, le jeu de démonstration et les vues. Patienter jusqu'au message de succès ; à la moindre erreur, arrêter et relever le message expurgé.</li>
+<li>Toujours dans la même base, importer <code>sql/02_minishop_procedures.sql</code>, puis <code>sql/03_minishop_triggers.sql</code>, dans cet ordre. Ils contiennent des <code>DELIMITER</code> : privilégier <strong>Importer</strong> le fichier complet, ne pas supprimer les délimiteurs au hasard ni coller des morceaux dans l'onglet SQL. La prise en charge exacte dépend de la version de phpMyAdmin. Si erreur de syntaxe ou de privilèges, arrêter et demander la configuration adaptée à l'IUT ; ne pas contourner par <code>root</code> ou <code>SUPER</code>.</li>
+<li>Facultatif et seulement après accord de l'équipe : importer une fois <code>sql/04_minishop_demo.sql</code> <strong>après</strong> 01, 02 et 03. Il crée des commandes et modifie les stocks. Ce fichier n'est pas idempotent : ne pas le rejouer pour « vérifier ». Le catalogue et les comptes fictifs existent déjà à l'étape 1, même sans 04.</li>
+<li>Dans <strong>Structure</strong>, <strong>Routines</strong> et <strong>Déclencheurs</strong>, vérifier la présence des objets. À partir de la version de ces fichiers : 8 tables, 3 vues, 17 procédures, 1 fonction et 16 triggers sont attendus ; les interfaces et privilèges peuvent masquer certains objets. Compter l'inventaire visible et demander à l'IUT si une liste manque ; ce comptage ne valide pas leur fonctionnement.</li>
+<li>À titre de vérification en lecture seule, l'onglet SQL de la base sélectionnée peut exécuter :</li>
+</ol>
+<pre><code class="language-sql">SELECT COUNT(*) AS categories FROM categorie;
+SELECT COUNT(*) AS produits FROM produit;
+SELECT COUNT(*) AS clients FROM client;
+</code></pre>
+<p>Avec le jeu SQL livré inchangé, attendre respectivement <code>4</code>, <code>36</code>, <code>3</code>. Cela indique uniquement que ces lignes ont été importées. Si les valeurs diffèrent, noter le résultat et arrêter avant une remise à zéro. Les données ou les scripts ont pu changer.</p>
+<p><strong>En cas d'import incomplet :</strong> ne pas réimporter l'ensemble ni supprimer des tables. Relever la base ciblée, l'étape, le code/message d'erreur sans secrets, les objets créés et demander conseil. Ne jamais lancer sur LineServ <code>run.sh --db</code>, <code>scripts/db_init.php</code>, <code>scripts/seed.php</code>, les tests SQL ou un script de charge : ils peuvent créer, supprimer ou réinitialiser des données et nécessitent d'autres droits.</p>
+<h2 id="6-configuration-applicative-apres-validation-de-larchitecture">6. Configuration applicative — après validation de l'architecture<a class="headerlink" href="#6-configuration-applicative-apres-validation-de-larchitecture" title="Permanent link">#</a></h2>
+<ol>
+<li>Créer <code>.env</code> <strong>côté serveur dans le dossier privé de la racine applicative</strong>, depuis <code>.env.example</code>, seulement après avoir déterminé où le processus PHP lit la racine. Ce fichier est ignoré par Git ; ne pas le téléverser sous <code>www/</code> ni le joindre à un e-mail. Protéger la lecture selon les permissions et l'identité du processus PHP indiquées par l'IUT : un <code>chmod 600</code> arbitraire peut empêcher le serveur de lire le fichier si les utilisateurs diffèrent.</li>
+<li>Renseigner <code>APP_ENV=prod</code>, <code>APP_DEBUG=0</code>, <code>STORAGE_DRIVER=sql</code>, <code>DB_HOST</code>, <code>DB_PORT</code> ou <code>DB_SOCKET</code>, <code>DB_NAME</code>, <code>DB_USER</code>, <code>DB_PASSWORD</code> avec les valeurs <strong>réellement attribuées</strong>. Utiliser un compte limité à la base de recette, avec les droits applicatifs nécessaires et sans privilèges d'administration globale. Les variables d'environnement du processus priment sur <code>.env</code> ; vérifier ce point si une valeur semble ignorée.</li>
+<li>Prévoir les répertoires privés nécessaires aux journaux et s'assurer que PHP peut y écrire, sans les rendre consultables par HTTP. Vérifier les cookies de session en HTTPS, y compris le drapeau <code>Secure</code> si un proxy termine TLS. Ne pas déposer de <code>phpinfo()</code> public.</li>
+<li>Une fois l'adaptation du préfixe, du bootstrap et de la réécriture réalisée, faire valider que <code>app/</code>, <code>.env</code>, <code>data/</code>, <code>var/</code>, <code>.git/</code>, <code>sql/</code> ne sont pas servis. Vérifier depuis le navigateur que les URL privées répondent 403/404, <strong>sans afficher ni partager leurs contenus</strong> ; interrompre immédiatement en cas d'exposition et faire retirer l'accès. Une 403/404 seule ne prouve pas toutes les protections.</li>
+<li>Activer l'accès restreint à la recette, neutraliser les comptes de démonstration publics ou remplacer leurs mots de passe, et fournir les nouveaux accès individuellement par canal confidentiel. Ne pas inventer de mot de passe dans les documents. Ne pas ouvrir le site tant que ces mesures ne sont pas vérifiées.</li>
+</ol>
+<h2 id="7-controles-sur-linstance-lineserv-avant-invitation">7. Contrôles sur l'instance LineServ avant invitation<a class="headerlink" href="#7-controles-sur-linstance-lineserv-avant-invitation" title="Permanent link">#</a></h2>
+<p>Sur une instance de recette isolée, utiliser uniquement des comptes et données fictifs. Relever l'URL exacte, la date et la révision ; comparer aux fichiers réellement publiés.</p>
+<ul>
+<li>☐ L'accueil, les images locales (visuel informatif en fiche produit, vignettes décoratives en liste) et CSS/JS se chargent ; cliquer catalogue, recherche et fiche produit ne sort pas de <code>/~pj509414/s302/</code>.</li>
+<li>☐ Formulaires et navigation conservent le préfixe ; les URL directes et rechargements fonctionnent ; une route inconnue donne une 404 sans détail interne.</li>
+<li>☐ Inscription, connexion, panier (avec et sans JavaScript), commande simulée, historique et annulation client en 2 étapes (avec conservation des lignes en historique) fonctionnent avec les comptes de recette.</li>
+<li>☐ Après connexion admin autorisée : listes, mode par défaut « Ajouter / retirer » (<code>DELTA</code>) sur <code>/admin/stocks</code>, modification d'un produit fictif, filtres de dates en fuseau local et évolution/annulation en 2 étapes d'une commande de test (avec retour de stock avant expédition et sans retour automatique si <code>EXPEDIEE</code>) fonctionnent ; aucune action ne modifie d'autres projets.</li>
+<li>☐ Sur <code>/preferences</code> (sans connexion requise) : vérifier la bascule intégrale <code>Français</code> ↔ <code>English</code> sur les pages publiques, client et admin, le choix manuel ou par géolocalisation locale sans requête réseau externe du fuseau horaire, et la réinitialisation.</li>
+<li>☐ Sur <code>/mentions-legales</code> : contrôler l'affichage exact des co-éditeurs étudiants et des coordonnées de l'hébergeur IUT.</li>
+<li>☐ Répéter un parcours avec deux sessions isolées ; vérifier qu'aucune commande d'un autre compte n'est exposée (404).</li>
+<li>☐ Parcourir sur ordinateur au clavier (<code>Tab</code>, <code>Maj+Tab</code>, <code>Entrée</code>) et vérifier une page publique et une page connectée avec WAVE (§8) — les tests responsive multi-tailles sont exclus de la campagne manuelle et couverts par la CI automatisée.</li>
+<li>☐ Pas d'accès public aux fichiers privés ou aux outils de développement (<code>public/mesurer.php</code>, <code>public/gen_volumes.php</code>) ; débogage désactivé ; comptes de démonstration non exposés.</li>
+<li>☐ Consigner les résultats réels et anomalies dans <a href="13-fiches-recette-uc.html">la fiche</a> et <a href="13-suivi-recette-uc.csv">le suivi CSV</a>, pas dans ce guide comme s'ils étaient déjà validés.</li>
+</ul>
+<p>Problèmes fréquents : <strong>404 sur <code>/catalogue</code> ou CSS absent</strong> → préfixe, réécriture et liens non adaptés ; <strong>500 dès l'accueil</strong> → chemin du bootstrap, droits de lecture, version PHP ou base ; <strong>connexion DB refusée</strong> → coordonnées et droits attribués, sans montrer le mot de passe ; <strong>import SQL incomplet</strong> → routines, délimiteurs ou privilèges, à constater sans réinitialiser. Ne pas activer le debug public pour obtenir un message ; voir les journaux privés avec l'accord de l'IUT.</p>
+<h2 id="8-logiciels-pour-laccessibilite-et-memo-optionnel-hors-campagne">8. Logiciels pour l'accessibilité (et mémo optionnel hors campagne)<a class="headerlink" href="#8-logiciels-pour-laccessibilite-et-memo-optionnel-hors-campagne" title="Permanent link">#</a></h2>
+<h3 id="wave-reperer-les-problemes-daccessibilite">WAVE : repérer les problèmes d'accessibilité<a class="headerlink" href="#wave-reperer-les-problemes-daccessibilite" title="Permanent link">#</a></h3>
+<p><a href="https://wave.webaim.org/extension/">WAVE de WebAIM</a> est une extension gratuite pour Firefox, Chrome et Edge. Elle analyse la page <strong>rendue</strong>, donc fonctionne avec un site PHP ; l'extension peut aussi analyser une page d'intranet ou une page où l'on est connecté. Selon WebAIM, l'analyse de l'extension s'effectue dans le navigateur, sans envoyer le contenu au serveur WAVE. Utiliser l'extension plutôt que le formulaire en ligne pour les pages privées.</p>
+<ol>
+<li>Installer l'extension depuis le lien officiel et ouvrir l'URL LineServ réellement validée.</li>
+<li>Sur l'accueil, cliquer l'icône WAVE. Relever les <strong>Errors</strong>, erreurs de contraste et <strong>Alerts</strong> : titre, description, élément et capture expurgée. Une alerte demande une vérification humaine, elle n'est pas forcément un défaut.</li>
+<li>Recommencer pour catalogue, produit, panier, inscription, commande et les pages connectées/admin autorisées, y compris quand un message d'erreur est affiché. Une analyse ne couvre que la page et l'état affichés.</li>
+<li>Tester en plus au clavier (<code>Tab</code>, <code>Maj+Tab</code>, <code>Entrée</code>, <code>Espace</code>, <code>Échap</code>) : focus visible, ordre logique, liens et formulaires utilisables.</li>
+</ol>
+<p><strong>Limite :</strong> WAVE détecte une partie des problèmes seulement. Ni absence d'erreurs ni un score ne prouve une conformité WCAG ou RGAA. Un audit humain approfondi et, le cas échéant, une évaluation experte restent nécessaires. Source : <a href="https://wave.webaim.org/help">aide officielle WAVE</a>.</p>
+<h3 id="note-hors-campagne-manuelle-pourquoi-le-responsive-nest-pas-rejoue-a-la-main">Note hors campagne manuelle : pourquoi le responsive n'est pas rejoué à la main<a class="headerlink" href="#note-hors-campagne-manuelle-pourquoi-le-responsive-nest-pas-rejoue-a-la-main" title="Permanent link">#</a></h3>
+<p>Par décision d'équipe, la vérification responsive multi-largeurs (<code>320</code>, <code>375</code>, <code>768</code>, <code>1440 px</code>) a été <strong>retirée des suites de tests manuels</strong> car trop longue à dérouler sur toutes les pages ; elle est exécutée automatiquement à chaque push par <code>tests/php/responsive_contract.php</code> et <code>tests/node/responsive_navigateur.mjs</code> (Chromium headless en CI). En cas d'anomalie visuelle ponctuelle signalée sur un écran particulier, le mode appareil de Chrome/Chromium (<code>F12</code> puis <code>Ctrl+Maj+M</code>, <a href="https://developer.chrome.com/docs/devtools/device-mode">documentation Chrome Device Mode</a>) reste utilisable uniquement à titre de diagnostic ciblé, sans campagne complète exigée.</p>
+<h2 id="9-documents-et-communication">9. Documents et communication<a class="headerlink" href="#9-documents-et-communication" title="Permanent link">#</a></h2>
+<ul>
+<li><a href="15-email-recette-lineserv.html">E-mail prêt à personnaliser pour la collègue</a>, à envoyer seulement quand URL et accès sont réellement prêts.</li>
+<li><a href="13-fiches-recette-uc.html">Fiches des 14 UC</a> : actions, attendus, risques et protocole.</li>
+<li><a href="13-suivi-recette-uc.csv">Tableau de suivi CSV</a> : <code>OK</code>, <code>KO</code>, <code>BLOQUÉ</code>, <code>NON JOUÉ</code> ou <code>NON APPLICABLE</code>, preuves et résultats réels.</li>
+<li><a href="01-cahier-des-charges-MiniShop.html">Cahier des charges</a>, <a href="02-document-tests-validation.html">tests et validation</a>, <a href="12-information-juridique.html">information juridique de la maquette</a>, <a href="DA.html">étude de design</a>.</li>
+<li>La maquette ne réalise ni paiement ni livraison ; l'annulation d'une commande n'est pas une fonction légale de rétractation. Aucune vente ni donnée personnelle réelle.</li>
+</ul>
+<p>Sources : <a href="https://docs.phpmyadmin.net/en/latest/import_export.html">phpMyAdmin — import dans une base sélectionnée</a>, <a href="https://wave.webaim.org/extension/">WAVE</a>, <a href="https://developer.chrome.com/docs/devtools/device-mode">Chrome Device Mode</a>. Les indications propres à LineServ viennent de l'exemple de l'utilisateur et restent à confirmer sur place.</p>
+<footer class="doc">
+  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/14-guide-lineserv.md</code>
+  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+</footer>
+</main>
+</body>
+</html>
