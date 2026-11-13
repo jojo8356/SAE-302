@@ -99,7 +99,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li><a href="#resultat-humain-cible-reelle">Résultat humain / cible réelle</a></li>
 </ul>
 </li>
-<li><a href="#3-revue-tache-par-tache-les-85-identifiants-de-docs06-todolistmd">3. Revue tâche par tâche — les 85 identifiants de docs/06-todolist.md</a><ul>
+<li><a href="#3-revue-tache-par-tache-les-84-identifiants-de-docs06-todolistmd">3. Revue tâche par tâche — les 84 identifiants de docs/06-todolist.md</a><ul>
 <li><a href="#d1-pilotage-depot-et-rendu">D1 — Pilotage, dépôt et rendu</a></li>
 <li><a href="#d2-cahier-des-charges-et-uml">D2 — Cahier des charges et UML</a></li>
 <li><a href="#d3-conception-de-donnees-et-sql">D3 — Conception de données et SQL</a></li>
@@ -122,12 +122,12 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <p>Ce rapport audite les fichiers versionnés de ce checkout et ne consulte pas directement le dépôt IUT. Les éléments externes rapportés sont distingués selon leur provenance ; ils ne présument pas l’état du clone local de l’utilisateur et ne transforment pas une tâche externe ou humaine en tâche accomplie sans preuve.</p>
 </blockquote>
 <h2 id="1-perimetre-et-verdict-global">1. Périmètre et verdict global<a class="headerlink" href="#1-perimetre-et-verdict-global" title="Permanent link">#</a></h2>
-<p><code>docs/06-todolist.md</code> a été régénérée en version 1.2 : les 85 tâches actuelles de la WBS totalisent 358 h planifiées. Après actualisation des attestations/preuves D1-L1-01/04/05/07, le suivi compte 37 tâches terminées, 8 partielles et 40 à faire ; 165 h sont déclarées acquises et 193 h restantes. Pour toutes les autres tâches, les états et métriques MariaDB restent ceux de la photographie historique du 23/09/2026, non rejouée pendant cette révision.</p>
+<p><code>docs/06-todolist.md</code> a été régénérée en version 1.3 : les 84 tâches actuelles de la WBS totalisent 355 h planifiées. Après actualisation des attestations/preuves D1-L1-01/04/05/07, le suivi compte 37 tâches terminées, 8 partielles et 39 à faire ; 165 h sont déclarées acquises et 190 h restantes. Pour toutes les autres tâches, les états et métriques MariaDB restent ceux de la photographie historique du 23/09/2026, non rejouée pendant cette révision. La fonctionnalité de déploiement/staging a été retirée sans remplacement ; ce retrait ne signifie pas qu’un déploiement a été effectué.</p>
 <table>
 <thead>
 <tr>
 <th>Statut d’audit</th>
-<th style="text-align: right;">Nombre sur 85</th>
+<th style="text-align: right;">Nombre sur 84</th>
 <th>Sens</th>
 </tr>
 </thead>
@@ -144,7 +144,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 <tr>
 <td><code>PARTIEL</code></td>
-<td style="text-align: right;">18</td>
+<td style="text-align: right;">17</td>
 <td>Une partie existe, mais un critère, une intégration, une preuve ou une cohérence reste à résoudre.</td>
 </tr>
 <tr>
@@ -159,12 +159,12 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 <tr>
 <td><strong>Total</strong></td>
-<td style="text-align: right;"><strong>85</strong></td>
+<td style="text-align: right;"><strong>84</strong></td>
 <td>Les tâches <code>PARTIEL</code>, <code>ÉCART</code> et <code>[!]</code> restent inachevées ; les réserves des <code>OK*</code> sont précisées dans les constats.</td>
 </tr>
 </tbody>
 </table>
-<p>Ces statuts évaluent les <strong>85 tâches de la WBS courante</strong>, pas tout le travail ultérieur. Les ajouts ultérieurs (langue/fuseau, informations légales, contact, conservation, etc.) ne figurent pas correctement dans cette WBS et doivent eux aussi être rattachés à des exigences ou à une liste d’évolutions.</p>
+<p>Ces statuts évaluent les <strong>84 tâches de la WBS courante</strong>, pas tout le travail ultérieur. Les ajouts ultérieurs (langue/fuseau, informations légales, contact, conservation, etc.) ne figurent pas correctement dans cette WBS et doivent eux aussi être rattachés à des exigences ou à une liste d’évolutions.</p>
 <p><strong>Datation des preuves :</strong> plusieurs sources du dépôt portent le 28/10/2026 ; les runs CI cités sont horodatés des 12 et 13/11/2026. Ces dates sont retranscrites depuis leurs métadonnées. Elles ne permettent pas, à elles seules, de fixer une date de coupure pour l’audit ni de réconcilier les divergences de branches relevées ci-dessous.</p>
 <h2 id="2-verifications-effectuees-et-limites">2. Vérifications effectuées et limites<a class="headerlink" href="#2-verifications-effectuees-et-limites" title="Permanent link">#</a></h2>
 <h3 id="preuve-externe-fournie-par-lutilisateur-clone-iut">Preuve externe fournie par l’utilisateur — clone IUT<a class="headerlink" href="#preuve-externe-fournie-par-lutilisateur-clone-iut" title="Permanent link">#</a></h3>
@@ -187,7 +187,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <p>Après l’ajout de ce rapport, la CI a échoué dans les deux jobs « suites isolées » PHP 8.2 et 8.5, les <strong>13 autres jobs ayant réussi</strong> : <a href="https://github.com/jojo8356/SAE-302/actions/runs/43394472738">run 43394472738</a> (horodatage API : <strong>13/11/2026</strong>). J’ai reproduit localement un échec de <code>tests/python/test_audit_structurel.py</code> : le rapport nouvellement versionné manquait dans <code>docs/17-inventaire-projet.csv</code>. Après ajout à l’inventaire et mise à jour de son résumé, la suite Python complète repasse localement (43 tests, 21 ignorés). Le run de suivi sur le SHA corrigé <code>dc527d34b8962572ae64f58578967cc081c14a0c</code> est ensuite vert <strong>15/15 jobs</strong> : <a href="https://github.com/jojo8356/SAE-302/actions/runs/43395560490">run 43395560490</a>. Le journal détaillé du run en échec n’est pas accessible depuis cette sandbox (réponse EOF du service de logs) ; je ne peux donc pas confirmer que le défaut reproduit explique à lui seul les deux jobs initiaux.</p>
 <h3 id="resultat-humain-cible-reelle">Résultat humain / cible réelle<a class="headerlink" href="#resultat-humain-cible-reelle" title="Permanent link">#</a></h3>
 <p>Les 200 scénarios des fiches de recette restent au statut <code>NON JOUÉ</code> dans le CSV. La campagne responsive multi-largeurs <strong>n’est pas</strong> à réintroduire dans les fiches manuelles : selon la décision projet, elle relève des tests automatisés, où des contrôles Chromium sont prévus. Les essais sur hébergement réel, mesures de performance cible, restauration chronométrée, validation pédagogique et répétitions de soutenance ne sont pas démontrés ici.</p>
-<h2 id="3-revue-tache-par-tache-les-85-identifiants-de-docs06-todolistmd">3. Revue tâche par tâche — les 85 identifiants de <code>docs/06-todolist.md</code><a class="headerlink" href="#3-revue-tache-par-tache-les-85-identifiants-de-docs06-todolistmd" title="Permanent link">#</a></h2>
+<h2 id="3-revue-tache-par-tache-les-84-identifiants-de-docs06-todolistmd">3. Revue tâche par tâche — les 84 identifiants de <code>docs/06-todolist.md</code><a class="headerlink" href="#3-revue-tache-par-tache-les-84-identifiants-de-docs06-todolistmd" title="Permanent link">#</a></h2>
 <p><code>OK</code> signifie que le critère de fin explicite de la WBS est satisfait, avec la preuve relevée, pour le périmètre précis de la tâche. <code>OK*</code> signifie « preuve d’un livrable, d’une suite ou confirmation humaine fournie », sans certifier tous les environnements, critères métier et vérifications humaines. Une confirmation déclarative de l’utilisateur est distinguée d’une vérification indépendante. Les raisons données priment sur le statut historique de la todolist.</p>
 <h3 id="d1-pilotage-depot-et-rendu">D1 — Pilotage, dépôt et rendu<a class="headerlink" href="#d1-pilotage-depot-et-rendu" title="Permanent link">#</a></h3>
 <table>
@@ -228,11 +228,6 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <td><code>D1-L1-07</code></td>
 <td><code>OK</code></td>
 <td>L’utilisateur atteste la réunion de vérification de l’audit et de validation simple du 13/11/2026 ; le compte rendu <code>docs/21-compte-rendu-reunion-audit-2026-11-13.md</code> consigne les choix communiqués. Aucun participant ou validation individuelle n’est inventé ; l’événement n’a pas été vérifié indépendamment.</td>
-</tr>
-<tr>
-<td><code>D1-L15-01</code></td>
-<td><code>PARTIEL</code></td>
-<td><code>scripts/deploy.php</code> est présent et la procédure de validation staging-only est documentée dans <code>docs/22-procedure-validation-staging.md</code>. Elle n’a pas été exécutée ; aucun déploiement ni accès à une base de production n’est revendiqué.</td>
 </tr>
 <tr>
 <td><code>D1-L15-02</code></td>
@@ -696,8 +691,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <p>Cela contredit notamment les critères du CDC CT-02/CT-03 et les tâches D4-L9-04/05, D4-L10-04 et D4-L11-02/03/04, ainsi que les affirmations de §16.2 selon lesquelles les procédures sont effectivement appelées par l’application. Il faut soit raccorder réellement ces procédures et ajouter une recette applicative SQL de bout en bout, soit faire valider une modification formelle du CDC. Les seuls tests SQL de la base ne suffisent pas pour cocher ces tâches à 100 %.</p>
 <h2 id="5-incoherences-a-corriger-dans-le-cdc-et-la-todolist">5. Incohérences à corriger dans le CDC et la todolist<a class="headerlink" href="#5-incoherences-a-corriger-dans-le-cdc-et-la-todolist" title="Permanent link">#</a></h2>
 <ol>
-<li><strong>Comptage des tâches — corrigé :</strong> <code>docs/06</code> a été régénérée à 85 identifiants ; après actualisation explicite de D1-L1-01/04/05/07, ses statuts détaillés comptent 37 terminées, 8 partielles et 40 à faire (85 au total).</li>
-<li><strong>Heures — réconciliées pour le suivi révisé :</strong> 358 h planifiées = 165 h acquises + 193 h restantes (46,1 % faites). La ventilation par personne et division est générée depuis les mêmes tâches ; les anciennes valeurs 169/191 et 162/198 ne sont plus reprises comme état courant.</li>
+<li><strong>Comptage des tâches — recalé :</strong> <code>docs/06</code> compte 84 identifiants après suppression du périmètre de déploiement/staging, sans tâche de remplacement ; les statuts détaillés comptent 37 terminées, 8 partielles et 39 à faire (84 au total).</li>
+<li><strong>Heures — réconciliées pour le suivi révisé :</strong> 355 h planifiées = 165 h acquises + 190 h restantes (46,5 % faites). La ventilation par personne et division est générée depuis les mêmes tâches ; les anciennes valeurs 169/191 et 162/198 ne sont plus reprises comme état courant.</li>
 <li><strong>Progression D4 périmée :</strong> <code>docs/06</code> affiche encore 0/146 h et 0 %, malgré l’application complète présente. <code>scripts/load_db.sh</code>, <code>tests/security/controles.sh</code> et le diaporama existent également alors que leurs lignes sont encore « à faire »/« partiel ».</li>
 <li><strong>Équipe :</strong> la WBS et le CDC conservent un modèle de charge A/B/C à trois personnes, tandis que d’autres documents décrivent une équipe de deux. La présente révision ne déduit pas de correspondance entre A/B/C, permissions GitLab et identités ; une rebaselining d’équipe distincte reste nécessaire.</li>
 <li><strong>Exigences non fonctionnelles :</strong> §4.2 et l’annexe 17.3 du CDC annoncent <code>ENF-01…ENF-16</code>, alors que <code>docs/annexes/annexe-enf.md</code> contient <code>ENF-01…ENF-22</code>.</li>
@@ -705,7 +700,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li><strong>Règles métier :</strong> §6.1 annonce 8 règles complémentaires, puis l’encadré en annonce 9 ; <code>RB-09</code> et <code>RB-12…RB-20</code> représentent dix identifiants. Le partage « imposées / ajoutées » doit être recalculé.</li>
 <li><strong>Séquences UML :</strong> cinq PNG/sources de séquence sont présents, mais le pointage §1.7 affirme six diagrammes rendus. Le minimum de quatre est satisfait ; c’est le compte annoncé et les deux diagrammes bonus qui sont à mettre en cohérence.</li>
 <li><strong>Dates/branche :</strong> le CDC §16.4, <code>docs/10-todo-corrections.md</code> et <code>docs/17-audit-global-projet.md</code> portent des références au 28/10/2026 ; <code>docs/10</code> nomme aussi une autre branche (<code>arena/6e1d3706-sae-302</code>). Les exécutions CI consultées sont horodatées des 12 et 13/11/2026. Ces dates sont retranscrites comme métadonnées et ne servent pas à imposer une coupure chronologique non justifiée ; leur provenance et leur correspondance avec les branches restent à réconcilier.</li>
-<li><strong>Inventaire global (actualisé) :</strong> le SHA de base contient 498 chemins. La révision retire <code>.gitlab-ci.yml</code>, ajoute quatre rapports (<code>docs/19</code> à <code>docs/22</code>) et 36 rendus HTML/PDF/DOCX manquants, soit 537 chemins versionnés ; <code>docs/17-inventaire-projet.csv</code> répertorie ces chemins sans doublon.</li>
+<li><strong>Inventaire global (actualisé) :</strong> le CSV <code>docs/17-inventaire-projet.csv</code> recense 532 chemins versionnés après retrait de la fonctionnalité de déploiement/staging et de ses artefacts associés ; le contrôle structurel vérifie l’inventaire sans doublon.</li>
 <li><strong>Source officielle hors dépôt :</strong> <code>sujetSAE.pdf</code> n’est toujours pas suivi dans le checkout, mais la pièce jointe fournie par l’utilisateur a permis de vérifier le point GitLab (p. 8–9). Elle demande l’accès GitLab partagé et le courriel de composition, sans exiger la visibilité privée ni la protection de <code>main</code> ; garder cette source jointe au dossier de rendu si le pointage doit être reproductible.</li>
 </ol>
 <h2 id="6-elements-de-travail-absents-de-la-todolist-dorigine">6. Éléments de travail absents de la todolist d’origine<a class="headerlink" href="#6-elements-de-travail-absents-de-la-todolist-dorigine" title="Permanent link">#</a></h2>
@@ -722,13 +717,13 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <h2 id="7-prochaines-actions-recommandees">7. Prochaines actions recommandées<a class="headerlink" href="#7-prochaines-actions-recommandees" title="Permanent link">#</a></h2>
 <ol>
 <li>Traiter en priorité l’écart <strong>JSON / PDO / procédures stockées</strong> et décider si le CDC reste contractuel sur l’exécution MySQL par l’application.</li>
-<li><code>docs/06-todolist.md</code> a été régénérée avec 85 tâches et les totaux cohérents ; conserver ses mesures SQL datées comme historiques, et tracer séparément les évolutions post-WBS encore absentes.</li>
+<li><code>docs/06-todolist.md</code> a été régénérée avec 84 tâches et les totaux cohérents ; conserver ses mesures SQL datées comme historiques, et tracer séparément les évolutions post-WBS encore absentes.</li>
 <li>Les nombres WBS/todolist, la date du compte rendu et les références CI ont été révisés ici ; les autres identifiants, dates et preuves listés au §5 restent à vérifier avant toute nouvelle clôture.</li>
 <li>Garder <code>[!]</code> pour les 200 scénarios manuels tant que l’équipe ne les a pas exécutés ; ne pas marquer « recette 100 % » sur la seule base de la CI.</li>
-<li>Planifier sur environnement isolé les tests de performance, la charge SQL, l’installation/restauration et le contrôle de déploiement ; conserver les sorties comme preuves.</li>
+<li>Planifier sur environnement isolé les tests de performance, la charge SQL et l’installation/restauration ; les scénarios manuels LineServ restent distincts et non joués.</li>
 <li>Faire attester séparément les tâches GitLab restantes, la validation pédagogique et les répétitions de soutenance. L’utilisateur confirme l’envoi du courriel de composition ; le dépôt IUT n’a pas été interrogé dans cet audit.</li>
 </ol>
-<p><strong>Aucune modification du code applicatif n’a été faite pendant cet audit.</strong> <code>docs/06-todolist.md</code> a été actualisée uniquement pour reprendre les attestations/preuves explicitement disponibles pour D1-L1-01/04/05/07 ; les autres statuts historiques ne sont pas reclassés et aucune vérification non effectuée n’est revendiquée.</p>
+<p><strong>L’audit initial n’a pas modifié le code applicatif.</strong> Cette mise à jour de périmètre retire le diagnostic et le script de mise en ligne, supprime la tâche de déploiement/staging sans remplacement, puis régénère les documents concernés. Aucun déploiement, test manuel LineServ ni restauration de base n’est revendiqué ; les autres statuts historiques ne sont pas reclassés et aucune vérification non effectuée n’est revendiquée.</p>
 <footer class="doc">
   <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/19-audit-cahier-des-charges-todolist.md</code>
   par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>

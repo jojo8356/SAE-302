@@ -22,7 +22,6 @@ app/Config/env.example.php,Application PHP,"Présence, non-vide ; syntaxe PHP pa
 app/Controller/Admin/CategorieAdminController.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Controller/Admin/CommandeAdminController.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Controller/Admin/DashboardController.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
-app/Controller/Admin/DiagnosticAdminController.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Controller/Admin/EquipeAdminController.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Controller/Admin/ParametreAdminController.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Controller/Admin/ProduitAdminController.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
@@ -83,7 +82,6 @@ app/View/admin/confirmer_annulation.php,Application PHP,"Présence, non-vide ; s
 app/View/admin/confirmer_suppression_categorie.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/View/admin/confirmer_suppression_produit.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/View/admin/dashboard.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
-app/View/admin/diagnostic.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/View/admin/equipe.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/View/admin/parametres.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/View/admin/produit_form.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
@@ -160,7 +158,6 @@ docs/18-politique-conservation.md,Documentation,Présence et non-vide uniquement
 docs/19-audit-cahier-des-charges-todolist.md,Documentation,Présence et non-vide uniquement
 docs/20-charte-gitlab-revues-croisees.md,Documentation,Présence et non-vide uniquement
 docs/21-compte-rendu-reunion-audit-2026-11-13.md,Documentation,Présence et non-vide uniquement
-docs/22-procedure-validation-staging.md,Documentation,Présence et non-vide uniquement
 docs/DA.md,Documentation,Présence et non-vide uniquement
 docs/annexes/annexe-cas-usage.md,Documentation,Présence et non-vide uniquement
 docs/annexes/annexe-enf.md,Documentation,Présence et non-vide uniquement
@@ -222,7 +219,6 @@ livrables/docx/18-politique-conservation.docx,Livrables,Présence et non-vide un
 livrables/docx/19-audit-cahier-des-charges-todolist.docx,Livrables,Présence et non-vide uniquement
 livrables/docx/20-charte-gitlab-revues-croisees.docx,Livrables,Présence et non-vide uniquement
 livrables/docx/21-compte-rendu-reunion-audit-2026-11-13.docx,Livrables,Présence et non-vide uniquement
-livrables/docx/22-procedure-validation-staging.docx,Livrables,Présence et non-vide uniquement
 livrables/docx/DA.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/README.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/annexe-cas-usage.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
@@ -253,7 +249,6 @@ livrables/html/18-politique-conservation.html,Livrables,Présence et non-vide un
 livrables/html/19-audit-cahier-des-charges-todolist.html,Livrables,Présence et non-vide uniquement
 livrables/html/20-charte-gitlab-revues-croisees.html,Livrables,Présence et non-vide uniquement
 livrables/html/21-compte-rendu-reunion-audit-2026-11-13.html,Livrables,Présence et non-vide uniquement
-livrables/html/22-procedure-validation-staging.html,Livrables,Présence et non-vide uniquement
 livrables/html/DA.html,Livrables,Présence et non-vide uniquement
 livrables/html/README.html,Livrables,Présence et non-vide uniquement
 livrables/html/annexe-cas-usage.html,Livrables,Présence et non-vide uniquement
@@ -285,7 +280,6 @@ livrables/pdf/18-politique-conservation.pdf,Livrables,Présence et non-vide uniq
 livrables/pdf/19-audit-cahier-des-charges-todolist.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/20-charte-gitlab-revues-croisees.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/21-compte-rendu-reunion-audit-2026-11-13.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/22-procedure-validation-staging.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/DA.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/README.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/annexe-cas-usage.pdf,Livrables,Présence et non-vide uniquement
@@ -353,7 +347,6 @@ scripts/code_mort_reference.json,Scripts et outillage,"Présence, non-vide, stru
 scripts/coverage.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 scripts/data_snapshot.mjs,Scripts et outillage,"Présence, non-vide, syntaxe Node si disponible"
 scripts/db_init.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
-scripts/deploy.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 scripts/dev-router.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 scripts/e2e.mjs,Scripts et outillage,"Présence, non-vide, syntaxe Node si disponible"
 scripts/gen_volumes.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"

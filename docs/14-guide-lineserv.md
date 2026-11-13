@@ -157,7 +157,7 @@ Par décision d'équipe, la vérification responsive multi-largeurs (`320`, `375
 ## 9. Documents et communication
 
 - [E-mail prêt à personnaliser pour la collègue](15-email-recette-lineserv.md), à envoyer seulement quand URL, accès, sauvegarde et procédure de retour à la démo sont réellement prêts.
-- [`docs/22-procedure-validation-staging.md`](22-procedure-validation-staging.md) reste une procédure distincte de staging isolé ; elle ne remplace pas cette campagne manuelle sur la base de production LineServ.
+- La campagne manuelle sur la base réelle LineServ reste distincte des tests automatisés de CI sur base jetable ; elle n’a pas été exécutée et aucune restauration n’a été réalisée.
 - [Fiches des 14 UC](13-fiches-recette-uc.md) : actions, attendus, risques et protocole.
 - [Tableau de suivi CSV](13-suivi-recette-uc.csv) : `OK`, `KO`, `BLOQUÉ`, `NON JOUÉ` ou `NON APPLICABLE`, preuves et résultats réels.
 - [Cahier des charges](01-cahier-des-charges-MiniShop.md), [tests et validation](02-document-tests-validation.md), [information juridique de la maquette](12-information-juridique.md), [étude de design](DA.md).

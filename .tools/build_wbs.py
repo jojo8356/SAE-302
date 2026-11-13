@@ -135,10 +135,9 @@ LOTS = {
    ("D5-L14-05","Matrice de traçabilité exigence → test + PV de recette","A",5,"traçabilité §9 du document 02 complète","02–04"),
    ("D5-L14-06","Performance : mesurer.sh p95 < 500 ms + correctifs","A",5,"ENF-01 mesuré et consigné","L9–L11"),
  ]),
- "L15": dict(nom="Mise en ligne de démo, deploy.php, README final, arborescence propre",
+ "L15": dict(nom="README final, arborescence propre, préparation du rendu",
              resp="A", semaines=["S11"], tasks=[
-   ("D1-L15-01","scripts/deploy.php : renouveler les hashes de démo et les emails .invalid ; procédure docs/22 à suivre en staging","A",3,"validation sur staging isolé : comptes et hashes contrôlés sans exposer de données sensibles","L14"),
-   ("D1-L15-02","README final : installation 5 commandes, comptes, tests, sauvegarde","A",3,"un tiers installe et lance en ≤ 15 min (ENF-13)","01"),
+   ("D1-L15-02","README final : installation 5 commandes, comptes, tests, sauvegarde","A",3,"un tiers installe et lance en ≤ 15 min (ENF-13)","D5-L14-05"),
    ("D1-L15-03","Nettoyage de l'arborescence + tag v1.0-rendu","A",2,"shortlog équilibré, tag posé, MR mergées","02"),
  ]),
  "L16": dict(nom="Soutenance : support, trame, répétitions chronométrées, questions anticipées",
@@ -162,18 +161,18 @@ LOT_H = {k: sum(t[3] for t in v["tasks"]) for k, v in LOTS.items()}
 COULEURS = {"D1":"#64748b","D2":"#7c2d12","D3":"#b45309","D4":"#15803d","D5":"#b91c1c","D6":"#6d28d9"}
 
 # ---------- assertions de cohérence (bottom-up) ----------
-TOTALS = {"L1":14,"L2":26,"L3":28,"L4":28,"L5":20,"L6":30,"L7":20,"L8":22,"L9":32,"L10":28,"L11":30,"L12":20,"L13":14,"L14":24,"L15":8,"L16":14}
+TOTALS = {"L1":14,"L2":26,"L3":28,"L4":28,"L5":20,"L6":30,"L7":20,"L8":22,"L9":32,"L10":28,"L11":30,"L12":20,"L13":14,"L14":24,"L15":5,"L16":14}
 for lot, tot in TOTALS.items():
     assert LOT_H[lot] == tot, f"{lot} : {LOT_H[lot]} ≠ {tot}"
-GRAND = sum(LOT_H.values()); assert GRAND == 358, GRAND
+GRAND = sum(LOT_H.values()); assert GRAND == 355, GRAND
 PERS = {"A":0,"B":0,"C":0}
 for lot in LOTS.values():
     for t in lot["tasks"]:
         PERS[t[2]] += t[3]
-assert PERS == {"A":120,"B":117,"C":121}, PERS
+assert PERS == {"A":117,"B":117,"C":121}, PERS
 N_TASKS = sum(len(v["tasks"]) for v in LOTS.values())
 DIV_H = {d[0]: sum(LOT_H[l] for l in d[4]) for d in DIVISIONS}
-assert sum(DIV_H.values()) == 358
+assert sum(DIV_H.values()) == 355
 
 # ---------- plan de charge hebdomadaire (répartition égale sur les semaines du lot) ----------
 SEMAINES = [f"S{i}" for i in range(1, 13)]
@@ -201,12 +200,12 @@ A("| | |")
 A("|---|---|")
 A("| **Projet** | MiniShop — site e-commerce avec back-office (SAE — BUT Informatique / L3, Université Côte d'Azur) |")
 A("| **Équipe** | 3 développeurs : **A** chef de projet & back-office · **B** modèle & base de données · **C** présentation, sécurité & tests |")
-A("| **Effort total** | **358 h planifiées**, sous la capacité nominale de 360 h (3 × 120 h) ; somme des 85 tâches de niveau 4 · calendrier **S1 → S12** |")
+A("| **Effort total** | **355 h planifiées**, sous la capacité nominale de 360 h (3 × 120 h) ; somme des 84 tâches de niveau 4 · calendrier **S1 → S12** |")
 A("| **Divisions (niveau 2)** | 6 — alignées une à une sur les 5 lignes du barème + la gestion de projet |")
 A("| **Lots (niveau 3)** | 16 (L1→L16, identiques au CDC §13.3, charges réconciliées) |")
-A("| **Tâches (niveau 4)** | **85 tâches individuelles** — chacune est assignable, estimable et vérifiable (règle d'arrêt WBS) |")
+A("| **Tâches (niveau 4)** | **84 tâches individuelles** — chacune est assignable, estimable et vérifiable (règle d'arrêt WBS) |")
 A("| **Documents liés** | `docs/01-cahier-des-charges-MiniShop.md` (§13.3/§13.4) · `docs/02-document-tests-validation.md` · `docs/03-support-soutenance.md` · `docs/04-conception-bd-et-sql.md` · `README.md` |")
-A("| **Version** | 1.1 — 23 octobre 2026 (révision de périmètre) |")
+A("| **Version** | 1.2 — 23 octobre 2026 (révision de périmètre) |")
 A("")
 A("---")
 A("")
@@ -219,7 +218,7 @@ A("|---|---|---|")
 A("| **1** | le projet (produit final) | MiniShop : boutique + back-office + dossier de conception et de validation |")
 A("| **2** | les **divisions** = livrables majeurs | 6 divisions D1→D6, une par ligne du barème (+ pilotage) |")
 A("| **3** | les **lots** = sous-livrables | 16 lots L1→L16 (reprend le CDC §13.3) |")
-A("| **4** | les **tâches individuelles** | **85 tâches**, estimées en heures et assignées à A, B ou C |")
+A("| **4** | les **tâches individuelles** | **84 tâches**, estimées en heures et assignées à A, B ou C |")
 A("")
 A("**Règle d'arrêt** (jusqu'où descendre) : on ne descend pas plus bas que le niveau 4, car chaque tâche y satisfait les trois critères de la méthode —")
 A("1. **assignable** à une ou plusieurs ressources (colonne *Resp.*),")
@@ -232,8 +231,8 @@ A("")
 A("**Identification** : `D<n>-L<lot>-<nn>` (ex. `D3-L6-04`). Chaque tâche devient une **issue GitLab** portant ce titre")
 A("(cf. §10), ce qui relie WBS, barème et trace de contribution individuelle.")
 A("")
-A("**Note de version** — le 23 octobre 2026, le livrable GitLab CI (2 h) a été retiré du périmètre à la demande de l'équipe ;")
-A("la charge révisée est de 358 h pour 85 tâches, dans une capacité nominale de 360 h. Les autres écarts historiques de charge restent hors de ce rebaselining.")
+A("**Note de version** — le livrable GitLab CI (2 h) avait déjà été retiré du périmètre. La présente révision retire aussi, sans remplacement, le déploiement de démonstration et sa validation staging (3 h) ;")
+A("la charge révisée est de 355 h pour 84 tâches, dans une capacité nominale de 360 h. Aucun déploiement réel n'est revendiqué.")
 A("")
 A("---")
 A("")
@@ -263,7 +262,7 @@ A("")
 A("<!--ARBRE_WBS-->")
 A("")
 A("```text")
-A("MiniShop — 358 h · 3 développeurs · 12 semaines (S1→S12)")
+A(f"MiniShop — {GRAND} h · 3 développeurs · 12 semaines (S1→S12)")
 A("│")
 for i, (did, nom, bareme, resp, lots) in enumerate(DIVISIONS):
     br = "├──" if i < len(DIVISIONS)-1 else "└──"
@@ -354,7 +353,7 @@ A("| **Équipe** | " + " | ".join(f"**{PLAN_TOT[s]}**" for s in SEMAINES) + f" |
 A("")
 A("**Pics assumés et anticipés** : S3 (B ≈ 32 h, lot L4 MCD/MLD), S5 (B ≈ 30 h, procédures), S7 (C = 32 h, front-office), S9 (équipe 40 h, back-office + sécurité).")
 A("Trois parades, revues chaque vendredi (CDC §13.5) : (i) les tâches amont des lots critiques démarrent dès la quinzaine précédente,")
-A("(ii) L13 et L15 (22 h au total, sans dépendance forte) servent de **variable d'ajustement**,")
+A("(ii) L13 (14 h) reste ajustable ; L15 (5 h) est réservé au README final, au nettoyage et au tag après la validation L14,")
 A("(iii) au-delà de 15 h/personne/semaine pendant deux semaines consécutives, le chef de projet applique la règle de réduction de périmètre du CDC §13.3 (jamais par suppression d'une pénalité).")
 A("")
 A("---")
@@ -446,11 +445,11 @@ A("| L13 réduit à la validation live du panier | `D4-L13-02…04` supprimées 
 A("| L8 simplifié (table de routes minimale, pas de routeur maison) | `D4-L8-01` réduite | −3 h |")
 A("| `EF-ADM-09` (indicateurs) et `EF-ADM-10` (comptes admin) non livrés | `D4-L11-04` réduite | −2 h |")
 A("| Procédures réduites à 8, triggers à 8 (en gardant TRG-A1/A2/A3, B2, B5, D1, D4) | `D3-L6-*` et `D3-L7-*` allégées | −25 h |")
-A("| **Total repli** | | **≈ −36 h → 322 h pour 2 personnes (estimation révisée)** |")
+A("| **Total repli** | | **≈ −36 h → 319 h pour 2 personnes (estimation révisée)** |")
 A("")
 A("---")
 A("")
-A("*WBS MiniShop v1.1 — document généré depuis la même source de données que le CDC §13.3 ;")
+A("*WBS MiniShop v1.2 — document généré depuis la même source de données que le CDC §13.3 ;")
 A("méthode : structure de découpage en 4 niveaux, estimation bottom-up, plan de charge, Gantt, chemin critique.*")
 
 OUT_MD.write_text("\n".join(md), encoding="utf-8")

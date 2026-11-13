@@ -24,7 +24,7 @@ declare(strict_types=1);
  *      en GET (pas de mutation par lien, cf. SEC-04).
  *
  * Ces contrôles sont volontairement statiques : ils ne remplacent pas l'E2E,
- * ils garantissent qu'une erreur de câblage est vue AVANT le déploiement.
+ * ils garantissent qu'une erreur de câblage est vue AVANT toute mise en production.
  */
 
 require_once dirname(__DIR__, 2) . '/app/bootstrap.php';
@@ -126,34 +126,6 @@ foreach ($routes as $route) {
 }
 $check('aucune action d’écriture joignable en GET (SEC-04)', $ecrituresEnGet === [], implode(', ', $ecrituresEnGet));
 $check('les routes POST existent (formulaires traités)', count(array_filter($routes, static fn (array $r): bool => $r['verbe'] === 'POST')) >= 10);
-
-$routesDiagnostic = array_values(array_filter($routes, static fn (array $r): bool => $r['motif'] === '/admin/diagnostic'));
-$routeDiagnosticOk = count($routesDiagnostic) === 1
-    && $routesDiagnostic[0]['verbe'] === 'GET'
-    && $routesDiagnostic[0]['garde'] === 'super';
-$check('diagnostic D1-L15-01 : route GET unique protégée SUPER', $routeDiagnosticOk);
-
-$controleurDiagnostic = (string) file_get_contents($racine . '/app/Controller/Admin/DiagnosticAdminController.php');
-$vueDiagnostic = (string) file_get_contents($racine . '/app/View/admin/diagnostic.php');
-$check('contrôleur diagnostic vérifie aussi le rôle SUPER', str_contains($controleurDiagnostic, 'Auth::exigeSuper()'));
-$check('diagnostic désactivé par défaut et activable par drapeau explicite',
-    str_contains($controleurDiagnostic, "Env::get('MINISHOP_STAGING_DIAGNOSTIC', '0') === '1'")
-    && str_contains($controleurDiagnostic, '$sections = [];')
-    && str_contains($controleurDiagnostic, 'if ($actif)')
-    && str_contains($controleurDiagnostic, '$sections = $this->diagnostics();'));
-$processusInterdit = preg_match('/\\b(?:shell_exec|exec|system|passthru|proc_open|popen)\\s*\\(/i', $controleurDiagnostic) === 1;
-$chargementDeploy = preg_match('/\\b(?:include|require)(?:_once)?\\s*[^;]*deploy\\.php/i', $controleurDiagnostic) === 1;
-$check('diagnostic sans lancement de deploy.php ni de sous-processus', !$processusInterdit && !$chargementDeploy);
-$ecritureSql = preg_match('/->\\s*(?:insert|update|delete|upsert|execute|exec|beginTransaction|commit|rollback)\\s*\\(/i', $controleurDiagnostic) === 1;
-$storeOuConnexion = str_contains($controleurDiagnostic, 'Database::store()')
-    || str_contains($controleurDiagnostic, '->pdo()')
-    || str_contains($controleurDiagnostic, 'new PDO(')
-    || str_contains($controleurDiagnostic, 'new \\PDO(');
-$check('contrôleur sans écriture ni connexion de diagnostic à la base', !$ecritureSql && !$storeOuConnexion);
-$check('diagnostic sans formulaire ni méthode POST dans sa vue', preg_match('/<form\\b|method\\s*=\\s*[\'\"]post/i', $vueDiagnostic) !== 1);
-$check('en-tête anti-cache pour la page diagnostic', str_contains($controleurDiagnostic, "Cache-Control: no-store"));
-$check('la vue ne reçoit ni environnement brut ni valeur de secret', !str_contains($vueDiagnostic, 'getenv(')
-    && !str_contains($vueDiagnostic, '$_ENV') && !str_contains($vueDiagnostic, '$_SERVER'));
 
 // ============================================================ 3. liens des vues
 echo "\n3. Liens internes des vues → routes déclarées\n";

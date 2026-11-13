@@ -38,7 +38,6 @@ $liensAdmin = [
     '/admin/stocks' => 'Stocks',
     '/admin/commandes' => 'Commandes',
     '/admin/parametres' => 'Paramètres',
-    '/admin/diagnostic' => 'Diagnostic staging',
     '/admin/equipe' => 'Équipe',
 ];
 
@@ -161,9 +160,6 @@ $lienNav = static function (string $href, string $libelle) use ($estCourant): st
                 <ul>
                     <?php foreach ($liensAdmin as $href => $libelle): ?>
                         <?php
-                        if ($href === '/admin/diagnostic' && ($admin['role'] ?? '') !== 'SUPER') {
-                            continue;
-                        }
                         $courant = $cheminCourant === $href;
                         $attribut = '';
                         if ($courant) {

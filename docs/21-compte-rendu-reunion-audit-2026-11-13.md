@@ -14,13 +14,17 @@ Les noms des participants, l’heure, le lieu et une feuille de présence n’on
 2. **`D1-L1-05` — livrable documentaire.** Créer une charte GitLab complète et un registre de revue dans `docs/20-charte-gitlab-revues-croisees.md`, en complément des modèles de MR existants. La validation porte sur la documentation ; l’utilisation réelle de MR et les revues croisées ne sont pas revendiquées sans identifiants ou preuves réels.
 3. **`D1-L1-07` — réunion.** Consigner la séance comme une réunion de vérification de l’audit et de validation simple. Le compte rendu reprend les décisions communiquées par l’utilisateur ; il ne complète pas les noms des participants ou des validations individuelles qui n’ont pas été transmis.
 4. **`D1-L1-04` — issue de barème.** Conserver le statut `OK` sur la base de la capture de l’issue `s302#2`, qui montre les cinq livrables et les pénalités §16.2. L’épinglage n’est pas confirmé et n’est pas revendiqué.
-5. **`D1-L15-01` — déploiement.** La tâche reste à prouver sur une cible de démonstration. La procédure de staging, de sauvegarde et de vérification des comptes/hashes est donnée dans [`docs/22-procedure-validation-staging.md`](22-procedure-validation-staging.md) ; aucun déploiement réel n’est déclaré ici.
+5. **Mise en ligne (état historique).** À la date du compte rendu, aucun déploiement réel n’était déclaré et cette vérification restait sans preuve ; le présent compte rendu ne prétend pas qu’une mise en ligne a eu lieu.
 
 ## Suite à donner
 
 - Les totaux et références de tâches ont été recalés après le retrait du livrable de CI GitLab ; la présente note conserve la décision, sans réintroduire ce livrable comme exigence courante.
 - Pour obtenir une preuve d’usage effectif des MR, ajouter au registre des identifiants/liens réels, auteurs, relecteurs distincts, approbations et commentaires résolus.
-- Pour `D1-L15-01`, exécuter la procédure de [`docs/22-procedure-validation-staging.md`](22-procedure-validation-staging.md) uniquement sur une base de staging sauvegardée, puis conserver une preuve expurgée des mots de passe et hashes bruts.
+- La recommandation historique de vérifier une mise en ligne n’a pas été exécutée et est retirée du périmètre courant avec la fonctionnalité correspondante, sans remplacement de charge.
+
+## Mise à jour du périmètre courant
+
+La fonctionnalité de mise en ligne et de diagnostic staging ainsi que ses éléments documentaires associés ont été retirés du dépôt, de la todolist et de la WBS, sans travail de remplacement. Cette suppression ne constitue pas une preuve de déploiement. La campagne manuelle LineServ reste distincte, n’a pas été exécutée et aucune restauration de base n’a été réalisée.
 
 ## Validation
 

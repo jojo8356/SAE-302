@@ -1,13 +1,12 @@
 # 08 — Fiche de suivi des commits (rejeu vers un nouveau GitLab)
 
-> **Objet.** Reconstituer ce projet sur un **nouveau dépôt GitLab** avec un historique
-> propre et complet : 32 commits racontant le projet dans l'ordre réel de construction,
-> chacun avec un message de commit prêt à copier-coller et un périmètre de fichiers exact.
-> Cette fiche et le script `scripts/rejeu_gitlab.py` sont générés du **même plan** :
-> ils ne peuvent pas diverger. Le script vérifie en fin de parcours que la couverture
-> des fichiers est exacte (aucun oublié, aucun doublon).
->
-> **Note de portée (23/10/2026).** Cette fiche et `scripts/rejeu_gitlab.py` sont un plan de rejeu proposé, pas une preuve d’historique GitLab réalisé ; ne pas l’exécuter ni le pousser vers le dépôt IUT sans demande explicite. Les entrées É5 (86 tâches) et É27 (GitLab CI) décrivent l’ancien périmètre prévu : la WBS courante compte 85 tâches et la CI GitLab a été retirée. Elles ne sont pas des exigences actives.
+> **Objet.** Décrire un scénario synthétique de rejeu du projet sur un **nouveau dépôt GitLab**,
+> avec 32 commits proposés, des messages prêts à copier-coller et un périmètre de fichiers.
+> Ce scénario est un plan, non un journal d'exécution ni une reconstitution certifiée de l'historique.
+> La fiche et `scripts/rejeu_gitlab.py` partagent le même plan ; le mode de rejeu vers un dépôt externe
+> ne doit pas être utilisé sans demande explicite et vérification préalable de sa compatibilité.
+
+> **Note de portée (23/10/2026).** Les entrées É5 (86 tâches) et É27 (GitLab CI) décrivent un périmètre historique ; la WBS courante compte 84 tâches et la CI GitLab a été retirée. Le scénario proposé ne comporte plus d’automatisation de mise en ligne. Aucune exécution de ce rejeu n’est revendiquée.
 
 ## 1. Mode d'emploi express
 
@@ -53,7 +52,7 @@ possible : c'est le §3.
 | É17 | `feat(client): panier serveur, commandes, compte, connexion/inscription` | 13 fichiers | Le parcours client complet  — **v3-front** |
 | É18 | `feat(app): couche dépôts — produits, catégories, clients, commandes, paramètres` | 5 fichiers | La couche dépôts isole l'accès aux données  |
 | É19 | `feat(admin): back-office complet — produits, catégories, commandes, stocks, équipe` | 14 fichiers | Le back-office  — **v4-back** |
-| É20 | `feat(web): front contrôleur, réécriture d'URL et script de déploiement` | 3 fichiers | Le point d'entrée unique du Web  |
+| É20 | `feat(web): front controller et réécriture d'URL` | 2 fichiers | Le point d'entrée unique du Web  |
 | É21 | `build(sandbox): runtime PHP 8.2-WASM, serveur HTTP et chaîne de tests npm` | 6 fichiers | L'outillage de développement  |
 | É22 | `build(perf): volumétrie et mesure ENF-01 (gen_volumes, mesurer)` | 5 fichiers | Les outils de mesure de performance exigés par ENF-01  |
 | É23 | `test(php): moteur (engine_smoke) et règles de gestion T-01…T-29 en PHP` | 2 fichiers | La première suite PHP vérifie le moteur seul, puis rejoue les 29 tests du plan de validation directement contre le moteur JSON. |
@@ -431,20 +430,17 @@ MESSAGE
 
 **Jalon.** `git tag -a v4-back -m "Back-office complet (produits, catégories, commandes, stocks, équipe)"`
 
-### É20 — feat(web): front contrôleur, réécriture d'URL et script de déploiement
+### É20 — feat(web): front controller et réécriture d'URL
 
-**Contenu.** Le point d'entrée unique du Web : toutes les URL passent par le routeur, et le script de déploiement installe la base MySQL de production.
+**Contenu.** Le point d'entrée unique du Web : toutes les URL dynamiques passent par le routeur et les fichiers statiques sont servis par le serveur Web.
 
 ```bash
 git add public/index.php \
-        public/.htaccess \
-        scripts/deploy.php
+        public/.htaccess
 git commit -F- <<'MESSAGE'
-feat(web): front contrôleur, réécriture d'URL et script de déploiement
+feat(web): front controller et réécriture d'URL
 
-public/index.php : déclaration de toutes les routes et boot de l'application ; .htaccess : toute requête passe par index.php, les fichiers statiques sont servis directement.
-
-scripts/deploy.php : déploiement MySQL (schéma + données initiales).
+public/index.php : déclaration des routes et démarrage de l'application ; .htaccess : les requêtes dynamiques passent par index.php, les fichiers statiques sont servis directement.
 MESSAGE
 ```
 

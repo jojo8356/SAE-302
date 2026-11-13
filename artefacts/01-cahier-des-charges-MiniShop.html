@@ -169,7 +169,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li><a href="#93-front-controller-et-routage">9.3 Front controller et routage</a></li>
 <li><a href="#94-objets-dependances-et-conventions-de-conception-php">9.4 Objets, dépendances et conventions de conception PHP</a></li>
 <li><a href="#95-gestion-des-sessions-et-du-panier-dans-larchitecture">9.5 Gestion des sessions et du panier dans l'architecture</a></li>
-<li><a href="#96-environnements-deploiement-sauvegarde">9.6 Environnements, déploiement, sauvegarde</a></li>
+<li><a href="#96-environnements-et-sauvegarde">9.6 Environnements et sauvegarde</a></li>
 </ul>
 </li>
 <li><a href="#10-modelisation-des-donnees-et-sql">10. Modélisation des données et SQL</a></li>
@@ -320,7 +320,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 <tr>
 <td>Réalisable</td>
-<td>§13.4 planning sur 12 semaines × 3 personnes = 360 h de capacité nominale ; charge planifiée révisée à 358 h</td>
+<td>§13.4 planning sur 12 semaines × 3 personnes = 360 h de capacité nominale ; charge planifiée révisée à 355 h</td>
 </tr>
 <tr>
 <td>Clair</td>
@@ -811,14 +811,14 @@ sur la base, <strong>conçu</strong> = exigence spécifiée dont la vérificatio
 <tr>
 <td><strong>Client</strong></td>
 <td>visiteur inscrit, identifié</td>
-<td><code>alice@example.com</code></td>
+<td><code>alice@example.test</code></td>
 <td>session PHP (<code>$_SESSION['user_id']</code>)</td>
 <td>tout le visiteur + gérer son compte, son panier, passer une commande, consulter son historique, <strong>annuler</strong> une commande non expédiée</td>
 </tr>
 <tr>
 <td><strong>Administrateur</strong></td>
 <td>membre du personnel du back-office</td>
-<td><code>admin@minishop.fr</code></td>
+<td><code>admin-test@example.test</code></td>
 <td>session PHP (<code>$_SESSION['admin_id']</code>, rôle distinct)</td>
 <td>gérer produits, catégories, stocks, commandes et statuts ; ne gère <strong>jamais</strong> le compte d'un client (RB-13)</td>
 </tr>
@@ -2617,8 +2617,8 @@ sur la base, <strong>conçu</strong> = exigence spécifiée dont la vérificatio
 </tr>
 <tr>
 <td>Environnements</td>
-<td><code>dev</code> (LAMP local), CI GitHub Actions, <code>prod</code> (LineServer : essais pré-démo puis réinitialisation avant la démonstration)</td>
-<td>dev = prod (interdit : les hashes et le seed diffèrent)</td>
+<td><code>dev</code> (poste local isolé, seed de démonstration), CI GitHub Actions (base jetable), <code>prod</code> (LineServ : campagne manuelle prévue sur la base réelle, uniquement après autorisation)</td>
+<td>mélanger les données/identifiants locaux avec la base réelle ; aucun scénario manuel LineServ ni aucune restauration n’a été exécuté</td>
 </tr>
 <tr>
 <td>Contrainte de périmètre physique</td>
@@ -2814,7 +2814,7 @@ END IF;
 <li>l'application utilise un compte <strong>dédié</strong> (<code>minishop_app</code>) limité à la base applicative : <code>SELECT, INSERT, UPDATE, DELETE, EXECUTE</code> + <code>TRIGGER</code> (nécessaire pour créer ses propres triggers à l'installation) ; <strong>jamais</strong> <code>DROP</code>, <code>GRANT OPTION</code>, ni accès à <code>mysql.*</code> ;</li>
 <li>un second compte d'installation (<code>minishop_admin</code>) est utilisé <strong>uniquement</strong> par <code>scripts/load_db.sh</code> puis peut être révoqué ;</li>
 <li>pas de requêtes administratives depuis PHP : la liste des comptes, les grants et les journaux d'erreurs ne sont consultés que par le développeur/la DBA ;</li>
-<li>les comptes de démonstration (hachés, §12.7) sont détruits en production pédagogique par un <code>scripts/deploy.php</code> qui ne copie pas le fichier de démonstration <code>sql/04_minishop_demo.sql</code>.</li>
+<li>les comptes de démonstration du seed sont réservés aux environnements locaux isolés ; le projet ne fournit aucun mécanisme de déploiement public ni de rotation automatisée de ces comptes. Sur LineServ, n'utiliser que des comptes de test explicitement autorisés.</li>
 </ul>
 <h3 id="87-sec-10-sec-11-sec-12-sec-13-en-tetes-durcissement-fuites-dinformation-journalisation">8.7 <code>SEC-10</code> <code>SEC-11</code> <code>SEC-12</code> <code>SEC-13</code> — En-têtes, durcissement, fuites d'information, journalisation<a class="headerlink" href="#87-sec-10-sec-11-sec-12-sec-13-en-tetes-durcissement-fuites-dinformation-journalisation" title="Permanent link">#</a></h3>
 <table>
@@ -3092,7 +3092,7 @@ validation → port offert ; assertion 5 : toute réécriture du port après val
 │   └── Router.php
 ├── public/                        # seul dossier exposé par Apache
 │   ├── index.php  .htaccess  css/  js/  img/
-├── scripts/{load_db.sh, run_sql_tests.sh, gen_volumes.sh, deploy.php, build-docs.sh}
+├── scripts/{load_db.sh, run_sql_tests.sh, gen_volumes.sh, build-docs.sh}
 ├── tests/
 │   ├── sql/{manifest.txt, fixture.sql, t01…t26_*.sql, out/, rapport_tests_sql.md}
 │   ├── php/                      # PHPUnit : modèles, repositories, sécurité
@@ -3150,7 +3150,7 @@ validation → port offert ; assertion 5 : toute réécriture du port après val
 <li>à la validation de commande, <code>CommandeRepository</code> appelle la procédure, <strong>puis</strong> vide la clé <code>panier</code> : le vidage n'est fait qu'après <code>COMMIT</code> (sinon un <code>ROLLBACK</code> perdrait le panier du client) ;</li>
 <li>variante persistée (V1, §12.8) : <code>PANIER</code>/<code>LIGNE_PANIER</code> en base, le même contrôleur, une méthode de repository en plus — l'architecture n'est pas touchée, preuve que la séparation des couches est la bonne.</li>
 </ul>
-<h3 id="96-environnements-deploiement-sauvegarde">9.6 Environnements, déploiement, sauvegarde<a class="headerlink" href="#96-environnements-deploiement-sauvegarde" title="Permanent link">#</a></h3>
+<h3 id="96-environnements-et-sauvegarde">9.6 Environnements et sauvegarde<a class="headerlink" href="#96-environnements-et-sauvegarde" title="Permanent link">#</a></h3>
 <table>
 <thead>
 <tr>
@@ -3168,14 +3168,14 @@ validation → port offert ; assertion 5 : toute réécriture du port après val
 <td><code>display_errors = On</code> <strong>uniquement</strong> en local</td>
 </tr>
 <tr>
-<td><code>demo</code>/<code>prod</code> (LineServer, machine de soutenance)</td>
-<td><code>minishop</code></td>
-<td>seed <strong>sans</strong> les mots de passe faibles, <code>sql/04</code> non joué</td>
-<td>essais pré-démo sur l’instance réelle, puis réinitialisation avant la démonstration ; HTTPS auto-signé, <code>scripts/deploy.php</code> (copie + <code>load_db.sh</code> + droits <code>var/</code>)</td>
+<td><code>demo</code>/<code>prod</code> (LineServ, machine de soutenance)</td>
+<td><code>minishop</code> (instance réelle ciblée par la campagne manuelle)</td>
+<td>données et comptes gérés sous l’autorité de l’exploitant ; <code>sql/04</code> réservé aux essais locaux</td>
+<td>recette manuelle pré-démo prévue sur l’instance réelle selon <code>docs/14-guide-lineserv.md</code>, uniquement après autorisation ; à ce jour, aucun scénario n’a été exécuté et aucune restauration n’a été réalisée. Le retour à l’état de démonstration relève d’une procédure autorisée de l’exploitant ; le projet ne fournit pas de déploiement automatisé. HTTPS selon la configuration LineServ</td>
 </tr>
 </tbody>
 </table>
-<p>Sauvegarde/restauration spécifiées (2 min d'exécution en démo) : <code>mysqldump --single-transaction --routines --triggers minishop &gt; backup.sql</code> et restauration <code>mysql minishop &lt; backup.sql</code> ; la présence de <code>--routines --triggers</code> est <strong>nécessaire</strong> ici : sans elle, une base restaurée perdrait la fonction, les 17 procédures et les 16 triggers, donc les règles <code>RB-03/06/11/18</code> cesseraient d'être appliquées silencieusement — c'est l'un des arguments à plaider en soutenance (§17.11).</p>
+<p>Procédure de sauvegarde/restauration spécifiée mais non exécutée ni chronométrée (objectif estimatif : 2 min en démo) : <code>mysqldump --single-transaction --routines --triggers minishop &gt; backup.sql</code> et restauration <code>mysql minishop &lt; backup.sql</code> ; la présence de <code>--routines --triggers</code> est <strong>nécessaire</strong> ici : sans elle, une base restaurée perdrait la fonction, les 17 procédures et les 16 triggers, donc les règles <code>RB-03/06/11/18</code> cesseraient d'être appliquées silencieusement — c'est l'un des arguments à plaider en soutenance (§17.11).</p>
 <hr />
 <h2 id="10-modelisation-des-donnees-et-sql">10. Modélisation des données et SQL<a class="headerlink" href="#10-modelisation-des-donnees-et-sql" title="Permanent link">#</a></h2>
 <p>Cette section est la synthèse lisible du <strong>document de conception de base de données</strong> demandé au point 3) du sujet ; les détails complets (MCD/MLD, normalisation, script, procédures, triggers, argumentation pédagogique) sont au <strong>§12</strong>, qui reprend plan par plan le document attendu, et sont livrés en <strong>document autonome</strong> <code>docs/04-conception-bd-et-sql.md</code> (livrable n°3, 20 points).</p>
@@ -4183,16 +4183,13 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 <td><code>RB-13</code></td>
 </tr>
 <tr>
-<td>3 commandes</td>
-<td>une <code>EN_PREPARATION</code> (2 lignes), un brouillon vide, une <code>EXPEDIEE</code> (2 lignes)</td>
+<td>4 commandes</td>
+<td>deux <code>EN_PREPARATION</code> validées (2 lignes et 1 ligne), un brouillon vide, une <code>EXPEDIEE</code> (2 lignes)</td>
 <td><code>RB-11</code>, <code>RB-06</code>, <code>RB-15</code>, <code>EF-CLI-10</code></td>
 </tr>
 </tbody>
 </table>
-<p><strong>Mots de passe de démonstration</strong> : <code>Demo2026!</code> (clients), <code>Admin2026!</code> (back-office), insérés sous forme de <strong>hashes bcrypt réels</strong> produits par :</p>
-<pre><code class="language-php">php -r 'echo password_hash(&quot;Demo2026!&quot;, PASSWORD_BCRYPT, [&quot;cost&quot; =&gt; 12]), &quot;\n&quot;;'
-</code></pre>
-<p>et non par un <code>INSERT … '123456'</code> : le seed respecte donc lui-même <code>RB-12</code>. Les hashes sont documentés dans le <code>README.md</code> pour permettre la démo, et le script de déploiement (<code>scripts/deploy.php</code>) régénère des hashes aléatoires et change les emails quand la démo est mise en ligne (<code>SEC-10</code>).</p>
+<p><strong>Comptes de démonstration</strong> : leurs valeurs d'authentification (mots de passe et hashes) ne sont pas reproduites dans la documentation. Les comptes du seed sont réservés aux environnements locaux isolés ; ne pas les publier ni les réutiliser sur LineServ. Pour une recette, utiliser uniquement un compte de test explicitement autorisé, transmis séparément par canal privé. Le projet ne fournit aucun script de rotation des comptes ni procédure automatisée de promotion/déploiement (SEC-10).</p>
 <h3 id="128-variantes-de-conception-documentees-arbitrages">12.8 Variantes de conception documentées (arbitrages)<a class="headerlink" href="#128-variantes-de-conception-documentees-arbitrages" title="Permanent link">#</a></h3>
 <table>
 <thead>
@@ -4368,7 +4365,7 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 </tr>
 </tbody>
 </table>
-<p>Total révisé : <strong>358 h planifiées</strong> pour le scénario à 3 personnes, dans une capacité nominale de 360 h. Le scénario à 2 personnes est rebasé séparément à <strong>322 h estimées</strong> après les réductions listées au §13.3 ; la répartition A/B/C n’est pas une correspondance nominative.</p>
+<p>Total révisé : <strong>355 h planifiées</strong> pour le scénario à 3 personnes, dans une capacité nominale de 360 h. Le scénario à 2 personnes est rebasé séparément à <strong>319 h estimées</strong> après les réductions listées au §13.3 ; la répartition A/B/C n’est pas une correspondance nominative.</p>
 <h3 id="133-repartition-de-la-charge-par-lot-verification-dequilibre">13.3 Répartition de la charge par lot (vérification d'équilibre)<a class="headerlink" href="#133-repartition-de-la-charge-par-lot-verification-dequilibre" title="Permanent link">#</a></h3>
 <table>
 <thead>
@@ -4481,8 +4478,8 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 </tr>
 <tr>
 <td>L15</td>
-<td>mise en ligne de démo, <code>deploy.php</code>, README final, arborescence propre</td>
-<td style="text-align: right;">8</td>
+<td>README final, arborescence propre et préparation du rendu</td>
+<td style="text-align: right;">5</td>
 <td>A</td>
 <td>S11</td>
 </tr>
@@ -4496,13 +4493,13 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 <tr>
 <td></td>
 <td><strong>Total</strong></td>
-<td style="text-align: right;"><strong>358</strong></td>
+<td style="text-align: right;"><strong>355</strong></td>
 <td></td>
 <td></td>
 </tr>
 </tbody>
 </table>
-<p><strong>Totaux révisés avec la WBS</strong> (<code>docs/05-wbs-projet.md</code> — estimation <em>bottom-up</em> des 85 tâches de niveau 4) : <strong>358 h planifiées</strong> dans une capacité nominale de 360 h, réparties <strong>A 120 h, B 117 h, C 121 h</strong> — personne au-delà du plafond de 122 h. Les pics de charge de S3, S5, S7 et S9 sont anticipés : tâches amont démarrées dès la quinzaine précédente, revue chaque vendredi (§13.5), lots L13/L15 servant de variable d'ajustement.</p>
+<p><strong>Totaux révisés avec la WBS</strong> (<code>docs/05-wbs-projet.md</code> — estimation <em>bottom-up</em> des 84 tâches de niveau 4) : <strong>355 h planifiées</strong> dans une capacité nominale de 360 h, réparties <strong>A 117 h, B 117 h, C 121 h</strong> — personne au-delà du plafond de 122 h. Les pics de charge de S3, S5, S7 et S9 sont anticipés : tâches amont démarrées dès la quinzaine précédente, revue chaque vendredi (§13.5), L13 pouvant servir d’ajustement ; L15 est réservé au README final et à la préparation du rendu après L14.</p>
 <p><strong>Réduction de périmètre si groupe de 2 (règle de repli, pas une option de confort) :</strong> suppression des lots L13 (JS réduit à la validation live du panier), L8 simplifié (pas de routeur maison : tableau de routes minimal), <code>EF-ADM-09</code> (indicateurs) et <code>EF-ADM-10</code> (comptes admin) non livrés, procédures réduites à 8, triggers à 8 (en gardant impérativement <code>TRG-A1/A2/A3/B2/B5/D1/D4</code> qui portent les règles notées). Aucune pénalité listée au §16.2 n'est autorisée à disparaître : ce sont les exigences « bonus » qui sautent.</p>
 <h3 id="134-planning-et-jalons">13.4 Planning et jalons<a class="headerlink" href="#134-planning-et-jalons" title="Permanent link">#</a></h3>
 <table>
@@ -4590,8 +4587,8 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 <td>S11</td>
 <td>01 → 07/12</td>
 <td>Stabilisation</td>
-<td>démo prête (<code>deploy.php</code>), README final, merges des dernières MR</td>
-<td>run complet de bout en bout</td>
+<td>README final, arborescence propre, préparation du tag et merges des dernières MR</td>
+<td>état réel des tests documenté</td>
 </tr>
 <tr>
 <td>S12</td>
@@ -4769,7 +4766,7 @@ git log --numstat --format= | awk '{print $4}' | sort | uniq -c | sort -rn | hea
 </tr>
 <tr>
 <td><strong>Préconditions</strong></td>
-<td>base chargée ; <code>MICRO-007</code> en stock = 2 ; client <code>bruno@example.com</code> connecté ; panier = {<code>CASQ-005</code> × 1, <code>MICRO-007</code> × 3}</td>
+<td>base chargée ; <code>MICRO-007</code> en stock = 2 ; client <code>bruno@example.test</code> connecté ; panier = {<code>CASQ-005</code> × 1, <code>MICRO-007</code> × 3}</td>
 </tr>
 <tr>
 <td><strong>Étapes</strong></td>
@@ -4999,7 +4996,7 @@ grep -c 'verifieJeton' app/Controller/*.php
 <tr>
 <td>manque d'analyse d'architecture (<strong>-2</strong>)</td>
 <td>pas de MVC détaillé</td>
-<td>§9 : 3 couches + rôle de la base, diagramme, arborescence, conventions, déploiement, sauvegarde</td>
+<td>§9 : 3 couches + rôle de la base, diagramme, arborescence, conventions, environnements et sauvegarde</td>
 <td>§9.1→§9.6</td>
 </tr>
 <tr>

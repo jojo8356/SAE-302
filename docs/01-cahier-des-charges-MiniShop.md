@@ -54,7 +54,7 @@ Ce projet est double : il est à la fois un CDC « client » (MiniShop doit fonc
 | Qualité d'un bon CDC | Comment elle est garantie ici |
 |---|---|
 | Nécessaire | §4 recouvre **les 14 cas d'utilisation minimum** et les 3×n fonctionnalités du sujet, sans en retirer aucune |
-| Réalisable | §13.4 planning sur 12 semaines × 3 personnes = 360 h de capacité nominale ; charge planifiée révisée à 358 h |
+| Réalisable | §13.4 planning sur 12 semaines × 3 personnes = 360 h de capacité nominale ; charge planifiée révisée à 355 h |
 | Clair | identifiants d'exigence, vocabulaire unique (§0.3), règles métier numérotées avec leur traduction SQL |
 | Vérifiable | §15 + annexe 17.8 : 29 tests SQL **exécutés** (29/29 conformes), tests fonctionnels, tests de sécurité |
 | Cohérent | matrice de traçabilité exigence → modèle → procédure → test (`docs/02-document-tests-validation.md` §6), aucune exigence orpheline |
@@ -726,7 +726,7 @@ Lecture de la table : les règles `RB-06`, `RB-11`, `RB-18` sont appliquées **d
 | Front | HTML5 sémantique, CSS natif (variables, grille/flexbox), **JavaScript ES2022 en modules**, pas de bundleur | React/Vue (build required, aucune plus-value pédagogique) |
 | Contrôle de version | **GitLab** (hébergé ou local), une MR par lot, merges **squash** interdits pour ne pas effacer les auteurs | GitHub (le sujet impose GitLab) |
 | CI | GitHub Actions : workflow versionné dans `.github/workflows/ci.yml` ; ses résultats ne valent pas preuve d’un pipeline GitLab | GitLab CI retirée du périmètre du CDC le 23/10/2026 |
-| Environnements | `dev` (LAMP local), CI GitHub Actions, `prod` (LineServer : essais pré-démo puis réinitialisation avant la démonstration) | dev = prod (interdit : les hashes et le seed diffèrent) |
+| Environnements | `dev` (poste local isolé, seed de démonstration), CI GitHub Actions (base jetable), `prod` (LineServ : campagne manuelle prévue sur la base réelle, uniquement après autorisation) | mélanger les données/identifiants locaux avec la base réelle ; aucun scénario manuel LineServ ni aucune restauration n’a été exécuté |
 | Contrainte de périmètre physique | **volumétrie retenue avec le client (arbitrage du 21/09/2026) : 200 produits au catalogue et 1 000 commandes par an** (soit ≈ 3 lignes par commande, ≈ 4 commandes/jour en moyenne, 40/jour en pointe). À cette échelle : aucune partition, aucun cache applicatif, aucun index FULLTEXT supplémentaire — mais des mesures faites sur un **jeu de données de taille réelle**, pas sur la démo : `scripts/gen_volumes.sh` (§15.3) | — (noté ici pour justifier l'absence d'infrastructure lourde) |
 
 ### 7.3 Contraintes de données (précisions demandées au §12)
@@ -900,7 +900,7 @@ Le message renvoyé est un **404** (et non un 403) : une réponse « interdit »
 - l'application utilise un compte **dédié** (`minishop_app`) limité à la base applicative : `SELECT, INSERT, UPDATE, DELETE, EXECUTE` + `TRIGGER` (nécessaire pour créer ses propres triggers à l'installation) ; **jamais** `DROP`, `GRANT OPTION`, ni accès à `mysql.*` ;
 - un second compte d'installation (`minishop_admin`) est utilisé **uniquement** par `scripts/load_db.sh` puis peut être révoqué ;
 - pas de requêtes administratives depuis PHP : la liste des comptes, les grants et les journaux d'erreurs ne sont consultés que par le développeur/la DBA ;
-- les comptes de démonstration (hachés, §12.7) sont détruits en production pédagogique par un `scripts/deploy.php` qui ne copie pas le fichier de démonstration `sql/04_minishop_demo.sql`.
+- les comptes de démonstration du seed sont réservés aux environnements locaux isolés ; le projet ne fournit aucun mécanisme de déploiement public ni de rotation automatisée de ces comptes. Sur LineServ, n'utiliser que des comptes de test explicitement autorisés.
 
 ### 8.7 `SEC-10` `SEC-11` `SEC-12` `SEC-13` — En-têtes, durcissement, fuites d'information, journalisation
 
@@ -1014,7 +1014,7 @@ minishop/
 │   └── Router.php
 ├── public/                        # seul dossier exposé par Apache
 │   ├── index.php  .htaccess  css/  js/  img/
-├── scripts/{load_db.sh, run_sql_tests.sh, gen_volumes.sh, deploy.php, build-docs.sh}
+├── scripts/{load_db.sh, run_sql_tests.sh, gen_volumes.sh, build-docs.sh}
 ├── tests/
 │   ├── sql/{manifest.txt, fixture.sql, t01…t26_*.sql, out/, rapport_tests_sql.md}
 │   ├── php/                      # PHPUnit : modèles, repositories, sécurité
@@ -1049,14 +1049,14 @@ minishop/
 - à la validation de commande, `CommandeRepository` appelle la procédure, **puis** vide la clé `panier` : le vidage n'est fait qu'après `COMMIT` (sinon un `ROLLBACK` perdrait le panier du client) ;
 - variante persistée (V1, §12.8) : `PANIER`/`LIGNE_PANIER` en base, le même contrôleur, une méthode de repository en plus — l'architecture n'est pas touchée, preuve que la séparation des couches est la bonne.
 
-### 9.6 Environnements, déploiement, sauvegarde
+### 9.6 Environnements et sauvegarde
 
 | Environnement | Base | Données | Particularités |
 |---|---|---|---|
 | `dev` (poste de chaque étudiant) | `minishop` | seed complet + hashes de démo | `display_errors = On` **uniquement** en local |
-| `demo`/`prod` (LineServer, machine de soutenance) | `minishop` | seed **sans** les mots de passe faibles, `sql/04` non joué | essais pré-démo sur l’instance réelle, puis réinitialisation avant la démonstration ; HTTPS auto-signé, `scripts/deploy.php` (copie + `load_db.sh` + droits `var/`) |
+| `demo`/`prod` (LineServ, machine de soutenance) | `minishop` (instance réelle ciblée par la campagne manuelle) | données et comptes gérés sous l’autorité de l’exploitant ; `sql/04` réservé aux essais locaux | recette manuelle pré-démo prévue sur l’instance réelle selon `docs/14-guide-lineserv.md`, uniquement après autorisation ; à ce jour, aucun scénario n’a été exécuté et aucune restauration n’a été réalisée. Le retour à l’état de démonstration relève d’une procédure autorisée de l’exploitant ; le projet ne fournit pas de déploiement automatisé. HTTPS selon la configuration LineServ |
 
-Sauvegarde/restauration spécifiées (2 min d'exécution en démo) : `mysqldump --single-transaction --routines --triggers minishop > backup.sql` et restauration `mysql minishop < backup.sql` ; la présence de `--routines --triggers` est **nécessaire** ici : sans elle, une base restaurée perdrait la fonction, les 17 procédures et les 16 triggers, donc les règles `RB-03/06/11/18` cesseraient d'être appliquées silencieusement — c'est l'un des arguments à plaider en soutenance (§17.11).
+Procédure de sauvegarde/restauration spécifiée mais non exécutée ni chronométrée (objectif estimatif : 2 min en démo) : `mysqldump --single-transaction --routines --triggers minishop > backup.sql` et restauration `mysql minishop < backup.sql` ; la présence de `--routines --triggers` est **nécessaire** ici : sans elle, une base restaurée perdrait la fonction, les 17 procédures et les 16 triggers, donc les règles `RB-03/06/11/18` cesseraient d'être appliquées silencieusement — c'est l'un des arguments à plaider en soutenance (§17.11).
 
 ---
 
@@ -1443,7 +1443,7 @@ L'exigence « Trigger 1 — Stock » est couverte par `TRG-A1`+`TRG-A2` (et `TRG
 | 1 administrateur | rôle `SUPER` | `RB-13` |
 | 4 commandes | deux `EN_PREPARATION` validées (2 lignes et 1 ligne), un brouillon vide, une `EXPEDIEE` (2 lignes) | `RB-11`, `RB-06`, `RB-15`, `EF-CLI-10` |
 
-**Comptes de démonstration** : leurs valeurs d'authentification (mots de passe et hashes) ne sont pas reproduites dans la documentation. Les comptes du seed sont réservés aux environnements locaux isolés ; ne pas les publier ni les réutiliser sur LineServ. Pour une recette, utiliser uniquement un compte de test explicitement autorisé, transmis séparément par canal privé. La procédure de déploiement doit renouveler les secrets et les adresses de ces comptes avant toute exposition (SEC-10).
+**Comptes de démonstration** : leurs valeurs d'authentification (mots de passe et hashes) ne sont pas reproduites dans la documentation. Les comptes du seed sont réservés aux environnements locaux isolés ; ne pas les publier ni les réutiliser sur LineServ. Pour une recette, utiliser uniquement un compte de test explicitement autorisé, transmis séparément par canal privé. Le projet ne fournit aucun script de rotation des comptes ni procédure automatisée de promotion/déploiement (SEC-10).
 
 ### 12.8 Variantes de conception documentées (arbitrages)
 
@@ -1496,7 +1496,7 @@ L'exigence « Trigger 1 — Stock » est couverte par `TRG-A1`+`TRG-A2` (et `TRG
 | Enseignante référente (maîtrise d'ouvrage pédagogique) | validation des jalons, réponses aux questions techniques | 1 h/semaine (cours) | arbitrages J1/J2/J3 |
 | Environnement | poste personnel, PHP 8.2, MySQL 8 (ou MariaDB 11), Apache, GitLab, VS Code, PlantUML | 0 € | — |
 
-Total révisé : **358 h planifiées** pour le scénario à 3 personnes, dans une capacité nominale de 360 h. Le scénario à 2 personnes est rebasé séparément à **322 h estimées** après les réductions listées au §13.3 ; la répartition A/B/C n’est pas une correspondance nominative.
+Total révisé : **355 h planifiées** pour le scénario à 3 personnes, dans une capacité nominale de 360 h. Le scénario à 2 personnes est rebasé séparément à **319 h estimées** après les réductions listées au §13.3 ; la répartition A/B/C n’est pas une correspondance nominative.
 
 ### 13.3 Répartition de la charge par lot (vérification d'équilibre)
 
@@ -1516,11 +1516,11 @@ Total révisé : **358 h planifiées** pour le scénario à 3 personnes, dans un
 | L12 | durcissement sécurité (CSRF, échappement, autorisation, en-têtes, journaux) | 20 | C | S9-S10 |
 | L13 | JavaScript client (panier, filtres, validation live, accessibilité) | 14 | C | S10 |
 | L14 | tests & validation : harnais, 29 tests SQL, cas fonctionnels, plan de recette, doc | 24 | B + A | S10-S11 |
-| L15 | mise en ligne de démo, `deploy.php`, README final, arborescence propre | 8 | A | S11 |
+| L15 | README final, arborescence propre et préparation du rendu | 5 | A | S11 |
 | L16 | soutenance : support, trame, répétitions chronométrées, questions anticipées | 14 | A + B + C | S12 |
-| | **Total** | **358** | | |
+| | **Total** | **355** | | |
 
-**Totaux révisés avec la WBS** (`docs/05-wbs-projet.md` — estimation *bottom-up* des 85 tâches de niveau 4) : **358 h planifiées** dans une capacité nominale de 360 h, réparties **A 120 h, B 117 h, C 121 h** — personne au-delà du plafond de 122 h. Les pics de charge de S3, S5, S7 et S9 sont anticipés : tâches amont démarrées dès la quinzaine précédente, revue chaque vendredi (§13.5), lots L13/L15 servant de variable d'ajustement.
+**Totaux révisés avec la WBS** (`docs/05-wbs-projet.md` — estimation *bottom-up* des 84 tâches de niveau 4) : **355 h planifiées** dans une capacité nominale de 360 h, réparties **A 117 h, B 117 h, C 121 h** — personne au-delà du plafond de 122 h. Les pics de charge de S3, S5, S7 et S9 sont anticipés : tâches amont démarrées dès la quinzaine précédente, revue chaque vendredi (§13.5), L13 pouvant servir d’ajustement ; L15 est réservé au README final et à la préparation du rendu après L14.
 
 **Réduction de périmètre si groupe de 2 (règle de repli, pas une option de confort) :** suppression des lots L13 (JS réduit à la validation live du panier), L8 simplifié (pas de routeur maison : tableau de routes minimal), `EF-ADM-09` (indicateurs) et `EF-ADM-10` (comptes admin) non livrés, procédures réduites à 8, triggers à 8 (en gardant impérativement `TRG-A1/A2/A3/B2/B5/D1/D4` qui portent les règles notées). Aucune pénalité listée au §16.2 n'est autorisée à disparaître : ce sont les exigences « bonus » qui sautent.
 
@@ -1538,7 +1538,7 @@ Total révisé : **358 h planifiées** pour le scénario à 3 personnes, dans un
 | S8 | 10 → 16/11 | Panier/commande | UC-06, UC-07 (transaction + triggers), UC-08 | commande de démonstration créée dans l'app |
 | S9 | 17 → 23/11 | Back-office + sécurité | **J4 : produits, catégories, stocks, commandes, statuts** + durcissement | parcours admin complet, `S-01…S-08` au vert |
 | S10 | 24 → 30/11 | Tests & validation | harnais rejoué, doc de tests, JS, accessibilité, correctifs | **J5 : plan de recette exécuté** |
-| S11 | 01 → 07/12 | Stabilisation | démo prête (`deploy.php`), README final, merges des dernières MR | run complet de bout en bout |
+| S11 | 01 → 07/12 | Stabilisation | README final, arborescence propre, préparation du tag et merges des dernières MR | état réel des tests documenté |
 | S12 | 08 → 14/12 | Restitution | **J6 : soutenance** + dépôt final taggé `v1.0-rendu` | support, réponses aux questions |
 
 Trois dates sont figées par le calendrier pédagogique : S2 (validation du CDC), S10 (fin des tests), S12 (soutenance).
@@ -1691,7 +1691,7 @@ Ces sept lignes sont **à montrer en soutenance** : elles prouvent que la base a
 | manque des solutions de sécurité (**-2**) | §8 « théorique » | 9 sous-sections `SEC-01…SEC-13` avec **code** + matrice menaces et **10 tests offensifs** `S-01…S-10` | §8, §15.3, `docs/02-document-tests-validation.md` §3.2 |
 | manque de règle métier (**-2**) | règles du sujet non listées | 20 règles dont les **11 imposées** citées à l'identique, avec traduction SQL + test | §6.1 (11/11 visibles) |
 | manque de contrainte technique (**-2**) | §7 bâclé | 12 contraintes `CT-*` imposées + 14 choix d'environnement + contraintes données/ergonomie/exploitation | §7.1 à §7.5 |
-| manque d'analyse d'architecture (**-2**) | pas de MVC détaillé | §9 : 3 couches + rôle de la base, diagramme, arborescence, conventions, déploiement, sauvegarde | §9.1→§9.6 |
+| manque d'analyse d'architecture (**-2**) | pas de MVC détaillé | §9 : 3 couches + rôle de la base, diagramme, arborescence, conventions, environnements et sauvegarde | §9.1→§9.6 |
 | manque une procédure stockée — **conception BD** (**-1**, max -5, barème ii) | < 5 | **17 procédures + 1 fonction** couvrant les 3 de l'exemple du sujet — `sp_create_order`, `sp_add_order_item` → **`sp_add_order_line`**, `sp_update_order_status` (noms intacts pour 2 sur 3, correspondance §12.5.2) | compteur `load_db.sh`, §12.5, §12.5.2 |
 | manque un déclencheur — **conception BD** (**-1**, max -5, barème ii) | < 5 | **16 triggers**, dont les 2 imposés (stock `stock - quantité`, historique `ORDER_STATUS_HISTORY` au format `id, order_id, old_status, new_status, changed_at`) | §12.6, `T-03/08/11/14/15/21/22/24` |
 | manque une procédure stockée — **application** (**-1**, max -5, barème iii) | < 5 (non appelées) | mêmes 17 procédures, **effectivement appelées** par les contrôleurs (aucun SQL métier en dur côté PHP, `SEC-01`) | §10, §15.3 contrôle 1, `S-01` |

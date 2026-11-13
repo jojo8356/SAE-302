@@ -1,18 +1,18 @@
 # MiniShop — Todolist projet : suivi de base et planification historique
 
-**Périmètre :** révision du 23 octobre 2026 ; le livrable CI GitLab est retiré et la WBS compte désormais 85 tâches. **D1-L1-01** est `OK*` sur attestation utilisateur de l'envoi du courriel (la boîte d'envoi n'a pas été vérifiée indépendamment) ; **D1-L1-07** est terminée sur attestation utilisateur, réunion datée du 13 novembre 2026.
+**Périmètre :** révision du 23 octobre 2026 ; la mise en ligne de démonstration et les contrôles staging associés sont retirés sans remplacement ; la WBS compte désormais 84 tâches. **D1-L1-01** est `OK*` sur attestation utilisateur de l'envoi du courriel (la boîte d'envoi n'a pas été vérifiée indépendamment) ; **D1-L1-07** est terminée sur attestation utilisateur, réunion datée du 13 novembre 2026.
 Le statut **D1-L1-04** porte sur l'issue contenant les cinq livrables et pénalités ; l'épinglage n'est pas attesté et n'est pas requis par ce critère. **D1-L1-05** est terminé sur le livrable documentaire uniquement : l'usage réel de MR/revues croisées n'est pas démontré.
 Les états non révisés restent ceux de la photographie du 23/09/2026 ; les statuts D1-L1-01/04/05/07 sont actualisés uniquement selon les attestations ou preuves décrites ici et dans l'audit docs/19. Les mesures MariaDB sont historiques et n'ont pas été rejouées. Les catégories dépendantes/asynchrones, le graphe et les plans S6 ci-dessous décrivent le planning de base à cette date : ils ne valent ni état d'exécution ni priorité actuelle. Revalider les dépendances, les statuts et les disponibilités avant toute action. La todolist comprend les tâches de la WBS révisée, classées en
 **tâches dépendantes** (ordre prévu dans le graphe) et **tâches asynchrones** (aucune dépendance restante identifiée dans la photographie de référence ; cela ne signifie pas qu'elles sont disponibles aujourd'hui).
 
 | | |
 |---|---|
-| **Avancement global** | **165 h faites / 358 h planifiées (46%)** — 37 terminées, 8 partielles, 40 à faire (85 tâches) |
-| **Reste à faire** | **193 h estimées**, dont 146 h pour l'application Web ; les autres postes restent issus de la photographie historique |
+| **Avancement global** | **165 h faites / 355 h planifiées (46%)** — 37 terminées, 8 partielles, 39 à faire (84 tâches) |
+| **Reste à faire** | **190 h estimées**, dont 146 h pour l'application Web ; les autres postes restent issus de la photographie historique |
 | **Backlog asynchrone du plan de base** | **35 h** classées sans dépendance restante dans la photographie du 23/09 ; statuts et disponibilité à revérifier |
 | **Chaîne planifiée** | L8 → L9 → L10 → L11 → L12 → L14 → L15 → L16 ; jalons du planning de base à revalider |
-| **Documents liés** | `docs/05-wbs-projet.md` (WBS) · `docs/20-charte-gitlab-revues-croisees.md` · `docs/21-compte-rendu-reunion-audit-2026-11-13.md` · `docs/22-procedure-validation-staging.md` |
-| **Version** | 1.2 — périmètre du 23 octobre, validation attestée le 13 novembre 2026 |
+| **Documents liés** | `docs/05-wbs-projet.md` (WBS) · `docs/20-charte-gitlab-revues-croisees.md` · `docs/21-compte-rendu-reunion-audit-2026-11-13.md` |
+| **Version** | 1.3 — périmètre du 23 octobre, validation attestée le 13 novembre 2026 |
 
 ---
 
@@ -22,19 +22,19 @@ Les états non révisés restent ceux de la photographie du 23/09/2026 ; les sta
 
 | Division | Charge | Fait | Reste | Avancement |
 |---|---:|---:|---:|---|
-| **D1 — Pilotage, dépôt GitLab & collaboration** | 22 h | 15 h | 7 h | ██████████████░░░░░░ 68% |
+| **D1 — Pilotage, dépôt GitLab & collaboration** | 19 h | 15 h | 4 h | ████████████████░░░░ 79% |
 | **D2 — Document de spécification du système** | 54 h | 50 h | 4 h | ███████████████████░ 93% |
 | **D3 — Conception de la base de données & SQL** | 98 h | 89 h | 9 h | ██████████████████░░ 91% |
 | **D4 — Application Web PHP / MySQL / PDO** | 146 h | 0 h | 146 h | ░░░░░░░░░░░░░░░░░░░░ 0% |
 | **D5 — Tests & validation** | 24 h | 6 h | 18 h | █████░░░░░░░░░░░░░░░ 25% |
 | **D6 — Soutenance** | 14 h | 5 h | 9 h | ███████░░░░░░░░░░░░░ 36% |
-| **Total** | **358 h** | **165 h** | **193 h** | **46%** |
+| **Total** | **355 h** | **165 h** | **190 h** | **46%** |
 
 ### 1.2 Répartition par rôle de planification (A/B/C ; aucune correspondance nominative établie)
 
 | Rôle | Charge WBS | Reste | Fait | Remarque (photographie du 23/09) |
 |---|---:|---:|---:|---|
-| **A** | 120 h | 79 h | 41 h | rôle de planification chargé du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |
+| **A** | 117 h | 76 h | 41 h | rôle de planification chargé du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |
 | **B** | 117 h | 17 h | 100 h | rôle de planification base de données/tests ; états et disponibilité après la photographie non revérifiés |
 | **C** | 121 h | 97 h | 24 h | rôle de planification front-office/sécurité/JS ; disponibilité et attribution nominative non établies |
 
@@ -89,10 +89,10 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | 1 | **L8** socle applicatif (routeur, PDO, vues, auth/CSRF, CI GitHub Actions) | 22 | — dans le plan de base | L9, L10, L11, L12 | page d'accueil servie (jalon S6 prévu) |
 | 2 | **L9** front-office (catalogue, recherche, fiche, compte, connexion) | 32 | L8 ; 04/05 après L8-04 | L10 (partiellement), L12 | **J3** parcours visiteur (S7) |
 | 3 | **L10** panier + commande (session, UC-06/07/08/09) | 28 | L8 ; écrans après L10-02/04 | L13, L14-03/04 | commande de démo dans l'app (S8) |
-| 4 | **L11** back-office (produits, catégories, stocks, commandes, statuts) | 30 | L8-04 (auth admin) ; vues après L11-02..04 | L12, L14-03, L15-01 | **J4** parcours admin (S9) |
+| 4 | **L11** back-office (produits, catégories, stocks, commandes, statuts) | 30 | L8-04 (auth admin) ; vues après L11-02..04 | L12, L14-03 | **J4** parcours admin (S9) |
 | 5 | **L12** durcissement sécurité (CSRF, IDOR, échappement, en-têtes) | 20 | L9 + L10 + L11 (à l'exception du script, §2) | L14-03 | S-01…S-08 au vert (S9-S10) |
 | 6 | **L14** tests & validation (sauf parties déjà async) | 15 | L12 ; 02 dès que le harnais est prêt | L15 | **J5** recette exécutée (S10) |
-| 7 | **L15** mise en ligne de démo + README final + tag | 6 | L11 + L14 | L16-03 | run de bout en bout (S11) |
+| 7 | **L15** README final, arborescence et tag de rendu | 3 | L11 + L14 | L16-03 | documentation et tag final préparés (S11) |
 | 8 | **L16-03** répétitions chronométrées | 5 | L16-01 (slides) + L11 (démo réelle) | — | **J6** soutenance (S12) |
 
 ### Sous-dépendances internes à respecter (les pièges classiques)
@@ -118,16 +118,16 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
  D2-L3-06 puml (4h, B)  ├─ tout cela tourne                │                       │        └─> L13 JS (14h, C)
  D3-L5-05 load_db (3h,B)│   EN PARALLÈLE                   ├─> L11 back (30h, A+C) ┘
  D3-L6-06/07 tNN (4h,A) │   de la chaîne ────────────────> │
- D3-L7-05 tNN (2h, A)   │                                   └─> L12 sécu (20h, C) ──> L14 tests (15h) ──> L15 rendu (6h)
+ D3-L7-05 tNN (2h, A)   │                                   └─> L12 sécu (20h, C) ──> L14 tests (15h) ──> L15 rendu (3h)
  D6-L16-01 slides (4h,A)                                                                   └─> L16-03 répét (5h)
  D4-L12-05* / L14-04* / L14-06* (préparations)
 ```
 
 ---
 
-## 5. Détail complet — les 85 tâches de la WBS et leur statut de suivi
+## 5. Détail complet — les 84 tâches de la WBS et leur statut de suivi
 
-### D1 — Pilotage, dépôt GitLab & collaboration (15/22 h faites, reste 7 h)
+### D1 — Pilotage, dépôt GitLab & collaboration (15/19 h faites, reste 4 h)
 
 #### 🟡 Lot L1 — Pilotage & dépôt (13/14 h · reste 1 h)
 
@@ -140,12 +140,11 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | `D1-L1-05` | Charte GitLab : branches, MR croisées, commits conventionnels, 1 issue par UC/EF (docs/20) | A | 0 | ✅ | — | — |
 | `D1-L1-07` | Réunion de vérification de l'audit complet et de validation simple (compte rendu docs/21-compte-rendu-reunion-audit-2026-11-13.md) | A | 0 | ✅ | — | — |
 
-#### 🟡 Lot L15 — Démo en ligne & rendu (2/8 h · reste 6 h)
+#### 🟡 Lot L15 — README final & rendu (2/5 h · reste 3 h)
 
 | ID | Tâche | Pers. | h rest. | Statut | Dépend de | Prio |
 |---|---|---|---:|---|---|---|
-| `D1-L15-01` | scripts/deploy.php : renouveler les hashes de démo et les emails .invalid ; procédure docs/22 à suivre en staging seulement | A | 3 | ⬜ | L11 | P2 |
-| `D1-L15-02` | README final : statut réel de l'application, wrapper build-docs.sh (ou pointer .tools), comptes | A | 1 | 🟡 | D1-L15-01 | P2 |
+| `D1-L15-02` | README final : statut réel de l'application, wrapper build-docs.sh (ou pointer .tools), comptes | A | 1 | 🟡 | D5-L14-05 | P2 |
 | `D1-L15-03` | Nettoyage de l'arborescence + tag v1.0-rendu | A | 2 | ⬜ | D1-L15-02 | P1 |
 
 
@@ -322,8 +321,9 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | **L8 complet** (jalon S6 prévu) | L9-01..03, L10-01/02, L11-02..04 |
 | **L9-01..03** catalogue/fiche OK | L10-01 (le panier référence la fiche) |
 | **L10-04** CommandeController OK | L10-05/06 (écrans), L13 (JS panier), L14-04 (exécution reserver.sh) |
-| **L11 complet** (J4 prévu) | L12 en mode validation, L14-03 (F-tests), L15-01 (deploy.php) |
-| **L12 complet** (S-01…S-08 vert) | L14-03/05 (recette finale), L15 (rendu) |
+| **L11 complet** (J4 prévu) | L12 en mode validation, L14-03 (F-tests) |
+| **L12 complet** (S-01…S-08 vert) | L14-03/05 (recette finale) |
+| **L14 complet** (J5 prévu) | D1-L15-02 (README final et statut réel des tests) |
 | **L15-03** tag `v1.0-rendu` | L16-03 (répétitions sur la démo figée) |
 
 ---
@@ -343,4 +343,4 @@ Dans le scénario historique, L8 devait débloquer la chaîne jusqu'au jalon J6 
 
 ---
 
-*Todolist MiniShop v1.2 — états autres que D1-L1-01/04/05/07 issus de la photographie du 23/09/2026, non revérifiés ici ; périmètre WBS révisé au 23/10/2026 ; D1-L1-01 : envoi attesté par l'utilisateur (boîte d'envoi non vérifiée) ; D1-L1-04 : preuve de l'issue et des cinq livrables ; D1-L1-05 : livrable documentaire uniquement ; D1-L1-07 : réunion du 13/11/2026 attestée, sans prétendre à des vérifications externes. Charge WBS : 358 h (A 120 / B 117 / C 121).*
+*Todolist MiniShop v1.3 — états autres que D1-L1-01/04/05/07 issus de la photographie du 23/09/2026, non revérifiés ici ; périmètre WBS révisé au 23/10/2026, sans remplacement des tâches de déploiement staging retirées ; D1-L1-01 : envoi attesté par l'utilisateur (boîte d'envoi non vérifiée) ; D1-L1-04 : preuve de l'issue et des cinq livrables ; D1-L1-05 : livrable documentaire uniquement ; D1-L1-07 : réunion du 13/11/2026 attestée, sans prétendre à des vérifications externes. Charge WBS : 355 h (A 117 / B 117 / C 121).*

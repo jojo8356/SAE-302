@@ -143,8 +143,8 @@ extrait() {
 #
 # Périmètre BLOQUANT : app/ et public/, exactement celui du CDC §15.3, c'est-à-dire
 # tout ce qu'une requête HTTP peut atteindre. scripts/ est balayé en INFORMATIF :
-# ce sont des outils d'exploitation (déploiement, volumétrie) lancés en console
-# par un opérateur qui possède déjà les identifiants de la base ; on y interpole
+# ce sont des outils d'exploitation (initialisation, sauvegarde, volumétrie)
+# lancés en console par un opérateur qui possède déjà les identifiants de la base ; on y interpole
 # parfois un nom de TABLE issu d'une liste littérale — chose qu'aucun paramètre
 # lié ne permet d'exprimer en SQL. Les faire échouer bloquerait le pipeline sur
 # une construction sûre, exactement le travers qu'on corrige ici.

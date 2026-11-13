@@ -65,7 +65,7 @@
         'Connexion': 'Sign in', 'Créer un compte': 'Create account', 'Déconnexion': 'Sign out',
         'À propos': 'About', 'Panier': 'Cart', 'Menu': 'Menu', 'Commandes': 'Orders',
         'Produits': 'Products', 'Stocks': 'Stock', 'Paramètres': 'Settings', 'Équipe': 'Team',
-        'Tableau de bord': 'Dashboard', 'Diagnostic staging': 'Staging diagnostics', 'Accueil': 'Home'
+        'Tableau de bord': 'Dashboard', 'Accueil': 'Home'
     };
     const traduireChaine = (source) => {
         if (window.MINISHOP_I18N_EN && typeof window.MINISHOP_I18N_EN.traduire === 'function') {

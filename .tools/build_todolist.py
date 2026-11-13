@@ -122,8 +122,7 @@ T = {
   ("D5-L14-06","Performance p95 < 500 ms : mesure SQL via mesurer_sql.sh ; mesure HTTP après L9","A",5,"T","L9;L10;L11","P2","ASYNC*"),
  ],
  "L15": [
-  ("D1-L15-01","scripts/deploy.php : renouveler les hashes de démo et les emails .invalid ; procédure docs/22 à suivre en staging seulement","A",3,"T","L11","P2",""),
-  ("D1-L15-02","README final : statut réel de l'application, wrapper build-docs.sh (ou pointer .tools), comptes","A",1,"P","D1-L15-01","P2",""),
+  ("D1-L15-02","README final : statut réel de l'application, wrapper build-docs.sh (ou pointer .tools), comptes","A",1,"P","D5-L14-05","P2",""),
   ("D1-L15-03","Nettoyage de l'arborescence + tag v1.0-rendu","A",2,"T","D1-L15-02","P1",""),
  ],
  "L16": [
@@ -137,7 +136,7 @@ LOT_NOM = {
  "L1":"Pilotage & dépôt","L2":"CDC : spécification","L3":"Diagrammes UML & règles","L4":"MCD/MLD/normalisation",
  "L5":"Script SQL & seed","L6":"17 procédures + tests","L7":"16 déclencheurs + tests","L8":"Socle applicatif MVC",
  "L9":"Front-office","L10":"Panier & commande","L11":"Back-office","L12":"Durcissement sécurité",
- "L13":"JavaScript client","L14":"Tests & validation","L15":"Démo en ligne & rendu","L16":"Soutenance"}
+ "L13":"JavaScript client","L14":"Tests & validation","L15":"README final & rendu","L16":"Soutenance"}
 DIV_LOTS = {"D1":["L1","L15"],"D2":["L2","L3"],"D3":["L4","L5","L6","L7"],
             "D4":["L8","L9","L10","L11","L12","L13"],"D5":["L14"],"D6":["L16"]}
 DIV_NOM = {"D1":"Pilotage, dépôt GitLab & collaboration","D2":"Document de spécification du système",
@@ -145,7 +144,7 @@ DIV_NOM = {"D1":"Pilotage, dépôt GitLab & collaboration","D2":"Document de sp�
            "D5":"Tests & validation","D6":"Soutenance"}
 COULEURS = {"D1":"#64748b","D2":"#7c2d12","D3":"#b45309","D4":"#15803d","D5":"#b91c1c","D6":"#6d28d9"}
 
-LOT_H = {"L1":14,"L2":26,"L3":28,"L4":28,"L5":20,"L6":30,"L7":20,"L8":22,"L9":32,"L10":28,"L11":30,"L12":20,"L13":14,"L14":24,"L15":8,"L16":14}
+LOT_H = {"L1":14,"L2":26,"L3":28,"L4":28,"L5":20,"L6":30,"L7":20,"L8":22,"L9":32,"L10":28,"L11":30,"L12":20,"L13":14,"L14":24,"L15":5,"L16":14}
 
 # ---------- calculs + assertions ----------
 REST = 0 ; FAIT = 0
@@ -175,7 +174,7 @@ for lot, tasks in T.items():
 for r in "ABC":
     pass
 # charge faite par personne = (charge WBS par personne) - restante ; charge WBS révisée : A120 B117 C121 (WBS §6.2)
-WBS_PERS = {"A":120,"B":117,"C":121}
+WBS_PERS = {"A":117,"B":117,"C":121}
 for lot, tasks in T.items():
     for (tid, lbl, r, h, st, dep, prio, async_) in tasks:
         pass
@@ -189,9 +188,9 @@ for lot, tasks in T.items():
 for r in "ABC": PERS_FAIT[r] = WBS_PERS[r] - PERS_REST[r]
 FAIT = sum(PERS_FAIT.values())
 TOTAL = FAIT + REST
-assert TOTAL == 358, TOTAL
-assert (PERS_REST["A"], PERS_REST["B"], PERS_REST["C"]) == (79, 17, 97), (PERS_REST["A"], PERS_REST["B"], PERS_REST["C"])
-assert sum(DIV_REST.values()) == REST == 193
+assert TOTAL == 355, TOTAL
+assert (PERS_REST["A"], PERS_REST["B"], PERS_REST["C"]) == (76, 17, 97), (PERS_REST["A"], PERS_REST["B"], PERS_REST["C"])
+assert sum(DIV_REST.values()) == REST == 190
 assert sum(DIV_FAIT.values()) == FAIT == 165
 assert PERS_FAIT == {"A":41,"B":100,"C":24}, PERS_FAIT
 
@@ -199,7 +198,7 @@ N_TASKS = sum(len(tasks) for tasks in T.values())
 COUNTS = {status: sum(1 for tasks in T.values() for task in tasks if task[4] == status) for status in ("F", "P", "T")}
 ASYNC_BY_PERSON = {person: sum(row[3] for row in ASYNC_TASKS if row[2] == person) for person in "ABC"}
 ASYNC_H = sum(ASYNC_BY_PERSON.values())
-assert N_TASKS == 85 and sum(COUNTS.values()) == N_TASKS, (N_TASKS, COUNTS)
+assert N_TASKS == 84 and sum(COUNTS.values()) == N_TASKS, (N_TASKS, COUNTS)
 BADGE = {"F":"✅","P":"🟡","T":"⬜"}
 STATUT_NOM = {"F":"fait","P":"partiel","T":"à faire"}
 
@@ -209,7 +208,7 @@ STATUT_NOM = {"F":"fait","P":"partiel","T":"à faire"}
 md = [] ; A = md.append
 A("# MiniShop — Todolist projet : suivi de base et planification historique")
 A("")
-A(f"**Périmètre :** révision du {SCOPE_DATE} ; le livrable CI GitLab est retiré et la WBS compte désormais {N_TASKS} tâches. **D1-L1-01** est `OK*` sur attestation utilisateur de l'envoi du courriel (la boîte d'envoi n'a pas été vérifiée indépendamment) ; **D1-L1-07** est terminée sur attestation utilisateur, réunion datée du {MEETING_DATE}.")
+A(f"**Périmètre :** révision du {SCOPE_DATE} ; la mise en ligne de démonstration et les contrôles staging associés sont retirés sans remplacement ; la WBS compte désormais {N_TASKS} tâches. **D1-L1-01** est `OK*` sur attestation utilisateur de l'envoi du courriel (la boîte d'envoi n'a pas été vérifiée indépendamment) ; **D1-L1-07** est terminée sur attestation utilisateur, réunion datée du {MEETING_DATE}.")
 A("Le statut **D1-L1-04** porte sur l'issue contenant les cinq livrables et pénalités ; l'épinglage n'est pas attesté et n'est pas requis par ce critère. **D1-L1-05** est terminé sur le livrable documentaire uniquement : l'usage réel de MR/revues croisées n'est pas démontré.")
 A("Les états non révisés restent ceux de la photographie du 23/09/2026 ; les statuts D1-L1-01/04/05/07 sont actualisés uniquement selon les attestations ou preuves décrites ici et dans l'audit docs/19. Les mesures MariaDB sont historiques et n'ont pas été rejouées. Les catégories dépendantes/asynchrones, le graphe et les plans S6 ci-dessous décrivent le planning de base à cette date : ils ne valent ni état d'exécution ni priorité actuelle. Revalider les dépendances, les statuts et les disponibilités avant toute action. La todolist comprend les tâches de la WBS révisée, classées en")
 A("**tâches dépendantes** (ordre prévu dans le graphe) et **tâches asynchrones** (aucune dépendance restante identifiée dans la photographie de référence ; cela ne signifie pas qu'elles sont disponibles aujourd'hui).")
@@ -220,8 +219,8 @@ A(f"| **Avancement global** | **{FAIT} h faites / {TOTAL} h planifiées ({FAIT/T
 A(f"| **Reste à faire** | **{REST} h estimées**, dont 146 h pour l'application Web ; les autres postes restent issus de la photographie historique |")
 A(f"| **Backlog asynchrone du plan de base** | **{ASYNC_H} h** classées sans dépendance restante dans la photographie du 23/09 ; statuts et disponibilité à revérifier |")
 A("| **Chaîne planifiée** | L8 → L9 → L10 → L11 → L12 → L14 → L15 → L16 ; jalons du planning de base à revalider |")
-A("| **Documents liés** | `docs/05-wbs-projet.md` (WBS) · `docs/20-charte-gitlab-revues-croisees.md` · `docs/21-compte-rendu-reunion-audit-2026-11-13.md` · `docs/22-procedure-validation-staging.md` |")
-A("| **Version** | 1.2 — périmètre du 23 octobre, validation attestée le 13 novembre 2026 |")
+A("| **Documents liés** | `docs/05-wbs-projet.md` (WBS) · `docs/20-charte-gitlab-revues-croisees.md` · `docs/21-compte-rendu-reunion-audit-2026-11-13.md` |")
+A("| **Version** | 1.3 — périmètre du 23 octobre, validation attestée le 13 novembre 2026 |")
 A("")
 A("---")
 A("")
@@ -240,7 +239,7 @@ A("### 1.2 Répartition par rôle de planification (A/B/C ; aucune correspondanc
 A("")
 A("| Rôle | Charge WBS | Reste | Fait | Remarque (photographie du 23/09) |")
 A("|---|---:|---:|---:|---|")
-A(f"| **A** | 120 h | {PERS_REST['A']} h | {PERS_FAIT['A']} h | rôle de planification chargé du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |")
+A(f"| **A** | 117 h | {PERS_REST['A']} h | {PERS_FAIT['A']} h | rôle de planification chargé du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |")
 A(f"| **B** | 117 h | {PERS_REST['B']} h | {PERS_FAIT['B']} h | rôle de planification base de données/tests ; états et disponibilité après la photographie non revérifiés |")
 A(f"| **C** | 121 h | {PERS_REST['C']} h | {PERS_FAIT['C']} h | rôle de planification front-office/sécurité/JS ; disponibilité et attribution nominative non établies |")
 A("")
@@ -302,10 +301,10 @@ A("|---|---|---:|---|---|---|")
 A("| 1 | **L8** socle applicatif (routeur, PDO, vues, auth/CSRF, CI GitHub Actions) | 22 | — dans le plan de base | L9, L10, L11, L12 | page d'accueil servie (jalon S6 prévu) |")
 A("| 2 | **L9** front-office (catalogue, recherche, fiche, compte, connexion) | 32 | L8 ; 04/05 après L8-04 | L10 (partiellement), L12 | **J3** parcours visiteur (S7) |")
 A("| 3 | **L10** panier + commande (session, UC-06/07/08/09) | 28 | L8 ; écrans après L10-02/04 | L13, L14-03/04 | commande de démo dans l'app (S8) |")
-A("| 4 | **L11** back-office (produits, catégories, stocks, commandes, statuts) | 30 | L8-04 (auth admin) ; vues après L11-02..04 | L12, L14-03, L15-01 | **J4** parcours admin (S9) |")
+A("| 4 | **L11** back-office (produits, catégories, stocks, commandes, statuts) | 30 | L8-04 (auth admin) ; vues après L11-02..04 | L12, L14-03 | **J4** parcours admin (S9) |")
 A("| 5 | **L12** durcissement sécurité (CSRF, IDOR, échappement, en-têtes) | 20 | L9 + L10 + L11 (à l'exception du script, §2) | L14-03 | S-01…S-08 au vert (S9-S10) |")
 A("| 6 | **L14** tests & validation (sauf parties déjà async) | 15 | L12 ; 02 dès que le harnais est prêt | L15 | **J5** recette exécutée (S10) |")
-A("| 7 | **L15** mise en ligne de démo + README final + tag | 6 | L11 + L14 | L16-03 | run de bout en bout (S11) |")
+A("| 7 | **L15** README final, arborescence et tag de rendu | 3 | L11 + L14 | L16-03 | documentation et tag final préparés (S11) |")
 A("| 8 | **L16-03** répétitions chronométrées | 5 | L16-01 (slides) + L11 (démo réelle) | — | **J6** soutenance (S12) |")
 A("")
 A("### Sous-dépendances internes à respecter (les pièges classiques)")
@@ -331,14 +330,14 @@ A(" D1-L1-02/04/07 (5h, photo)│                                │            
 A(" D2-L3-06 puml (4h, B)  ├─ tout cela tourne                │                       │        └─> L13 JS (14h, C)")
 A(" D3-L5-05 load_db (3h,B)│   EN PARALLÈLE                   ├─> L11 back (30h, A+C) ┘")
 A(" D3-L6-06/07 tNN (4h,A) │   de la chaîne ────────────────> │")
-A(" D3-L7-05 tNN (2h, A)   │                                   └─> L12 sécu (20h, C) ──> L14 tests (15h) ──> L15 rendu (6h)")
+A(" D3-L7-05 tNN (2h, A)   │                                   └─> L12 sécu (20h, C) ──> L14 tests (15h) ──> L15 rendu (3h)")
 A(" D6-L16-01 slides (4h,A)                                                                   └─> L16-03 répét (5h)")
 A(" D4-L12-05* / L14-04* / L14-06* (préparations)")
 A("```")
 A("")
 A("---")
 A("")
-A("## 5. Détail complet — les 85 tâches de la WBS et leur statut de suivi")
+A("## 5. Détail complet — les 84 tâches de la WBS et leur statut de suivi")
 A("")
 for d in ["D1","D2","D3","D4","D5","D6"]:
     tot = sum(LOT_H[l] for l in DIV_LOTS[d])
@@ -369,8 +368,9 @@ A("| **L8-04** middleware auth/CSRF OK | L9-04/05 (compte, connexion) · L11-01 
 A("| **L8 complet** (jalon S6 prévu) | L9-01..03, L10-01/02, L11-02..04 |")
 A("| **L9-01..03** catalogue/fiche OK | L10-01 (le panier référence la fiche) |")
 A("| **L10-04** CommandeController OK | L10-05/06 (écrans), L13 (JS panier), L14-04 (exécution reserver.sh) |")
-A("| **L11 complet** (J4 prévu) | L12 en mode validation, L14-03 (F-tests), L15-01 (deploy.php) |")
-A("| **L12 complet** (S-01…S-08 vert) | L14-03/05 (recette finale), L15 (rendu) |")
+A("| **L11 complet** (J4 prévu) | L12 en mode validation, L14-03 (F-tests) |")
+A("| **L12 complet** (S-01…S-08 vert) | L14-03/05 (recette finale) |")
+A("| **L14 complet** (J5 prévu) | D1-L15-02 (README final et statut réel des tests) |")
 A("| **L15-03** tag `v1.0-rendu` | L16-03 (répétitions sur la démo figée) |")
 A("")
 A("---")
@@ -390,7 +390,7 @@ A("Dans le scénario historique, L8 devait débloquer la chaîne jusqu'au jalon 
 A("")
 A("---")
 A("")
-A("*Todolist MiniShop v1.2 — états autres que D1-L1-01/04/05/07 issus de la photographie du 23/09/2026, non revérifiés ici ; périmètre WBS révisé au 23/10/2026 ; D1-L1-01 : envoi attesté par l'utilisateur (boîte d'envoi non vérifiée) ; D1-L1-04 : preuve de l'issue et des cinq livrables ; D1-L1-05 : livrable documentaire uniquement ; D1-L1-07 : réunion du 13/11/2026 attestée, sans prétendre à des vérifications externes. Charge WBS : 358 h (A 120 / B 117 / C 121).*")
+A("*Todolist MiniShop v1.3 — états autres que D1-L1-01/04/05/07 issus de la photographie du 23/09/2026, non revérifiés ici ; périmètre WBS révisé au 23/10/2026, sans remplacement des tâches de déploiement staging retirées ; D1-L1-01 : envoi attesté par l'utilisateur (boîte d'envoi non vérifiée) ; D1-L1-04 : preuve de l'issue et des cinq livrables ; D1-L1-05 : livrable documentaire uniquement ; D1-L1-07 : réunion du 13/11/2026 attestée, sans prétendre à des vérifications externes. Charge WBS : 355 h (A 117 / B 117 / C 121).*")
 
 OUT_MD.write_text("\n".join(md), encoding="utf-8")
 print(f"OK MD : {OUT_MD} ({len(md)} lignes) — restant {REST} h, fait {FAIT} h, async {len(ASYNC_TASKS)} tâches")

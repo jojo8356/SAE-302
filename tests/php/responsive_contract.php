@@ -120,16 +120,6 @@ foreach ($adminVues as $nomVue) {
 $check('admin mobile : libellés empilés et valeurs repliables',
     str_contains($css, '.tableau-defilant--admin tbody td::before { content: attr(data-label); display: block;')
     && str_contains($css, '.tableau-defilant--admin .tableau-commandes .montant { text-align: left; white-space: normal; }'));
-$check('diagnostic D1-L15-01 : grille flexible sans largeur fixe',
-    preg_match('/\\.diagnostic__grille\\s*\\{[^}]*grid-template-columns:\\s*repeat\\(auto-fit,\\s*minmax\\(min\\(100%,\\s*22rem\\),\\s*1fr\\)\\)/s', $css) === 1
-    && str_contains($css, '.diagnostic {') && str_contains($css, 'overflow-wrap: anywhere;'));
-$check('diagnostic : cartes et statuts empilés au breakpoint mobile',
-    preg_match('/@media \\(max-width: 35em\\)[\\s\\S]*?\\.diagnostic__controle\\s*\\{[^}]*grid-template-columns:\\s*minmax\\(0,\\s*1fr\\)/', $css) === 1
-    && str_contains($css, '.diagnostic__etat {'));
-$check('diagnostic : compteurs de synthèse adaptatifs jusqu’à 320 px',
-    str_contains($css, 'grid-template-columns: repeat(auto-fit, minmax(min(100%, 7rem), 1fr));')
-    && preg_match('/@media \\(max-width: 25em\\)[\\s\\S]*?\\.diagnostic__totaux\\s*\\{[^}]*grid-template-columns:\\s*minmax\\(0,\\s*1fr\\)/', $css) === 1);
-
 // ------------------------------------------------------------ 4. typographie
 echo "\n4. Typographie fluide et lisibilité\n";
 $clamps = substr_count($css, 'clamp(');

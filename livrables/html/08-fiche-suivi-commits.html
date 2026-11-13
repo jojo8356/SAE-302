@@ -113,7 +113,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li><a href="#e17-featclient-panier-serveur-commandes-compte-connexioninscription">É17 — feat(client): panier serveur, commandes, compte, connexion/inscription</a></li>
 <li><a href="#e18-featapp-couche-depots-produits-categories-clients-commandes-parametres">É18 — feat(app): couche dépôts — produits, catégories, clients, commandes, paramètres</a></li>
 <li><a href="#e19-featadmin-back-office-complet-produits-categories-commandes-stocks-equipe">É19 — feat(admin): back-office complet — produits, catégories, commandes, stocks, équipe</a></li>
-<li><a href="#e20-featweb-front-controleur-reecriture-durl-et-script-de-deploiement">É20 — feat(web): front contrôleur, réécriture d'URL et script de déploiement</a></li>
+<li><a href="#e20-featweb-front-controller-et-reecriture-durl">É20 — feat(web): front controller et réécriture d'URL</a></li>
 <li><a href="#e21-buildsandbox-runtime-php-82-wasm-serveur-http-et-chaine-de-tests-npm">É21 — build(sandbox): runtime PHP 8.2-WASM, serveur HTTP et chaîne de tests npm</a></li>
 <li><a href="#e22-buildperf-volumetrie-et-mesure-enf-01-gen_volumes-mesurer">É22 — build(perf): volumétrie et mesure ENF-01 (gen_volumes, mesurer)</a></li>
 <li><a href="#e23-testphp-moteur-engine_smoke-et-regles-de-gestion-t-01t-29-en-php">É23 — test(php): moteur (engine_smoke) et règles de gestion T-01…T-29 en PHP</a></li>
@@ -137,13 +137,12 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </nav>
 <h1 id="08-fiche-de-suivi-des-commits-rejeu-vers-un-nouveau-gitlab">08 — Fiche de suivi des commits (rejeu vers un nouveau GitLab)<a class="headerlink" href="#08-fiche-de-suivi-des-commits-rejeu-vers-un-nouveau-gitlab" title="Permanent link">#</a></h1>
 <blockquote>
-<p><strong>Objet.</strong> Reconstituer ce projet sur un <strong>nouveau dépôt GitLab</strong> avec un historique
-propre et complet : 32 commits racontant le projet dans l'ordre réel de construction,
-chacun avec un message de commit prêt à copier-coller et un périmètre de fichiers exact.
-Cette fiche et le script <code>scripts/rejeu_gitlab.py</code> sont générés du <strong>même plan</strong> :
-ils ne peuvent pas diverger. Le script vérifie en fin de parcours que la couverture
-des fichiers est exacte (aucun oublié, aucun doublon).</p>
-<p><strong>Note de portée (23/10/2026).</strong> Cette fiche et <code>scripts/rejeu_gitlab.py</code> sont un plan de rejeu proposé, pas une preuve d’historique GitLab réalisé ; ne pas l’exécuter ni le pousser vers le dépôt IUT sans demande explicite. Les entrées É5 (86 tâches) et É27 (GitLab CI) décrivent l’ancien périmètre prévu : la WBS courante compte 85 tâches et la CI GitLab a été retirée. Elles ne sont pas des exigences actives.</p>
+<p><strong>Objet.</strong> Décrire un scénario synthétique de rejeu du projet sur un <strong>nouveau dépôt GitLab</strong>,
+avec 32 commits proposés, des messages prêts à copier-coller et un périmètre de fichiers.
+Ce scénario est un plan, non un journal d'exécution ni une reconstitution certifiée de l'historique.
+La fiche et <code>scripts/rejeu_gitlab.py</code> partagent le même plan ; le mode de rejeu vers un dépôt externe
+ne doit pas être utilisé sans demande explicite et vérification préalable de sa compatibilité.</p>
+<p><strong>Note de portée (23/10/2026).</strong> Les entrées É5 (86 tâches) et É27 (GitLab CI) décrivent un périmètre historique ; la WBS courante compte 84 tâches et la CI GitLab a été retirée. Le scénario proposé ne comporte plus d’automatisation de mise en ligne. Aucune exécution de ce rejeu n’est revendiquée.</p>
 </blockquote>
 <h2 id="1-mode-demploi-express">1. Mode d'emploi express<a class="headerlink" href="#1-mode-demploi-express" title="Permanent link">#</a></h2>
 <pre><code class="language-bash"># 1) Créer sur GitLab le projet vide « minishop-sae » (NE PAS cocher « Initialize with a README »)
@@ -293,8 +292,8 @@ possible : c'est le §3.</p>
 </tr>
 <tr>
 <td>É20</td>
-<td><code>feat(web): front contrôleur, réécriture d'URL et script de déploiement</code></td>
-<td>3 fichiers</td>
+<td><code>feat(web): front controller et réécriture d'URL</code></td>
+<td>2 fichiers</td>
 <td>Le point d'entrée unique du Web</td>
 </tr>
 <tr>
@@ -643,17 +642,14 @@ RB-13 : seul un admin SUPER gère les comptes ; un compte client ne peut jamais 
 MESSAGE
 </code></pre>
 <p><strong>Jalon.</strong> <code>git tag -a v4-back -m "Back-office complet (produits, catégories, commandes, stocks, équipe)"</code></p>
-<h3 id="e20-featweb-front-controleur-reecriture-durl-et-script-de-deploiement">É20 — feat(web): front contrôleur, réécriture d'URL et script de déploiement<a class="headerlink" href="#e20-featweb-front-controleur-reecriture-durl-et-script-de-deploiement" title="Permanent link">#</a></h3>
-<p><strong>Contenu.</strong> Le point d'entrée unique du Web : toutes les URL passent par le routeur, et le script de déploiement installe la base MySQL de production.</p>
+<h3 id="e20-featweb-front-controller-et-reecriture-durl">É20 — feat(web): front controller et réécriture d'URL<a class="headerlink" href="#e20-featweb-front-controller-et-reecriture-durl" title="Permanent link">#</a></h3>
+<p><strong>Contenu.</strong> Le point d'entrée unique du Web : toutes les URL dynamiques passent par le routeur et les fichiers statiques sont servis par le serveur Web.</p>
 <pre><code class="language-bash">git add public/index.php \
-        public/.htaccess \
-        scripts/deploy.php
+        public/.htaccess
 git commit -F- &lt;&lt;'MESSAGE'
-feat(web): front contrôleur, réécriture d'URL et script de déploiement
+feat(web): front controller et réécriture d'URL
 
-public/index.php : déclaration de toutes les routes et boot de l'application ; .htaccess : toute requête passe par index.php, les fichiers statiques sont servis directement.
-
-scripts/deploy.php : déploiement MySQL (schéma + données initiales).
+public/index.php : déclaration des routes et démarrage de l'application ; .htaccess : les requêtes dynamiques passent par index.php, les fichiers statiques sont servis directement.
 MESSAGE
 </code></pre>
 <h3 id="e21-buildsandbox-runtime-php-82-wasm-serveur-http-et-chaine-de-tests-npm">É21 — build(sandbox): runtime PHP 8.2-WASM, serveur HTTP et chaîne de tests npm<a class="headerlink" href="#e21-buildsandbox-runtime-php-82-wasm-serveur-http-et-chaine-de-tests-npm" title="Permanent link">#</a></h3>
@@ -748,7 +744,7 @@ MESSAGE
 git commit -F- &lt;&lt;'MESSAGE'
 ci: chaîne GitLab CI (6 jobs) + miroir GitHub Actions (CT-09)
 
-Jobs : syntaxe PHP, schéma rejouable, 29 tests SQL, tests PHP (moteur + règles), génération des documents. Un pipeline vert prouve que les critères du barème sont tenus ; un job rouge bloque le merge.
+Jobs : syntaxe PHP, schéma rejouable, 28 tests SQL, tests PHP (moteur + règles), génération des documents. Un pipeline vert prouve que les critères du barème sont tenus ; un job rouge bloque le merge.
 
 Cible de notation : GitLab CI (ce fichier). Le workflow GitHub Actions est le miroir de développement, maintenu synchrone.
 MESSAGE

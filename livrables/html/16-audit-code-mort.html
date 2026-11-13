@@ -174,7 +174,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </table>
 <p>Le contrôle détecte les paramètres non cités et certaines variables locales <strong>écrites une seule fois</strong>, ainsi que les noms de fonctions/méthodes sans autre mention textuelle. Il ne prouve ni l’atteignabilité ni l’absence d’utilisation : références indirectes, portée, héritage, récursion, <code>include</code>, <code>compact</code>, variables dynamiques, réflexion, dépendances et appels externes limitent le résultat. Il ne détecte pas toutes les écritures répétées sans lecture, les variables au niveau fichier ou le code mort CSS/JS/SQL. Aucune suppression automatique.</p>
 <h2 id="inventaire-fichier-par-fichier">Inventaire fichier par fichier<a class="headerlink" href="#inventaire-fichier-par-fichier" title="Permanent link">#</a></h2>
-<p>Tailles en octets historiques mesurées lors du premier audit (<code>870dda5</code>) ; les fichiers ont pu être modifiés depuis. L’exception d’accès refusé a été ajoutée ensuite. Les deux lignes du diagnostic staging, ajoutées à l’inventaire depuis ce relevé, indiquent la taille mesurée lors de cette mise à jour. <code>—</code> : fichier non PHP. Les références listées sont des exemples, pas une liste exhaustive.</p>
+<p>Tailles en octets historiques mesurées lors du premier audit (<code>870dda5</code>) ; les fichiers ont pu être modifiés depuis. L’exception d’accès refusé a été ajoutée ensuite. <code>—</code> : fichier non PHP. Les références listées sont des exemples, pas une liste exhaustive.</p>
 <table>
 <thead>
 <tr>
@@ -244,12 +244,6 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <td style="text-align: right;">1857</td>
 <td style="text-align: right;">1</td>
 <td>Tableau de bord administratif : un seul point d’entrée. Références : <code>public/index.php</code>.</td>
-</tr>
-<tr>
-<td><code>app/Controller/Admin/DiagnosticAdminController.php</code></td>
-<td style="text-align: right;">16205</td>
-<td style="text-align: right;">6</td>
-<td>Diagnostic staging préliminaire, réservé à SUPER et explicitement activé; inventorie le runtime web sans connexion SQL ni lancement de commande. Références : <code>public/index.php</code>, <code>app/View/admin/diagnostic.php</code>.</td>
 </tr>
 <tr>
 <td><code>app/Controller/Admin/EquipeAdminController.php</code></td>
@@ -568,12 +562,6 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <td style="text-align: right;">4755</td>
 <td style="text-align: right;">0</td>
 <td>Vue HTML : tableau de bord ; pas de méthode attendue. Références : <code>app/Controller/Admin/DashboardController.php</code>.</td>
-</tr>
-<tr>
-<td><code>app/View/admin/diagnostic.php</code></td>
-<td style="text-align: right;">5893</td>
-<td style="text-align: right;">0</td>
-<td>Vue HTML du diagnostic staging : synthèse des contrôles et limites, sans données sensibles ni action sur la base; rendue par <code>app/Controller/Admin/DiagnosticAdminController.php</code>.</td>
 </tr>
 <tr>
 <td><code>app/View/admin/equipe.php</code></td>

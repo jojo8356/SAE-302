@@ -129,8 +129,9 @@ Le workflow automatisé du dépôt est défini dans [`ci.yml`](.github/workflows
 
 - [`docs/13-fiches-recette-uc.md`](docs/13-fiches-recette-uc.md) décrit les scénarios et leur déroulement.
 - [`docs/13-suivi-recette-uc.csv`](docs/13-suivi-recette-uc.csv) sert à suivre leur exécution.
+- La campagne manuelle LineServ, décrite dans [`docs/14-guide-lineserv.md`](docs/14-guide-lineserv.md), vise la base réelle prévue par le protocole ; elle n’a pas été jouée et aucune restauration n’a été effectuée. Les bases jetables de CI restent distinctes.
 
-Un scénario ne doit être marqué comme joué qu’après son exécution réelle. Les campagnes responsives multi-largeurs sont couvertes par les tests automatisés, pas par la checklist manuelle.
+Un scénario ne doit être marqué comme joué qu’après son exécution réelle. Les campagnes responsives multi-largeurs sont couvertes par les tests automatisés, pas par la checklist manuelle. Le dépôt ne fournit pas de procédure automatisée de déploiement.
 
 ## Documentation du projet
 
