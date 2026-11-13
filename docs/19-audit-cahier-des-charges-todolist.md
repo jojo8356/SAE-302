@@ -28,6 +28,10 @@ Ces statuts évaluent les **86 tâches de la WBS**, pas tout le travail ultérie
 
 Le relevé terminal communiqué montre `origin` configuré sur `https://iut-git.unice.fr/but2_s302/s302.git` et une requête `git ls-remote --heads origin` réussie. Les références visibles sont `chahd`, `dev`, `pj509414/dev` (SHA `bcca4d1d527b2ef859295a44dd1c65134aa93ab5`) et `pj509414/poc-auth-jwt` ; aucune référence `main` n’apparaît dans cette sortie. Cela prouve que le dépôt existe et est lisible depuis ce clone. L’utilisateur indique que les invitations sont bonnes ; aucune capture ou sortie GitLab ne les vérifie indépendamment. La visibilité privée, la protection de branche et l’envoi du courriel restent à confirmer.
 
+### Source officielle fournie par l’utilisateur — `sujetSAE.pdf`
+
+Le PDF officiel joint a été lu pour vérifier le critère GitLab. À la **page 8**, il demande d’envoyer par courriel la composition du groupe à `thanh-phuong.nguyen@univ-cotedazur.fr` avec l’objet `Composition SAE`, puis de communiquer l’adresse GitLab et de partager l’accès avec l’enseignante. La page 9 demande une contribution régulière sur GitLab et un README d’installation. Le PDF ne demande pas de dépôt privé, ne mentionne pas de branche `main` protégée, de blocage du push direct, de squash ou de suppression automatique de branche source. La mention « pages privées » à la page 5 concerne les pages de l’application, pas la visibilité du dépôt. Le privé et les règles de branche figurant dans la WBS/annexe GitLab sont donc des choix ajoutés par les documents de projet, pas des exigences vérifiées du sujet officiel.
+
 ### Vérifications rejouées dans cette sandbox
 
 - `bash tests/security/controles.sh` : **10/10** contrôles statiques réussis.
@@ -58,7 +62,7 @@ Les 200 scénarios des fiches de recette restent au statut `NON JOUÉ` dans le C
 
 | ID | État audité | Constat et preuve |
 |---|---|---|
-| `D1-L1-01` | `PARTIEL` | Relevé fourni : dépôt IUT accessible, branches visibles mais aucun `main` dans la sortie. L’utilisateur confirme que les invitations sont bonnes. La visibilité privée, la règle « pas de push direct » sur `main`, la désactivation du squash, la suppression automatique des branches source et le courriel de composition restent à confirmer. |
+| `D1-L1-01` | `PARTIEL` | Le sujet officiel (PDF fourni, p. 8) demande le courriel de composition et le partage de l’accès GitLab avec l’enseignante ; l’utilisateur confirme que les invitations sont bonnes et `git ls-remote` prouve que le dépôt est accessible. La preuve d’envoi du courriel manque. Le privé, la protection de `main`, le squash et la suppression des branches source ne figurent que dans la WBS/annexe du projet, pas dans le PDF officiel ; aucune branche `main` n’est visible dans la sortie fournie. |
 | `D1-L1-02` | `OK*` | `app/` et `public/` existent et sont peuplés ; le besoin d’un squelette vide est dépassé. |
 | `D1-L1-03` | `PARTIEL` | Le README décrit prérequis et installation, mais pas la composition et les rôles d’équipe demandés. Aucun nom/rôle n’est inventé pour compléter ce champ. |
 | `D1-L1-04` | `[!]` | L’issue GitLab épinglée ne peut pas être vérifiée depuis le dépôt GitHub. |
@@ -192,7 +196,7 @@ Cela contredit notamment les critères du CDC CT-02/CT-03 et les tâches D4-L9-0
 8. **Séquences UML :** cinq PNG/sources de séquence sont présents, mais le pointage §1.7 affirme six diagrammes rendus. Le minimum de quatre est satisfait ; c’est le compte annoncé et les deux diagrammes bonus qui sont à mettre en cohérence.
 9. **Dates/branche :** le CDC §16.4, `docs/10-todo-corrections.md` et `docs/17-audit-global-projet.md` portent des références au 28/10/2026 ; `docs/10` nomme aussi une autre branche (`arena/6e1d3706-sae-302`). Les exécutions CI consultées sont horodatées des 12 et 13/11/2026. Ces dates sont retranscrites comme métadonnées et ne servent pas à imposer une coupure chronologique non justifiée ; leur provenance et leur correspondance avec les branches restent à réconcilier.
 10. **Inventaire global (corrigé dans le présent suivi) :** `docs/17-audit-global-projet.md` annonçait 402 fichiers, alors que le CSV exhaustif et `git ls-tree` recensent 498 chemins au SHA audité. L’ajout de ce rapport porte le checkout courant à 499 fichiers ; le résumé global et l’inventaire ont été mis en cohérence.
-11. **Source officielle absente :** le CDC prétend pointer ligne par ligne `sujetSAE.pdf`, mais ce PDF n’est pas suivi dans le checkout. L’audit peut comparer CDC, WBS, todolist, code et tests ; il ne peut pas refaire le pointage contre le sujet original absent.
+11. **Source officielle hors dépôt :** `sujetSAE.pdf` n’est toujours pas suivi dans le checkout, mais la pièce jointe fournie par l’utilisateur a permis de vérifier le point GitLab (p. 8–9). Elle demande l’accès GitLab partagé et le courriel de composition, sans exiger la visibilité privée ni la protection de `main` ; garder cette source jointe au dossier de rendu si le pointage doit être reproductible.
 
 ## 6. Éléments de travail absents de la todolist d’origine
 
