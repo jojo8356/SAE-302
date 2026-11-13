@@ -726,10 +726,8 @@ Lecture de la table : les règles `RB-06`, `RB-11`, `RB-18` sont appliquées **d
 | Front | HTML5 sémantique, CSS natif (variables, grille/flexbox), **JavaScript ES2022 en modules**, pas de bundleur | React/Vue (build required, aucune plus-value pédagogique) |
 | Contrôle de version | **GitLab** (hébergé ou local), une MR par lot, merges **squash** interdits pour ne pas effacer les auteurs | GitHub (le sujet impose GitLab) |
 | CI | GitHub Actions : workflow versionné dans `.github/workflows/ci.yml` ; ses résultats ne valent pas preuve d’un pipeline GitLab | GitLab CI retirée du périmètre du CDC le 23/10/2026 |
-| Environnements | `dev` (LAMP local), tests automatisés sur une cible isolée (implémentation actuelle : base jetable `minishop_test`), `prod` (démo hébergée sur la machine de soutenance) | Ne jamais exécuter les tests SQL destructifs sur des données à préserver |
+| Environnements | `dev` (LAMP local), CI GitHub Actions, `prod` (LineServer : essais pré-démo puis réinitialisation avant la démonstration) | dev = prod (interdit : les hashes et le seed diffèrent) |
 | Contrainte de périmètre physique | **volumétrie retenue avec le client (arbitrage du 21/09/2026) : 200 produits au catalogue et 1 000 commandes par an** (soit ≈ 3 lignes par commande, ≈ 4 commandes/jour en moyenne, 40/jour en pointe). À cette échelle : aucune partition, aucun cache applicatif, aucun index FULLTEXT supplémentaire — mais des mesures faites sur un **jeu de données de taille réelle**, pas sur la démo : `scripts/gen_volumes.sh` (§15.3) | — (noté ici pour justifier l'absence d'infrastructure lourde) |
-
-La séparation de la cible de test et le nom `minishop_test` sont des choix d’implémentation et de sûreté du projet, **pas des exigences du sujet du professeur**. Le PDF demande un script SQL de génération de la base et un document de tests/validation, sans imposer de base séparée ni de convention de nommage.
 
 ### 7.3 Contraintes de données (précisions demandées au §12)
 
@@ -1019,7 +1017,7 @@ minishop/
 ├── scripts/{load_db.sh, run_sql_tests.sh, gen_volumes.sh, deploy.php, build-docs.sh}
 ├── tests/
 │   ├── sql/{manifest.txt, fixture.sql, t01…t26_*.sql, out/, rapport_tests_sql.md}
-│   ├── php/                      # PHPUnit : modèles, repositories (base de test), sécurité
+│   ├── php/                      # PHPUnit : modèles, repositories, sécurité
 │   ├── charge/reserver.sh        # C-01 : N tentatives simultanées sur M exemplaires (anti-survente)
 │   ├── perf/mesurer.sh           # ENF-01 : p95 par URL (ab ou curl)
 │   └── security/controles.sh     # 10 contrôles statiques bloquants en CI (§15.3)
@@ -1039,7 +1037,7 @@ minishop/
 | Conventions | Effet concret |
 |---|---|
 | `declare(strict_types=1);` + PSR-12 + `final class` par défaut | le type d'un `id` ne « glisse » pas de `string` à `int` ; pas d'héritage non désiré |
-| un repository = une agrégation, constructeur injectant `PDO` | testable avec une base de test, remplaçable par un double |
+| un repository = une agrégation, constructeur injectant `PDO` | dépendance testable et remplaçable par un double |
 | les contrôleurs ne **font jamais** `new PDO()` : le PDO vient du constructeur | la configuration des options PDO reste unique et ne peut pas être désactivée par étourderie (`ENF-09`) |
 | erreurs métier = exceptions du domaine (`StockInsuffisant`, `AccesRefuse`, `RegleInterdite`) | traduction centralisée en code HTTP + message utilisateur ; journalisation automatique (`SEC-13`) |
 | aucune `super-globale` dans le modèle | `$_SESSION` n'est lu que dans `Auth` et les contrôleurs |
@@ -1056,8 +1054,7 @@ minishop/
 | Environnement | Base | Données | Particularités |
 |---|---|---|---|
 | `dev` (poste de chaque étudiant) | `minishop` | seed complet + hashes de démo | `display_errors = On` **uniquement** en local |
-| `test` (CI GitHub Actions + harnais) | base jetable `minishop_test` (choix d’implémentation actuel, non exigé par le sujet) | seed + fixture de tests | recréée intégralement à chaque campagne ; `DB_TEST=minishop_test` |
-| `demo`/`prod` (machine de soutenance) | `minishop` | seed **sans** les mots de passe faibles, `sql/04` non joué | HTTPS auto-signé, `scripts/deploy.php` (copie + `load_db.sh` + droits `var/`) |
+| `demo`/`prod` (LineServer, machine de soutenance) | `minishop` | seed **sans** les mots de passe faibles, `sql/04` non joué | essais pré-démo sur l’instance réelle, puis réinitialisation avant la démonstration ; HTTPS auto-signé, `scripts/deploy.php` (copie + `load_db.sh` + droits `var/`) |
 
 Sauvegarde/restauration spécifiées (2 min d'exécution en démo) : `mysqldump --single-transaction --routines --triggers minishop > backup.sql` et restauration `mysql minishop < backup.sql` ; la présence de `--routines --triggers` est **nécessaire** ici : sans elle, une base restaurée perdrait la fonction, les 17 procédures et les 16 triggers, donc les règles `RB-03/06/11/18` cesseraient d'être appliquées silencieusement — c'est l'un des arguments à plaider en soutenance (§17.11).
 
@@ -1674,7 +1671,7 @@ grep -c 'verifieJeton' app/Controller/*.php
 | 4 | `NEW.prix_unitaire` ciblé par un `SELECT … INTO` dans un trigger | syntaxe non permise par MySQL/MariaDB | variable locale dans le trigger, puis `SET NEW.prix_unitaire = …` |
 | 5 | un `DELETE FROM ligne_commande` dont la sous-requête lisait `PRODUIT` échouait (trigger écrivant sur `PRODUIT`) | limitation « table déjà utilisée par la requête appelante » | en test : purge via table temporaire ; en application : la restitution passe par les triggers, jamais par une écriture croisée |
 | 6 | `CALL sp_search_products` renvoyait une erreur de syntaxe sur `LIMIT :lim` | les requêtes préparées MySQL/MariaDB n'acceptent que des marqueurs `?` | procédure réécrite en marqueurs positionnels avec nombre de paramètres constant |
-| 7 | `v_catalogue` renvoyait `ERROR 1356` (vue référencant une colonne inexistante) **uniquement dans la base de test** : le test `T-26` redéfinissait `v_etat_stock` à son profit et cassait la vue livrée dont dépend `v_catalogue` ; le même test révélait des `montant_total` non recalculés sur les commandes rescapées, parce que la fixture supprime des lignes par `DELETE` direct (la sous-requête sur `produit` est interdite par le trigger) et que `trg_ligne_decrement_stock` ne se déclenche donc pas | un test ne doit jamais redéfinir un objet de production ; un `DELETE` contournant la procédure contourne aussi ses effets de bord | `T-26` lit la vue livrée au lieu de la recréer ; la fixture normalise `montant_total = SUM(total_ligne)` en fin de purge ; **`T-27` (nouveau)** vérifie l'existence et la cohérence des 3 vues, y compris ce recalcul |
+| 7 | `v_catalogue` renvoyait `ERROR 1356` (vue référencant une colonne inexistante) **pendant la campagne de tests SQL** : le test `T-26` redéfinissait `v_etat_stock` à son profit et cassait la vue livrée dont dépend `v_catalogue` ; le même test révélait des `montant_total` non recalculés sur les commandes rescapées, parce que la fixture supprime des lignes par `DELETE` direct (la sous-requête sur `produit` est interdite par le trigger) et que `trg_ligne_decrement_stock` ne se déclenche donc pas | un test ne doit jamais redéfinir un objet de production ; un `DELETE` contournant la procédure contourne aussi ses effets de bord | `T-26` lit la vue livrée au lieu de la recréer ; la fixture normalise `montant_total = SUM(total_ligne)` en fin de purge ; **`T-27` (nouveau)** vérifie l'existence et la cohérence des 3 vues, y compris ce recalcul |
 
 Ces sept lignes sont **à montrer en soutenance** : elles prouvent que la base a été testée réellement (et pas seulement écrite), et chacune a un test qui la verrouille (§17.8).
 

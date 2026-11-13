@@ -2617,8 +2617,8 @@ sur la base, <strong>conçu</strong> = exigence spécifiée dont la vérificatio
 </tr>
 <tr>
 <td>Environnements</td>
-<td><code>dev</code> (LAMP local), tests automatisés sur une cible isolée (implémentation actuelle : base jetable <code>minishop_test</code>), <code>prod</code> (démo hébergée sur la machine de soutenance)</td>
-<td>Ne jamais exécuter les tests SQL destructifs sur des données à préserver</td>
+<td><code>dev</code> (LAMP local), CI GitHub Actions, <code>prod</code> (LineServer : essais pré-démo puis réinitialisation avant la démonstration)</td>
+<td>dev = prod (interdit : les hashes et le seed diffèrent)</td>
 </tr>
 <tr>
 <td>Contrainte de périmètre physique</td>
@@ -2627,7 +2627,6 @@ sur la base, <strong>conçu</strong> = exigence spécifiée dont la vérificatio
 </tr>
 </tbody>
 </table>
-<p>La séparation de la cible de test et le nom <code>minishop_test</code> sont des choix d’implémentation et de sûreté du projet, <strong>pas des exigences du sujet du professeur</strong>. Le PDF demande un script SQL de génération de la base et un document de tests/validation, sans imposer de base séparée ni de convention de nommage.</p>
 <h3 id="73-contraintes-de-donnees-precisions-demandees-au-12">7.3 Contraintes de données (précisions demandées au §12)<a class="headerlink" href="#73-contraintes-de-donnees-precisions-demandees-au-12" title="Permanent link">#</a></h3>
 <ul>
 <li><strong>Nommage</strong> : tables en MAJUSCULES au pluriel dans la conception (MLD) et en minuscules au pluriel dans le DDL MySQL (<code>client</code>, <code>produit</code>, <code>ligne_commande</code>) ; clés primaires <code>id_&lt;singulier&gt;</code> ; clés étrangères <code>&lt;table_référencée&gt;_id</code> ; index <code>idx_*</code>, uniques <code>uk_*</code>, FK <code>fk_*</code>, CHECK <code>ck_*</code>.</li>
@@ -3096,7 +3095,7 @@ validation → port offert ; assertion 5 : toute réécriture du port après val
 ├── scripts/{load_db.sh, run_sql_tests.sh, gen_volumes.sh, deploy.php, build-docs.sh}
 ├── tests/
 │   ├── sql/{manifest.txt, fixture.sql, t01…t26_*.sql, out/, rapport_tests_sql.md}
-│   ├── php/                      # PHPUnit : modèles, repositories (base de test), sécurité
+│   ├── php/                      # PHPUnit : modèles, repositories, sécurité
 │   ├── charge/reserver.sh        # C-01 : N tentatives simultanées sur M exemplaires (anti-survente)
 │   ├── perf/mesurer.sh           # ENF-01 : p95 par URL (ab ou curl)
 │   └── security/controles.sh     # 10 contrôles statiques bloquants en CI (§15.3)
@@ -3125,7 +3124,7 @@ validation → port offert ; assertion 5 : toute réécriture du port après val
 </tr>
 <tr>
 <td>un repository = une agrégation, constructeur injectant <code>PDO</code></td>
-<td>testable avec une base de test, remplaçable par un double</td>
+<td>dépendance testable et remplaçable par un double</td>
 </tr>
 <tr>
 <td>les contrôleurs ne <strong>font jamais</strong> <code>new PDO()</code> : le PDO vient du constructeur</td>
@@ -3169,16 +3168,10 @@ validation → port offert ; assertion 5 : toute réécriture du port après val
 <td><code>display_errors = On</code> <strong>uniquement</strong> en local</td>
 </tr>
 <tr>
-<td><code>test</code> (CI GitHub Actions + harnais)</td>
-<td>base jetable <code>minishop_test</code> (choix d’implémentation actuel, non exigé par le sujet)</td>
-<td>seed + fixture de tests</td>
-<td>recréée intégralement à chaque campagne ; <code>DB_TEST=minishop_test</code></td>
-</tr>
-<tr>
-<td><code>demo</code>/<code>prod</code> (machine de soutenance)</td>
+<td><code>demo</code>/<code>prod</code> (LineServer, machine de soutenance)</td>
 <td><code>minishop</code></td>
 <td>seed <strong>sans</strong> les mots de passe faibles, <code>sql/04</code> non joué</td>
-<td>HTTPS auto-signé, <code>scripts/deploy.php</code> (copie + <code>load_db.sh</code> + droits <code>var/</code>)</td>
+<td>essais pré-démo sur l’instance réelle, puis réinitialisation avant la démonstration ; HTTPS auto-signé, <code>scripts/deploy.php</code> (copie + <code>load_db.sh</code> + droits <code>var/</code>)</td>
 </tr>
 </tbody>
 </table>
@@ -4910,7 +4903,7 @@ grep -c 'verifieJeton' app/Controller/*.php
 </tr>
 <tr>
 <td>7</td>
-<td><code>v_catalogue</code> renvoyait <code>ERROR 1356</code> (vue référencant une colonne inexistante) <strong>uniquement dans la base de test</strong> : le test <code>T-26</code> redéfinissait <code>v_etat_stock</code> à son profit et cassait la vue livrée dont dépend <code>v_catalogue</code> ; le même test révélait des <code>montant_total</code> non recalculés sur les commandes rescapées, parce que la fixture supprime des lignes par <code>DELETE</code> direct (la sous-requête sur <code>produit</code> est interdite par le trigger) et que <code>trg_ligne_decrement_stock</code> ne se déclenche donc pas</td>
+<td><code>v_catalogue</code> renvoyait <code>ERROR 1356</code> (vue référencant une colonne inexistante) <strong>pendant la campagne de tests SQL</strong> : le test <code>T-26</code> redéfinissait <code>v_etat_stock</code> à son profit et cassait la vue livrée dont dépend <code>v_catalogue</code> ; le même test révélait des <code>montant_total</code> non recalculés sur les commandes rescapées, parce que la fixture supprime des lignes par <code>DELETE</code> direct (la sous-requête sur <code>produit</code> est interdite par le trigger) et que <code>trg_ligne_decrement_stock</code> ne se déclenche donc pas</td>
 <td>un test ne doit jamais redéfinir un objet de production ; un <code>DELETE</code> contournant la procédure contourne aussi ses effets de bord</td>
 <td><code>T-26</code> lit la vue livrée au lieu de la recréer ; la fixture normalise <code>montant_total = SUM(total_ligne)</code> en fin de purge ; <strong><code>T-27</code> (nouveau)</strong> vérifie l'existence et la cohérence des 3 vues, y compris ce recalcul</td>
 </tr>
