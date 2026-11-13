@@ -66,7 +66,10 @@ $classesEtat = [
                         <?php foreach ($section['controles'] as $controle): ?>
                             <?php
                             $etat = (string) ($controle['etat'] ?? 'info');
-                            $classeEtat = array_key_exists($etat, $libellesEtat) ? $etat : 'info';
+                            $classeEtat = 'info';
+                            if (array_key_exists($etat, $libellesEtat)) {
+                                $classeEtat = $etat;
+                            }
                             ?>
                             <li class="diagnostic__controle">
                                 <div class="diagnostic__texte">

@@ -138,7 +138,9 @@ $vueDiagnostic = (string) file_get_contents($racine . '/app/View/admin/diagnosti
 $check('contrôleur diagnostic vérifie aussi le rôle SUPER', str_contains($controleurDiagnostic, 'Auth::exigeSuper()'));
 $check('diagnostic désactivé par défaut et activable par drapeau explicite',
     str_contains($controleurDiagnostic, "Env::get('MINISHOP_STAGING_DIAGNOSTIC', '0') === '1'")
-    && str_contains($controleurDiagnostic, '$sections = $actif ? $this->diagnostics() : [];'));
+    && str_contains($controleurDiagnostic, '$sections = [];')
+    && str_contains($controleurDiagnostic, 'if ($actif)')
+    && str_contains($controleurDiagnostic, '$sections = $this->diagnostics();'));
 $processusInterdit = preg_match('/\\b(?:shell_exec|exec|system|passthru|proc_open|popen)\\s*\\(/i', $controleurDiagnostic) === 1;
 $chargementDeploy = preg_match('/\\b(?:include|require)(?:_once)?\\s*[^;]*deploy\\.php/i', $controleurDiagnostic) === 1;
 $check('diagnostic sans lancement de deploy.php ni de sous-processus', !$processusInterdit && !$chargementDeploy);
