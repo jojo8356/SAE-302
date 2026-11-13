@@ -12,8 +12,8 @@
 
 | Statut d’audit | Nombre sur 86 | Sens |
 |---|---:|---|
-| `OK*` | 52 | Livrable présent et preuve automatisée/structurelle repérée dans le dépôt ou la CI. **Ce n’est pas une certification absolue** ; le périmètre des preuves CI et l’échec structurel relevé lors de l’ajout du rapport sont explicités ci-dessous. |
-| `PARTIEL` | 22 | Une partie existe, mais un critère, une intégration, une preuve ou une cohérence reste à résoudre. |
+| `OK*` | 53 | Livrable présent et preuve automatisée/structurelle repérée dans le dépôt ou la CI. **Ce n’est pas une certification absolue** ; le périmètre des preuves CI et l’échec structurel relevé lors de l’ajout du rapport sont explicités ci-dessous. |
+| `PARTIEL` | 21 | Une partie existe, mais un critère, une intégration, une preuve ou une cohérence reste à résoudre. |
 | `ÉCART` | 6 | Écart explicite entre la tâche/contrainte du CDC et l’application présente. |
 | `[!]` | 6 | Tâche humaine, externe, mesure cible ou état impossible à vérifier depuis ce checkout. |
 | **Total** | **86** | Les tâches non `OK*` empêchent de conclure à une réalisation à 100 %. |
@@ -64,13 +64,13 @@ Les 200 scénarios des fiches de recette restent au statut `NON JOUÉ` dans le C
 |---|---|---|
 | `D1-L1-01` | `PARTIEL` | Le sujet officiel (PDF fourni, p. 8) demande le courriel de composition et le partage de l’accès GitLab avec l’enseignante ; `git ls-remote` prouve que le dépôt est accessible et la capture « Membres » montre l’enseignante comme membre direct `Reporter`. La preuve d’envoi du courriel manque, donc la tâche reste `PARTIEL`. Le privé, la protection de `main`, le squash et la suppression des branches source sont des ajouts de la WBS/annexe, pas des exigences du PDF officiel. |
 | `D1-L1-02` | `OK*` | `app/` et `public/` existent et sont peuplés ; le besoin d’un squelette vide est dépassé. |
-| `D1-L1-03` | `PARTIEL` | Le README à la racine décrit les prérequis et l’installation, mais ne présente pas encore la composition nommée ni les responsabilités d’équipe/RACI. La capture GitLab « Membres » identifie les deux étudiants du dépôt : Johan Polsinelli (`Owner`) et Chahd Gouiaa (`Developer`) ; l’enseignante NGUYEN Thanh-Phuong y apparaît comme `Reporter`. Ces rôles sont des permissions GitLab, pas une attribution RACI : inscrire les membres et leurs responsabilités réelles dans le README avant de valider la tâche. |
+| `D1-L1-03` | `OK*` | Le README à la racine présente désormais les deux membres nommés et leurs responsabilités opérationnelles A/B, d’après l’adaptation à deux personnes de `docs/06-todolist.md`, en distinguant ces rôles des permissions GitLab (`Owner` pour Johan Polsinelli, `Developer` pour Chahd Gouiaa). L’enseignante NGUYEN Thanh-Phuong (`Reporter`) est indiquée séparément. Le livrable est présent ; sa lecture effective par chaque membre n’est pas vérifiable depuis le dépôt. |
 | `D1-L1-04` | `[!]` | L’issue GitLab épinglée ne peut pas être vérifiée depuis le dépôt GitHub. |
 | `D1-L1-05` | `PARTIEL` | Charte/annexe GitLab et modèles de MR présents ; l’usage effectif des MR et les revues croisées ne sont pas prouvés par ces fichiers. |
 | `D1-L1-06` | `PARTIEL` | `.gitlab-ci.yml` existe, mais aucune exécution GitLab n’est attestée ici. La CI GitHub est une autre chaîne et ne prouve pas le pipeline IUT. |
 | `D1-L1-07` | `[!]` | Réunion de cadrage et décisions d’équipe : aucune preuve de compte rendu ou de validation humaine. |
 | `D1-L15-01` | `PARTIEL` | `scripts/deploy.php` est présent ; un déploiement réel avec vérification des comptes/hashes sur la cible n’est pas prouvé. |
-| `D1-L15-02` | `OK*` | README final présent ; `scripts/build-docs.sh` et l’aide des comptes de démonstration existent. La composition d’équipe reste à renseigner séparément. |
+| `D1-L15-02` | `OK*` | README final présent ; `scripts/build-docs.sh` et l’aide des comptes de démonstration existent. La composition et la répartition opérationnelle A/B sont maintenant indiquées dans le README. |
 | `D1-L15-03` | `[!]` | Aucun tag n’est présent dans les références de ce checkout ; nettoyage et tag final sur le dépôt IUT non vérifiables sans accès/demande explicite. |
 
 ### D2 — Cahier des charges et UML
@@ -78,7 +78,7 @@ Les 200 scénarios des fiches de recette restent au statut `NON JOUÉ` dans le C
 | ID | État audité | Constat et preuve |
 |---|---|---|
 | `D2-L2-01` | `PARTIEL` | §1–§2 existent, mais les dates et les affirmations d’état ne sont pas réconciliées entre les documents (voir §5). |
-| `D2-L2-02` | `PARTIEL` | Acteurs et RACI documentés ; le CDC/WBS annonce 3 développeurs tandis que la todolist annonce 2. L’équipe réelle n’est pas attestée. |
+| `D2-L2-02` | `PARTIEL` | Le README et la capture GitLab identifient désormais les deux étudiants (Johan Polsinelli et Chahd Gouiaa) ; la todolist à deux personnes précise leur répartition opérationnelle A/B. Le CDC/WBS initial conserve toutefois un RACI à trois personnes, et les charges/plans restent contradictoires : réconcilier ces documents. |
 | `D2-L2-03` | `PARTIEL` | Matrice fonctionnelle présente, mais le CDC, les annexes de tests et les nouvelles fonctionnalités ne forment pas encore une trace unique et sans contradictions. |
 | `D2-L2-04` | `PARTIEL` | Contraintes écrites, mais le CDC présente MySQL/PDO comme contrainte alors que le README et `StorageDriver` indiquent JSON par défaut et SQL optionnel / en migration. |
 | `D2-L2-05` | `PARTIEL` | Mesures de sécurité détaillées, mais la numérotation SEC et les preuves ne sont pas alignées partout ; SEC-14 est notamment cité sans fiche de contrôle dédiée. |
@@ -189,7 +189,7 @@ Cela contredit notamment les critères du CDC CT-02/CT-03 et les tâches D4-L9-0
 1. **Comptage des tâches :** l’en-tête de `docs/06` annonce « 86 tâches terminées, 14 partielles, 34 à faire », soit **134** statuts, alors que le tableau détaillé contient 86 identifiants uniques.
 2. **Heures :** l’en-tête indique 169 h faites / 191 h restantes ; §1.1 indique 162 h / 198 h. Les heures restantes par personne font 93 + 105 = 198, tandis que §8 donne 95 + 97 = 192. Les heures ne se réconcilient donc pas.
 3. **Progression D4 périmée :** `docs/06` affiche encore 0/146 h et 0 %, malgré l’application complète présente. `scripts/load_db.sh`, `tests/security/controles.sh` et le diaporama existent également alors que leurs lignes sont encore « à faire »/« partiel ».
-4. **Équipe :** `docs/05` et §13 du CDC planifient 3 développeurs / 360 h ; `docs/06` passe à 2 développeurs mais conserve 360 h et des tableaux de charge qui ne concordent pas. Il faut documenter le choix réel et recalculer les charges, pas supposer la composition.
+4. **Équipe :** le README identifie maintenant Johan Polsinelli et Chahd Gouiaa et explicite la répartition A/B de l’équipe à deux de `docs/06`. `docs/05` et §13 du CDC planifient encore 3 développeurs / 360 h ; `docs/06` passe à 2 sans recalculer les 360 h ni réconcilier ses tableaux de charge. Il reste à harmoniser la RACI initiale et les charges ; la composition réelle n’est plus à supposer.
 5. **Exigences non fonctionnelles :** §4.2 et l’annexe 17.3 du CDC annoncent `ENF-01…ENF-16`, alors que `docs/annexes/annexe-enf.md` contient `ENF-01…ENF-22`.
 6. **Sécurité :** `SEC-14` est cité dans §8.9, mais n’a pas de fiche dédiée dans la séquence §8.1–§8.7 ni de test identifié dans la stratégie de tests. Clarifier si cet identifiant est une exigence, puis lui attribuer un contrôle.
 7. **Règles métier :** §6.1 annonce 8 règles complémentaires, puis l’encadré en annonce 9 ; `RB-09` et `RB-12…RB-20` représentent dix identifiants. Le partage « imposées / ajoutées » doit être recalculé.

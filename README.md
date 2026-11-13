@@ -8,6 +8,19 @@
 
 > **Périmètre : maquette scolaire.** Les paiements et les livraisons sont simulés. Le formulaire de contact n’envoie pas de courriel. Le projet n’est pas destiné à traiter de vraies ventes ni à être déployé tel quel en production.
 
+## Équipe et responsabilités
+
+Le groupe de réalisation comprend deux étudiants. La répartition opérationnelle A/B ci-dessous reprend l’adaptation à deux développeurs de [`docs/06-todolist.md`](docs/06-todolist.md). Les responsabilités du projet et les permissions GitLab sont indiquées séparément.
+
+| Membre | Responsabilités du projet (RACI) | Accès au dépôt GitLab IUT |
+|---|---|---|
+| **Johan Polsinelli** | **A — pilotage et intégration** : dépôt/CI, backend et base de données, tests, déploiement et support de soutenance ; `R/A` sur ses lots, `C` sur les lots de B. | `Owner` |
+| **Chahd Gouiaa** | **B — développement applicatif** : front-office, vues, sécurité, JavaScript et répétitions ; `R/A` sur ses lots, `C` sur les lots de A. | `Developer` |
+
+Les deux membres réalisent des relectures croisées des MR (`R`). `R` = réalise, `A` = assume la responsabilité finale, `C` = consulté. Les lettres A/B désignent la répartition opérationnelle de l’équipe à deux ; elles ne sont pas les permissions GitLab. Le CDC initial prévoit trois personnes (`docs/01-cahier-des-charges-MiniShop.md`, §3.3) : cette répartition explicite l’adaptation au groupe réel de deux indiqué dans la todolist.
+
+**Encadrement** — NGUYEN Thanh-Phuong, enseignante référente, est membre directe du projet GitLab IUT avec le rôle `Reporter` ; elle ne fait pas partie du groupe étudiant.
+
 ## Fonctionnalités
 
 - **Catalogue public** : catégories, recherche, filtres, fiches produit et gestion du panier.
