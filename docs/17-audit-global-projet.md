@@ -2,7 +2,7 @@
 
 **Date de rédaction initiale :** 28 octobre 2026 · **Périmètre de l’inventaire actualisé :** fichiers versionnés du checkout courant, pas la copie locale ni les fichiers ignorés de l’utilisateur. [Inventaire exhaustif des chemins](17-inventaire-projet.csv) · [Revue initiale du code potentiellement inutilisé](16-audit-code-mort.md) · [Todolist](10-todo-corrections.md).
 
-L’inventaire couvre **537 chemins versionnés** dans le périmètre révisé : 498 au SHA de base audité (`b54ab9833eb5e7d5116a21a1f21cb3b7c845eb31`), moins `.gitlab-ci.yml`, plus quatre rapports (`docs/19`–`docs/22`) et 36 rendus HTML/PDF/DOCX ajoutés pour les documents qui n’avaient pas encore ces formats versionnés. Le total précédent de **402** ne correspondait pas au CSV exhaustif ni au nombre de chemins retournés par `git ls-tree`; il est remplacé. Le contrôle structurel confirme la présence et la non-vacuité des fichiers suivis, sans certifier leur contenu.
+L’inventaire couvre **539 chemins versionnés** dans le périmètre révisé : 498 au SHA de base audité (`b54ab9833eb5e7d5116a21a1f21cb3b7c845eb31`), moins `.gitlab-ci.yml`, plus quatre rapports (`docs/19`–`docs/22`), 36 rendus HTML/PDF/DOCX ajoutés pour les documents qui n’avaient pas encore ces formats versionnés et les deux fichiers de la page de diagnostic staging. Le total précédent de **402** ne correspondait pas au CSV exhaustif ni au nombre de chemins retournés par `git ls-tree`; il est remplacé. Le contrôle structurel confirme la présence et la non-vacuité des fichiers suivis, sans certifier leur contenu.
 
 Cet audit combine un inventaire automatisé de tout le dépôt et une revue manuelle ciblée sur les anomalies et risques découverts. Il **ne démontre pas l’absence de tous les défauts** et n’est pas une lecture fonctionnelle ligne par ligne de chaque livrable. L’inventaire indique des contrôles de structure, pas une certification du contenu.
 
@@ -39,7 +39,7 @@ Cet audit combine un inventaire automatisé de tout le dépôt et une revue manu
 
 ## Couverture par famille
 
-- `app/`, `public/` : inventaire détaillé des 120 fichiers dans `docs/16-audit-code-mort.md`, revue ciblée des 11 candidats, contrats PHP, sécurité, parcours HTTP WASM. Le rendu visuel réel et tous les chemins ne sont pas démontrés.
+- `app/`, `public/` : inventaire détaillé des 147 fichiers dans `docs/16-audit-code-mort.md`, revue ciblée des 11 candidats, contrats PHP, sécurité, parcours HTTP WASM. Le rendu visuel réel et tous les chemins ne sont pas démontrés.
 - `scripts/`, `tests/`, CI et configuration racine : examen ciblé des runners, du provisionnement, de l’E2E, des tests SQL et des garde-fous Git ; syntaxe des scripts couverte par les contrôles ci-dessous. Certains outils d’installation, sauvegarde, déploiement, capture et performance peuvent modifier des données : usage sur environnement isolé, après lecture de leurs options.
 - `sql/`, `tests/sql/` : fichiers inventoriés, scénarios et appels dangereux examinés. Les SQL directs peuvent réinitialiser leurs bases. La campagne SQL réelle n’a pas été lancée dans cette sandbox ; voir le résultat de la CI MySQL isolée, qui ne remplace pas MariaDB ni LineServ.
 - `data/`, `uploads/`, ressources : fichiers inventoriés, JSON et SVG analysés structurellement. Les données de démo ne doivent pas être utilisées comme comptes actifs en production. Aucun contenu de compte n’est reproduit ici ; fichiers locaux ignorés et non suivis hors périmètre.

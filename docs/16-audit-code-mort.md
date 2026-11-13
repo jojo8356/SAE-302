@@ -40,7 +40,7 @@ Le contrôle détecte les paramètres non cités et certaines variables locales 
 
 ## Inventaire fichier par fichier
 
-Tailles en octets historiques mesurées lors du premier audit (`870dda5`) ; les fichiers ont pu être modifiés depuis. L’exception d’accès refusé a été ajoutée ensuite. `—` : fichier non PHP. Les références listées sont des exemples, pas une liste exhaustive.
+Tailles en octets historiques mesurées lors du premier audit (`870dda5`) ; les fichiers ont pu être modifiés depuis. L’exception d’accès refusé a été ajoutée ensuite. Les deux lignes du diagnostic staging, ajoutées à l’inventaire depuis ce relevé, indiquent la taille mesurée lors de cette mise à jour. `—` : fichier non PHP. Les références listées sont des exemples, pas une liste exhaustive.
 
 | Fichier | Octets | Fonctions avec corps | Rôle et indice d’utilisation |
 |---|---:|---:|---|
@@ -54,6 +54,7 @@ Tailles en octets historiques mesurées lors du premier audit (`870dda5`) ; les 
 | `app/Controller/Admin/CategorieAdminController.php` | 2845 | 4 | Gestion des catégories. Références : `public/index.php`. |
 | `app/Controller/Admin/CommandeAdminController.php` | 5062 | 3 | Gestion des commandes et de leurs statuts. Références : `public/index.php`. |
 | `app/Controller/Admin/DashboardController.php` | 1857 | 1 | Tableau de bord administratif : un seul point d’entrée. Références : `public/index.php`. |
+| `app/Controller/Admin/DiagnosticAdminController.php` | 16205 | 6 | Diagnostic staging préliminaire, réservé à SUPER et explicitement activé; inventorie le runtime web sans connexion SQL ni lancement de commande. Références : `public/index.php`, `app/View/admin/diagnostic.php`. |
 | `app/Controller/Admin/EquipeAdminController.php` | 3712 | 3 | Administration des comptes de l’équipe. Références : `public/index.php`. |
 | `app/Controller/Admin/ParametreAdminController.php` | 2914 | 2 | Consultation et modification des paramètres métier. Références : `public/index.php`. |
 | `app/Controller/Admin/ProduitAdminController.php` | 5421 | 8 | Création et modification des produits. Références : `public/index.php`. |
@@ -107,6 +108,7 @@ Tailles en octets historiques mesurées lors du premier audit (`870dda5`) ; les 
 | `app/View/admin/commande_detail.php` | 3467 | 0 | Vue HTML : détail et actions d’une commande admin ; pas de méthode attendue. Références : `app/Controller/Admin/CommandeAdminController.php`. |
 | `app/View/admin/commandes.php` | 2598 | 0 | Vue HTML : liste des commandes admin ; pas de méthode attendue. Références : `app/Controller/Admin/CommandeAdminController.php`, `app/View/admin/commande_detail.php`, `app/View/admin/dashboard.php`…. |
 | `app/View/admin/dashboard.php` | 4755 | 0 | Vue HTML : tableau de bord ; pas de méthode attendue. Références : `app/Controller/Admin/DashboardController.php`. |
+| `app/View/admin/diagnostic.php` | 5785 | 0 | Vue HTML du diagnostic staging : synthèse des contrôles et limites, sans données sensibles ni action sur la base; rendue par `app/Controller/Admin/DiagnosticAdminController.php`. |
 | `app/View/admin/equipe.php` | 2792 | 0 | Vue HTML : équipe et rôles ; pas de méthode attendue. Références : `app/Controller/Admin/EquipeAdminController.php`, `app/View/layout.php`, `public/index.php`…. |
 | `app/View/admin/parametres.php` | 2556 | 0 | Vue HTML : paramètres métier ; pas de méthode attendue. Références : `app/Controller/Admin/ParametreAdminController.php`, `app/View/layout.php`, `public/index.php`…. |
 | `app/View/admin/produit_form.php` | 4264 | 0 | Vue HTML : formulaire produit ; pas de méthode attendue. Références : `app/Controller/Admin/ProduitAdminController.php`. |

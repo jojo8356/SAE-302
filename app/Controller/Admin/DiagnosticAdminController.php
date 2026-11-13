@@ -29,7 +29,10 @@ final class DiagnosticAdminController extends Controller
         // Drapeau absent par défaut : n'afficher les vérifications d'hôte que
         // lorsque l'équipe a explicitement activé cette page sur le staging.
         $actif = Env::get('MINISHOP_STAGING_DIAGNOSTIC', '0') === '1';
-        $sections = $actif ? $this->diagnostics() : [];
+        $sections = [];
+        if ($actif) {
+            $sections = $this->diagnostics();
+        }
         $compteurs = ['ok' => 0, 'attention' => 0, 'bloque' => 0, 'manuel' => 0, 'info' => 0];
 
         foreach ($sections as $section) {
@@ -59,11 +62,46 @@ final class DiagnosticAdminController extends Controller
         };
 
         $pdoDisponible = class_exists(\PDO::class);
-        $pdoDrivers = $pdoDisponible ? \PDO::getAvailableDrivers() : [];
+        $pdoDrivers = [];
+        if ($pdoDisponible) {
+            $pdoDrivers = \PDO::getAvailableDrivers();
+        }
+        $pdoMysqlDisponible = in_array('mysql', $pdoDrivers, true);
+        $versionPhpSuffisante = PHP_VERSION_ID >= 80200;
         $bcryptDisponible = function_exists('password_hash')
             && function_exists('password_algos')
             && defined('PASSWORD_BCRYPT')
             && in_array(PASSWORD_BCRYPT, password_algos(), true);
+        $randomBytesDisponible = function_exists('random_bytes');
+
+        $etatPhp = 'bloque';
+        if ($versionPhpSuffisante) {
+            $etatPhp = 'ok';
+        }
+        $etatPdo = 'bloque';
+        $detailPdo = 'Extension PDO absente du serveur web.';
+        if ($pdoDisponible) {
+            $etatPdo = 'ok';
+            $detailPdo = 'Extension PDO disponible dans le serveur web.';
+        }
+        $etatPdoMysql = 'bloque';
+        $detailPdoMysql = 'Le pilote MySQL de PDO n’est pas chargé dans le serveur web.';
+        if ($pdoMysqlDisponible) {
+            $etatPdoMysql = 'ok';
+            $detailPdoMysql = 'Le pilote MySQL de PDO est chargé dans le serveur web.';
+        }
+        $etatBcrypt = 'bloque';
+        $detailBcrypt = 'PASSWORD_BCRYPT n’est pas disponible dans ce runtime.';
+        if ($bcryptDisponible) {
+            $etatBcrypt = 'ok';
+            $detailBcrypt = 'PASSWORD_BCRYPT est disponible.';
+        }
+        $etatRandomBytes = 'bloque';
+        $detailRandomBytes = 'random_bytes() est indisponible.';
+        if ($randomBytesDisponible) {
+            $etatRandomBytes = 'ok';
+            $detailRandomBytes = 'random_bytes() est disponible.';
+        }
         $racine = MINISHOP_ROOT;
         $scriptDeploy = $racine . '/scripts/deploy.php';
         $configLegacy = $racine . '/app/Config/env.php';
@@ -85,65 +123,73 @@ final class DiagnosticAdminController extends Controller
         $runtime = [
             $controle(
                 'PHP du serveur web',
-                PHP_VERSION_ID >= 80200 ? 'ok' : 'bloque',
+                $etatPhp,
                 'PHP ' . PHP_VERSION . ' · SAPI ' . PHP_SAPI . '. La version du PHP CLI n’est pas vérifiée par cette page.',
             ),
             $controle(
                 'PDO',
-                $pdoDisponible ? 'ok' : 'bloque',
-                $pdoDisponible ? 'Extension PDO disponible dans le serveur web.' : 'Extension PDO absente du serveur web.',
+                $etatPdo,
+                $detailPdo,
             ),
             $controle(
                 'PDO MySQL (pdo_mysql)',
-                in_array('mysql', $pdoDrivers, true) ? 'ok' : 'bloque',
-                in_array('mysql', $pdoDrivers, true)
-                    ? 'Le pilote MySQL de PDO est chargé dans le serveur web.'
-                    : 'Le pilote MySQL de PDO n’est pas chargé dans le serveur web.',
+                $etatPdoMysql,
+                $detailPdoMysql,
             ),
             $controle(
                 'Hachage bcrypt',
-                $bcryptDisponible ? 'ok' : 'bloque',
-                $bcryptDisponible ? 'PASSWORD_BCRYPT est disponible.' : 'PASSWORD_BCRYPT n’est pas disponible dans ce runtime.',
+                $etatBcrypt,
+                $detailBcrypt,
             ),
             $controle(
                 'Générateur aléatoire cryptographique',
-                function_exists('random_bytes') ? 'ok' : 'bloque',
-                function_exists('random_bytes') ? 'random_bytes() est disponible.' : 'random_bytes() est indisponible.',
+                $etatRandomBytes,
+                $detailRandomBytes,
             ),
         ];
 
         foreach (['json', 'mbstring', 'intl'] as $extension) {
             $chargee = extension_loaded($extension);
+            if ($chargee) {
+                $etatExtension = 'ok';
+                $detailExtension = 'Extension chargée dans le serveur web.';
+            } else {
+                $etatExtension = 'bloque';
+                $detailExtension = 'Extension absente du serveur web.';
+            }
             $runtime[] = $controle(
                 'Extension PHP ' . $extension,
-                $chargee ? 'ok' : 'bloque',
-                $chargee ? 'Extension chargée dans le serveur web.' : 'Extension absente du serveur web.',
+                $etatExtension,
+                $detailExtension,
             );
         }
 
-        $runtime[] = $controle(
-            'scripts/deploy.php',
-            $scriptLisible ? 'ok' : 'bloque',
-            $scriptLisible
-                ? 'Le fichier est présent et lisible par le serveur web; cela ne prouve pas son exécution par PHP CLI.'
-                : 'Le fichier est absent ou illisible depuis le serveur web.',
-        );
+        if ($scriptLisible) {
+            $etatScript = 'ok';
+            $detailScript = 'Le fichier est présent et lisible par le serveur web; cela ne prouve pas son exécution par PHP CLI.';
+        } else {
+            $etatScript = 'bloque';
+            $detailScript = 'Le fichier est absent ou illisible depuis le serveur web.';
+        }
+        $runtime[] = $controle('scripts/deploy.php', $etatScript, $detailScript);
 
+        if ($configLegacyPresente) {
+            $etatConfigLegacy = 'attention';
+            $detailConfigLegacy = 'Fichier présent : si son inclusion retourne un tableau, scripts/deploy.php peut en prendre les clés db_host, db_port, db_name, db_user et db_pass avant les variables du processus. Vérifier la cible staging hors de cette page; ce contrôle n’inspecte ni n’affiche ses valeurs. Le chargement normal de MiniShop peut lire ce fichier pour l’authentification.';
+        } else {
+            $etatConfigLegacy = 'ok';
+            $detailConfigLegacy = 'Fichier absent : aucun remplacement par ce fichier PHP. La configuration du processus CLI reste à vérifier.';
+        }
+        if ($dotenvPresent) {
+            $etatDotenv = 'attention';
+            $detailDotenv = 'Fichier présent, mais scripts/deploy.php ne le lit pas. Ne pas supposer qu’il configure la commande CLI.';
+        } else {
+            $etatDotenv = 'info';
+            $detailDotenv = 'Aucun fichier .env détecté à la racine applicative; des variables CLI peuvent néanmoins être définies séparément.';
+        }
         $configuration = [
-            $controle(
-                'Priorité de app/Config/env.php',
-                $configLegacyPresente ? 'attention' : 'ok',
-                $configLegacyPresente
-                    ? 'Fichier présent : si son inclusion retourne un tableau, scripts/deploy.php peut en prendre les clés db_host, db_port, db_name, db_user et db_pass avant les variables du processus. Vérifier la cible staging hors de cette page; ce contrôle n’inspecte ni n’affiche ses valeurs. Le chargement normal de MiniShop peut lire ce fichier pour l’authentification.'
-                    : 'Fichier absent : aucun remplacement par ce fichier PHP. La configuration du processus CLI reste à vérifier.',
-            ),
-            $controle(
-                'Fichier .env',
-                $dotenvPresent ? 'attention' : 'info',
-                $dotenvPresent
-                    ? 'Fichier présent, mais scripts/deploy.php ne le lit pas. Ne pas supposer qu’il configure la commande CLI.'
-                    : 'Aucun fichier .env détecté à la racine applicative; des variables CLI peuvent néanmoins être définies séparément.',
-            ),
+            $controle('Priorité de app/Config/env.php', $etatConfigLegacy, $detailConfigLegacy),
+            $controle('Fichier .env', $etatDotenv, $detailDotenv),
         ];
 
         $hostPresent = self::variableRenseignee('DB_HOST');
@@ -166,9 +212,11 @@ final class DiagnosticAdminController extends Controller
                 'Si elle est également absente du PHP CLI et de app/Config/env.php, scripts/deploy.php utilise 127.0.0.1 par défaut.',
             ),
         );
-        $detailPortPresent = $portValide
-            ? 'DB_PORT paraît valide dans le processus web; sa valeur est masquée et le PHP CLI peut différer.'
-            : 'DB_PORT est présent, mais son format n’est pas valide dans le processus web; le PHP CLI peut différer.';
+        if ($portValide) {
+            $detailPortPresent = 'DB_PORT paraît valide dans le processus web; sa valeur est masquée et le PHP CLI peut différer.';
+        } else {
+            $detailPortPresent = 'DB_PORT est présent, mais son format n’est pas valide dans le processus web; le PHP CLI peut différer.';
+        }
         $configuration[] = $controle(
             'DB_PORT',
             self::etatVariable($portValide, $configLegacyPresente),
@@ -179,9 +227,11 @@ final class DiagnosticAdminController extends Controller
                 'Si elle est également absente du PHP CLI et de app/Config/env.php, scripts/deploy.php utilise le port 3306 par défaut.',
             ),
         );
-        $detailBasePresente = count($baseSources) > 1
-            ? 'DB et DB_NAME sont tous deux présents dans le processus web; scripts/deploy.php donne priorité à DB. Les valeurs sont masquées.'
-            : 'DB ou DB_NAME est présent dans le processus web; la valeur est masquée et la cible staging reste à confirmer.';
+        if (count($baseSources) > 1) {
+            $detailBasePresente = 'DB et DB_NAME sont tous deux présents dans le processus web; scripts/deploy.php donne priorité à DB. Les valeurs sont masquées.';
+        } else {
+            $detailBasePresente = 'DB ou DB_NAME est présent dans le processus web; la valeur est masquée et la cible staging reste à confirmer.';
+        }
         $configuration[] = $controle(
             'DB ou DB_NAME',
             self::etatVariable($baseSources !== [], $configLegacyPresente),
@@ -203,12 +253,13 @@ final class DiagnosticAdminController extends Controller
             ),
         );
 
-        $detailMotDePassePresent = $aliasMotDePassePresent
-            ? 'DB_PASS est présent; DB_PASSWORD ne le remplace pas. Les valeurs sont masquées et le PHP CLI peut différer.'
-            : 'DB_PASS est présent dans le processus web; valeur masquée, à vérifier séparément dans le PHP CLI.';
-        $detailMotDePasseAbsent = $aliasMotDePassePresent
-            ? 'DB_PASSWORD seul est présent, mais scripts/deploy.php attend DB_PASS (sauf configuration PHP prioritaire). La valeur n’est jamais affichée.'
-            : 'Si elle est également absente du PHP CLI et de app/Config/env.php, scripts/deploy.php utilise un mot de passe vide.';
+        if ($aliasMotDePassePresent) {
+            $detailMotDePassePresent = 'DB_PASS est présent; DB_PASSWORD ne le remplace pas. Les valeurs sont masquées et le PHP CLI peut différer.';
+            $detailMotDePasseAbsent = 'DB_PASSWORD seul est présent, mais scripts/deploy.php attend DB_PASS (sauf configuration PHP prioritaire). La valeur n’est jamais affichée.';
+        } else {
+            $detailMotDePassePresent = 'DB_PASS est présent dans le processus web; valeur masquée, à vérifier séparément dans le PHP CLI.';
+            $detailMotDePasseAbsent = 'Si elle est également absente du PHP CLI et de app/Config/env.php, scripts/deploy.php utilise un mot de passe vide.';
+        }
         $configuration[] = $controle(
             'DB_PASS',
             self::etatVariable($motDePassePresent, $configLegacyPresente),
@@ -221,13 +272,14 @@ final class DiagnosticAdminController extends Controller
         );
 
         $socketPresent = self::variableRenseignee('DB_SOCKET');
-        $configuration[] = $controle(
-            'DB_SOCKET',
-            $socketPresent ? 'attention' : 'info',
-            $socketPresent
-                ? 'DB_SOCKET est présente dans le processus web, mais scripts/deploy.php ne la lit pas; il construit une connexion TCP à partir de DB_HOST et DB_PORT. Valeur masquée; PHP CLI non vérifié.'
-                : 'scripts/deploy.php n’utilise pas DB_SOCKET; la cible CLI dépend de DB_HOST et DB_PORT.',
-        );
+        if ($socketPresent) {
+            $etatSocket = 'attention';
+            $detailSocket = 'DB_SOCKET est présente dans le processus web, mais scripts/deploy.php ne la lit pas; il construit une connexion TCP à partir de DB_HOST et DB_PORT. Valeur masquée; PHP CLI non vérifié.';
+        } else {
+            $etatSocket = 'info';
+            $detailSocket = 'scripts/deploy.php n’utilise pas DB_SOCKET; la cible CLI dépend de DB_HOST et DB_PORT.';
+        }
+        $configuration[] = $controle('DB_SOCKET', $etatSocket, $detailSocket);
 
         $configuration[] = $controle(
             'Écart entre processus web et CLI',
@@ -301,13 +353,17 @@ final class DiagnosticAdminController extends Controller
         string $detailPresente,
         string $detailAbsente,
     ): string {
-        $observation = $presente
-            ? 'Variable renseignée dans le processus web (valeur masquée).'
-            : 'Variable absente du processus web.';
-        $detail = $presente ? $detailPresente : $detailAbsente;
-        $limite = $configLegacyPresente
-            ? ' app/Config/env.php peut primer sur cette variable.'
-            : '';
+        if ($presente) {
+            $observation = 'Variable renseignée dans le processus web (valeur masquée).';
+            $detail = $detailPresente;
+        } else {
+            $observation = 'Variable absente du processus web.';
+            $detail = $detailAbsente;
+        }
+        $limite = '';
+        if ($configLegacyPresente) {
+            $limite = ' app/Config/env.php peut primer sur cette variable.';
+        }
 
         return $observation . $limite . ' ' . $detail . ' Le processus CLI peut différer.';
     }
