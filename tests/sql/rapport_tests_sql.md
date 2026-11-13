@@ -76,8 +76,7 @@ Chaque ligne ci-dessous est un rejet **attendu** observé sur la base réelle :
 | `sp_delete_product` | produit vendu → masqué (`visible = 0`) ; produit jamais vendu → supprimé | ✅ |
 | `sp_search_products` | 2 jeux de résultats (page + `total_trouves`), tri liste blanche | ✅ |
 
-Mots de passe de démonstration : les 4 hash du seed sont des sorties **bcrypt réelles**
-(`password_hash()`), vérifiés contre `Demo2026!` (clients) et `Admin2026!` (admin).
+Les comptes de démonstration utilisent des valeurs d’authentification hachées ; ce rapport ne publie aucun mot de passe ni hash complet.
 
 ## 4. Suite complète (29 tests du manifeste)
 

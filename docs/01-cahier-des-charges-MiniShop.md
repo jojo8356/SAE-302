@@ -225,8 +225,8 @@ sur la base, **conçu** = exigence spécifiée dont la vérification suppose l'a
 | Acteur | Définition | Qui l'incarne dans la démo | Authentification | Droits (résumé) |
 |---|---|---|---|---|
 | **Visiteur** | personne non identifiée sur le site public | toute navigation en navigation privée | aucune | consulter catégories, produits, rechercher, filtrer, voir la fiche produit, **créer un compte**, ouvrir une session |
-| **Client** | visiteur inscrit, identifié | `alice@example.com` | session PHP (`$_SESSION['user_id']`) | tout le visiteur + gérer son compte, son panier, passer une commande, consulter son historique, **annuler** une commande non expédiée |
-| **Administrateur** | membre du personnel du back-office | `admin@minishop.fr` | session PHP (`$_SESSION['admin_id']`, rôle distinct) | gérer produits, catégories, stocks, commandes et statuts ; ne gère **jamais** le compte d'un client (RB-13) |
+| **Client** | visiteur inscrit, identifié | `alice@example.test` | session PHP (`$_SESSION['user_id']`) | tout le visiteur + gérer son compte, son panier, passer une commande, consulter son historique, **annuler** une commande non expédiée |
+| **Administrateur** | membre du personnel du back-office | `admin-test@example.test` | session PHP (`$_SESSION['admin_id']`, rôle distinct) | gérer produits, catégories, stocks, commandes et statuts ; ne gère **jamais** le compte d'un client (RB-13) |
 | *SGBD MySQL* (secondaire) | exécute les procédures stockées, déclencheurs, contraintes, transactions | — | comptes applicatifs distincts (§8.6) | garant final des règles de gestion |
 | *Faux client / attaquant* (secondaire, pour l'étude de sécurité uniquement) | utilisateur malveillant : injection SQL, XSS, IDOR, CSRF, force brute | 10 tests offensifs `S-01…S-10` (document de tests) | n'a aucun droit légitime | ses tentatives doivent **échouer**, et l'échec est un livrable |
 
@@ -1441,15 +1441,9 @@ L'exigence « Trigger 1 — Stock » est couverte par `TRG-A1`+`TRG-A2` (et `TRG
 | 36 produits (3 pages de 12) | prix de 8.50 à 1249 € HT, dont **`POWER-010`, `POWER-030` et `MONTRE-032` en rupture (`stock = 0`)**, `MICRO-007` au seuil de réassort, `BRAC-012` **masqué** | `RB-19`, `EF-ADM-05`, `F-12/13`, `T-25`, `T-26` |
 | 3 clients | alice / bruno / carla | `RB-01`, `SEC-08`, `T-18` (deux clients différents suffisent à prouver l'IDOR) |
 | 1 administrateur | rôle `SUPER` | `RB-13` |
-| 3 commandes | une `EN_PREPARATION` (2 lignes), un brouillon vide, une `EXPEDIEE` (2 lignes) | `RB-11`, `RB-06`, `RB-15`, `EF-CLI-10` |
+| 4 commandes | deux `EN_PREPARATION` validées (2 lignes et 1 ligne), un brouillon vide, une `EXPEDIEE` (2 lignes) | `RB-11`, `RB-06`, `RB-15`, `EF-CLI-10` |
 
-**Mots de passe de démonstration** : `Demo2026!` (clients), `Admin2026!` (back-office), insérés sous forme de **hashes bcrypt réels** produits par :
-
-```php
-php -r 'echo password_hash("Demo2026!", PASSWORD_BCRYPT, ["cost" => 12]), "\n";'
-```
-
-et non par un `INSERT … '123456'` : le seed respecte donc lui-même `RB-12`. Les hashes sont documentés dans le `README.md` pour permettre la démo, et le script de déploiement (`scripts/deploy.php`) régénère des hashes aléatoires et change les emails quand la démo est mise en ligne (`SEC-10`).
+**Comptes de démonstration** : leurs valeurs d'authentification (mots de passe et hashes) ne sont pas reproduites dans la documentation. Les comptes du seed sont réservés aux environnements locaux isolés ; ne pas les publier ni les réutiliser sur LineServ. Pour une recette, utiliser uniquement un compte de test explicitement autorisé, transmis séparément par canal privé. La procédure de déploiement doit renouveler les secrets et les adresses de ces comptes avant toute exposition (SEC-10).
 
 ### 12.8 Variantes de conception documentées (arbitrages)
 
@@ -1621,7 +1615,7 @@ Répartition cible, cohérente avec le RACI §3.3 : B ≈ 45 % des commits de `s
 | | |
 |---|---|
 | **ID / titre** | `F-18` — Validation de commande avec stock insuffisant sur la **deuxième** ligne |
-| **Préconditions** | base chargée ; `MICRO-007` en stock = 2 ; client `bruno@example.com` connecté ; panier = {`CASQ-005` × 1, `MICRO-007` × 3} |
+| **Préconditions** | base chargée ; `MICRO-007` en stock = 2 ; client `bruno@example.test` connecté ; panier = {`CASQ-005` × 1, `MICRO-007` × 3} |
 | **Étapes** | 1. `/panier` → « Passer la commande » ; 2. sélectionner l'adresse ; 3. confirmer |
 | **Résultat attendu** | HTTP 409, message reprenant le code `STOCK_INSUFFISANT` traduit, **aucune** commande créée, stock de `CASQ-005` inchangé (rollback prouvé), panier conservé pour correction |
 | **Preuves** | (a) `SELECT COUNT(*) FROM commande WHERE id_client = 2 AND date_commande > NOW() - INTERVAL 1 MINUTE;` → 0 ; (b) `SELECT stock FROM produit WHERE reference = 'CASQ-005';` → inchangé ; (c) capture d'écran ; (d) ligne de journal `RULE_REJECTED / STOCK_INSUFFISANT` |

@@ -80,13 +80,7 @@ Le serveur PHP intégré est réservé au développement local. Ne pas l’expos
 
 ### Comptes de démonstration
 
-Pour afficher les identifiants **initiaux** du jeu de démonstration JSON :
-
-```bash
-php scripts/aide.php --comptes-demo
-```
-
-Cette commande est en lecture seule. Les comptes affichés peuvent avoir été modifiés ou ne pas exister dans une installation donnée ; ne pas utiliser ces identifiants sur une instance accessible au public.
+Les comptes du seed sont réservés aux environnements locaux isolés. Les adresses, mots de passe et hashes ne sont pas reproduits dans la documentation ni dans les supports. Pour une recette LineServ, utiliser uniquement un compte de test autorisé, avec les accès transmis séparément par canal privé ; ne pas réutiliser les comptes du seed sur une instance de production ou accessible au public.
 
 ## Configuration et mode SQL
 

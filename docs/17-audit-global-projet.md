@@ -27,7 +27,7 @@ Cet audit combine un inventaire automatisé de tout le dépôt et une revue manu
 
 `visuel_produit($url, $alternative, $largeur, $hauteur)` reçoit une `AlternativeImage` : utiliser `new \App\View\Image\AlternativeDecorative()` pour une image décorative ou `new \App\View\Image\AlternativeInformative($description)` pour une image informative. La description est obligatoire et échappée. Les anciennes signatures avec le nom en deuxième position doivent être adaptées ; les cartes conservent `alt=""`. La fiche identifie le visuel comme indicatif, mais ne décrit pas son apparence. Le choix de la stratégie est explicite à l’exécution.
 
-`php scripts/aide.php --help` est une aide en lecture seule. `--comptes-demo` affiche les identifiants initiaux du seed JSON, potentiellement absents ou modifiés localement ; le script refuse l’accès HTTP et ne vérifie ni n’initialise la base. Ne pas laisser les comptes de démo actifs sur une instance accessible sans protection.
+`php scripts/aide.php --help` est une aide CLI en lecture seule. L’option `--comptes-demo` affiche les accès initiaux du seed JSON : ne l’utiliser que pour un développement local isolé ; ne jamais publier, capturer ni joindre sa sortie à un ticket, et ne jamais s’en servir sur LineServ. Le script refuse l’accès HTTP et ne vérifie ni n’initialise la base. Pour la recette LineServ, utiliser uniquement un compte de test autorisé dont l’accès est transmis séparément par canal privé.
 
 ### Accesseur de code d’erreur SQL supprimé
 

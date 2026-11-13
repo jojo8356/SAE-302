@@ -786,16 +786,13 @@ CREATE TABLE ligne_commande (
 <td><code>RB-13</code></td>
 </tr>
 <tr>
-<td>3 commandes</td>
-<td>une <code>EN_PREPARATION</code> (2 lignes), un brouillon vide, une <code>EXPEDIEE</code> (2 lignes)</td>
+<td>4 commandes</td>
+<td>deux <code>EN_PREPARATION</code> validées (2 lignes et 1 ligne), un brouillon vide, une <code>EXPEDIEE</code> (2 lignes)</td>
 <td><code>RB-11</code>, <code>RB-06</code>, <code>RB-15</code>, <code>EF-CLI-10</code></td>
 </tr>
 </tbody>
 </table>
-<p><strong>Mots de passe de démonstration</strong> : <code>Demo2026!</code> (clients), <code>Admin2026!</code> (back-office), insérés sous forme de <strong>hashes bcrypt réels</strong> produits par :</p>
-<pre><code class="language-php">php -r 'echo password_hash(&quot;Demo2026!&quot;, PASSWORD_BCRYPT, [&quot;cost&quot; =&gt; 12]), &quot;\n&quot;;'
-</code></pre>
-<p>et non par un <code>INSERT … '123456'</code> : le seed respecte donc lui-même <code>RB-12</code>. Les hashes sont documentés dans le <code>README.md</code> pour permettre la démo, et le script de déploiement (<code>scripts/deploy.php</code>) régénère des hashes aléatoires et change les emails quand la démo est mise en ligne (<code>SEC-10</code>).</p>
+<p><strong>Comptes de démonstration</strong> : leurs valeurs d'authentification (mots de passe et hashes) ne sont pas reproduites dans la documentation. Les comptes du seed sont réservés aux environnements locaux isolés ; ne pas les publier ni les réutiliser sur LineServ. Pour une recette, utiliser uniquement un compte de test explicitement autorisé, transmis séparément par canal privé. La procédure de déploiement doit renouveler les secrets et les adresses de ces comptes avant toute exposition (SEC-10).</p>
 <hr />
 <h2 id="partie-b-procedures-stockees">Partie B — Procédures stockées<a class="headerlink" href="#partie-b-procedures-stockees" title="Permanent link">#</a></h2>
 <h3 id="b1-procedures-stockees-17-livrees-1-fonction-minimum-demande-5">B.1 Procédures stockées (17 livrées + 1 fonction — minimum demandé : 5)<a class="headerlink" href="#b1-procedures-stockees-17-livrees-1-fonction-minimum-demande-5" title="Permanent link">#</a></h3>

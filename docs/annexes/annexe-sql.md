@@ -7,12 +7,11 @@ Fichiers sources : `sql/01_minishop_schema.sql` (DDL + données), `sql/02_minish
 
 (A→F : scripts SQL, fixture et manifeste de tests ; G→H : mesures de performance et volumétrie ;
 I : fichiers hors dépôt.)
-Ils sont reproduits ici intégralement **depuis les fichiers réels** pour que le document rendu soit
-autoportant ; le dépôt reste la source de vérité (les régénérer : `bash "$DIR_SCRIPTS/build-docs.sh"`).
+Les extraits ci-dessous reprennent la structure des scripts pour l’explication pédagogique. Les identifiants, hashes et coordonnées des comptes de démonstration sont expurgés ; les marqueurs rendent les lignes concernées non exécutables. Le dépôt reste la source de vérité, mais cette annexe n’est pas un export restaurable.
 
 ## A. Script de création et de peuplement — `sql/01_minishop_schema.sql`
 
-_(309 lignes, copié verbatim depuis le dépôt.)_
+_(Extrait abrégé et expurgé des valeurs de comptes et de coordonnées ; non exécutable.)_
 
 ```sql
 -- =====================================================================
@@ -252,11 +251,10 @@ CREATE TABLE order_status_history (
 
 -- ---------------------------------------------------------------------
 -- FIN DES TABLES — insertion du jeu de données de démonstration
--- (mot de passe des comptes de test : Demo2026! pour les clients,
---  Admin2026! pour le back-office — hash générés par password_hash()).
+-- Valeurs d’authentification des comptes de démonstration expurgées.
 -- ---------------------------------------------------------------------
 INSERT INTO administrateur (nom, prenom, email, mot_de_passe_hash, role) VALUES
-  ('Nguyen','Alice','admin@minishop.fr','$2b$10$ASp02qmyg5r3VvXRIV60/ObRO3IDB6bJ7DWgH20FOECvoNtDPNNW2','SUPER');
+  ('Admin','Demo','admin@example.test','[HASH EXPURGÉ]','SUPER');
 
 INSERT INTO categorie (nom, slug, description) VALUES
   ('Informatique','informatique','Ordinateurs portables, périphériques et composants'),
@@ -283,9 +281,9 @@ INSERT INTO produit
   ('BRAC-012','Bracelet connecté Band','bracelet-connecte-band','Suivi du sommeil et des notifications, 10 jours.',35.00,20.00,42.00,60,15,4,0,'img/band.jpg');
 
 INSERT INTO client (nom, prenom, email, mot_de_passe_hash, telephone, adresse_livraison, code_postal, ville) VALUES
-  ('Dupont','Alice','alice@example.com','$2b$10$ldtyUy7EyQ4YJ0L8qBWZxuTuefzalZmCDOnXNnBHHZNm8cZqOerjO','0612345678','12 rue de France','06000','Nice'),
-  ('Martin','Bruno','bruno@example.com','$2b$10$ldtyUy7EyQ4YJ0L8qBWZxuTuefzalZmCDOnXNnBHHZNm8cZqOerjO','0698765432','5 avenue Jean Médecin','06000','Nice'),
-  ('Moretti','Carla','carla@example.com','$2b$10$ldtyUy7EyQ4YJ0L8qBWZxuTuefzalZmCDOnXNnBHHZNm8cZqOerjO',NULL,'8 rue Papin','06300','Nice');
+  ('Client','A','client-a@example.test','[HASH EXPURGÉ]',NULL,NULL,NULL,NULL),
+  ('Client','B','client-b@example.test','[HASH EXPURGÉ]',NULL,NULL,NULL,NULL),
+  ('Client','C','client-c@example.test','[HASH EXPURGÉ]',NULL,NULL,NULL,NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;
 
@@ -1472,7 +1470,7 @@ FOR EACH ROW
 
 ## D. Commandes de démonstration via `CALL` — `sql/04_minishop_demo.sql`
 
-_(46 lignes, copié verbatim depuis le dépôt.)_
+_(Structure conservée ; les adresses de démonstration sont remplacées par une valeur générique.)_
 
 ```sql
 -- =====================================================================
@@ -1490,7 +1488,7 @@ _(46 lignes, copié verbatim depuis le dépôt.)_
 -- scripts/load_db.sh ; en mode interactif, taper `USE minishop;` d'abord.
 
 -- Client 1 : commande complète (2 x Casque Aura + 1 x Cable USB-C) validée
-CALL sp_create_order(1, '12 rue de France, 06000 Nice', @id_c1, @num_c1);
+CALL sp_create_order(1, 'Adresse de test', @id_c1, @num_c1);
 CALL sp_add_order_line(@id_c1, 5, 2, @l, @t, @r);
 CALL sp_add_order_line(@id_c1, 9, 1, @l, @t, @r);
 -- validation par la procedure : c'est elle qui FIGE les frais de port et solde le
@@ -1499,11 +1497,11 @@ CALL sp_add_order_line(@id_c1, 9, 1, @l, @t, @r);
 CALL sp_confirm_order(@id_c1, 1, 0, @mnt_c1, @r_c1);
 
 -- Client 2 : panier en préparation (brouillon) — 1 x Batterie externe (stock 0)
-CALL sp_create_order(2, '5 avenue Jean Médecin, 06000 Nice', @id_c2, @num_c2);
+CALL sp_create_order(2, 'Adresse de test', @id_c2, @num_c2);
 
 -- Client 3 : commande payée puis expédiée (statuts posés par UPDATE direct : le trigger
 -- trg_commande_transition_statut contrôle la matrice RB-11 exactement comme la procédure)
-CALL sp_create_order(3, '8 rue Papin, 06300 Nice', @id_c3, @num_c3);
+CALL sp_create_order(3, 'Adresse de test', @id_c3, @num_c3);
 CALL sp_add_order_line(@id_c3, 3, 1, @l, @t, @r);
 CALL sp_add_order_line(@id_c3, 4, 2, @l, @t, @r);
 UPDATE commande SET statut = 'EN_PREPARATION' WHERE id_commande = @id_c3;
@@ -1513,7 +1511,7 @@ UPDATE commande SET statut = 'EXPEDIEE'       WHERE id_commande = @id_c3;
 -- Client 1 (bis) : petit panier SOUS la franchise, pour que les frais de port soient
 -- visibles dans la demonstration et dans le tableau de bord (4,90 EUR de livraison
 -- standard ajoutes au montant) ; C1 et C3 beneficient en revanche de la franchise.
-CALL sp_create_order(1, '12 rue de France, 06000 Nice', @id_c4, @num_c4);
+CALL sp_create_order(1, 'Adresse de test', @id_c4, @num_c4);
 CALL sp_add_order_line(@id_c4, 8, 1, @l, @t, @r);    -- 1 x Ecran 27" QHD : 58.80 EUR TTC
 CALL sp_confirm_order(@id_c4, 1, 0, @mnt_c4, @r_c4); -- 58.80 < 80.00 -> port 4.90, total 63.70
 
@@ -1708,7 +1706,7 @@ exit $rc
 
 ## G2. Mesure des performances côté base — `tests/perf/mesurer_sql.sh`
 
-_(101 lignes, copié verbatim depuis le dépôt.)_
+_(Extrait expurgé des coordonnées de démonstration ; les valeurs génériques ne sont pas destinées à une exécution.)_
 
 ```bash
 #!/usr/bin/env bash
@@ -1796,7 +1794,7 @@ pid=$(q -e "SELECT MIN(id_produit) FROM produit WHERE stock > 5")
 if [ -n "${pid:-}" ]; then
   t1=$(date +%s%N)
   q > /dev/null 2>&1 <<SQL
-CALL sp_create_order(1, '12 rue de France, 06000 Nice', @c, @n);
+CALL sp_create_order(1, 'Adresse de test', @c, @n);
 CALL sp_add_order_line(@c, $pid, 1, @l, @t, @r);
 CALL sp_confirm_order(@c, 1, 0, @m, @code);
 SQL

@@ -93,7 +93,7 @@
 - **Client** : recherche → fiche produit → ajout au panier (sans rechargement) → commande → suivi
 - **Gestionnaire** : expédition d'une commande → journal de statut mis à jour automatiquement
 - **Super-admin** : création d'un produit → contrôle du stock et de l'alerte de rupture
-> Comptes livrés : `alice@example.com` / `Demo2026!` et `admin@minishop.fr` / `Admin2026!`.
+> Les identifiants de démonstration ne sont pas reproduits dans ce support. Pour une recette, utiliser uniquement des comptes de test autorisés et transmettre tout accès séparément par canal privé.
 
 ---
 

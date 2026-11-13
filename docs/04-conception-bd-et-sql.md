@@ -287,15 +287,9 @@ Contrôles de cohérence livrés avec le script (dans `load_db.sh`) : comptage d
 | 36 produits (3 pages de 12) | prix de 8.50 à 1249 € HT, dont **`POWER-010`, `POWER-030` et `MONTRE-032` en rupture (`stock = 0`)**, `MICRO-007` au seuil de réassort, `BRAC-012` **masqué** | `RB-19`, `EF-ADM-05`, `F-12/13`, `T-25`, `T-26` |
 | 3 clients | alice / bruno / carla | `RB-01`, `SEC-08`, `T-18` (deux clients différents suffisent à prouver l'IDOR) |
 | 1 administrateur | rôle `SUPER` | `RB-13` |
-| 3 commandes | une `EN_PREPARATION` (2 lignes), un brouillon vide, une `EXPEDIEE` (2 lignes) | `RB-11`, `RB-06`, `RB-15`, `EF-CLI-10` |
+| 4 commandes | deux `EN_PREPARATION` validées (2 lignes et 1 ligne), un brouillon vide, une `EXPEDIEE` (2 lignes) | `RB-11`, `RB-06`, `RB-15`, `EF-CLI-10` |
 
-**Mots de passe de démonstration** : `Demo2026!` (clients), `Admin2026!` (back-office), insérés sous forme de **hashes bcrypt réels** produits par :
-
-```php
-php -r 'echo password_hash("Demo2026!", PASSWORD_BCRYPT, ["cost" => 12]), "\n";'
-```
-
-et non par un `INSERT … '123456'` : le seed respecte donc lui-même `RB-12`. Les hashes sont documentés dans le `README.md` pour permettre la démo, et le script de déploiement (`scripts/deploy.php`) régénère des hashes aléatoires et change les emails quand la démo est mise en ligne (`SEC-10`).
+**Comptes de démonstration** : leurs valeurs d'authentification (mots de passe et hashes) ne sont pas reproduites dans la documentation. Les comptes du seed sont réservés aux environnements locaux isolés ; ne pas les publier ni les réutiliser sur LineServ. Pour une recette, utiliser uniquement un compte de test explicitement autorisé, transmis séparément par canal privé. La procédure de déploiement doit renouveler les secrets et les adresses de ces comptes avant toute exposition (SEC-10).
 
 
 ---

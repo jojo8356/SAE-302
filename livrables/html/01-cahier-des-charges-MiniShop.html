@@ -811,14 +811,14 @@ sur la base, <strong>conçu</strong> = exigence spécifiée dont la vérificatio
 <tr>
 <td><strong>Client</strong></td>
 <td>visiteur inscrit, identifié</td>
-<td><code>alice@example.com</code></td>
+<td><code>alice@example.test</code></td>
 <td>session PHP (<code>$_SESSION['user_id']</code>)</td>
 <td>tout le visiteur + gérer son compte, son panier, passer une commande, consulter son historique, <strong>annuler</strong> une commande non expédiée</td>
 </tr>
 <tr>
 <td><strong>Administrateur</strong></td>
 <td>membre du personnel du back-office</td>
-<td><code>admin@minishop.fr</code></td>
+<td><code>admin-test@example.test</code></td>
 <td>session PHP (<code>$_SESSION['admin_id']</code>, rôle distinct)</td>
 <td>gérer produits, catégories, stocks, commandes et statuts ; ne gère <strong>jamais</strong> le compte d'un client (RB-13)</td>
 </tr>
@@ -4183,16 +4183,13 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 <td><code>RB-13</code></td>
 </tr>
 <tr>
-<td>3 commandes</td>
-<td>une <code>EN_PREPARATION</code> (2 lignes), un brouillon vide, une <code>EXPEDIEE</code> (2 lignes)</td>
+<td>4 commandes</td>
+<td>deux <code>EN_PREPARATION</code> validées (2 lignes et 1 ligne), un brouillon vide, une <code>EXPEDIEE</code> (2 lignes)</td>
 <td><code>RB-11</code>, <code>RB-06</code>, <code>RB-15</code>, <code>EF-CLI-10</code></td>
 </tr>
 </tbody>
 </table>
-<p><strong>Mots de passe de démonstration</strong> : <code>Demo2026!</code> (clients), <code>Admin2026!</code> (back-office), insérés sous forme de <strong>hashes bcrypt réels</strong> produits par :</p>
-<pre><code class="language-php">php -r 'echo password_hash(&quot;Demo2026!&quot;, PASSWORD_BCRYPT, [&quot;cost&quot; =&gt; 12]), &quot;\n&quot;;'
-</code></pre>
-<p>et non par un <code>INSERT … '123456'</code> : le seed respecte donc lui-même <code>RB-12</code>. Les hashes sont documentés dans le <code>README.md</code> pour permettre la démo, et le script de déploiement (<code>scripts/deploy.php</code>) régénère des hashes aléatoires et change les emails quand la démo est mise en ligne (<code>SEC-10</code>).</p>
+<p><strong>Comptes de démonstration</strong> : leurs valeurs d'authentification (mots de passe et hashes) ne sont pas reproduites dans la documentation. Les comptes du seed sont réservés aux environnements locaux isolés ; ne pas les publier ni les réutiliser sur LineServ. Pour une recette, utiliser uniquement un compte de test explicitement autorisé, transmis séparément par canal privé. La procédure de déploiement doit renouveler les secrets et les adresses de ces comptes avant toute exposition (SEC-10).</p>
 <h3 id="128-variantes-de-conception-documentees-arbitrages">12.8 Variantes de conception documentées (arbitrages)<a class="headerlink" href="#128-variantes-de-conception-documentees-arbitrages" title="Permanent link">#</a></h3>
 <table>
 <thead>
@@ -4769,7 +4766,7 @@ git log --numstat --format= | awk '{print $4}' | sort | uniq -c | sort -rn | hea
 </tr>
 <tr>
 <td><strong>Préconditions</strong></td>
-<td>base chargée ; <code>MICRO-007</code> en stock = 2 ; client <code>bruno@example.com</code> connecté ; panier = {<code>CASQ-005</code> × 1, <code>MICRO-007</code> × 3}</td>
+<td>base chargée ; <code>MICRO-007</code> en stock = 2 ; client <code>bruno@example.test</code> connecté ; panier = {<code>CASQ-005</code> × 1, <code>MICRO-007</code> × 3}</td>
 </tr>
 <tr>
 <td><strong>Étapes</strong></td>

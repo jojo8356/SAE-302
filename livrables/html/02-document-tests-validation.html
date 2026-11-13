@@ -438,7 +438,7 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 <tr>
 <td>F-07</td>
 <td>Inscription refusée (e-mail existant)</td>
-<td><code>alice@example.com</code> existe</td>
+<td><code>client-test@example.test</code> existe</td>
 <td><code>POST /inscription</code> avec le même e-mail</td>
 <td>message humain « Cet email est déjà utilisé. », saisies non sensibles conservées, aucun doublon créé</td>
 <td>RB-01</td>
@@ -900,13 +900,13 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 <tbody>
 <tr>
 <td>Préconditions</td>
-<td>seed chargé ; <code>alice@example.com</code> connectée, adresse au profil ; panier = {<code>CASQ-005</code> × 2}</td>
+<td>seed chargé ; C1 (compte fictif de test) connecté, adresse au profil ; panier = {<code>CASQ-005</code> × 2}</td>
 <td>panier = {<code>CASQ-005</code> × 1, <code>MICRO-007</code> × 3} avec <code>MICRO-007</code> en stock 2</td>
 <td>commande « En préparation » contenant <code>SAC-008</code> × 2 ; stock <code>SAC-008</code> = 22</td>
 </tr>
 <tr>
 <td>Données en entrée</td>
-<td><code>id_client</code> (session), adresse du profil « 12 rue de France, 06000 Nice » (pré-remplie), jeton CSRF</td>
+<td><code>id_client</code> (session), adresse fictive du profil « Adresse de test, 00000 Ville » (pré-remplie), jeton CSRF</td>
 <td>idem, lignes du panier en session</td>
 <td><code>id_commande</code>, confirmation explicite sur la page dédiée</td>
 </tr>

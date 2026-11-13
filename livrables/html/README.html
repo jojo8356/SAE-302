@@ -208,10 +208,7 @@ cd SAE-302
 </ul>
 <p>Le serveur PHP intégré est réservé au développement local. Ne pas l’exposer directement à Internet.</p>
 <h3 id="comptes-de-demonstration">Comptes de démonstration<a class="headerlink" href="#comptes-de-demonstration" title="Permanent link">#</a></h3>
-<p>Pour afficher les identifiants <strong>initiaux</strong> du jeu de démonstration JSON :</p>
-<pre><code class="language-bash">php scripts/aide.php --comptes-demo
-</code></pre>
-<p>Cette commande est en lecture seule. Les comptes affichés peuvent avoir été modifiés ou ne pas exister dans une installation donnée ; ne pas utiliser ces identifiants sur une instance accessible au public.</p>
+<p>Les comptes du seed sont réservés aux environnements locaux isolés. Les adresses, mots de passe et hashes ne sont pas reproduits dans la documentation ni dans les supports. Pour une recette LineServ, utiliser uniquement un compte de test autorisé, avec les accès transmis séparément par canal privé ; ne pas réutiliser les comptes du seed sur une instance de production ou accessible au public.</p>
 <h2 id="configuration-et-mode-sql">Configuration et mode SQL<a class="headerlink" href="#configuration-et-mode-sql" title="Permanent link">#</a></h2>
 <p>Pour personnaliser la configuration locale, copier le modèle puis modifier <code>.env</code> :</p>
 <pre><code class="language-bash">cp .env.example .env
