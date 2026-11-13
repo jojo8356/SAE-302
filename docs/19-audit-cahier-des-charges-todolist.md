@@ -26,7 +26,7 @@ Ces statuts évaluent les **86 tâches de la WBS**, pas tout le travail ultérie
 
 ### Preuve externe fournie par l’utilisateur — clone IUT
 
-Le relevé terminal communiqué montre `origin` configuré sur `https://iut-git.unice.fr/but2_s302/s302.git` et une requête `git ls-remote --heads origin` réussie. Les références visibles sont `chahd`, `dev`, `pj509414/dev` (SHA `bcca4d1d527b2ef859295a44dd1c65134aa93ab5`) et `pj509414/poc-auth-jwt` ; aucune référence `main` n’apparaît dans cette sortie. Cela prouve que le dépôt existe et est lisible depuis ce clone. L’utilisateur indique que les invitations sont bonnes ; aucune capture ou sortie GitLab ne les vérifie indépendamment. La visibilité privée, la protection de branche et l’envoi du courriel restent à confirmer.
+Le relevé terminal communiqué montre `origin` configuré sur `https://iut-git.unice.fr/but2_s302/s302.git` et une requête `git ls-remote --heads origin` réussie. Les références visibles sont `chahd`, `dev`, `pj509414/dev` (SHA `bcca4d1d527b2ef859295a44dd1c65134aa93ab5`) et `pj509414/poc-auth-jwt` ; aucune référence `main` n’apparaît dans cette sortie. Cela prouve que le dépôt existe et est lisible depuis ce clone. La capture GitLab « Membres » fournie montre l’enseignante NGUYEN Thanh-Phuong comme membre direct avec le rôle `Reporter`, et Chahd comme `Developer` hérité du groupe ; elle confirme l’accès de l’enseignante au projet. L’envoi du courriel reste à confirmer.
 
 ### Source officielle fournie par l’utilisateur — `sujetSAE.pdf`
 
@@ -62,7 +62,7 @@ Les 200 scénarios des fiches de recette restent au statut `NON JOUÉ` dans le C
 
 | ID | État audité | Constat et preuve |
 |---|---|---|
-| `D1-L1-01` | `PARTIEL` | Le sujet officiel (PDF fourni, p. 8) demande le courriel de composition et le partage de l’accès GitLab avec l’enseignante ; l’utilisateur confirme que les invitations sont bonnes et `git ls-remote` prouve que le dépôt est accessible. La preuve d’envoi du courriel manque. Le privé, la protection de `main`, le squash et la suppression des branches source ne figurent que dans la WBS/annexe du projet, pas dans le PDF officiel ; aucune branche `main` n’est visible dans la sortie fournie. |
+| `D1-L1-01` | `PARTIEL` | Le sujet officiel (PDF fourni, p. 8) demande le courriel de composition et le partage de l’accès GitLab avec l’enseignante ; `git ls-remote` prouve que le dépôt est accessible et la capture « Membres » montre l’enseignante comme membre direct `Reporter`. La preuve d’envoi du courriel manque, donc la tâche reste `PARTIEL`. Le privé, la protection de `main`, le squash et la suppression des branches source sont des ajouts de la WBS/annexe, pas des exigences du PDF officiel. |
 | `D1-L1-02` | `OK*` | `app/` et `public/` existent et sont peuplés ; le besoin d’un squelette vide est dépassé. |
 | `D1-L1-03` | `PARTIEL` | Le README décrit prérequis et installation, mais pas la composition et les rôles d’équipe demandés. Aucun nom/rôle n’est inventé pour compléter ce champ. |
 | `D1-L1-04` | `[!]` | L’issue GitLab épinglée ne peut pas être vérifiée depuis le dépôt GitHub. |
