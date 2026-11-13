@@ -1,8 +1,8 @@
 # Rapport d’audit global du projet
 
-**Date :** 28 octobre 2026 · **Périmètre :** fichiers versionnés de cette branche, pas la copie locale ni les fichiers ignorés de l’utilisateur. [Inventaire exhaustif des chemins](17-inventaire-projet.csv) · [Revue initiale du code potentiellement inutilisé](16-audit-code-mort.md) · [Todolist](10-todo-corrections.md).
+**Date de rédaction initiale :** 28 octobre 2026 · **Périmètre de l’inventaire actualisé :** fichiers versionnés du checkout courant, pas la copie locale ni les fichiers ignorés de l’utilisateur. [Inventaire exhaustif des chemins](17-inventaire-projet.csv) · [Revue initiale du code potentiellement inutilisé](16-audit-code-mort.md) · [Todolist](10-todo-corrections.md).
 
-L’inventaire couvre **402 fichiers versionnés** : 94 applicatifs, 26 publics, 74 tests, 37 scripts, 4 SQL source, 8 données, 14 copies SQL et captures, 57 documents, 59 livrables, 7 artefacts, 10 fichiers d’outillage/CI et 12 fichiers de configuration/racine. Aucun fichier vide détecté.
+L’inventaire couvre **499 fichiers versionnés** dans ce checkout : **498** au SHA de base audité (`b54ab9833eb5e7d5116a21a1f21cb3b7c845eb31`), puis le présent rapport d’audit ajouté. Le total précédent de **402** ne correspondait pas au CSV exhaustif ni au nombre de chemins retournés par `git ls-tree`; il est remplacé. Le contrôle structurel confirme que les fichiers suivis sont présents et non vides.
 
 Cet audit combine un inventaire automatisé de tout le dépôt et une revue manuelle ciblée sur les anomalies et risques découverts. Il **ne démontre pas l’absence de tous les défauts** et n’est pas une lecture fonctionnelle ligne par ligne de chaque livrable. L’inventaire indique des contrôles de structure, pas une certification du contenu.
 

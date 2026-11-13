@@ -1,6 +1,6 @@
 # Audit de conformité — cahier des charges, todolist et preuves
 
-**Date de référence de l’audit : 2026-10-23** · **Révision examinée :** `b54ab9833eb5e7d5116a21a1f21cb3b7c845eb31` (`main`, base de la branche Arena courante).
+**Révision examinée :** `b54ab9833eb5e7d5116a21a1f21cb3b7c845eb31` (`main`, base de la branche Arena courante). Les dates des documents et des exécutions CI sont rapportées telles qu’enregistrées ; aucune date de coupure non documentée n’est utilisée pour les ordonner.
 
 > **Conclusion courte : non, la todolist n’est ni à jour ni suffisamment complète pour affirmer que toutes ses tâches sont achevées à 100 %.** L’application et les livrables sont bien présents, et de nombreuses vérifications automatisées existent. Il reste toutefois des écarts d’implémentation à une exigence explicite du CDC, des tests humains non joués, des mesures et actions externes non prouvées, ainsi que des incohérences de comptage et de dates entre documents.
 >
@@ -12,13 +12,15 @@
 
 | Statut d’audit | Nombre sur 86 | Sens |
 |---|---:|---|
-| `OK*` | 52 | Livrable présent et preuve automatisée/structurelle repérée dans le dépôt ou la CI. **Ce n’est pas une certification absolue** ; la réserve temporelle de la CI est ci-dessous. |
+| `OK*` | 52 | Livrable présent et preuve automatisée/structurelle repérée dans le dépôt ou la CI. **Ce n’est pas une certification absolue** ; le périmètre des preuves CI et l’échec structurel relevé lors de l’ajout du rapport sont explicités ci-dessous. |
 | `PARTIEL` | 21 | Une partie existe, mais un critère, une intégration, une preuve ou une cohérence reste à résoudre. |
 | `ÉCART` | 6 | Écart explicite entre la tâche/contrainte du CDC et l’application présente. |
 | `[!]` | 7 | Tâche humaine, externe, mesure cible ou état impossible à vérifier depuis ce checkout. |
 | **Total** | **86** | Les tâches non `OK*` empêchent de conclure à une réalisation à 100 %. |
 
 Ces statuts évaluent les **86 tâches de la WBS**, pas tout le travail ultérieur. Les ajouts ultérieurs (langue/fuseau, informations légales, contact, conservation, etc.) ne figurent pas correctement dans cette WBS et doivent eux aussi être rattachés à des exigences ou à une liste d’évolutions.
+
+**Datation des preuves :** plusieurs sources du dépôt portent le 28/10/2026 ; les runs CI cités sont horodatés des 12 et 13/11/2026. Ces dates sont retranscrites depuis leurs métadonnées. Elles ne permettent pas, à elles seules, de fixer une date de coupure pour l’audit ni de réconcilier les divergences de branches relevées ci-dessous.
 
 ## 2. Vérifications effectuées et limites
 
@@ -28,7 +30,7 @@ Ces statuts évaluent les **86 tâches de la WBS**, pas tout le travail ultérie
 - `node scripts/wasm_verdict.mjs` : **9/9** cas du calcul de verdict réussis.
 - `node --check` : **41** fichiers JavaScript/ES modules sans erreur de syntaxe.
 - `bash -n` : **13** scripts shell sans erreur de syntaxe.
-- Suites Python disponibles : **42 tests** découverts, **22 exécutés avec succès** et **20 sautés** parce que PHP natif ou les dépendances/services nécessaires manquent.
+- Suite Python complète rejouée après correction de l’inventaire : **43 tests**, dont **22 réussis** et **21 sautés** faute de PHP natif ou de ses extensions POSIX. Le comptage inclut désormais la suite structurelle et le nouvel audit.
 - `python3 scripts/verifier_fiches_uc.py` : **46 contrôles documentaires** réussis ; 14 UC, 164 scénarios, 36 couples de transitions, 200 entrées de suivi.
 - `docs/13-suivi-recette-uc.csv` : **200 lignes**, toutes au statut `NON JOUÉ`, aucun identifiant dupliqué.
 
@@ -36,11 +38,13 @@ Ces statuts évaluent les **86 tâches de la WBS**, pas tout le travail ultérie
 
 Dans cette sandbox, `php`, `composer`, `mysql`, `mariadb`, `node_modules/` et `vendor/` sont absents. Je n’ai donc pas prétendu rejouer les suites PHP, PHPUnit, l’E2E PHP-WASM, les tests navigateur ou SQL localement et je n’ai installé aucune dépendance.
 
-GitHub Actions fournit un enregistrement de succès **15/15 jobs** pour le SHA exact audité, incluant MySQL 8, MariaDB 11.8, PHP, PHPUnit, sécurité, E2E et Chromium : [run 43200590421](https://github.com/jojo8356/SAE-302/actions/runs/43200590421). **Réserve majeure :** l’API GitHub date ce run du **12 novembre 2026**, et le commit porte aussi un horodatage du 12 novembre, alors que la date de référence de cet audit est le **23 octobre 2026**. Cette incohérence chronologique doit être corrigée ; le run est rapporté comme preuve visible attachée au SHA, pas présenté comme une exécution antérieure au 23 octobre.
+GitHub Actions fournit un enregistrement **15/15 jobs réussis** pour le SHA de base audité, incluant MySQL 8, MariaDB 11.8, PHP, PHPUnit, sécurité, E2E et Chromium : [run 43200590421](https://github.com/jojo8356/SAE-302/actions/runs/43200590421) (horodatage API : **12/11/2026** ; commit également horodaté du 12/11).
+
+Après l’ajout de ce rapport, la CI de la branche a échoué dans les deux jobs « suites isolées » PHP 8.2 et 8.5, les **13 autres jobs ayant réussi** : [run 43394472738](https://github.com/jojo8356/SAE-302/actions/runs/43394472738) (horodatage API : **13/11/2026**). J’ai reproduit localement un échec de `tests/python/test_audit_structurel.py` : le rapport nouvellement versionné manquait dans `docs/17-inventaire-projet.csv`. Après ajout à l’inventaire et mise à jour de son résumé, la suite Python complète repasse localement (43 tests, 21 ignorés). Le journal détaillé du run n’est pas accessible depuis cette sandbox (réponse EOF du service de logs) ; je ne peux donc pas confirmer que ce défaut explique à lui seul les deux jobs CI.
 
 ### Résultat humain / cible réelle
 
-Les 200 scénarios des fiches de recette sont à ce jour non joués dans le CSV. La campagne responsive multi-largeurs **n’est pas** à réintroduire dans les fiches manuelles : selon la décision projet, elle relève des tests automatisés, où des contrôles Chromium sont prévus. Les essais sur hébergement réel, mesures de performance cible, restauration chronométrée, validation pédagogique et répétitions de soutenance ne sont pas démontrés ici.
+Les 200 scénarios des fiches de recette restent au statut `NON JOUÉ` dans le CSV. La campagne responsive multi-largeurs **n’est pas** à réintroduire dans les fiches manuelles : selon la décision projet, elle relève des tests automatisés, où des contrôles Chromium sont prévus. Les essais sur hébergement réel, mesures de performance cible, restauration chronométrée, validation pédagogique et répétitions de soutenance ne sont pas démontrés ici.
 
 ## 3. Revue tâche par tâche — les 86 identifiants de `docs/06-todolist.md`
 
@@ -65,7 +69,7 @@ Les 200 scénarios des fiches de recette sont à ce jour non joués dans le CSV.
 
 | ID | État audité | Constat et preuve |
 |---|---|---|
-| `D2-L2-01` | `PARTIEL` | §1–§2 existent, mais les dates et les affirmations d’état ne sont pas cohérentes avec la date de référence (voir §5). |
+| `D2-L2-01` | `PARTIEL` | §1–§2 existent, mais les dates et les affirmations d’état ne sont pas réconciliées entre les documents (voir §5). |
 | `D2-L2-02` | `PARTIEL` | Acteurs et RACI documentés ; le CDC/WBS annonce 3 développeurs tandis que la todolist annonce 2. L’équipe réelle n’est pas attestée. |
 | `D2-L2-03` | `PARTIEL` | Matrice fonctionnelle présente, mais le CDC, les annexes de tests et les nouvelles fonctionnalités ne forment pas encore une trace unique et sans contradictions. |
 | `D2-L2-04` | `PARTIEL` | Contraintes écrites, mais le CDC présente MySQL/PDO comme contrainte alors que le README et `StorageDriver` indiquent JSON par défaut et SQL optionnel / en migration. |
@@ -148,7 +152,7 @@ Les 200 scénarios des fiches de recette sont à ce jour non joués dans le CSV.
 | ID | État audité | Constat et preuve |
 |---|---|---|
 | `D5-L14-01` | `PARTIEL` | Docs de stratégie et de recette présents, mais des affirmations de complétude/date et de nombres doivent être réconciliées. |
-| `D5-L14-02` | `OK*` | 29 scénarios SQL existent ; CI MySQL/MariaDB correspondante enregistrée comme verte pour le SHA, avec réserve de date au §2. |
+| `D5-L14-02` | `OK*` | 29 scénarios SQL existent ; le run CI du SHA de base inclut les jobs MySQL/MariaDB verts (§2). |
 | `D5-L14-03` | `PARTIEL` | Couverture automatisée élargie au-delà de F-01…F-31 ; cependant les 200 scénarios manuels restent `NON JOUÉ`, donc « exécution + preuves » n’est pas intégralement achevé. |
 | `D5-L14-04` | `PARTIEL` | `tests/charge/reserver.sh` existe et le stress JSON est couvert ; l’essai HTTP/SQL 20 demandes sur 12 unités reste à exécuter sur une base isolée/cible. |
 | `D5-L14-05` | `PARTIEL` | Matrice de traçabilité présente ; PV non signé et campagne manuelle non renseignée. |
@@ -182,8 +186,9 @@ Cela contredit notamment les critères du CDC CT-02/CT-03 et les tâches D4-L9-0
 6. **Sécurité :** `SEC-14` est cité dans §8.9, mais n’a pas de fiche dédiée dans la séquence §8.1–§8.7 ni de test identifié dans la stratégie de tests. Clarifier si cet identifiant est une exigence, puis lui attribuer un contrôle.
 7. **Règles métier :** §6.1 annonce 8 règles complémentaires, puis l’encadré en annonce 9 ; `RB-09` et `RB-12…RB-20` représentent dix identifiants. Le partage « imposées / ajoutées » doit être recalculé.
 8. **Séquences UML :** cinq PNG/sources de séquence sont présents, mais le pointage §1.7 affirme six diagrammes rendus. Le minimum de quatre est satisfait ; c’est le compte annoncé et les deux diagrammes bonus qui sont à mettre en cohérence.
-9. **Dates/branche :** CDC §16.4, `docs/10-todo-corrections.md` et `docs/17-audit-global-projet.md` font état du 28/10/2026, postérieur à la date d’audit 23/10/2026 ; `docs/10` nomme aussi une autre branche (`arena/6e1d3706-sae-302`). Le checkout et le run CI portent, eux, des dates du 12/11/2026. Aucune de ces dates ne doit être recyclée comme preuve datée sans réconciliation.
-10. **Source officielle absente :** le CDC prétend pointer ligne par ligne `sujetSAE.pdf`, mais ce PDF n’est pas suivi dans le checkout. L’audit peut comparer CDC, WBS, todolist, code et tests ; il ne peut pas refaire le pointage contre le sujet original absent.
+9. **Dates/branche :** le CDC §16.4, `docs/10-todo-corrections.md` et `docs/17-audit-global-projet.md` portent des références au 28/10/2026 ; `docs/10` nomme aussi une autre branche (`arena/6e1d3706-sae-302`). Les exécutions CI consultées sont horodatées des 12 et 13/11/2026. Ces dates sont retranscrites comme métadonnées et ne servent pas à imposer une coupure chronologique non justifiée ; leur provenance et leur correspondance avec les branches restent à réconcilier.
+10. **Inventaire global (corrigé dans le présent suivi) :** `docs/17-audit-global-projet.md` annonçait 402 fichiers, alors que le CSV exhaustif et `git ls-tree` recensent 498 chemins au SHA audité. L’ajout de ce rapport porte le checkout courant à 499 fichiers ; le résumé global et l’inventaire ont été mis en cohérence.
+11. **Source officielle absente :** le CDC prétend pointer ligne par ligne `sujetSAE.pdf`, mais ce PDF n’est pas suivi dans le checkout. L’audit peut comparer CDC, WBS, todolist, code et tests ; il ne peut pas refaire le pointage contre le sujet original absent.
 
 ## 6. Éléments de travail absents de la todolist d’origine
 
