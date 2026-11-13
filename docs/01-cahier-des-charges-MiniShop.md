@@ -726,8 +726,10 @@ Lecture de la table : les règles `RB-06`, `RB-11`, `RB-18` sont appliquées **d
 | Front | HTML5 sémantique, CSS natif (variables, grille/flexbox), **JavaScript ES2022 en modules**, pas de bundleur | React/Vue (build required, aucune plus-value pédagogique) |
 | Contrôle de version | **GitLab** (hébergé ou local), une MR par lot, merges **squash** interdits pour ne pas effacer les auteurs | GitHub (le sujet impose GitLab) |
 | CI | GitHub Actions : workflow versionné dans `.github/workflows/ci.yml` ; ses résultats ne valent pas preuve d’un pipeline GitLab | GitLab CI retirée du périmètre du CDC le 23/10/2026 |
-| Environnements | `dev` (LAMP local), `test` (base `minishop_test` recréée à chaque campagne), `prod` (démo hébergée sur la machine de soutenance) | dev = prod (interdit : les hashes et le seed diffèrent) |
+| Environnements | `dev` (LAMP local), tests automatisés sur une cible isolée (implémentation actuelle : base jetable `minishop_test`), `prod` (démo hébergée sur la machine de soutenance) | Ne jamais exécuter les tests SQL destructifs sur des données à préserver |
 | Contrainte de périmètre physique | **volumétrie retenue avec le client (arbitrage du 21/09/2026) : 200 produits au catalogue et 1 000 commandes par an** (soit ≈ 3 lignes par commande, ≈ 4 commandes/jour en moyenne, 40/jour en pointe). À cette échelle : aucune partition, aucun cache applicatif, aucun index FULLTEXT supplémentaire — mais des mesures faites sur un **jeu de données de taille réelle**, pas sur la démo : `scripts/gen_volumes.sh` (§15.3) | — (noté ici pour justifier l'absence d'infrastructure lourde) |
+
+La séparation de la cible de test et le nom `minishop_test` sont des choix d’implémentation et de sûreté du projet, **pas des exigences du sujet du professeur**. Le PDF demande un script SQL de génération de la base et un document de tests/validation, sans imposer de base séparée ni de convention de nommage.
 
 ### 7.3 Contraintes de données (précisions demandées au §12)
 
@@ -1054,7 +1056,7 @@ minishop/
 | Environnement | Base | Données | Particularités |
 |---|---|---|---|
 | `dev` (poste de chaque étudiant) | `minishop` | seed complet + hashes de démo | `display_errors = On` **uniquement** en local |
-| `test` (CI GitHub Actions + harnais) | `minishop_test` | seed + fixture de tests | recréée intégralement à chaque campagne ; `DB_TEST=minishop_test` |
+| `test` (CI GitHub Actions + harnais) | base jetable `minishop_test` (choix d’implémentation actuel, non exigé par le sujet) | seed + fixture de tests | recréée intégralement à chaque campagne ; `DB_TEST=minishop_test` |
 | `demo`/`prod` (machine de soutenance) | `minishop` | seed **sans** les mots de passe faibles, `sql/04` non joué | HTTPS auto-signé, `scripts/deploy.php` (copie + `load_db.sh` + droits `var/`) |
 
 Sauvegarde/restauration spécifiées (2 min d'exécution en démo) : `mysqldump --single-transaction --routines --triggers minishop > backup.sql` et restauration `mysql minishop < backup.sql` ; la présence de `--routines --triggers` est **nécessaire** ici : sans elle, une base restaurée perdrait la fonction, les 17 procédures et les 16 triggers, donc les règles `RB-03/06/11/18` cesseraient d'être appliquées silencieusement — c'est l'un des arguments à plaider en soutenance (§17.11).

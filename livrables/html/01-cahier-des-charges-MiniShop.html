@@ -2617,8 +2617,8 @@ sur la base, <strong>conçu</strong> = exigence spécifiée dont la vérificatio
 </tr>
 <tr>
 <td>Environnements</td>
-<td><code>dev</code> (LAMP local), <code>test</code> (base <code>minishop_test</code> recréée à chaque campagne), <code>prod</code> (démo hébergée sur la machine de soutenance)</td>
-<td>dev = prod (interdit : les hashes et le seed diffèrent)</td>
+<td><code>dev</code> (LAMP local), tests automatisés sur une cible isolée (implémentation actuelle : base jetable <code>minishop_test</code>), <code>prod</code> (démo hébergée sur la machine de soutenance)</td>
+<td>Ne jamais exécuter les tests SQL destructifs sur des données à préserver</td>
 </tr>
 <tr>
 <td>Contrainte de périmètre physique</td>
@@ -2627,6 +2627,7 @@ sur la base, <strong>conçu</strong> = exigence spécifiée dont la vérificatio
 </tr>
 </tbody>
 </table>
+<p>La séparation de la cible de test et le nom <code>minishop_test</code> sont des choix d’implémentation et de sûreté du projet, <strong>pas des exigences du sujet du professeur</strong>. Le PDF demande un script SQL de génération de la base et un document de tests/validation, sans imposer de base séparée ni de convention de nommage.</p>
 <h3 id="73-contraintes-de-donnees-precisions-demandees-au-12">7.3 Contraintes de données (précisions demandées au §12)<a class="headerlink" href="#73-contraintes-de-donnees-precisions-demandees-au-12" title="Permanent link">#</a></h3>
 <ul>
 <li><strong>Nommage</strong> : tables en MAJUSCULES au pluriel dans la conception (MLD) et en minuscules au pluriel dans le DDL MySQL (<code>client</code>, <code>produit</code>, <code>ligne_commande</code>) ; clés primaires <code>id_&lt;singulier&gt;</code> ; clés étrangères <code>&lt;table_référencée&gt;_id</code> ; index <code>idx_*</code>, uniques <code>uk_*</code>, FK <code>fk_*</code>, CHECK <code>ck_*</code>.</li>
@@ -3169,7 +3170,7 @@ validation → port offert ; assertion 5 : toute réécriture du port après val
 </tr>
 <tr>
 <td><code>test</code> (CI GitHub Actions + harnais)</td>
-<td><code>minishop_test</code></td>
+<td>base jetable <code>minishop_test</code> (choix d’implémentation actuel, non exigé par le sujet)</td>
 <td>seed + fixture de tests</td>
 <td>recréée intégralement à chaque campagne ; <code>DB_TEST=minishop_test</code></td>
 </tr>

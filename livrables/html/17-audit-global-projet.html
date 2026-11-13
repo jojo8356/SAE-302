@@ -135,7 +135,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tr>
 <td>Tests SQL</td>
 <td>L’ancien test supprimait silencieusement sa cible, y compris une base existante ou celle de l’application si configurée comme cible. Il refuse <code>DB_NAME</code>, crée une base absente atomiquement, et n’autorise une réinitialisation qu’avec l’option explicite <code>--reinitialiser-base-existante</code>.</td>
-<td>Garde-fous, intégration et 29 scénarios réussis sur le serveur MySQL jetable de la CI du commit <code>796aada</code>. Aucun serveur SQL local n’a été touché.</td>
+<td>Garde-fous, intégration et 29 scénarios réussis sur le serveur MySQL jetable de la CI du commit <code>796aada</code>. Aucun serveur SQL local n’a été touché. Cette isolation est un choix de sûreté technique, pas une exigence du sujet ; voir le contrôle de la source officielle dans <code>docs/19</code>.</td>
 </tr>
 <tr>
 <td>Tests nouveautés SQL</td>
