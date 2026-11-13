@@ -1,55 +1,48 @@
-# E-mail à envoyer à la collègue — transfert et recette MiniShop sur LineServ
+# E-mail à envoyer à la collègue — recette pré-démo MiniShop sur LineServ
 
-L'e-mail ci-dessous demande à la collègue de transférer le projet : il ne présuppose pas qu'un site est déjà en ligne. Le lien IUT est celui communiqué par Johan. L'état réel de cette branche, l'accès et le déploiement LineServ n'ont pas été vérifiés ici. Le [guide LineServ](14-guide-lineserv.md) indique notamment les précautions et blocages techniques à examiner avant publication.
+L'e-mail ci-dessous demande une recette manuelle sur l'instance **de production LineServ et sa base réellement configurée**. Il ne présuppose ni que le site est en ligne ni que la recette a été jouée. Ne l'envoyer qu'une fois la cible, l'accès restreint, la sauvegarde et la procédure de retour à l'état de démonstration confirmés. `minishop_test` reste réservée aux tests automatisés GitHub CI.
 
 ---
 
-**Objet : Transfert et test complet de MiniShop sur LineServ**
+**Objet : Recette pré-démo de MiniShop sur LineServ**
 
 Salut,
 
-Est-ce que tu pourrais transférer notre site MiniShop sur **LineServ**, puis le tester et me dire ce qui fonctionne, ce qui bloque ou ce qui pourrait être amélioré ?
+Est-ce que tu pourrais tester MiniShop sur **LineServ** pendant la fenêtre de recette pré-démo que nous aurons confirmée ensemble, puis me signaler ce qui fonctionne, bloque ou pourrait être amélioré ? Il s'agit de l'instance de production de notre projet et de la base réellement utilisée par cette instance — pas d'une nouvelle base de test.
 
-Il n'y a pas encore de lien pour le site : il faut récupérer le projet à partir de ma branche et le transférer sur LineServ :
+Le site n'est pas déclaré disponible par ce message. Le lien prévu est celui communiqué pour LineServ :
 
-https://iut-git.unice.fr/but2_s302/s302/-/tree/pj509414/dev?ref_type=heads
+https://linserv-info-01.campus.unice.fr/~pj509414/s302/
 
-Utilise tes propres accès LineServ. Si le transfert ou l'initialisation est bloqué, notamment à cause de l'adresse en sous-dossier ou de la séparation des fichiers privés, arrête-toi et dis-moi à quelle étape tu bloques et quel message s'affiche. Ne réinitialise pas de base ou de répertoire existant et ne mets pas de fichiers privés ou de configuration dans un dossier accessible publiquement. Une fois le site installé, envoie-moi son lien.
+Avant toute écriture, nous devons confirmer en privé que la configuration de l'application et la base sélectionnée dans phpMyAdmin/Adminer désignent bien la même base de production MiniShop, que l'accès au site est limité aux testeurs et qu'elle ne contient que des données fictives/de démonstration. Une sauvegarde complète de l'état de démonstration et une procédure autorisée pour la restaurer dans **cette même base** doivent aussi être prêtes. Si la cible n'est pas certaine, si tu vois des données réelles ou si un utilisateur non prévu peut accéder au site, arrête-toi et préviens-moi.
 
-C'est une **maquette** : le paiement et la livraison sont simulés. Merci d'utiliser uniquement les comptes et données fictifs, sans saisir de vraie carte bancaire ni de données personnelles.
+Utilise uniquement des comptes et données fictifs créés pour la recette (`example.test`, références de test), sans vraie adresse, donnée personnelle ni moyen de paiement. Si un compte autorisé est nécessaire, je te transmettrai son accès séparément par un canal privé : ne mets aucun mot de passe dans un e-mail, document, ticket ou capture.
 
-Voici les comptes de démonstration prévus si le jeu de test est initialisé et n'a pas été modifié :
+Voici les vérifications prévues sur ordinateur (pas de campagne responsive multi-tailles : elle est couverte par les tests automatisés) :
 
-| Type | Adresse e-mail | Mot de passe |
-|---|---|---|
-| Client Alice | `alice@example.com` | `Demo2026!` |
-| Client Bruno | `bruno@example.com` | `Demo2026!` |
-| Client Carla | `carla@example.com` | `Demo2026!` |
-| Administrateur **SUPER** | `admin@minishop.fr` | `Admin2026!` |
+1. **Catalogue et visuels** : parcourir les catégories, rechercher un produit, essayer les filtres et leur réinitialisation, puis ouvrir une fiche produit.
+2. **Compte de test** : créer un compte fictif ou utiliser le compte de test autorisé, modifier uniquement ses données synthétiques, puis se déconnecter.
+3. **Panier et commande** : ajouter un article de test, changer sa quantité, le retirer, puis passer une commande simulée en vérifiant l'adresse fictive, les frais de port et la confirmation.
+4. **Historique et annulation en deux étapes** : retrouver une commande de test, ouvrir son détail et, si elle n'est pas expédiée, vérifier l'écran de confirmation, l'annulation et la conservation de ses lignes dans l'historique.
+5. **Administration**, uniquement si tu disposes d'un accès explicitement autorisé : tester produits, catégories, stocks et statuts de commandes sur les éléments de test prévus, jamais sur des données réelles ou non identifiées.
+6. **Langue FR/EN et fuseau (`/preferences`)** : passer en anglais, vérifier les pages accessibles, revenir en français, essayer un changement de fuseau, puis réinitialiser les préférences du navigateur.
+7. **Informations et mentions légales** : ouvrir les liens du pied de page et signaler les liens cassés ou les textes peu clairs.
 
-Ces comptes sont connus publiquement : le site de recette doit être à accès restreint ; ne laisse pas le compte administrateur de démonstration exposé publiquement.
+Ne lance aucun SQL direct, fixture, import, commande de reset (`run.sh --db`, `scripts/db_init.php`, `scripts/load_db.sh`), test automatisé SQL, purge, outil de volumétrie ou script de charge contre la base de production. Les scénarios qui exigent une intervention de ce type sont à marquer `BLOQUÉ` dans le suivi ; ils ne justifient pas de contourner ces consignes.
 
-Voici les points à tester sur ordinateur (pas besoin de faire de campagne responsive multi-tailles, c'est déjà vérifié par nos tests automatisés) :
-
-1. **Catalogue et visuels** : naviguer dans les catégories, rechercher un produit, essayer le cumul et la réinitialisation des filtres et du tri, puis ouvrir une fiche produit.
-2. **Compte** : t'inscrire ou te connecter avec les données de test, modifier le profil (dont l'adresse de livraison) et te déconnecter.
-3. **Panier et commande** : ajouter un article (avec puis sans JavaScript si tu peux), changer sa quantité, le retirer, puis passer une commande simulée en vérifiant l'adresse pré-remplie, les frais de port et la confirmation.
-4. **Historique et annulation en 2 étapes** : retrouver ta commande, ouvrir son détail et, si elle n'est pas encore expédiée, tester son annulation en vérifiant bien l'écran de confirmation intermédiaire et le fait que les lignes restent visibles dans l'historique avec le total d'origine avant annulation.
-5. **Administration**, si tu as un accès autorisé : consulter le tableau de bord, tester produits, catégories (dont le refus de doublon et la confirmation de suppression), stocks (vérifier que le mode par défaut est bien « Ajouter / retirer ») et statuts de commandes (dont l'écran de confirmation d'annulation, avec retour de stock avant expédition et sans retour automatique si la commande est déjà expédiée), uniquement sur les éléments de test que je t'indiquerai.
-6. **Langue FR/EN et fuseau horaire (`/preferences`)** : ouvrir la page **Préférences**, passer le site en **anglais (`English`)** pour vérifier que toutes les pages (publiques, panier, compte, pages légales et administration) sont bien traduites, puis revenir en **français**. Tester aussi le changement de fuseau horaire (manuellement et, si tu veux, avec « Utiliser ma position ») puis vérifier que les dates affichées et les filtres de dates s'adaptent bien, avant de cliquer sur « Réinitialiser ».
-7. **Informations et mentions légales** : ouvrir tous les liens du pied de page, notamment les mentions légales, l'à-propos, le contact, l'aide, la livraison, les CGV, les CGU, les garanties, la confidentialité, les cookies et la rétractation, et me signaler les liens cassés ou textes peu clairs.
-
-Pour chaque problème, peux-tu me préciser :
+Pour chaque problème, peux-tu préciser :
 
 - la page concernée et les étapes pour reproduire le problème ;
 - ce que tu attendais et ce qui s'est réellement passé ;
-- le message affiché et, si possible, une capture, en masquant les données personnelles et les identifiants ;
+- le message affiché et, si possible, une capture expurgée de données, identifiants, cookies, mots de passe et valeurs de configuration ;
 - ton navigateur ;
 - si le problème arrive à chaque fois et s'il bloque la suite.
 
-Tu peux me répondre avec un problème par paragraphe. Dis-moi aussi quelles pages sont correctes et lesquelles tu n'as pas pu tester.
+Après la recette, arrête les tests et préviens-moi. **Avant la démo, la base de production LineServ devra obligatoirement être restaurée à l'état de démonstration à partir de la sauvegarde pré-recette**, par la personne autorisée et selon la procédure validée. Ne la réinitialise pas toi-même si la cible ou la procédure n'est pas certaine. L'accès restera restreint jusqu'à la vérification de la restauration ; si elle échoue, nous ne présenterons pas la base comme prête.
 
-Les **fiches des 14 cas d'utilisation**, le **tableau de suivi** et le **cahier des charges** sont dans le GitHub si tu veux davantage de détails.
+Tu peux me répondre avec un problème par paragraphe. Dis-moi aussi quelles pages sont correctes, lesquelles tu n'as pas pu tester et si tu as dû marquer des cas `BLOQUÉ`.
+
+Les **fiches des 14 cas d'utilisation**, le **tableau de suivi** et le **guide LineServ** sont dans le dépôt si tu veux davantage de détails.
 
 Merci beaucoup pour ton aide !
 

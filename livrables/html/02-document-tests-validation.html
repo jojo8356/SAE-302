@@ -116,7 +116,7 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 - préférences personnelles sur <code>/preferences</code> accessibles sans compte (<code>localStorage</code> seul, aucun cookie de suivi) : choix manuel ou géolocalisation navigateur locale sans tiers (<code>public/js/tz-lookup.js</code> CC0), traduction complète FR ↔ EN des 48 vues et du panier AJAX (<code>public/js/i18n-en.js</code>, <code>public/js/panier.js</code>), stockage UTC de bout en bout et affichage/filtrage selon le fuseau local choisi ;
 - compatibilité responsive à 320, 375, 768 et 1440 px avec tableaux administrateur et clients repliés en cartes mobiles étiquetées (<code>data-label</code>) et double implémentation décorative/informative des visuels produits ;
 - mentions légales de la maquette étudiante conformes à l'article 6, III, 2 de la LCEN (co-éditeurs <strong>Johan Polsinelli</strong> et <strong>Chahd Gouiaa</strong>, hébergeur pédagogique IUT Nice Côte d'Azur <code>linserv-info-01.campus.unice.fr</code>), transparence RGPD de la maquette scolaire et outils CLI de conservation/purge (<code>24 mois</code> comptes sans commande, <code>12 mois</code> contact, <code>6 mois</code> journaux, <code>30 jours</code> sauvegardes dédiées).</p>
-<p>Aucun résultat d'exécution humaine sur navigateur réel ou serveur LineServ n'est inventé : la colonne « Statut » distingue strictement ce qui est <strong>exécuté automatiquement en CI</strong> (15 jobs verts, y compris l'intégralité des contrôles responsive 320/375/1440 px sous Chromium) de ce qui <strong>reste à dérouler manuellement</strong> (<code>[!]</code>, et <code>NON JOUÉ</code> sur les 200 entrées de <a href="13-suivi-recette-uc.csv"><code>13-suivi-recette-uc.csv</code></a> — les campagnes responsive multi-largeurs ayant été volontairement retirées des suites manuelles car trop longues à jouer à la main).</p>
+<p>Aucun résultat d'exécution humaine sur navigateur réel ou serveur LineServ n'est inventé : la colonne « Statut » distingue strictement ce qui est <strong>exécuté automatiquement en CI</strong> (15 jobs verts, y compris l'intégralité des contrôles responsive 320/375/1440 px sous Chromium) de ce qui <strong>reste à dérouler manuellement</strong> (<code>[!]</code>, et <code>NON JOUÉ</code> sur les 200 entrées de <a href="13-suivi-recette-uc.csv"><code>13-suivi-recette-uc.csv</code></a> — les campagnes responsive multi-largeurs ayant été volontairement retirées des suites manuelles car trop longues à jouer à la main). La campagne manuelle prévue se déroule sur la base réellement utilisée par l'application de production LineServ pendant une fenêtre pré-démo, puis cette même base doit être restaurée à l'état de démonstration avant la démo ; rien de cela n'a été effectué. <code>minishop_test</code> reste exclusivement une base temporaire des tests automatisés GitHub CI, pas une cible de recette manuelle.</p>
 <h2 id="1-dispositif">1. Dispositif<a class="headerlink" href="#1-dispositif" title="Permanent link">#</a></h2>
 <table>
 <thead>
@@ -127,12 +127,16 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 </thead>
 <tbody>
 <tr>
-<td>Environnement de test CI &amp; cible</td>
+<td>Environnement automatisé CI</td>
 <td>Linux (Debian 13 / Ubuntu), PHP 8.2 et 8.5, MariaDB 11.8 et MySQL 8.0, Apache 2.4 / routeur de développement, Playwright Chromium (320, 375 et 1440 px, FR et EN, avec et sans JS)</td>
 </tr>
 <tr>
-<td>Jeu de données</td>
-<td>seed <code>sql/01</code> + commandes de démo <code>sql/04</code> : 4 catégories, 36 produits, 3 clients (<code>alice</code>, <code>bruno</code>, <code>carla</code>), 1 admin <code>SUPER</code>, 3 commandes ; base isolée <code>minishop_test</code> créée puis supprimée à chaque campagne</td>
+<td>Cible de la recette manuelle</td>
+<td>Instance LineServ et base de production réellement configurée pour l'application (<code>DB_NAME</code> à confirmer dans la configuration privée) ; campagne pré-démo, puis restauration obligatoire de cette même base à l'état de démonstration</td>
+</tr>
+<tr>
+<td>Jeu de données automatisé</td>
+<td>seed <code>sql/01</code> + commandes de démo <code>sql/04</code> : 4 catégories, 36 produits, 3 clients (<code>alice</code>, <code>bruno</code>, <code>carla</code>), 1 admin <code>SUPER</code>, 4 commandes ; base temporaire <code>minishop_test</code> créée/supprimée uniquement pour les tests SQL automatisés en CI</td>
 </tr>
 <tr>
 <td>Outillage automatisé</td>
@@ -148,7 +152,7 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 </tr>
 <tr>
 <td>Entrée en recette</td>
-<td>pré-conditions <code>PRÉ-1</code>…<code>PRÉ-6</code> du CDC §11.3 + réinitialisation préalable de <code>/preferences</code> (<code>Français</code>, <code>Europe/Paris</code>)</td>
+<td>pré-conditions <code>PRÉ-1</code>…<code>PRÉ-6</code> du CDC §11.3 ; confirmation de la cible de production LineServ, accès limité et données synthétiques ; sauvegarde restaurable de l'état de démo avant les écritures ; préférences <code>/preferences</code> réinitialisées (<code>Français</code>, <code>Europe/Paris</code>)</td>
 </tr>
 <tr>
 <td>Critère de recette</td>
@@ -161,7 +165,7 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 </tbody>
 </table>
 <h2 id="2-tests-de-regles-de-gestion-base-de-donnees-executes">2. Tests de règles de gestion (base de données) — <strong>exécutés</strong><a class="headerlink" href="#2-tests-de-regles-de-gestion-base-de-donnees-executes" title="Permanent link">#</a></h2>
-<p>Commande isolée : <code>./scripts/run_sql_tests.sh</code> ou <code>php tests/php/sql_integration.php</code> (base jetable <code>minishop_test</code> créée puis supprimée ; manifeste <code>tests/sql/manifest.txt</code>, fixture d'état avant chaque scénario).</p>
+<p>Tests SQL <strong>automatisés uniquement</strong> : <code>./scripts/run_sql_tests.sh</code> ou <code>php tests/php/sql_integration.php</code> (base temporaire <code>minishop_test</code> créée puis supprimée par le harnais ; manifeste <code>tests/sql/manifest.txt</code>, fixture d'état avant chaque scénario). Ces commandes ne sont pas à lancer sur LineServ et ne désignent pas la base des tests manuels.</p>
 <p><strong>Résultat vérifié en CI (MySQL 8.0 et MariaDB 11.8) : 29 tests / 29 conformes</strong>, complétés par l'<strong>étape 6 d'intégration PDO</strong> (<code>sp_cancel_order</code> avec conservation des lignes et restitution unique du stock, garde <code>ANNULATION_VIA_PARCOURS_DEDIE</code> sur <code>sp_update_order_status</code>, annulation administrateur d'une commande <code>EXPEDIEE</code> sans retour de stock, session PDO forcée en UTC <code>+00:00</code>, filtrage UTC de <code>revenueReport</code> et <code>RetentionComptes</code> sur <code>SqlStore</code>) ainsi que par <code>tests/php/migration_mariadb_test.php</code> sur schémas antérieurs. 15 de ces tests contournent volontairement l'application (<code>INSERT</code>/<code>UPDATE</code>/<code>DELETE</code> directs) : la conformité prouve que les règles tiennent dans le SGBD lui-même.</p>
 <table>
 <thead>
@@ -350,6 +354,7 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 </tbody>
 </table>
 <h2 id="3-tests-fonctionnels-recette-de-lapplication-f-00-a-f-56">3. Tests fonctionnels (recette de l'application — <code>F-00</code> à <code>F-56</code>)<a class="headerlink" href="#3-tests-fonctionnels-recette-de-lapplication-f-00-a-f-56" title="Permanent link">#</a></h2>
+<p>Les gestes manuels <code>[!]</code> se font sur l'application LineServ reliée à sa base de production, pendant la fenêtre pré-démo autorisée et avec des données synthétiques. Après la campagne, restaurer cette même base à l'état de démonstration selon <a href="14-guide-lineserv.html"><code>14-guide-lineserv.md</code></a>. La base <code>minishop_test</code> ne sert qu'aux tests automatisés en CI.</p>
 <p>Lecture de la colonne <strong>Statut</strong> :
 - <strong>« automatisé (...) »</strong> : assertions exécutées automatiquement par <code>scripts/run-all-tests.mjs</code> et les 15 jobs CI (les vérifications responsive 320/375/1440 px et cartes mobiles <code>data-label</code> sont couvertes uniquement en automatisé par <code>responsive_contract.php</code> et <code>responsive_navigateur.mjs</code>, hors suites manuelles) ;
 - <strong>« automatisé (...) + test navigateur réel <code>[!]</code> »</strong> : logique et DOM prouvés automatiquement en JSDOM/Chromium, comportement natif de l'interface navigateur (invite de permission de géolocalisation, stockage local, relecture linguistique) restant à constater humainement (<code>NON JOUÉ</code> dans <a href="13-suivi-recette-uc.csv"><code>13-suivi-recette-uc.csv</code></a>) ;
@@ -952,29 +957,29 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 <tr>
 <td>S-01</td>
 <td>Injection SQL dans la recherche</td>
-<td>12 payloads (<code>' OR 1=1 --</code>, <code>UNION SELECT email,mot_de_passe_hash FROM client</code>, <code>; DROP TABLE client</code>, guillemets, etc.)</td>
-<td>réponses 200 avec 0 résultat ou message de validation ; <code>SELECT COUNT(*) FROM client</code> inchangé ; aucune erreur SQL affichée</td>
+<td>Les tentatives SQL destructives ou d'extraction (<code>UNION</code> sur les tables de comptes, <code>DROP</code>, etc.) sont <code>BLOQUÉ</code> sur la production ; sur LineServ, utiliser seulement une recherche littérale non destructive via l'interface.</td>
+<td>Réponse normale/validation sans erreur technique ni divulgation ; les payloads agressifs et vérifications par SQL direct restent aux tests automatisés isolés/CI.</td>
 <td>SEC-01, SEC-02</td>
 </tr>
 <tr>
 <td>S-02</td>
 <td>Script stocké puis affiché (XSS)</td>
-<td>créer en admin un produit nommé <code>&lt;script&gt;alert(document.cookie)&lt;/script&gt;</code>, ouvrir la fiche client puis la liste admin (FR et EN)</td>
-<td>texte affiché littéralement (<code>&amp;lt;script&amp;gt;</code>) ; cookie <code>HttpOnly</code> inaccessible ; CSP stricte (<code>script-src 'self'</code>, aucun inline) bloquant toute exécution</td>
+<td>Avec un compte admin de test, créer un produit de test nommé <code>&lt;script&gt;console.log('test')&lt;/script&gt;</code> puis ouvrir sa fiche et la liste admin avec un compte de test (FR et EN)</td>
+<td>Texte affiché littéralement (<code>&amp;lt;script&amp;gt;</code>) ; aucune exécution ni requête externe ; CSP stricte (<code>script-src 'self'</code>, aucun inline). Supprimer le produit uniquement via l'interface avant la restauration finale si nécessaire.</td>
 <td>SEC-03</td>
 </tr>
 <tr>
 <td>S-03</td>
 <td>IDOR sur les commandes</td>
-<td>itérer <code>/mes-commandes/1..20</code> et <code>/annulation</code> avec un autre compte client, puis appeler <code>sp_confirm_order</code></td>
-<td>404 systématique sur les commandes d'autrui ; la procédure renvoie <code>ACCES_NON_AUTORISE</code> (<code>T-18</code>) ; aucune donnée divulguée</td>
+<td>Avec deux comptes synthétiques C1/C2, ouvrir uniquement une commande de test de C2 depuis la session de C1 via l'interface/HTTP ; ne pas énumérer des identifiants réels ni appeler une procédure SQL</td>
+<td>404 sur la commande de test d'autrui ; aucune donnée divulguée. La vérification SQL de <code>sp_confirm_order</code> (<code>T-18</code>) reste en CI.</td>
 <td>SEC-08</td>
 </tr>
 <tr>
 <td>S-04</td>
 <td>Falsification du prix ou du port</td>
-<td><code>POST /commande/valider</code> et <code>POST /api/panier/ajouter</code> avec <code>prix_unitaire=0.01</code> et <code>frais_port=0</code> injectés</td>
-<td>ligne enregistrée au vrai prix serveur, port calculé côté serveur ; tout <code>UPDATE</code> ultérieur du prix est bloqué en base (<code>T-11</code>, <code>T-28</code>)</td>
+<td>Sur un panier/client de test, modifier les champs de prix/port dans une requête HTTP contrôlée ; ne pas effectuer d'<code>UPDATE</code> SQL</td>
+<td>Si une commande de test est créée, ses montants restent ceux calculés côté serveur ; la garde SQL contre <code>UPDATE</code> direct (<code>T-11</code>, <code>T-28</code>) est vérifiée uniquement en CI.</td>
 <td>SEC-10, RB-06</td>
 </tr>
 <tr>
@@ -1001,15 +1006,15 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 <tr>
 <td>S-08</td>
 <td>Fuite d'information dans les messages et journaux</td>
-<td>provoquer une erreur métier, une coupure DB ou une exception non gérée</td>
-<td>pages génériques sans SQL, chemin interne ni code <code>RB*</code> ; aucun mot de passe, hash ni coordonnée nominative dans les nouvelles traces d'audit</td>
+<td>Provoquer uniquement une erreur métier avec les données de test ; ne pas couper la base ni provoquer volontairement une panne de production</td>
+<td>Page générique sans SQL, chemin interne ni code <code>RB*</code> ; aucune donnée sensible dans les preuves/journaux. La coupure DB est <code>BLOQUÉ</code> sur LineServ.</td>
 <td>SEC-12, SEC-13</td>
 </tr>
 <tr>
 <td>S-09</td>
 <td>Force brute sur l'authentification</td>
-<td>rafale de tentatives sur <code>/connexion</code> et <code>/admin/connexion</code> sur instance isolée</td>
-<td>message neutre constant ; <strong>limite connue documentée</strong> : pas de limiteur de débit applicatif intégré dans la maquette scolaire (<code>TC05-09</code>)</td>
+<td>Aucune rafale ni script de force brute sur la production LineServ ; seuls quelques échecs manuels à faible cadence sur un compte de test sont permis selon <code>TC05-09</code>, sinon <code>BLOQUÉ</code></td>
+<td>message neutre constant ; <strong>limite connue documentée</strong> : pas de limiteur de débit applicatif intégré dans la maquette scolaire</td>
 <td>SEC-04, SEC-06</td>
 </tr>
 <tr>
@@ -1021,7 +1026,7 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 </tr>
 </tbody>
 </table>
-<p>Les 10 cas sont rejouables manuellement (<code>curl</code> + navigateur sur instance isolée, cf. <code>TCX-01</code>…<code>TCX-05</code>) et couverts par <code>scripts/wasm-e2e.mjs</code> (T6, T12, T13) ainsi que <code>tests/phpunit/SecurityContractTest.php</code> et <code>tests/php/contract_http.php</code>. Les <strong>10 contrôles statiques</strong> (+ auto-test sur fixtures fautives) sont bloquants en CI : <code>bash tests/security/controles.sh</code>.</p>
+<p>Les contrôles manuels navigateur/HTTP de <code>TCX-01</code>…<code>TCX-05</code> ne portent que sur des comptes et données de test synthétiques de LineServ, avec autorisation, sans SQL direct, extraction de comptes, rafale ni panne. Les scénarios exigeant une instance isolée, une mutation hors des données de test ou une attaque à charge élevée sont <code>BLOQUÉ</code> pour la campagne de production. Les tests automatisés sont couverts par <code>scripts/wasm-e2e.mjs</code> (T6, T12, T13), <code>tests/phpunit/SecurityContractTest.php</code> et <code>tests/php/contract_http.php</code>. Les <strong>10 contrôles statiques</strong> (+ auto-test sur fixtures fautives) sont bloquants en CI : <code>bash tests/security/controles.sh</code> ; aucun test automatisé ni SQL direct ne doit viser la base de production.</p>
 <h2 id="5-tests-de-performance-de-concurrence-dinstallation-et-de-restauration">5. Tests de performance, de concurrence, d'installation et de restauration<a class="headerlink" href="#5-tests-de-performance-de-concurrence-dinstallation-et-de-restauration" title="Permanent link">#</a></h2>
 <table>
 <thead>
@@ -1037,37 +1042,37 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 <td>P-01</td>
 <td>Catalogue filtré, 200 produits</td>
 <td><code>bash tests/perf/mesurer.sh '/catalogue?cat=1&amp;prix_max=500'</code></td>
-<td>p95 &lt; 500 ms, ≤ 5 requêtes (<code>ENF-01</code>) — protocole prêt, <strong>à mesurer sur le serveur cible <code>[!]</code></strong></td>
+<td>p95 &lt; 500 ms, ≤ 5 requêtes (<code>ENF-01</code>) — mesure LineServ uniquement avec autorisation explicite, faible cadence et fenêtre pré-démo ; sinon <code>BLOQUÉ</code> <code>[!]</code></td>
 </tr>
 <tr>
 <td>P-02</td>
 <td>Recherche « casque »</td>
 <td><code>bash tests/perf/mesurer.sh '/recherche?q=casque'</code></td>
-<td>p95 &lt; 500 ms ; <code>EXPLAIN</code> utilisant <code>idx_produit_visible</code> ou <code>FULLTEXT</code> (<code>ENF-02</code>) — <strong>à mesurer sur le serveur cible <code>[!]</code></strong></td>
+<td>p95 &lt; 500 ms ; <code>EXPLAIN</code> utilisant <code>idx_produit_visible</code> ou <code>FULLTEXT</code> (<code>ENF-02</code>) — aucun <code>EXPLAIN</code> ou accès SQL direct sur la base de production ; mesure HTTP LineServ seulement avec autorisation explicite et faible cadence, sinon <code>BLOQUÉ</code> <code>[!]</code></td>
 </tr>
 <tr>
 <td>P-03</td>
 <td>Validation de commande</td>
 <td><code>bash tests/perf/mesurer.sh '/commande/valider'</code> (POST)</td>
-<td>p95 &lt; 900 ms avec verrous — <strong>à mesurer sur le serveur cible <code>[!]</code></strong></td>
+<td>p95 &lt; 900 ms avec verrous — uniquement sur panier/compte synthétique, avec autorisation explicite et une exécution contrôlée ; sinon <code>BLOQUÉ</code> <code>[!]</code></td>
 </tr>
 <tr>
 <td>P-06</td>
 <td>Performances côté base sur jeu de volumétrie</td>
-<td><code>sudo bash scripts/capture_perf.sh</code> (base dédiée <code>minishop_perf</code>, ne touche jamais <code>minishop</code>)</td>
-<td><code>EXPLAIN</code> sans <code>ALL</code> sur catalogue, recherche et « mes commandes » (un <code>ALL</code> documenté sur l'agrégation par statut, A-08) ; génère <code>tests/perf/dernieres_mesures.txt</code> hors Git</td>
+<td><code>sudo bash scripts/capture_perf.sh</code> (jeu local dédié, hors LineServ)</td>
+<td>Contrôle automatisé/local seulement ; ne pas créer de base secondaire ni lancer <code>EXPLAIN</code>/volumétrie sur la production LineServ dans la recette manuelle</td>
 </tr>
 <tr>
 <td>C-01</td>
 <td>Tentative de survente concurrente</td>
 <td><code>bash tests/charge/reserver.sh 20 12</code> (et <code>php tests/php/json_concurrency_stress.php</code>)</td>
-<td>12 commandes réussies, 8 refus <code>STOCK_INSUFFISANT</code>, stock final 0 (<code>RB-18</code>) — stress concurrent JSON exécuté en CI ; tir HTTP SQL <code>reserver.sh</code> <strong>à rejouer sur serveur cible <code>[!]</code></strong></td>
+<td>Le stress JSON est exécuté en CI. Ne pas lancer 20 requêtes concurrentes contre LineServ dans la recette ordinaire ; tir HTTP SQL uniquement après accord écrit de l'hébergeur, sur stock synthétique dédié, sinon <code>BLOQUÉ</code> <code>[!]</code></td>
 </tr>
 <tr>
 <td>C-02</td>
 <td>Rejeu du POST de commande / double annulation</td>
-<td>rejouer le même <code>POST /commande/valider</code> ou <code>POST .../annulation</code></td>
-<td>au plus une commande / une seule restitution de stock (<code>TC07-08</code>, <code>TC09-02</code>, <code>TC09-09</code>)</td>
+<td>rejouer une fois le même <code>POST /commande/valider</code> ou <code>POST .../annulation</code> pour une commande de test LineServ</td>
+<td>au plus une commande / une seule restitution de stock (<code>TC07-08</code>, <code>TC09-02</code>, <code>TC09-09</code>) ; arrêter après le contrôle et restaurer la base avant la démo</td>
 </tr>
 <tr>
 <td>I-01</td>
@@ -1078,8 +1083,8 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 <tr>
 <td>B-01</td>
 <td>Sauvegarde / restauration complète</td>
-<td><code>mysqldump --single-transaction --routines --triggers minishop &gt; b.sql</code>, restauration sur base vide puis <code>run_sql_tests.sh</code></td>
-<td><strong>29/29</strong> : prouve la survie de la fonction, des 17 procédures et des 16 triggers (<code>ENF-15</code>) — <strong>à rejouer sur poste SQL <code>[!]</code></strong></td>
+<td>sauvegarde SQL complète avec routines/triggers, puis restauration selon une procédure approuvée</td>
+<td>Vérifier la procédure avant la campagne ; la restauration de la sauvegarde pré-campagne dans la même base LineServ est le retour obligatoire à l'état de démo. Ne pas exécuter une commande de restauration non validée ni restaurer sur un nom de base supposé <code>[!]</code></td>
 </tr>
 </tbody>
 </table>
@@ -1255,7 +1260,7 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 <td>Base de données (contraintes, procédures, triggers, vues, UTC, migration)</td>
 <td>29 (<code>T-01</code>…<code>T-29</code>)</td>
 <td><strong>29</strong></td>
-<td>0 (rejouable sur LineServ via §5 de <code>14-guide-lineserv.md</code>)</td>
+<td>0 (tests SQL automatisés uniquement sur <code>minishop_test</code> en CI ; aucun rejeu manuel sur la base de production)</td>
 <td>0</td>
 <td>0</td>
 <td>jobs CI MySQL 8.0 &amp; MariaDB 11.8 (<code>sql_integration.php</code> + étape 6 + <code>migration_mariadb_test.php</code>)</td>
@@ -1470,7 +1475,7 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 <ul>
 <li>la <strong>base de données</strong> est verrouillée par 29 scénarios SQL + l'étape 6 d'intégration PDO et la migration MariaDB, rejoués automatiquement à chaque push sur MySQL 8.0 et MariaDB 11.8 ;</li>
 <li>l'<strong>application complète</strong> (57 cas fonctionnels <code>F-00</code>…<code>F-56</code>, dont le bilinguisme intégral FR/EN, le fuseau horaire local sans tiers, les confirmations en 2 étapes, les tableaux mobiles <code>data-label</code>, les mentions légales LCEN et les outils de conservation) est couverte par les 15 jobs de CI ;</li>
-<li>la <strong>recette manuelle humaine</strong> dispose de suites actualisées et allégées (<a href="13-fiches-recette-uc.html"><code>docs/13-fiches-recette-uc.md</code></a> et <a href="13-suivi-recette-uc.csv"><code>docs/13-suivi-recette-uc.csv</code></a>, 164 scénarios + 36 couples = 200 lignes <code>NON JOUÉ</code> à exécuter sur navigateur réel et sur LineServ, les tests responsive multi-largeurs ayant été retirés du périmètre manuel et confiés aux seules suites automatisées) ;</li>
+<li>la <strong>recette manuelle humaine</strong> dispose de suites actualisées et allégées (<a href="13-fiches-recette-uc.html"><code>docs/13-fiches-recette-uc.md</code></a> et <a href="13-suivi-recette-uc.csv"><code>docs/13-suivi-recette-uc.csv</code></a>, 164 scénarios + 36 couples = 200 lignes <code>NON JOUÉ</code> à dérouler sur navigateur réel et sur la base de production LineServ pendant une fenêtre pré-démo autorisée, avec restauration obligatoire de cette même base à l'état de démonstration avant la démo ; les tests responsive multi-largeurs et les tests SQL restent automatisés, <code>minishop_test</code> étant réservé à la CI) ;</li>
 <li>les copies versionnées de ce document dans <code>livrables/{html,pdf,docx}/02-document-tests-validation.*</code> se régénèrent avec <code>python3 scripts/md_to_{html,pdf,docx}.py</code>.</li>
 </ul>
 <footer class="doc">

@@ -183,7 +183,7 @@ Un administrateur connecté sans le rôle SUPER reçoit désormais un statut HTT
 Même avec **15 jobs CI automatisés**, une campagne humaine reste indispensable sur ordinateur pour valider :
 1. les parcours métier complets, la navigation au clavier et les confirmations explicites en deux étapes (avec et sans JavaScript) dans un navigateur réel ;
 2. l'expérience réelle de la boîte de dialogue navigateur de permission de géolocalisation sur `/preferences` et la qualité linguistique perçue des pages traduites en anglais ;
-3. l'hébergement cible **LineServ** (sous-dossier éventuel, séparation des fichiers privés, import phpMyAdmin sur base dédiée, absence de scripts de développement exposés).
+3. l'hébergement cible **LineServ** (sous-dossier éventuel, séparation des fichiers privés, absence de scripts de développement exposés) et la recette manuelle sur la base réellement utilisée par l'application de production, pendant une fenêtre pré-démo autorisée ; cette même base doit être restaurée à l'état de démonstration avant la démo. `minishop_test` reste réservée aux tests SQL automatisés de GitHub CI et n'est pas la cible manuelle.
 
 **Périmètre volontairement exclu du manuel :** les tests responsive multi-largeurs (`320/375/768/1440 px`, cartes mobiles `data-label`, portrait/paysage téléphone) ont été retirés des suites manuelles car trop longs à exécuter sur l'ensemble des vues ; ils reposent désormais exclusivement sur les suites automatisées (`tests/php/responsive_contract.php` et `tests/node/responsive_navigateur.mjs`). L'absence de validation humaine exhaustive sur téléphones physiques est assumée et documentée.
 

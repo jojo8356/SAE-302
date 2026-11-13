@@ -94,7 +94,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li><a href="#objectif-et-limites">Objectif et limites</a></li>
 <li><a href="#methode-etudiee">Méthode étudiée</a></li>
 <li><a href="#codes-et-verdicts">Codes et verdicts</a></li>
-<li><a href="#preparer-une-campagne-sans-detruire-les-donnees">Préparer une campagne sans détruire les données</a></li>
+<li><a href="#preparer-une-campagne-pre-demo-sur-la-base-de-production-lineserv">Préparer une campagne pré-démo sur la base de production LineServ</a></li>
 <li><a href="#deroulement-et-preuves">Déroulement et preuves</a></li>
 </ul>
 </li>
@@ -126,7 +126,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </div>
 </nav>
 <h1 id="fiches-de-recette-minishop-uc-01-a-uc-14">Fiches de recette MiniShop — UC-01 à UC-14<a class="headerlink" href="#fiches-de-recette-minishop-uc-01-a-uc-14" title="Permanent link">#</a></h1>
-<p><strong>Révision de référence :</strong> branche de cette fiche, à relever au lancement par <code>git rev-parse --short HEAD</code>. <strong>Périmètre :</strong> maquette web MiniShop (vues publiques, espace client, back-office, préférences locales FR/EN et fuseau horaire, outils CLI de maintenance), magasin JSON ou MariaDB/MySQL selon configuration. <strong>Campagne manuelle : non exécutée par la rédaction de ce document.</strong> Aucun résultat humain, testeur, date d'exécution ni preuve n'est prérempli.</p>
+<p><strong>Révision de référence :</strong> branche de cette fiche, à relever au lancement par <code>git rev-parse --short HEAD</code>. <strong>Périmètre :</strong> maquette web MiniShop (vues publiques, espace client, back-office, préférences locales FR/EN et fuseau horaire, outils CLI de maintenance), magasin JSON ou MariaDB/MySQL selon configuration. <strong>Cible manuelle retenue (décision utilisateur) :</strong> la base réellement utilisée par l'application en production sur LineServ, identifiée depuis la configuration privée (<code>DB_HOST</code>/<code>DB_NAME</code>, à confirmer sur place), pendant une fenêtre de recette pré-démo ; elle doit être remise à son état de démonstration avant la démo. Il ne s'agit pas d'une base manuelle séparée : <code>minishop_test</code> est réservée aux tests automatisés GitHub CI. <strong>Campagne manuelle : non exécutée par la rédaction de ce document.</strong> Aucun accès, test, testeur, date d'exécution, preuve ni réinitialisation de production n'est attesté ici.</p>
 <h2 id="0-mode-demploi">0. Mode d'emploi<a class="headerlink" href="#0-mode-demploi" title="Permanent link">#</a></h2>
 <h3 id="objectif-et-limites">Objectif et limites<a class="headerlink" href="#objectif-et-limites" title="Permanent link">#</a></h3>
 <p>Le tableau de suivi prêt à remplir est <a href="13-suivi-recette-uc.csv">13-suivi-recette-uc.csv</a> : chaque scénario et chaque couple de statut y dispose de sa propre ligne, initialement <code>NON JOUÉ</code>. Ouvrir le fichier en UTF-8 avec séparateur point-virgule ; ne pas envoyer de preuve contenant des secrets.</p>
@@ -141,23 +141,22 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <h3 id="codes-et-verdicts">Codes et verdicts<a class="headerlink" href="#codes-et-verdicts" title="Permanent link">#</a></h3>
 <ul>
 <li><strong>P0</strong> : critique (perte de données, paiement/stock, accès ou parcours bloqué) ; <strong>P1</strong> : important ; <strong>P2</strong> : complémentaire.</li>
-<li><strong>M</strong> : navigateur ; <strong>R</strong> : requête ou outil contrôlé ; <strong>I</strong> : intégration isolée avec droits adaptés (ou CLI sur copie jetable). Ne pas lancer R/I sur une base partagée, sur Internet ou sans autorisation.</li>
+<li><strong>M</strong> : navigateur sur l'application LineServ ; <strong>R</strong> : requête HTTP contrôlée vers cette application ; <strong>I</strong> : vérification d'intégration via l'application, sur des données synthétiques identifiées et avec autorisation. La campagne manuelle ne lance aucun SQL direct, fixture, import, commande de réinitialisation, purge exécutable ni script de charge contre la production ; si un scénario l'exige, le marquer <code>BLOQUÉ</code> (les tests SQL automatisés restent en CI sur <code>minishop_test</code>).</li>
 <li><strong>APP</strong> : comportement attendu d'après le code consulté ; <strong>SPEC</strong> : exigence ou résultat souhaité à vérifier, <strong>pas une promesse d'implémentation</strong>. Un échec de SPEC est une anomalie ou un écart à qualifier, jamais un succès par défaut.</li>
 <li>Chaque scénario est initialement <strong>NON JOUÉ</strong>. Après exécution, reporter dans le journal : <code>OK</code>, <code>KO</code>, <code>BLOQUÉ</code>, <code>NON JOUÉ</code> ou <code>NON APPLICABLE</code>, le résultat observé et la preuve. Un contrôle d'une interface ne prouve pas une règle côté serveur ; les protections doivent aussi être vérifiées par les tests adaptés.</li>
 </ul>
-<h3 id="preparer-une-campagne-sans-detruire-les-donnees">Préparer une campagne sans détruire les données<a class="headerlink" href="#preparer-une-campagne-sans-detruire-les-donnees" title="Permanent link">#</a></h3>
+<h3 id="preparer-une-campagne-pre-demo-sur-la-base-de-production-lineserv">Préparer une campagne pré-démo sur la base de production LineServ<a class="headerlink" href="#preparer-une-campagne-pre-demo-sur-la-base-de-production-lineserv" title="Permanent link">#</a></h3>
 <ol>
-<li>Vérifier la version réellement utilisée (<code>git rev-parse --short HEAD</code>), le pilote (<code>json</code> ou <code>sql</code>), la base, l'URL, le navigateur et l'état initial des préférences navigateur (<code>/preferences</code> : clé <code>localStorage</code> <code>minishop.preferences.v1</code>). Avant les scénarios nominaux en français, cliquer sur « Réinitialiser » dans <code>/preferences</code> afin de repartir sur le repli <code>Français</code> + <code>Europe/Paris</code>. Les données et identifiants des comptes de test ci-dessous sont des <strong>exemples fictifs</strong> ; ne jamais entrer de coordonnées personnelles réelles ou bancaires dans les formulaires.</li>
-<li>Utiliser un environnement et une base de recette <strong>distincts</strong>, avec sauvegarde et autorisation du propriétaire. Les tests créent comptes et commandes et modifient stock, produits et statuts. Ne jamais lancer <code>--reset</code>, <code>--db-reset</code>, des scripts de volumétrie, de purge <code>--executer</code> ou une fixture SQL sur la base partagée. Une simple lecture peut créer une session et des journaux.</li>
-<li>Utiliser si disponible un administrateur <code>SUPER</code> et, pour les contrôles de rôle, un gestionnaire <code>GESTIONNAIRE</code> autorisé à tester ; ne pas présumer les identifiants encore valides. Le jeu de démonstration versionné prévoit <code>alice@example.com</code> / <code>Demo2026!</code>, <code>bruno@example.com</code> / <code>Demo2026!</code>, <code>carla@example.com</code> / <code>Demo2026!</code> et <code>admin@minishop.fr</code> / <code>Admin2026!</code> si ces comptes n'ont pas été modifiés. Ne pas changer leurs mots de passe dans une base partagée.</li>
-<li>Créer ou faire créer <strong>dans la recette isolée</strong> :
-   - <strong>C1</strong> et <strong>C2</strong> : deux clients distincts actifs ; un e-mail neuf non utilisé, par exemple <code>uc-nouveau@example.test</code> ; <strong>A1</strong> : administrateur <code>SUPER</code> ; <strong>G1</strong> : administrateur <code>GESTIONNAIRE</code> si disponible.
-   - <strong>K1</strong> : catégorie de test et <strong>K0</strong> : catégorie de test vide ; <strong>P1</strong> : produit visible, stock 5, prix HT 10,00 €, TVA 20 % (TTC 12,00 €) ; <strong>P2</strong> : visible, stock 0 ; <strong>P3</strong> : masqué ; <strong>P4</strong> : visible, stock 1. Références et noms uniques, par exemple <code>TEST-UC-P1</code> et <code>Produit UC P1</code>.
-   - Noter les frais de port, la franchise, la TVA par défaut et la durée <code>conservation_compte</code> (<code>24</code> mois par défaut) dans <code>/admin/parametres</code>, sans les modifier sur une instance partagée. Prévoir trois commandes de C1 sur la base isolée : <strong>O1</strong>, non expédiée (<code>EN_PREPARATION</code> ou <code>PAYEE</code>), pour l'annulation client ; <strong>O2</strong>, distincte, pour les changements de statut nominaux ; <strong>O3</strong>, passée à <code>EXPEDIEE</code>, pour vérifier l'annulation administrative sans retour automatique de stock. Noter références, identifiants, stocks initiaux et URL de détail.</li>
-<li>Pour chaque ligne, remettre <strong>uniquement les données de recette isolées</strong> dans l'état indiqué ; si ce n'est pas possible, marquer <code>BLOQUÉ</code>. Les opérations de remise en état doivent être décidées par le responsable de l'environnement ; ne pas improviser de suppression ou réinitialisation.</li>
+<li>Relever la révision réellement déployée, l'URL et le navigateur. Confirmer en privé que l'application utilise <code>STORAGE_DRIVER=sql</code> et que les valeurs configurées de <code>DB_HOST</code>/<code>DB_NAME</code> correspondent exactement à la base sélectionnée dans phpMyAdmin/Adminer. Ne pas supposer le nom <code>minishop</code>, ne pas recopier les valeurs de configuration dans Git, le CSV ou une capture. Avant les scénarios nominaux en français, cliquer sur « Réinitialiser » dans <code>/preferences</code> pour repartir sur <code>Français</code> + <code>Europe/Paris</code>.</li>
+<li>La cible est la <strong>base de production réelle de LineServ</strong>, pas une nouvelle base de recette. Jouer la campagne uniquement dans une fenêtre pré-démo autorisée, avec accès au site limité aux testeurs et après confirmation que la base ne contient que des données de démonstration/synthétiques et aucun usage réel en cours. Si le contenu, le propriétaire, la cible ou l'absence de données réelles ne sont pas certains, arrêter et marquer les scénarios <code>BLOQUÉ</code>. Une consultation peut elle-même créer une session ou une trace.</li>
+<li>Avant toute écriture, exporter l'état de démonstration initial de la base cible dans un emplacement privé, hors dépôt et hors répertoire web. Vérifier que la sauvegarde inclut schéma, données, vues, routines, fonction et triggers, et qu'une procédure de restauration autorisée est prête. Cette sauvegarde constitue le point de retour à l'état de démo ; si elle n'est pas disponible ou restaurable, ne pas commencer les tests mutatifs.</li>
+<li>Utiliser uniquement des comptes et données <strong>fictifs de test</strong>. Prévoir C1 et C2 (clients distincts créés pour la campagne, avec e-mails <code>example.test</code>), A1 (compte administrateur de test fourni/autorisé par le propriétaire) et G1 (compte gestionnaire de test si disponible). Ne pas créer de compte administrateur via l'inscription publique. Les identifiants de connexion sont obtenus séparément par canal privé ; aucun mot de passe ne doit figurer dans cette fiche, le suivi CSV, les tickets ou les captures. Ne pas modifier les identifiants ou données personnelles d'un compte réel.</li>
+<li>Créer dans la base de production, via l'application, des objets de test clairement préfixés (<code>TEST-UC-…</code>) : K1/K0 (catégories), P1 (visible, stock 5, prix HT 10,00 €, TVA 20 %), P2 (stock 0), P3 (masqué), P4 (stock 1), puis O1/O2/O3 appartenant à C1 pour les parcours concernés. Relever leur état initial dans un journal privé expurgé. Ne modifier que ces objets de test ; si un scénario ne peut pas être joué sans toucher à des données non dédiées, le marquer <code>BLOQUÉ</code>.</li>
+<li>En fin de campagne, interrompre les écritures et suivre le §5.5 du <a href="14-guide-lineserv.html">guide LineServ</a> pour restaurer <strong>la même base de production</strong> depuis la sauvegarde validée de l'état de démo. Ne pas annoncer la base prête pour la démo avant d'avoir vérifié ce retour. Les scénarios exigeant du SQL direct, une fixture, une purge, une panne forcée ou une charge sont exclus de cette campagne de production : les marquer <code>BLOQUÉ</code> et les laisser aux contrôles automatisés/CI.</li>
 </ol>
+<p>Dans <a href="13-suivi-recette-uc.csv">13-suivi-recette-uc.csv</a>, la colonne <code>Base</code> qualifie le scénario (<code>APP</code>/<code>SPEC</code>) ; elle ne désigne ni un nom de base SQL ni l'environnement. Conserver les 200 lignes à <code>NON JOUÉ</code> jusqu'à leur exécution réelle.</p>
 <h3 id="deroulement-et-preuves">Déroulement et preuves<a class="headerlink" href="#deroulement-et-preuves" title="Permanent link">#</a></h3>
-<p>Pour un parcours, ouvrir les routes sur l'origine de l'instance, par exemple <code>http://localhost:8000/catalogue</code> si le serveur local est configuré sur ce port. Relever <strong>avant et après</strong> : stock, panier, numéro et statut de commande, montants (<code>montant_total</code>, <code>frais_port</code>, et <code>Total de la commande avant annulation</code> le cas échéant), langue/fuseau actifs et éventuelle écriture d'audit. Capturer une preuve expurgée : aucune donnée réelle, mot de passe, cookie ou secret. Pour les transitions, utiliser une commande distincte par cas ou une fixture isolée ; ne pas supposer qu'on peut revenir à un état précédent.</p>
+<p>Pour un parcours, ouvrir l'URL de l'application de production LineServ, pas une instance locale ni une autre base. Relever <strong>avant et après</strong> sur les seuls objets synthétiques : stock, panier, identifiant non sensible et statut de commande, montants (<code>montant_total</code>, <code>frais_port</code>, et <code>Total de la commande avant annulation</code> le cas échéant), langue/fuseau actifs et éventuelle écriture d'audit. Capturer une preuve expurgée : aucune donnée réelle, mot de passe, cookie, secret ni valeur de configuration. Pour les transitions, utiliser une commande de test distincte par cas ; ne pas utiliser de fixture ou requête SQL pour remettre l'état en place. La restauration complète de la base de démo est obligatoire en fin de campagne.</p>
 <p>Journal à recopier pour chaque scénario joué :</p>
 <table>
 <thead>
@@ -262,7 +261,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tr>
 <td>TC01-09</td>
 <td>P1 I SPEC</td>
-<td>Simuler une indisponibilité du magasin uniquement sur une instance jetable.</td>
+<td>Ne pas simuler l'indisponibilité du magasin sur la production LineServ. Marquer <code>BLOQUÉ</code> pour la campagne manuelle ; conserver ce test dans l'environnement automatisé isolé/CI.</td>
 <td>Message générique sans secret ni trace technique au visiteur (ni promesse infondée sur la page 500) ; aucune altération métier. Noter le code HTTP obtenu.</td>
 </tr>
 <tr>
@@ -430,8 +429,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tr>
 <td>TC04-01</td>
 <td>P0 M APP</td>
-<td>Utiliser un e-mail neuf et <code>Test2026!</code> deux fois, cocher les CGV et créer.</td>
-<td>Compte créé ; connexion immédiate et redirection vers <code>/compte</code> ; aucun mot de passe affiché en clair.</td>
+<td>Utiliser un e-mail fictif neuf et un mot de passe saisi uniquement dans le formulaire, cocher les CGV et créer.</td>
+<td>Compte créé ; connexion immédiate et redirection vers <code>/compte</code> ; aucun mot de passe affiché ni consigné en clair.</td>
 </tr>
 <tr>
 <td>TC04-02</td>
@@ -478,8 +477,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tr>
 <td>TC04-09</td>
 <td>P1 I SPEC</td>
-<td>Deux inscriptions simultanées avec le même e-mail, uniquement en recette isolée.</td>
-<td>Au plus un compte créé ; aucune donnée partielle ni erreur technique divulguée.</td>
+<td>Deux inscriptions simultanées avec le même e-mail fictif dédié, sur LineServ pendant la fenêtre autorisée.</td>
+<td>Au plus un compte de test créé ; aucune donnée réelle partielle ni erreur technique divulguée.</td>
 </tr>
 <tr>
 <td>TC04-10</td>
@@ -528,13 +527,13 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tr>
 <td>TC05-05</td>
 <td>P1 M APP</td>
-<td>Changer le mot de passe d'un compte <strong>jetable</strong> avec un ancien mot de passe erroné.</td>
+<td>Sur un compte client fictif créé pour cette campagne, saisir un ancien mot de passe erroné. Ne consigner aucune valeur de mot de passe.</td>
 <td>Refus ; ancien mot de passe toujours valide.</td>
 </tr>
 <tr>
 <td>TC05-06</td>
 <td>P1 M APP</td>
-<td>Sur un compte jetable, changer avec ancien mot de passe correct et confirmation ; se reconnecter.</td>
+<td>Sur un compte client fictif créé pour cette campagne, changer le mot de passe avec l'ancien saisi en privé et une confirmation, puis se reconnecter. Ne consigner aucune valeur.</td>
 <td>Nouveau mot de passe accepté ; ancien refusé ; aucun mot de passe affiché en clair.</td>
 </tr>
 <tr>
@@ -552,7 +551,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tr>
 <td>TC05-09</td>
 <td>P1 I SPEC</td>
-<td>Tester plusieurs échecs et l'expiration sur une instance jetable, sans attaquer un service partagé.</td>
+<td>Sur le seul compte de test dédié, réaliser quelques échecs de connexion à faible cadence pendant la fenêtre autorisée ; ne pas lancer de script de force brute ni de rafale. Si l'hébergement ou le compte risque d'être affecté, marquer <code>BLOQUÉ</code>.</td>
 <td>Comparer les protections réellement observées au cahier des charges ; temporisation/limitation de débit sur <code>/connexion</code> ne sont pas considérées acquises sans mesure.</td>
 </tr>
 <tr>
@@ -700,14 +699,14 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tr>
 <td>TC07-08</td>
 <td>P0 R SPEC</td>
-<td>Double clic rapide / rejouer exactement le même POST dans une instance isolée.</td>
+<td>Sur un panier et un compte de test, double-cliquer ou rejouer le même POST une seule fois sur LineServ pendant la fenêtre autorisée.</td>
 <td>Le vidage transactionnel du panier ou le contrôle de jeton doit empêcher une double commande ; relever tout doublon éventuel comme anomalie.</td>
 </tr>
 <tr>
 <td>TC07-09</td>
 <td>P0 I SPEC</td>
-<td>Deux clients valident simultanément le dernier exemplaire de P4 (stock 1) sur instance isolée.</td>
-<td>Exactement 1 commande réussie et 1 refus <code>STOCK_INSUFFISANT</code>, stock final = 0 ; vérifier séparément le verrou fichier JSON et <code>SELECT … FOR UPDATE</code> sous MariaDB/MySQL.</td>
+<td>Deux clients de test valident simultanément le dernier exemplaire de P4 (stock 1) sur LineServ, uniquement dans la fenêtre autorisée et sans autre commande concurrente.</td>
+<td>Exactement 1 commande réussie et 1 refus <code>STOCK_INSUFFISANT</code>, stock final = 0 ; le contrôle manuel porte sur le parcours applicatif SQL. La variante JSON et l'inspection SQL restent automatisées/hors production.</td>
 </tr>
 <tr>
 <td>TC07-10</td>
@@ -724,8 +723,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tr>
 <td>TC07-12</td>
 <td>P1 I SPEC</td>
-<td>Couper le stockage pendant une validation uniquement sur un environnement jetable.</td>
-<td>Page d'erreur générique sans secret et état atomique (aucune ligne ou décrémentation orpheline). Ne jamais couper la base de l'équipe.</td>
+<td>Scénario non exécuté sur la base de production : il faudrait interrompre le stockage pendant une écriture. Marquer <code>BLOQUÉ</code> dans la campagne LineServ ; conserver ce contrôle en environnement automatisé isolé/CI.</td>
+<td>Page d'erreur générique sans secret et état atomique (aucune ligne ou décrémentation orpheline). Ne jamais couper la base ou le service LineServ.</td>
 </tr>
 </tbody>
 </table>
@@ -842,7 +841,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tr>
 <td>TC09-07</td>
 <td>P0 I SPEC</td>
-<td>Simuler une erreur lors de la restitution uniquement sur une copie jetable.</td>
+<td>Ne pas provoquer une erreur de stockage/restitution sur la production LineServ. Marquer <code>BLOQUÉ</code> pour la campagne manuelle ; conserver le scénario dans les tests automatisés isolés/CI.</td>
 <td>Transaction annulée intégralement : ni restitution partielle ni statut <code>ANNULEE</code> incohérent.</td>
 </tr>
 <tr>
@@ -854,8 +853,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tr>
 <td>TC09-09</td>
 <td>P1 R/I APP</td>
-<td>Lancer concurremment l'annulation client (<code>C1</code>) et l'annulation administrateur (<code>A1</code>) sur une même commande <code>EN_PREPARATION</code> dans une instance isolée.</td>
-<td>Une seule annulation aboutit, l'autre reçoit un refus propre ; le stock n'est recrédité <strong>qu'une seule fois</strong> (verrou exclusif JSON / transaction <code>FOR UPDATE</code> SQL).</td>
+<td>Sur l'unique commande synthétique O1, lancer au même moment l'annulation depuis les sessions de test client C1 et administrateur A1 sur LineServ. N'utiliser aucune commande réelle ; si le contrôle nécessite un script/SQL ou perturbe d'autres usages, marquer <code>BLOQUÉ</code>.</td>
+<td>Une seule annulation aboutit, l'autre reçoit un refus propre ; le stock de test n'est recrédité <strong>qu'une seule fois</strong>.</td>
 </tr>
 </tbody>
 </table>
@@ -934,8 +933,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tr>
 <td>TC10-11</td>
 <td>P1 I SPEC</td>
-<td>Deux créations concurrentes de même référence, seulement en recette isolée.</td>
-<td>Au plus un produit créé ; intégrité préservée.</td>
+<td>Deux créations simultanées de même référence <code>TEST-UC-…</code> via l'application LineServ, dans la fenêtre autorisée. Si la concurrence ne peut pas être testée sans script ou requête SQL, marquer <code>BLOQUÉ</code>.</td>
+<td>Au plus un produit de test créé ; intégrité préservée.</td>
 </tr>
 </tbody>
 </table>
@@ -1058,8 +1057,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tr>
 <td>TC12-08</td>
 <td>P0 I SPEC</td>
-<td>Ajustement administrateur et validation de commande simultanés sur P4 dans une base jetable.</td>
-<td>Aucun stock négatif ni mouvement perdu ; tester séparément JSON et MariaDB/MySQL.</td>
+<td>Sur le seul produit de test P4, lancer une action d'ajustement et une validation de commande concurrentes depuis deux sessions LineServ, dans la fenêtre autorisée ; ne pas utiliser de charge automatisée.</td>
+<td>Aucun stock négatif ni mouvement perdu. Le parcours manuel porte uniquement sur les données synthétiques de la base de production.</td>
 </tr>
 <tr>
 <td>TC12-09</td>
@@ -1144,8 +1143,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tr>
 <td>TC13-11</td>
 <td>P1 M/R APP</td>
-<td>Sur base isolée avec une commande créée à <code>22:30:00Z</code> en été (soit <code>00:30</code> le lendemain à <code>Europe/Paris</code> et <code>18:30</code> le jour même à <code>America/New_York</code>), basculer le fuseau dans <code>/preferences</code> et filtrer ce jour sur <code>/admin/commandes</code> et <code>/admin</code>.</td>
-<td>La commande est rattachée au lendemain sous <code>Europe/Paris</code> et au jour même sous <code>America/New_York</code>, tandis que son horodatage stocké en base reste invariant en UTC.</td>
+<td>Sur LineServ, basculer le fuseau dans <code>/preferences</code> et filtrer les commandes de test sur <code>/admin/commandes</code> et <code>/admin</code>. Ne pas éditer directement un horodatage de production pour fabriquer <code>22:30:00Z</code> ; si aucune commande synthétique appropriée n'existe, marquer le cas <code>BLOQUÉ</code>.</td>
+<td>La commande synthétique est rattachée au jour local attendu sous <code>Europe/Paris</code> ou <code>America/New_York</code>, tandis que son horodatage stocké reste invariant en UTC.</td>
 </tr>
 </tbody>
 </table>
@@ -1212,13 +1211,13 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tr>
 <td>TC14-09</td>
 <td>P1 I SPEC</td>
-<td>Tester chaque ligne de la matrice ci-dessous avec commandes indépendantes sur base isolée, une transition par commande.</td>
-<td>Transitions <code>A</code> acceptées, <code>X</code> refusées, <code>I</code> sans doublon d'historique ; résultat réel consigné par couple <code>TC14-09/DE→VERS</code>.</td>
+<td>Tester dans l'interface LineServ les transitions accessibles, chacune sur une commande synthétique distincte. Ne pas modifier un statut par SQL ; les couples non testables dans l'interface sont <code>BLOQUÉ</code> en manuel et restent vérifiés en CI.</td>
+<td>Transitions <code>A</code> acceptées, <code>X</code> refusées lorsque l'interface permet de les soumettre, <code>I</code> sans doublon d'historique ; résultat consigné par couple <code>TC14-09/DE→VERS</code>.</td>
 </tr>
 <tr>
 <td>TC14-10</td>
 <td>P0 I SPEC</td>
-<td>Simuler un échec de stockage pendant une transition uniquement sur une copie jetable.</td>
+<td>Ne pas simuler d'échec de stockage sur la base de production LineServ. Marquer <code>BLOQUÉ</code> pour la campagne manuelle ; conserver le scénario dans les tests automatisés isolés/CI.</td>
 <td>Rollback complet : ni statut partiellement modifié ni trace orpheline ; aucun secret divulgué.</td>
 </tr>
 <tr>
@@ -1230,7 +1229,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tr>
 <td>TC14-12</td>
 <td>P1 I APP</td>
-<td>Sur une base SQL jetable, appeler directement <code>CALL sp_update_order_status(id_cmd, 'ANNULEE', id_admin, 'motif', @code)</code> sans passer par <code>sp_cancel_order</code>.</td>
+<td>Ne pas appeler directement <code>sp_update_order_status</code> contre la base de production. Marquer <code>BLOQUÉ</code> pour la recette manuelle LineServ ; le test SQL de la garde <code>ANNULATION_VIA_PARCOURS_DEDIE</code> reste dans la CI automatisée.</td>
 <td>Refus par la garde <code>ANNULATION_VIA_PARCOURS_DEDIE</code> ; statut, montants et stock demeurent intacts.</td>
 </tr>
 </tbody>
@@ -1306,9 +1305,9 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 </tbody>
 </table>
-<p><strong>Exécution :</strong> attribuer un résultat distinct à chacun des 36 couples sous l'identifiant <code>TC14-09 / ORIGINE → CIBLE</code>, sur une commande appropriée et une base jetable ; tracer si le cas est inaccessible en interface et nécessite une requête ou un test de repository. Toute annulation nécessite le commentaire exigé par le contrôleur et le passage par le parcours d'annulation dédié. Comparer la matrice JSON (<code>app/Model/Data/Triggers.php</code>) et SQL (<code>sql/02_minishop_procedures.sql</code>, <code>sql/03_minishop_triggers.sql</code>) sur leurs environnements respectifs, sans conclure pour SQL à partir du seul test JSON.</p>
+<p><strong>Exécution :</strong> attribuer un résultat distinct aux couples réellement testés depuis l'interface LineServ, sur des commandes synthétiques ; les couples qui exigent une requête SQL directe ou un test de repository sont <code>BLOQUÉ</code> dans la campagne de production. Toute annulation testée en interface nécessite le commentaire exigé par le contrôleur et le passage par le parcours d'annulation dédié. La comparaison exhaustive des matrices JSON (<code>app/Model/Data/Triggers.php</code>) et SQL (<code>sql/02_minishop_procedures.sql</code>, <code>sql/03_minishop_triggers.sql</code>) reste automatisée en CI ; ne pas la rejouer manuellement sur la base de production.</p>
 <h2 id="15-scenarios-transversaux-securite-preferences-fren-fuseau-horaire-mentions-legales-et-conservation">15. Scénarios transversaux — sécurité, préférences FR/EN, fuseau horaire, mentions légales et conservation<a class="headerlink" href="#15-scenarios-transversaux-securite-preferences-fren-fuseau-horaire-mentions-legales-et-conservation" title="Permanent link">#</a></h2>
-<p>Ces scénarios complètent les 14 UC sans créer artificiellement de nouveaux numéros d'UC (le responsive multi-largeurs est exclu de cette campagne manuelle et vérifié par les suites automatisées). Les tests marqués <code>I</code> ou <code>R</code> exigent une instance isolée et une autorisation explicite. Références associées : <code>docs/12-information-juridique.md</code>, <code>docs/18-politique-conservation.md</code>, <code>tests/node/preferences_test.mjs</code>, <code>tests/php/mentions_legales_test.php</code>, <code>tests/php/retention_comptes_test.php</code>, <code>tests/python/test_retention_cli.py</code>.</p>
+<p>Ces scénarios complètent les 14 UC sans créer artificiellement de nouveaux numéros d'UC (le responsive multi-largeurs est exclu de cette campagne manuelle et vérifié par les suites automatisées). Les tests <code>I</code> ou <code>R</code> de la campagne LineServ doivent rester des actions applicatives contrôlées sur des données synthétiques avec autorisation ; s'ils exigent une base/processus isolé, du SQL direct ou une panne forcée, les marquer <code>BLOQUÉ</code> plutôt que d'improviser. Références associées : <code>docs/12-information-juridique.md</code>, <code>docs/18-politique-conservation.md</code>, <code>tests/node/preferences_test.mjs</code>, <code>tests/php/mentions_legales_test.php</code>, <code>tests/php/retention_comptes_test.php</code>, <code>tests/python/test_retention_cli.py</code>.</p>
 <table>
 <thead>
 <tr>
@@ -1388,8 +1387,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tr>
 <td>TCX-12</td>
 <td>P1 I APP</td>
-<td>Sur une copie jetable uniquement, rendre le fichier de réception de contact non inscriptible puis soumettre <code>/contact</code>.</td>
-<td>L'échec est signalé proprement à l'utilisateur ; aucun faux message de confirmation n'est affiché. Ne jamais modifier les permissions d'une instance partagée.</td>
+<td>Ne pas modifier les permissions du serveur de production LineServ. Marquer <code>BLOQUÉ</code> dans la campagne manuelle ; vérifier ce scénario uniquement dans les tests automatisés ou un environnement de développement autorisé.</td>
+<td>L'échec est signalé proprement à l'utilisateur ; aucun faux message de confirmation n'est affiché.</td>
 </tr>
 <tr>
 <td>TCX-13</td>
@@ -1400,14 +1399,14 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tr>
 <td>TCX-14</td>
 <td>P1 I SPEC</td>
-<td>Tester panne et retour du magasin de données sur une instance jetable.</td>
+<td>Ne pas interrompre le service de base de données de production. Marquer <code>BLOQUÉ</code> pour LineServ ; conserver l'essai de panne/retour du magasin dans l'environnement automatisé isolé/CI.</td>
 <td>Page d'erreur générique sans secret (et sans affirmer faussement sur la 500 qu'aucune donnée n'a été modifiée), aucune écriture partielle, reprise propre au retour du service.</td>
 </tr>
 <tr>
 <td>TCX-15</td>
 <td>P1 I SPEC</td>
-<td>Mesurer les temps p95 et la tenue à la charge (<code>tests/perf/mesurer.sh</code>, <code>tests/charge/reserver.sh</code>) avec un jeu de recette défini et une autorisation écrite.</td>
-<td>Comparer aux seuils du cahier des charges ; joindre conditions matérielles et mesures réelles. <strong>Aucune mesure de serveur de recette n'est inventée ici.</strong></td>
+<td>Ne pas lancer les scripts de charge ou de volumétrie contre la production LineServ dans cette campagne. Marquer <code>BLOQUÉ</code> ; toute campagne de performance séparée exige une autorisation écrite de l'hébergeur, une fenêtre dédiée et un plan d'arrêt.</td>
+<td>Comparer aux seuils du cahier des charges ; joindre conditions matérielles et mesures réelles. <strong>Aucune mesure de serveur de production n'est inventée ici.</strong></td>
 </tr>
 <tr>
 <td>TCX-16</td>
@@ -1418,8 +1417,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tr>
 <td>TCX-17</td>
 <td>P1 I APP</td>
-<td>Sur une copie jetable uniquement, tester la politique de conservation (<code>conservation_compte = 24</code> mois, <a href="18-politique-conservation.html">18-politique-conservation.md</a>) via <code>scripts/purger_comptes.php</code>, <code>scripts/nettoyage_donnees.php</code> et <code>scripts/archive_restreinte.php</code> d'abord en simulation par défaut, puis avec <code>--executer</code>.</td>
-<td>En simulation : aucune écriture. Avec <code>--executer</code> : <code>purger_comptes.php</code> ne supprime que les comptes inactifs ≥ 24 mois + 2 jours <strong>sans commande</strong> (ceux ayant des commandes ou une date future/invalide sont conservés et signalés) ; <code>nettoyage_donnees.php</code> applique 12 mois aux contacts, 6 mois aux journaux et 30 jours aux sauvegardes du dossier dédié marqué <code>.minishop-sauvegardes</code> (en gardant au moins les 2 plus récentes) ; <code>archive_restreinte.php</code> crée une archive chiffrée privée sans modifier la source. Noter qu'aucun <code>cron</code> automatique n'est installé par défaut.</td>
+<td>Ne pas exécuter <code>scripts/purger_comptes.php</code>, <code>scripts/nettoyage_donnees.php</code> ni <code>scripts/archive_restreinte.php</code> contre la base de production LineServ, même avec <code>--executer</code>. Marquer <code>BLOQUÉ</code> pour la campagne manuelle ; leur simulation et exécution contrôlée restent hors de la recette de production et doivent être validées par les tests automatisés/CI.</td>
+<td>Les critères de conservation restent ceux du plan : comptes inactifs ≥ 24 mois + 2 jours sans commande, contacts 12 mois, journaux 6 mois et sauvegardes dédiées 30 jours (au moins les 2 plus récentes) ; <code>archive_restreinte.php</code> ne modifie pas la source. Aucun <code>cron</code> automatique n'est installé par défaut.</td>
 </tr>
 <tr>
 <td>TCX-18</td>
@@ -1460,8 +1459,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tr>
 <td>TCX-24</td>
 <td>P1 M/I SPEC</td>
-<td>Vérifier <code>/confidentialite</code> et, sur une copie jetable, créer/modifier un client et un administrateur fictifs puis inspecter le journal d'audit local (<code>app/Model/Data/Journal.php</code>).</td>
-<td><code>/confidentialite</code> expose clairement le périmètre de maquette scolaire, le stockage local des préférences et les durées de conservation ; les nouvelles traces d'audit des tables <code>client</code> et <code>administrateur</code> ne contiennent ni nom, ni e-mail, ni adresse, ni <code>mot_de_passe_hash</code>.</td>
+<td>Vérifier <code>/confidentialite</code> sur LineServ puis, si le journal privé est accessible avec autorisation, créer/modifier uniquement un client et un administrateur fictifs de test et contrôler les traces correspondantes. Ne pas ouvrir ni copier des journaux contenant des données réelles.</td>
+<td><code>/confidentialite</code> expose clairement le périmètre de maquette scolaire, le stockage local des préférences et les durées de conservation ; les nouvelles traces liées aux données de test ne contiennent ni nom, ni e-mail, ni adresse, ni <code>mot_de_passe_hash</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -1590,7 +1589,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li>Les tests automatisés du dépôt (suites PHP, PHPUnit, requêtes HTTP PHP-WASM, tests JSDOM <code>FR ↔ EN</code>, intégration SQL sur base jetable et Chromium headless en CI) sécurisent les non-régressions logiques et structurelles, mais <strong>ne remplacent pas</strong> un test manuel humain sur navigateur réel et instance déployée sur LineServ. <strong>Choix d'équipe explicite :</strong> le responsive multi-largeurs est retiré de la campagne manuelle (trop long à dérouler page par page) et laissé aux seules suites automatisées (<code>tests/php/responsive_contract.php</code> et <code>tests/node/responsive_navigateur.mjs</code>) ; l'absence d'essai manuel exhaustif sur téléphones physiques reste documentée comme limite assumée.</li>
 <li>Le cahier des charges décrit certaines exigences plus ambitieuses que l'état maquette scolaire : en particulier la complexité lettre+chiffre du mot de passe (<code>TC04-06</code>), la limitation de débit sur <code>/connexion</code> (<code>TC05-09</code>), l'absence de <code>cron</code> installé d'office et l'exclusion volontaire des comptes possédant des commandes dans <code>purger_comptes.php</code> (<code>TCX-17</code>). Marquer les écarts observés et ne pas déduire une conformité de production commerciale du passage vert des suites automatisées.</li>
 <li>La page de rétractation et les mentions légales correspondent à une <strong>maquette pédagogique étudiante</strong> : pas de déclaration de rétractation en ligne ni d'accusé durable réel, pas de paiement ni de livraison réels, et traduction anglaise à vocation pédagogique non relue par un juriste. Aucun texte de cette fiche ne transforme la maquette en boutique juridiquement prête à vendre.</li>
-<li>Le SQL et les outils CLI de purge/nettoyage doivent être testés uniquement sur une <strong>base ou copie de recette jetable identifiée et autorisée</strong>, jamais sur la base de travail partagée.</li>
+<li>La campagne manuelle cible la base réellement utilisée en production sur LineServ et se déroule avant la démo, sur des données synthétiques uniquement. Aucun SQL direct, fixture, reset, purge exécutable ou script de charge ne doit être lancé sur cette base ; les scénarios qui en dépendent sont <code>BLOQUÉ</code> en manuel. <code>minishop_test</code> reste réservé aux tests automatisés GitHub CI, jamais à la recette manuelle.</li>
 <li>Aucun temps de performance, résultat sur appareil, identité de testeur, historique ou validation humaine n'est fabriqué dans cette fiche : les 200 lignes de <a href="13-suivi-recette-uc.csv">13-suivi-recette-uc.csv</a> restent à <code>NON JOUÉ</code> tant qu'un membre de l'équipe ne les a pas effectivement déroulées.</li>
 </ol>
 <h3 id="controle-automatique-de-la-fiche">Contrôle automatique de la fiche<a class="headerlink" href="#controle-automatique-de-la-fiche" title="Permanent link">#</a></h3>
