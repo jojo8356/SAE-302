@@ -12,8 +12,8 @@
 
 | Statut d’audit | Nombre sur 86 | Sens |
 |---|---:|---|
-| `OK*` | 53 | Livrable présent et preuve automatisée/structurelle repérée dans le dépôt ou la CI. **Ce n’est pas une certification absolue** ; le périmètre des preuves CI et l’échec structurel relevé lors de l’ajout du rapport sont explicités ci-dessous. |
-| `PARTIEL` | 21 | Une partie existe, mais un critère, une intégration, une preuve ou une cohérence reste à résoudre. |
+| `OK*` | 54 | Livrable présent ou confirmation humaine fournie, avec preuve repérée dans le dépôt/la CI ou par l’utilisateur. **Ce n’est pas une certification absolue** ; le périmètre des preuves CI et les éléments déclaratifs sont explicités ci-dessous. |
+| `PARTIEL` | 20 | Une partie existe, mais un critère, une intégration, une preuve ou une cohérence reste à résoudre. |
 | `ÉCART` | 6 | Écart explicite entre la tâche/contrainte du CDC et l’application présente. |
 | `[!]` | 6 | Tâche humaine, externe, mesure cible ou état impossible à vérifier depuis ce checkout. |
 | **Total** | **86** | Les tâches non `OK*` empêchent de conclure à une réalisation à 100 %. |
@@ -26,7 +26,7 @@ Ces statuts évaluent les **86 tâches de la WBS**, pas tout le travail ultérie
 
 ### Preuve externe fournie par l’utilisateur — clone IUT
 
-Le relevé terminal communiqué montre `origin` configuré sur `https://iut-git.unice.fr/but2_s302/s302.git` et une requête `git ls-remote --heads origin` réussie. Les références visibles sont `chahd`, `dev`, `pj509414/dev` (SHA `bcca4d1d527b2ef859295a44dd1c65134aa93ab5`) et `pj509414/poc-auth-jwt` ; aucune référence `main` n’apparaît dans cette sortie. Cela prouve que le dépôt existe et est lisible depuis ce clone. La capture GitLab « Membres » fournie montre l’enseignante NGUYEN Thanh-Phuong comme membre direct avec le rôle `Reporter`, et Chahd comme `Developer` hérité du groupe ; elle confirme l’accès de l’enseignante au projet. L’envoi du courriel reste à confirmer.
+Le relevé terminal communiqué montre `origin` configuré sur `https://iut-git.unice.fr/but2_s302/s302.git` et une requête `git ls-remote --heads origin` réussie. Les références visibles sont `chahd`, `dev`, `pj509414/dev` (SHA `bcca4d1d527b2ef859295a44dd1c65134aa93ab5`) et `pj509414/poc-auth-jwt` ; aucune référence `main` n’apparaît dans cette sortie. Cela prouve que le dépôt existe et est lisible depuis ce clone. La capture GitLab « Membres » fournie montre l’enseignante NGUYEN Thanh-Phuong comme membre direct avec le rôle `Reporter`, et Chahd comme `Developer` hérité du groupe ; elle confirme l’accès de l’enseignante au projet. L’utilisateur confirme avoir envoyé le courriel de composition rédigé dans la conversation, qui comprenait l’adresse GitLab ; cette confirmation n’a pas été vérifiée indépendamment dans la boîte d’envoi.
 
 ### Source officielle fournie par l’utilisateur — `sujetSAE.pdf`
 
@@ -56,13 +56,13 @@ Les 200 scénarios des fiches de recette restent au statut `NON JOUÉ` dans le C
 
 ## 3. Revue tâche par tâche — les 86 identifiants de `docs/06-todolist.md`
 
-`OK*` signifie « preuve d’un livrable ou d’une suite repérée », pas « tous les environnements, critères métier et vérifications humaines sont certifiés ». Les raisons données priment sur le statut historique de la todolist.
+`OK*` signifie « preuve d’un livrable, d’une suite ou confirmation humaine fournie », pas « tous les environnements, critères métier et vérifications humaines sont certifiés ». Une confirmation déclarative de l’utilisateur est distinguée d’une vérification indépendante. Les raisons données priment sur le statut historique de la todolist.
 
 ### D1 — Pilotage, dépôt et rendu
 
 | ID | État audité | Constat et preuve |
 |---|---|---|
-| `D1-L1-01` | `PARTIEL` | Le sujet officiel (PDF fourni, p. 8) demande le courriel de composition et le partage de l’accès GitLab avec l’enseignante ; `git ls-remote` prouve que le dépôt est accessible et la capture « Membres » montre l’enseignante comme membre direct `Reporter`. La preuve d’envoi du courriel manque, donc la tâche reste `PARTIEL`. Le privé, la protection de `main`, le squash et la suppression des branches source sont des ajouts de la WBS/annexe, pas des exigences du PDF officiel. |
+| `D1-L1-01` | `OK*` | Le sujet officiel (PDF fourni, p. 8) demande le courriel de composition, la communication de l’adresse GitLab et le partage de l’accès avec l’enseignante. L’utilisateur confirme avoir envoyé le courriel proposé, avec la composition du groupe et l’adresse du dépôt ; la capture « Membres » montre l’enseignante comme membre directe `Reporter`, et `git ls-remote` confirme que le dépôt est lisible. L’envoi est attesté par l’utilisateur, mais n’a pas été vérifié indépendamment dans la boîte d’envoi. Le privé, la protection de `main`, le squash et la suppression des branches source sont des ajouts de la WBS/annexe, pas des exigences du PDF officiel. |
 | `D1-L1-02` | `OK*` | `app/` et `public/` existent et sont peuplés ; le besoin d’un squelette vide est dépassé. |
 | `D1-L1-03` | `OK*` | Le README à la racine présente désormais les deux membres nommés et leurs responsabilités opérationnelles A/B, d’après l’adaptation à deux personnes de `docs/06-todolist.md`, en distinguant ces rôles des permissions GitLab (`Owner` pour Johan Polsinelli, `Developer` pour Chahd Gouiaa). L’enseignante NGUYEN Thanh-Phuong (`Reporter`) est indiquée séparément. Le livrable est présent ; sa lecture effective par chaque membre n’est pas vérifiable depuis le dépôt. |
 | `D1-L1-04` | `[!]` | L’issue GitLab épinglée ne peut pas être vérifiée depuis le dépôt GitHub. |
@@ -218,6 +218,6 @@ Ces éléments peuvent être **déjà livrés** dans le code et les tests : leur
 3. Réconcilier les nombres, identifiants et dates des documents listés au §5 ; ne cocher que ce qui a une preuve datée et reproductible.
 4. Garder `[!]` pour les 200 scénarios manuels tant que l’équipe ne les a pas exécutés ; ne pas marquer « recette 100 % » sur la seule base de la CI.
 5. Planifier sur environnement isolé les tests de performance, la charge SQL, l’installation/restauration et le contrôle de déploiement ; conserver les sorties comme preuves.
-6. Faire attester séparément les tâches GitLab, la composition/validation pédagogique et les répétitions de soutenance. Le dépôt IUT n’a pas été interrogé dans cet audit.
+6. Faire attester séparément les tâches GitLab restantes, la validation pédagogique et les répétitions de soutenance. L’utilisateur confirme l’envoi du courriel de composition ; le dépôt IUT n’a pas été interrogé dans cet audit.
 
 **Aucune modification du code applicatif n’a été faite pendant cet audit.** Ce document formalise les constats sans modifier artificiellement les statuts historiques de `docs/06-todolist.md`.
