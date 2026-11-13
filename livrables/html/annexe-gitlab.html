@@ -96,7 +96,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li><a href="#4-convention-de-messages-de-commit">4. Convention de messages de commit</a></li>
 <li><a href="#5-ce-qui-ne-doit-jamais-etre-commite">5. Ce qui ne doit jamais être commité</a></li>
 <li><a href="#6-modele-de-readmemd-livre-exactement-ce-fichier-a-la-racine-du-depot">6. Modèle de README.md livré (exactement ce fichier à la racine du dépôt)</a></li>
-<li><a href="#7-ci-le-fichier-de-controle-livre-homeusergitlab-ciyml-6-jobs">7. CI : le fichier de contrôle livré (/home/user/.gitlab-ci.yml, 6 jobs)</a></li>
+<li><a href="#7-ci-et-preuve-de-revue">7. CI et preuve de revue</a></li>
 <li><a href="#8-ce-que-le-jury-regarde-en-premier-auto-controle-avant-le-rendu">8. Ce que le jury regarde en premier (auto-contrôle avant le rendu)</a></li>
 </ul>
 </div>
@@ -158,28 +158,8 @@ security(session): régénère l'id de session à l'ouverture et à la montée d
 <p><code>app/Config/env.php</code> (identifiants MySQL), tout fichier <code>.env</code> réel, les journaux <code>var/log/*</code>, les dumps SQL contenant des données réelles, <code>vendor/</code>, <code>node_modules/</code>, les captures d'écran de test (référencées par un lien wiki ou compressées dans <code>tests/captures/</code> si légères), les hashes de mots de passe autres que ceux de démonstration.</p>
 <h2 id="6-modele-de-readmemd-livre-exactement-ce-fichier-a-la-racine-du-depot">6. Modèle de <code>README.md</code> livré (exactement ce fichier à la racine du dépôt)<a class="headerlink" href="#6-modele-de-readmemd-livre-exactement-ce-fichier-a-la-racine-du-depot" title="Permanent link">#</a></h2>
 <p>Le fichier <code>README.md</code> du dépôt (reproduit intégralement dans le dépôt de ce rendu) contient : présentation du projet, membres et rôles, prérequis, installation en 5 commandes, comptes de démonstration avec <strong>mots de passe de démo</strong>, exécution des tests (SQL, charge, statiques), arborescence, lien vers les documents (CDC, tests, soutenance), procédure de sauvegarde/restauration, et la table des 29 tests SQL avec leur commande de rejeu. <strong>Critère d'acceptation</strong> : un tiers, sur une machine propre, doit pouvoir installer et lancer la démo en ≤ 15 min en suivant uniquement le README (<code>ENF-13</code>).</p>
-<h2 id="7-ci-le-fichier-de-controle-livre-homeusergitlab-ciyml-6-jobs">7. CI : le fichier de contrôle livré (<code>/home/user/.gitlab-ci.yml</code>, 6 jobs)<a class="headerlink" href="#7-ci-le-fichier-de-controle-livre-homeusergitlab-ciyml-6-jobs" title="Permanent link">#</a></h2>
-<pre><code class="language-yaml"># .gitlab-ci.yml (extrait des jobs obligatoires)
-stages: [validate, db, test, docs]
-php-lint:      { stage: validate, script: [ &quot;find app public -name '*.php' -exec php -l {} \\;&quot; ] }
-security-scan: { stage: validate, script: [ &quot;bash tests/security/controles.sh&quot; ] }   # 10 grep bloquants
-base-tests:
-  stage: db
-  services: [ mysql:8.0 ]
-  variables: { MYSQL_DATABASE: minishop_test, MYSQL_ALLOW_EMPTY_PASSWORD: &quot;yes&quot;, DB_TEST: minishop_test }
-  before_script: [ &quot;apt-get update -qq &amp;&amp; apt-get install -y -qq default-mysql-client&quot; ]
-  script: [ &quot;DB_USER=root bash scripts/run_sql_tests.sh&quot; ]
-  artifacts: { paths: [ &quot;tests/sql/rapport_tests_sql.md&quot;, &quot;tests/sql/out&quot; ] }
-</code></pre>
-<p><strong>Règle « pas de re-run » (à appliquer telle quelle).</strong> Si le pipeline est <strong>vert avant le merge</strong> (statut de la
-MR : « Pipeline passed »), <strong>aucun re-run n'est nécessaire après le merge</strong> : le pipeline post-merge rejoue les
-6 mêmes jobs, sur le même arbre de fichiers (GitLab CI teste la MR sur son <em>merge result</em>, GitHub Actions sur
-<code>refs/pull/&lt;n&gt;/merge</code>). Le run post-merge sert de <strong>preuve et de badge</strong>, pas de contrôle — on ne clique donc ni
-« Retry » côté GitLab, ni « Re-run jobs » côté GitHub. Exceptions, à connaître pour la soutenance : <code>main</code> a
-avancé entre le run de la MR et le merge (la chaîne re-démarre seule), run <strong>annulé</strong> (<code>interruptible: true</code>),
-échec de code corrigé puis poussé (c'est le <code>push</code> qui relance, jamais un re-run manuel), <code>style</code> en échec
-<code>allow_failure</code> (non bloquant), <strong>panne d'infrastructure</strong> (un seul <em>Retry</em> justifié, anomalie consignée).
-Tableau complet : <strong>CDC §14.2</strong>.</p>
+<h2 id="7-ci-et-preuve-de-revue">7. CI et preuve de revue<a class="headerlink" href="#7-ci-et-preuve-de-revue" title="Permanent link">#</a></h2>
+<p>La charte complète et le registre réutilisable sont dans <a href="../20-charte-gitlab-revues-croisees.html"><code>docs/20-charte-gitlab-revues-croisees.md</code></a>. La CI conservée est GitHub Actions (<code>.github/workflows/ci.yml</code>). Elle ne prouve pas qu’une MR GitLab a reçu une revue ou qu’un pipeline GitLab IUT a été exécuté. Consigner séparément l’identifiant de la MR, le relecteur distinct, les commentaires résolus et le résultat de CI avec sa plateforme.</p>
 <h2 id="8-ce-que-le-jury-regarde-en-premier-auto-controle-avant-le-rendu">8. Ce que le jury regarde en premier (auto-contrôle avant le rendu)<a class="headerlink" href="#8-ce-que-le-jury-regarde-en-premier-auto-controle-avant-le-rendu" title="Permanent link">#</a></h2>
 <table>
 <thead>
@@ -190,16 +170,16 @@ Tableau complet : <strong>CDC §14.2</strong>.</p>
 </thead>
 <tbody>
 <tr>
-<td>Pipeline <strong>vert avant le merge</strong> (et non un re-run après coup)</td>
-<td>onglet <em>Pipelines</em> de la MR « Pipeline passed » (GitHub : <code>gh pr checks &lt;n&gt;</code>) ; <strong>règle</strong> « pas de re-run » du §7</td>
+<td>Revue croisée <strong>réelle</strong></td>
+<td>identifiant de MR GitLab, relecteur distinct, approbation et fils de discussion résolus dans le registre de <code>docs/20</code></td>
 </tr>
 <tr>
-<td>Les 6 jobs tournent sans <code>allow_failure</code> déguisé</td>
-<td>seul <code>style</code> est en <code>allow_failure: true</code> (§7)</td>
+<td>CI GitHub Actions</td>
+<td>enregistrer le lien et le commit testés ; ne pas le présenter comme une CI GitLab</td>
 </tr>
 <tr>
-<td>Pipeline qui <strong>casse</strong> sur une concaténation SQL</td>
-<td>contrôle <code>security-scan</code> n° 1 (<code>tests/security/controles.sh</code>)</td>
+<td>Contrôle SQL</td>
+<td>contrôle <code>security-scan</code> n° 1 (<code>tests/security/controles.sh</code>) dans la CI GitHub Actions</td>
 </tr>
 </tbody>
 </table>

@@ -169,7 +169,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li><a href="#93-front-controller-et-routage">9.3 Front controller et routage</a></li>
 <li><a href="#94-objets-dependances-et-conventions-de-conception-php">9.4 Objets, dépendances et conventions de conception PHP</a></li>
 <li><a href="#95-gestion-des-sessions-et-du-panier-dans-larchitecture">9.5 Gestion des sessions et du panier dans l'architecture</a></li>
-<li><a href="#96-environnements-deploiement-sauvegarde">9.6 Environnements, déploiement, sauvegarde</a></li>
+<li><a href="#96-environnements-et-sauvegarde">9.6 Environnements et sauvegarde</a></li>
 </ul>
 </li>
 <li><a href="#10-modelisation-des-donnees-et-sql">10. Modélisation des données et SQL</a></li>
@@ -201,7 +201,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </li>
 <li><a href="#14-deroulement-gitlab-et-tracabilite-de-la-contribution">14. Déroulement GitLab et traçabilité de la contribution</a><ul>
 <li><a href="#141-regles-de-fonctionnement-du-depot">14.1 Règles de fonctionnement du dépôt</a></li>
-<li><a href="#142-integration-continue-gitlab-ciyml">14.2 Intégration continue (.gitlab-ci.yml)</a></li>
+<li><a href="#142-integration-continue-github-actions">14.2 Intégration continue — GitHub Actions</a></li>
 <li><a href="#143-repartition-des-commits-attendue-auto-controle-avant-le-rendu">14.3 Répartition des commits attendue (auto-contrôle avant le rendu)</a></li>
 </ul>
 </li>
@@ -320,7 +320,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 <tr>
 <td>Réalisable</td>
-<td>§13.4 planning sur 12 semaines × 3 personnes = 360 h, charges vérifiées ligne à ligne</td>
+<td>§13.4 planning sur 12 semaines × 3 personnes = 360 h de capacité nominale ; charge planifiée révisée à 355 h</td>
 </tr>
 <tr>
 <td>Clair</td>
@@ -660,9 +660,9 @@ sur la base, <strong>conçu</strong> = exigence spécifiée dont la vérificatio
 </tr>
 <tr>
 <td>Application PHP/MySQL/PDO <strong>MVC</strong>, GitLab (participation de chacun), <strong>document de tests et validation</strong></td>
-<td>§10 (procédures et triggers <strong>réellement utilisés</strong> par l'app), §14.2 (GitLab, commits par développeur), §15 + <code>docs/02</code></td>
-<td><code>.gitlab-ci.yml</code> (8 jobs), <code>README.md</code> d'installation</td>
-<td><strong>spécifié, code à produire</strong></td>
+<td>§10 (procédures et triggers <strong>réellement utilisés</strong> par l'app), §14.2 (commits par développeur et CI GitHub Actions), §15 + <code>docs/02</code></td>
+<td><code>.github/workflows/ci.yml</code>, <code>README.md</code> d'installation</td>
+<td><strong>spécifié et livré</strong></td>
 </tr>
 <tr>
 <td>Soutenance <strong>15 min</strong></td>
@@ -740,7 +740,7 @@ sur la base, <strong>conçu</strong> = exigence spécifiée dont la vérificatio
 </thead>
 <tbody>
 <tr>
-<td>Temps de réponse des pages catalogue (12 produits, 100 lignes de données)</td>
+<td>Temps de réponse des pages catalogue (une page = 12 produits, 100 lignes de données)</td>
 <td>&lt; 500 ms p95</td>
 <td><code>ab -n 200 -c 4</code> ou <code>curl -w '%{time_total}'</code> en local, consigné dans <code>docs/02-document-tests-validation.md</code> (§3.3, mesures <code>tests/perf/mesurer.sh</code>)</td>
 </tr>
@@ -811,14 +811,14 @@ sur la base, <strong>conçu</strong> = exigence spécifiée dont la vérificatio
 <tr>
 <td><strong>Client</strong></td>
 <td>visiteur inscrit, identifié</td>
-<td><code>alice@example.com</code></td>
+<td><code>alice@example.test</code></td>
 <td>session PHP (<code>$_SESSION['user_id']</code>)</td>
 <td>tout le visiteur + gérer son compte, son panier, passer une commande, consulter son historique, <strong>annuler</strong> une commande non expédiée</td>
 </tr>
 <tr>
 <td><strong>Administrateur</strong></td>
 <td>membre du personnel du back-office</td>
-<td><code>admin@minishop.fr</code></td>
+<td><code>admin-test@example.test</code></td>
 <td>session PHP (<code>$_SESSION['admin_id']</code>, rôle distinct)</td>
 <td>gérer produits, catégories, stocks, commandes et statuts ; ne gère <strong>jamais</strong> le compte d'un client (RB-13)</td>
 </tr>
@@ -2532,7 +2532,7 @@ sur la base, <strong>conçu</strong> = exigence spécifiée dont la vérificatio
 <tr>
 <td><code>CT-09</code></td>
 <td><strong>Travail sur GitLab</strong>, participation de chaque développeur comptée, historique conservé</td>
-<td>§14 : branches, MR, commits signés, CI</td>
+<td>§14 : branches, MR et commits ; CI GitHub Actions distincte</td>
 <td><code>git shortlog -sne</code>, <code>README.md</code></td>
 </tr>
 <tr>
@@ -2612,13 +2612,13 @@ sur la base, <strong>conçu</strong> = exigence spécifiée dont la vérificatio
 </tr>
 <tr>
 <td>CI</td>
-<td><code>.gitlab-ci.yml</code> : <code>php -l</code>, <code>phpcs</code> (optionnel), chargement SQL dans un service MySQL, exécution des tests SQL et PHPUnit</td>
-<td>pas de CI (rendrait la preuve de contribution plus faible)</td>
+<td>GitHub Actions : workflow versionné dans <code>.github/workflows/ci.yml</code> ; ses résultats ne valent pas preuve d’un pipeline GitLab</td>
+<td>GitLab CI retirée du périmètre du CDC le 23/10/2026</td>
 </tr>
 <tr>
 <td>Environnements</td>
-<td><code>dev</code> (LAMP local), <code>test</code> (base <code>minishop_test</code> recréée à chaque campagne), <code>prod</code> (démo hébergée sur la machine de soutenance)</td>
-<td>dev = prod (interdit : les hashes et le seed diffèrent)</td>
+<td><code>dev</code> (poste local isolé, seed de démonstration), CI GitHub Actions (base jetable), <code>prod</code> (LineServ : campagne manuelle prévue sur la base réelle, uniquement après autorisation)</td>
+<td>mélanger les données/identifiants locaux avec la base réelle ; aucun scénario manuel LineServ ni aucune restauration n’a été exécuté</td>
 </tr>
 <tr>
 <td>Contrainte de périmètre physique</td>
@@ -2814,7 +2814,7 @@ END IF;
 <li>l'application utilise un compte <strong>dédié</strong> (<code>minishop_app</code>) limité à la base applicative : <code>SELECT, INSERT, UPDATE, DELETE, EXECUTE</code> + <code>TRIGGER</code> (nécessaire pour créer ses propres triggers à l'installation) ; <strong>jamais</strong> <code>DROP</code>, <code>GRANT OPTION</code>, ni accès à <code>mysql.*</code> ;</li>
 <li>un second compte d'installation (<code>minishop_admin</code>) est utilisé <strong>uniquement</strong> par <code>scripts/load_db.sh</code> puis peut être révoqué ;</li>
 <li>pas de requêtes administratives depuis PHP : la liste des comptes, les grants et les journaux d'erreurs ne sont consultés que par le développeur/la DBA ;</li>
-<li>les comptes de démonstration (hachés, §12.7) sont détruits en production pédagogique par un <code>scripts/deploy.php</code> qui ne copie pas le fichier de démonstration <code>sql/04_minishop_demo.sql</code>.</li>
+<li>les comptes de démonstration du seed sont réservés aux environnements locaux isolés ; le projet ne fournit aucun mécanisme de déploiement public ni de rotation automatisée de ces comptes. Sur LineServ, n'utiliser que des comptes de test explicitement autorisés.</li>
 </ul>
 <h3 id="87-sec-10-sec-11-sec-12-sec-13-en-tetes-durcissement-fuites-dinformation-journalisation">8.7 <code>SEC-10</code> <code>SEC-11</code> <code>SEC-12</code> <code>SEC-13</code> — En-têtes, durcissement, fuites d'information, journalisation<a class="headerlink" href="#87-sec-10-sec-11-sec-12-sec-13-en-tetes-durcissement-fuites-dinformation-journalisation" title="Permanent link">#</a></h3>
 <table>
@@ -3092,16 +3092,16 @@ validation → port offert ; assertion 5 : toute réécriture du port après val
 │   └── Router.php
 ├── public/                        # seul dossier exposé par Apache
 │   ├── index.php  .htaccess  css/  js/  img/
-├── scripts/{load_db.sh, run_sql_tests.sh, gen_volumes.sh, deploy.php, build-docs.sh}
+├── scripts/{load_db.sh, run_sql_tests.sh, gen_volumes.sh, build-docs.sh}
 ├── tests/
 │   ├── sql/{manifest.txt, fixture.sql, t01…t26_*.sql, out/, rapport_tests_sql.md}
-│   ├── php/                      # PHPUnit : modèles, repositories (base de test), sécurité
+│   ├── php/                      # PHPUnit : modèles, repositories, sécurité
 │   ├── charge/reserver.sh        # C-01 : N tentatives simultanées sur M exemplaires (anti-survente)
 │   ├── perf/mesurer.sh           # ENF-01 : p95 par URL (ab ou curl)
 │   └── security/controles.sh     # 10 contrôles statiques bloquants en CI (§15.3)
 ├── var/{log/, cache/}        # créés par l'installeur, jamais versionnés (.gitignore)
 ├── .gitignore                # secrets + artefacts (voir §14.1 règle 7)
-└── .gitlab-ci.yml            # 6 jobs : lint, style, security-scan, base-tests, unit, docs
+└── .github/workflows/ci.yml # CI du dépôt sur GitHub Actions
 </code></pre>
 <h3 id="93-front-controller-et-routage">9.3 Front controller et routage<a class="headerlink" href="#93-front-controller-et-routage" title="Permanent link">#</a></h3>
 <ul>
@@ -3124,7 +3124,7 @@ validation → port offert ; assertion 5 : toute réécriture du port après val
 </tr>
 <tr>
 <td>un repository = une agrégation, constructeur injectant <code>PDO</code></td>
-<td>testable avec une base de test, remplaçable par un double</td>
+<td>dépendance testable et remplaçable par un double</td>
 </tr>
 <tr>
 <td>les contrôleurs ne <strong>font jamais</strong> <code>new PDO()</code> : le PDO vient du constructeur</td>
@@ -3150,7 +3150,7 @@ validation → port offert ; assertion 5 : toute réécriture du port après val
 <li>à la validation de commande, <code>CommandeRepository</code> appelle la procédure, <strong>puis</strong> vide la clé <code>panier</code> : le vidage n'est fait qu'après <code>COMMIT</code> (sinon un <code>ROLLBACK</code> perdrait le panier du client) ;</li>
 <li>variante persistée (V1, §12.8) : <code>PANIER</code>/<code>LIGNE_PANIER</code> en base, le même contrôleur, une méthode de repository en plus — l'architecture n'est pas touchée, preuve que la séparation des couches est la bonne.</li>
 </ul>
-<h3 id="96-environnements-deploiement-sauvegarde">9.6 Environnements, déploiement, sauvegarde<a class="headerlink" href="#96-environnements-deploiement-sauvegarde" title="Permanent link">#</a></h3>
+<h3 id="96-environnements-et-sauvegarde">9.6 Environnements et sauvegarde<a class="headerlink" href="#96-environnements-et-sauvegarde" title="Permanent link">#</a></h3>
 <table>
 <thead>
 <tr>
@@ -3168,20 +3168,14 @@ validation → port offert ; assertion 5 : toute réécriture du port après val
 <td><code>display_errors = On</code> <strong>uniquement</strong> en local</td>
 </tr>
 <tr>
-<td><code>test</code> (CI GitLab + harnais)</td>
-<td><code>minishop_test</code></td>
-<td>seed + fixture de tests</td>
-<td>recréée intégralement à chaque campagne ; <code>DB_TEST=minishop_test</code></td>
-</tr>
-<tr>
-<td><code>demo</code>/<code>prod</code> (machine de soutenance)</td>
-<td><code>minishop</code></td>
-<td>seed <strong>sans</strong> les mots de passe faibles, <code>sql/04</code> non joué</td>
-<td>HTTPS auto-signé, <code>scripts/deploy.php</code> (copie + <code>load_db.sh</code> + droits <code>var/</code>)</td>
+<td><code>demo</code>/<code>prod</code> (LineServ, machine de soutenance)</td>
+<td><code>minishop</code> (instance réelle ciblée par la campagne manuelle)</td>
+<td>données et comptes gérés sous l’autorité de l’exploitant ; <code>sql/04</code> réservé aux essais locaux</td>
+<td>recette manuelle pré-démo prévue sur l’instance réelle selon <code>docs/14-guide-lineserv.md</code>, uniquement après autorisation ; à ce jour, aucun scénario n’a été exécuté et aucune restauration n’a été réalisée. Le retour à l’état de démonstration relève d’une procédure autorisée de l’exploitant ; le projet ne fournit pas de déploiement automatisé. HTTPS selon la configuration LineServ</td>
 </tr>
 </tbody>
 </table>
-<p>Sauvegarde/restauration spécifiées (2 min d'exécution en démo) : <code>mysqldump --single-transaction --routines --triggers minishop &gt; backup.sql</code> et restauration <code>mysql minishop &lt; backup.sql</code> ; la présence de <code>--routines --triggers</code> est <strong>nécessaire</strong> ici : sans elle, une base restaurée perdrait la fonction, les 17 procédures et les 16 triggers, donc les règles <code>RB-03/06/11/18</code> cesseraient d'être appliquées silencieusement — c'est l'un des arguments à plaider en soutenance (§17.11).</p>
+<p>Procédure de sauvegarde/restauration spécifiée mais non exécutée ni chronométrée (objectif estimatif : 2 min en démo) : <code>mysqldump --single-transaction --routines --triggers minishop &gt; backup.sql</code> et restauration <code>mysql minishop &lt; backup.sql</code> ; la présence de <code>--routines --triggers</code> est <strong>nécessaire</strong> ici : sans elle, une base restaurée perdrait la fonction, les 17 procédures et les 16 triggers, donc les règles <code>RB-03/06/11/18</code> cesseraient d'être appliquées silencieusement — c'est l'un des arguments à plaider en soutenance (§17.11).</p>
 <hr />
 <h2 id="10-modelisation-des-donnees-et-sql">10. Modélisation des données et SQL<a class="headerlink" href="#10-modelisation-des-donnees-et-sql" title="Permanent link">#</a></h2>
 <p>Cette section est la synthèse lisible du <strong>document de conception de base de données</strong> demandé au point 3) du sujet ; les détails complets (MCD/MLD, normalisation, script, procédures, triggers, argumentation pédagogique) sont au <strong>§12</strong>, qui reprend plan par plan le document attendu, et sont livrés en <strong>document autonome</strong> <code>docs/04-conception-bd-et-sql.md</code> (livrable n°3, 20 points).</p>
@@ -3255,7 +3249,7 @@ validation → port offert ; assertion 5 : toute réécriture du port après val
 </tbody>
 </table>
 <h3 id="113-pre-conditions-de-recette-ce-que-lequipe-doit-avoir-livre-avant-de-tester">11.3 Pré-conditions de recette (ce que l'équipe doit avoir livré avant de tester)<a class="headerlink" href="#113-pre-conditions-de-recette-ce-que-lequipe-doit-avoir-livre-avant-de-tester" title="Permanent link">#</a></h3>
-<p><code>PRÉ-1</code> base chargée sans erreur par <code>scripts/load_db.sh</code> avec compteurs affichés (tables 8, vues 3, fonctions 1, procédures 17, triggers 16, 12 produits, 3 clients, 1 admin, 4 commandes de démo) ; <code>PRÉ-2</code> <code>scripts/run_sql_tests.sh</code> → 29/29 ; <code>PRÉ-3</code> <code>php -l</code> sur 100 % des fichiers ; <code>PRÉ-4</code> les 10 contrôles statiques de sécurité au vert (<code>bash tests/security/controles.sh</code>) ; <code>PRÉ-5</code> <code>README.md</code> à jour, testé sur une machine propre ; <code>PRÉ-6</code> 3 auteurs distincts dans <code>git shortlog</code>.</p>
+<p><code>PRÉ-1</code> base chargée sans erreur par <code>scripts/load_db.sh</code> avec compteurs affichés (tables 8, vues 3, fonctions 1, procédures 17, triggers 16, 36 produits, 3 clients, 1 admin, 4 commandes de démo) ; <code>PRÉ-2</code> <code>scripts/run_sql_tests.sh</code> → 29/29 ; <code>PRÉ-3</code> <code>php -l</code> sur 100 % des fichiers ; <code>PRÉ-4</code> les 10 contrôles statiques de sécurité au vert (<code>bash tests/security/controles.sh</code>) ; <code>PRÉ-5</code> <code>README.md</code> à jour, testé sur une machine propre ; <code>PRÉ-6</code> 3 auteurs distincts dans <code>git shortlog</code>.</p>
 <hr />
 <h2 id="12-conception-de-la-base-de-donnees">12. Conception de la base de données<a class="headerlink" href="#12-conception-de-la-base-de-donnees" title="Permanent link">#</a></h2>
 <blockquote>
@@ -3440,7 +3434,7 @@ PARAMETRE(cle PK, valeur, description, maj_le)   -- 4 lignes livrées : frais_po
 </tr>
 </tbody>
 </table>
-<p>Le <strong>jeu de démonstration</strong> livré par <code>sql/01</code> et <code>sql/04</code> : 1 administrateur, 4 catégories, <strong>12 produits</strong>
+<p>Le <strong>jeu de démonstration</strong> livré par <code>sql/01</code> et <code>sql/04</code> : 1 administrateur, 4 catégories, <strong>36 produits</strong> (3 pages de 12)
 (dont <code>POWER-010</code> en rupture de stock pour <code>RB-04</code>/<code>RB-19</code>, <code>BRAC-012</code> masqué), <strong>3 clients</strong> dont les mots de
 passe sont des hashes <code>password_hash()</code>, et <strong>4 commandes</strong> créées <strong>par appels de procédures</strong> : deux validées
 avec franchise de port atteinte (<code>frais_port = 0.00</code>), un brouillon vide, et une petite commande qui <strong>paie</strong>
@@ -3737,7 +3731,7 @@ CREATE TABLE ligne_commande (
 ) ENGINE=InnoDB;
 </code></pre>
 <p>Le script contient aussi : la création de la base (<code>utf8mb4_unicode_ci</code>), les 8 tables dans l'ordre de dépendance
-(les 7 entités du MCD plus <code>parametre</code>, qui porte les règles chiffrées — port, franchise, TVA, seuil d'alerte), l'index <code>FULLTEXT (nom, description)</code>, les index de filtrage, <strong>3 vues</strong> (<code>v_etat_stock</code> = formule unique de l'état de stock, <code>v_catalogue</code> = produits visibles enrichis catégorie + état, <code>v_commandes_client</code> = commandes + client + nombre de lignes) ; ces vues sont réellement créées par <code>sql/01</code> et comptées par <code>scripts/load_db.sh</code>, 4 catégories, 12 produits (dont un en rupture <code>stock = 0</code> et un masqué <code>visible = 0</code> pour tester <code>RB-19</code>), 3 clients, 1 administrateur, et <strong>des hashes générés par <code>password_hash()</code></strong> (§12.7). Le jeu de commandes de démonstration est volontairement créé <strong>par appels de procédures</strong> (<code>sql/04</code>) et non par <code>INSERT</code> directs : c'est ce qui fait vivre les triggers dans la base de démonstration.</p>
+(les 8 entités du MCD, dont <code>parametre</code>, qui porte les règles chiffrées — port, franchise, TVA, seuil d'alerte), l'index <code>FULLTEXT (nom, description)</code>, les index de filtrage, <strong>3 vues</strong> (<code>v_etat_stock</code> = formule unique de l'état de stock, <code>v_catalogue</code> = produits visibles enrichis catégorie + état, <code>v_commandes_client</code> = commandes + client + nombre de lignes) ; ces vues sont réellement créées par <code>sql/01</code> et comptées par <code>scripts/load_db.sh</code>, 4 catégories, 36 produits (dont trois en rupture <code>stock = 0</code> et un masqué <code>visible = 0</code> pour tester <code>RB-19</code>), 3 clients, 1 administrateur, et <strong>des hashes générés par <code>password_hash()</code></strong> (§12.7). Le jeu de commandes de démonstration est volontairement créé <strong>par appels de procédures</strong> (<code>sql/04</code>) et non par <code>INSERT</code> directs : c'est ce qui fait vivre les triggers dans la base de démonstration.</p>
 <p>Contrôles de cohérence livrés avec le script (dans <code>load_db.sh</code>) : comptage des tables/procédures/triggers, nombre de lignes par table, et les 4 requêtes de preuve du §12.3.5.</p>
 <h3 id="125-procedures-stockees-17-livrees-1-fonction-minimum-demande-5">12.5 Procédures stockées (17 livrées + 1 fonction — minimum demandé : 5)<a class="headerlink" href="#125-procedures-stockees-17-livrees-1-fonction-minimum-demande-5" title="Permanent link">#</a></h3>
 <p><strong>Catalogue complet.</strong> « Usage » indique l'appelant (cas d'utilisation) ; « Test » la preuve d'exécution.</p>
@@ -4174,8 +4168,8 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 <td><code>RB-08</code> (une catégorie vide est créée par les tests de suppression)</td>
 </tr>
 <tr>
-<td>12 produits</td>
-<td>prix de 12.50 à 1249 € HT, dont <strong><code>POWER-010</code> en rupture (<code>stock = 0</code>)</strong>, <code>MICRO-007</code> sous seuil, <code>BRAC-012</code> <strong>masqué</strong></td>
+<td>36 produits (3 pages de 12)</td>
+<td>prix de 8.50 à 1249 € HT, dont <strong><code>POWER-010</code>, <code>POWER-030</code> et <code>MONTRE-032</code> en rupture (<code>stock = 0</code>)</strong>, <code>MICRO-007</code> au seuil de réassort, <code>BRAC-012</code> <strong>masqué</strong></td>
 <td><code>RB-19</code>, <code>EF-ADM-05</code>, <code>F-12/13</code>, <code>T-25</code>, <code>T-26</code></td>
 </tr>
 <tr>
@@ -4189,16 +4183,13 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 <td><code>RB-13</code></td>
 </tr>
 <tr>
-<td>3 commandes</td>
-<td>une <code>EN_PREPARATION</code> (2 lignes), un brouillon vide, une <code>EXPEDIEE</code> (2 lignes)</td>
+<td>4 commandes</td>
+<td>deux <code>EN_PREPARATION</code> validées (2 lignes et 1 ligne), un brouillon vide, une <code>EXPEDIEE</code> (2 lignes)</td>
 <td><code>RB-11</code>, <code>RB-06</code>, <code>RB-15</code>, <code>EF-CLI-10</code></td>
 </tr>
 </tbody>
 </table>
-<p><strong>Mots de passe de démonstration</strong> : <code>Demo2026!</code> (clients), <code>Admin2026!</code> (back-office), insérés sous forme de <strong>hashes bcrypt réels</strong> produits par :</p>
-<pre><code class="language-php">php -r 'echo password_hash(&quot;Demo2026!&quot;, PASSWORD_BCRYPT, [&quot;cost&quot; =&gt; 12]), &quot;\n&quot;;'
-</code></pre>
-<p>et non par un <code>INSERT … '123456'</code> : le seed respecte donc lui-même <code>RB-12</code>. Les hashes sont documentés dans le <code>README.md</code> pour permettre la démo, et le script de déploiement (<code>scripts/deploy.php</code>) régénère des hashes aléatoires et change les emails quand la démo est mise en ligne (<code>SEC-10</code>).</p>
+<p><strong>Comptes de démonstration</strong> : leurs valeurs d'authentification (mots de passe et hashes) ne sont pas reproduites dans la documentation. Les comptes du seed sont réservés aux environnements locaux isolés ; ne pas les publier ni les réutiliser sur LineServ. Pour une recette, utiliser uniquement un compte de test explicitement autorisé, transmis séparément par canal privé. Le projet ne fournit aucun script de rotation des comptes ni procédure automatisée de promotion/déploiement (SEC-10).</p>
 <h3 id="128-variantes-de-conception-documentees-arbitrages">12.8 Variantes de conception documentées (arbitrages)<a class="headerlink" href="#128-variantes-de-conception-documentees-arbitrages" title="Permanent link">#</a></h3>
 <table>
 <thead>
@@ -4344,7 +4335,7 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 <tbody>
 <tr>
 <td>Développeur A — chef de projet, back-office</td>
-<td>arbitrages, contrôles back-office, intégration, GitLab/CI</td>
+<td>arbitrages, contrôles back-office, intégration GitLab/GitHub Actions</td>
 <td>~ 120 h</td>
 <td>§13/§14, <code>AdminController</code>, <code>CommandeController</code>, CI</td>
 </tr>
@@ -4374,7 +4365,7 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 </tr>
 </tbody>
 </table>
-<p>Total : <strong>360 h</strong> pour 3 personnes (270 h si le groupe est de 2 → le périmètre est alors réduit selon la liste du §13.3, jamais par suppression d'une pénalité).</p>
+<p>Total révisé : <strong>355 h planifiées</strong> pour le scénario à 3 personnes, dans une capacité nominale de 360 h. Le scénario à 2 personnes est rebasé séparément à <strong>319 h estimées</strong> après les réductions listées au §13.3 ; la répartition A/B/C n’est pas une correspondance nominative.</p>
 <h3 id="133-repartition-de-la-charge-par-lot-verification-dequilibre">13.3 Répartition de la charge par lot (vérification d'équilibre)<a class="headerlink" href="#133-repartition-de-la-charge-par-lot-verification-dequilibre" title="Permanent link">#</a></h3>
 <table>
 <thead>
@@ -4390,7 +4381,7 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 <tr>
 <td>L1</td>
 <td>Cadrage, relecture du sujet, grille de conformité, squelette du dépôt, <code>README</code></td>
-<td style="text-align: right;">16</td>
+<td style="text-align: right;">14</td>
 <td>A</td>
 <td>S1</td>
 </tr>
@@ -4487,8 +4478,8 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 </tr>
 <tr>
 <td>L15</td>
-<td>mise en ligne de démo, <code>deploy.php</code>, README final, arborescence propre</td>
-<td style="text-align: right;">8</td>
+<td>README final, arborescence propre et préparation du rendu</td>
+<td style="text-align: right;">5</td>
 <td>A</td>
 <td>S11</td>
 </tr>
@@ -4502,13 +4493,13 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 <tr>
 <td></td>
 <td><strong>Total</strong></td>
-<td style="text-align: right;"><strong>360</strong></td>
+<td style="text-align: right;"><strong>355</strong></td>
 <td></td>
 <td></td>
 </tr>
 </tbody>
 </table>
-<p><strong>Totaux réconciliés avec la WBS</strong> (<code>docs/05-wbs-projet.md</code> — estimation <em>bottom-up</em> des 86 tâches de niveau 4) : <strong>360 h = 3 × 120 h</strong> (§13.2), réparties <strong>A 122 h, B 117 h, C 121 h</strong> — personne au-delà du plafond de 122 h, et la règle « un commit par personne par semaine » reste tenable. Les pics de charge de S3, S5, S7 et S9 sont anticipés : tâches amont démarrées dès la quinzaine précédente, revue chaque vendredi (§13.5), lots L13/L15 servant de variable d'ajustement.</p>
+<p><strong>Totaux révisés avec la WBS</strong> (<code>docs/05-wbs-projet.md</code> — estimation <em>bottom-up</em> des 84 tâches de niveau 4) : <strong>355 h planifiées</strong> dans une capacité nominale de 360 h, réparties <strong>A 117 h, B 117 h, C 121 h</strong> — personne au-delà du plafond de 122 h. Les pics de charge de S3, S5, S7 et S9 sont anticipés : tâches amont démarrées dès la quinzaine précédente, revue chaque vendredi (§13.5), L13 pouvant servir d’ajustement ; L15 est réservé au README final et à la préparation du rendu après L14.</p>
 <p><strong>Réduction de périmètre si groupe de 2 (règle de repli, pas une option de confort) :</strong> suppression des lots L13 (JS réduit à la validation live du panier), L8 simplifié (pas de routeur maison : tableau de routes minimal), <code>EF-ADM-09</code> (indicateurs) et <code>EF-ADM-10</code> (comptes admin) non livrés, procédures réduites à 8, triggers à 8 (en gardant impérativement <code>TRG-A1/A2/A3/B2/B5/D1/D4</code> qui portent les règles notées). Aucune pénalité listée au §16.2 n'est autorisée à disparaître : ce sont les exigences « bonus » qui sautent.</p>
 <h3 id="134-planning-et-jalons">13.4 Planning et jalons<a class="headerlink" href="#134-planning-et-jalons" title="Permanent link">#</a></h3>
 <table>
@@ -4596,8 +4587,8 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 <td>S11</td>
 <td>01 → 07/12</td>
 <td>Stabilisation</td>
-<td>démo prête (<code>deploy.php</code>), README final, merges des dernières MR</td>
-<td>run complet de bout en bout</td>
+<td>README final, arborescence propre, préparation du tag et merges des dernières MR</td>
+<td>état réel des tests documenté</td>
 </tr>
 <tr>
 <td>S12</td>
@@ -4684,118 +4675,10 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 <li><code>.gitignore</code> (livré à la racine du dépôt) : <code>app/Config/env.php</code>, <code>config/env.php</code>, <code>.env</code>, <code>var/</code>, <code>vendor/</code>, <code>node_modules/</code>, <code>dist/</code>, <code>*.log</code>, <code>tests/sql/out/*</code> — <strong>jamais</strong> de mot de passe, même de démonstration, dans un fichier de configuration versionné (seul <code>app/Config/env.example.php</code> l'est, sans valeur). <strong>Arbitrage tracé</strong> : les journaux bruts par test (<code>tests/sql/out/*.log</code>) ne sont <strong>pas</strong> versionnés car régénérables, mais <code>tests/sql/rapport_tests_sql.md</code> <strong>l'est</strong> (avec une exception <code>!</code> dans le <code>.gitignore</code>) puisqu'il constitue la preuve de recette demandée au barème iii et citée au §15.4.</li>
 <li>Une <strong>issue GitLab par exigence</strong> <code>EF-*</code> (au moins les 14 cas d'utilisation) et par pénalité du §16.2, refermées par un MR : c'est la traçabilité la plus lisible pour le jury.</li>
 </ol>
-<h3 id="142-integration-continue-gitlab-ciyml">14.2 Intégration continue (<code>.gitlab-ci.yml</code>)<a class="headerlink" href="#142-integration-continue-gitlab-ciyml" title="Permanent link">#</a></h3>
-<p>Le fichier <strong><code>.gitlab-ci.yml</code> est livré à la racine du dépôt</strong> (6 jobs, YAML validé) ; la table ci-dessous
-en est la lecture fonctionnelle — chaque job est rattaché à une ligne du barème, et <strong>un job qui échoue bloque
-le merge</strong> : la pénalité devient visible pendant le développement, pas au rendu.</p>
-<table>
-<thead>
-<tr>
-<th>Job (nom réel)</th>
-<th>Stage</th>
-<th>Commande</th>
-<th>Échec</th>
-<th>Point du barème protégé</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>php-lint</code></td>
-<td><code>validate</code></td>
-<td><code>find app public -name '*.php' -print0 \| xargs -0 -n1 -P4 php -l</code></td>
-<td>bloquant (exit 1)</td>
-<td>iii — application qui tourne</td>
-</tr>
-<tr>
-<td><code>style</code></td>
-<td><code>validate</code></td>
-<td><code>phpcs --standard=PSR12 app public</code></td>
-<td><strong><code>allow_failure: true</code></strong> (signalé, non bloquant)</td>
-<td>qualité de code (aucune pénalité, mais relecture jury)</td>
-</tr>
-<tr>
-<td><code>security-scan</code></td>
-<td><code>validate</code></td>
-<td><code>bash tests/security/controles.sh</code> — 10 <code>grep</code> bloquants du §15.3</td>
-<td>bloquant</td>
-<td>-2 « manque des solutions de sécurité »</td>
-</tr>
-<tr>
-<td><code>base-tests</code></td>
-<td><code>db</code></td>
-<td><code>./scripts/load_db.sh</code> puis <code>./scripts/run_sql_tests.sh</code> (service <code>mysql:8.0</code>, base <code>minishop_test</code>)</td>
-<td>bloquant (29 tests conformes exigés)</td>
-<td>-3 « manque le script SQL », -1 par procédure, -1 par trigger</td>
-</tr>
-<tr>
-<td><code>unit</code></td>
-<td><code>test</code></td>
-<td><code>./vendor/bin/phpunit --testsuite app</code> (rapport JUnit publié)</td>
-<td>bloquant</td>
-<td>iii + document de tests</td>
-</tr>
-<tr>
-<td><code>docs</code></td>
-<td><code>docs</code></td>
-<td><code>PLANTUML_JAR=plantuml.jar bash docs/diagrams/render.sh</code></td>
-<td>bloquant (diagramme non rendu)</td>
-<td>-1 « manque un diagramme UML »</td>
-</tr>
-</tbody>
-</table>
-<p>Artefacts conservés par la CI : <code>tests/sql/rapport_tests_sql.md</code> et <code>tests/sql/out/</code> (4 semaines),
-<code>phpunit.xml</code> (rapport JUnit), <code>docs/diagrams/</code> (1 semaine).</p>
-<p><strong>Règle « pas de re-run » (économie de CI, tracée ici et rappelée dans <code>README.md</code> et l'annexe 17.9).</strong>
-<em>Si la CI/CD est verte avant le merge, aucun re-run n'est nécessaire après le merge.</em> Le pipeline déclenché
-sur <code>main</code> par un merge est un <strong>relais de traçabilité</strong>, pas un contrôle : il rejoue les mêmes jobs, avec les
-mêmes images, sur le <strong>même arbre de fichiers</strong> — GitHub Actions et GitLab CI exécutent déjà la PR/MR sur le
-commit de fusion (<code>refs/pull/&lt;n&gt;/merge</code> côté GitHub, <em>merge result</em> côté GitLab), donc l'état validé avant le
-merge <strong>est</strong> l'état de <code>main</code> après le merge. Un re-run manuel ne peut rien révéler de plus, et coûte 5 à 8 min
-de machine par MR (dont un service <code>mysql:8.0</code>), à multiplier par le nombre de lots du §13.3 : c'est du temps
-pris sur la démo et sur le quota d'Actions. Il est donc remplacé par les six vérifications ci-dessous.</p>
-<table>
-<thead>
-<tr>
-<th>Situation</th>
-<th>Relancer ?</th>
-<th>Pourquoi / comment vérifier</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>MR verte → merge immédiat (cas nominal)</td>
-<td><strong>non</strong></td>
-<td>l'arbre fusionné est exactement celui qui vient d'être testé ; on ne clique ni « Re-run jobs », ni « Retry », ni <code>gh run rerun</code></td>
-</tr>
-<tr>
-<td><code>main</code> a avancé entre le run de la MR et le merge (deux MR enchaînées)</td>
-<td><strong>oui, automatiquement</strong></td>
-<td>le commit de fusion n'est plus celui testé : le <code>push</code> sur <code>main</code> re-déclenche la chaîne ; contrôler <code>gh pr checks &lt;n&gt;</code> avant de merger</td>
-</tr>
-<tr>
-<td>run <strong>annulé / interrompu</strong> (<code>interruptible: true</code>, <code>concurrency.cancel-in-progress</code>)</td>
-<td>oui</td>
-<td>un job annulé n'est pas une preuve : relancer la MR <strong>avant</strong> de merger, sinon la preuve manque à l'annexe 17.8</td>
-</tr>
-<tr>
-<td><code>style</code> (PSR-12) seul en échec</td>
-<td><strong>non</strong></td>
-<td><code>allow_failure: true</code> : non bloquant par construction (ligne 2 du tableau ci-dessus)</td>
-</tr>
-<tr>
-<td>échec de code <strong>déjà corrigé et poussé</strong></td>
-<td><strong>non</strong></td>
-<td>c'est le <code>push</code> qui relance la chaîne ; un re-run manuel rejouerait l'<strong>ancien</strong> commit et fausserait la preuve</td>
-</tr>
-<tr>
-<td>panne d'infrastructure (miroir PlantUML, paquets <code>apt</code>, registre Docker)</td>
-<td>oui, <strong>une fois</strong></td>
-<td>échec d'outillage, pas de code : <code>gh run rerun &lt;id&gt; --failed</code> (GitLab : <em>Retry</em> sur le job) ; l'anomalie est consignée au registre <code>A-0x</code> du document de tests</td>
-</tr>
-</tbody>
-</table>
-<p>Contrôle avant de merger, en une commande : <code>gh pr checks &lt;n&gt;</code> (GitHub) ou l'onglet <em>Pipelines</em> de la MR
-(GitLab — « Pipeline passed » débloque le bouton <em>Merge</em>). <strong>Aucun re-run n'est déclenché après le merge.</strong></p>
+<h3 id="142-integration-continue-github-actions">14.2 Intégration continue — GitHub Actions<a class="headerlink" href="#142-integration-continue-github-actions" title="Permanent link">#</a></h3>
+<p><strong>Décision de périmètre du 23 octobre 2026 :</strong> la configuration GitLab CI et son livrable sont retirés du présent cahier des charges et du dépôt. L’automatisation conservée est le workflow GitHub Actions <a href="../.github/workflows/ci.yml"><code>.github/workflows/ci.yml</code></a>. GitLab reste utilisé pour le dépôt, les issues et les MR ; aucun pipeline GitLab n’est revendiqué.</p>
+<p>Les résultats GitHub Actions attestent uniquement les contrôles exécutés sur GitHub et sur le commit concerné. Ils ne prouvent ni un pipeline GitLab IUT ni l’approbation d’une MR GitLab. Pour une PR GitHub, les contrôles sont consultés avant fusion dans l’onglet <em>Checks</em> ou avec <code>gh pr checks &lt;n&gt;</code>. Les réexécutions sont réservées à un run annulé, une correction poussée ou une panne d’infrastructure ; le statut exact reste consultable dans GitHub Actions.</p>
+<p>Le workflow versionné définit les jobs et leurs commandes : lint PHP, tests, contrôles de sécurité, bases de données et navigateur. Cette section ne garantit pas la présence d’un pipeline GitLab ni une intégration automatique entre GitHub et le dépôt IUT.</p>
 <h3 id="143-repartition-des-commits-attendue-auto-controle-avant-le-rendu">14.3 Répartition des commits attendue (auto-contrôle avant le rendu)<a class="headerlink" href="#143-repartition-des-commits-attendue-auto-controle-avant-le-rendu" title="Permanent link">#</a></h3>
 <pre><code class="language-bash">git shortlog -sne main         # 3 auteurs attendus, chacun &gt; 20 commits
 git log --since='2 weeks ago' --pretty='%an %s' | sort | uniq -c   # rythme hebdomadaire
@@ -4846,7 +4729,7 @@ git log --numstat --format= | awk '{print $4}' | sort | uniq -c | sort -rn | hea
 <td>Sécurité</td>
 <td>9 catégories de menaces de la matrice §8.8, couvertes par 10 tests offensifs <code>S-01…S-10</code></td>
 <td><code>tests/security/controles.sh</code> (10 contrôles statiques, exécutés) + tests offensifs à dérouler sur l'application (L12)</td>
-<td>10/10 attaques échouent — <strong>non mesuré ici</strong> : le PHP n'est pas encore écrit (§16.4)</td>
+<td>10/10 attaques échouent — <strong>mesuré</strong> : rejouées par l'E2E (T6, T12, T13) sur l'application, 185 vérifications vertes le 28/10/2026</td>
 </tr>
 <tr>
 <td>Performance / concurrence</td>
@@ -4883,7 +4766,7 @@ git log --numstat --format= | awk '{print $4}' | sort | uniq -c | sort -rn | hea
 </tr>
 <tr>
 <td><strong>Préconditions</strong></td>
-<td>base chargée ; <code>MICRO-007</code> en stock = 2 ; client <code>bruno@example.com</code> connecté ; panier = {<code>CASQ-005</code> × 1, <code>MICRO-007</code> × 3}</td>
+<td>base chargée ; <code>MICRO-007</code> en stock = 2 ; client <code>bruno@example.test</code> connecté ; panier = {<code>CASQ-005</code> × 1, <code>MICRO-007</code> × 3}</td>
 </tr>
 <tr>
 <td><strong>Étapes</strong></td>
@@ -5017,7 +4900,7 @@ grep -c 'verifieJeton' app/Controller/*.php
 </tr>
 <tr>
 <td>7</td>
-<td><code>v_catalogue</code> renvoyait <code>ERROR 1356</code> (vue référencant une colonne inexistante) <strong>uniquement dans la base de test</strong> : le test <code>T-26</code> redéfinissait <code>v_etat_stock</code> à son profit et cassait la vue livrée dont dépend <code>v_catalogue</code> ; le même test révélait des <code>montant_total</code> non recalculés sur les commandes rescapées, parce que la fixture supprime des lignes par <code>DELETE</code> direct (la sous-requête sur <code>produit</code> est interdite par le trigger) et que <code>trg_ligne_decrement_stock</code> ne se déclenche donc pas</td>
+<td><code>v_catalogue</code> renvoyait <code>ERROR 1356</code> (vue référencant une colonne inexistante) <strong>pendant la campagne de tests SQL</strong> : le test <code>T-26</code> redéfinissait <code>v_etat_stock</code> à son profit et cassait la vue livrée dont dépend <code>v_catalogue</code> ; le même test révélait des <code>montant_total</code> non recalculés sur les commandes rescapées, parce que la fixture supprime des lignes par <code>DELETE</code> direct (la sous-requête sur <code>produit</code> est interdite par le trigger) et que <code>trg_ligne_decrement_stock</code> ne se déclenche donc pas</td>
 <td>un test ne doit jamais redéfinir un objet de production ; un <code>DELETE</code> contournant la procédure contourne aussi ses effets de bord</td>
 <td><code>T-26</code> lit la vue livrée au lieu de la recréer ; la fixture normalise <code>montant_total = SUM(total_ligne)</code> en fin de purge ; <strong><code>T-27</code> (nouveau)</strong> vérifie l'existence et la cohérence des 3 vues, y compris ce recalcul</td>
 </tr>
@@ -5057,14 +4940,14 @@ grep -c 'verifieJeton' app/Controller/*.php
 <td><strong>Application Web</strong> PHP/MySQL/PDO fonctionnant selon le CDC + les deux documents</td>
 <td style="text-align: right;">30</td>
 <td><code>app/</code>, <code>public/</code>, <code>sql/</code>, <code>tests/</code></td>
-<td>️ à développer (S6→S11) — les fondations base/tests sont prouvées</td>
+<td>✅ livrée et testée — campagne du 28/10/2026 : 11 suites vertes, SQL 29/29, E2E 185</td>
 </tr>
 <tr>
 <td>iv</td>
 <td><strong>Soutenance</strong> (15 min + questions)</td>
 <td style="text-align: right;">10</td>
 <td><code>docs/03-support-soutenance.md</code>, §17.11</td>
-<td>⚙️ à produire</td>
+<td>✅ produite (support + diaporama 12 slides)</td>
 </tr>
 <tr>
 <td>v</td>
@@ -5113,7 +4996,7 @@ grep -c 'verifieJeton' app/Controller/*.php
 <tr>
 <td>manque d'analyse d'architecture (<strong>-2</strong>)</td>
 <td>pas de MVC détaillé</td>
-<td>§9 : 3 couches + rôle de la base, diagramme, arborescence, conventions, déploiement, sauvegarde</td>
+<td>§9 : 3 couches + rôle de la base, diagramme, arborescence, conventions, environnements et sauvegarde</td>
 <td>§9.1→§9.6</td>
 </tr>
 <tr>
@@ -5206,7 +5089,7 @@ grep -c 'verifieJeton' app/Controller/*.php
 <p>Toute demande nouvelle (fonctionnalité, règle, écran) est traitée en 4 questions avant acceptation : (1) fait-elle partie des 22 libellés du sujet ? (2) augmente-t-elle une note (i/ii/iii) ou seulement le plaisir de coder ? (3) touche-t-elle une règle <code>RB-*</code> existante (risque de régression) ? (4) combien de jours et qui ? Une réponse « non » à (1) ou (2) ⇒ <strong>refus motivé</strong>, consigné dans une issue GitLab (<code>wontfix</code>, avec le lien vers ce §11.2). C'est le garde-fou qui protège les points acquis plutôt que d'en ajouter.</p>
 <h3 id="164-limites-assumees-de-ce-document">16.4 Limites assumées de ce document<a class="headerlink" href="#164-limites-assumees-de-ce-document" title="Permanent link">#</a></h3>
 <ol>
-<li><strong>le code PHP n'est pas encore écrit</strong> : le CDC le spécifie (classes, méthodes, conventions, contrôles de sécurité, tests) mais le §15.4 et le §16.1 indiquent explicitement les étapes à exécuter par l'équipe (<code>php -l</code>, PHPUnit, recette F-01…F-33) ; rien ici ne prétend avoir testé ce qui n'existe pas encore.</li>
+<li>~~<strong>le code PHP n'est pas encore écrit</strong>~~ — <strong>périmé depuis le 28/10/2026</strong>. Ce paragraphe décrivait l'état du CDC au moment de sa rédaction ; l'application est depuis livrée et testée (11 suites vertes : linter 0 violation sur 101 fichiers, 29/29 règles SQL sur base réelle, 282 vérifications unitaires, 185 vérifications E2E). Les mentions d'état du §16 ont été mises à jour en conséquence, et le PV de recette du <code>docs/02</code> §8 porte les résultats de la campagne.</li>
 <li>Les tests <strong>SQL</strong> (29), le chargement de la base, les procédures, les triggers et les diagrammes <strong>ont</strong> été exécutés/rendus dans un environnement réel (MariaDB 11.8.6) ; les mesures <strong>côté base</strong> <code>ENF-01/ENF-02</code> (SQL sans PHP) sont <strong>acquises</strong> (<code>tests/perf/mesurer_sql.sh</code>, 15–17 ms sur 200 produits / 1 000 commandes) ; la mesure <strong>HTTP</strong> (<code>tests/perf/mesurer.sh</code>, p95) reste un protocole à exécuter une fois le PHP livré (§15.4).</li>
 <li>Le langage MySQL visé est <strong>MySQL 8.0.16+</strong> ; l'environnement de développement de l'équipe peut être MariaDB 10.6+/11.x : le script a été écrit pour être valide dans les deux (collation <code>utf8mb4_unicode_ci</code>, pas de <code>GENERATED ALWAYS</code>, marqueurs <code>?</code> dans les requêtes préparées de procédure) et c'est vérifié par le chargement réussi ci-dessus.</li>
 </ol>
@@ -5263,8 +5146,8 @@ grep -c 'verifieJeton' app/Controller/*.php
 </tr>
 <tr>
 <td>17.9</td>
-<td>Charte GitLab, modèle de MR, <code>README.md</code> livrable, <code>.gitlab-ci.yml</code> et <code>.gitignore</code> (textes intégraux)</td>
-<td><code>README.md</code>, <code>.gitlab-ci.yml</code>, <code>.gitignore</code>, <code>docs/annexes/annexe-gitlab.md</code> (recopiés en <code>annexe-sql.md</code> §G et §H)</td>
+<td>Charte GitLab, modèle de MR, registre de revue croisée, <code>README.md</code> livrable et <code>.gitignore</code></td>
+<td><code>README.md</code>, <code>docs/20-charte-gitlab-revues-croisees.md</code>, <code>.gitignore</code>, <code>docs/annexes/annexe-gitlab.md</code></td>
 </tr>
 <tr>
 <td>17.10</td>
@@ -5340,7 +5223,7 @@ grep -c 'verifieJeton' app/Controller/*.php
 <h3 id="171-bis-179-bis-contenu-des-annexes-fichiers-lies">17.1 bis → 17.9 bis — Contenu des annexes (fichiers liés)<a class="headerlink" href="#171-bis-179-bis-contenu-des-annexes-fichiers-lies" title="Permanent link">#</a></h3>
 <p>Les annexes ne sont pas résumées ici : elles existent en tant que fichiers <strong>complets</strong> du dépôt, reliés ci-dessous.
 <code>docs/annexes/annexe-sql.md</code> reproduit <strong>verbatim</strong> les 4 scripts SQL joués avec succès, la fixture et le
-<code>manifest.txt</code> des 29 tests, puis <code>.gitlab-ci.yml</code> (§G) et <code>.gitignore</code> (§H) ; <code>docs/annexes/annexe-cas-usage.md</code> contient les 14 fiches de cas d'utilisation ;
+<code>manifest.txt</code> des 29 tests et <code>.gitignore</code> (annexe SQL) ; le workflow CI conservé est <code>.github/workflows/ci.yml</code> ; <code>docs/annexes/annexe-cas-usage.md</code> contient les 14 fiches de cas d'utilisation ;
 <code>docs/annexes/annexe-enf.md</code> les 22 exigences non fonctionnelles ; <code>docs/annexes/annexe-php-patterns.md</code> les
 patterns PHP/PDO/sécurité de référence ; <code>docs/annexes/annexe-gitlab.md</code> la charte GitLab et le modèle de MR.</p>
 <ul>

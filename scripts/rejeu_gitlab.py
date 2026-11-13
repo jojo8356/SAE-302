@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Rejoue l'historique MiniShop en 32 commits commentés vers un nouveau GitLab.
+"""Outil historique de reconstruction d'un plan MiniShop en 32 commits commentés.
+
+⚠️ Ce plan décrit un état antérieur (notamment l'ancienne CI GitLab) ; il ne constitue
+ni un journal Git constaté ni l'état courant du dépôt. La fiche générée avec `--fiche`
+reste une trace de ce plan ancien. Le mode `--dest` crée une histoire synthétique dans
+une copie distincte : ne pas l'exécuter pour fabriquer ou pousser un historique sans
+autorisation explicite.
 
 Deux usages :
   1. Générer la fiche de suivi (documentation humaine) :
@@ -301,13 +307,12 @@ PLAN: list[dict] = [
     },
     {
         "numero": "É20",
-        "titre": "feat(web): front contrôleur, réécriture d'URL et script de déploiement",
-        "globs": ["public/index.php", "public/.htaccess", "scripts/deploy.php"],
+        "titre": "feat(web): front controller et réécriture d'URL",
+        "globs": ["public/index.php", "public/.htaccess"],
         "corps": [
-            "public/index.php : déclaration de toutes les routes et boot de l'application ; .htaccess : toute requête passe par index.php, les fichiers statiques sont servis directement.",
-            "scripts/deploy.php : déploiement MySQL (schéma + données initiales).",
+            "public/index.php : déclaration des routes et démarrage de l'application ; .htaccess : les requêtes dynamiques passent par index.php, les fichiers statiques sont servis directement.",
         ],
-        "contenu": "Le point d'entrée unique du Web : toutes les URL passent par le routeur, et le script de déploiement installe la base MySQL de production.",
+        "contenu": "Le point d'entrée unique du Web : toutes les URL dynamiques passent par le routeur et les fichiers statiques sont servis par le serveur Web.",
     },
     {
         "numero": "É21",
@@ -392,7 +397,7 @@ PLAN: list[dict] = [
         "titre": "ci: chaîne GitLab CI (6 jobs) + miroir GitHub Actions (CT-09)",
         "globs": [".gitlab-ci.yml", ".github/*"],
         "corps": [
-            "Jobs : syntaxe PHP, schéma rejouable, 28 tests SQL, tests PHP (moteur + règles), génération des documents. Un pipeline vert prouve que les critères du barème sont tenus ; un job rouge bloque le merge.",
+            "Jobs : syntaxe PHP, schéma rejouable, 29 tests SQL, tests PHP (moteur + règles), génération des documents. Un pipeline vert prouve que les critères du barème sont tenus ; un job rouge bloque le merge.",
             "Cible de notation : GitLab CI (ce fichier). Le workflow GitHub Actions est le miroir de développement, maintenu synchrone.",
         ],
         "contenu": "L'intégration continue exigée par la contrainte CT-09 : chaque push rejoue syntaxe, SQL, tests PHP et génération des documents — côté GitLab pour la notation.",
@@ -460,12 +465,13 @@ def generer_fiche(chemin: str) -> None:
 
     a("# 08 — Fiche de suivi des commits (rejeu vers un nouveau GitLab)")
     a("")
-    a("> **Objet.** Reconstituer ce projet sur un **nouveau dépôt GitLab** avec un historique")
-    a("> propre et complet : 32 commits racontant le projet dans l'ordre réel de construction,")
-    a("> chacun avec un message de commit prêt à copier-coller et un périmètre de fichiers exact.")
-    a("> Cette fiche et le script `scripts/rejeu_gitlab.py` sont générés du **même plan** :")
-    a("> ils ne peuvent pas diverger. Le script vérifie en fin de parcours que la couverture")
-    a("> des fichiers est exacte (aucun oublié, aucun doublon).")
+    a("> **Objet.** Décrire un scénario synthétique de rejeu du projet sur un **nouveau dépôt GitLab**,")
+    a("> avec 32 commits proposés, des messages prêts à copier-coller et un périmètre de fichiers.")
+    a("> Ce scénario est un plan, non un journal d'exécution ni une reconstitution certifiée de l'historique.")
+    a("> La fiche et `scripts/rejeu_gitlab.py` partagent le même plan ; le mode de rejeu vers un dépôt externe")
+    a("> ne doit pas être utilisé sans demande explicite et vérification préalable de sa compatibilité.")
+    a("")
+    a("> **Note de portée (23/10/2026).** Les entrées É5 (86 tâches) et É27 (GitLab CI) décrivent un périmètre historique ; la WBS courante compte 84 tâches et la CI GitLab a été retirée. Le scénario proposé ne comporte plus d’automatisation de mise en ligne. Aucune exécution de ce rejeu n’est revendiquée.")
     a("")
     a("## 1. Mode d'emploi express")
     a("")
@@ -512,7 +518,7 @@ def generer_fiche(chemin: str) -> None:
         "É17": "13 fichiers",
         "É18": "5 fichiers",
         "É19": "14 fichiers",
-        "É20": "3 fichiers",
+        "É20": "2 fichiers",
         "É21": "6 fichiers",
         "É22": "5 fichiers",
         "É23": "2 fichiers",

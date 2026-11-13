@@ -456,7 +456,7 @@ PARAMETRE(cle PK, valeur, description, maj_le)   -- 4 lignes livrées : frais_po
 </tr>
 </tbody>
 </table>
-<p>Le <strong>jeu de démonstration</strong> livré par <code>sql/01</code> et <code>sql/04</code> : 1 administrateur, 4 catégories, <strong>12 produits</strong>
+<p>Le <strong>jeu de démonstration</strong> livré par <code>sql/01</code> et <code>sql/04</code> : 1 administrateur, 4 catégories, <strong>36 produits</strong> (3 pages de 12)
 (dont <code>POWER-010</code> en rupture de stock pour <code>RB-04</code>/<code>RB-19</code>, <code>BRAC-012</code> masqué), <strong>3 clients</strong> dont les mots de
 passe sont des hashes <code>password_hash()</code>, et <strong>4 commandes</strong> créées <strong>par appels de procédures</strong> : deux validées
 avec franchise de port atteinte (<code>frais_port = 0.00</code>), un brouillon vide, et une petite commande qui <strong>paie</strong>
@@ -753,7 +753,7 @@ CREATE TABLE ligne_commande (
 ) ENGINE=InnoDB;
 </code></pre>
 <p>Le script contient aussi : la création de la base (<code>utf8mb4_unicode_ci</code>), les 8 tables dans l'ordre de dépendance
-(les 7 entités du MCD plus <code>parametre</code>, qui porte les règles chiffrées — port, franchise, TVA, seuil d'alerte), l'index <code>FULLTEXT (nom, description)</code>, les index de filtrage, <strong>3 vues</strong> (<code>v_etat_stock</code> = formule unique de l'état de stock, <code>v_catalogue</code> = produits visibles enrichis catégorie + état, <code>v_commandes_client</code> = commandes + client + nombre de lignes) ; ces vues sont réellement créées par <code>sql/01</code> et comptées par <code>scripts/load_db.sh</code>, 4 catégories, 12 produits (dont un en rupture <code>stock = 0</code> et un masqué <code>visible = 0</code> pour tester <code>RB-19</code>), 3 clients, 1 administrateur, et <strong>des hashes générés par <code>password_hash()</code></strong> (A.5). Le jeu de commandes de démonstration est volontairement créé <strong>par appels de procédures</strong> (<code>sql/04</code>) et non par <code>INSERT</code> directs : c'est ce qui fait vivre les triggers dans la base de démonstration.</p>
+(les 8 entités du MCD, dont <code>parametre</code>, qui porte les règles chiffrées — port, franchise, TVA, seuil d'alerte), l'index <code>FULLTEXT (nom, description)</code>, les index de filtrage, <strong>3 vues</strong> (<code>v_etat_stock</code> = formule unique de l'état de stock, <code>v_catalogue</code> = produits visibles enrichis catégorie + état, <code>v_commandes_client</code> = commandes + client + nombre de lignes) ; ces vues sont réellement créées par <code>sql/01</code> et comptées par <code>scripts/load_db.sh</code>, 4 catégories, 36 produits (dont trois en rupture <code>stock = 0</code> et un masqué <code>visible = 0</code> pour tester <code>RB-19</code>), 3 clients, 1 administrateur, et <strong>des hashes générés par <code>password_hash()</code></strong> (A.5). Le jeu de commandes de démonstration est volontairement créé <strong>par appels de procédures</strong> (<code>sql/04</code>) et non par <code>INSERT</code> directs : c'est ce qui fait vivre les triggers dans la base de démonstration.</p>
 <p>Contrôles de cohérence livrés avec le script (dans <code>load_db.sh</code>) : comptage des tables/procédures/triggers, nombre de lignes par table, et les 4 requêtes de preuve de la section A.3.5.</p>
 <h3 id="a5-donnees-de-demonstration-et-precautions">A.5 Données de démonstration et précautions<a class="headerlink" href="#a5-donnees-de-demonstration-et-precautions" title="Permanent link">#</a></h3>
 <table>
@@ -771,8 +771,8 @@ CREATE TABLE ligne_commande (
 <td><code>RB-08</code> (une catégorie vide est créée par les tests de suppression)</td>
 </tr>
 <tr>
-<td>12 produits</td>
-<td>prix de 12.50 à 1249 € HT, dont <strong><code>POWER-010</code> en rupture (<code>stock = 0</code>)</strong>, <code>MICRO-007</code> sous seuil, <code>BRAC-012</code> <strong>masqué</strong></td>
+<td>36 produits (3 pages de 12)</td>
+<td>prix de 8.50 à 1249 € HT, dont <strong><code>POWER-010</code>, <code>POWER-030</code> et <code>MONTRE-032</code> en rupture (<code>stock = 0</code>)</strong>, <code>MICRO-007</code> au seuil de réassort, <code>BRAC-012</code> <strong>masqué</strong></td>
 <td><code>RB-19</code>, <code>EF-ADM-05</code>, <code>F-12/13</code>, <code>T-25</code>, <code>T-26</code></td>
 </tr>
 <tr>
@@ -786,16 +786,13 @@ CREATE TABLE ligne_commande (
 <td><code>RB-13</code></td>
 </tr>
 <tr>
-<td>3 commandes</td>
-<td>une <code>EN_PREPARATION</code> (2 lignes), un brouillon vide, une <code>EXPEDIEE</code> (2 lignes)</td>
+<td>4 commandes</td>
+<td>deux <code>EN_PREPARATION</code> validées (2 lignes et 1 ligne), un brouillon vide, une <code>EXPEDIEE</code> (2 lignes)</td>
 <td><code>RB-11</code>, <code>RB-06</code>, <code>RB-15</code>, <code>EF-CLI-10</code></td>
 </tr>
 </tbody>
 </table>
-<p><strong>Mots de passe de démonstration</strong> : <code>Demo2026!</code> (clients), <code>Admin2026!</code> (back-office), insérés sous forme de <strong>hashes bcrypt réels</strong> produits par :</p>
-<pre><code class="language-php">php -r 'echo password_hash(&quot;Demo2026!&quot;, PASSWORD_BCRYPT, [&quot;cost&quot; =&gt; 12]), &quot;\n&quot;;'
-</code></pre>
-<p>et non par un <code>INSERT … '123456'</code> : le seed respecte donc lui-même <code>RB-12</code>. Les hashes sont documentés dans le <code>README.md</code> pour permettre la démo, et le script de déploiement (<code>scripts/deploy.php</code>) régénère des hashes aléatoires et change les emails quand la démo est mise en ligne (<code>SEC-10</code>).</p>
+<p><strong>Comptes de démonstration</strong> : leurs valeurs d'authentification (mots de passe et hashes) ne sont pas reproduites dans la documentation. Les comptes du seed sont réservés aux environnements locaux isolés ; ne pas les publier ni les réutiliser sur LineServ. Pour une recette, utiliser uniquement un compte de test explicitement autorisé, transmis séparément par canal privé. Le projet ne fournit aucun script de rotation des comptes ni procédure automatisée de promotion/déploiement (SEC-10).</p>
 <hr />
 <h2 id="partie-b-procedures-stockees">Partie B — Procédures stockées<a class="headerlink" href="#partie-b-procedures-stockees" title="Permanent link">#</a></h2>
 <h3 id="b1-procedures-stockees-17-livrees-1-fonction-minimum-demande-5">B.1 Procédures stockées (17 livrées + 1 fonction — minimum demandé : 5)<a class="headerlink" href="#b1-procedures-stockees-17-livrees-1-fonction-minimum-demande-5" title="Permanent link">#</a></h3>
@@ -1305,19 +1302,19 @@ Le tableau relie chaque fichier aux parties du présent document qui l'analysent
 <td><a href="../sql/01_minishop_schema.sql"><code>sql/01_minishop_schema.sql</code></a></td>
 <td>DDL : 8 tables, 3 vues, index FULLTEXT + jeu de données de référence (4 catégories, 12 produits, 3 clients, 1 admin, hashes <code>password_hash()</code>, table <code>parametre</code>)</td>
 <td>A.1 · A.2 · A.4 · A.5</td>
-<td style="text-align: right;">313</td>
+<td style="text-align: right;">344</td>
 </tr>
 <tr>
 <td><a href="../sql/02_minishop_procedures.sql"><code>sql/02_minishop_procedures.sql</code></a></td>
 <td>directive <code>DELIMITER</code> + 1 fonction (<code>fn_param</code>) + 17 procédures stockées</td>
 <td>B.1 · B.2 · B.3</td>
-<td style="text-align: right;">841</td>
+<td style="text-align: right;">867</td>
 </tr>
 <tr>
 <td><a href="../sql/03_minishop_triggers.sql"><code>sql/03_minishop_triggers.sql</code></a></td>
 <td>directive <code>DELIMITER</code> + 16 déclencheurs (blocs A stock, B prix/immuabilité, C catégories, D commandes/historique)</td>
 <td>C.1 · C.2 · C.3</td>
-<td style="text-align: right;">298</td>
+<td style="text-align: right;">315</td>
 </tr>
 <tr>
 <td><a href="../sql/04_minishop_demo.sql"><code>sql/04_minishop_demo.sql</code></a></td>
@@ -1341,7 +1338,7 @@ Le tableau relie chaque fichier aux parties du présent document qui l'analysent
 <td><a href="../tests/perf/mesurer.sh"><code>tests/perf/mesurer.sh</code></a></td>
 <td>protocole de mesure p95 HTTP (<code>ENF-01</code>)</td>
 <td>doc 02 §5</td>
-<td style="text-align: right;">19</td>
+<td style="text-align: right;">83</td>
 </tr>
 <tr>
 <td><a href="../tests/perf/mesurer_sql.sh"><code>tests/perf/mesurer_sql.sh</code></a></td>
@@ -1353,19 +1350,19 @@ Le tableau relie chaque fichier aux parties du présent document qui l'analysent
 <td><a href="../scripts/gen_volumes.sh"><code>scripts/gen_volumes.sh</code></a></td>
 <td>générateur de volumétrie (200 produits / 1 000 commandes via les procédures)</td>
 <td>doc 02 §5</td>
-<td style="text-align: right;">104</td>
+<td style="text-align: right;">25</td>
 </tr>
 <tr>
-<td><a href="../.gitlab-ci.yml"><code>.gitlab-ci.yml</code></a></td>
-<td>chaîne CI : 6 jobs alignés sur le barème (lint, sécurité, tests SQL, unitaires, diagrammes) ; <strong>pas de re-run après un merge dont la MR était verte</strong></td>
+<td><a href="../.github/workflows/ci.yml"><code>.github/workflows/ci.yml</code></a></td>
+<td>workflow CI GitHub Actions du dépôt ; il ne prouve pas un pipeline GitLab IUT</td>
 <td>CDC §14.2</td>
-<td style="text-align: right;">114</td>
+<td style="text-align: right;">873</td>
 </tr>
 <tr>
 <td><a href="../.gitignore"><code>.gitignore</code></a></td>
 <td>secrets hors dépôt (<code>app/Config/env.php</code>), artefacts régénérables</td>
 <td>CDC §14.1 règle 7</td>
-<td style="text-align: right;">35</td>
+<td style="text-align: right;">64</td>
 </tr>
 </tbody>
 </table>

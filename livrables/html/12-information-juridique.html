@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="SAÉ 302 — MiniShop : Information e-commerce et données — audit de MiniShop#">
+<title>Information e-commerce et données — audit de MiniShop# — MiniShop</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --papier: #fbfaf7;
+  --carte: #ffffff;
+  --trait: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-clair: #dbeafe;
+  --code: #f1f5f9;
+  --mesure: 72ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
+    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
+    --accent-clair: #1e3a8a; --code: #16223a;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  max-width: calc(var(--mesure) + 6rem);
+  background: var(--papier);
+  color: var(--encre);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
+h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
+p, li { max-width: var(--mesure); }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+}
+pre {
+  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
+  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.35rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+thead th { background: var(--accent-clair); }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
+img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li input[type="checkbox"] { margin-right: 0.4rem; }
+.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
+.toc > ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1rem; }
+footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+@media print {
+  :root { --papier: #fff; --carte: #fff; }
+  @page { size: A4; margin: 18mm 16mm; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#1-sources-et-structure-retenue">1. Sources et structure retenue</a></li>
+<li><a href="#2-audit-des-donnees-et-des-cookies">2. Audit des données et des cookies</a></li>
+<li><a href="#3-points-bloquants-avant-de-vendre-reellement">3. Points bloquants avant de vendre réellement</a></li>
+<li><a href="#4-verification-et-auto-evaluation">4. Vérification et auto-évaluation</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="information-e-commerce-et-donnees-audit-de-minishop">Information e-commerce et données — audit de MiniShop<a class="headerlink" href="#information-e-commerce-et-donnees-audit-de-minishop" title="Permanent link">#</a></h1>
+<p>Recherche et audit du code au <strong>23 octobre 2026</strong>, France, vente de biens à des consommateurs. Document de travail pédagogique, <strong>pas un avis juridique ni une certification de conformité</strong>. Le droit évolue : vérifier les textes, le modèle économique et les informations effectives avec le professionnel avant une mise en ligne commerciale. Les obligations concernent avant tout des <strong>informations et des fonctions</strong> ; toutes n'imposent pas nécessairement une page autonome portant un nom particulier.</p>
+<h2 id="1-sources-et-structure-retenue">1. Sources et structure retenue<a class="headerlink" href="#1-sources-et-structure-retenue" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Sujet</th>
+<th>Source de référence</th>
+<th>Traduction dans la maquette</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Identification et informations précontractuelles</td>
+<td><a href="https://entreprendre.service-public.gouv.fr/vosdroits/F37351">Service public : mentions d'un site professionnel</a>, <a href="https://www.economie.gouv.fr/dgccrf/les-fiches-pratiques/e-commerce-les-regles-entre-professionnels-et-consommateurs">DGCCRF : e-commerce</a></td>
+<td><code>/mentions-legales</code> (édition étudiante non professionnelle : Johan Polsinelli et Chahd Gouiaa, co-direction de publication, e-mails universitaires selon art. 6-III-2 LCEN, hébergement pédagogique visé Université Côte d'Azur — IUT Nice Côte d'Azur), <code>/cgv</code>, total et frais simulés avant confirmation ; aucun vendeur commercial identifié.</td>
+</tr>
+<tr>
+<td>Livraison et retours</td>
+<td><a href="https://www.economie.gouv.fr/dgccrf/les-fiches-pratiques/comment-realiser-des-achats-sur-internet-de-facon-securisee">DGCCRF : achat en ligne</a></td>
+<td><code>/livraison</code> et <code>/retractation</code> ; aucun délai ou transporteur inventé.</td>
+</tr>
+<tr>
+<td>Rétractation</td>
+<td><a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000044563193">L. 221-21</a>, <a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000053303365">D. 221-5</a>, <a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000045418600">modèle R. 221-1</a>, <a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000053303407">avis type R. 221-3</a>, <a href="https://www.service-public.fr/particuliers/vosdroits/F10485">Service public</a></td>
+<td>Délai en principe de 14 jours dès réception pour les biens, exceptions ; modèle de rétractation, distinct de l'annulation de la commande. <strong>Fonction en ligne absente</strong>, voir §3.</td>
+</tr>
+<tr>
+<td>Garanties légales</td>
+<td><a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000045987267">D. 211-2</a>, <a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000045981314">annexe D. 211-2, partie A</a></td>
+<td>Encadré réglementaire reproduit dans les CGV et sur <code>/garanties</code>. Professionnel répondant des garanties et ses coordonnées à compléter.</td>
+</tr>
+<tr>
+<td>Médiation</td>
+<td><a href="https://www.economie.gouv.fr/dgccrf/les-fiches-pratiques/la-mediation-de-la-consommation-ce-que-vous-devez-savoir">DGCCRF : médiation de la consommation</a></td>
+<td>Nom, adresse et site du médiateur réellement désigné à compléter ; réclamation préalable. Aucun médiateur fictif.</td>
+</tr>
+<tr>
+<td>Données personnelles</td>
+<td><a href="https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre3">RGPD chapitre III</a>, <a href="https://www.cnil.fr/fr/conformite-rgpd-information-des-personnes-et-transparence">CNIL : transparence</a>, <a href="https://www.cnil.fr/fr/passer-laction/les-durees-de-conservation-des-donnees">CNIL : durées</a></td>
+<td><code>/confidentialite</code> décrit les traitements observés et ce qui reste à déterminer, plutôt que des promesses de purge.</td>
+</tr>
+<tr>
+<td>Cookies</td>
+<td><a href="https://www.cnil.fr/fr/cookies-et-autres-traceurs/regles/cookies/lignes-directrices-modificatives-et-recommandation">CNIL : lignes directrices et recommandation</a>, <a href="https://www.cnil.fr/fr/cookies-et-autres-traceurs/regles/cookies/comment-mettre-mon-site-web-en-conformite">mise en conformité</a>, <a href="https://www.cnil.fr/fr/cookies-et-autres-traceurs/regles/cookies/FAQ">FAQ</a></td>
+<td><code>/cookies</code> ; absence de bandeau fictif pour les seuls traceurs nécessaires observés ; examen complémentaire si ajout de traceurs ou service tiers.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Comparaison sans copie de clauses :</strong> <a href="https://www.boulanger.com/evenement/conditions-generales-vente-boulanger">Boulanger : CGV</a> et <a href="https://www.boulanger.com/evenement/infos-legales">mentions légales</a> séparent notamment vente, informations d'identification et livraison. <a href="https://www.fnac.com/Help/cgv-fnac-marketplace">Fnac Marketplace</a> et <a href="https://www.backmarket.fr/fr-fr/legal/terms-of-use">Back Market</a> distinguent aussi plateforme et vendeurs tiers. MiniShop n'étant pas une place de marché, les obligations propres à l'intermédiation ne sont pas importées par simple analogie. L'étude de <strong>présentation</strong> et ses principes responsive précèdent le CSS dans <code>docs/DA.md</code> §12. <code>/cgu</code> est une page de confort, pas une affirmation qu'une page CGU séparée serait systématiquement obligatoire.</p>
+<h2 id="2-audit-des-donnees-et-des-cookies">2. Audit des données et des cookies<a class="headerlink" href="#2-audit-des-donnees-et-des-cookies" title="Permanent link">#</a></h2>
+<ul>
+<li><code>app/Security/Auth.php</code> démarre <code>MINISHOPSESS</code> pour la session (panier, connexion, jeton CSRF) : <code>HttpOnly</code>, <code>SameSite=Lax</code>, <code>Secure</code> seulement si PHP détecte HTTPS. Les autres paramètres et durées viennent de PHP et du navigateur. Le mode WASM possède une implémentation de session propre au harnais ; ses résultats ne valent pas validation du serveur PHP natif derrière un proxy.</li>
+<li><code>public/mesurer.php</code> crée un autre cookie de session <code>MINISHOPSESSID</code>, <code>HttpOnly</code>, <code>SameSite=Lax</code>, durée session, <strong><code>Secure=false</code></strong>. Outil de développement, non nécessaire à la boutique. Son garde dépend notamment du nom d'hôte ou d'indices locaux : ne pas le considérer comme une barrière de sécurité suffisante. <strong>Exclure <code>mesurer.php</code> et <code>gen_volumes.php</code> du déploiement public</strong>, vérifier les autres outils de développement et supprimer les marqueurs de déverrouillage.</li>
+<li>Inspection des scripts et vues applicatifs : pas de pixel marketing, SDK analytics, <code>document.cookie</code> ou <code>sessionStorage</code> identifié. <code>public/js/preferences.js</code> utilise <code>localStorage</code> (<code>minishop.preferences.v1</code>) uniquement pour la langue et le fuseau horaire lorsque l'utilisateur enregistre ses préférences, et peut appeler <code>navigator.geolocation.getCurrentPosition</code> après clic explicite pour déduire localement le fuseau via <code>tz-lookup.js</code> sans transmettre ni conserver les coordonnées ; le JavaScript du panier et du tableau de bord admin fait uniquement des requêtes vers l'origine. La CSP du contrôleur frontal autorise des ressources locales. Ce constat porte sur le dépôt et les parcours testés, <strong>pas</strong> sur une future intégration, une extension navigateur, les services internes de localisation du navigateur/OS, le serveur web, un proxy ou les éventuels services de l'hébergeur. Refaire l'inventaire réseau/stockage sur l'instance réelle.</li>
+<li>Le cookie de session servant au panier, à l'authentification et à la sécurité, ainsi que le stockage local limité au choix de langue/fuseau demandé par l'utilisateur, sont susceptibles d'être exemptés de consentement sous les conditions CNIL, avec information transparente dans <code>/cookies</code> et <code>/confidentialite</code>. Aucun choix « tout accepter / refuser » n'est simulé. Si un traceur non exempté est ajouté : information préalable complète, consentement positif avant dépôt, refus aussi simple, retrait à tout moment, preuve et contrôle des tiers ; l'exemption de mesure d'audience n'est jamais automatique.</li>
+<li>Comptes, coordonnées et commandes sont stockés en JSON ou SQL. En mode JSON, les fichiers <code>data/minishop/*.json</code> versionnés servent de jeu d'essai de démonstration et sont créés/mis à jour en clair hors chiffrement applicatif ; en cas d'erreur pendant un commit multi-fichiers JSON, une écriture partielle reste possible (<code>app/View/errors/500.php</code> n'affirme plus qu'aucune donnée n'a été modifiée). Le journal du moteur JSON <code>var/journal/db.jsonl</code> minimise désormais les nouvelles entrées <code>client</code> et <code>administrateur</code> (sans nom, e-mail ni condensat <code>mot_de_passe_hash</code>), mais les commandes, le nom d'acteur administrateur et les entrées historiques peuvent encore contenir des données personnelles. Le contact écrit nom, e-mail, message et date dans <code>var/log/contact.jsonl</code>, sans envoi d'e-mail ; les anciennes entrées sont limitées à 500 caractères, les nouvelles sont complètes jusqu'à 2 000 caractères. L'échec d'écriture est signalé ; aucun délai de réponse n'est garanti. Les nouveaux fichiers contact et journaux passent par <code>NettoyageJournaux::ajouter</code> avec un masque restrictif et un <code>chmod</code> 0600 si possible, mais <strong>cela ne constitue pas un audit de sécurité ni ne corrige les permissions des tables JSON ou des autres journaux serveur</strong>.</li>
+<li><code>conservation_compte=24</code> est la valeur initiale du seed pour les comptes inactifs sans commande, appliquée uniquement si l'exploitant exécute <code>scripts/purger_comptes.php</code> ou la maintenance CLI dédiée. Des rotations manuelles séparées (simulées par défaut, non planifiées) existent pour <code>contact.jsonl</code> (12 mois), le journal JSON (6 mois) et un dossier local dédié de sauvegardes (30 jours), ainsi qu'un outil manuel de copies chiffrées (<code>scripts/archive_restreinte.php</code>) qui ne retire pas la donnée source. Les comptes ayant des commandes, les sessions, les copies d'hébergement et les archives légales nécessitent encore des règles, habilitations et procédures effectives et testées. Le serveur et l'hébergeur peuvent produire d'autres journaux ; accès, sous-traitants, localisation et transferts sont inconnus.</li>
+</ul>
+<h2 id="3-points-bloquants-avant-de-vendre-reellement">3. Points bloquants avant de vendre réellement<a class="headerlink" href="#3-points-bloquants-avant-de-vendre-reellement" title="Permanent link">#</a></h2>
+<ul>
+<li>[!] Identifier et publier un vendeur professionnel avant toute exploitation commerciale : dénomination, forme sociale, capital le cas échéant, adresse professionnelle, e-mail et téléphone effectifs, immatriculation RCS/RNE et TVA intracommunautaire, responsable de publication commercial et hébergeur effectif de production (les mentions actuelles ne couvrent que l'édition étudiante non professionnelle et l'hébergement pédagogique visé). Déterminer les mentions supplémentaires liées au statut et aux produits.</li>
+<li>[!] Finaliser les CGV avec le professionnel : moyens de paiement effectifs, conditions et restriction de livraison, délais ou dates, prix et frais, destinataire et frais de retour, traitement des réclamations, coordonnées du vendeur responsable des garanties, médiateur désigné avec adresse et site. Vérifier toutes les informations produit et environnementales applicables aux catégories vendues, et les modalités d'archivage contractuel.</li>
+<li>[!] Depuis le <strong>19 juin 2026</strong>, pour les contrats concernés conclus en ligne, L. 221-21 et D. 221-5 exigent une fonctionnalité gratuite, visible, directe et facile d'accès, qui permette la déclaration (nom/prénom, détails du contrat et moyen électronique de réception), une étape explicite « confirmer la rétractation » ou équivalent et un accusé de réception sur support durable mentionnant contenu, date et heure d'envoi dans un délai raisonnable. La disponibilité vaut pendant le délai légal. Le professionnel doit prévoir réception effective, traçabilité et traitement fiable ; accès non conditionné à une connexion si cela rend l'exercice inaccessible. <strong>Cette fonction n'existe pas dans MiniShop.</strong> Une page statique, une annulation avant expédition, un téléchargement local ou le contact de démonstration ne la remplacent pas. Avant ouverture commerciale : concevoir la réception et la confirmation, un canal d'envoi fiable, la gestion des pannes/reprises et des données, puis tester sécurité, accessibilité et conservation de la preuve ; faire valider juridiquement l'ensemble.</li>
+<li>[!] Le bouton actuel et le statut « payée » sont des <strong>simulations</strong>. En vente réelle, vérifier l'obligation de paiement clairement indiquée sur le bouton, la possibilité de corriger la commande avant validation, la preuve de commande et sa confirmation sur support durable, ainsi que l'application des CGV et des droits du consommateur. Aucun paiement réel, expédition, remboursement, SAV ou notification e-mail n'est implémenté par cette passe.</li>
+<li>[!] Désigner le responsable du traitement, le cas échéant son représentant ou DPO, publier ses coordonnées et celles pour exercer les droits, les finalités et bases adaptées, destinataires/sous-traitants, durées ou critères, transferts et garanties ; mettre en place les réponses aux demandes et la procédure de réclamation CNIL. Définir les règles et automatiser la suppression/anonymisation applicables à chaque stockage, y compris sessions, audit, contact et sauvegardes. Examiner la minimisation des anciennes/nouvelles valeurs du journal.</li>
+<li>[!] Vérifier sur l'hébergement réel : TLS et <code>Secure</code> derrière proxy de confiance, accès stricts aux fichiers hors <code>public/</code>, permissions, chiffrement et sauvegardes, journaux serveur, authentification d'administration et supervision. Désactiver les outils de développement ; ne pas utiliser de données réelles tant que l'ensemble n'est pas prêt.</li>
+<li>[!] Vérifier les exigences d'accessibilité applicables au service et les éventuelles exemptions ; réaliser un audit manuel avec technologies d'assistance, tailles de viewport et navigateur réel. La présence de tests et de CSS responsive ne prouve pas une conformité WCAG/RGAA complète.</li>
+</ul>
+<h2 id="4-verification-et-auto-evaluation">4. Vérification et auto-évaluation<a class="headerlink" href="#4-verification-et-auto-evaluation" title="Permanent link">#</a></h2>
+<ul>
+<li><code>tests/php/information_juridique_test.php</code> vérifie routes et liens du pied, éléments essentiels des textes, absence de promesses trompeuses, lien formulaire et commande, et présence du CSS centré. Ce sont des <strong>contrats de régression</strong>, pas une preuve que le droit est respecté.</li>
+<li>Le parcours HTTP WASM vérifie l'accès public aux huit pages, rendu de l'encadré, modèle et réserve de rétractation, cookie observé, formulaire de contact valide, CSRF, échappement XSS et échec d'écriture. Les journaux du test restent isolés et ne remplacent pas ceux de l'utilisateur.</li>
+<li>Tests responsive statiques et suite applicative complète : voir <code>docs/10-todo-corrections.md</code> pour les résultats datés. [!] Aucun contrôle visuel navigateur complet ni test SQL réel dans cette sandbox.</li>
+<li><strong>Bilan :</strong> information plus claire, structurée et traçable pour la soutenance ; <strong>non prêt pour une boutique réelle</strong> tant que les blocages précédents et une validation juridique ne sont pas levés. Un contenu légal, même exact à une date donnée, ne remplace jamais les services et processus réels.</li>
+</ul>
+<footer class="doc">
+  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/12-information-juridique.md</code>
+  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+</footer>
+</main>
+</body>
+</html>

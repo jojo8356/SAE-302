@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<meta name="description" content="SAÉ 302 — MiniShop : MiniShop — site e-commerce + back-office (SAE)#">
-<title>MiniShop — site e-commerce + back-office (SAE)# — MiniShop</title>
+<meta name="description" content="SAÉ 302 — MiniShop : MiniShop#">
+<title>MiniShop# — MiniShop</title>
 <style>
 :root {
   --encre: #0f172a;
@@ -90,344 +90,216 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <main id="contenu">
 <nav class="toc" aria-label="Sommaire"><div class="toc">
 <ul>
+<li><a href="#equipe-responsabilites-et-acces">Équipe, responsabilités et accès</a></li>
+<li><a href="#fonctionnalites">Fonctionnalités</a></li>
+<li><a href="#technologies-et-donnees">Technologies et données</a></li>
+<li><a href="#lancer-lapplication-en-local">Lancer l’application en local</a><ul>
 <li><a href="#prerequis">Prérequis</a></li>
-<li><a href="#installation-5-commandes">Installation (5 commandes)</a></li>
+<li><a href="#demarrage-rapide">Démarrage rapide</a></li>
 <li><a href="#comptes-de-demonstration">Comptes de démonstration</a></li>
-<li><a href="#contenu-de-la-base-verifiable-en-1-requete">Contenu de la base (vérifiable en 1 requête)</a></li>
-<li><a href="#etat-reel-du-depot-a-lire-avant-de-chercher-un-fichier">État réel du dépôt (à lire avant de chercher un fichier)</a></li>
-<li><a href="#tests-livres">Tests livrés</a></li>
-<li><a href="#arborescence">Arborescence</a></li>
-<li><a href="#documents-et-rendus-les-diagrammes-ne-saffichent-pas-dans-un-apercu-sans-reseau">Documents et rendus (les diagrammes ne s'affichent PAS dans un aperçu sans réseau)</a></li>
-<li><a href="#membres-et-roles-tracabilite-gitlab">Membres et rôles (traçabilité GitLab)</a></li>
-<li><a href="#sauvegarde-restauration-a-faire-avant-une-demo">Sauvegarde / restauration (à faire avant une démo)</a></li>
-<li><a href="#licence">Licence</a></li>
+</ul>
+</li>
+<li><a href="#configuration-et-mode-sql">Configuration et mode SQL</a></li>
+<li><a href="#tests">Tests</a><ul>
+<li><a href="#suites-locales-sans-serveur-sql-ni-dependances-node">Suites locales sans serveur SQL ni dépendances Node</a></li>
+<li><a href="#campagnes-integrees">Campagnes intégrées</a></li>
+<li><a href="#recette-manuelle">Recette manuelle</a></li>
+</ul>
+</li>
+<li><a href="#documentation-du-projet">Documentation du projet</a></li>
+<li><a href="#organisation-du-depot">Organisation du dépôt</a></li>
+<li><a href="#licence-et-reutilisation">Licence et réutilisation</a></li>
 </ul>
 </div>
 </nav>
-<h1 id="minishop-site-e-commerce-back-office-sae">MiniShop — site e-commerce + back-office (SAE)<a class="headerlink" href="#minishop-site-e-commerce-back-office-sae" title="Permanent link">#</a></h1>
-<p><a href="https://github.com/jojo8356/SAE-302/actions/workflows/ci.yml"><img alt="CI — GitHub (dev)" src="https://github.com/jojo8356/SAE-302/actions/workflows/ci.yml/badge.svg" /></a> <a href="https://gitlab.example.com/minishop/-/pipelines"><img alt="CI — GitLab (prod)" src="https://gitlab.example.com/minishop/badges/main/pipeline.svg" /></a></p>
-<p>Projet pédagogique : catalogue, panier, commandes, espace d'administration — <strong>PHP 8 / MySQL (PDO) /
-procédures stockées / déclencheurs / architecture MVC</strong> — avec sa base de données conçue, normalisée,
-testée, et son cahier des charges complet.</p>
+<h1 id="minishop">MiniShop<a class="headerlink" href="#minishop" title="Permanent link">#</a></h1>
+<p><a href="https://github.com/jojo8356/SAE-302/actions/workflows/ci.yml"><img alt="CI GitHub Actions" src="https://github.com/jojo8356/SAE-302/actions/workflows/ci.yml/badge.svg" /></a></p>
 <blockquote>
-<p><strong>CI/CD dev vs prod</strong> : le dev avant la prod se fait sur <strong>GitHub</strong> (<code>.github/workflows/ci.yml</code> — adaptation de <code>.gitlab-ci.yml</code>), la prod/notée reste sur <strong>GitLab</strong> (<code>.gitlab-ci.yml</code>). Les deux pipelines exécutent les mêmes 6 jobs (php-lint, style PSR-12, security-scan, base-tests mysql:8.0, unit phpunit, docs PlantUML) avec les mêmes images (<code>php:8.2</code>, <code>mysql:8.0</code>, <code>openjdk:17</code>). <code>concurrency/cancel-in-progress</code> reproduit <code>interruptible: true</code>.</p>
-<p><strong>Règle « pas de re-run »</strong> : si la CI/CD est <strong>verte avant le merge</strong> (PR/MR au statut ✅), elle n'a <strong>pas besoin d'être relancée après le merge</strong>. Le run déclenché sur <code>main</code> par un merge est un <strong>relais de traçabilité</strong>, pas une vérification : mêmes 6 jobs, mêmes images, <strong>même arbre de fichiers</strong> (GitHub Actions exécute déjà le workflow <code>pull_request</code> sur le commit de fusion <code>refs/pull/&lt;n&gt;/merge</code>, GitLab CI sur le <em>merge result</em>). Un re-run manuel — <code>gh run rerun &lt;id&gt;</code>, bouton « Re-run jobs », « Retry » GitLab — ne peut donc rien révéler de neuf et coûte 5 à 8 min de machine (service <code>mysql:8.0</code> compris) par MR. On relance <strong>uniquement</strong> si <code>main</code> a avancé depuis le run de la PR, si le run a été <strong>annulé</strong> (<code>cancel-in-progress</code>), si le code a été corrigé puis poussé (c'est alors le <code>push</code> qui relance), ou en cas de <strong>panne d'infrastructure</strong> (miroir PlantUML, <code>apt</code>, registre Docker) — règle complète et tableau des 6 exceptions : <strong>CDC §14.2</strong>.</p>
+<p><strong>MiniShop</strong> est une application Web de boutique en ligne réalisée dans un cadre pédagogique : catalogue, panier, commandes et back-office. Le projet est développé en <strong>PHP</strong> et propose un stockage JSON par défaut ainsi qu’un pilote SQL via PDO.</p>
+<p><strong>Cadre</strong> — SAE — BUT Informatique (BUT2), Université Côte d'Azur.</p>
+<p><strong>Périmètre : maquette scolaire.</strong> Les paiements et les livraisons sont simulés. Le formulaire de contact n’envoie pas de courriel. Le projet n’est pas destiné à traiter de vraies ventes ni à être déployé tel quel en production.</p>
 </blockquote>
+<h2 id="equipe-responsabilites-et-acces">Équipe, responsabilités et accès<a class="headerlink" href="#equipe-responsabilites-et-acces" title="Permanent link">#</a></h2>
+<p>Le groupe de réalisation comprend deux étudiants. Les permissions du dépôt GitLab IUT sont présentées séparément des responsabilités de planification.</p>
 <table>
 <thead>
 <tr>
-<th></th>
-<th></th>
+<th>Membre</th>
+<th>Accès au dépôt GitLab IUT</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Cadre</strong></td>
-<td>SAE — BUT Informatique / Licence 3, Université Côte d'Azur</td>
+<td><strong>Johan Polsinelli</strong></td>
+<td><code>Owner</code></td>
 </tr>
 <tr>
-<td><strong>Groupe</strong></td>
-<td>3 étudiants (prénoms/noms/numéros dans §Membres ci-dessous)</td>
-</tr>
-<tr>
-<td><strong>Référente</strong></td>
-<td>Thanh-Phuong Nguyen — <code>thanh-phuong.nguyen@univ-cotedazur.fr</code></td>
-</tr>
-<tr>
-<td><strong>Documents</strong></td>
-<td><a href="docs/01-cahier-des-charges-MiniShop.html"><code>docs/01-cahier-des-charges-MiniShop.md</code></a> (spécification <strong>et</strong> conception de base de données) · <a href="docs/02-document-tests-validation.html"><code>docs/02-document-tests-validation.md</code></a> · <a href="docs/03-support-soutenance.html"><code>docs/03-support-soutenance.md</code></a> · <a href="docs/04-conception-bd-et-sql.html"><code>docs/04-conception-bd-et-sql.md</code></a> (livrable n°3 autonome : MCD, MLD, normalisation, analyse + <strong>liens vers les scripts SQL livrés en fichiers</strong>) · <a href="docs/05-wbs-projet.html"><code>docs/05-wbs-projet.md</code></a> (WBS : 6 divisions, 16 lots, 86 tâches individuelles, charges bottom-up, plan de charge, Gantt, chemin critique) · <a href="docs/08-fiche-suivi-commits.html"><code>docs/08-fiche-suivi-commits.md</code></a> (fiche de suivi des 32 commits + script de rejeu vers un nouveau GitLab)</td>
-</tr>
-<tr>
-<td><strong>Scripts SQL</strong></td>
-<td><a href="sql/01_minishop_schema.sql"><code>sql/01_minishop_schema.sql</code></a> (DDL + données) · <a href="sql/02_minishop_procedures.sql"><code>sql/02_minishop_procedures.sql</code></a> (1 fonction + 17 procédures) · <a href="sql/03_minishop_triggers.sql"><code>sql/03_minishop_triggers.sql</code></a> (16 déclencheurs) · <a href="sql/04_minishop_demo.sql"><code>sql/04_minishop_demo.sql</code></a> (démo via <code>CALL</code>) — chaîne validée de zéro sur MariaDB 11.8.6</td>
-</tr>
-<tr>
-<td><strong>État</strong></td>
-<td>base de données + 29 tests SQL <strong>exécutés avec succès</strong> (règles RB-01…RB-20, vues, frais de port) ; application PHP <strong>livrée</strong> (MVC, design system, suite PHPUnit, E2E HTTP 180 vérifications) ; écarts restants suivis dans <a href="docs/10-todo-corrections.html"><code>docs/10-todo-corrections.md</code></a></td>
+<td><strong>Chahd Gouiaa</strong></td>
+<td><code>Developer</code></td>
 </tr>
 </tbody>
 </table>
-<h2 id="prerequis">Prérequis<a class="headerlink" href="#prerequis" title="Permanent link">#</a></h2>
+<p>La WBS et la todolist utilisent des lettres A/B/C pour les responsabilités de projet et le RACI. Aucune correspondance entre ces lettres et les personnes nommées n’est établie dans ce README. Les permissions GitLab (<code>Owner</code>, <code>Developer</code>) ne sont pas des rôles RACI. La charte <a href="docs/20-charte-gitlab-revues-croisees.html"><code>docs/20-charte-gitlab-revues-croisees.md</code></a> décrit le processus de revue attendu ; ce README n’atteste pas que des MR ou des revues croisées ont déjà eu lieu.</p>
+<p><strong>Encadrement</strong> — NGUYEN Thanh-Phuong, enseignante référente, est membre directe du projet GitLab IUT avec le rôle <code>Reporter</code> ; elle ne fait pas partie du groupe étudiant.</p>
+<h2 id="fonctionnalites">Fonctionnalités<a class="headerlink" href="#fonctionnalites" title="Permanent link">#</a></h2>
 <ul>
-<li>PHP <strong>8.2+</strong> avec les extensions <code>pdo_mysql</code>, <code>mbstring</code>, <code>json</code>, <code>intl</code></li>
-<li>MySQL <strong>8.0.16+</strong> (les contraintes <code>CHECK</code> sont appliquées depuis cette version) <strong>ou MariaDB 10.6+</strong></li>
-<li>Apache 2.4 avec <code>mod_rewrite</code> (ou le serveur embarqué PHP pour un essai rapide)</li>
-<li>client <code>mysql</code> / <code>mariadb</code> en ligne de commande, <code>bash</code></li>
-<li>facultatif : <code>pandoc</code> + <code>plantuml</code> (rendu des documents et des diagrammes), <code>phpunit</code>, <code>phpcs</code></li>
+<li><strong>Catalogue public</strong> : catégories, recherche, filtres, fiches produit et gestion du panier.</li>
+<li><strong>Espace client</strong> : inscription, connexion, coordonnées, commandes et annulation selon leur état.</li>
+<li><strong>Back-office</strong> : gestion des produits, catégories, stocks, commandes et paramètres de la boutique.</li>
+<li><strong>Préférences personnelles</strong> : interface en français ou en anglais et fuseau horaire choisi manuellement ou estimé localement à la demande.</li>
+<li><strong>Interface responsive</strong> et pages d’information adaptées au périmètre pédagogique.</li>
 </ul>
-<h2 id="installation-5-commandes">Installation (5 commandes)<a class="headerlink" href="#installation-5-commandes" title="Permanent link">#</a></h2>
-<pre><code class="language-bash"># 1. cloner et placer le projet
-git clone &lt;URL_DU_DEPOT&gt; minishop &amp;&amp; cd minishop
-
-# 2. configuration (jamais commitée)
-cp app/Config/env.example.php app/Config/env.php      # puis éditer db_user / db_pass
-
-# 3. créer la base, les tables, les 16 triggers, la fonction + 17 procédures et le jeu de démonstration
-DB_USER=root DB_PASS='...' ./scripts/load_db.sh
-
-# 4. vérifier que la base est saine (29 tests de règles de gestion, vues et frais de port)
-DB_USER=root DB_PASS='...' ./scripts/run_sql_tests.sh   # 29 tests, attendu : « Tests conformes : 29 / 29 »
-
-# 5. lancer (développement) — en production : DocumentRoot = public/
-php -S localhost:8000 -t public
-#   http://localhost:8000/            (front-office)
-#   http://localhost:8000/admin        (back-office, compte admin requis)
-</code></pre>
-<p>Le script <code>load_db.sh</code> encapsule les fichiers contenant des procédures/triggers avec un
-<code>DELIMITER $$</code> (le client <code>mysql</code> n'accepte pas <code>DELIMITER</code> en mode batch). Sous MySQL Workbench ou
-phpMyAdmin, ouvrir et exécuter <code>sql/01 → 02 → 03 → 04</code> dans cet ordre fonctionne aussi.</p>
-<h2 id="comptes-de-demonstration">Comptes de démonstration<a class="headerlink" href="#comptes-de-demonstration" title="Permanent link">#</a></h2>
+<p>Les décisions d’interface s’appuient sur l’étude de design de <a href="docs/DA.html"><code>docs/DA.md</code></a>. Les contrôles d’accès par rôle, protections CSRF, requêtes préparées et politique CSP sont décrits dans le code et les documents de sécurité.</p>
+<h2 id="technologies-et-donnees">Technologies et données<a class="headerlink" href="#technologies-et-donnees" title="Permanent link">#</a></h2>
 <table>
 <thead>
 <tr>
-<th>Rôle</th>
-<th>Email</th>
-<th>Mot de passe (démo uniquement)</th>
+<th>Domaine</th>
+<th>Technologies / choix</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Client</td>
-<td><code>alice@example.com</code></td>
-<td><code>Demo2026!</code></td>
+<td>Application</td>
+<td>PHP <strong>8.2 ou plus récent</strong>, architecture MVC, HTML, CSS et JavaScript natif</td>
 </tr>
 <tr>
-<td>Client</td>
-<td><code>bruno@example.com</code></td>
-<td><code>Demo2026!</code></td>
+<td>Stockage par défaut</td>
+<td>Fichiers JSON, sans serveur de base de données</td>
 </tr>
 <tr>
-<td>Client</td>
-<td><code>carla@example.com</code></td>
-<td><code>Demo2026!</code></td>
+<td>Stockage SQL optionnel</td>
+<td>MySQL <strong>8.0.16+</strong> ou MariaDB <strong>10.6+</strong>, via PDO (<code>pdo_mysql</code>)</td>
 </tr>
 <tr>
-<td>Administrateur (rôle <code>SUPER</code>)</td>
-<td><code>admin@minishop.fr</code></td>
-<td><code>Admin2026!</code></td>
+<td>Base de données</td>
+<td>Schéma relationnel, procédures stockées, déclencheurs et migrations dans <code>sql/</code></td>
+</tr>
+<tr>
+<td>Tests</td>
+<td>Suites PHP et Python ; contrôles complémentaires dans GitHub Actions</td>
 </tr>
 </tbody>
 </table>
-<p>Les mots de passe sont stockés <strong>hachés</strong> (<code>password_hash()</code> bcrypt cost 12) dans <code>sql/01_minishop_schema.sql</code>.
-Pour en régénérer : <code>php -r 'echo password_hash("MonMotDePasse", PASSWORD_BCRYPT, ["cost"=&gt;12]), "\n";'</code>.
-Ne rejouez <strong>pas</strong> <code>sql/04_minishop_demo.sql</code> sur une installation exposée (commandes de démonstration) ;
-<code>php scripts/deploy.php --write-sql --db</code> régénère des <strong>hashes bcrypt aléatoires</strong> et des
-<strong>emails de démo uniques</strong> (domaine <code>.invalid</code>, suffixe aléatoire) pour la démo publique
-(le script rend la version <code>.sh</code> historique obsolète, celle-ci a été supprimée).</p>
-<h2 id="contenu-de-la-base-verifiable-en-1-requete">Contenu de la base (vérifiable en 1 requête)<a class="headerlink" href="#contenu-de-la-base-verifiable-en-1-requete" title="Permanent link">#</a></h2>
-<pre><code class="language-sql">SELECT 'tables' objet, COUNT(*) n FROM information_schema.tables    WHERE table_schema = DATABASE()
-UNION ALL SELECT 'procedures', COUNT(*) FROM information_schema.routines WHERE routine_schema = DATABASE() AND routine_type = 'PROCEDURE'
-UNION ALL SELECT 'triggers',   COUNT(*) FROM (SELECT DISTINCT TRIGGER_NAME FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA = DATABASE()) t;
+<p>Le pilote JSON est celui utilisé par défaut. Le mode SQL est sélectionné dans <code>.env</code> avec <code>STORAGE_DRIVER=sql</code>. Les secrets et réglages propres à une machine doivent rester dans <code>.env</code>, qui n’est pas destiné à être versionné ; seul le modèle <code>.env.example</code> est suivi par Git. <strong>Node.js et npm ne sont pas nécessaires pour lancer l’application.</strong></p>
+<h2 id="lancer-lapplication-en-local">Lancer l’application en local<a class="headerlink" href="#lancer-lapplication-en-local" title="Permanent link">#</a></h2>
+<h3 id="prerequis">Prérequis<a class="headerlink" href="#prerequis" title="Permanent link">#</a></h3>
+<ul>
+<li>PHP <strong>8.2+</strong> avec les extensions <code>json</code> et <code>mbstring</code> ;</li>
+<li>Bash pour <code>run.sh</code>.</li>
+</ul>
+<p>L’extension <code>pdo_mysql</code> et un serveur MySQL/MariaDB sont nécessaires uniquement pour utiliser le stockage SQL. Python 3 est requis pour lancer l’ensemble des suites PHP avec le runner présenté ci-dessous.</p>
+<h3 id="demarrage-rapide">Démarrage rapide<a class="headerlink" href="#demarrage-rapide" title="Permanent link">#</a></h3>
+<pre><code class="language-bash">git clone https://github.com/jojo8356/SAE-302.git
+cd SAE-302
+./run.sh
 </code></pre>
-<p>8 tables · 3 vues · 1 fonction + 17 procédures stockées · 16 déclencheurs · 12 produits · 4 catégories · 3 clients · 1 admin · 4 commandes de démonstration (dont une qui paie 4,90 EUR de frais de port).</p>
-<h2 id="etat-reel-du-depot-a-lire-avant-de-chercher-un-fichier">État réel du dépôt (à lire avant de chercher un fichier)<a class="headerlink" href="#etat-reel-du-depot-a-lire-avant-de-chercher-un-fichier" title="Permanent link">#</a></h2>
+<p>Au premier lancement, <code>run.sh</code> prépare le fichier local <code>.env</code> s’il est absent, initialise le jeu de démonstration JSON si nécessaire, puis démarre le serveur PHP de développement. Ouvrir ensuite <a href="http://localhost:8000/">http://localhost:8000/</a>.</p>
+<p>Pour choisir un autre port :</p>
+<pre><code class="language-bash">PORT=8080 ./run.sh
+</code></pre>
+<p>Pages utiles :</p>
+<ul>
+<li>Boutique : <a href="http://localhost:8000/">http://localhost:8000/</a></li>
+<li>Catalogue : <a href="http://localhost:8000/catalogue">http://localhost:8000/catalogue</a></li>
+<li>Connexion client : <a href="http://localhost:8000/connexion">http://localhost:8000/connexion</a></li>
+<li>Connexion administration : <a href="http://localhost:8000/admin/connexion">http://localhost:8000/admin/connexion</a></li>
+<li>Préférences : <a href="http://localhost:8000/preferences">http://localhost:8000/preferences</a></li>
+</ul>
+<p>Le serveur PHP intégré est réservé au développement local. Ne pas l’exposer directement à Internet.</p>
+<h3 id="comptes-de-demonstration">Comptes de démonstration<a class="headerlink" href="#comptes-de-demonstration" title="Permanent link">#</a></h3>
+<p>Les comptes du seed sont réservés aux environnements locaux isolés. Les adresses, mots de passe et hashes ne sont pas reproduits dans la documentation ni dans les supports. Pour une recette LineServ, utiliser uniquement un compte de test autorisé, avec les accès transmis séparément par canal privé ; ne pas réutiliser les comptes du seed sur une instance de production ou accessible au public.</p>
+<h2 id="configuration-et-mode-sql">Configuration et mode SQL<a class="headerlink" href="#configuration-et-mode-sql" title="Permanent link">#</a></h2>
+<p>Pour personnaliser la configuration locale, copier le modèle puis modifier <code>.env</code> :</p>
+<pre><code class="language-bash">cp .env.example .env
+</code></pre>
+<p>Les paramètres disponibles incluent le pilote (<code>STORAGE_DRIVER</code>), le chemin des données JSON et, pour SQL, les coordonnées de connexion (<code>DB_HOST</code>, <code>DB_PORT</code>, <code>DB_NAME</code>, <code>DB_USER</code>, <code>DB_PASSWORD</code>, <code>DB_SOCKET</code>). Garder les mots de passe et autres secrets hors du dépôt.</p>
+<p>Le mode JSON ne demande aucun service supplémentaire. Pour essayer le mode SQL, installer et démarrer localement un serveur MySQL/MariaDB ainsi que l’extension PHP <code>pdo_mysql</code>, configurer l’accès dans <code>.env</code>, puis utiliser :</p>
+<pre><code class="language-bash">./run.sh --db
+./run.sh
+</code></pre>
+<p><code>./run.sh --db</code> crée la base configurée et bascule le pilote local sur SQL ; le second lancement démarre l’application. À utiliser uniquement sur une base locale dédiée aux essais. Les commandes de réinitialisation et les scripts SQL de création peuvent supprimer des données : ne jamais les exécuter sur une base partagée ou à conserver. Les détails du schéma sont dans <a href="docs/04-conception-bd-et-sql.html"><code>docs/04-conception-bd-et-sql.md</code></a>.</p>
+<h2 id="tests">Tests<a class="headerlink" href="#tests" title="Permanent link">#</a></h2>
+<h3 id="suites-locales-sans-serveur-sql-ni-dependances-node">Suites locales sans serveur SQL ni dépendances Node<a class="headerlink" href="#suites-locales-sans-serveur-sql-ni-dependances-node" title="Permanent link">#</a></h3>
+<p>Avec PHP 8.2+ et Python 3 installés, lancer les suites PHP et les contrôles documentaires sans accéder à une base SQL ni démarrer l’E2E :</p>
+<pre><code class="language-bash">php scripts/run-all-tests.php --sans-sql --sans-e2e
+</code></pre>
+<p>Le runner détaille les suites exécutées et signale explicitement les parties non jouées. Cette commande ne valide ni l’intégration SQL ni les parcours E2E ; ne pas les considérer comme réussis lorsqu’ils sont ignorés.</p>
+<h3 id="campagnes-integrees">Campagnes intégrées<a class="headerlink" href="#campagnes-integrees" title="Permanent link">#</a></h3>
+<p>Le runner complet est :</p>
+<pre><code class="language-bash">php scripts/run-all-tests.php
+</code></pre>
+<p>L’intégration SQL nécessite un serveur de test isolé : elle crée et supprime une base dédiée. L’E2E PHP-WASM et certains tests JavaScript ne sont exécutés que si leurs outils optionnels sont présents. Vérifier le résumé final du runner pour distinguer les tests <strong>joués</strong>, <strong>non joués</strong> et <strong>en échec</strong>. Ne jamais lancer de tests SQL contre une base de données contenant des informations à conserver.</p>
+<p>Le workflow automatisé du dépôt est défini dans <a href=".github/workflows/ci.yml"><code>ci.yml</code></a>. Il couvre notamment la syntaxe PHP, les suites de tests, des contrôles de sécurité, SQL sur bases jetables et des vérifications responsive en navigateur. Cette CI GitHub ne constitue pas une preuve de pipeline GitLab IUT.</p>
+<h3 id="recette-manuelle">Recette manuelle<a class="headerlink" href="#recette-manuelle" title="Permanent link">#</a></h3>
+<ul>
+<li><a href="docs/13-fiches-recette-uc.html"><code>docs/13-fiches-recette-uc.md</code></a> décrit les scénarios et leur déroulement.</li>
+<li><a href="docs/13-suivi-recette-uc.csv"><code>docs/13-suivi-recette-uc.csv</code></a> sert à suivre leur exécution.</li>
+<li>La campagne manuelle LineServ, décrite dans <a href="docs/14-guide-lineserv.html"><code>docs/14-guide-lineserv.md</code></a>, vise la base réelle prévue par le protocole ; elle n’a pas été jouée et aucune restauration n’a été effectuée. Les bases jetables de CI restent distinctes.</li>
+</ul>
+<p>Un scénario ne doit être marqué comme joué qu’après son exécution réelle. Les campagnes responsives multi-largeurs sont couvertes par les tests automatisés, pas par la checklist manuelle. Le dépôt ne fournit pas de procédure automatisée de déploiement.</p>
+<h2 id="documentation-du-projet">Documentation du projet<a class="headerlink" href="#documentation-du-projet" title="Permanent link">#</a></h2>
 <table>
 <thead>
 <tr>
-<th>Zone</th>
-<th>Statut</th>
-<th>Comment le vérifier</th>
+<th>Document</th>
+<th>Contenu</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>app/**</code>, <code>public/**</code>, <code>data/</code>, <code>scripts/seed.php</code></td>
-<td><strong>application livrée et testée</strong> (PHP pur, moteur JSON, <strong>design system CSS/JS + SVG</strong>)</td>
-<td><code>npm run test:all</code> → 7 suites vertes (108 + 28 + 48 + 34 + 180 vérifications)</td>
+<td><a href="docs/01-cahier-des-charges-MiniShop.html">Cahier des charges</a></td>
+<td>Besoin, exigences fonctionnelles et règles métier</td>
 </tr>
 <tr>
-<td><code>app/Model/Data/</code></td>
-<td>moteur « JSON-comme-SGBD » : schéma, contraintes (NOT NULL/ENUM/CHECK/UNIQUE/FK), triggers, transactions, vues, journal JSONL — piloté par l'énumération <code>StorageDriver</code> (JSON actif ; <code>SqlStore</code> = pilote PDO réel, procédures à brancher)</td>
-<td><code>node scripts/wasm_run.mjs tests/php/engine_smoke.php</code></td>
+<td><a href="docs/02-document-tests-validation.html">Tests et validation</a></td>
+<td>Stratégie, résultats et protocole de recette</td>
 </tr>
 <tr>
-<td><code>tests/php/**</code>, <code>scripts/wasm-e2e.mjs</code>, <code>scripts/run-all-tests.mjs</code></td>
-<td><strong>livrés et exécutés</strong> (voir « Tests livrés » ci-dessus)</td>
-<td><code>npm run test:all</code></td>
+<td><a href="ARCHITECTURE.html">Architecture logicielle</a></td>
+<td>Couches, parcours HTTP, règles métier, persistance, sécurité, tests et limites</td>
 </tr>
 <tr>
-<td><code>sql/</code>, <code>tests/sql/</code>, <code>docs/</code> (CDC, tests, soutenance, annexes, diagrammes)</td>
-<td><strong>livrés</strong> ; <code>sql/</code> = référence comportementale du moteur JSON</td>
-<td><code>./scripts/run_sql_tests.sh</code> → 29/29</td>
+<td><a href="STACK.html">Stack technique</a></td>
+<td>Langages, prérequis, bibliothèques et outils par contexte d’utilisation</td>
 </tr>
 <tr>
-<td><code>tests/security/controles.sh</code>, <code>tests/charge/reserver.sh</code>, <code>tests/perf/mesurer.sh</code></td>
-<td><strong>scripts livrés</strong> ; les deux derniers supposent l'application en service</td>
-<td><code>bash -n</code> passe</td>
+<td><a href="docs/04-conception-bd-et-sql.html">Conception de la base</a></td>
+<td>Modèle de données et choix SQL</td>
 </tr>
 <tr>
-<td><code>tests/sql/out/*.log</code></td>
-<td>non versionnés (régénérables) — seul <code>tests/sql/rapport_tests_sql.md</code> est versionné, preuve de recette à l'appui</td>
-<td><code>.gitignore</code>, §14.1 règle 7</td>
+<td><a href="docs/11-strategie-tests.html">Stratégie de tests</a></td>
+<td>Périmètre et limites des tests automatisés</td>
+</tr>
+<tr>
+<td><a href="docs/DA.html">Étude de design</a></td>
+<td>Analyse concurrentielle et direction visuelle</td>
+</tr>
+<tr>
+<td><a href="docs/07-note-cybersecurite.html">Sécurité</a></td>
+<td>Mesures mises en place et limites connues</td>
+</tr>
+<tr>
+<td><a href="docs/12-information-juridique.html">Informations juridiques</a></td>
+<td>Cadre légal de la maquette pédagogique</td>
+</tr>
+<tr>
+<td><a href="docs/18-politique-conservation.html">Conservation des données</a></td>
+<td>Politique proposée et limites des outils de la maquette</td>
 </tr>
 </tbody>
 </table>
-<h2 id="tests-livres">Tests livrés<a class="headerlink" href="#tests-livres" title="Permanent link">#</a></h2>
-<p>L'application est livrée avec <strong>sept suites, toutes vertes</strong>, exécutables d'un bloc :</p>
-<pre><code class="language-bash">npm run test:all        # ou : node scripts/run-all-tests.mjs
+<h2 id="organisation-du-depot">Organisation du dépôt<a class="headerlink" href="#organisation-du-depot" title="Permanent link">#</a></h2>
+<pre><code class="language-text">app/          contrôleurs, services, dépôts, sécurité et vues
+public/       point d’entrée HTTP, feuilles CSS, JavaScript et visuels
+data/         données du moteur JSON
+docs/         cahier des charges, conception, tests et livrables documentaires
+sql/          schéma, procédures, déclencheurs, données de démonstration et migrations
+scripts/      lancement, configuration, tests et outils de développement
+tests/        tests PHP, Python, JavaScript et scénarios SQL
 </code></pre>
-<blockquote>
-<p>🛡️ <strong>Sécurité</strong> : la note complète « failles testées → corrections → code » (S-01…S-10, SEC-01…SEC-13, limites assumées) est dans <strong><code>docs/07-note-cybersecurite.md</code></strong> ; les attaques correspondantes sont rejouées en continu par les batteries T6/T12/T13 de la suite E2E.</p>
-</blockquote>
-<table>
-<thead>
-<tr>
-<th>Suite</th>
-<th>Fichier</th>
-<th>Couverture</th>
-<th>Verdict</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Linter strict types</td>
-<td><code>scripts/strict_types_lint.php</code></td>
-<td>règle <code>declare_strict_types</code> de php-cs-fixer + types natifs « PHPStan level 9 » (params, retours, propriétés) + <strong>règle maison : opérateur ternaire interdit</strong> (<code>? :</code> et <code>?:</code>, remplacés par <code>if/else</code> ; <code>??</code> et types nullables <code>?int</code> autorisés) sur <strong>tout le livrable PHP</strong></td>
-<td>✅ 0 violation / 86 fichiers</td>
-</tr>
-<tr>
-<td>Moteur JSON</td>
-<td><code>tests/php/engine_smoke.php</code></td>
-<td>contraintes, triggers, transactions, journal du moteur</td>
-<td>✅ vert</td>
-</tr>
-<tr>
-<td>Règles de gestion</td>
-<td><code>tests/php/run_tests.php</code></td>
-<td>T-01…T-29 du document de tests (RB-01…RB-20, vues, frais de port)</td>
-<td>✅ 29/29</td>
-</tr>
-<tr>
-<td>Unitaires</td>
-<td><code>tests/php/unit_tests.php</code></td>
-<td><code>Text</code> (fold/slug/collation), échappement, CSRF, <strong>matrice RB-11 complète</strong> (36 couples), <code>Filter</code>, <code>PanierSession</code>, prix TTC, journal</td>
-<td>✅ 98/98</td>
-</tr>
-<tr>
-<td>Fonctionnalités</td>
-<td><code>tests/php/features_test.php</code></td>
-<td><strong>UC-01…UC-14</strong> via les repositories (catalogue, compte, panier, commande, annulation, back-office, indicateurs)</td>
-<td>✅ 108/108</td>
-</tr>
-<tr>
-<td>Contrats de design</td>
-<td><code>tests/php/css_contract.php</code></td>
-<td>tokens de <code>docs/DA.md</code>, contrastes WCAG calculés, classes des vues réellement définies, <code>prefers-reduced-motion</code>, feuille d'impression</td>
-<td>✅ 28/28</td>
-</tr>
-<tr>
-<td>Contrat responsive</td>
-<td><code>tests/php/responsive_contract.php</code></td>
-<td>320 px → 1536 px : paliers en <code>em</code>, menu repliable, tableaux accessibles, panier en cartes, <code>dvh</code>, encoches, <code>pointer: coarse</code>, container queries</td>
-<td>✅ 48/48</td>
-</tr>
-<tr>
-<td>Unitaires PHPUnit</td>
-<td><code>tests/phpunit/</code></td>
-<td><code>Text</code>, <code>Filter</code>, moteur JSON (contraintes, transactions), matrice RB-11, prix TTC, contrats de sécurité — exécutés hors ligne par <code>run-local.php</code></td>
-<td>✅ 34/34</td>
-</tr>
-<tr>
-<td>E2E HTTP</td>
-<td><code>scripts/wasm-e2e.mjs</code></td>
-<td>T1…T14 : parcours réels (cookies + CSRF) — pages publiques, auth, commande 488,40 €, annulation, back-office, cloisonnement, catalogue avancé, compte, panier (plafond/re-tri/prix falsifié), CRUD admin, filtres + audit + journal, <strong>sécurité offensive</strong> (injection, XSS stocké, IDOR, fixation de session, traversées, escalation), rôles RB-13, contact/API/paramètres</td>
-<td>✅ 180/180</td>
-</tr>
-</tbody>
-</table>
-<p>Commandes individuelles : <code>npm test</code> (règles), <code>npm run test:units</code>, <code>npm run test:features</code>, <code>npm run test:design</code>, <code>npm run test:phpunit</code>, <code>npm run test:e2e</code> (re-seed puis parcours HTTP ; l'E2E <strong>pollue</strong> <code>data/minishop</code> par construction — re-seeder ensuite : <code>node scripts/wasm_run.mjs scripts/seed.php</code>).</p>
-<p>Les suites PHP sont <strong>autonomes</strong> (aucun SQL, magasins JSON temporaires par section) : elles s'exécutent telles quelles avec <code>php tests/php/&lt;suite&gt;.php</code> sur une machine normale, ou via <code>node scripts/wasm_run.mjs</code> en sandbox.</p>
-<p><strong>Qualité de code type « Packagist »</strong> : sur machine normale (avec Composer), <code>composer cs:check</code> (php-cs-fixer, config <code>.php-cs-fixer.php</code>) et <code>composer lint:types</code> (PHPStan level 9 + strict-rules, config <code>phpstan.neon</code>) — tous deux en <code>require-dev</code>, <strong>aucune dépendance runtime</strong>. Dans la sandbox (Packagist injoignable), <code>npm run lint:types</code> rejoue les mêmes vérifications via le tokenizer PHP. Passages du 28/09 : 4 fermetures non typées corrigées, puis <strong>éradication des 156 opérateurs ternaires du livrable</strong> (vues, contrôleurs, dépôts, moteur, tests) remplacés par des <code>if/else</code> — règle maison ajoutée au linter.</p>
-<p>Compléments livrés par ailleurs : <code>bash tests/security/controles.sh</code> (contrôles statiques), <code>bash tests/charge/reserver.sh</code> (survente), <code>bash tests/perf/mesurer.sh</code> (p95, ENF-01), <code>docs/diagrams/render.sh</code> (14 diagrammes), <code>./scripts/build-docs.sh</code> (assemblage documentaire complet).</p>
-<p><em>Historique : la campagne SQL d'origine (<code>./scripts/run_sql_tests.sh</code>, 29/29, rapport <code>tests/sql/rapport_tests_sql.md</code>) reste jouable — <code>sql/</code> sert de référence comportementale au moteur JSON.</em></p>
-<h2 id="arborescence">Arborescence<a class="headerlink" href="#arborescence" title="Permanent link">#</a></h2>
-<pre><code>app/Config, app/Controller, app/Model, app/Repository, app/Security, app/View
-docs/{01-cahier-des-charges, 02-document-tests-validation, 03-support-soutenance, 04-conception-bd-et-sql, 05-wbs-projet, 06-todolist}, docs/annexes, docs/diagrams/{src/*.puml, *.png}
-public/{index.php, .htaccess, css, js, img, gen_volumes.php, mesurer.php (dev-only, navigateur)}
-scripts/{load_db.sh, run_sql_tests.sh, deploy.php, build-docs.sh, gen_volumes.php (wrapper dev)}
-sql/{01_minishop_schema.sql, 02_minishop_procedures.sql, 03_minishop_triggers.sql, 04_minishop_demo.sql}
-tests/{sql/** (manifest, fixture, tNN_*.sql, rapport), security/controles.sh, charge/reserver.sh, perf/mesurer_sql.sh, perf/mesurer.php→public/mesurer.php, php/**}
-var/log  ·  .gitignore  ·  .gitlab-ci.yml (6 jobs, prod)  ·  .github/workflows/ci.yml (6 jobs, dev/GitHub)
-</code></pre>
-<h2 id="documents-et-rendus-les-diagrammes-ne-saffichent-pas-dans-un-apercu-sans-reseau">Documents et rendus (les diagrammes ne s'affichent PAS dans un aperçu sans réseau)<a class="headerlink" href="#documents-et-rendus-les-diagrammes-ne-saffichent-pas-dans-un-apercu-sans-reseau" title="Permanent link">#</a></h2>
-<blockquote>
-<p><strong>Si tu ne vois pas <code>dist/</code></strong> : ce dossier est listé dans <code>.gitignore</code> (artefact régénérable, §14.1) et donc masqué par certains explorateurs/aperçus. Une <strong>copie visible</strong> est maintenue dans <strong><code>livrables/</code></strong> à la racine (<code>livrables/*.docx</code>, <code>livrables/html/*.html</code>), régénérée à chaque <code>bash scripts/build-docs.sh</code>.</p>
-</blockquote>
-<p><code>bash scripts/build-docs.sh</code> produit, dans <code>dist/</code> (répertoire généré, hors Git) :</p>
-<table>
-<thead>
-<tr>
-<th>Rendu</th>
-<th>Chemin</th>
-<th>Image des diagrammes</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Markdown (source de vérité, éditable)</td>
-<td><code>docs/01-…-MiniShop.md</code></td>
-<td><strong>chemins relatifs</strong> → non affichés dans un visualiseur sandboxé sans accès réseau ; ouvrir le <code>.docx</code> ou le <code>.html</code> pour les voir</td>
-</tr>
-<tr>
-<td>Word</td>
-<td><code>dist/01-cahier-des-charges-MiniShop.docx</code></td>
-<td>images <strong>intégrées</strong> (14 figures)</td>
-</tr>
-<tr>
-<td>HTML autonome</td>
-<td><code>dist/html/01-cahier-des-charges-MiniShop.html</code></td>
-<td>images <strong>intégrées en base64</strong> — lisible hors ligne, projetable, aucune dépendance</td>
-</tr>
-<tr>
-<td>PNG / SVG</td>
-<td><code>docs/diagrams/*.{png,svg}</code></td>
-<td>sources rendues par <code>docs/diagrams/render.sh</code> (PlantUML)</td>
-</tr>
-</tbody>
-</table>
-<p>Si un aperçu affiche une image cassée là où il y a un <code>![…](docs/diagrams/…png)</code>, le fichier existe :
-vérifier avec <code>ls docs/diagrams/*.png \| wc -l</code> (attendu <strong>14</strong>) et ouvrir <code>dist/html/01-cahier-des-charges-MiniShop.html</code>.</p>
-<h2 id="membres-et-roles-tracabilite-gitlab">Membres et rôles (traçabilité GitLab)<a class="headerlink" href="#membres-et-roles-tracabilite-gitlab" title="Permanent link">#</a></h2>
-<table>
-<thead>
-<tr>
-<th>Personne</th>
-<th>Rôle (RACI du CDC §3.3)</th>
-<th>Zones principales</th>
-<th>Commits</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Étudiant·e A</td>
-<td>chef de projet · back-office</td>
-<td><code>app/Controller/</code>, <code>README.md</code>, <code>.gitlab-ci.yml</code></td>
-<td>≥ 20</td>
-</tr>
-<tr>
-<td>Étudiant·e B</td>
-<td>modèle et base de données</td>
-<td><code>sql/</code>, <code>app/Repository/</code>, <code>tests/sql/</code></td>
-<td>≥ 20</td>
-</tr>
-<tr>
-<td>Étudiant·e C</td>
-<td>présentation, sécurité, tests</td>
-<td><code>app/View/</code>, <code>public/js/</code>, <code>docs/02-*</code></td>
-<td>≥ 20</td>
-</tr>
-</tbody>
-</table>
-<p>Chaque personne committe aussi dans les deux autres zones (au moins 5 commits chacun) : <code>git shortlog -sne main</code>
-doit montrer une participation équilibrée, c'est un critère de notation individuel.</p>
-<h2 id="sauvegarde-restauration-a-faire-avant-une-demo">Sauvegarde / restauration (à faire avant une démo)<a class="headerlink" href="#sauvegarde-restauration-a-faire-avant-une-demo" title="Permanent link">#</a></h2>
-<pre><code class="language-bash">mysqldump --single-transaction --routines --triggers -u root -p minishop &gt; backup.sql   # --routines --triggers : OBLIGATOIRE ici
-mysql -u root -p minishop &lt; backup.sql
-</code></pre>
-<p>Sans <code>--routines --triggers</code>, une restauration « normale » perd la fonction, les 17 procédures et les 16 déclencheurs :
-les règles <code>RB-03</code>, <code>RB-06</code>, <code>RB-11</code>, <code>RB-18</code> cesseraient silencieusement d'être appliquées.</p>
-<h2 id="licence">Licence<a class="headerlink" href="#licence" title="Permanent link">#</a></h2>
-<p>Projet pédagogique — code et documents fournis tels quels, usage pédagogique uniquement.</p>
+<h2 id="licence-et-reutilisation">Licence et réutilisation<a class="headerlink" href="#licence-et-reutilisation" title="Permanent link">#</a></h2>
+<p>MiniShop est un projet pédagogique de SAE en BUT Informatique à l’IUT Nice Côte d’Azur. Le dépôt ne fournit pas de licence libre distincte ; toute réutilisation en dehors du cadre pédagogique doit être autorisée par les ayants droit.</p>
 <footer class="doc">
   <p>SAÉ 302 — MiniShop · document généré depuis <code>README.md</code>
   par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>

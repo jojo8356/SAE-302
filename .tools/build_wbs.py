@@ -4,9 +4,10 @@ Méthode : structure 4 niveaux (projet → divisions → lots → tâches indivi
 estimation bottom-up, plan de charge, Gantt, chemin critique, coûts, exploitation GitLab."""
 import pathlib, re, markdown
 
-DOCS = pathlib.Path("/home/user/docs")
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+DOCS = ROOT / "docs"
 OUT_MD = DOCS / "05-wbs-projet.md"
-OUT_HTML = pathlib.Path("/home/user/artefacts/05-wbs-projet.html")  # artefact rendu
+OUT_HTML = ROOT / "artefacts" / "05-wbs-projet.html"  # artefact rendu
 
 # =====================================================================
 # DONNÉES — niveaux 3 (lots) et 4 (tâches individuelles)
@@ -18,10 +19,9 @@ LOTS = {
    ("D1-L1-01","Ouvrir le dépôt privé GitLab, inviter les 3 développeurs et l'enseignante (Reporter), protéger main, désactiver le squash","A",2,"accès effectifs + courriel « Composition SAE » envoyé","—"),
    ("D1-L1-02","Squelette du dépôt : arborescence app/ public/ sql/ tests/ docs/ scripts/ + .gitignore","A",2,"arborescence conforme au CDC §9.2","01"),
    ("D1-L1-03","README v0 : prérequis, installation cible, membres et rôles (RACI)","A",3,"README visible à la racine, lu par les 3 membres","02"),
-   ("D1-L1-04","Grille de conformité au barème (CDC §16) épinglée en issue GitLab","A",3,"issue créée : 5 livrables + pénalités suivis","01"),
-   ("D1-L1-05","Charte GitLab : branches, MR croisées, commits conventionnels, 1 issue par UC/EF","A",2,"wiki + modèle de MR (annexe 17.9)","01"),
-   ("D1-L1-06","CI v0 : .gitlab-ci.yml avec job php-lint","A",2,"pipeline vert sur un commit vide","02"),
-   ("D1-L1-07","Réunion de cadrage : relecture du sujet ligne à ligne, périmètre, règle de repli groupe de 2","A",2,"compte-rendu dans le wiki du dépôt","—"),
+   ("D1-L1-04","Grille de conformité au barème (CDC §16) suivie dans une issue GitLab","A",3,"issue créée : 5 livrables + pénalités suivis","01"),
+   ("D1-L1-05","Charte GitLab : branches, MR croisées, commits conventionnels, 1 issue par UC/EF","A",2,"charte versionnée dans docs/20 + modèles de MR dans .gitlab/merge_request_templates/","01"),
+   ("D1-L1-07","Réunion de vérification de l'audit complet et de validation simple","A",2,"compte rendu versionné dans docs/21-compte-rendu-reunion-audit-2026-11-13.md","—"),
  ]),
  "L2": dict(nom="CDC : présentation, objectifs, acteurs, fonctionnalités",
             resp="A + C", semaines=["S1","S2"], tasks=[
@@ -82,7 +82,7 @@ LOTS = {
    ("D4-L8-02","app/Config/Database.php : PDO, ERRMODE_EXCEPTION, EMULATE_PREPARES = false","A",3,"connexion centralisée, aucune requête hors repository","01"),
    ("D4-L8-03","Gabarit de vues + layout + helper d'échappement systématique","A",4,"toute variable passe par htmlspecialchars($v, ENT_QUOTES…)","01"),
    ("D4-L8-04","app/Security : AuthMiddleware, sessions durcies, jetons CSRF","A",6,"pages privées inaccessibles sans session, CSRF vérifié","02"),
-   ("D4-L8-05","CI complète (6 jobs) + app/Config/env.example.php (jamais de secret versionné)","A",4,"pipeline vert bloque un merge en échec","01"),
+   ("D4-L8-05","CI GitHub Actions + app/Config/env.example.php (jamais de secret versionné)","A",4,"contrôles GitHub Actions verts sur le commit vérifié","01"),
  ]),
  "L9": dict(nom="Front-office : catalogue, recherche, fiche, inscription, connexion",
             resp="C", semaines=["S7"], tasks=[
@@ -135,10 +135,9 @@ LOTS = {
    ("D5-L14-05","Matrice de traçabilité exigence → test + PV de recette","A",5,"traçabilité §9 du document 02 complète","02–04"),
    ("D5-L14-06","Performance : mesurer.sh p95 < 500 ms + correctifs","A",5,"ENF-01 mesuré et consigné","L9–L11"),
  ]),
- "L15": dict(nom="Mise en ligne de démo, deploy.sh, README final, arborescence propre",
+ "L15": dict(nom="README final, arborescence propre, préparation du rendu",
              resp="A", semaines=["S11"], tasks=[
-   ("D1-L15-01","scripts/deploy.sh : hashes aléatoires, emails de démo régénérés","A",3,"démo reinstallable en 1 commande, SEC-10 respecté","L14"),
-   ("D1-L15-02","README final : installation 5 commandes, comptes, tests, sauvegarde","A",3,"un tiers installe et lance en ≤ 15 min (ENF-13)","01"),
+   ("D1-L15-02","README final : installation 5 commandes, comptes, tests, sauvegarde","A",3,"un tiers installe et lance en ≤ 15 min (ENF-13)","D5-L14-05"),
    ("D1-L15-03","Nettoyage de l'arborescence + tag v1.0-rendu","A",2,"shortlog équilibré, tag posé, MR mergées","02"),
  ]),
  "L16": dict(nom="Soutenance : support, trame, répétitions chronométrées, questions anticipées",
@@ -150,7 +149,7 @@ LOTS = {
 }
 
 DIVISIONS = [
- ("D1","Pilotage, dépôt GitLab & intégration","barème v — contribution GitLab + README (10 pts, individuel)","A",["L1","L15"]),
+ ("D1","Pilotage, dépôt GitLab & collaboration","barème v — contribution GitLab + README (10 pts, individuel)","A",["L1","L15"]),
  ("D2","Document de spécification du système","barème i — 20 points","A + C",["L2","L3"]),
  ("D3","Conception de la base de données & SQL","barème ii — 20 points","B",["L4","L5","L6","L7"]),
  ("D4","Application Web PHP / MySQL / PDO","barème iii — 30 points (avec D5)","A + C",["L8","L9","L10","L11","L12","L13"]),
@@ -162,18 +161,18 @@ LOT_H = {k: sum(t[3] for t in v["tasks"]) for k, v in LOTS.items()}
 COULEURS = {"D1":"#64748b","D2":"#7c2d12","D3":"#b45309","D4":"#15803d","D5":"#b91c1c","D6":"#6d28d9"}
 
 # ---------- assertions de cohérence (bottom-up) ----------
-TOTALS = {"L1":16,"L2":26,"L3":28,"L4":28,"L5":20,"L6":30,"L7":20,"L8":22,"L9":32,"L10":28,"L11":30,"L12":20,"L13":14,"L14":24,"L15":8,"L16":14}
+TOTALS = {"L1":14,"L2":26,"L3":28,"L4":28,"L5":20,"L6":30,"L7":20,"L8":22,"L9":32,"L10":28,"L11":30,"L12":20,"L13":14,"L14":24,"L15":5,"L16":14}
 for lot, tot in TOTALS.items():
     assert LOT_H[lot] == tot, f"{lot} : {LOT_H[lot]} ≠ {tot}"
-GRAND = sum(LOT_H.values()); assert GRAND == 360, GRAND
+GRAND = sum(LOT_H.values()); assert GRAND == 355, GRAND
 PERS = {"A":0,"B":0,"C":0}
 for lot in LOTS.values():
     for t in lot["tasks"]:
         PERS[t[2]] += t[3]
-assert PERS == {"A":122,"B":117,"C":121}, PERS
+assert PERS == {"A":117,"B":117,"C":121}, PERS
 N_TASKS = sum(len(v["tasks"]) for v in LOTS.values())
 DIV_H = {d[0]: sum(LOT_H[l] for l in d[4]) for d in DIVISIONS}
-assert sum(DIV_H.values()) == 360
+assert sum(DIV_H.values()) == 355
 
 # ---------- plan de charge hebdomadaire (répartition égale sur les semaines du lot) ----------
 SEMAINES = [f"S{i}" for i in range(1, 13)]
@@ -201,12 +200,12 @@ A("| | |")
 A("|---|---|")
 A("| **Projet** | MiniShop — site e-commerce avec back-office (SAE — BUT Informatique / L3, Université Côte d'Azur) |")
 A("| **Équipe** | 3 développeurs : **A** chef de projet & back-office · **B** modèle & base de données · **C** présentation, sécurité & tests |")
-A("| **Effort total** | **360 h = 3 × 120 h** (estimation *bottom-up* : la somme des 86 tâches de niveau 4) · calendrier **S1 → S12** |")
+A("| **Effort total** | **355 h planifiées**, sous la capacité nominale de 360 h (3 × 120 h) ; somme des 84 tâches de niveau 4 · calendrier **S1 → S12** |")
 A("| **Divisions (niveau 2)** | 6 — alignées une à une sur les 5 lignes du barème + la gestion de projet |")
 A("| **Lots (niveau 3)** | 16 (L1→L16, identiques au CDC §13.3, charges réconciliées) |")
-A("| **Tâches (niveau 4)** | **86 tâches individuelles** — chacune est assignable, estimable et vérifiable (règle d'arrêt WBS) |")
+A("| **Tâches (niveau 4)** | **84 tâches individuelles** — chacune est assignable, estimable et vérifiable (règle d'arrêt WBS) |")
 A("| **Documents liés** | `docs/01-cahier-des-charges-MiniShop.md` (§13.3/§13.4) · `docs/02-document-tests-validation.md` · `docs/03-support-soutenance.md` · `docs/04-conception-bd-et-sql.md` · `README.md` |")
-A("| **Version** | 1.0 — 23 septembre 2026 |")
+A("| **Version** | 1.2 — 23 octobre 2026 (révision de périmètre) |")
 A("")
 A("---")
 A("")
@@ -219,7 +218,7 @@ A("|---|---|---|")
 A("| **1** | le projet (produit final) | MiniShop : boutique + back-office + dossier de conception et de validation |")
 A("| **2** | les **divisions** = livrables majeurs | 6 divisions D1→D6, une par ligne du barème (+ pilotage) |")
 A("| **3** | les **lots** = sous-livrables | 16 lots L1→L16 (reprend le CDC §13.3) |")
-A("| **4** | les **tâches individuelles** | **86 tâches**, estimées en heures et assignées à A, B ou C |")
+A("| **4** | les **tâches individuelles** | **84 tâches**, estimées en heures et assignées à A, B ou C |")
 A("")
 A("**Règle d'arrêt** (jusqu'où descendre) : on ne descend pas plus bas que le niveau 4, car chaque tâche y satisfait les trois critères de la méthode —")
 A("1. **assignable** à une ou plusieurs ressources (colonne *Resp.*),")
@@ -232,9 +231,8 @@ A("")
 A("**Identification** : `D<n>-L<lot>-<nn>` (ex. `D3-L6-04`). Chaque tâche devient une **issue GitLab** portant ce titre")
 A("(cf. §10), ce qui relie WBS, barème et trace de contribution individuelle.")
 A("")
-A("**Note de version** — les charges par lot du CDC §13.3 ont été **réconciliées** avec cette estimation bottom-up")
-A("(la première mouture totalisait 402 h de lots contre 362 h annoncées, et la charge C dépassait le plafond affiché) ;")
-A("le CDC corrigé et la WBS affichent désormais le même total : **360 h = 3 × 120 h** (§13.2 du CDC).")
+A("**Note de version** — le livrable GitLab CI (2 h) avait déjà été retiré du périmètre. La présente révision retire aussi, sans remplacement, le déploiement de démonstration et sa validation staging (3 h) ;")
+A("la charge révisée est de 355 h pour 84 tâches, dans une capacité nominale de 360 h. Aucun déploiement réel n'est revendiqué.")
 A("")
 A("---")
 A("")
@@ -264,7 +262,7 @@ A("")
 A("<!--ARBRE_WBS-->")
 A("")
 A("```text")
-A("MiniShop — 360 h · 3 développeurs · 12 semaines (S1→S12)")
+A(f"MiniShop — {GRAND} h · 3 développeurs · 12 semaines (S1→S12)")
 A("│")
 for i, (did, nom, bareme, resp, lots) in enumerate(DIVISIONS):
     br = "├──" if i < len(DIVISIONS)-1 else "└──"
@@ -331,10 +329,10 @@ A("### 6.2 Charge par personne (pas de sur-allocation)")
 A("")
 A("| Personne | Rôle (RACI CDC §3.3) | Charge | Part | Plafond | Verdict |")
 A("|---|---|---:|---:|---:|---|")
-A(f"| **A** | chef de projet, back-office, intégration/CI | {PERS['A']} h | {PERS['A']/GRAND:.0%} | 122 h | ✅ au plafond |")
-A(f"| **B** | modèle et base de données, tests SQL | {PERS['B']} h | {PERS['B']/GRAND:.0%} | 122 h | ✅ |")
-A(f"| **C** | présentation, sécurité, JS, tests | {PERS['C']} h | {PERS['C']/GRAND:.0%} | 122 h | ✅ |")
-A(f"| | **Total** | **{GRAND} h** | 100 % | 3 × 122 h | équilibré (écart max 5 h) |")
+A(f"| **A** | chef de projet, back-office, intégration GitHub Actions | {PERS['A']} h | {PERS['A']/GRAND:.1%} | 122 h | ✅ |")
+A(f"| **B** | modèle et base de données, tests SQL | {PERS['B']} h | {PERS['B']/GRAND:.1%} | 122 h | ✅ |")
+A(f"| **C** | présentation, sécurité, JS, tests | {PERS['C']} h | {PERS['C']/GRAND:.1%} | 122 h | ✅ |")
+A(f"| | **Total** | **{GRAND} h** | 100 % | 3 × 122 h | équilibré (écart max 4 h) |")
 A("")
 A("Chaque personne porte sa division principale **et** intervient dans les deux autres")
 A("(ex. : A relit le document de conception D3 et exécute des tests SQL ; B rédige des questions de soutenance ;")
@@ -355,7 +353,7 @@ A("| **Équipe** | " + " | ".join(f"**{PLAN_TOT[s]}**" for s in SEMAINES) + f" |
 A("")
 A("**Pics assumés et anticipés** : S3 (B ≈ 32 h, lot L4 MCD/MLD), S5 (B ≈ 30 h, procédures), S7 (C = 32 h, front-office), S9 (équipe 40 h, back-office + sécurité).")
 A("Trois parades, revues chaque vendredi (CDC §13.5) : (i) les tâches amont des lots critiques démarrent dès la quinzaine précédente,")
-A("(ii) L13 et L15 (22 h au total, sans dépendance forte) servent de **variable d'ajustement**,")
+A("(ii) L13 (14 h) reste ajustable ; L15 (5 h) est réservé au README final, au nettoyage et au tag après la validation L14,")
 A("(iii) au-delà de 15 h/personne/semaine pendant deux semaines consécutives, le chef de projet applique la règle de réduction de périmètre du CDC §13.3 (jamais par suppression d'une pénalité).")
 A("")
 A("---")
@@ -420,11 +418,11 @@ A("")
 A("## 10. Exploitation dans GitLab (la WBS devient le tableau du projet)")
 A("")
 A("1. **Une issue par tâche de niveau 4** : titre `[(D3-L6-04)] sp_create_order, sp_add_order_line…` ;")
-A("   description = définition de fini + dépendances ; 86 issues créées dès S1 (bulk import CSV).")
+A(f"   description = définition de fini + dépendances ; {N_TASKS} issues à suivre au total (bulk import CSV).")
 A("2. **Labels** : `D1`…`D6` (couleur de division), `L1`…`L16`, `A`/`B`/`C`, `jalon-J1`…`jalon-J6`.")
 A("3. **Board** : colonnes *À faire → En cours → En revue (MR) → Fermé* ; une colonne par jalon en vue *Listes de jalons*.")
 A("4. **MR** : une MR par lot minimum, **mergée par un autre développeur que l'auteur** (auto-merge interdit) ;")
-A("   la CI doit être verte (6 jobs, dont base-tests = 29/29).")
+A("   les contrôles GitHub Actions doivent être verts sur le commit vérifié ; aucun pipeline GitLab n'est revendiqué.")
 A("5. **Suivi individuel** (barème v) : `git shortlog -sne main` doit montrer 3 auteurs > 20 commits ;")
 A("   la répartition cible par zone (B ≈ 45 % de `sql/`, A ≈ 40 % de `app/Controller/`, C ≈ 45 % de `app/View/` et `public/js/`)")
 A("   est celle du CDC §14.3 ; chacun garde ≥ 5 commits dans les trois zones.")
@@ -433,12 +431,11 @@ A("---")
 A("")
 A("## 11. Gouvernance : définition de « terminé » et règle de repli")
 A("")
-A("**Une tâche de niveau 4 est fermée seulement si :**")
-A("")
-A("- sa **définition de fini** est observée (colonne dédiée dans chaque table du §5) ;")
-A("- le code ou le document passe la **CI** (php-lint, 29 tests SQL, contrôles de sécurité, rendu des diagrammes) ;")
-A("- une **autre personne** a relu la MR (revue croisée systématique) ;")
-A("- la **documentation** liée (CDC, doc de conception, doc de tests, README) est mise à jour dans la même MR.")
+A("**Une tâche de niveau 4 est fermée lorsque sa définition de fini est observée** (colonne dédiée au §5) et que les preuves annoncées correspondent réellement au livrable.")
+A("Pour un changement traité par MR, consigner la revue croisée et, lorsqu'applicable, le statut CI du commit ; ces éléments ne sont pas inférés de la seule présence de la charte ou des modèles.")
+A("Le critère documentaire de `D1-L1-05` porte uniquement sur la charte versionnée et les modèles de MR ; il ne certifie pas l'usage effectif des MR ni des revues croisées.")
+A("La CI automatisée du dépôt est GitHub Actions (`.github/workflows/ci.yml`) ; elle ne constitue pas une preuve de pipeline GitLab IUT.")
+A("La documentation liée (CDC, conception, tests, README) est mise à jour avec le livrable concerné.")
 A("")
 A("**Règle de repli si groupe de 2** (CDC §13.3) — la WBS se réduit ainsi, sans supprimer une exigence pénalisée :")
 A("")
@@ -448,11 +445,11 @@ A("| L13 réduit à la validation live du panier | `D4-L13-02…04` supprimées 
 A("| L8 simplifié (table de routes minimale, pas de routeur maison) | `D4-L8-01` réduite | −3 h |")
 A("| `EF-ADM-09` (indicateurs) et `EF-ADM-10` (comptes admin) non livrés | `D4-L11-04` réduite | −2 h |")
 A("| Procédures réduites à 8, triggers à 8 (en gardant TRG-A1/A2/A3, B2, B5, D1, D4) | `D3-L6-*` et `D3-L7-*` allégées | −25 h |")
-A("| **Total repli** | | **≈ −36 h → 324 h pour 2 personnes (~160 h chacune, périmètre validé en S1)** |")
+A("| **Total repli** | | **≈ −36 h → 319 h pour 2 personnes (estimation révisée)** |")
 A("")
 A("---")
 A("")
-A("*WBS MiniShop v1.0 — document généré depuis la même source de données que le CDC §13.3 (charges réconciliées) ;")
+A("*WBS MiniShop v1.2 — document généré depuis la même source de données que le CDC §13.3 ;")
 A("méthode : structure de découpage en 4 niveaux, estimation bottom-up, plan de charge, Gantt, chemin critique.*")
 
 OUT_MD.write_text("\n".join(md), encoding="utf-8")
@@ -463,7 +460,7 @@ print(f"OK MD : {OUT_MD} ({len(md)} lignes, {OUT_MD.stat().st_size/1024:.0f} Ko)
 # =====================================================================
 # arbre (ul/li)
 tree = ['<div class="wbswrap"><ul class="wbstree">',
-        '<li><span class="node n1">MiniShop — 360 h · 3 devs · S1→S12</span><ul>']
+        f'<li><span class="node n1">MiniShop — {GRAND} h · 3 devs · S1→S12</span><ul>']
 for did, nom, bareme, resp, lots in DIVISIONS:
     tree.append(f'<li><span class="node ndiv" style="background:{COULEURS[did]}">{did} · {nom} · {DIV_H[did]} h · {resp}</span><ul>')
     for l in lots:
@@ -511,7 +508,7 @@ table.gantt td.h { text-align:right; padding:2px 8px; }
 table.gantt tr.tot td { background:#f0e6d2 !important; font-weight:bold; }
 """
 html = markdown.markdown(text, extensions=["tables", "fenced_code"], output_format="html5")
-HTML = pathlib.Path("/home/user/.tools/build_doc04_html.py").read_text(encoding="utf-8")
+HTML = (ROOT / ".tools" / "build_doc04_html.py").read_text(encoding="utf-8")
 css = re.search(r'CSS = """(.*?)"""', HTML, re.S).group(1) + EXTRA_CSS
 page = f"""<!DOCTYPE html>
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">

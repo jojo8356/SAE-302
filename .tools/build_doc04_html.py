@@ -2,9 +2,10 @@
 """Génère la version HTML autonome (images en base64) du livrable 04."""
 import base64, pathlib, re, markdown
 
-DOCS = pathlib.Path("/home/user/docs")
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+DOCS = ROOT / "docs"
 MD = DOCS / "04-conception-bd-et-sql.md"
-OUT = pathlib.Path("/home/user/artefacts/04-conception-bd-et-sql.html")  # artefact rendu
+OUT = ROOT / "artefacts" / "04-conception-bd-et-sql.html"  # artefact rendu
 
 text = MD.read_text(encoding="utf-8")
 

@@ -1,0 +1,1613 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="SAÉ 302 — MiniShop : Fiches de recette MiniShop — UC-01 à UC-14#">
+<title>Fiches de recette MiniShop — UC-01 à UC-14# — MiniShop</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --papier: #fbfaf7;
+  --carte: #ffffff;
+  --trait: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-clair: #dbeafe;
+  --code: #f1f5f9;
+  --mesure: 72ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
+    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
+    --accent-clair: #1e3a8a; --code: #16223a;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  max-width: calc(var(--mesure) + 6rem);
+  background: var(--papier);
+  color: var(--encre);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
+h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
+p, li { max-width: var(--mesure); }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+}
+pre {
+  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
+  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.35rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+thead th { background: var(--accent-clair); }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
+img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li input[type="checkbox"] { margin-right: 0.4rem; }
+.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
+.toc > ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1rem; }
+footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+@media print {
+  :root { --papier: #fff; --carte: #fff; }
+  @page { size: A4; margin: 18mm 16mm; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#0-mode-demploi">0. Mode d'emploi</a><ul>
+<li><a href="#objectif-et-limites">Objectif et limites</a></li>
+<li><a href="#methode-etudiee">Méthode étudiée</a></li>
+<li><a href="#codes-et-verdicts">Codes et verdicts</a></li>
+<li><a href="#preparer-une-campagne-pre-demo-sur-la-base-de-production-lineserv">Préparer une campagne pré-démo sur la base de production LineServ</a></li>
+<li><a href="#deroulement-et-preuves">Déroulement et preuves</a></li>
+</ul>
+</li>
+<li><a href="#uc-01-consulter-le-catalogue">UC-01 — Consulter le catalogue</a></li>
+<li><a href="#uc-02-rechercher-un-produit">UC-02 — Rechercher un produit</a></li>
+<li><a href="#uc-03-consulter-une-fiche-produit">UC-03 — Consulter une fiche produit</a></li>
+<li><a href="#uc-04-creer-un-compte">UC-04 — Créer un compte</a></li>
+<li><a href="#uc-05-connexion-deconnexion-et-gestion-du-compte">UC-05 — Connexion, déconnexion et gestion du compte</a></li>
+<li><a href="#uc-06-gerer-le-panier">UC-06 — Gérer le panier</a></li>
+<li><a href="#uc-07-passer-une-commande">UC-07 — Passer une commande</a></li>
+<li><a href="#uc-08-consulter-lhistorique-des-commandes">UC-08 — Consulter l'historique des commandes</a></li>
+<li><a href="#uc-09-annuler-une-commande">UC-09 — Annuler une commande</a></li>
+<li><a href="#uc-10-gerer-les-produits">UC-10 — Gérer les produits</a></li>
+<li><a href="#uc-11-gerer-les-categories">UC-11 — Gérer les catégories</a></li>
+<li><a href="#uc-12-gerer-les-stocks">UC-12 — Gérer les stocks</a></li>
+<li><a href="#uc-13-consulter-et-filtrer-les-commandes-cote-administration">UC-13 — Consulter et filtrer les commandes côté administration</a></li>
+<li><a href="#uc-14-modifier-le-statut-dune-commande">UC-14 — Modifier le statut d'une commande</a><ul>
+<li><a href="#matrice-des-36-couples-de-statuts-oracle-applicatif-a-verifier">Matrice des 36 couples de statuts — oracle applicatif à vérifier</a></li>
+</ul>
+</li>
+<li><a href="#15-scenarios-transversaux-securite-preferences-fren-fuseau-horaire-mentions-legales-et-conservation">15. Scénarios transversaux — sécurité, préférences FR/EN, fuseau horaire, mentions légales et conservation</a></li>
+<li><a href="#16-synthese-vierge-de-campagne">16. Synthèse vierge de campagne</a><ul>
+<li><a href="#elements-a-ne-pas-confondre">Éléments à ne pas confondre</a></li>
+<li><a href="#controle-automatique-de-la-fiche">Contrôle automatique de la fiche</a></li>
+<li><a href="#auto-evaluation-de-la-livraison-documentaire">Auto-évaluation de la livraison documentaire</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<h1 id="fiches-de-recette-minishop-uc-01-a-uc-14">Fiches de recette MiniShop — UC-01 à UC-14<a class="headerlink" href="#fiches-de-recette-minishop-uc-01-a-uc-14" title="Permanent link">#</a></h1>
+<p><strong>Révision de référence :</strong> branche de cette fiche, à relever au lancement par <code>git rev-parse --short HEAD</code>. <strong>Périmètre :</strong> maquette web MiniShop (vues publiques, espace client, back-office, préférences locales FR/EN et fuseau horaire, outils CLI de maintenance), magasin JSON ou MariaDB/MySQL selon configuration. <strong>Cible manuelle retenue (décision utilisateur) :</strong> la base réellement utilisée par l'application en production sur LineServ, identifiée depuis la configuration privée (<code>DB_HOST</code>/<code>DB_NAME</code>, à confirmer sur place), pendant une fenêtre de recette pré-démo ; elle doit être remise à son état de démonstration avant la démo. Il ne s'agit pas d'une base manuelle séparée : <code>minishop_test</code> est réservée aux tests automatisés GitHub CI. <strong>Campagne manuelle : non exécutée par la rédaction de ce document.</strong> Aucun accès, test, testeur, date d'exécution, preuve ni réinitialisation de production n'est attesté ici.</p>
+<h2 id="0-mode-demploi">0. Mode d'emploi<a class="headerlink" href="#0-mode-demploi" title="Permanent link">#</a></h2>
+<h3 id="objectif-et-limites">Objectif et limites<a class="headerlink" href="#objectif-et-limites" title="Permanent link">#</a></h3>
+<p>Le tableau de suivi prêt à remplir est <a href="13-suivi-recette-uc.csv">13-suivi-recette-uc.csv</a> : chaque scénario et chaque couple de statut y dispose de sa propre ligne, initialement <code>NON JOUÉ</code>. Ouvrir le fichier en UTF-8 avec séparateur point-virgule ; ne pas envoyer de preuve contenant des secrets.</p>
+<p>Ce document transforme les 14 UC du <a href="01-cahier-des-charges-MiniShop.html">cahier des charges</a> et de son <a href="annexes/annexe-cas-usage.html">annexe</a>, enrichis des évolutions livrées sur la maquette (confirmations explicites en deux étapes sans JavaScript, conservation de l'historique des lignes après annulation, mode d'ajustement de stock non destructif par défaut, préférences locales de langue FR/EN et de fuseau horaire sans tiers, double implémentation décorative/informative des visuels produits, mentions légales étudiantes LCEN art. 6, III, 2 et outils CLI de conservation/purge), en scénarios de recette manuelle reproductibles. Il couvre nominal, alternatives, erreurs, bornes, sécurité, bilinguisme, fuseaux horaires, transitions et pannes prioritaires. <strong>Périmètre allégé sur le responsive :</strong> les campagnes multi-largeurs (<code>320/375/768/1440 px</code> et cartes mobiles) sont retirées des suites manuelles car trop longues à dérouler à la main sur chaque vue ; elles sont déléguées aux suites automatisées (<code>tests/php/responsive_contract.php</code> et <code>tests/node/responsive_navigateur.mjs</code> sous Chromium en CI). « Tous les scénarios possibles » ne peut pas être garanti : les combinaisons de données, configurations et pannes sont ouvertes ; compléter la liste si un risque ou un défaut nouveau apparaît. Un scénario décrit <strong>un résultat attendu</strong>, pas un résultat constaté. Les anciennes annexes contiennent aussi des exigences ou détails techniques qui ne sont pas nécessairement implémentés : cette fiche distingue les attentes sans inventer de succès.</p>
+<h3 id="methode-etudiee">Méthode étudiée<a class="headerlink" href="#methode-etudiee" title="Permanent link">#</a></h3>
+<ul>
+<li><a href="https://learn.microsoft.com/en-us/dynamics365/guidance/implementation-guide/testing-strategy-planning">Microsoft — stratégie de tests</a> : scénarios métier reproductibles, résultats attendus explicites, cas positifs et négatifs ; <a href="https://learn.microsoft.com/en-us/azure/devops/test/run-manual-tests?view=azure-devops">Microsoft — exécution manuelle</a> : noter résultat, preuve et anomalie.</li>
+<li><a href="https://www.atlassian.com/software/confluence/resources/guides/how-to/test-plan">Atlassian — plan de test</a> et <a href="https://www.atlassian.com/devops/testing-tutorials/jira-xray-integration-manage-test-cases">Atlassian/Xray</a> : périmètre, risques, identifiants, préconditions, étapes, critères et traçabilité. Cette fiche s'inspire de ces principes, <strong>sans prétendre être un modèle interne officiel de ces entreprises</strong>.</li>
+<li><a href="https://istqb.org/certifications/certified-tester-model-based-tester-ct-mbt/">ISTQB — techniques de test</a> : classes d'équivalence, valeurs limites, tables de décision et transitions d'état.</li>
+<li><a href="https://testing.googleblog.com/2016/09/testing-on-toilet-what-makes-good-end.html">Google Testing Blog — bons tests de bout en bout</a> : privilégier les parcours critiques de bout en bout, compléter par des tests plus ciblés ; un compteur de tests ne prouve pas l'absence de défauts.</li>
+</ul>
+<h3 id="codes-et-verdicts">Codes et verdicts<a class="headerlink" href="#codes-et-verdicts" title="Permanent link">#</a></h3>
+<ul>
+<li><strong>P0</strong> : critique (perte de données, paiement/stock, accès ou parcours bloqué) ; <strong>P1</strong> : important ; <strong>P2</strong> : complémentaire.</li>
+<li><strong>M</strong> : navigateur sur l'application LineServ ; <strong>R</strong> : requête HTTP contrôlée vers cette application ; <strong>I</strong> : vérification d'intégration via l'application, sur des données synthétiques identifiées et avec autorisation. La campagne manuelle ne lance aucun SQL direct, fixture, import, commande de réinitialisation, purge exécutable ni script de charge contre la production ; si un scénario l'exige, le marquer <code>BLOQUÉ</code> (les tests SQL automatisés restent en CI sur <code>minishop_test</code>).</li>
+<li><strong>APP</strong> : comportement attendu d'après le code consulté ; <strong>SPEC</strong> : exigence ou résultat souhaité à vérifier, <strong>pas une promesse d'implémentation</strong>. Un échec de SPEC est une anomalie ou un écart à qualifier, jamais un succès par défaut.</li>
+<li>Chaque scénario est initialement <strong>NON JOUÉ</strong>. Après exécution, reporter dans le journal : <code>OK</code>, <code>KO</code>, <code>BLOQUÉ</code>, <code>NON JOUÉ</code> ou <code>NON APPLICABLE</code>, le résultat observé et la preuve. Un contrôle d'une interface ne prouve pas une règle côté serveur ; les protections doivent aussi être vérifiées par les tests adaptés.</li>
+</ul>
+<h3 id="preparer-une-campagne-pre-demo-sur-la-base-de-production-lineserv">Préparer une campagne pré-démo sur la base de production LineServ<a class="headerlink" href="#preparer-une-campagne-pre-demo-sur-la-base-de-production-lineserv" title="Permanent link">#</a></h3>
+<ol>
+<li>Relever la révision réellement déployée, l'URL et le navigateur. Confirmer en privé que l'application utilise <code>STORAGE_DRIVER=sql</code> et que les valeurs configurées de <code>DB_HOST</code>/<code>DB_NAME</code> correspondent exactement à la base sélectionnée dans phpMyAdmin/Adminer. Ne pas supposer le nom <code>minishop</code>, ne pas recopier les valeurs de configuration dans Git, le CSV ou une capture. Avant les scénarios nominaux en français, cliquer sur « Réinitialiser » dans <code>/preferences</code> pour repartir sur <code>Français</code> + <code>Europe/Paris</code>.</li>
+<li>La cible est la <strong>base de production réelle de LineServ</strong>, pas une nouvelle base de recette. Jouer la campagne uniquement dans une fenêtre pré-démo autorisée, avec accès au site limité aux testeurs et après confirmation que la base ne contient que des données de démonstration/synthétiques et aucun usage réel en cours. Si le contenu, le propriétaire, la cible ou l'absence de données réelles ne sont pas certains, arrêter et marquer les scénarios <code>BLOQUÉ</code>. Une consultation peut elle-même créer une session ou une trace.</li>
+<li>Avant toute écriture, exporter l'état de démonstration initial de la base cible dans un emplacement privé, hors dépôt et hors répertoire web. Vérifier que la sauvegarde inclut schéma, données, vues, routines, fonction et triggers, et qu'une procédure de restauration autorisée est prête. Cette sauvegarde constitue le point de retour à l'état de démo ; si elle n'est pas disponible ou restaurable, ne pas commencer les tests mutatifs.</li>
+<li>Utiliser uniquement des comptes et données <strong>fictifs de test</strong>. Prévoir C1 et C2 (clients distincts créés pour la campagne, avec e-mails <code>example.test</code>), A1 (compte administrateur de test fourni/autorisé par le propriétaire) et G1 (compte gestionnaire de test si disponible). Ne pas créer de compte administrateur via l'inscription publique. Les identifiants de connexion sont obtenus séparément par canal privé ; aucun mot de passe ne doit figurer dans cette fiche, le suivi CSV, les tickets ou les captures. Ne pas modifier les identifiants ou données personnelles d'un compte réel.</li>
+<li>Créer dans la base de production, via l'application, des objets de test clairement préfixés (<code>TEST-UC-…</code>) : K1/K0 (catégories), P1 (visible, stock 5, prix HT 10,00 €, TVA 20 %), P2 (stock 0), P3 (masqué), P4 (stock 1), puis O1/O2/O3 appartenant à C1 pour les parcours concernés. Relever leur état initial dans un journal privé expurgé. Ne modifier que ces objets de test ; si un scénario ne peut pas être joué sans toucher à des données non dédiées, le marquer <code>BLOQUÉ</code>.</li>
+<li>En fin de campagne, interrompre les écritures et suivre le §5.5 du <a href="14-guide-lineserv.html">guide LineServ</a> pour restaurer <strong>la même base de production</strong> depuis la sauvegarde validée de l'état de démo. Ne pas annoncer la base prête pour la démo avant d'avoir vérifié ce retour. Les scénarios exigeant du SQL direct, une fixture, une purge, une panne forcée ou une charge sont exclus de cette campagne de production : les marquer <code>BLOQUÉ</code> et les laisser aux contrôles automatisés/CI.</li>
+</ol>
+<p>Dans <a href="13-suivi-recette-uc.csv">13-suivi-recette-uc.csv</a>, la colonne <code>Base</code> qualifie le scénario (<code>APP</code>/<code>SPEC</code>) ; elle ne désigne ni un nom de base SQL ni l'environnement. Conserver les 200 lignes à <code>NON JOUÉ</code> jusqu'à leur exécution réelle.</p>
+<h3 id="deroulement-et-preuves">Déroulement et preuves<a class="headerlink" href="#deroulement-et-preuves" title="Permanent link">#</a></h3>
+<p>Pour un parcours, ouvrir l'URL de l'application de production LineServ, pas une instance locale ni une autre base. Relever <strong>avant et après</strong> sur les seuls objets synthétiques : stock, panier, identifiant non sensible et statut de commande, montants (<code>montant_total</code>, <code>frais_port</code>, et <code>Total de la commande avant annulation</code> le cas échéant), langue/fuseau actifs et éventuelle écriture d'audit. Capturer une preuve expurgée : aucune donnée réelle, mot de passe, cookie, secret ni valeur de configuration. Pour les transitions, utiliser une commande de test distincte par cas ; ne pas utiliser de fixture ou requête SQL pour remettre l'état en place. La restauration complète de la base de démo est obligatoire en fin de campagne.</p>
+<p>Journal à recopier pour chaque scénario joué :</p>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>À renseigner par le testeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Campagne / ID scénario</td>
+<td></td>
+</tr>
+<tr>
+<td>Version / pilote / navigateur / langue &amp; fuseau</td>
+<td></td>
+</tr>
+<tr>
+<td>Date / testeur</td>
+<td></td>
+</tr>
+<tr>
+<td>Statut (<code>OK</code>, <code>KO</code>, <code>BLOQUÉ</code>, <code>NON JOUÉ</code>, <code>NON APPLICABLE</code>)</td>
+<td>NON JOUÉ</td>
+</tr>
+<tr>
+<td>Résultat observé / écarts</td>
+<td></td>
+</tr>
+<tr>
+<td>Preuve expurgée / ticket d'anomalie</td>
+<td></td>
+</tr>
+<tr>
+<td>Données utilisées / remise en état</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Une anomalie doit indiquer l'ID, la version, le prérequis, les étapes, l'attendu, l'observé, la gravité et la preuve. Ne pas conclure « réussi » sans exécution et comparaison. Les tests des scénarios <code>SPEC</code> peuvent révéler des fonctions absentes.</p>
+<hr />
+<h2 id="uc-01-consulter-le-catalogue">UC-01 — Consulter le catalogue<a class="headerlink" href="#uc-01-consulter-le-catalogue" title="Permanent link">#</a></h2>
+<p><strong>Acteur :</strong> visiteur. <strong>But :</strong> parcourir l'accueil, les catégories, les filtres, le tri et les pages. <strong>Déclencheur :</strong> ouverture de <code>/</code>, <code>/catalogue</code> ou <code>/categories</code>. <strong>Préconditions :</strong> K1, P1, P2 et P3 configurés ; préférences réinitialisées (<code>Français</code>, <code>Europe/Paris</code>). <strong>Nominal :</strong> ouvrir le catalogue, voir les cartes, choisir K1, passer de page si possible. <strong>Postcondition :</strong> aucune modification métier de produit ou commande ; une session technique peut être créée. <strong>Références :</strong> EF-VIS-01/03/05, RB-19 ; tests automatisés associés : <code>tests/php/catalogue_stock_test.php</code>, <code>tests/php/date_ajout_test.php</code>, <code>tests/php/cartes_accessibilite_test.php</code>, <code>scripts/wasm-e2e.mjs</code> (couverture partielle, à rejouer manuellement).</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Priorité / méthode / base</th>
+<th>Actions et données</th>
+<th>Résultat attendu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TC01-01</td>
+<td>P0 M APP</td>
+<td>Ouvrir <code>/catalogue</code>, puis K1 ; rechercher ou paginer pour trouver P1 et P2.</td>
+<td>P1 et P2 visibles ; P3 absent ; cartes avec nom, prix TTC et disponibilité.</td>
+</tr>
+<tr>
+<td>TC01-02</td>
+<td>P1 M APP</td>
+<td>Ouvrir <code>/categories</code>, vérifier l'alignement centré de la section et la netteté des icônes SVG, puis cliquer K1.</td>
+<td>Section centrée et icônes propres ; navigation vers K1 ; compteur cohérent avec les seuls produits visibles.</td>
+</tr>
+<tr>
+<td>TC01-03</td>
+<td>P1 M APP</td>
+<td>Sélectionner K0 vide.</td>
+<td>Message de liste vide clair et lien concret permettant de revenir au catalogue complet.</td>
+</tr>
+<tr>
+<td>TC01-04</td>
+<td>P1 M APP</td>
+<td>Cumul K1 + prix min/max + « en stock ».</td>
+<td>Chaque carte respecte tous les critères ; l'URL partageable reproduit exactement la même liste en navigation privée.</td>
+</tr>
+<tr>
+<td>TC01-05</td>
+<td>P1 M APP</td>
+<td>Choisir tri prix croissant puis décroissant avec produits en stock et en rupture.</td>
+<td>Dans chaque groupe, l'ordre choisi est respecté ; les produits en rupture figurent en fin de liste.</td>
+</tr>
+<tr>
+<td>TC01-06</td>
+<td>P1 M APP</td>
+<td>Parcourir pages 1 et 2 avec plus de 12 résultats.</td>
+<td>Au plus 12 cartes par page par défaut (plafond serveur 60), aucune répétition ni omission ; filtres conservés d'une page à l'autre.</td>
+</tr>
+<tr>
+<td>TC01-07</td>
+<td>P2 R APP</td>
+<td>Demander <code>page=0</code>, une page très grande et un tri inconnu sur la copie de recette.</td>
+<td>Pas d'erreur technique ; page inférieure bornée à 1, page hors résultat vide avec lien retour page 1, tri inconnu ramené au tri par défaut.</td>
+</tr>
+<tr>
+<td>TC01-08</td>
+<td>P1 M APP</td>
+<td>Ouvrir <code>/</code> et comparer les quatre derniers ajouts aux dates UTC stockées et aux ID visibles, puis changer de fuseau dans <code>/preferences</code>.</td>
+<td>Tri par date de création décroissante puis ID décroissant en cas d'égalité ; balise <code>&lt;time data-date-format="ajout" datetime="…Z"&gt;</code> fidèle à l'UTC de chaque produit, affichée en <code>Europe/Paris</code> sans JS et convertie dans le fuseau choisi avec JS.</td>
+</tr>
+<tr>
+<td>TC01-09</td>
+<td>P1 I SPEC</td>
+<td>Ne pas simuler l'indisponibilité du magasin sur la production LineServ. Marquer <code>BLOQUÉ</code> pour la campagne manuelle ; conserver ce test dans l'environnement automatisé isolé/CI.</td>
+<td>Message générique sans secret ni trace technique au visiteur (ni promesse infondée sur la page 500) ; aucune altération métier. Noter le code HTTP obtenu.</td>
+</tr>
+<tr>
+<td>TC01-10</td>
+<td>P1 M APP</td>
+<td>Inspecter les visuels sur <code>/</code> et <code>/catalogue</code> (photographie d'accueil vs vignettes des cartes produits).</td>
+<td>Photographie d'accueil locale informative avec <code>alt</code> descriptif et dimensions explicites ; vignettes des cartes produits décoratives (<code>alt=""</code>) sans redondance vocale avec le titre adjacent ; zéro requête réseau externe.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-02-rechercher-un-produit">UC-02 — Rechercher un produit<a class="headerlink" href="#uc-02-rechercher-un-produit" title="Permanent link">#</a></h2>
+<p><strong>Acteur :</strong> visiteur. <strong>But :</strong> rechercher par nom, description ou référence et combiner avec les filtres. <strong>Déclencheur :</strong> saisie d'une recherche sur <code>/recherche</code> ou <code>/catalogue</code>. <strong>Préconditions :</strong> P1 visible et mot distinctif connu. <strong>Nominal :</strong> saisir le mot, valider, consulter les résultats. <strong>Postcondition :</strong> pas d'écriture métier. <strong>Références :</strong> EF-VIS-02, RB-19, SEC-02 ; <code>tests/php/catalogue_stock_test.php</code>, <code>tests/php/catalogue_filtres_test.php</code>, <code>scripts/ui-e2e-catalogue.mjs</code>, <code>scripts/wasm-e2e.mjs</code>.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Priorité / méthode / base</th>
+<th>Actions et données</th>
+<th>Résultat attendu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TC02-01</td>
+<td>P0 M APP</td>
+<td>Rechercher le nom exact de P1.</td>
+<td>P1 apparaît avec son nom et son prix TTC corrects.</td>
+</tr>
+<tr>
+<td>TC02-02</td>
+<td>P1 M APP</td>
+<td>Rechercher une partie du nom puis la référence de P1.</td>
+<td>P1 figure dans chaque résultat correspondant.</td>
+</tr>
+<tr>
+<td>TC02-03</td>
+<td>P1 M SPEC</td>
+<td>Rechercher une variante de casse et, avec un produit accentué, sans accent.</td>
+<td>Résultats équivalents pour la casse et les accents ; noter pilote et extensions (<code>intl</code>) si écart.</td>
+</tr>
+<tr>
+<td>TC02-04</td>
+<td>P1 M APP</td>
+<td>Rechercher un terme inexistant puis une saisie vide.</td>
+<td>Aucun résultat avec message adapté et lien de retour pour le premier ; recherche vide équivalente au catalogue.</td>
+</tr>
+<tr>
+<td>TC02-05</td>
+<td>P1 M APP</td>
+<td>Rechercher le nom de P3 masqué.</td>
+<td>P3 n'apparaît jamais au visiteur.</td>
+</tr>
+<tr>
+<td>TC02-06</td>
+<td>P1 M APP</td>
+<td>Cumul recherche, catégorie, prix, disponibilité et pagination.</td>
+<td>Seuls les résultats satisfaisant tous les filtres apparaissent ; tous les critères restent dans l'URL au changement de tri ou de page.</td>
+</tr>
+<tr>
+<td>TC02-07</td>
+<td>P1 R SPEC</td>
+<td>Envoyer une recherche de 120 puis 121 caractères sur la recette isolée.</td>
+<td>Aucune erreur technique ; traitement borné à la limite serveur ou refus explicite, sans divulgation.</td>
+</tr>
+<tr>
+<td>TC02-08</td>
+<td>P0 M SPEC</td>
+<td>Rechercher littéralement <code>' OR 1=1 --</code> et <code>&lt;script&gt;alert(1)&lt;/script&gt;</code> dans la recette.</td>
+<td>Aucun script exécuté, aucune modification de données ; la recherche ne retourne pas tous les produits par injection.</td>
+</tr>
+<tr>
+<td>TC02-09</td>
+<td>P2 R SPEC</td>
+<td>Tester caractères Unicode, espaces et caractères <code>%</code> / <code>_</code> dans la recette.</td>
+<td>Aucun plantage ni fuite ; documenter si les caractères SQL sont traités comme littéraux ou motifs.</td>
+</tr>
+<tr>
+<td>TC02-10</td>
+<td>P1 M APP</td>
+<td>Appliquer plusieurs filtres simultanés sur <code>/catalogue</code>, puis cliquer sur le lien de réinitialisation des filtres.</td>
+<td>Tous les critères sont effacés d'un coup et le catalogue complet des produits visibles réapparaît.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-03-consulter-une-fiche-produit">UC-03 — Consulter une fiche produit<a class="headerlink" href="#uc-03-consulter-une-fiche-produit" title="Permanent link">#</a></h2>
+<p><strong>Acteur :</strong> visiteur. <strong>But :</strong> consulter caractéristiques, visuel indicatif, prix TTC et stock. <strong>Déclencheur :</strong> clic sur une carte ou URL <code>/produit/{slug}</code>. <strong>Préconditions :</strong> P1 visible, P2 en rupture, P3 masqué. <strong>Nominal :</strong> ouvrir P1 depuis le catalogue. <strong>Postcondition :</strong> aucune modification métier. <strong>Références :</strong> EF-VIS-04, RB-02/16/19 ; <code>tests/php/fiche_produit_test.php</code>, <code>scripts/ui-e2e-produit.mjs</code>, <code>scripts/wasm-e2e.mjs</code>.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Priorité / méthode / base</th>
+<th>Actions et données</th>
+<th>Résultat attendu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TC03-01</td>
+<td>P0 M APP</td>
+<td>Ouvrir P1 (<code>/produit/{slug}</code>).</td>
+<td>Fiche complète de P1 : prix TTC 12,00 € (TVA 20 % incluse), catégorie, stock disponible, mention pédagogique de visuel indicatif et fil d'Ariane cohérents.</td>
+</tr>
+<tr>
+<td>TC03-02</td>
+<td>P1 M APP</td>
+<td>Ouvrir P2 en rupture.</td>
+<td>Rupture clairement indiquée ; ajout au panier désactivé via l'interface.</td>
+</tr>
+<tr>
+<td>TC03-03</td>
+<td>P0 M APP</td>
+<td>Ouvrir directement l'URL de P3 masqué.</td>
+<td>Réponse 404 générique habillée par le design system ; aucune information de P3 divulguée.</td>
+</tr>
+<tr>
+<td>TC03-04</td>
+<td>P1 M APP</td>
+<td>Ouvrir un slug inexistant.</td>
+<td>Page 404 propre, sans détail technique.</td>
+</tr>
+<tr>
+<td>TC03-05</td>
+<td>P1 M APP</td>
+<td>Supprimer ou masquer un produit de test non commandé après avoir gardé son URL, puis recharger.</td>
+<td>La fiche ne reste pas accessible publiquement (404).</td>
+</tr>
+<tr>
+<td>TC03-06</td>
+<td>P2 M APP</td>
+<td>Créer un produit sans image locale valide ou avec un chemin externe refusé.</td>
+<td>Repli visuel local propre ; aucune icône d'image cassée ni chargement réseau externe.</td>
+</tr>
+<tr>
+<td>TC03-07</td>
+<td>P1 M SPEC</td>
+<td>Avec P1 stock 5, essayer quantités 1, 5 puis 6.</td>
+<td>1 et 5 acceptées (<code>max=5</code> sur le champ) ; toute demande supérieure à 5 est refusée en français sans code technique et le panier n'excède jamais 5.</td>
+</tr>
+<tr>
+<td>TC03-08</td>
+<td>P1 R SPEC</td>
+<td>Soumettre une URL ou un champ contenant du HTML dans l'environnement de recette.</td>
+<td>Pas d'exécution de script ni de divulgation de fichier.</td>
+</tr>
+<tr>
+<td>TC03-09</td>
+<td>P1 M APP</td>
+<td>Sur <code>/produit/{slug}</code>, inspecter l'image principale de la fiche ET les vignettes de la section « Produits similaires » (en FR puis en EN).</td>
+<td>Le visuel principal utilise le mode <strong>informatif</strong> (<code>alt="Visuel indicatif : &lt;Nom&gt;"</code> en FR, <code>"Illustrative image: &lt;Nom&gt;"</code> en EN) tandis que les cartes similaires utilisent le mode <strong>décoratif</strong> (<code>alt=""</code>).</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-04-creer-un-compte">UC-04 — Créer un compte<a class="headerlink" href="#uc-04-creer-un-compte" title="Permanent link">#</a></h2>
+<p><strong>Acteur :</strong> visiteur. <strong>But :</strong> créer un compte client fictif et se connecter. <strong>Déclencheur :</strong> validation de <code>/inscription</code>. <strong>Préconditions :</strong> adresse de test neuve, CGV et politique de confidentialité consultables, session visiteur. <strong>Nominal :</strong> renseigner identité, e-mail neuf, mot de passe et confirmation, cocher les CGV, créer. <strong>Postcondition :</strong> un client créé et connecté ; aucun compte administrateur créé. <strong>Références :</strong> EF-VIS-06, RB-01/12/13 ; <code>tests/php/features_test.php</code>, <code>tests/php/inscription_erreurs_test.php</code>, <code>scripts/ui-e2e-inscription.mjs</code>, <code>scripts/wasm-e2e.mjs</code>.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Priorité / méthode / base</th>
+<th>Actions et données</th>
+<th>Résultat attendu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TC04-01</td>
+<td>P0 M APP</td>
+<td>Utiliser un e-mail fictif neuf et un mot de passe saisi uniquement dans le formulaire, cocher les CGV et créer.</td>
+<td>Compte créé ; connexion immédiate et redirection vers <code>/compte</code> ; aucun mot de passe affiché ni consigné en clair.</td>
+</tr>
+<tr>
+<td>TC04-02</td>
+<td>P0 M APP</td>
+<td>Réessayer avec l'e-mail déjà créé.</td>
+<td>Doublon refusé en français (« Cet email est déjà utilisé. ») ; aucun second compte portant le même e-mail.</td>
+</tr>
+<tr>
+<td>TC04-03</td>
+<td>P1 M APP</td>
+<td>Omettre nom, prénom ou saisir un e-mail invalide.</td>
+<td>Création refusée ; messages de validation clairs ; aucune création partielle.</td>
+</tr>
+<tr>
+<td>TC04-04</td>
+<td>P1 M APP</td>
+<td>Donner deux mots de passe différents ou ne pas accepter les CGV.</td>
+<td>Création refusée et cause exacte indiquée.</td>
+</tr>
+<tr>
+<td>TC04-05</td>
+<td>P1 R APP</td>
+<td>Tester des mots de passe ASCII de 7 puis 8 caractères avec un e-mail différent par essai.</td>
+<td>7 caractères refusés ; comparer le résultat du cas à 8 à la politique affichée et noter le comportement observé.</td>
+</tr>
+<tr>
+<td>TC04-06</td>
+<td>P1 R SPEC</td>
+<td>Soumettre 8 caractères uniquement alphabétiques puis uniquement numériques, avec confirmation.</td>
+<td>Selon l'aide affichée, lettre <strong>et</strong> chiffre devraient être exigés ; le contrôleur actuel ne vérifie que la longueur minimale de 8 caractères. Écart possible à relever, pas succès présumé.</td>
+</tr>
+<tr>
+<td>TC04-07</td>
+<td>P0 R SPEC</td>
+<td>Retirer le jeton CSRF, puis sur une autre inscription à e-mail neuf injecter <code>role=SUPER</code>.</td>
+<td>Sans jeton : refus 403 sans création ; avec champ rôle ajouté à une demande valide : compte strictement client, table administrateur intacte.</td>
+</tr>
+<tr>
+<td>TC04-08</td>
+<td>P1 M SPEC</td>
+<td>Ajouter P1 au panier visiteur, puis s'inscrire.</td>
+<td>Le panier constitué avant inscription reste présent après connexion ; noter toute perte éventuelle.</td>
+</tr>
+<tr>
+<td>TC04-09</td>
+<td>P1 I SPEC</td>
+<td>Deux inscriptions simultanées avec le même e-mail fictif dédié, sur LineServ pendant la fenêtre autorisée.</td>
+<td>Au plus un compte de test créé ; aucune donnée réelle partielle ni erreur technique divulguée.</td>
+</tr>
+<tr>
+<td>TC04-10</td>
+<td>P1 M APP</td>
+<td>Soumettre <code>/inscription</code> avec plusieurs erreurs simultanées (nom vide + e-mail invalide + mot de passe trop court + CGV décochées), et vérifier les mentions sous le formulaire.</td>
+<td>Toutes les erreurs s'affichent ensemble dès le premier retour ; les valeurs non sensibles saisies sont conservées (mots de passe vidés) ; lien vers <code>/confidentialite</code> présent sans case de prospection forcée.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-05-connexion-deconnexion-et-gestion-du-compte">UC-05 — Connexion, déconnexion et gestion du compte<a class="headerlink" href="#uc-05-connexion-deconnexion-et-gestion-du-compte" title="Permanent link">#</a></h2>
+<p><strong>Acteur :</strong> visiteur ou client. <strong>But :</strong> s'authentifier, gérer son profil et son adresse structurée, puis se déconnecter. <strong>Déclencheur :</strong> <code>/connexion</code> ou <code>/compte</code>. <strong>Préconditions :</strong> C1 et C2 actifs et distincts. <strong>Nominal :</strong> se connecter comme C1, modifier une information de test, enregistrer puis se déconnecter. <strong>Postcondition :</strong> seule la fiche C1 change ; session client fermée après déconnexion. <strong>Références :</strong> EF-VIS-07, EF-CLI-01/02, RB-01/12 ; <code>tests/php/features_test.php</code>, <code>tests/php/adresse_livraison_test.php</code>, <code>scripts/wasm-e2e.mjs</code>.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Priorité / méthode / base</th>
+<th>Actions et données</th>
+<th>Résultat attendu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TC05-01</td>
+<td>P0 M APP</td>
+<td>Connecter C1 avec ses bons identifiants.</td>
+<td>Accès à <code>/compte</code> et <code>/mes-commandes</code>.</td>
+</tr>
+<tr>
+<td>TC05-02</td>
+<td>P0 M APP</td>
+<td>Mauvais mot de passe pour C1 puis adresse inexistante.</td>
+<td>Accès refusé ; message générique strictement identique pour ces deux cas (« Email ou mot de passe erroné. »).</td>
+</tr>
+<tr>
+<td>TC05-03</td>
+<td>P1 M APP</td>
+<td>Modifier le téléphone de test de C1 sans changer son e-mail, enregistrer puis recharger.</td>
+<td>Nouvelle valeur conservée pour C1 seulement ; aucun faux refus d'unicité sur son propre e-mail.</td>
+</tr>
+<tr>
+<td>TC05-04</td>
+<td>P1 M APP</td>
+<td>Remplacer l'e-mail de C1 par celui de C2.</td>
+<td>Refus du doublon ; les deux comptes restent inchangés.</td>
+</tr>
+<tr>
+<td>TC05-05</td>
+<td>P1 M APP</td>
+<td>Sur un compte client fictif créé pour cette campagne, saisir un ancien mot de passe erroné. Ne consigner aucune valeur de mot de passe.</td>
+<td>Refus ; ancien mot de passe toujours valide.</td>
+</tr>
+<tr>
+<td>TC05-06</td>
+<td>P1 M APP</td>
+<td>Sur un compte client fictif créé pour cette campagne, changer le mot de passe avec l'ancien saisi en privé et une confirmation, puis se reconnecter. Ne consigner aucune valeur.</td>
+<td>Nouveau mot de passe accepté ; ancien refusé ; aucun mot de passe affiché en clair.</td>
+</tr>
+<tr>
+<td>TC05-07</td>
+<td>P0 M APP</td>
+<td>Déconnecter C1 puis ouvrir <code>/compte</code> et <code>/mes-commandes</code>.</td>
+<td>Redirection vers <code>/connexion</code> ; aucune donnée privée affichée.</td>
+</tr>
+<tr>
+<td>TC05-08</td>
+<td>P0 R SPEC</td>
+<td>Contrôler la régénération d'identifiant de session après authentification, sans publier les cookies en preuve.</td>
+<td>L'ancien identifiant pré-authentification ne donne pas accès à la session authentifiée.</td>
+</tr>
+<tr>
+<td>TC05-09</td>
+<td>P1 I SPEC</td>
+<td>Sur le seul compte de test dédié, réaliser quelques échecs de connexion à faible cadence pendant la fenêtre autorisée ; ne pas lancer de script de force brute ni de rafale. Si l'hébergement ou le compte risque d'être affecté, marquer <code>BLOQUÉ</code>.</td>
+<td>Comparer les protections réellement observées au cahier des charges ; temporisation/limitation de débit sur <code>/connexion</code> ne sont pas considérées acquises sans mesure.</td>
+</tr>
+<tr>
+<td>TC05-10</td>
+<td>P1 R SPEC</td>
+<td>Envoyer un changement de profil sans jeton CSRF.</td>
+<td>Refus 403 ; profil inchangé.</td>
+</tr>
+<tr>
+<td>TC05-11</td>
+<td>P1 M APP</td>
+<td>Sur <code>/compte</code>, renseigner l'adresse structurée fictive (rue, code postal, ville), enregistrer puis ouvrir <code>/commande/valider</code> avec un article en panier.</td>
+<td>L'adresse enregistrée est conservée au profil et pré-remplit correctement le formulaire de livraison à l'étape de validation.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-06-gerer-le-panier">UC-06 — Gérer le panier<a class="headerlink" href="#uc-06-gerer-le-panier" title="Permanent link">#</a></h2>
+<p><strong>Acteur :</strong> visiteur ou client. <strong>But :</strong> ajouter (avec ou sans JavaScript), modifier, retirer et vérifier les montants calculés par le serveur. <strong>Déclencheur :</strong> ajout depuis catalogue/fiche ou ouverture de <code>/panier</code>. <strong>Préconditions :</strong> P1 visible stock 5, P2 stock 0, P3 masqué ; panier vide dans une session isolée. <strong>Nominal :</strong> ajouter P1, observer le retour instantané, modifier sa quantité, contrôler le total et retirer. <strong>Postcondition :</strong> état de panier cohérent ; aucun stock débité avant commande. <strong>Références :</strong> EF-CLI-03/04/05/06, RB-15/18/19 ; <code>tests/php/unit_tests.php</code>, <code>tests/php/panier_cta_test.php</code>, <code>scripts/ui-e2e-panier.mjs</code>, <code>scripts/wasm-e2e.mjs</code>.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Priorité / méthode / base</th>
+<th>Actions et données</th>
+<th>Résultat attendu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TC06-01</td>
+<td>P0 M APP</td>
+<td>Avec JavaScript activé, ajouter 1 P1 depuis le catalogue ou la fiche puis ouvrir <code>/panier</code>.</td>
+<td>Mise à jour sans rechargement via <code>/api/panier/ajouter</code> (<code>#badge-panier</code>, <code>aria-label</code> du lien panier et annonce <code>#zone-annonces</code>) ; sur <code>/panier</code>, quantité 1, prix TTC 12,00 €, totaux calculés exclusivement côté serveur (affichés une seule fois en pied de tableau) et bouton « Valider ma commande » présent.</td>
+</tr>
+<tr>
+<td>TC06-02</td>
+<td>P1 M APP</td>
+<td>Ajouter P1 une deuxième fois puis changer la quantité à 5.</td>
+<td>Une seule ligne agrégée ; quantité 5 ; sous-total marchandises TTC 60,00 €.</td>
+</tr>
+<tr>
+<td>TC06-03</td>
+<td>P0 M/R APP</td>
+<td>Demander plus de 5 P1 par formulaire ou requête <code>/api/panier/ajouter</code>.</td>
+<td>Refus clair sans code technique ; quantité effective plafonnée au stock disponible ; stock en base inchangé tant qu'aucune commande n'est validée.</td>
+</tr>
+<tr>
+<td>TC06-04</td>
+<td>P1 M APP</td>
+<td>Régler la quantité à 0 puis retirer une ligne (et rejouer un second retrait sur la même ligne).</td>
+<td>Ligne retirée proprement sans erreur au second retrait (idempotence) ; état « panier vide » affiché si elle était seule.</td>
+</tr>
+<tr>
+<td>TC06-05</td>
+<td>P0 M/R SPEC</td>
+<td>Tenter d'ajouter P2 en rupture et P3 masqué.</td>
+<td>Aucune quantité achetable pour P2 ; P3 masqué est rejeté et ne peut pas entrer dans un panier valide.</td>
+</tr>
+<tr>
+<td>TC06-06</td>
+<td>P1 M APP</td>
+<td>Après ajout de P1, masquer P1 depuis A1 puis rouvrir le panier C1.</td>
+<td>P1 masqué n'est plus commandable ; rétablir seulement dans la recette isolée.</td>
+</tr>
+<tr>
+<td>TC06-07</td>
+<td>P1 M SPEC</td>
+<td>Avec des prix de test adaptés, vérifier sous-total et port à 0,01 € sous, exactement à, puis à 0,01 € au-dessus de la franchise configurée (80,00 € par défaut).</td>
+<td>Port facturé sous le seuil (4,90 € par défaut) et offert dès la franchise atteinte (0,00 €) ; total TTC = marchandises TTC + port.</td>
+</tr>
+<tr>
+<td>TC06-08</td>
+<td>P1 M APP</td>
+<td>Désactiver JavaScript dans les outils du navigateur puis ajouter, modifier la quantité et retirer P1.</td>
+<td>Repli complet en formulaires POST classiques avec rechargement de page, sans aucune perte fonctionnelle.</td>
+</tr>
+<tr>
+<td>TC06-09</td>
+<td>P0 R SPEC</td>
+<td>Modifier un champ <code>prix_unitaire</code> côté navigateur ou omettre le jeton CSRF sur <code>/panier/*</code> et <code>/api/panier/*</code>.</td>
+<td>Prix envoyé par le client ignoré ; sans CSRF valide, refus 403 et aucune mutation de panier.</td>
+</tr>
+<tr>
+<td>TC06-10</td>
+<td>P1 M SPEC</td>
+<td>Dans deux sessions isolées, modifier le panier C1 puis consulter C2.</td>
+<td>Aucun article ni quantité n'est partagé entre les sessions.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-07-passer-une-commande">UC-07 — Passer une commande<a class="headerlink" href="#uc-07-passer-une-commande" title="Permanent link">#</a></h2>
+<p><strong>Acteur :</strong> client. <strong>But :</strong> transformer un panier en commande simulée après récapitulatif précontractuel. <strong>Déclencheur :</strong> ouverture puis confirmation sur <code>/commande/valider</code>. <strong>Préconditions :</strong> C1 connecté, P1 visible en stock, adresse fictive au profil, panier non vide. <strong>Nominal :</strong> contrôler le récapitulatif et les frais de port affichés avant validation, vérifier l'adresse pré-remplie, confirmer la commande simulée, noter le numéro et vérifier le détail. <strong>Postcondition :</strong> commande et lignes enregistrées, stock débité une seule fois, trace d'historique créée, panier vidé ; aucun paiement réel. <strong>Références :</strong> EF-CLI-07, RB-04/06/15/18/20, ENF-14/16 ; <code>tests/php/run_tests.php</code>, <code>tests/php/valider_recap_test.php</code>, <code>scripts/ui-e2e-valider.mjs</code>, <code>scripts/wasm-e2e.mjs</code>.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Priorité / méthode / base</th>
+<th>Actions et données</th>
+<th>Résultat attendu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TC07-01</td>
+<td>P0 M APP</td>
+<td>Sur <code>/commande/valider</code>, vérifier les mentions précontractuelles et le total affiché sur le bouton, puis commander 2 P1 (stock initial 5) avec adresse valide et paiement simulé coché.</td>
+<td>Bandeau de simulation pédagogique et liens <code>/cgv</code>, <code>/livraison</code>, <code>/retractation</code>, <code>/garanties</code> présents ; commande numérotée <code>CMDAAAA-NNNNNN</code>, statut <code>PAYEE</code> (simulé), ligne figée à 12,00 € TTC, port exact figé, stock final 3 et panier vidé.</td>
+</tr>
+<tr>
+<td>TC07-02</td>
+<td>P1 M APP</td>
+<td>Commander P1 en décochant l'option de paiement immédiat simulé (si proposée) ou selon le flux nominal <code>EN_PREPARATION</code>.</td>
+<td>Commande enregistrée au statut attendu (<code>EN_PREPARATION</code> ou <code>PAYEE</code> selon l'option choisie), sans aucun débit réel ; totaux, historique initial et stock cohérents.</td>
+</tr>
+<tr>
+<td>TC07-03</td>
+<td>P0 M APP</td>
+<td>Tenter d'ouvrir ou de poster <code>/commande/valider</code> avec un panier vide.</td>
+<td>Redirection propre avec message explicite ; aucune commande vide créée.</td>
+</tr>
+<tr>
+<td>TC07-04</td>
+<td>P1 M APP</td>
+<td>Depuis une session visiteur ayant un panier, cliquer « Valider ma commande ».</td>
+<td>Redirection vers <code>/connexion</code> puis retour au parcours client après authentification ; aucune commande créée sans session client.</td>
+</tr>
+<tr>
+<td>TC07-05</td>
+<td>P1 M APP</td>
+<td>Vider l'adresse de livraison sur <code>/commande/valider</code> et soumettre.</td>
+<td>Refus clair en français ; panier et stocks strictement inchangés, aucune commande créée.</td>
+</tr>
+<tr>
+<td>TC07-06</td>
+<td>P0 I SPEC</td>
+<td>Mettre P4 (stock 1) dans le panier de C1 puis consommer cette unité par C2 juste avant la validation de C1.</td>
+<td>Pas de survente : C1 reçoit le message humain « Stock insuffisant pour cette quantité. », aucune commande partielle ni stock négatif, panier conservé pour ajustement.</td>
+</tr>
+<tr>
+<td>TC07-07</td>
+<td>P0 I SPEC</td>
+<td>Avec deux lignes en panier (<code>P1 × 1</code> et <code>P4 × 2</code> pour un stock 1), soumettre la validation.</td>
+<td>Rollback intégral : aucune commande créée et le stock de P1 reste strictement inchangé.</td>
+</tr>
+<tr>
+<td>TC07-08</td>
+<td>P0 R SPEC</td>
+<td>Sur un panier et un compte de test, double-cliquer ou rejouer le même POST une seule fois sur LineServ pendant la fenêtre autorisée.</td>
+<td>Le vidage transactionnel du panier ou le contrôle de jeton doit empêcher une double commande ; relever tout doublon éventuel comme anomalie.</td>
+</tr>
+<tr>
+<td>TC07-09</td>
+<td>P0 I SPEC</td>
+<td>Deux clients de test valident simultanément le dernier exemplaire de P4 (stock 1) sur LineServ, uniquement dans la fenêtre autorisée et sans autre commande concurrente.</td>
+<td>Exactement 1 commande réussie et 1 refus <code>STOCK_INSUFFISANT</code>, stock final = 0 ; le contrôle manuel porte sur le parcours applicatif SQL. La variante JSON et l'inspection SQL restent automatisées/hors production.</td>
+</tr>
+<tr>
+<td>TC07-10</td>
+<td>P1 M APP</td>
+<td>Après validation de O2, augmenter le prix HT de P1 dans <code>/admin/produits</code> puis rouvrir O2 côté client.</td>
+<td>La ligne de O2 affiche toujours les 12,00 € TTC figés lors de l'achat tandis que le catalogue affiche le nouveau tarif.</td>
+</tr>
+<tr>
+<td>TC07-11</td>
+<td>P0 R SPEC</td>
+<td>Soumettre <code>/commande/valider</code> sans jeton CSRF ou en injectant <code>frais_port=0</code> et <code>prix_unitaire=0.01</code>.</td>
+<td>Sans CSRF : refus 403 ; champs injectés ignorés, seuls les montants calculés par le serveur et la base font foi.</td>
+</tr>
+<tr>
+<td>TC07-12</td>
+<td>P1 I SPEC</td>
+<td>Scénario non exécuté sur la base de production : il faudrait interrompre le stockage pendant une écriture. Marquer <code>BLOQUÉ</code> dans la campagne LineServ ; conserver ce contrôle en environnement automatisé isolé/CI.</td>
+<td>Page d'erreur générique sans secret et état atomique (aucune ligne ou décrémentation orpheline). Ne jamais couper la base ou le service LineServ.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-08-consulter-lhistorique-des-commandes">UC-08 — Consulter l'historique des commandes<a class="headerlink" href="#uc-08-consulter-lhistorique-des-commandes" title="Permanent link">#</a></h2>
+<p><strong>Acteur :</strong> client. <strong>But :</strong> consulter ses commandes, leur détail, leur piste d'audit et l'historique préservé des commandes annulées. <strong>Déclencheur :</strong> ouverture de <code>/mes-commandes</code> ou <code>/mes-commandes/{id}</code>. <strong>Préconditions :</strong> C1 et C2 distincts ; O1 et une commande annulée chez C1 ; au moins une commande de C2 pour le test d'isolation. <strong>Nominal :</strong> C1 ouvre sa liste puis le détail de O1. <strong>Postcondition :</strong> aucune modification métier. <strong>Références :</strong> EF-CLI-08/09, RB-10/11, SEC-08 ; <code>tests/php/features_test.php</code>, <code>tests/php/annulation_historique_test.php</code>, <code>scripts/ui-e2e-mes-commandes.mjs</code>, <code>scripts/wasm-e2e.mjs</code>.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Priorité / méthode / base</th>
+<th>Actions et données</th>
+<th>Résultat attendu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TC08-01</td>
+<td>P0 M APP</td>
+<td>C1 ouvre <code>/mes-commandes</code> puis le détail de O1.</td>
+<td>Numéro, date (formatée selon le fuseau <code>/preferences</code>), badge de statut, montant aligné en chiffres tabulaires, lignes commandées, frais de port et chronologie des statuts affichés.</td>
+</tr>
+<tr>
+<td>TC08-02</td>
+<td>P1 M APP</td>
+<td>Avec un client de test neuf sans commande, ouvrir <code>/mes-commandes</code>.</td>
+<td>État vide explicite et lien direct vers <code>/catalogue</code>.</td>
+</tr>
+<tr>
+<td>TC08-03</td>
+<td>P0 M APP</td>
+<td>C2 ouvre directement <code>/mes-commandes/{id_de_O1}</code> appartenant à C1.</td>
+<td>Réponse 404 générique (jamais 403 révélant l'existence) ; aucun nom, adresse, ligne ou montant de C1 divulgué.</td>
+</tr>
+<tr>
+<td>TC08-04</td>
+<td>P0 M APP</td>
+<td>Sans connexion, ouvrir <code>/mes-commandes</code> puis <code>/mes-commandes/1</code>.</td>
+<td>Redirection vers <code>/connexion</code> ; aucun contenu privé divulgué.</td>
+</tr>
+<tr>
+<td>TC08-05</td>
+<td>P1 M SPEC</td>
+<td>Demander <code>/mes-commandes/999999</code> puis un identifiant non numérique.</td>
+<td>Réponse 404 propre sans trace SQL ni message technique.</td>
+</tr>
+<tr>
+<td>TC08-06</td>
+<td>P1 M APP</td>
+<td>Comparer le prix unitaire figé dans O1 avec le prix catalogue courant modifié en recette.</td>
+<td>Le détail affiche invariablement le prix figé lors de la commande.</td>
+</tr>
+<tr>
+<td>TC08-07</td>
+<td>P1 M SPEC</td>
+<td>Faire évoluer le statut de O2 par A1 puis recharger son détail côté C1.</td>
+<td>Nouveau statut et nouvelle entrée d'historique visibles immédiatement ; aucune autre commande altérée.</td>
+</tr>
+<tr>
+<td>TC08-08</td>
+<td>P1 M APP</td>
+<td>Ouvrir sur <code>/mes-commandes</code> puis en détail une commande <code>ANNULEE</code>.</td>
+<td>La commande annulée reste visible dans la liste ; son détail <strong>conserve toutes les lignes d'origine en historique</strong>, affiche le « Total de la commande avant annulation » ainsi que le montant soldé <code>0,00 €</code>, et ne propose plus aucun bouton d'annulation.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-09-annuler-une-commande">UC-09 — Annuler une commande<a class="headerlink" href="#uc-09-annuler-une-commande" title="Permanent link">#</a></h2>
+<p><strong>Acteur :</strong> client propriétaire. <strong>But :</strong> annuler techniquement en deux étapes une commande simulée non expédiée, avec restitution unique du stock et conservation de l'historique des lignes. <strong>Déclencheur :</strong> clic sur « Annuler la commande » depuis <code>/mes-commandes/{id}</code>. <strong>Préconditions :</strong> O1 appartient à C1, statut <code>EN_PREPARATION</code> ou <code>PAYEE</code>, lignes et stocks initiaux relevés. <strong>Nominal :</strong> ouvrir O1, passer par la page GET de confirmation, confirmer en POST, vérifier statut, lignes conservées, montants et stock. <strong>Postcondition :</strong> O1 <code>ANNULEE</code>, lignes préservées, <code>Total avant annulation</code> conservé, <code>montant_total</code> et <code>frais_port</code> à <code>0,00 €</code>, unités restituées exactement une fois. <strong>Références :</strong> EF-CLI-10, RB-09/11/18/20 ; <code>tests/php/actions_destructrices_test.php</code>, <code>tests/php/annulation_historique_test.php</code>, <code>scripts/ui-e2e-annulation.mjs</code>, <code>scripts/ui-e2e-annulation-historique.mjs</code>, <code>scripts/wasm-e2e.mjs</code>. <strong>Ne pas confondre avec la rétractation légale</strong>, non opérationnelle sur cette maquette.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Priorité / méthode / base</th>
+<th>Actions et données</th>
+<th>Résultat attendu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TC09-01</td>
+<td>P0 M APP</td>
+<td>Sur O1 avant expédition : 1) cliquer « Annuler la commande » (<code>GET /mes-commandes/{id}/annulation/confirmation</code>), recharger cette page GET puis tester « Non, garder ma commande » ; 2) rouvrir la confirmation et valider le formulaire POST (même JavaScript coupé).</td>
+<td>Étape 1 : aucun effet de bord (statut et stock intacts). Étape 2 : statut <code>ANNULEE</code>, stock recrédité <strong>exactement une fois</strong>, <strong>lignes conservées en historique</strong>, <code>Total de la commande avant annulation</code> affiché, total et port soldés à <code>0,00 €</code>, trace <code>CLIENT</code> ajoutée.</td>
+</tr>
+<tr>
+<td>TC09-02</td>
+<td>P0 R APP</td>
+<td>Rejouer une deuxième fois le <code>POST /mes-commandes/{id}/annulation</code> sur la même O1 déjà annulée.</td>
+<td>Refus propre en français sans code technique ; aucune seconde restitution de stock ; historique non dupliqué.</td>
+</tr>
+<tr>
+<td>TC09-03</td>
+<td>P0 M/R APP</td>
+<td>C2 tente <code>GET /mes-commandes/{id_de_O1}/annulation/confirmation</code> puis <code>POST /mes-commandes/{id_de_O1}/annulation</code>.</td>
+<td>Refus 404 sans fuite d'information ; commande O1 et stock de C1 strictement intacts.</td>
+</tr>
+<tr>
+<td>TC09-04</td>
+<td>P0 M/R APP</td>
+<td>Tenter d'annuler comme client une commande <code>EXPEDIEE</code> (O3) ou <code>LIVREE</code> (interface puis POST forgé).</td>
+<td>Aucun bouton d'annulation affiché ; en POST forgé, refus humain (« Cette commande est déjà expédiée ou livrée… »), statut et stock intacts.</td>
+</tr>
+<tr>
+<td>TC09-05</td>
+<td>P1 M APP</td>
+<td>Lire les mentions affichées sur le détail de O1 et sur l'écran de confirmation d'annulation.</td>
+<td>Distinction explicite entre l'annulation technique avant expédition simulée et le droit légal de rétractation après livraison (renvoi vers <code>/retractation</code>, aucune promesse de remboursement réel).</td>
+</tr>
+<tr>
+<td>TC09-06</td>
+<td>P0 R SPEC</td>
+<td>Soumettre <code>POST /mes-commandes/{id}/annulation</code> sans jeton CSRF ou sans session client.</td>
+<td>Refus (403 sans CSRF, redirection <code>/connexion</code> hors session) ; aucune mutation.</td>
+</tr>
+<tr>
+<td>TC09-07</td>
+<td>P0 I SPEC</td>
+<td>Ne pas provoquer une erreur de stockage/restitution sur la production LineServ. Marquer <code>BLOQUÉ</code> pour la campagne manuelle ; conserver le scénario dans les tests automatisés isolés/CI.</td>
+<td>Transaction annulée intégralement : ni restitution partielle ni statut <code>ANNULEE</code> incohérent.</td>
+</tr>
+<tr>
+<td>TC09-08</td>
+<td>P1 M APP</td>
+<td>Annuler une commande multi-lignes comportant plusieurs produits distincts.</td>
+<td>Chaque produit voit son stock recrédité de sa quantité exacte une seule fois ; toutes les lignes restent lisibles sur le détail annulé.</td>
+</tr>
+<tr>
+<td>TC09-09</td>
+<td>P1 R/I APP</td>
+<td>Sur l'unique commande synthétique O1, lancer au même moment l'annulation depuis les sessions de test client C1 et administrateur A1 sur LineServ. N'utiliser aucune commande réelle ; si le contrôle nécessite un script/SQL ou perturbe d'autres usages, marquer <code>BLOQUÉ</code>.</td>
+<td>Une seule annulation aboutit, l'autre reçoit un refus propre ; le stock de test n'est recrédité <strong>qu'une seule fois</strong>.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-10-gerer-les-produits">UC-10 — Gérer les produits<a class="headerlink" href="#uc-10-gerer-les-produits" title="Permanent link">#</a></h2>
+<p><strong>Acteur :</strong> administrateur autorisé. <strong>But :</strong> créer, modifier, masquer et supprimer un produit avec confirmation explicite en deux étapes. <strong>Déclencheur :</strong> action dans <code>/admin/produits</code>. <strong>Préconditions :</strong> A1 connecté, K1 existante, référence et slug uniques ; produits fictifs. <strong>Nominal :</strong> créer, retrouver, modifier et vérifier le produit côté catalogue. <strong>Postcondition :</strong> fiche et visibilité cohérentes ; suppression en 2 étapes (physique si jamais commandé, masquage <code>visible = 0</code> si déjà référencé dans une commande). <strong>Références :</strong> EF-ADM-01/02, RB-02/07/09/14/16/19 ; <code>tests/php/features_test.php</code>, <code>tests/php/actions_destructrices_test.php</code>, <code>scripts/wasm-e2e.mjs</code>.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Priorité / méthode / base</th>
+<th>Actions et données</th>
+<th>Résultat attendu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TC10-01</td>
+<td>P0 M APP</td>
+<td>A1 crée P1 visible : HT 10,00 €, TVA 20 %, stock 5, K1.</td>
+<td>Produit créé ; TTC 12,00 € calculé ; visible immédiatement côté public.</td>
+</tr>
+<tr>
+<td>TC10-02</td>
+<td>P1 M APP</td>
+<td>Modifier nom et prix HT de P1 puis recharger.</td>
+<td>Modification persistée ; TTC recalculé ; commandes antérieures gardent leur prix unitaire figé.</td>
+</tr>
+<tr>
+<td>TC10-03</td>
+<td>P1 M APP</td>
+<td>Masquer P1 (<code>visible = 0</code>), vérifier côté visiteur, puis le rendre à nouveau visible.</td>
+<td>Absent du catalogue, de la recherche et des compteurs publics (fiche en 404) tant que masqué ; réapparaît après réactivation.</td>
+</tr>
+<tr>
+<td>TC10-04</td>
+<td>P1 M APP</td>
+<td>Créer un produit avec une référence ou un slug déjà utilisé.</td>
+<td>Doublon refusé par message clair en français ; aucune seconde fiche ni écrasement.</td>
+</tr>
+<tr>
+<td>TC10-05</td>
+<td>P0 M/R APP</td>
+<td>Essayer prix HT 0 ou négatif et stock négatif.</td>
+<td>Refus sans code technique brut ; aucun produit invalide créé.</td>
+</tr>
+<tr>
+<td>TC10-06</td>
+<td>P1 M APP</td>
+<td>Sur un produit de test <strong>jamais commandé</strong> : ouvrir <code>GET /admin/produits/{id}/suppression/confirmation</code> (recharger en GET pour vérifier l'absence d'effet), puis confirmer en POST (y compris JavaScript désactivé).</td>
+<td>La page GET n'altère rien ; le POST supprime définitivement le produit jamais commandé.</td>
+</tr>
+<tr>
+<td>TC10-07</td>
+<td>P0 M APP</td>
+<td>Sur un produit de test <strong>déjà commandé</strong> : ouvrir la page de confirmation puis valider la suppression en POST.</td>
+<td>La page annonce le masquage ; le produit passe à <code>visible = 0</code> sans être supprimé de la base, et les commandes historiques qui le référencent restent intégralement consultables.</td>
+</tr>
+<tr>
+<td>TC10-08</td>
+<td>P1 M APP</td>
+<td>Créer un produit visible et vérifier la section « Nouveautés » de l'accueil <code>/</code>.</td>
+<td>Il apparaît parmi les 4 derniers ajouts avec son horodatage UTC converti dans le fuseau actif.</td>
+</tr>
+<tr>
+<td>TC10-09</td>
+<td>P0 R SPEC</td>
+<td>Un client ou visiteur tente une route <code>/admin/produit*</code> ou un POST sans jeton CSRF.</td>
+<td>Redirection <code>/admin/connexion</code> hors session admin, ou refus 403 sans CSRF ; aucune modification produit.</td>
+</tr>
+<tr>
+<td>TC10-10</td>
+<td>P1 M/R SPEC</td>
+<td>Saisir un nom contenant <code>&lt;script&gt;</code> et une URL d'image externe (<code>https://…</code>) ou en traversée (<code>../</code>).</td>
+<td>Nom affiché littéralement échappé ; chemin d'image externe/traversant rejeté ou ramené au repli local, zéro requête sortante.</td>
+</tr>
+<tr>
+<td>TC10-11</td>
+<td>P1 I SPEC</td>
+<td>Deux créations simultanées de même référence <code>TEST-UC-…</code> via l'application LineServ, dans la fenêtre autorisée. Si la concurrence ne peut pas être testée sans script ou requête SQL, marquer <code>BLOQUÉ</code>.</td>
+<td>Au plus un produit de test créé ; intégrité préservée.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-11-gerer-les-categories">UC-11 — Gérer les catégories<a class="headerlink" href="#uc-11-gerer-les-categories" title="Permanent link">#</a></h2>
+<p><strong>Acteur :</strong> administrateur autorisé. <strong>But :</strong> créer, modifier et supprimer une catégorie sans écrasement silencieux de doublon et avec confirmation en deux étapes. <strong>Déclencheur :</strong> <code>/admin/categories</code>. <strong>Préconditions :</strong> A1 connecté, K0 vide, K1 contenant P1, noms de test uniques. <strong>Nominal :</strong> créer une catégorie de test, la modifier puis la supprimer après confirmation lorsqu'elle est vide. <strong>Postcondition :</strong> catégorie créée ou modifiée proprement ; doublon de nom/slug refusé ; suppression d'une catégorie occupée refusée avec aide à la réaffectation. <strong>Références :</strong> EF-ADM-03, RB-07/14 ; <code>tests/php/categorie_doublon_test.php</code>, <code>tests/php/actions_destructrices_test.php</code>, <code>scripts/ui-e2e-categories.mjs</code>, <code>scripts/wasm-e2e.mjs</code>.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Priorité / méthode / base</th>
+<th>Actions et données</th>
+<th>Résultat attendu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TC11-01</td>
+<td>P1 M APP</td>
+<td>Créer K0 avec nom unique et slug laissé vide.</td>
+<td>Catégorie créée ; slug normalisé généré automatiquement.</td>
+</tr>
+<tr>
+<td>TC11-02</td>
+<td>P1 M APP</td>
+<td>Modifier le nom et la description de K0.</td>
+<td>Valeurs mises à jour et retrouvées après rechargement ; aucun faux refus d'unicité sur K0 elle-même.</td>
+</tr>
+<tr>
+<td>TC11-03</td>
+<td>P1 M APP</td>
+<td>Cliquer « Supprimer » sur K0 vide (<code>GET /admin/categories/{id}/suppression/confirmation</code>), vérifier que le GET seul ne supprime rien, puis confirmer en POST.</td>
+<td>K0 est supprimée uniquement après le POST de confirmation ; autres catégories intactes.</td>
+</tr>
+<tr>
+<td>TC11-04</td>
+<td>P0 M APP</td>
+<td>Ouvrir la confirmation de suppression de K1 contenant P1 puis tenter de supprimer.</td>
+<td>Avertissement du nombre de produits rattachés et refus clair en français (avec lien vers <code>/admin/produits</code> pour réaffecter) ; K1 et P1 restent intacts.</td>
+</tr>
+<tr>
+<td>TC11-05</td>
+<td>P0 M APP</td>
+<td>Tenter de créer une nouvelle catégorie portant le même nom que K0 (y compris variante de casse ou d'accent) avec une autre description, ou de renommer une autre catégorie sur K0.</td>
+<td>Refus explicite (« Ce nom de catégorie existe déjà. » / « Ce slug de catégorie existe déjà. ») ; <strong>aucune fusion silencieuse</strong> et la description d'origine de K0 reste strictement inchangée.</td>
+</tr>
+<tr>
+<td>TC11-06</td>
+<td>P1 M/R SPEC</td>
+<td>Envoyer un nom vide ou un slug explicite déjà pris par une autre catégorie.</td>
+<td>Refus de validation clair ; aucune altération d'une catégorie existante.</td>
+</tr>
+<tr>
+<td>TC11-07</td>
+<td>P0 R SPEC</td>
+<td>Tenter une création, modification ou suppression sans session admin ou sans jeton CSRF.</td>
+<td>Refus ; catégories inchangées.</td>
+</tr>
+<tr>
+<td>TC11-08</td>
+<td>P1 M SPEC</td>
+<td>Saisir un nom ou une description contenant du HTML dans une catégorie de recette.</td>
+<td>Texte échappé partout (admin, catalogue, filtres) ; aucun script exécuté.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-12-gerer-les-stocks">UC-12 — Gérer les stocks<a class="headerlink" href="#uc-12-gerer-les-stocks" title="Permanent link">#</a></h2>
+<p><strong>Acteur :</strong> administrateur autorisé. <strong>But :</strong> ajuster un stock avec motif obligatoire (mode additif par défaut non destructif) et consulter les alertes. <strong>Déclencheur :</strong> <code>/admin/stocks</code>. <strong>Préconditions :</strong> A1 connecté, P1 stock 5 et seuil d'alerte connu, P2 stock 0 ; données isolées. <strong>Nominal :</strong> vérifier le mode sélectionné par défaut, ajuster P1 avec motif et contrôler la liste et les filtres d'alerte. <strong>Postcondition :</strong> stock modifié uniquement pour le produit visé ; aucun stock négatif ni code technique brut. <strong>Références :</strong> EF-ADM-04/05, RB-03/17/18, ENF-13 ; <code>tests/php/stocks_defaut_test.php</code>, <code>tests/php/run_tests.php</code>, <code>scripts/ui-e2e-stocks.mjs</code>, <code>scripts/wasm-e2e.mjs</code>.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Priorité / méthode / base</th>
+<th>Actions et données</th>
+<th>Résultat attendu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TC12-01</td>
+<td>P0 M APP</td>
+<td>Ouvrir <code>/admin/stocks</code>, vérifier l'option sélectionnée par défaut sur la ligne P1 (stock 5), saisir <code>+3</code> et un motif de réception sans changer le sélecteur, puis valider.</td>
+<td>Le mode sélectionné par défaut est <strong>« Ajouter / retirer » (<code>DELTA</code>)</strong> et non « Fixer à » (évite d'écraser accidentellement le stock) ; P1 passe de 5 à <strong>8</strong> ; autres stocks inchangés.</td>
+</tr>
+<tr>
+<td>TC12-02</td>
+<td>P1 M APP</td>
+<td>Sur P1 (stock 8) : tester <code>DELTA</code> avec <code>-3</code> et motif, puis choisir explicitement « Fixer à » (<code>SET</code>) avec <code>10</code> et motif d'inventaire.</td>
+<td>P1 passe à 5 puis à 10 exactement ; confirmation lisible.</td>
+</tr>
+<tr>
+<td>TC12-03</td>
+<td>P0 M/R APP</td>
+<td>Sur P1 (stock 5) : soumettre <code>DELTA</code> <code>-6</code> puis <code>SET</code> <code>-1</code>.</td>
+<td>Refus traduit en français (« Le stock ne peut pas devenir négatif. », sans code <code>RB03_…</code>) ; P1 reste à 5.</td>
+</tr>
+<tr>
+<td>TC12-04</td>
+<td>P1 M APP</td>
+<td>Soumettre un ajustement avec le champ motif vide ou composé d'espaces.</td>
+<td>Refus navigateur ou serveur ; stock inchangé.</td>
+</tr>
+<tr>
+<td>TC12-05</td>
+<td>P1 M APP</td>
+<td>Filtrer <code>/admin/stocks?etat=alerte</code>, <code>rupture</code>, <code>tres_bas</code> puis <code>ok</code>.</td>
+<td>P2 remonte en <code>RUPTURE</code> ; les articles ≤ seuil remontent en <code>TRES_BAS</code> ; cohérence exacte entre vue SQL et calcul applicatif.</td>
+</tr>
+<tr>
+<td>TC12-06</td>
+<td>P1 M SPEC</td>
+<td>Vérifier la trace du mouvement et de son motif dans le journal d'audit disponible.</td>
+<td>Mouvement et motif retrouvés dans la trace d'audit ; noter un écart si le motif n'apparaît pas sur le pilote testé.</td>
+</tr>
+<tr>
+<td>TC12-07</td>
+<td>P0 R SPEC</td>
+<td>Tenter <code>POST /admin/stocks</code> sans session administrateur ou sans jeton CSRF.</td>
+<td>Refus ; aucun changement de stock.</td>
+</tr>
+<tr>
+<td>TC12-08</td>
+<td>P0 I SPEC</td>
+<td>Sur le seul produit de test P4, lancer une action d'ajustement et une validation de commande concurrentes depuis deux sessions LineServ, dans la fenêtre autorisée ; ne pas utiliser de charge automatisée.</td>
+<td>Aucun stock négatif ni mouvement perdu. Le parcours manuel porte uniquement sur les données synthétiques de la base de production.</td>
+</tr>
+<tr>
+<td>TC12-09</td>
+<td>P2 M SPEC</td>
+<td>Avec seuil d'alerte = 3, tester successivement stocks 0, 2, 3 et 4 (et vérifier le refus de −1).</td>
+<td>−1 refusé ; 0 classé <code>RUPTURE</code> ; 2 et 3 classés <code>TRES_BAS</code> ; 4 classé disponible (<code>OK</code>).</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-13-consulter-et-filtrer-les-commandes-cote-administration">UC-13 — Consulter et filtrer les commandes côté administration<a class="headerlink" href="#uc-13-consulter-et-filtrer-les-commandes-cote-administration" title="Permanent link">#</a></h2>
+<p><strong>Acteur :</strong> administrateur <code>SUPER</code> ou <code>GESTIONNAIRE</code> selon droits. <strong>But :</strong> consulter commandes, détails, historique, indicateurs et paramètres en tenant compte du fuseau horaire choisi. <strong>Déclencheur :</strong> ouverture de <code>/admin/commandes</code>, <code>/admin</code>, <code>/admin/equipe</code> ou <code>/admin/parametres</code>. <strong>Préconditions :</strong> A1 (<code>SUPER</code>), O1 et O2 avec statuts/dates connus ; G1 (<code>GESTIONNAIRE</code>) si disponible. <strong>Nominal :</strong> lister, filtrer par critères et dates, ouvrir un détail puis consulter le tableau de bord. <strong>Postcondition :</strong> aucune modification métier lors des consultations. <strong>Références :</strong> EF-ADM-06/08/09, RB-10/11/13/15 ; <code>tests/php/heure_test.php</code>, <code>scripts/ui-e2e-heure.mjs</code>, <code>scripts/wasm-e2e.mjs</code>.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Priorité / méthode / base</th>
+<th>Actions et données</th>
+<th>Résultat attendu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TC13-01</td>
+<td>P0 M APP</td>
+<td>A1 ouvre <code>/admin/commandes</code>.</td>
+<td>Liste des commandes avec numéro, date locale (issue de l'UTC), client, badge de statut et montant aligné à droite.</td>
+</tr>
+<tr>
+<td>TC13-02</td>
+<td>P1 M APP</td>
+<td>Filtrer par statut, recherche client/numéro et montant minimum connu.</td>
+<td>Seules les commandes correspondantes apparaissent ; le total cumulé affiché correspond aux résultats filtrés.</td>
+</tr>
+<tr>
+<td>TC13-03</td>
+<td>P1 M APP</td>
+<td>Filtrer par période <code>du</code> / <code>au</code> incluant O2 (avec JavaScript activé puis désactivé).</td>
+<td>Les champs cachés <code>debut_utc</code> / <code>fin_utc</code> transmettent les bornes exactes du jour local choisi dans <code>/preferences</code> converties en UTC (et se recalculent si une URL signet porte d'anciennes bornes) ; sans JS, repli propre sur <code>Europe/Paris</code>.</td>
+</tr>
+<tr>
+<td>TC13-04</td>
+<td>P1 M APP</td>
+<td>Saisir un critère sans aucune correspondance.</td>
+<td>État vide clair sans erreur ni fuite technique.</td>
+</tr>
+<tr>
+<td>TC13-05</td>
+<td>P1 M APP</td>
+<td>Ouvrir <code>/admin/commandes/{id}</code> sur O2 puis sur une commande annulée.</td>
+<td>Lignes, quantités, prix figés, port, statut, piste d'audit complète (auteur, rôle, date locale, commentaire) et, si annulée, <code>Total avant annulation</code> + lignes préservées.</td>
+</tr>
+<tr>
+<td>TC13-06</td>
+<td>P1 M APP</td>
+<td>Ouvrir <code>/admin</code> avec un jeu de recette connu.</td>
+<td>Chiffre d'affaires par statut, panier moyen, top 5 produits et indicateurs « du jour » (bornés selon <code>jour_local</code> du fuseau actif) cohérents avec les commandes non annulées.</td>
+</tr>
+<tr>
+<td>TC13-07</td>
+<td>P0 M/R APP</td>
+<td>Visiteur non connecté puis client C1 tentent <code>/admin</code>, <code>/admin/commandes</code> et <code>/admin/commandes/1</code>.</td>
+<td>Redirection vers <code>/admin/connexion</code> sans fuite de données administratives.</td>
+</tr>
+<tr>
+<td>TC13-08</td>
+<td>P1 M APP</td>
+<td>Demander <code>/admin/commandes/999999</code> en tant que A1.</td>
+<td>Réponse 404 générique propre, sans erreur technique.</td>
+</tr>
+<tr>
+<td>TC13-09</td>
+<td>P0 M/R APP</td>
+<td>Connecter G1 (<code>GESTIONNAIRE</code>) et tester <code>GET /admin/equipe</code> puis <code>POST /admin/equipe</code> (avec CSRF valide) ; contrôler aussi <code>/admin/parametres</code> avec A1.</td>
+<td><code>G1</code> reçoit un <strong>HTTP 403 réel</strong> (page « Accès refusé » avec lien vers <code>/admin</code>) sur <code>/admin/equipe</code> ; dans <code>/admin/parametres</code>, A1 voit <code>frais_port</code>, <code>franchise_port</code>, <code>tva_defaut</code> et <code>conservation_compte</code> (<code>24</code> mois par défaut, borné de 1 à 120).</td>
+</tr>
+<tr>
+<td>TC13-10</td>
+<td>P2 M APP</td>
+<td>Sur <code>/admin/commandes</code>, saisir une période inversée (<code>du &gt; au</code>) puis une date invalide.</td>
+<td>Message de demande de correction lisible sans erreur 500 ni trace SQL.</td>
+</tr>
+<tr>
+<td>TC13-11</td>
+<td>P1 M/R APP</td>
+<td>Sur LineServ, basculer le fuseau dans <code>/preferences</code> et filtrer les commandes de test sur <code>/admin/commandes</code> et <code>/admin</code>. Ne pas éditer directement un horodatage de production pour fabriquer <code>22:30:00Z</code> ; si aucune commande synthétique appropriée n'existe, marquer le cas <code>BLOQUÉ</code>.</td>
+<td>La commande synthétique est rattachée au jour local attendu sous <code>Europe/Paris</code> ou <code>America/New_York</code>, tandis que son horodatage stocké reste invariant en UTC.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="uc-14-modifier-le-statut-dune-commande">UC-14 — Modifier le statut d'une commande<a class="headerlink" href="#uc-14-modifier-le-statut-dune-commande" title="Permanent link">#</a></h2>
+<p><strong>Acteur :</strong> administrateur autorisé. <strong>But :</strong> faire évoluer le statut d'une commande selon la matrice <code>RB-11</code>, avec parcours dédié de confirmation d'annulation (distinguant commandes avant expédition et commandes déjà expédiées) et piste d'audit complète. <strong>Déclencheur :</strong> formulaire du détail <code>/admin/commandes/{id}</code>. <strong>Préconditions :</strong> A1 connecté ; O2 (pour transitions nominales), une commande non expédiée distincte (pour <code>TC14-06</code>) et O3 <code>EXPEDIEE</code> (pour <code>TC14-11</code>) avec stocks initiaux relevés. <strong>Nominal :</strong> choisir un statut autorisé et valider. <strong>Postcondition :</strong> transition valide, historique enrichi d'une entrée unique et effets de stock exacts. <strong>Références :</strong> EF-ADM-07, RB-09/11/13/15/18 ; <code>tests/php/actions_destructrices_test.php</code>, <code>tests/phpunit/JsonStoreTest.php</code>, <code>tests/php/sql_integration.php</code>, <code>scripts/wasm-e2e.mjs</code>.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Priorité / méthode / base</th>
+<th>Actions et données</th>
+<th>Résultat attendu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TC14-01</td>
+<td>P0 M APP</td>
+<td>Sur O2 <code>PAYEE</code>, sélectionner <code>EXPEDIEE</code>, valider puis relire l'historique.</td>
+<td>Statut <code>EXPEDIEE</code> ; nouvelle trace avec auteur <code>ADMIN</code>, identifiant et horodatage ; montants et stocks inchangés.</td>
+</tr>
+<tr>
+<td>TC14-02</td>
+<td>P1 M APP</td>
+<td>Sur une commande <code>EXPEDIEE</code>, sélectionner <code>LIVREE</code> et valider.</td>
+<td>Statut <code>LIVREE</code> ; état terminal atteint, le formulaire ne propose plus aucune transition ultérieure.</td>
+</tr>
+<tr>
+<td>TC14-03</td>
+<td>P0 R APP</td>
+<td>Poster hors interface une transition interdite (ex. <code>EXPEDIEE</code> → <code>BROUILLON</code> ou <code>LIVREE</code> → <code>ANNULEE</code>).</td>
+<td>Refus humain en français (sans code <code>RB11_…</code> brut) ; statut et historique strictement inchangés.</td>
+</tr>
+<tr>
+<td>TC14-04</td>
+<td>P1 R APP</td>
+<td>Rejouer une demande vers le statut déjà actif avec jeton CSRF valide.</td>
+<td>Opération idempotente : statut inchangé et aucune ligne d'historique dupliquée.</td>
+</tr>
+<tr>
+<td>TC14-05</td>
+<td>P1 M APP</td>
+<td>Demander <code>ANNULEE</code> depuis <code>/admin/commandes/{id}</code> avec un commentaire vide.</td>
+<td>Refus explicite exigeant un motif d'annulation ; statut et stock inchangés.</td>
+</tr>
+<tr>
+<td>TC14-06</td>
+<td>P0 M APP</td>
+<td>Sur une commande <strong>non expédiée</strong> (<code>BROUILLON</code>, <code>EN_PREPARATION</code> ou <code>PAYEE</code>), choisir <code>ANNULEE</code> avec un motif et soumettre une 1re fois (même JavaScript coupé), tester « Non, revenir à la commande », puis recommencer et valider l'écran de confirmation (<code>confirmer_annulation=1</code>).</td>
+<td>Le 1er envoi affiche la page « Confirmer l'annulation » <strong>sans modifier la base</strong> ; « Non » laisse la commande intacte ; la confirmation passe le statut à <code>ANNULEE</code>, <strong>restitue le stock exactement une fois</strong>, conserve les lignes, mémorise <code>Total avant annulation</code>, solde total et port à <code>0,00 €</code> et trace l'administrateur + son motif.</td>
+</tr>
+<tr>
+<td>TC14-07</td>
+<td>P0 R SPEC</td>
+<td>Visiteur, client C1 ou requête sans jeton CSRF tente <code>POST /admin/commandes/{id}/statut</code>.</td>
+<td>Refus (redirection <code>/admin/connexion</code> ou 403 CSRF) ; aucun changement ni ligne d'historique.</td>
+</tr>
+<tr>
+<td>TC14-08</td>
+<td>P1 R SPEC</td>
+<td>Cibler un identifiant de commande inexistant ou une valeur de statut inconnue.</td>
+<td>Refus propre sans erreur SQL ni création parasite.</td>
+</tr>
+<tr>
+<td>TC14-09</td>
+<td>P1 I SPEC</td>
+<td>Tester dans l'interface LineServ les transitions accessibles, chacune sur une commande synthétique distincte. Ne pas modifier un statut par SQL ; les couples non testables dans l'interface sont <code>BLOQUÉ</code> en manuel et restent vérifiés en CI.</td>
+<td>Transitions <code>A</code> acceptées, <code>X</code> refusées lorsque l'interface permet de les soumettre, <code>I</code> sans doublon d'historique ; résultat consigné par couple <code>TC14-09/DE→VERS</code>.</td>
+</tr>
+<tr>
+<td>TC14-10</td>
+<td>P0 I SPEC</td>
+<td>Ne pas simuler d'échec de stockage sur la base de production LineServ. Marquer <code>BLOQUÉ</code> pour la campagne manuelle ; conserver le scénario dans les tests automatisés isolés/CI.</td>
+<td>Rollback complet : ni statut partiellement modifié ni trace orpheline ; aucun secret divulgué.</td>
+</tr>
+<tr>
+<td>TC14-11</td>
+<td>P0 M APP</td>
+<td>Sur O3 déjà au statut <code>EXPEDIEE</code> : vérifier côté client l'absence d'annulation, puis côté A1 choisir <code>ANNULEE</code> avec motif, lire l'avertissement de l'écran de confirmation (même sans JS) et confirmer.</td>
+<td>L'écran avertit explicitement que <strong>la commande étant expédiée, le stock ne sera pas automatiquement restitué</strong> ; après confirmation, O3 passe à <code>ANNULEE</code>, total et port sont soldés (<code>Total avant annulation</code> et lignes conservés), la trace <code>ADMIN</code> est écrite et <strong>le stock produit reste inchangé</strong> (retour physique éventuel à saisir dans <code>/admin/stocks</code>).</td>
+</tr>
+<tr>
+<td>TC14-12</td>
+<td>P1 I APP</td>
+<td>Ne pas appeler directement <code>sp_update_order_status</code> contre la base de production. Marquer <code>BLOQUÉ</code> pour la recette manuelle LineServ ; le test SQL de la garde <code>ANNULATION_VIA_PARCOURS_DEDIE</code> reste dans la CI automatisée.</td>
+<td>Refus par la garde <code>ANNULATION_VIA_PARCOURS_DEDIE</code> ; statut, montants et stock demeurent intacts.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="matrice-des-36-couples-de-statuts-oracle-applicatif-a-verifier">Matrice des 36 couples de statuts — oracle applicatif à vérifier<a class="headerlink" href="#matrice-des-36-couples-de-statuts-oracle-applicatif-a-verifier" title="Permanent link">#</a></h3>
+<p><code>A</code> : transition autorisée ; <code>X</code> : interdite ; <code>I</code> : même statut, opération idempotente attendue par le repository (le formulaire ne propose pas forcément ce cas). Les lignes représentent l'état <strong>avant</strong>, les colonnes l'état <strong>demandé</strong>. <code>EXPEDIEE → ANNULEE</code> est une possibilité réservée à l'<strong>administrateur</strong> via le parcours dédié de confirmation (sans restitution automatique du stock) ; un client ne peut jamais annuler une commande expédiée. Les annulations avant expédition (<code>BROUILLON</code>, <code>EN_PREPARATION</code>, <code>PAYEE</code> → <code>ANNULEE</code>) doivent restituer le stock une seule fois tout en conservant les lignes en historique.</p>
+<table>
+<thead>
+<tr>
+<th>Origine → cible</th>
+<th style="text-align: right;">BROUILLON</th>
+<th style="text-align: right;">EN_PREPARATION</th>
+<th style="text-align: right;">PAYEE</th>
+<th style="text-align: right;">EXPEDIEE</th>
+<th style="text-align: right;">LIVREE</th>
+<th style="text-align: right;">ANNULEE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BROUILLON</td>
+<td style="text-align: right;">I</td>
+<td style="text-align: right;">A</td>
+<td style="text-align: right;">A</td>
+<td style="text-align: right;">X</td>
+<td style="text-align: right;">X</td>
+<td style="text-align: right;">A</td>
+</tr>
+<tr>
+<td>EN_PREPARATION</td>
+<td style="text-align: right;">X</td>
+<td style="text-align: right;">I</td>
+<td style="text-align: right;">A</td>
+<td style="text-align: right;">A</td>
+<td style="text-align: right;">X</td>
+<td style="text-align: right;">A</td>
+</tr>
+<tr>
+<td>PAYEE</td>
+<td style="text-align: right;">X</td>
+<td style="text-align: right;">X</td>
+<td style="text-align: right;">I</td>
+<td style="text-align: right;">A</td>
+<td style="text-align: right;">X</td>
+<td style="text-align: right;">A</td>
+</tr>
+<tr>
+<td>EXPEDIEE</td>
+<td style="text-align: right;">X</td>
+<td style="text-align: right;">X</td>
+<td style="text-align: right;">X</td>
+<td style="text-align: right;">I</td>
+<td style="text-align: right;">A</td>
+<td style="text-align: right;">A</td>
+</tr>
+<tr>
+<td>LIVREE</td>
+<td style="text-align: right;">X</td>
+<td style="text-align: right;">X</td>
+<td style="text-align: right;">X</td>
+<td style="text-align: right;">X</td>
+<td style="text-align: right;">I</td>
+<td style="text-align: right;">X</td>
+</tr>
+<tr>
+<td>ANNULEE</td>
+<td style="text-align: right;">X</td>
+<td style="text-align: right;">X</td>
+<td style="text-align: right;">X</td>
+<td style="text-align: right;">X</td>
+<td style="text-align: right;">X</td>
+<td style="text-align: right;">I</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Exécution :</strong> attribuer un résultat distinct aux couples réellement testés depuis l'interface LineServ, sur des commandes synthétiques ; les couples qui exigent une requête SQL directe ou un test de repository sont <code>BLOQUÉ</code> dans la campagne de production. Toute annulation testée en interface nécessite le commentaire exigé par le contrôleur et le passage par le parcours d'annulation dédié. La comparaison exhaustive des matrices JSON (<code>app/Model/Data/Triggers.php</code>) et SQL (<code>sql/02_minishop_procedures.sql</code>, <code>sql/03_minishop_triggers.sql</code>) reste automatisée en CI ; ne pas la rejouer manuellement sur la base de production.</p>
+<h2 id="15-scenarios-transversaux-securite-preferences-fren-fuseau-horaire-mentions-legales-et-conservation">15. Scénarios transversaux — sécurité, préférences FR/EN, fuseau horaire, mentions légales et conservation<a class="headerlink" href="#15-scenarios-transversaux-securite-preferences-fren-fuseau-horaire-mentions-legales-et-conservation" title="Permanent link">#</a></h2>
+<p>Ces scénarios complètent les 14 UC sans créer artificiellement de nouveaux numéros d'UC (le responsive multi-largeurs est exclu de cette campagne manuelle et vérifié par les suites automatisées). Les tests <code>I</code> ou <code>R</code> de la campagne LineServ doivent rester des actions applicatives contrôlées sur des données synthétiques avec autorisation ; s'ils exigent une base/processus isolé, du SQL direct ou une panne forcée, les marquer <code>BLOQUÉ</code> plutôt que d'improviser. Références associées : <code>docs/12-information-juridique.md</code>, <code>docs/18-politique-conservation.md</code>, <code>tests/node/preferences_test.mjs</code>, <code>tests/php/mentions_legales_test.php</code>, <code>tests/php/retention_comptes_test.php</code>, <code>tests/python/test_retention_cli.py</code>.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Priorité / méthode / base</th>
+<th>Actions et données</th>
+<th>Résultat attendu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TCX-01</td>
+<td>P0 M APP</td>
+<td>Sans session puis connecté comme C1, ouvrir <code>/admin</code>, <code>/admin/produits</code>, <code>/admin/commandes</code>, <code>/admin/stocks</code>, <code>/admin/equipe</code> et <code>/admin/parametres</code>.</td>
+<td>Redirection vers <code>/admin/connexion</code> sans aucune information d'administration divulguée.</td>
+</tr>
+<tr>
+<td>TCX-02</td>
+<td>P0 R SPEC</td>
+<td>Sur les actions mutatives représentatives (panier HTML et <code>/api/panier/*</code>, commande, compte, annulation, back-office), retirer ou falsifier le jeton CSRF.</td>
+<td>Chaque mutation est refusée (403) avec message humain explicite ; état avant/après strictement identique.</td>
+</tr>
+<tr>
+<td>TCX-03</td>
+<td>P0 R SPEC</td>
+<td>Inspecter les en-têtes HTTP (<code>Content-Security-Policy</code>, <code>X-Frame-Options</code>, <code>X-Content-Type-Options</code>, <code>Referrer-Policy</code>) et les cookies de session au démarrage, à la connexion et à la déconnexion, sans publier leur valeur.</td>
+<td>CSP stricte (<code>default-src 'none'</code>, <code>script-src 'self'</code>, <code>style-src 'self'</code>, <code>connect-src 'self'</code>, <code>frame-ancestors 'none'</code>), zéro script/style en ligne ; cookie de session <code>HttpOnly</code>, <code>SameSite=Lax</code> (et <code>Secure</code> en HTTPS) renouvelé à la connexion.</td>
+</tr>
+<tr>
+<td>TCX-04</td>
+<td>P0 M/R SPEC</td>
+<td>Saisir du HTML ou des guillemets dans recherche, nom de produit, catégorie, adresse et formulaire de contact de test.</td>
+<td>Aucune balise exécutable ; valeurs affichées littéralement échappées partout.</td>
+</tr>
+<tr>
+<td>TCX-05</td>
+<td>P0 R SPEC</td>
+<td>Essayer une consultation ou une action sur un identifiant appartenant à C2 depuis la session de C1.</td>
+<td>Aucune divulgation ni modification des données de C2 (réponse 404 sur les commandes d'autrui).</td>
+</tr>
+<tr>
+<td>TCX-06</td>
+<td>P1 M APP</td>
+<td>Depuis le pied de page et la navigation, ouvrir <code>/a-propos</code>, <code>/aide</code>, <code>/contact</code>, <code>/mentions-legales</code> (et <code>/mentions</code>), <code>/cgv</code>, <code>/cgu</code>, <code>/livraison</code>, <code>/retractation</code>, <code>/garanties</code>, <code>/confidentialite</code>, <code>/cookies</code> et <code>/preferences</code>.</td>
+<td>Toutes les pages répondent en HTTP 200 sans session requise, avec titres cohérents et aucun lien interne en 404.</td>
+</tr>
+<tr>
+<td>TCX-07</td>
+<td>P0 M APP</td>
+<td>Lire <code>/retractation</code>, <code>/cgv</code>, l'écran d'annulation de commande et <code>/contact</code>.</td>
+<td>Annonce loyale de maquette scolaire : ni paiement réel, ni livraison, ni fonction légale de rétractation en ligne avec accusé durable ; formulaire de contact enregistré localement à titre de démonstration sans promesse d'envoi d'e-mail ni de délai de réponse.</td>
+</tr>
+<tr>
+<td>TCX-08</td>
+<td>P0 M SPEC</td>
+<td>Audit de préparation à une éventuelle vente réelle : chercher une fonction de rétractation en ligne (art. L.221-21-1) et son accusé sur support durable.</td>
+<td><strong>NON CONFORME / BLOQUÉ pour une boutique commerciale réelle</strong> tant que non implémentés ; documenté honnêtement dans <a href="12-information-juridique.html">12-information-juridique.md</a> pour la maquette scolaire.</td>
+</tr>
+<tr>
+<td>TCX-09</td>
+<td>P1 M APP</td>
+<td>Contrôler <code>/cookies</code> et l'onglet Application/Stockage du navigateur sur un parcours complet.</td>
+<td>Seul le cookie de session technique nécessaire (<code>HttpOnly</code>) et, après action sur <code>/preferences</code>, l'entrée <code>localStorage</code> <code>minishop.preferences.v1</code> sont présents ; aucun cookie publicitaire, analytique ni <code>sessionStorage</code>, ni <code>document.cookie</code> manipulé en JS.</td>
+</tr>
+<tr>
+<td>TCX-10</td>
+<td>P1 M/I SPEC</td>
+<td>Dans le navigateur réel et sur l'hébergement cible (LineServ), inventorier cookies, stockage et requêtes réseau dès le premier chargement.</td>
+<td>Zéro requête vers un CDN, police distante ou service tiers ; vérifier que l'hébergement réel n'injecte pas de traceur externe supplémentaire.</td>
+</tr>
+<tr>
+<td>TCX-11</td>
+<td>P1 M APP</td>
+<td>Envoyer un message fictif valide via <code>/contact</code> puis lire l'accusé affiché.</td>
+<td>Succès affiché uniquement après écriture effective dans le journal local ; rappel explicite qu'aucun courriel n'est expédié.</td>
+</tr>
+<tr>
+<td>TCX-12</td>
+<td>P1 I APP</td>
+<td>Ne pas modifier les permissions du serveur de production LineServ. Marquer <code>BLOQUÉ</code> dans la campagne manuelle ; vérifier ce scénario uniquement dans les tests automatisés ou un environnement de développement autorisé.</td>
+<td>L'échec est signalé proprement à l'utilisateur ; aucun faux message de confirmation n'est affiché.</td>
+</tr>
+<tr>
+<td>TCX-13</td>
+<td>P1 M SPEC</td>
+<td>Parcourir menus, skip-link, formulaires, filtres, panier, confirmations et préférences au clavier seul (<code>Tab</code>, <code>Maj+Tab</code>, <code>Entrée</code>, <code>Espace</code>) puis activer la réduction des animations (<code>prefers-reduced-motion</code>).</td>
+<td>Focus visible partout, ordre logique, accès aux actions et messages, animations réduites respectées ; consigner toute gêne observée sans conclure seul à une certification WCAG/RGAA.</td>
+</tr>
+<tr>
+<td>TCX-14</td>
+<td>P1 I SPEC</td>
+<td>Ne pas interrompre le service de base de données de production. Marquer <code>BLOQUÉ</code> pour LineServ ; conserver l'essai de panne/retour du magasin dans l'environnement automatisé isolé/CI.</td>
+<td>Page d'erreur générique sans secret (et sans affirmer faussement sur la 500 qu'aucune donnée n'a été modifiée), aucune écriture partielle, reprise propre au retour du service.</td>
+</tr>
+<tr>
+<td>TCX-15</td>
+<td>P1 I SPEC</td>
+<td>Ne pas lancer les scripts de charge ou de volumétrie contre la production LineServ dans cette campagne. Marquer <code>BLOQUÉ</code> ; toute campagne de performance séparée exige une autorisation écrite de l'hébergeur, une fenêtre dédiée et un plan d'arrêt.</td>
+<td>Comparer aux seuils du cahier des charges ; joindre conditions matérielles et mesures réelles. <strong>Aucune mesure de serveur de production n'est inventée ici.</strong></td>
+</tr>
+<tr>
+<td>TCX-16</td>
+<td>P0 I SPEC</td>
+<td>Vérifier l'absence ou le blocage de <code>public/mesurer.php</code> et <code>public/gen_volumes.php</code> lors d'un déploiement sur serveur partagé (LineServ).</td>
+<td>Outils de développement exclus du dossier web public (cf. <a href="14-guide-lineserv.html">14-guide-lineserv.md</a>) ; ne pas se reposer sur la seule garde d'hôte local.</td>
+</tr>
+<tr>
+<td>TCX-17</td>
+<td>P1 I APP</td>
+<td>Ne pas exécuter <code>scripts/purger_comptes.php</code>, <code>scripts/nettoyage_donnees.php</code> ni <code>scripts/archive_restreinte.php</code> contre la base de production LineServ, même avec <code>--executer</code>. Marquer <code>BLOQUÉ</code> pour la campagne manuelle ; leur simulation et exécution contrôlée restent hors de la recette de production et doivent être validées par les tests automatisés/CI.</td>
+<td>Les critères de conservation restent ceux du plan : comptes inactifs ≥ 24 mois + 2 jours sans commande, contacts 12 mois, journaux 6 mois et sauvegardes dédiées 30 jours (au moins les 2 plus récentes) ; <code>archive_restreinte.php</code> ne modifie pas la source. Aucun <code>cron</code> automatique n'est installé par défaut.</td>
+</tr>
+<tr>
+<td>TCX-18</td>
+<td>P0 M APP</td>
+<td>Ouvrir <code>/mentions-legales</code> (et <code>/mentions</code>) ainsi que <code>/cgu</code> en français puis en anglais.</td>
+<td>Mentions étudiantes complètes et exactes : édition non professionnelle dans le cadre de la SAE S3.02 (BUT Informatique 2e année, IUT Nice Côte d'Azur — Université Côte d'Azur) par <strong>Johan Polsinelli</strong> (<code>johan.polsinelli@etu.unice.fr</code>) et <strong>Chahd Gouiaa</strong> (<code>chahd.gouiaa@etu.unice.fr</code> / <code>chahd.gouiaa@etu.univ-cotedazur.fr</code>), co-responsabilité de la publication, dispense de domicile/téléphone personnel au titre de l'article 6, III, 2 de la LCEN, et hébergeur pédagogique visé (<code>linserv-info-01.campus.unice.fr</code>, 28 avenue Valrose, 06103 Nice Cedex 2, <code>+33 (0)4 89 15 00 00</code>).</td>
+</tr>
+<tr>
+<td>TCX-19</td>
+<td>P0 M APP</td>
+<td>Ouvrir <code>/preferences</code> sans être connecté : tester le choix manuel de langue (<code>Français</code> / <code>English</code>) et de fuseau IANA, vérifier le repli par défaut (<code>Français</code> → <code>Europe/Paris</code>, <code>English</code> → <code>America/New_York</code>), cliquer « Réinitialiser », puis tester avec <code>localStorage</code> bloqué et avec JavaScript désactivé.</td>
+<td>Préférences enregistrées uniquement dans <code>localStorage</code> (<code>minishop.preferences.v1</code>), sans compte requis ni cookie de suivi ; « Réinitialiser » vide le stockage local et précise que l'autorisation navigateur de géolocalisation se retire dans les paramètres du navigateur ; comportement dégradé propre sans erreur bloquante si <code>localStorage</code> ou JS est désactivé.</td>
+</tr>
+<tr>
+<td>TCX-20</td>
+<td>P1 M APP</td>
+<td>Sur <code>/preferences</code> avec l'onglet Réseau ouvert : cliquer « Utiliser ma position » en refusant d'abord la permission navigateur, puis en l'autorisant (ou via l'émulateur de capteurs DevTools).</td>
+<td>En cas de refus : message explicite et fuseau précédent conservé. En cas d'accord : calcul <strong>100 % local</strong> du fuseau (<code>public/js/tz-lookup.js</code> CC0) avec <strong>zéro requête réseau externe</strong>, <strong>zéro coordonnée GPS transmise au serveur ou stockée dans <code>localStorage</code></strong>, affichage du fuseau estimé avec mention de marge d'approximation près des frontières et possibilité de correction manuelle.</td>
+</tr>
+<tr>
+<td>TCX-21</td>
+<td>P0 M APP</td>
+<td>Basculer en <code>English</code> sur <code>/preferences</code>, parcourir sur ordinateur les vues publiques, les 12 pages d'information/légales, le panier AJAX (<code>Adding…</code>, <code>Cart, 1 item</code>, refus de stock traduit) et l'espace client, puis revenir en <code>Français</code>.</td>
+<td>Attribut <code>&lt;html lang="en"&gt;</code> et <code>&lt;title&gt;</code> synchronisés ; interface et erreurs métier intégralement traduites en anglais sans code technique (seuls les noms/descriptions libres de produits issus de la base restent dans leur langue d'origine) ; retour <code>EN → FR</code> restaure le français sans perte des saisies de formulaire.</td>
+</tr>
+<tr>
+<td>TCX-22</td>
+<td>P0 M APP</td>
+<td>Connecté en administrateur avec la langue <code>English</code>, parcourir sur ordinateur les pages <code>/admin*</code> (tableau de bord, produits, catégories, stocks, commandes, confirmation d'annulation, équipe, paramètres), puis repasser en <code>Français</code>.</td>
+<td>Tous les titres, filtres, badges de statut, boutons, messages flash et écrans de confirmation de l'administration sont traduits en anglais, puis reviennent fidèlement en français.</td>
+</tr>
+<tr>
+<td>TCX-23</td>
+<td>P1 M APP</td>
+<td>Inspecter les balises <code>&lt;time datetime="…Z"&gt;</code> sur l'accueil, <code>/mes-commandes</code>, <code>/admin/commandes</code> et l'historique des statuts d'une commande en changeant de fuseau dans <code>/preferences</code> (dont dates d'hiver UTC+1 et d'été UTC+2), puis JavaScript coupé.</td>
+<td>L'attribut <code>datetime</code> conserve toujours l'horodatage UTC canonique (<code>Z</code>), l'affichage humain s'adapte immédiatement au fuseau choisi (avec bascule heure d'hiver / heure d'été exacte), et le rendu serveur sans JavaScript affiche proprement en <code>Europe/Paris</code>.</td>
+</tr>
+<tr>
+<td>TCX-24</td>
+<td>P1 M/I SPEC</td>
+<td>Vérifier <code>/confidentialite</code> sur LineServ puis, si le journal privé est accessible avec autorisation, créer/modifier uniquement un client et un administrateur fictifs de test et contrôler les traces correspondantes. Ne pas ouvrir ni copier des journaux contenant des données réelles.</td>
+<td><code>/confidentialite</code> expose clairement le périmètre de maquette scolaire, le stockage local des préférences et les durées de conservation ; les nouvelles traces liées aux données de test ne contiennent ni nom, ni e-mail, ni adresse, ni <code>mot_de_passe_hash</code>.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="16-synthese-vierge-de-campagne">16. Synthèse vierge de campagne<a class="headerlink" href="#16-synthese-vierge-de-campagne" title="Permanent link">#</a></h2>
+<p>Ces lignes ne remplacent pas le journal par scénario. Ne cocher un UC que lorsque les cas applicables de cet UC ont été joués et examinés ; si un cas critique est bloqué ou échoue, reporter l'écart et ne pas annoncer une validation complète.</p>
+<table>
+<thead>
+<tr>
+<th>UC</th>
+<th>Fonction</th>
+<th>Scénarios</th>
+<th>Statut initial</th>
+<th>Preuves / anomalies</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UC-01</td>
+<td>Catalogue et accueil</td>
+<td>TC01-01 à TC01-10</td>
+<td>NON JOUÉ</td>
+<td></td>
+</tr>
+<tr>
+<td>UC-02</td>
+<td>Recherche et filtres</td>
+<td>TC02-01 à TC02-10</td>
+<td>NON JOUÉ</td>
+<td></td>
+</tr>
+<tr>
+<td>UC-03</td>
+<td>Fiche produit et visuels</td>
+<td>TC03-01 à TC03-09</td>
+<td>NON JOUÉ</td>
+<td></td>
+</tr>
+<tr>
+<td>UC-04</td>
+<td>Inscription</td>
+<td>TC04-01 à TC04-10</td>
+<td>NON JOUÉ</td>
+<td></td>
+</tr>
+<tr>
+<td>UC-05</td>
+<td>Connexion et compte</td>
+<td>TC05-01 à TC05-11</td>
+<td>NON JOUÉ</td>
+<td></td>
+</tr>
+<tr>
+<td>UC-06</td>
+<td>Panier (avec et sans JS)</td>
+<td>TC06-01 à TC06-10</td>
+<td>NON JOUÉ</td>
+<td></td>
+</tr>
+<tr>
+<td>UC-07</td>
+<td>Validation de commande</td>
+<td>TC07-01 à TC07-12</td>
+<td>NON JOUÉ</td>
+<td></td>
+</tr>
+<tr>
+<td>UC-08</td>
+<td>Historique client</td>
+<td>TC08-01 à TC08-08</td>
+<td>NON JOUÉ</td>
+<td></td>
+</tr>
+<tr>
+<td>UC-09</td>
+<td>Annulation client (2 étapes)</td>
+<td>TC09-01 à TC09-09</td>
+<td>NON JOUÉ</td>
+<td></td>
+</tr>
+<tr>
+<td>UC-10</td>
+<td>Produits administration</td>
+<td>TC10-01 à TC10-11</td>
+<td>NON JOUÉ</td>
+<td></td>
+</tr>
+<tr>
+<td>UC-11</td>
+<td>Catégories administration</td>
+<td>TC11-01 à TC11-08</td>
+<td>NON JOUÉ</td>
+<td></td>
+</tr>
+<tr>
+<td>UC-12</td>
+<td>Stocks administration</td>
+<td>TC12-01 à TC12-09</td>
+<td>NON JOUÉ</td>
+<td></td>
+</tr>
+<tr>
+<td>UC-13</td>
+<td>Commandes, KPI et rôles admin</td>
+<td>TC13-01 à TC13-11</td>
+<td>NON JOUÉ</td>
+<td></td>
+</tr>
+<tr>
+<td>UC-14</td>
+<td>Statuts et annulation admin</td>
+<td>TC14-01 à TC14-12 et 36 couples TC14-09</td>
+<td>NON JOUÉ</td>
+<td></td>
+</tr>
+<tr>
+<td>Transversal</td>
+<td>Sécurité, FR/EN, fuseau, LCEN, conservation</td>
+<td>TCX-01 à TCX-24</td>
+<td>NON JOUÉ</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="elements-a-ne-pas-confondre">Éléments à ne pas confondre<a class="headerlink" href="#elements-a-ne-pas-confondre" title="Permanent link">#</a></h3>
+<ol>
+<li>Les tests automatisés du dépôt (suites PHP, PHPUnit, requêtes HTTP PHP-WASM, tests JSDOM <code>FR ↔ EN</code>, intégration SQL sur base jetable et Chromium headless en CI) sécurisent les non-régressions logiques et structurelles, mais <strong>ne remplacent pas</strong> un test manuel humain sur navigateur réel et instance déployée sur LineServ. <strong>Choix d'équipe explicite :</strong> le responsive multi-largeurs est retiré de la campagne manuelle (trop long à dérouler page par page) et laissé aux seules suites automatisées (<code>tests/php/responsive_contract.php</code> et <code>tests/node/responsive_navigateur.mjs</code>) ; l'absence d'essai manuel exhaustif sur téléphones physiques reste documentée comme limite assumée.</li>
+<li>Le cahier des charges décrit certaines exigences plus ambitieuses que l'état maquette scolaire : en particulier la complexité lettre+chiffre du mot de passe (<code>TC04-06</code>), la limitation de débit sur <code>/connexion</code> (<code>TC05-09</code>), l'absence de <code>cron</code> installé d'office et l'exclusion volontaire des comptes possédant des commandes dans <code>purger_comptes.php</code> (<code>TCX-17</code>). Marquer les écarts observés et ne pas déduire une conformité de production commerciale du passage vert des suites automatisées.</li>
+<li>La page de rétractation et les mentions légales correspondent à une <strong>maquette pédagogique étudiante</strong> : pas de déclaration de rétractation en ligne ni d'accusé durable réel, pas de paiement ni de livraison réels, et traduction anglaise à vocation pédagogique non relue par un juriste. Aucun texte de cette fiche ne transforme la maquette en boutique juridiquement prête à vendre.</li>
+<li>La campagne manuelle cible la base réellement utilisée en production sur LineServ et se déroule avant la démo, sur des données synthétiques uniquement. Aucun SQL direct, fixture, reset, purge exécutable ou script de charge ne doit être lancé sur cette base ; les scénarios qui en dépendent sont <code>BLOQUÉ</code> en manuel. <code>minishop_test</code> reste réservé aux tests automatisés GitHub CI, jamais à la recette manuelle.</li>
+<li>Aucun temps de performance, résultat sur appareil, identité de testeur, historique ou validation humaine n'est fabriqué dans cette fiche : les 200 lignes de <a href="13-suivi-recette-uc.csv">13-suivi-recette-uc.csv</a> restent à <code>NON JOUÉ</code> tant qu'un membre de l'équipe ne les a pas effectivement déroulées.</li>
+</ol>
+<h3 id="controle-automatique-de-la-fiche">Contrôle automatique de la fiche<a class="headerlink" href="#controle-automatique-de-la-fiche" title="Permanent link">#</a></h3>
+<p>Après récupération des fichiers, depuis le dépôt local :</p>
+<pre><code class="language-bash">cd /home/jojokes/Documents/BUT/Projet/s302
+python3 scripts/verifier_fiches_uc.py
+</code></pre>
+<p>Sortie attendue :</p>
+<pre><code class="language-text">Fiches UC : 46 contrôles ; 164 scénarios, 36 couples, 200 lignes de suivi ; 0 erreur(s).
+Contrôle documentaire réussi : aucune exécution métier n’a été effectuée.
+</code></pre>
+<p>Le contrôle vérifie la présence des 14 fiches, des identifiants distincts et ordonnés, de la synthèse, de la matrice conforme à <code>Triggers::TRANSITIONS</code>, des liens locaux, des chemins du dépôt cités, de l'exclusion des scénarios manuels responsive et de l'alignement exact du fichier CSV. Il ne lance <strong>aucun scénario métier</strong> et ne prouve pas le résultat de la recette humaine.</p>
+<h3 id="auto-evaluation-de-la-livraison-documentaire">Auto-évaluation de la livraison documentaire<a class="headerlink" href="#auto-evaluation-de-la-livraison-documentaire" title="Permanent link">#</a></h3>
+<p>La fiche comporte <strong>164 scénarios</strong> identifiés (140 répartis sur <code>UC-01</code> à <code>UC-14</code> et 24 transversaux <code>TCX-01</code> à <code>TCX-24</code>) ainsi que <strong>36 couples de transition</strong> suivis séparément, soit <strong>200 lignes</strong> dans <code>docs/13-suivi-recette-uc.csv</code> (<code>TC14-09</code> restant le scénario chapeau de la matrice). Toutes les évolutions fonctionnelles, juridiques et d'internationalisation du dépôt sont couvertes manuellement (confirmations sans JavaScript en 2 étapes, conservation des lignes après annulation, distinction avant/après expédition pour l'annulation administrateur et garde <code>ANNULATION_VIA_PARCOURS_DEDIE</code>, mode par défaut additif sur les stocks, refus des doublons de catégories, préférences locales FR/EN et fuseau horaire par choix manuel ou géolocalisation locale CC0 sans tiers, traduction intégrale des vues et du panier AJAX, stockage UTC et bornes locales des filtres admin, double mode décoratif/informatif des visuels produits, mentions légales étudiantes LCEN art. 6, III, 2 et outils CLI de conservation à 24/12/6 mois et 30 jours), tandis que les tests responsive multi-largeurs ont été volontairement retirés du protocole manuel au profit de la CI Chromium.</p>
+<footer class="doc">
+  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/13-fiches-recette-uc.md</code>
+  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+</footer>
+</main>
+</body>
+</html>

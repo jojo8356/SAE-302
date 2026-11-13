@@ -119,6 +119,19 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li><a href="#146-limites-assumees">14.6 Limites assumées</a></li>
 </ul>
 </li>
+<li><a href="#12-pages-dinformation-et-confiance-etude-prealable-28102026">12. Pages d'information et confiance — étude préalable (28/10/2026)</a></li>
+<li><a href="#15-date-des-derniers-ajouts-decision-prealable">15. Date des derniers ajouts — décision préalable</a></li>
+<li><a href="#16-lisibilite-du-pied-de-page-correction-de-contraste">16. Lisibilité du pied de page — correction de contraste</a></li>
+<li><a href="#17-cartes-produit-liens-et-titres-accessibles">17. Cartes produit : liens et titres accessibles</a><ul>
+<li><a href="#alternatives-des-visuels-produit">Alternatives des visuels produit</a></li>
+<li><a href="#complement-filtres-de-prix">Complément — filtres de prix</a></li>
+</ul>
+</li>
+<li><a href="#20-etude-ciblee-tableaux-administrateur-sur-mobile">20. Étude ciblée — tableaux administrateur sur mobile</a><ul>
+<li><a href="#preferences-de-fuseau-etude-avant-realisation">Préférences de fuseau (étude avant réalisation)</a></li>
+<li><a href="#traduction-bilingue-fren-et-independance-linguistique-du-css">Traduction bilingue FR/EN et indépendance linguistique du CSS</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </nav>
@@ -128,7 +141,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 Il précède l'implémentation (<code>public/css/app.css</code>) et la <strong>valide</strong> : chaque décision ci-dessous
 correspond à un token ou un composant du code, et au test <code>tests/php/css_contract.php</code>.</p>
 <p><strong>Périmètre.</strong> Interface web responsive (360 px → 1440 px), deux contextes (boutique, back-office),
-14 écrans, accessibilité <strong>WCAG 2.1 AA</strong> (ENF-08), zéro dépendance externe (polices système, SVG inline,
+14 écrans, accessibilité <strong>WCAG 2.1 AA</strong> (ENF-08), zéro dépendance externe (polices système et glyphe euro local, SVG inline,
 aucune CDN) pour rester conforme à <code>ENF-20</code> (« aucune dépendance runtime hors PHP/MySQL/Apache »).</p>
 </blockquote>
 <hr />
@@ -534,8 +547,13 @@ back-office au même niveau de soin que la boutique — c'est rare et c'est un a
 <hr />
 <h2 id="6-typographie">6. Typographie<a class="headerlink" href="#6-typographie" title="Permanent link">#</a></h2>
 <ul>
-<li><strong>Une seule famille</strong> : pile système <code>system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif</code>.
-  Avantages : zéro requête réseau (offline, soutenance sans Wi-Fi), rendu natif, <code>ENF-20</code> respecté.</li>
+<li><strong>Texte système</strong> : pile <code>system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif</code>.
+  Le caractère <strong>€</strong> utilise seul le glyphe de Lato Regular, adapté et renommé <code>MiniShopEuro</code>,
+  limité à <code>U+20AC</code> par <code>unicode-range</code> : deux barres lisibles, même avec un prix en gras.
+  Le fichier local <code>public/fonts/minishop-euro.woff2</code> est servi par l'application, sans CDN ;
+  la licence SIL OFL 1.1 et le copyright sont dans <code>public/fonts/OFL.txt</code> (source : <code>google/fonts</code>, <code>ofl/lato/Lato-Regular.ttf</code>, blob <code>0f3d0f837d24834b9b5b0a6b735459c56f5e75c3</code>).
+  CSP : <code>font-src 'self'</code>. En cas d'échec du chargement, le symbole texte et la pile système restent disponibles.
+  Les montants restent du texte Unicode, lisible, sélectionnable et accessible.</li>
 <li><strong>Chiffres tabulaires</strong> (<code>font-variant-numeric: tabular-nums</code>) sur les prix, montants et stocks :
   les colonnes de tableaux s'alignent.</li>
 <li>Échelle modulaire 1,25 (base 16 px) :</li>
@@ -649,12 +667,12 @@ back-office au même niveau de soin que la boutique — c'est rare et c'est un a
 <tr>
 <td>8</td>
 <td><strong>Formulaire</strong></td>
-<td>label au-dessus, aide en 14 px, erreur sous le champ + <code>aria-describedby</code>, focus 3 px</td>
+<td>label au-dessus, aide en 14 px, erreur sous le champ + <code>aria-describedby</code>, focus 3 px ; contact et authentification : carte centrée 575 px maximum (460 px + 25 %), titre intérieur centré, légende sémantique conservée</td>
 </tr>
 <tr>
 <td>9</td>
 <td><strong>Boutons</strong></td>
-<td>primaire (accent), secondaire (contour), discret (lien) ; 3 tailles ; état <code>disabled</code> explicite</td>
+<td>primaire (accent), secondaire (contour), discret (lien) ; 3 tailles ; état <code>disabled</code> explicite : fond et texte inchangés au survol, curseur interdit</td>
 </tr>
 <tr>
 <td>10</td>
@@ -741,14 +759,58 @@ les tokens sont prêts (<code>[data-theme="dark"]</code> documenté) si la suite
 <hr />
 <h2 id="10-iconographie-et-imagerie">10. Iconographie et imagerie<a class="headerlink" href="#10-iconographie-et-imagerie" title="Permanent link">#</a></h2>
 <ul>
-<li><strong>Icônes SVG inline</strong> (course 24 px, trait 1,75 px) : <code>panier</code>, <code>recherche</code>, <code>coche</code>, <code>alerte</code>,
-  <code>croix</code>, <code>chevron</code>, <code>camion</code>, <code>cadenas</code>. Aucune bibliothèque externe, aucun sprite réseau.</li>
+<li><strong>Icônes : jeu Lucide, inliné</strong> (gabarit 24 × 24, <code>stroke-width</code> 1,75 px, <code>currentColor</code>).
+  Tracés utilisés : <code>panier</code>, <code>recherche</code>, <code>coche</code>, <code>alerte</code>, <code>croix</code>, <code>camion</code>, <code>cadenas</code>,
+  <code>retour</code>, <code>user</code>, <code>eclair</code>, <code>menu</code>, plus <strong>une icône par famille de produits</strong> :
+  <code>laptop</code> → Informatique, <code>headphones</code> → Audio, <code>shopping-bag</code> → Accessoires,
+  <code>watch</code> → Objets connectés, <code>tag</code> en repli pour toute catégorie créée après coup
+  (le slug vient de la base : un slug inconnu affiche une étiquette, jamais un trou).
+  Répartition : la pastille de catégorie fait 44 × 44 px (<code>--primaire-fond</code>, rayon <code>--r-sm</code>),
+  elle passe en <code>--primaire</code> plein au survol et au focus — l'icône est <strong>décorative</strong>
+  (<code>aria-hidden</code>, <code>focusable="false"</code>), le nom de la catégorie reste dans le <code>&lt;h2&gt;</code>/<code>&lt;h3&gt;</code>.
+  Aucun CDN, aucun sprite réseau : les tracés sont dans <code>app/Security/xss.php</code> (<code>icone()</code>,
+  <code>icone_categorie()</code>), donc servis par la page elle-même et compatibles avec la CSP
+  <code>img-src 'self' data:</code>. Un test vérifie qu'aucune icône ne contient d'URL (<code>css_contract.php</code>).</li>
+<li><strong>Licence des icônes</strong> — Lucide, licence ISC :
+  <code>Copyright (c) for portions of Lucide are held by Cole Bemis 2013-2022 as part of Feather (MIT).</code>
+  <code>All other copyright (c) for Lucide are held by Lucide Contributors 2022.</code>
+  Permission to use, copy, modify, and/or distribute this software for any purpose with or
+  without fee is hereby granted, provided that the above copyright notice and this permission
+  notice appear in all copies. THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+  WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+  AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR
+  CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+  WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+  CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</li>
 <li><strong>Logo</strong> : un « M » en boucle ouverte (circuit imprimé) dans un carré arrondi <code>--primaire</code>,
   décliné en <code>logo.svg</code> (horizontal) et <code>favicon.svg</code> (carré).</li>
-<li><strong>Images produit</strong> : le jeu de démonstration n'a pas de photos ; la carte affiche un <strong>placeholder
-  génératif</strong> (dégradé neutre + initiale du produit) — ce n'est jamais une image cassée.</li>
-<li><strong>Pas de photographie de banque d'images</strong> : le projet est pédagogique, on assume une direction
-  « fiche technique » plutôt qu'un e-commerce photographique.</li>
+<li><strong>Images produit</strong> : les 36 produits du jeu de démonstration ont un <strong>packshot réel</strong> — 12 visuels distincts, un par famille de produit, réutilisés à l'identique dans la famille (cadre homogène, 36 fiches cohérentes)
+  (<code>public/img/produits/*.jpg</code>, 800 × 600, 15–49 Ko, tous produits selon la même recette : objet seul,
+  fond neutre <code>--surface-2</code>, ombre de contact douce, lumière venant du haut à gauche). C'est ce qui
+  distingue un site crédible d'une maquette. Le <strong>repli</strong> (dégradé + initiale, cadre en pointillés)
+  subsiste pour tout produit sans visuel ou dont le fichier a disparu : une image cassée est pire
+  qu'une absence d'image, et <code>image_produit()</code> ne renvoie jamais d'URL non résolue.</li>
+<li><strong>Photographie assumée, à deux niveaux</strong> : une image d'<strong>ambiance</strong> dans le hero
+  (<code>public/img/illustration-achat.jpg</code>, 960 × 524, 63 Ko) et un <strong>packshot par produit</strong>
+  (<code>public/img/produits/*.jpg</code>). L'interface reste par ailleurs en direction « fiche technique »
+  (aplats, filets, tokens) : la photo sert la preuve, pas la décoration.</li>
+<li><strong>Pourquoi deux niveaux</strong> : le hero vend une <em>ambiance</em>, la carte vend un <em>objet</em>. Le même
+    cadrage ne peut pas servir les deux — d'où l'ambiance en 16/9 et les packshots en 4/3.</li>
+<li><strong>Cohérence imposée</strong> : mêmes fond, même lumière, même cadrage sur les 12 packshots. Un site
+    dont les vignettes viennent de sources différentes « sent » l'assemblage ; c'est la première
+    chose qu'un correcteur remarque.</li>
+<li><strong>Provenance</strong> : image générée pour le projet (aucun droit de tiers, aucune banque d'images,
+    aucune requête réseau — ENF-20 tenu). Palette alignée sur <code>--primaire</code> (cobalt) et <code>--accent</code>
+    (terracotta), fond crème proche de <code>--papier</code>.</li>
+<li><strong>Contraintes tenues</strong> : <code>width</code>/<code>height</code> déclarés (aucun décalage de mise en page au chargement),
+    <code>loading="eager"</code> + <code>fetchpriority="high"</code> pour le hero (au-dessus de la ligne de flottaison),
+    <code>loading="lazy"</code> pour les vignettes (une grille de 12 produits ne doit pas retarder le premier
+    écran), <code>alt</code> descriptif pour l'ambiance et <strong><code>alt=""</code> pour les packshots des cartes</strong> — le nom du produit
+    est déjà le titre de la carte, le répéter ferait bavarder un lecteur d'écran.
+    <code>object-fit: cover</code> en carte, <code>contain</code> sur la fiche (on ne rogne pas le sujet). Poids ≤ 250 Ko
+    pour le hero, ≤ 120 Ko par packshot : vérifié par <code>tests/php/css_contract.php</code>.</li>
+<li><strong>Règle</strong> : toute nouvelle photo de produit devra suivre la même grille (fond neutre, lumière
+    douce, 16/9 ou 4/3, ≤ 250 Ko) sous peine de casser la cohérence du hero.</li>
 </ul>
 <hr />
 <h2 id="11-regles-editoriales-microcopy">11. Règles éditoriales (microcopy)<a class="headerlink" href="#11-regles-editoriales-microcopy" title="Permanent link">#</a></h2>
@@ -825,6 +887,10 @@ les tokens sont prêts (<code>[data-theme="dark"]</code> documenté) si la suite
 <td>identité</td>
 </tr>
 <tr>
+<td><code>public/img/illustration-achat.jpg</code></td>
+<td>photographie du hero (960×524, 63 Ko)</td>
+</tr>
+<tr>
 <td><code>app/View/layout.php</code></td>
 <td>gabarit : skip-link, en-tête, nav, <code>aria-live</code>, pied de page</td>
 </tr>
@@ -852,7 +918,7 @@ les tokens sont prêts (<code>[data-theme="dark"]</code> documenté) si la suite
 <li>pas d'animations au-delà de 150 ms ;</li>
 <li>pas de framework CSS (ni Bootstrap ni Tailwind) : le design system est écrit à la main, ~700 lignes,
   lisible et testable — argument de soutenance sur la maîtrise du CSS ;</li>
-<li>pas de police web : la pile système garantit un rendu identique hors ligne.</li>
+<li>pas de CDN de polices : la pile système et le glyphe euro local fonctionnent hors ligne.</li>
 </ul>
 <hr />
 <h2 id="14-responsive-et-adaptation-continue">14. Responsive et adaptation continue<a class="headerlink" href="#14-responsive-et-adaptation-continue" title="Permanent link">#</a></h2>
@@ -1091,6 +1157,76 @@ d'un palier supplémentaire pour le passage en cartes du panier.</p>
   réels reste à cocher dans le PV de recette (doc <code>02</code>).</li>
 <li>Pas de <code>:has()</code> ni de <code>color-mix()</code> indispensables : les rares usages de
   <code>color-mix()</code> ont un repli par couleur littérale dans la même règle.</li>
+</ul>
+<h2 id="12-pages-dinformation-et-confiance-etude-prealable-28102026">12. Pages d'information et confiance — étude préalable (28/10/2026)<a class="headerlink" href="#12-pages-dinformation-et-confiance-etude-prealable-28102026" title="Permanent link">#</a></h2>
+<p>Les pages juridiques de <a href="https://www.boulanger.com/evenement/conditions-generales-vente-boulanger">Boulanger</a> séparent l'identification, les conditions de vente et les informations de livraison/retour ; celles de <a href="https://www.fnac.com/Help/cgv-fnac-marketplace">Fnac</a> et <a href="https://www.backmarket.fr/fr-fr/legal/terms-of-use">Back Market</a> distinguent en outre les rôles des vendeurs de marketplace. MiniShop est une <strong>maquette de vente directe</strong>, non une marketplace : on reprend la navigation identifiable, les titres explicites et la séparation des sujets, pas leurs clauses ni leurs obligations propres aux plateformes. Les éléments juridiques et les limites sont étudiés dans <code>docs/12-information-juridique.md</code>.</p>
+<p><strong>Décisions avant réalisation :</strong> pied de page organisé en rubriques courtes, lien direct vers la rétractation ; pages centrées et de largeur de lecture limitée, hiérarchie H1/H2, encadrés visibles pour le statut de maquette et le texte réglementaire, liens soulignés, retours à la ligne et marges adaptables, pas de tableau à défilement imposé. Aucun bandeau de choix décoratif pour les seuls traceurs nécessaires. La disposition doit fonctionner au clavier et à 320 px sans défilement horizontal ; les principes de <a href="https://www.w3.org/WAI/WCAG21/Understanding/reflow.html">reflow WCAG</a> et de <a href="https://design-system.service.gov.uk/styles/layout/">mise en page GOV.UK</a> guident le choix. Les contrôles statiques ne remplacent pas un audit d'accessibilité ni un rendu navigateur réel.</p>
+<h2 id="15-date-des-derniers-ajouts-decision-prealable">15. Date des derniers ajouts — décision préalable<a class="headerlink" href="#15-date-des-derniers-ajouts-decision-prealable" title="Permanent link">#</a></h2>
+<p>Le benchmark des cartes d'Amazon, Fnac, Boulanger et Back Market (§2–3) privilégie
+la hiérarchie image → nom → prix → disponibilité → action ; il ne démontre pas que
+ces sites affichent une heure de création sur leurs cartes. Pour le besoin propre à
+MiniShop, ajouter cette métadonnée <strong>après l'action</strong>, centrée, en taille secondaire
+lisible et séparée par un trait discret, sans détourner l'attention du produit ni
+modifier les autres cartes du catalogue. Un élément HTML <code>time</code> rend la date
+compréhensible aux outils ; si elle manque ou n'est pas valide, afficher un repli
+explicite sans date inventée. L'alignement reste fluide et le texte peut revenir à
+la ligne sur mobile, conformément aux principes de reflow W3C et de mise en page
+GOV.UK documentés en §14.5. Aucune nouvelle image ni icône n'est nécessaire.</p>
+<h2 id="16-lisibilite-du-pied-de-page-correction-de-contraste">16. Lisibilité du pied de page — correction de contraste<a class="headerlink" href="#16-lisibilite-du-pied-de-page-correction-de-contraste" title="Permanent link">#</a></h2>
+<p>La comparaison des enseignes et des systèmes de design (§2 et §14) retient une
+hiérarchie discrète mais lisible pour les informations secondaires. La capture
+WAVE fournie pour le catalogue signale un texte du pied de page trop peu contrasté.
+Pour conserver ce design sans modifier sa structure responsive, le texte d'aide
+du pied hérite d'une couleur claire explicitement adaptée au fond sombre ; les
+autres textes d'aide conservent leur couleur sur fond clair. La règle cible le
+contexte du pied pour qu'une classe générique définie plus loin ne l'écrase pas.</p>
+<p>La cible pour du texte normal est un rapport d'au moins 4,5:1 selon le
+<a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html">critère WCAG 1.4.3</a>.
+Le calcul des couleurs déclarées donne <code>#475569</code> sur <code>#0f172a</code> = 2,36:1
+avant correction et <code>#cbd5e1</code> sur <code>#0f172a</code> = 12,02:1 après correction.
+C’est un contrôle statique, pas une analyse de rendu : confirmer le résultat
+sur le navigateur et la page réellement déployés.</p>
+<h2 id="17-cartes-produit-liens-et-titres-accessibles">17. Cartes produit : liens et titres accessibles<a class="headerlink" href="#17-cartes-produit-liens-et-titres-accessibles" title="Permanent link">#</a></h2>
+<p>L’étude concurrentielle des cartes (§2.3 et §2.4) et les principes de clarté
+de la charte conservent le nom comme véritable titre, le prix distinct et une
+action visible « Voir la fiche ». Lorsqu’un titre et un bouton conduisent tous
+deux à la même fiche, cela répète l’arrêt clavier et déclenche l’alerte WAVE
+« Redundant link » : conserver uniquement le bouton, dont le nom accessible
+comprend le nom du produit, pour différencier les actions entre cartes. Le nom
+reste un titre lisible mais n’est plus un deuxième lien. Aucun changement de
+grille, de couleurs ni de cibles tactiles n’est nécessaire.</p>
+<p>Un « Possible heading » est une alerte à examiner, pas la preuve d’un titre
+manquant. L’utilisateur a transmis un élément effectivement signalé :
+<code>&lt;p class="carte-produit__prix"&gt;30,00 € &lt;small&gt;TTC&lt;/small&gt;&lt;/p&gt;</code>. Il s’agit
+d’un prix, non d’un titre de section ; il reste donc un paragraphe, avec une
+hiérarchie de prix lisible. Dans cette version du CSS, sa taille est <code>1.25rem</code>
+et son poids <code>800</code> ; les grands paragraphes en gras peuvent déclencher la
+<a href="https://wave.webaim.org/api/docs?format=html">heuristique WAVE</a>. Ne pas le
+transformer artificiellement en titre pour supprimer l’alerte. Un élément a été
+identifié, pas nécessairement tous les autres : les vérifier individuellement et
+refaire WAVE après déploiement ; aucun rendu réel n’a été exécuté ici.</p>
+<h3 id="alternatives-des-visuels-produit">Alternatives des visuels produit<a class="headerlink" href="#alternatives-des-visuels-produit" title="Permanent link">#</a></h3>
+<p>Les cartes conservent une image décorative (<code>alt=""</code>), le nom étant déjà visible. La fiche choisit explicitement une alternative informative qui identifie le visuel comme indicatif. Ce libellé reprend le nom, sans inventer de détail sur la photographie ; une véritable description visuelle doit être fournie et vérifiée si l’image véhicule une information supplémentaire. Le choix entre les deux stratégies se fait à l’exécution, pas par le compilateur PHP.</p>
+<h3 id="complement-filtres-de-prix">Complément — filtres de prix<a class="headerlink" href="#complement-filtres-de-prix" title="Permanent link">#</a></h3>
+<p>Dans la continuité des filtres à facettes observés chez Boulanger (§2.4), les bornes
+de prix forment un groupe unique : deux champs côte à côte si l’espace le permet,
+puis empilés sur les écrans les plus étroits. Les libellés restent visibles et
+les champs ne doivent pas provoquer de défilement horizontal. L’implémentation
+est dans <code>.filtres-prix</code> et le rendu reste à vérifier sur les appareils réels.</p>
+<h2 id="20-etude-ciblee-tableaux-administrateur-sur-mobile">20. Étude ciblée — tableaux administrateur sur mobile<a class="headerlink" href="#20-etude-ciblee-tableaux-administrateur-sur-mobile" title="Permanent link">#</a></h2>
+<p><strong>Étude avant implémentation.</strong> Le <a href="https://ui.shadcn.com/docs/components/base/table">composant Table de shadcn/ui</a> conserve un vrai tableau dans une zone défilante ; sa <a href="https://ui.shadcn.com/docs/typeset">documentation Typeset</a> distingue le retour à la ligne et le défilement horizontal contenu. Le <a href="https://designsystem.digital.gov/components/table/">design system USWDS</a> recommande le tableau défilant pour comparer de nombreuses colonnes chiffrées, et les lignes empilées avec <code>data-label</code> identique à l'en-tête pour des fiches descriptives. Le <a href="https://www.w3.org/WAI/WCAG21/Understanding/reflow.html">W3C</a> prévoit une exception pour le tableau bidimensionnel, pas pour le débordement du reste de la page.</p>
+<p><strong>Décision MiniShop.</strong> Garder les tableaux HTML et leurs en-têtes sur grand écran ; sur mobile, présenter chaque enregistrement comme une fiche, chaque libellé au-dessus de sa valeur, sans imposer une ligne unique. Les noms, montants, statuts, liens et actions restent visibles, sans troncature ; les mots très longs peuvent se couper, les contrôles restent utilisables. Pour les tableaux qui doivent rester comparatifs, conserver la région défilante bornée et accessible au clavier. Reprendre les principes, pas installer React/shadcn ni copier leurs composants : le projet reste PHP/CSS autonome. Vérifier à 320, 375 et 1440 px, avec textes longs et JavaScript désactivé ; les tests automatisés ne remplacent pas une revue sur appareils et lecteurs d'écran.</p>
+<h3 id="preferences-de-fuseau-etude-avant-realisation">Préférences de fuseau (étude avant réalisation)<a class="headerlink" href="#preferences-de-fuseau-etude-avant-realisation" title="Permanent link">#</a></h3>
+<ul>
+<li><a href="https://www.smashingmagazine.com/2022/05/designing-better-language-selector/">Smashing Magazine, sélecteurs de langue et région</a> : séparer langue et localisation, proposer une préférence modifiable, accessible au clavier et retrouvable en pied de page.</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API">MDN, Geolocation API</a> : accès explicite et uniquement en contexte sécurisé ; traiter refus et indisponibilité sans bloquer le choix manuel.</li>
+<li>Décision : préférences personnelles communes aux visiteurs et à l'administration, choix de fuseau IANA manuel ou détection volontaire, retour d'état clair, bouton de réinitialisation et formulaire lisible à 320 px. Stockage du seul choix dans le navigateur ; pas de coordonnées ni de préférence en base. Pour les calculs de jours côté serveur, seules des bornes UTC nécessaires aux requêtes sont transmises. Le fuseau doit rester IANA (pas uniquement un UTC±n actuel), afin de respecter les changements d'heure des dates passées et futures.</li>
+<li>Le choix anglais traduit désormais l’ensemble de l’interface (navigation, boutique, panier, validation, espace client, pages d’information et pages légales, back-office complet et messages dynamiques) et signale honnêtement que les données libres issues du catalogue ou saisies en base conservent leur langue d’enregistrement. La géolocalisation utilise la bibliothèque locale <code>@photostructure/tz-lookup</code> 11.8.0 (CC0), approximative près des frontières ; le navigateur calcule les heures via <code>Intl</code>.</li>
+</ul>
+<h3 id="traduction-bilingue-fren-et-independance-linguistique-du-css">Traduction bilingue FR/EN et indépendance linguistique du CSS<a class="headerlink" href="#traduction-bilingue-fren-et-independance-linguistique-du-css" title="Permanent link">#</a></h3>
+<ul>
+<li><a href="https://www.w3.org/WAI/WCAG21/Techniques/html/H57">WCAG 2.1 — Technique H57 (SC 3.1.1 Language of Page)</a> et SC 3.1.2 : l’attribut <code>lang</code> de <code>&lt;html&gt;</code> est synchronisé avec la langue active (<code>fr</code> ou <code>en</code>), et les options du sélecteur de langue portent leur propre attribut <code>lang</code> (<code>Français</code> / <code>English</code>).</li>
+<li><a href="https://www.w3.org/International/articles/article-text-size">W3C Internationalization — Text size in translation</a> et <a href="https://designsystem.digital.gov/components/table/">USWDS Table</a> : les conteneurs flexibles/empilés absorbent la variation de longueur FR/EN à 320 px sans débordement horizontal, les étiquettes mobiles <code>td::before { content: attr(data-label); }</code> restent synchronisées avec les en-têtes <code>thead th</code> traduits, et la cellule principale du panier cible la classe structurelle <code>.tableau-panier td.produit</code> en plus de <code>[data-label="Produit"]</code> pour conserver son empilement pleine largeur lorsque <code>data-label</code> devient <code>"Product"</code>.</li>
 </ul>
 <footer class="doc">
   <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/DA.md</code>

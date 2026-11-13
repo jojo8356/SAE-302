@@ -152,7 +152,7 @@ Le dépôt comporte plusieurs niveaux, avec des prérequis différents :
 - **Tests Python** sous `tests/python/` : tests d’outils CLI, contrôles structurels et autres vérifications s’appuyant surtout sur la bibliothèque standard.
 - **Contrôles shell** sous `tests/security/`, tests de charge et scripts d’orchestration : ils n’équivalent pas à une campagne de recette réelle sur l’hébergement visé.
 
-Les workflows déclarés se trouvent dans [`.github/workflows/ci.yml`](.github/workflows/ci.yml) et [`.gitlab-ci.yml`](.gitlab-ci.yml). Ils configurent notamment des jobs PHP, MySQL, MariaDB, Node/Chromium et documentation. La définition d’un job ne prouve pas son succès : il faut consulter le résultat du pipeline correspondant au commit.
+Le workflow automatisé déclaré se trouve dans [`.github/workflows/ci.yml`](.github/workflows/ci.yml). Il configure des contrôles PHP, SQL, navigateur et documentation. GitLab reste le dépôt de collaboration (issues et MR) ; aucune CI GitLab n’est configurée dans le périmètre courant. La définition d’un job ne prouve pas son succès : consulter le résultat GitHub Actions du commit concerné.
 
 [!] Ce document n’affirme pas qu’une exécution complète des tests, une recette manuelle ou un déploiement LineServ a été réalisé pendant sa rédaction. Les vérifications qui nécessitent un serveur SQL, un navigateur Chromium réel, des services externes ou l’environnement IUT doivent être confirmées dans leur environnement propre ; aucune mesure ni identité de test n’est inventée ici.
 

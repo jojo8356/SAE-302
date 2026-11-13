@@ -24,7 +24,7 @@ declare(strict_types=1);
  *      en GET (pas de mutation par lien, cf. SEC-04).
  *
  * Ces contrôles sont volontairement statiques : ils ne remplacent pas l'E2E,
- * ils garantissent qu'une erreur de câblage est vue AVANT le déploiement.
+ * ils garantissent qu'une erreur de câblage est vue AVANT toute mise en production.
  */
 
 require_once dirname(__DIR__, 2) . '/app/bootstrap.php';

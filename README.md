@@ -1,12 +1,25 @@
 # MiniShop
 
-[![CI GitHub Actions](https://github.com/jojo8356/SAE-302/actions/workflows/ci.yml/badge.svg)](https://github.com/jojo8356/SAE-302/actions/workflows/ci.yml) [![Pipeline GitLab](https://iut-git.unice.fr/but2_s302/s302/badges/main/pipeline.svg)](https://iut-git.unice.fr/but2_s302/s302/-/pipelines)
+[![CI GitHub Actions](https://github.com/jojo8356/SAE-302/actions/workflows/ci.yml/badge.svg)](https://github.com/jojo8356/SAE-302/actions/workflows/ci.yml)
 
 > **MiniShop** est une application Web de boutique en ligne réalisée dans un cadre pédagogique : catalogue, panier, commandes et back-office. Le projet est développé en **PHP** et propose un stockage JSON par défaut ainsi qu’un pilote SQL via PDO.
 
 > **Cadre** — SAE — BUT Informatique (BUT2), Université Côte d'Azur.
 
 > **Périmètre : maquette scolaire.** Les paiements et les livraisons sont simulés. Le formulaire de contact n’envoie pas de courriel. Le projet n’est pas destiné à traiter de vraies ventes ni à être déployé tel quel en production.
+
+## Équipe, responsabilités et accès
+
+Le groupe de réalisation comprend deux étudiants. Les permissions du dépôt GitLab IUT sont présentées séparément des responsabilités de planification.
+
+| Membre | Accès au dépôt GitLab IUT |
+|---|---|
+| **Johan Polsinelli** | `Owner` |
+| **Chahd Gouiaa** | `Developer` |
+
+La WBS et la todolist utilisent des lettres A/B/C pour les responsabilités de projet et le RACI. Aucune correspondance entre ces lettres et les personnes nommées n’est établie dans ce README. Les permissions GitLab (`Owner`, `Developer`) ne sont pas des rôles RACI. La charte [`docs/20-charte-gitlab-revues-croisees.md`](docs/20-charte-gitlab-revues-croisees.md) décrit le processus de revue attendu ; ce README n’atteste pas que des MR ou des revues croisées ont déjà eu lieu.
+
+**Encadrement** — NGUYEN Thanh-Phuong, enseignante référente, est membre directe du projet GitLab IUT avec le rôle `Reporter` ; elle ne fait pas partie du groupe étudiant.
 
 ## Fonctionnalités
 
@@ -26,7 +39,7 @@ Les décisions d’interface s’appuient sur l’étude de design de [`docs/DA.
 | Stockage par défaut | Fichiers JSON, sans serveur de base de données |
 | Stockage SQL optionnel | MySQL **8.0.16+** ou MariaDB **10.6+**, via PDO (`pdo_mysql`) |
 | Base de données | Schéma relationnel, procédures stockées, déclencheurs et migrations dans `sql/` |
-| Tests | Suites PHP et Python ; contrôles complémentaires dans les pipelines GitHub Actions et GitLab CI |
+| Tests | Suites PHP et Python ; contrôles complémentaires dans GitHub Actions |
 
 Le pilote JSON est celui utilisé par défaut. Le mode SQL est sélectionné dans `.env` avec `STORAGE_DRIVER=sql`. Les secrets et réglages propres à une machine doivent rester dans `.env`, qui n’est pas destiné à être versionné ; seul le modèle `.env.example` est suivi par Git. **Node.js et npm ne sont pas nécessaires pour lancer l’application.**
 
@@ -67,13 +80,7 @@ Le serveur PHP intégré est réservé au développement local. Ne pas l’expos
 
 ### Comptes de démonstration
 
-Pour afficher les identifiants **initiaux** du jeu de démonstration JSON :
-
-```bash
-php scripts/aide.php --comptes-demo
-```
-
-Cette commande est en lecture seule. Les comptes affichés peuvent avoir été modifiés ou ne pas exister dans une installation donnée ; ne pas utiliser ces identifiants sur une instance accessible au public.
+Les comptes du seed sont réservés aux environnements locaux isolés. Les adresses, mots de passe et hashes ne sont pas reproduits dans la documentation ni dans les supports. Pour une recette LineServ, utiliser uniquement un compte de test autorisé, avec les accès transmis séparément par canal privé ; ne pas réutiliser les comptes du seed sur une instance de production ou accessible au public.
 
 ## Configuration et mode SQL
 
@@ -116,14 +123,15 @@ php scripts/run-all-tests.php
 
 L’intégration SQL nécessite un serveur de test isolé : elle crée et supprime une base dédiée. L’E2E PHP-WASM et certains tests JavaScript ne sont exécutés que si leurs outils optionnels sont présents. Vérifier le résumé final du runner pour distinguer les tests **joués**, **non joués** et **en échec**. Ne jamais lancer de tests SQL contre une base de données contenant des informations à conserver.
 
-Les workflows automatisés sont définis dans [`ci.yml`](.github/workflows/ci.yml) et [`.gitlab-ci.yml`](.gitlab-ci.yml). Ils couvrent notamment la syntaxe PHP, les suites de tests, des contrôles de sécurité, SQL sur bases jetables et des vérifications responsive en navigateur.
+Le workflow automatisé du dépôt est défini dans [`ci.yml`](.github/workflows/ci.yml). Il couvre notamment la syntaxe PHP, les suites de tests, des contrôles de sécurité, SQL sur bases jetables et des vérifications responsive en navigateur. Cette CI GitHub ne constitue pas une preuve de pipeline GitLab IUT.
 
 ### Recette manuelle
 
 - [`docs/13-fiches-recette-uc.md`](docs/13-fiches-recette-uc.md) décrit les scénarios et leur déroulement.
 - [`docs/13-suivi-recette-uc.csv`](docs/13-suivi-recette-uc.csv) sert à suivre leur exécution.
+- La campagne manuelle LineServ, décrite dans [`docs/14-guide-lineserv.md`](docs/14-guide-lineserv.md), vise la base réelle prévue par le protocole ; elle n’a pas été jouée et aucune restauration n’a été effectuée. Les bases jetables de CI restent distinctes.
 
-Un scénario ne doit être marqué comme joué qu’après son exécution réelle. Les campagnes responsives multi-largeurs sont couvertes par les tests automatisés, pas par la checklist manuelle.
+Un scénario ne doit être marqué comme joué qu’après son exécution réelle. Les campagnes responsives multi-largeurs sont couvertes par les tests automatisés, pas par la checklist manuelle. Le dépôt ne fournit pas de procédure automatisée de déploiement.
 
 ## Documentation du projet
 

@@ -69,36 +69,14 @@ security(session): régénère l'id de session à l'ouverture et à la montée d
 
 Le fichier `README.md` du dépôt (reproduit intégralement dans le dépôt de ce rendu) contient : présentation du projet, membres et rôles, prérequis, installation en 5 commandes, comptes de démonstration avec **mots de passe de démo**, exécution des tests (SQL, charge, statiques), arborescence, lien vers les documents (CDC, tests, soutenance), procédure de sauvegarde/restauration, et la table des 29 tests SQL avec leur commande de rejeu. **Critère d'acceptation** : un tiers, sur une machine propre, doit pouvoir installer et lancer la démo en ≤ 15 min en suivant uniquement le README (`ENF-13`).
 
-## 7. CI : le fichier de contrôle livré (`/home/user/.gitlab-ci.yml`, 6 jobs)
+## 7. CI et preuve de revue
 
-```yaml
-# .gitlab-ci.yml (extrait des jobs obligatoires)
-stages: [validate, db, test, docs]
-php-lint:      { stage: validate, script: [ "find app public -name '*.php' -exec php -l {} \\;" ] }
-security-scan: { stage: validate, script: [ "bash tests/security/controles.sh" ] }   # 10 grep bloquants
-base-tests:
-  stage: db
-  services: [ mysql:8.0 ]
-  variables: { MYSQL_DATABASE: minishop_test, MYSQL_ALLOW_EMPTY_PASSWORD: "yes", DB_TEST: minishop_test }
-  before_script: [ "apt-get update -qq && apt-get install -y -qq default-mysql-client" ]
-  script: [ "DB_USER=root bash scripts/run_sql_tests.sh" ]
-  artifacts: { paths: [ "tests/sql/rapport_tests_sql.md", "tests/sql/out" ] }
-```
-
-**Règle « pas de re-run » (à appliquer telle quelle).** Si le pipeline est **vert avant le merge** (statut de la
-MR : « Pipeline passed »), **aucun re-run n'est nécessaire après le merge** : le pipeline post-merge rejoue les
-6 mêmes jobs, sur le même arbre de fichiers (GitLab CI teste la MR sur son *merge result*, GitHub Actions sur
-`refs/pull/<n>/merge`). Le run post-merge sert de **preuve et de badge**, pas de contrôle — on ne clique donc ni
-« Retry » côté GitLab, ni « Re-run jobs » côté GitHub. Exceptions, à connaître pour la soutenance : `main` a
-avancé entre le run de la MR et le merge (la chaîne re-démarre seule), run **annulé** (`interruptible: true`),
-échec de code corrigé puis poussé (c'est le `push` qui relance, jamais un re-run manuel), `style` en échec
-`allow_failure` (non bloquant), **panne d'infrastructure** (un seul *Retry* justifié, anomalie consignée).
-Tableau complet : **CDC §14.2**.
+La charte complète et le registre réutilisable sont dans [`docs/20-charte-gitlab-revues-croisees.md`](../20-charte-gitlab-revues-croisees.md). La CI conservée est GitHub Actions (`.github/workflows/ci.yml`). Elle ne prouve pas qu’une MR GitLab a reçu une revue ou qu’un pipeline GitLab IUT a été exécuté. Consigner séparément l’identifiant de la MR, le relecteur distinct, les commentaires résolus et le résultat de CI avec sa plateforme.
 
 ## 8. Ce que le jury regarde en premier (auto-contrôle avant le rendu)
 
 | Point | Où le prouver |
 |---|---|
-| Pipeline **vert avant le merge** (et non un re-run après coup) | onglet *Pipelines* de la MR « Pipeline passed » (GitHub : `gh pr checks <n>`) ; **règle** « pas de re-run » du §7 |
-| Les 6 jobs tournent sans `allow_failure` déguisé | seul `style` est en `allow_failure: true` (§7) |
-| Pipeline qui **casse** sur une concaténation SQL | contrôle `security-scan` n° 1 (`tests/security/controles.sh`) |
+| Revue croisée **réelle** | identifiant de MR GitLab, relecteur distinct, approbation et fils de discussion résolus dans le registre de `docs/20` |
+| CI GitHub Actions | enregistrer le lien et le commit testés ; ne pas le présenter comme une CI GitLab |
+| Contrôle SQL | contrôle `security-scan` n° 1 (`tests/security/controles.sh`) dans la CI GitHub Actions |

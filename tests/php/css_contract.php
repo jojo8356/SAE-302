@@ -208,7 +208,6 @@ $check(
     $nonDefinies === [],
     implode(', ', $nonDefinies),
 );
-
 // --------------------------------------------------------- 4. accessibilité
 echo "\n4. Accessibilité et robustesse (DA §9)\n";
 $check('focus visible défini (:focus-visible)', str_contains($css, ':focus-visible'));

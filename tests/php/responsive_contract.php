@@ -120,7 +120,6 @@ foreach ($adminVues as $nomVue) {
 $check('admin mobile : libellés empilés et valeurs repliables',
     str_contains($css, '.tableau-defilant--admin tbody td::before { content: attr(data-label); display: block;')
     && str_contains($css, '.tableau-defilant--admin .tableau-commandes .montant { text-align: left; white-space: normal; }'));
-
 // ------------------------------------------------------------ 4. typographie
 echo "\n4. Typographie fluide et lisibilité\n";
 $clamps = substr_count($css, 'clamp(');

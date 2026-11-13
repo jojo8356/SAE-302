@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="SAÉ 302 — MiniShop : Compte rendu — vérification de l’audit et validation simple#">
+<title>Compte rendu — vérification de l’audit et validation simple# — MiniShop</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --papier: #fbfaf7;
+  --carte: #ffffff;
+  --trait: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-clair: #dbeafe;
+  --code: #f1f5f9;
+  --mesure: 72ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
+    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
+    --accent-clair: #1e3a8a; --code: #16223a;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  max-width: calc(var(--mesure) + 6rem);
+  background: var(--papier);
+  color: var(--encre);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
+h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
+p, li { max-width: var(--mesure); }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+}
+pre {
+  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
+  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.35rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+thead th { background: var(--accent-clair); }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
+img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li input[type="checkbox"] { margin-right: 0.4rem; }
+.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
+.toc > ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1rem; }
+footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+@media print {
+  :root { --papier: #fff; --carte: #fff; }
+  @page { size: A4; margin: 18mm 16mm; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#participants-et-limites-de-consignation">Participants et limites de consignation</a></li>
+<li><a href="#decisions-validees">Décisions validées</a></li>
+<li><a href="#suite-a-donner">Suite à donner</a></li>
+<li><a href="#mise-a-jour-du-perimetre-courant">Mise à jour du périmètre courant</a></li>
+<li><a href="#validation">Validation</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="compte-rendu-verification-de-laudit-et-validation-simple">Compte rendu — vérification de l’audit et validation simple<a class="headerlink" href="#compte-rendu-verification-de-laudit-et-validation-simple" title="Permanent link">#</a></h1>
+<p><strong>Date :</strong> 13 novembre 2026
+<strong>Objet :</strong> vérification de l’audit complet et validation simple des choix de périmètre et de documentation.
+<strong>Source du compte rendu :</strong> l’utilisateur atteste que la réunion a eu lieu le 13 novembre 2026 et confirme que le présent compte rendu reprend les choix communiqués dans cette conversation. Cette attestation n’a pas été vérifiée indépendamment.</p>
+<h2 id="participants-et-limites-de-consignation">Participants et limites de consignation<a class="headerlink" href="#participants-et-limites-de-consignation" title="Permanent link">#</a></h2>
+<p>Les noms des participants, l’heure, le lieu et une feuille de présence n’ont pas été fournis ; aucun n’est inventé. La réunion est consignée comme une vérification de l’audit et une validation simple des décisions listées ci-dessous. Ce compte rendu n’affirme pas qu’une tierce personne a validé chaque ligne de l’audit ni qu’une exécution technique externe a été rejouée.</p>
+<h2 id="decisions-validees">Décisions validées<a class="headerlink" href="#decisions-validees" title="Permanent link">#</a></h2>
+<ol>
+<li><strong>Retrait de <code>D1-L1-06</code> et de la CI GitLab.</strong> Retirer la tâche et le fichier <code>.gitlab-ci.yml</code> de la todolist, de la WBS et du CDC, supprimer le fichier du dépôt et retirer la ligne de l’audit. Les références actuelles doivent être adaptées ; GitHub Actions reste une chaîne distincte et ne vaut pas preuve d’un pipeline GitLab.</li>
+<li><strong><code>D1-L1-05</code> — livrable documentaire.</strong> Créer une charte GitLab complète et un registre de revue dans <code>docs/20-charte-gitlab-revues-croisees.md</code>, en complément des modèles de MR existants. La validation porte sur la documentation ; l’utilisation réelle de MR et les revues croisées ne sont pas revendiquées sans identifiants ou preuves réels.</li>
+<li><strong><code>D1-L1-07</code> — réunion.</strong> Consigner la séance comme une réunion de vérification de l’audit et de validation simple. Le compte rendu reprend les décisions communiquées par l’utilisateur ; il ne complète pas les noms des participants ou des validations individuelles qui n’ont pas été transmis.</li>
+<li><strong><code>D1-L1-04</code> — issue de barème.</strong> Conserver le statut <code>OK</code> sur la base de la capture de l’issue <code>s302#2</code>, qui montre les cinq livrables et les pénalités §16.2. L’épinglage n’est pas confirmé et n’est pas revendiqué.</li>
+<li><strong>Mise en ligne (état historique).</strong> À la date du compte rendu, aucun déploiement réel n’était déclaré et cette vérification restait sans preuve ; le présent compte rendu ne prétend pas qu’une mise en ligne a eu lieu.</li>
+</ol>
+<h2 id="suite-a-donner">Suite à donner<a class="headerlink" href="#suite-a-donner" title="Permanent link">#</a></h2>
+<ul>
+<li>Les totaux et références de tâches ont été recalés après le retrait du livrable de CI GitLab ; la présente note conserve la décision, sans réintroduire ce livrable comme exigence courante.</li>
+<li>Pour obtenir une preuve d’usage effectif des MR, ajouter au registre des identifiants/liens réels, auteurs, relecteurs distincts, approbations et commentaires résolus.</li>
+<li>La recommandation historique de vérifier une mise en ligne n’a pas été exécutée et est retirée du périmètre courant avec la fonctionnalité correspondante, sans remplacement de charge.</li>
+</ul>
+<h2 id="mise-a-jour-du-perimetre-courant">Mise à jour du périmètre courant<a class="headerlink" href="#mise-a-jour-du-perimetre-courant" title="Permanent link">#</a></h2>
+<p>La fonctionnalité de mise en ligne et de diagnostic staging ainsi que ses éléments documentaires associés ont été retirés du dépôt, de la todolist et de la WBS, sans travail de remplacement. Cette suppression ne constitue pas une preuve de déploiement. La campagne manuelle LineServ reste distincte, n’a pas été exécutée et aucune restauration de base n’a été réalisée.</p>
+<h2 id="validation">Validation<a class="headerlink" href="#validation" title="Permanent link">#</a></h2>
+<p>L’utilisateur confirme que la réunion avait pour objet la vérification de l’audit et une validation simple, et que les choix ci-dessus constituent le compte rendu demandé. Aucun accès au dépôt IUT ni aucune vérification extérieure n’ont été effectués pour rédiger cette note.</p>
+<footer class="doc">
+  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/21-compte-rendu-reunion-audit-2026-11-13.md</code>
+  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+</footer>
+</main>
+</body>
+</html>

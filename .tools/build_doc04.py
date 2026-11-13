@@ -3,9 +3,10 @@
    à partir du CDC §12 (source) et de l'annexe SQL (scripts verbatim)."""
 import re, pathlib, base64
 
-UP = pathlib.Path("/home/user/docs")            # documents officiels (.md)
-ANN = pathlib.Path("/home/user/docs/annexes")      # annexes (.md)
-OUT = pathlib.Path("/home/user/docs")
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+UP = ROOT / "docs"            # documents officiels (.md)
+ANN = UP / "annexes"          # annexes (.md)
+OUT = UP
 OUT.mkdir(exist_ok=True)
 (OUT / "diagrams").mkdir(exist_ok=True)
 
@@ -179,7 +180,7 @@ doc = doc.replace("](docs/diagrams/", "](diagrams/")
 
 # ---------- 4. Annexes : liens vers les fichiers livrés ----------
 import shutil
-SQLDIR = pathlib.Path("/home/user/sql")
+SQLDIR = ROOT / "sql"
 
 def nlines(p): return len(p.read_text(encoding="utf-8").splitlines())
 
@@ -198,26 +199,25 @@ fichiers = [
   "A.5", nlines(SQLDIR/"04_minishop_demo.sql")),
  ("[`tests/sql/fixture.sql`](../tests/sql/fixture.sql)",
   "jeu de données des tests (état de référence mémorisé dans `stock_initial`)",
-  "C.3 · doc 02", nlines(pathlib.Path("/home/user/tests/sql/fixture.sql"))),
+  "C.3 · doc 02", nlines(ROOT / "tests/sql/fixture.sql")),
  ("[`tests/sql/manifest.txt`](../tests/sql/manifest.txt)",
   "manifeste des 29 tests SQL (résultat attendu par test)",
-  "C.3 · doc 02", nlines(pathlib.Path("/home/user/tests/sql/manifest.txt"))),
+  "C.3 · doc 02", nlines(ROOT / "tests/sql/manifest.txt")),
  ("[`tests/perf/mesurer.sh`](../tests/perf/mesurer.sh)",
   "protocole de mesure p95 HTTP (`ENF-01`)",
-  "doc 02 §5", nlines(pathlib.Path("/home/user/tests/perf/mesurer.sh"))),
+  "doc 02 §5", nlines(ROOT / "tests/perf/mesurer.sh")),
  ("[`tests/perf/mesurer_sql.sh`](../tests/perf/mesurer_sql.sh)",
   "mesure côté base : plans d'exécution, p95, coût d'une écriture métier",
-  "A.3 · doc 02 §5", nlines(pathlib.Path("/home/user/tests/perf/mesurer_sql.sh"))),
+  "A.3 · doc 02 §5", nlines(ROOT / "tests/perf/mesurer_sql.sh")),
  ("[`scripts/gen_volumes.sh`](../scripts/gen_volumes.sh)",
   "générateur de volumétrie (200 produits / 1 000 commandes via les procédures)",
-  "doc 02 §5", nlines(pathlib.Path("/home/user/scripts/gen_volumes.sh"))),
- ("[`.gitlab-ci.yml`](../.gitlab-ci.yml)",
-  "chaîne CI : 6 jobs alignés sur le barème (lint, sécurité, tests SQL, unitaires, diagrammes) ; "
-  "**pas de re-run après un merge dont la MR était verte**",
-  "CDC §14.2", nlines(pathlib.Path("/home/user/.gitlab-ci.yml"))),
+  "doc 02 §5", nlines(ROOT / "scripts/gen_volumes.sh")),
+ ("[`.github/workflows/ci.yml`](../.github/workflows/ci.yml)",
+  "workflow CI GitHub Actions du dépôt ; il ne prouve pas un pipeline GitLab IUT",
+  "CDC §14.2", nlines(ROOT / ".github/workflows/ci.yml")),
  ("[`.gitignore`](../.gitignore)",
   "secrets hors dépôt (`app/Config/env.php`), artefacts régénérables",
-  "CDC §14.1 règle 7", nlines(pathlib.Path("/home/user/.gitignore"))),
+  "CDC §14.1 règle 7", nlines(ROOT / ".gitignore")),
 ]
 
 annex_lines = []

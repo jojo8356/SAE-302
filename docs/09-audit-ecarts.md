@@ -8,6 +8,9 @@
 > **Méthode.** Audit statique du dépôt + exécution réelle de `node scripts/run-all-tests.mjs`
 > et `bash tests/security/controles.sh` le 23/10/2026.
 
+> **Note de portée (révision du 23/10/2026).** Les références à `.gitlab-ci.yml`, aux jobs GitLab et à une « cible notée » ci-dessous décrivent l’état antérieur examiné par cet audit. La configuration GitLab CI et son exigence ont depuis été retirées du CDC ; la CI GitHub Actions est distincte et ne prouve pas un pipeline GitLab.
+
+
 ## 0. Synthèse
 
 **Statut vérifié le 23/10/2026** (les détails et les commandes de preuve sont dans `10-todo-corrections.md`).
@@ -26,6 +29,7 @@
 **Vert et vérifié** : `node scripts/run-all-tests.mjs` → linter 0 violation / 86 fichiers, moteur 98/98,
 règles 108/108, fonctionnalités OK, design 28/28, PHPUnit 34/34, E2E 185/185 ;
 `bash tests/security/controles.sh` → 10/10 + auto-test.
+
 
 ---
 

@@ -6,13 +6,12 @@ Fichiers sources : `sql/01_minishop_schema.sql` (DDL + données), `sql/02_minish
 (protocole de mesure `ENF-01`) et `scripts/gen_volumes.sh` (jeu de mesure de volumétrie).
 
 (A→F : scripts SQL, fixture et manifeste de tests ; G→H : mesures de performance et volumétrie ;
-I→J : CI et fichiers hors dépôt.)
-Ils sont reproduits ici intégralement **depuis les fichiers réels** pour que le document rendu soit
-autoportant ; le dépôt reste la source de vérité (les régénérer : `bash "$DIR_SCRIPTS/build-docs.sh"`).
+I : fichiers hors dépôt.)
+Les extraits ci-dessous reprennent la structure des scripts pour l’explication pédagogique. Les identifiants, hashes et coordonnées des comptes de démonstration sont expurgés ; les marqueurs rendent les lignes concernées non exécutables. Le dépôt reste la source de vérité, mais cette annexe n’est pas un export restaurable.
 
 ## A. Script de création et de peuplement — `sql/01_minishop_schema.sql`
 
-_(309 lignes, copié verbatim depuis le dépôt.)_
+_(Extrait abrégé et expurgé des valeurs de comptes et de coordonnées ; non exécutable.)_
 
 ```sql
 -- =====================================================================
@@ -252,11 +251,10 @@ CREATE TABLE order_status_history (
 
 -- ---------------------------------------------------------------------
 -- FIN DES TABLES — insertion du jeu de données de démonstration
--- (mot de passe des comptes de test : Demo2026! pour les clients,
---  Admin2026! pour le back-office — hash générés par password_hash()).
+-- Valeurs d’authentification des comptes de démonstration expurgées.
 -- ---------------------------------------------------------------------
 INSERT INTO administrateur (nom, prenom, email, mot_de_passe_hash, role) VALUES
-  ('Nguyen','Alice','admin@minishop.fr','$2b$10$ASp02qmyg5r3VvXRIV60/ObRO3IDB6bJ7DWgH20FOECvoNtDPNNW2','SUPER');
+  ('Admin','Demo','admin@example.test','[HASH EXPURGÉ]','SUPER');
 
 INSERT INTO categorie (nom, slug, description) VALUES
   ('Informatique','informatique','Ordinateurs portables, périphériques et composants'),
@@ -283,9 +281,9 @@ INSERT INTO produit
   ('BRAC-012','Bracelet connecté Band','bracelet-connecte-band','Suivi du sommeil et des notifications, 10 jours.',35.00,20.00,42.00,60,15,4,0,'img/band.jpg');
 
 INSERT INTO client (nom, prenom, email, mot_de_passe_hash, telephone, adresse_livraison, code_postal, ville) VALUES
-  ('Dupont','Alice','alice@example.com','$2b$10$ldtyUy7EyQ4YJ0L8qBWZxuTuefzalZmCDOnXNnBHHZNm8cZqOerjO','0612345678','12 rue de France','06000','Nice'),
-  ('Martin','Bruno','bruno@example.com','$2b$10$ldtyUy7EyQ4YJ0L8qBWZxuTuefzalZmCDOnXNnBHHZNm8cZqOerjO','0698765432','5 avenue Jean Médecin','06000','Nice'),
-  ('Moretti','Carla','carla@example.com','$2b$10$ldtyUy7EyQ4YJ0L8qBWZxuTuefzalZmCDOnXNnBHHZNm8cZqOerjO',NULL,'8 rue Papin','06300','Nice');
+  ('Client','A','client-a@example.test','[HASH EXPURGÉ]',NULL,NULL,NULL,NULL),
+  ('Client','B','client-b@example.test','[HASH EXPURGÉ]',NULL,NULL,NULL,NULL),
+  ('Client','C','client-c@example.test','[HASH EXPURGÉ]',NULL,NULL,NULL,NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;
 
@@ -1472,7 +1470,7 @@ FOR EACH ROW
 
 ## D. Commandes de démonstration via `CALL` — `sql/04_minishop_demo.sql`
 
-_(46 lignes, copié verbatim depuis le dépôt.)_
+_(Structure conservée ; les adresses de démonstration sont remplacées par une valeur générique.)_
 
 ```sql
 -- =====================================================================
@@ -1490,7 +1488,7 @@ _(46 lignes, copié verbatim depuis le dépôt.)_
 -- scripts/load_db.sh ; en mode interactif, taper `USE minishop;` d'abord.
 
 -- Client 1 : commande complète (2 x Casque Aura + 1 x Cable USB-C) validée
-CALL sp_create_order(1, '12 rue de France, 06000 Nice', @id_c1, @num_c1);
+CALL sp_create_order(1, 'Adresse de test', @id_c1, @num_c1);
 CALL sp_add_order_line(@id_c1, 5, 2, @l, @t, @r);
 CALL sp_add_order_line(@id_c1, 9, 1, @l, @t, @r);
 -- validation par la procedure : c'est elle qui FIGE les frais de port et solde le
@@ -1499,11 +1497,11 @@ CALL sp_add_order_line(@id_c1, 9, 1, @l, @t, @r);
 CALL sp_confirm_order(@id_c1, 1, 0, @mnt_c1, @r_c1);
 
 -- Client 2 : panier en préparation (brouillon) — 1 x Batterie externe (stock 0)
-CALL sp_create_order(2, '5 avenue Jean Médecin, 06000 Nice', @id_c2, @num_c2);
+CALL sp_create_order(2, 'Adresse de test', @id_c2, @num_c2);
 
 -- Client 3 : commande payée puis expédiée (statuts posés par UPDATE direct : le trigger
 -- trg_commande_transition_statut contrôle la matrice RB-11 exactement comme la procédure)
-CALL sp_create_order(3, '8 rue Papin, 06300 Nice', @id_c3, @num_c3);
+CALL sp_create_order(3, 'Adresse de test', @id_c3, @num_c3);
 CALL sp_add_order_line(@id_c3, 3, 1, @l, @t, @r);
 CALL sp_add_order_line(@id_c3, 4, 2, @l, @t, @r);
 UPDATE commande SET statut = 'EN_PREPARATION' WHERE id_commande = @id_c3;
@@ -1513,7 +1511,7 @@ UPDATE commande SET statut = 'EXPEDIEE'       WHERE id_commande = @id_c3;
 -- Client 1 (bis) : petit panier SOUS la franchise, pour que les frais de port soient
 -- visibles dans la demonstration et dans le tableau de bord (4,90 EUR de livraison
 -- standard ajoutes au montant) ; C1 et C3 beneficient en revanche de la franchise.
-CALL sp_create_order(1, '12 rue de France, 06000 Nice', @id_c4, @num_c4);
+CALL sp_create_order(1, 'Adresse de test', @id_c4, @num_c4);
 CALL sp_add_order_line(@id_c4, 8, 1, @l, @t, @r);    -- 1 x Ecran 27" QHD : 58.80 EUR TTC
 CALL sp_confirm_order(@id_c4, 1, 0, @mnt_c4, @r_c4); -- 58.80 < 80.00 -> port 4.90, total 63.70
 
@@ -1708,7 +1706,7 @@ exit $rc
 
 ## G2. Mesure des performances côté base — `tests/perf/mesurer_sql.sh`
 
-_(101 lignes, copié verbatim depuis le dépôt.)_
+_(Extrait expurgé des coordonnées de démonstration ; les valeurs génériques ne sont pas destinées à une exécution.)_
 
 ```bash
 #!/usr/bin/env bash
@@ -1796,7 +1794,7 @@ pid=$(q -e "SELECT MIN(id_produit) FROM produit WHERE stock > 5")
 if [ -n "${pid:-}" ]; then
   t1=$(date +%s%N)
   q > /dev/null 2>&1 <<SQL
-CALL sp_create_order(1, '12 rue de France, 06000 Nice', @c, @n);
+CALL sp_create_order(1, 'Adresse de test', @c, @n);
 CALL sp_add_order_line(@c, $pid, 1, @l, @t, @r);
 CALL sp_confirm_order(@c, 1, 0, @m, @code);
 SQL
@@ -1925,133 +1923,11 @@ run -e "SELECT (SELECT COUNT(*) FROM produit)              AS produits,
 echo "Mesures : DB=$DB ./tests/perf/mesurer.sh   |   Retour au jeu de demo : bash "$DIR_SCRIPTS/gen_volumes.sh" --purge"
 ```
 
-## I. Chaîne d'intégration continue — `.gitlab-ci.yml`
+## Décision de périmètre CI (23 octobre 2026)
 
-_(114 lignes, copié verbatim depuis le dépôt.)_
+La configuration `.gitlab-ci.yml` a été retirée du projet et du présent cahier des charges. Le workflow conservé est GitHub Actions (`.github/workflows/ci.yml`) ; son résultat ne constitue pas une preuve de pipeline GitLab. Le contenu détaillé du workflow se trouve dans le fichier versionné, qui reste la source de vérité.
 
-```yaml
-# MiniShop — chaîne d'intégration continue (contrainte CT-09 et §14.2 du cahier des charges).
-# Chaque job répond à un critère du barème : un pipeline vert prouve que (a) le script SQL est
-# rejouable, (b) les 28 tests (règles, vues, frais de port) passent, (c) aucune règle de sécurité n'a été
-# court-circuitée dans le code PHP. Un job qui échoue bloque le merge : la pénalité devient
-# visible pendant le développement, pas au moment du rendu.
-#
-# Prod : GitLab CI (ce fichier) — cible de notation, barème §16.1.
-# Dev  : GitHub Actions (.github/workflows/ci.yml) — même 6 jobs adaptés pour GitHub
-#        (setup-php, services mysql:8.0, fallback sans load_db.sh). Les deux pipelines
-#        sont maintenus synchrones ; en dev on pousse sur GitHub, en prod on miroir vers GitLab.
-#
-# Règle de re-run (CDC §14.2, annexe 17.9 §7) : si le pipeline est VERT avant le merge
-# (statut de la MR « Pipeline passed »), aucun re-run n'est nécessaire après le merge.
-# Le pipeline post-merge rejoue les mêmes jobs sur le même arbre de fichiers (GitLab teste
-# la MR sur son merge result) : il sert de preuve/badge, pas de contrôle. On ne relance que
-# si main a avancé, si le run a été annulé, si le code a été corrigé puis poussé (le push
-# relance seul), ou après une panne d'infrastructure (un Retry, anomalie consignée A-0x).
-
-stages: [validate, db, test, docs]
-
-default:
-  interruptible: true
-
-# 1. Syntaxe PHP : 100 % des fichiers doivent être valides (§11.3 PRÉ-3).
-php-lint:
-  stage: validate
-  image: php:8.2-cli
-  script:
-    - find app public -name '*.php' -print0 | xargs -0 -n1 -P4 php -l
-
-# 2. Conventions PSR-12 : signalées, non bloquantes (ne doit jamais faire échouer une démo).
-style:
-  stage: validate
-  image: php:8.2-cli
-  allow_failure: true
-  script:
-    - "command -v phpcs >/dev/null 2>&1 || pear install -f PHP_CodeSniffer || true"
-    - "phpcs --standard=PSR12 --report=summary app public || true"
-
-# 3. Contrôles statiques de sécurité : 10 grep bloquants (interpolation SQL, échappement
-#    manquant, mot de passe en dur, session durcie, CSRF, contrôle d'appartenance).
-security-scan:
-  stage: validate
-  image: alpine:3.20
-  before_script:
-    - apk add --no-cache bash grep findutils
-  script:
-    - bash tests/security/controles.sh
-
-# 4. Base de données : chargement du schéma puis 28 tests (règles, vues, port).
-#    Porte les points « script SQL », « procédures stockées », « triggers » du barème.
-base-tests:
-  stage: db
-  image: mysql:8.0
-  services:
-    - name: mysql:8.0
-      alias: mysql
-  variables:
-    MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-    MYSQL_DATABASE: minishop_test
-    DB_HOST: mysql
-    DB_USER: root
-    DB_PASS: ""
-    DB_TEST: minishop_test
-  before_script:
-    - apt-get update -qq
-    - apt-get install -y -qq --no-install-recommends mariadb-client
-  script:
-    - ./scripts/load_db.sh
-    - ./scripts/run_sql_tests.sh
-  artifacts:
-    when: always
-    expire_in: 4 weeks
-    paths:
-      - tests/sql/rapport_tests_sql.md
-      - tests/sql/out/
-
-# 5. Tests unitaires PHP (modèles, repositories, sécurité) sur la base de test.
-unit:
-  stage: test
-  image: php:8.2-cli
-  services:
-    - name: mysql:8.0
-      alias: mysql
-  variables:
-    MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-    MYSQL_DATABASE: minishop_test
-    DB_TEST: minishop_test
-  before_script:
-    - apt-get update -qq
-    - apt-get install -y -qq --no-install-recommends mariadb-client unzip git
-    - "test -f composer.phar || (curl -sS https://getcomposer.org/installer | php)"
-    - php composer.phar install --prefer-dist --no-progress
-  script:
-    - ./vendor/bin/phpunit --testsuite app --log-junit phpunit.xml
-  artifacts:
-    when: always
-    reports:
-      junit: phpunit.xml
-
-# 6. Documentation : les diagrammes doivent se régénérer depuis leurs sources, sinon la
-#    pénalité « manque un diagramme UML » (-1) s'applique au rendu.
-docs:
-  stage: docs
-  image: openjdk:17-slim
-  before_script:
-    - apt-get update -qq && apt-get install -y -qq --no-install-recommends curl || true
-    - "test -f plantuml.jar || curl -sSL -o plantuml.jar https://github.com/plantuml/plantuml/releases/download/v1.2024.0/plantuml-1.2024.0.jar"
-  script:
-    - PLANTUML_JAR=plantuml.jar bash docs/diagrams/render.sh
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - docs/diagrams/
-```
-
-**Règle de re-run** : si le pipeline est **vert avant le merge**, aucun re-run n'est nécessaire après le
-merge — la MR est testée sur son *merge result* (GitHub Actions : `refs/pull/<n>/merge`), donc le run
-post-merge rejoue les mêmes jobs sur le même arbre de fichiers. Exceptions et tableau des six cas : **CDC
-§14.2** ; application à la charte d'équipe : **annexe 17.9 §7**.
-
-## J. Fichiers hors dépôt — `.gitignore`
+## I. Fichiers hors dépôt — `.gitignore`
 
 _(35 lignes, copié verbatim depuis le dépôt.)_
 

@@ -470,8 +470,8 @@ if ($racines === []) {
     // Tout le livrable PHP du dépôt. Les scripts d'exploitation sont énumérés
     // un par un (et non via le dossier `scripts` entier) pour être couverts :
     // ils ne l'étaient pas, et un fichier sans `<?php` avait pu passer.
-    // Restent volontairement hors périmètre, car antérieurs et non applicatifs :
-    // scripts/deploy.php et scripts/gen_volumes*.php (outils d'exploitation).
+    // Restent volontairement hors périmètre, car non applicatifs :
+    // scripts/gen_volumes*.php (outils de volumétrie).
     $racines = [
         'app',
         'public',

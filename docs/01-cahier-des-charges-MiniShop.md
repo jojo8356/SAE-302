@@ -54,7 +54,7 @@ Ce projet est double : il est à la fois un CDC « client » (MiniShop doit fonc
 | Qualité d'un bon CDC | Comment elle est garantie ici |
 |---|---|
 | Nécessaire | §4 recouvre **les 14 cas d'utilisation minimum** et les 3×n fonctionnalités du sujet, sans en retirer aucune |
-| Réalisable | §13.4 planning sur 12 semaines × 3 personnes = 360 h, charges vérifiées ligne à ligne |
+| Réalisable | §13.4 planning sur 12 semaines × 3 personnes = 360 h de capacité nominale ; charge planifiée révisée à 355 h |
 | Clair | identifiants d'exigence, vocabulaire unique (§0.3), règles métier numérotées avec leur traduction SQL |
 | Vérifiable | §15 + annexe 17.8 : 29 tests SQL **exécutés** (29/29 conformes), tests fonctionnels, tests de sécurité |
 | Cohérent | matrice de traçabilité exigence → modèle → procédure → test (`docs/02-document-tests-validation.md` §6), aucune exigence orpheline |
@@ -169,7 +169,7 @@ sur la base, **conçu** = exigence spécifiée dont la vérification suppose l'a
 | **≥ 5 triggers**, dont « Trigger 1 — Stock » (`stock - quantité commandée`) et « Trigger 2 — Historique » sur `ORDER_STATUS_HISTORY` | §12.6 (16) + §12.5.2 (colonnes exactes du sujet + 4 utiles) | `T-07`, `T-21`, `T-22` | **exécuté** |
 | Sécurité : `PDO::prepare`/`execute`, `password_hash`/`password_verify`, `htmlspecialchars`, `$_SESSION['user_id']`, `commande.php?id=25` | §8.1, §8.4, §8.5, §8.7 | `bash tests/security/controles.sh` (**10/10**) | **exécuté (statique)** |
 | Architecture **3 couches MVC** | §9 + §4.5 | `architecture_mvc.png` | **documenté + rendu** |
-| Application PHP/MySQL/PDO **MVC**, GitLab (participation de chacun), **document de tests et validation** | §10 (procédures et triggers **réellement utilisés** par l'app), §14.2 (GitLab, commits par développeur), §15 + `docs/02` | `.gitlab-ci.yml` (8 jobs), `README.md` d'installation | **spécifié et livré** (§16.4 révisé le 28/10/2026) |
+| Application PHP/MySQL/PDO **MVC**, GitLab (participation de chacun), **document de tests et validation** | §10 (procédures et triggers **réellement utilisés** par l'app), §14.2 (commits par développeur et CI GitHub Actions), §15 + `docs/02` | `.github/workflows/ci.yml`, `README.md` d'installation | **spécifié et livré** |
 | Soutenance **15 min** | §17.11 + `docs/03-support-soutenance.md` (déroulé minute par minute) | minutage affiché | **documenté** |
 | Barème 20/20/30/10/10 **et ses pénalités** | §16 : chaque pénalité du sujet a une ligne « comment elle est évitée » | §16.1 à §16.3 | **documenté** |
 | Groupe de 3, **composition envoyée par courriel** (`sujet : Composition SAE`), **URL GitLab partagée** avec l'enseignante | §14.2, annexe 17.7 (§GitLab) | checklist S1 du planning (§14.4) | **à réaliser par l'équipe** |
@@ -225,8 +225,8 @@ sur la base, **conçu** = exigence spécifiée dont la vérification suppose l'a
 | Acteur | Définition | Qui l'incarne dans la démo | Authentification | Droits (résumé) |
 |---|---|---|---|---|
 | **Visiteur** | personne non identifiée sur le site public | toute navigation en navigation privée | aucune | consulter catégories, produits, rechercher, filtrer, voir la fiche produit, **créer un compte**, ouvrir une session |
-| **Client** | visiteur inscrit, identifié | `alice@example.com` | session PHP (`$_SESSION['user_id']`) | tout le visiteur + gérer son compte, son panier, passer une commande, consulter son historique, **annuler** une commande non expédiée |
-| **Administrateur** | membre du personnel du back-office | `admin@minishop.fr` | session PHP (`$_SESSION['admin_id']`, rôle distinct) | gérer produits, catégories, stocks, commandes et statuts ; ne gère **jamais** le compte d'un client (RB-13) |
+| **Client** | visiteur inscrit, identifié | `alice@example.test` | session PHP (`$_SESSION['user_id']`) | tout le visiteur + gérer son compte, son panier, passer une commande, consulter son historique, **annuler** une commande non expédiée |
+| **Administrateur** | membre du personnel du back-office | `admin-test@example.test` | session PHP (`$_SESSION['admin_id']`, rôle distinct) | gérer produits, catégories, stocks, commandes et statuts ; ne gère **jamais** le compte d'un client (RB-13) |
 | *SGBD MySQL* (secondaire) | exécute les procédures stockées, déclencheurs, contraintes, transactions | — | comptes applicatifs distincts (§8.6) | garant final des règles de gestion |
 | *Faux client / attaquant* (secondaire, pour l'étude de sécurité uniquement) | utilisateur malveillant : injection SQL, XSS, IDOR, CSRF, force brute | 10 tests offensifs `S-01…S-10` (document de tests) | n'a aucun droit légitime | ses tentatives doivent **échouer**, et l'échec est un livrable |
 
@@ -707,7 +707,7 @@ Lecture de la table : les règles `RB-06`, `RB-11`, `RB-18` sont appliquées **d
 | `CT-06` | **JavaScript côté client** | ES2022 natif, sans framework, sur le panier / filtres / validations | §4.5.3, test F-13 |
 | `CT-07` | **Authentification + sessions** PHP | `session_*` durcis, `$_SESSION['user_id']`, régénération d'ID | §8.4, tests S-05/S-06 |
 | `CT-08` | **Sécurité des applications Web** (9 points du sujet) | §8, un sous-chapitre par point demandé, avec code | 10 tests offensifs `S-01…S-10` + `tests/security/controles.sh` |
-| `CT-09` | **Travail sur GitLab**, participation de chaque développeur comptée, historique conservé | §14 : branches, MR, commits signés, CI | `git shortlog -sne`, `README.md` |
+| `CT-09` | **Travail sur GitLab**, participation de chaque développeur comptée, historique conservé | §14 : branches, MR et commits ; CI GitHub Actions distincte | `git shortlog -sne`, `README.md` |
 | `CT-10` | **Document de tests et de validation** | §15 + annexe 17.8 | harnais rejouable |
 | `CT-11` | **Livrer le script SQL de création de la base** (avec insertion de données) | `sql/01_minishop_schema.sql` + `02` (procédures) + `03` (triggers) + `04` (démonstration) | `scripts/load_db.sh` |
 | `CT-12` | Soutenance de 15 min + questions | §17.11 | plan de soutenance |
@@ -725,8 +725,8 @@ Lecture de la table : les règles `RB-06`, `RB-11`, `RB-18` sont appliquées **d
 | Normes de code | **PSR-12** + `declare(strict_types=1)` + autoloading **PSR-4** (`App\` → `app/`) | Zend/PSR-0 (obsolète) |
 | Front | HTML5 sémantique, CSS natif (variables, grille/flexbox), **JavaScript ES2022 en modules**, pas de bundleur | React/Vue (build required, aucune plus-value pédagogique) |
 | Contrôle de version | **GitLab** (hébergé ou local), une MR par lot, merges **squash** interdits pour ne pas effacer les auteurs | GitHub (le sujet impose GitLab) |
-| CI | `.gitlab-ci.yml` : `php -l`, `phpcs` (optionnel), chargement SQL dans un service MySQL, exécution des tests SQL et PHPUnit | pas de CI (rendrait la preuve de contribution plus faible) |
-| Environnements | `dev` (LAMP local), `test` (base `minishop_test` recréée à chaque campagne), `prod` (démo hébergée sur la machine de soutenance) | dev = prod (interdit : les hashes et le seed diffèrent) |
+| CI | GitHub Actions : workflow versionné dans `.github/workflows/ci.yml` ; ses résultats ne valent pas preuve d’un pipeline GitLab | GitLab CI retirée du périmètre du CDC le 23/10/2026 |
+| Environnements | `dev` (poste local isolé, seed de démonstration), CI GitHub Actions (base jetable), `prod` (LineServ : campagne manuelle prévue sur la base réelle, uniquement après autorisation) | mélanger les données/identifiants locaux avec la base réelle ; aucun scénario manuel LineServ ni aucune restauration n’a été exécuté |
 | Contrainte de périmètre physique | **volumétrie retenue avec le client (arbitrage du 21/09/2026) : 200 produits au catalogue et 1 000 commandes par an** (soit ≈ 3 lignes par commande, ≈ 4 commandes/jour en moyenne, 40/jour en pointe). À cette échelle : aucune partition, aucun cache applicatif, aucun index FULLTEXT supplémentaire — mais des mesures faites sur un **jeu de données de taille réelle**, pas sur la démo : `scripts/gen_volumes.sh` (§15.3) | — (noté ici pour justifier l'absence d'infrastructure lourde) |
 
 ### 7.3 Contraintes de données (précisions demandées au §12)
@@ -900,7 +900,7 @@ Le message renvoyé est un **404** (et non un 403) : une réponse « interdit »
 - l'application utilise un compte **dédié** (`minishop_app`) limité à la base applicative : `SELECT, INSERT, UPDATE, DELETE, EXECUTE` + `TRIGGER` (nécessaire pour créer ses propres triggers à l'installation) ; **jamais** `DROP`, `GRANT OPTION`, ni accès à `mysql.*` ;
 - un second compte d'installation (`minishop_admin`) est utilisé **uniquement** par `scripts/load_db.sh` puis peut être révoqué ;
 - pas de requêtes administratives depuis PHP : la liste des comptes, les grants et les journaux d'erreurs ne sont consultés que par le développeur/la DBA ;
-- les comptes de démonstration (hachés, §12.7) sont détruits en production pédagogique par un `scripts/deploy.php` qui ne copie pas le fichier de démonstration `sql/04_minishop_demo.sql`.
+- les comptes de démonstration du seed sont réservés aux environnements locaux isolés ; le projet ne fournit aucun mécanisme de déploiement public ni de rotation automatisée de ces comptes. Sur LineServ, n'utiliser que des comptes de test explicitement autorisés.
 
 ### 8.7 `SEC-10` `SEC-11` `SEC-12` `SEC-13` — En-têtes, durcissement, fuites d'information, journalisation
 
@@ -1014,16 +1014,16 @@ minishop/
 │   └── Router.php
 ├── public/                        # seul dossier exposé par Apache
 │   ├── index.php  .htaccess  css/  js/  img/
-├── scripts/{load_db.sh, run_sql_tests.sh, gen_volumes.sh, deploy.php, build-docs.sh}
+├── scripts/{load_db.sh, run_sql_tests.sh, gen_volumes.sh, build-docs.sh}
 ├── tests/
 │   ├── sql/{manifest.txt, fixture.sql, t01…t26_*.sql, out/, rapport_tests_sql.md}
-│   ├── php/                      # PHPUnit : modèles, repositories (base de test), sécurité
+│   ├── php/                      # PHPUnit : modèles, repositories, sécurité
 │   ├── charge/reserver.sh        # C-01 : N tentatives simultanées sur M exemplaires (anti-survente)
 │   ├── perf/mesurer.sh           # ENF-01 : p95 par URL (ab ou curl)
 │   └── security/controles.sh     # 10 contrôles statiques bloquants en CI (§15.3)
 ├── var/{log/, cache/}        # créés par l'installeur, jamais versionnés (.gitignore)
 ├── .gitignore                # secrets + artefacts (voir §14.1 règle 7)
-└── .gitlab-ci.yml            # 6 jobs : lint, style, security-scan, base-tests, unit, docs
+└── .github/workflows/ci.yml # CI du dépôt sur GitHub Actions
 ```
 
 ### 9.3 Front controller et routage
@@ -1037,7 +1037,7 @@ minishop/
 | Conventions | Effet concret |
 |---|---|
 | `declare(strict_types=1);` + PSR-12 + `final class` par défaut | le type d'un `id` ne « glisse » pas de `string` à `int` ; pas d'héritage non désiré |
-| un repository = une agrégation, constructeur injectant `PDO` | testable avec une base de test, remplaçable par un double |
+| un repository = une agrégation, constructeur injectant `PDO` | dépendance testable et remplaçable par un double |
 | les contrôleurs ne **font jamais** `new PDO()` : le PDO vient du constructeur | la configuration des options PDO reste unique et ne peut pas être désactivée par étourderie (`ENF-09`) |
 | erreurs métier = exceptions du domaine (`StockInsuffisant`, `AccesRefuse`, `RegleInterdite`) | traduction centralisée en code HTTP + message utilisateur ; journalisation automatique (`SEC-13`) |
 | aucune `super-globale` dans le modèle | `$_SESSION` n'est lu que dans `Auth` et les contrôleurs |
@@ -1049,15 +1049,14 @@ minishop/
 - à la validation de commande, `CommandeRepository` appelle la procédure, **puis** vide la clé `panier` : le vidage n'est fait qu'après `COMMIT` (sinon un `ROLLBACK` perdrait le panier du client) ;
 - variante persistée (V1, §12.8) : `PANIER`/`LIGNE_PANIER` en base, le même contrôleur, une méthode de repository en plus — l'architecture n'est pas touchée, preuve que la séparation des couches est la bonne.
 
-### 9.6 Environnements, déploiement, sauvegarde
+### 9.6 Environnements et sauvegarde
 
 | Environnement | Base | Données | Particularités |
 |---|---|---|---|
 | `dev` (poste de chaque étudiant) | `minishop` | seed complet + hashes de démo | `display_errors = On` **uniquement** en local |
-| `test` (CI GitLab + harnais) | `minishop_test` | seed + fixture de tests | recréée intégralement à chaque campagne ; `DB_TEST=minishop_test` |
-| `demo`/`prod` (machine de soutenance) | `minishop` | seed **sans** les mots de passe faibles, `sql/04` non joué | HTTPS auto-signé, `scripts/deploy.php` (copie + `load_db.sh` + droits `var/`) |
+| `demo`/`prod` (LineServ, machine de soutenance) | `minishop` (instance réelle ciblée par la campagne manuelle) | données et comptes gérés sous l’autorité de l’exploitant ; `sql/04` réservé aux essais locaux | recette manuelle pré-démo prévue sur l’instance réelle selon `docs/14-guide-lineserv.md`, uniquement après autorisation ; à ce jour, aucun scénario n’a été exécuté et aucune restauration n’a été réalisée. Le retour à l’état de démonstration relève d’une procédure autorisée de l’exploitant ; le projet ne fournit pas de déploiement automatisé. HTTPS selon la configuration LineServ |
 
-Sauvegarde/restauration spécifiées (2 min d'exécution en démo) : `mysqldump --single-transaction --routines --triggers minishop > backup.sql` et restauration `mysql minishop < backup.sql` ; la présence de `--routines --triggers` est **nécessaire** ici : sans elle, une base restaurée perdrait la fonction, les 17 procédures et les 16 triggers, donc les règles `RB-03/06/11/18` cesseraient d'être appliquées silencieusement — c'est l'un des arguments à plaider en soutenance (§17.11).
+Procédure de sauvegarde/restauration spécifiée mais non exécutée ni chronométrée (objectif estimatif : 2 min en démo) : `mysqldump --single-transaction --routines --triggers minishop > backup.sql` et restauration `mysql minishop < backup.sql` ; la présence de `--routines --triggers` est **nécessaire** ici : sans elle, une base restaurée perdrait la fonction, les 17 procédures et les 16 triggers, donc les règles `RB-03/06/11/18` cesseraient d'être appliquées silencieusement — c'est l'un des arguments à plaider en soutenance (§17.11).
 
 ---
 
@@ -1442,15 +1441,9 @@ L'exigence « Trigger 1 — Stock » est couverte par `TRG-A1`+`TRG-A2` (et `TRG
 | 36 produits (3 pages de 12) | prix de 8.50 à 1249 € HT, dont **`POWER-010`, `POWER-030` et `MONTRE-032` en rupture (`stock = 0`)**, `MICRO-007` au seuil de réassort, `BRAC-012` **masqué** | `RB-19`, `EF-ADM-05`, `F-12/13`, `T-25`, `T-26` |
 | 3 clients | alice / bruno / carla | `RB-01`, `SEC-08`, `T-18` (deux clients différents suffisent à prouver l'IDOR) |
 | 1 administrateur | rôle `SUPER` | `RB-13` |
-| 3 commandes | une `EN_PREPARATION` (2 lignes), un brouillon vide, une `EXPEDIEE` (2 lignes) | `RB-11`, `RB-06`, `RB-15`, `EF-CLI-10` |
+| 4 commandes | deux `EN_PREPARATION` validées (2 lignes et 1 ligne), un brouillon vide, une `EXPEDIEE` (2 lignes) | `RB-11`, `RB-06`, `RB-15`, `EF-CLI-10` |
 
-**Mots de passe de démonstration** : `Demo2026!` (clients), `Admin2026!` (back-office), insérés sous forme de **hashes bcrypt réels** produits par :
-
-```php
-php -r 'echo password_hash("Demo2026!", PASSWORD_BCRYPT, ["cost" => 12]), "\n";'
-```
-
-et non par un `INSERT … '123456'` : le seed respecte donc lui-même `RB-12`. Les hashes sont documentés dans le `README.md` pour permettre la démo, et le script de déploiement (`scripts/deploy.php`) régénère des hashes aléatoires et change les emails quand la démo est mise en ligne (`SEC-10`).
+**Comptes de démonstration** : leurs valeurs d'authentification (mots de passe et hashes) ne sont pas reproduites dans la documentation. Les comptes du seed sont réservés aux environnements locaux isolés ; ne pas les publier ni les réutiliser sur LineServ. Pour une recette, utiliser uniquement un compte de test explicitement autorisé, transmis séparément par canal privé. Le projet ne fournit aucun script de rotation des comptes ni procédure automatisée de promotion/déploiement (SEC-10).
 
 ### 12.8 Variantes de conception documentées (arbitrages)
 
@@ -1497,19 +1490,19 @@ et non par un `INSERT … '123456'` : le seed respecte donc lui-même `RB-12`. L
 
 | Ressource | Rôle | Charge prévue | Livrables portés |
 |---|---|---|---|
-| Développeur A — chef de projet, back-office | arbitrages, contrôles back-office, intégration, GitLab/CI | ~ 120 h | §13/§14, `AdminController`, `CommandeController`, CI |
+| Développeur A — chef de projet, back-office | arbitrages, contrôles back-office, intégration GitLab/GitHub Actions | ~ 120 h | §13/§14, `AdminController`, `CommandeController`, CI |
 | Développeur B — modèle et base de données | MCD/MLD, SQL, procédures, triggers, repositories, tests SQL | ~ 120 h | §12, `sql/**`, `app/Repository/**`, `tests/sql/**` |
 | Développeur C — présentation, sécurité, tests | vues, JS, sessions/CSRF/échappement, doc de tests, maquette | ~ 120 h | §8/§15, `app/View/**`, `public/js/**`, `docs/02-*` |
 | Enseignante référente (maîtrise d'ouvrage pédagogique) | validation des jalons, réponses aux questions techniques | 1 h/semaine (cours) | arbitrages J1/J2/J3 |
 | Environnement | poste personnel, PHP 8.2, MySQL 8 (ou MariaDB 11), Apache, GitLab, VS Code, PlantUML | 0 € | — |
 
-Total : **360 h** pour 3 personnes (270 h si le groupe est de 2 → le périmètre est alors réduit selon la liste du §13.3, jamais par suppression d'une pénalité).
+Total révisé : **355 h planifiées** pour le scénario à 3 personnes, dans une capacité nominale de 360 h. Le scénario à 2 personnes est rebasé séparément à **319 h estimées** après les réductions listées au §13.3 ; la répartition A/B/C n’est pas une correspondance nominative.
 
 ### 13.3 Répartition de la charge par lot (vérification d'équilibre)
 
 | Lot | Description | Charge (h) | Responsable | Semaine |
 |---|---|---:|---|---|
-| L1 | Cadrage, relecture du sujet, grille de conformité, squelette du dépôt, `README` | 16 | A | S1 |
+| L1 | Cadrage, relecture du sujet, grille de conformité, squelette du dépôt, `README` | 14 | A | S1 |
 | L2 | CDC : présentation, objectifs, acteurs, fonctionnalités | 26 | A + C | S1-S2 |
 | L3 | Diagrammes UML (cas, classes, séquences) + règles métier formalisées | 28 | B + C | S2-S3 |
 | L4 | MCD → MLD → normalisation, jeu de données | 28 | B | S3 |
@@ -1523,11 +1516,11 @@ Total : **360 h** pour 3 personnes (270 h si le groupe est de 2 → le périmèt
 | L12 | durcissement sécurité (CSRF, échappement, autorisation, en-têtes, journaux) | 20 | C | S9-S10 |
 | L13 | JavaScript client (panier, filtres, validation live, accessibilité) | 14 | C | S10 |
 | L14 | tests & validation : harnais, 29 tests SQL, cas fonctionnels, plan de recette, doc | 24 | B + A | S10-S11 |
-| L15 | mise en ligne de démo, `deploy.php`, README final, arborescence propre | 8 | A | S11 |
+| L15 | README final, arborescence propre et préparation du rendu | 5 | A | S11 |
 | L16 | soutenance : support, trame, répétitions chronométrées, questions anticipées | 14 | A + B + C | S12 |
-| | **Total** | **360** | | |
+| | **Total** | **355** | | |
 
-**Totaux réconciliés avec la WBS** (`docs/05-wbs-projet.md` — estimation *bottom-up* des 86 tâches de niveau 4) : **360 h = 3 × 120 h** (§13.2), réparties **A 122 h, B 117 h, C 121 h** — personne au-delà du plafond de 122 h, et la règle « un commit par personne par semaine » reste tenable. Les pics de charge de S3, S5, S7 et S9 sont anticipés : tâches amont démarrées dès la quinzaine précédente, revue chaque vendredi (§13.5), lots L13/L15 servant de variable d'ajustement.
+**Totaux révisés avec la WBS** (`docs/05-wbs-projet.md` — estimation *bottom-up* des 84 tâches de niveau 4) : **355 h planifiées** dans une capacité nominale de 360 h, réparties **A 117 h, B 117 h, C 121 h** — personne au-delà du plafond de 122 h. Les pics de charge de S3, S5, S7 et S9 sont anticipés : tâches amont démarrées dès la quinzaine précédente, revue chaque vendredi (§13.5), L13 pouvant servir d’ajustement ; L15 est réservé au README final et à la préparation du rendu après L14.
 
 **Réduction de périmètre si groupe de 2 (règle de repli, pas une option de confort) :** suppression des lots L13 (JS réduit à la validation live du panier), L8 simplifié (pas de routeur maison : tableau de routes minimal), `EF-ADM-09` (indicateurs) et `EF-ADM-10` (comptes admin) non livrés, procédures réduites à 8, triggers à 8 (en gardant impérativement `TRG-A1/A2/A3/B2/B5/D1/D4` qui portent les règles notées). Aucune pénalité listée au §16.2 n'est autorisée à disparaître : ce sont les exigences « bonus » qui sautent.
 
@@ -1545,7 +1538,7 @@ Total : **360 h** pour 3 personnes (270 h si le groupe est de 2 → le périmèt
 | S8 | 10 → 16/11 | Panier/commande | UC-06, UC-07 (transaction + triggers), UC-08 | commande de démonstration créée dans l'app |
 | S9 | 17 → 23/11 | Back-office + sécurité | **J4 : produits, catégories, stocks, commandes, statuts** + durcissement | parcours admin complet, `S-01…S-08` au vert |
 | S10 | 24 → 30/11 | Tests & validation | harnais rejoué, doc de tests, JS, accessibilité, correctifs | **J5 : plan de recette exécuté** |
-| S11 | 01 → 07/12 | Stabilisation | démo prête (`deploy.php`), README final, merges des dernières MR | run complet de bout en bout |
+| S11 | 01 → 07/12 | Stabilisation | README final, arborescence propre, préparation du tag et merges des dernières MR | état réel des tests documenté |
 | S12 | 08 → 14/12 | Restitution | **J6 : soutenance** + dépôt final taggé `v1.0-rendu` | support, réponses aux questions |
 
 Trois dates sont figées par le calendrier pédagogique : S2 (validation du CDC), S10 (fin des tests), S12 (soutenance).
@@ -1580,44 +1573,13 @@ Suivi budgétaire : dans ce contexte, le « budget » à suivre est celui du **t
 7. `.gitignore` (livré à la racine du dépôt) : `app/Config/env.php`, `config/env.php`, `.env`, `var/`, `vendor/`, `node_modules/`, `dist/`, `*.log`, `tests/sql/out/*` — **jamais** de mot de passe, même de démonstration, dans un fichier de configuration versionné (seul `app/Config/env.example.php` l'est, sans valeur). **Arbitrage tracé** : les journaux bruts par test (`tests/sql/out/*.log`) ne sont **pas** versionnés car régénérables, mais `tests/sql/rapport_tests_sql.md` **l'est** (avec une exception `!` dans le `.gitignore`) puisqu'il constitue la preuve de recette demandée au barème iii et citée au §15.4.
 8. Une **issue GitLab par exigence** `EF-*` (au moins les 14 cas d'utilisation) et par pénalité du §16.2, refermées par un MR : c'est la traçabilité la plus lisible pour le jury.
 
-### 14.2 Intégration continue (`.gitlab-ci.yml`)
+### 14.2 Intégration continue — GitHub Actions
 
-Le fichier **`.gitlab-ci.yml` est livré à la racine du dépôt** (6 jobs, YAML validé) ; la table ci-dessous
-en est la lecture fonctionnelle — chaque job est rattaché à une ligne du barème, et **un job qui échoue bloque
-le merge** : la pénalité devient visible pendant le développement, pas au rendu.
+**Décision de périmètre du 23 octobre 2026 :** la configuration GitLab CI et son livrable sont retirés du présent cahier des charges et du dépôt. L’automatisation conservée est le workflow GitHub Actions [`.github/workflows/ci.yml`](../.github/workflows/ci.yml). GitLab reste utilisé pour le dépôt, les issues et les MR ; aucun pipeline GitLab n’est revendiqué.
 
-| Job (nom réel) | Stage | Commande | Échec | Point du barème protégé |
-|---|---|---|---|---|
-| `php-lint` | `validate` | `find app public -name '*.php' -print0 \| xargs -0 -n1 -P4 php -l` | bloquant (exit 1) | iii — application qui tourne |
-| `style` | `validate` | `phpcs --standard=PSR12 app public` | **`allow_failure: true`** (signalé, non bloquant) | qualité de code (aucune pénalité, mais relecture jury) |
-| `security-scan` | `validate` | `bash tests/security/controles.sh` — 10 `grep` bloquants du §15.3 | bloquant | -2 « manque des solutions de sécurité » |
-| `base-tests` | `db` | `./scripts/load_db.sh` puis `./scripts/run_sql_tests.sh` (service `mysql:8.0`, base `minishop_test`) | bloquant (29 tests conformes exigés) | -3 « manque le script SQL », -1 par procédure, -1 par trigger |
-| `unit` | `test` | `./vendor/bin/phpunit --testsuite app` (rapport JUnit publié) | bloquant | iii + document de tests |
-| `docs` | `docs` | `PLANTUML_JAR=plantuml.jar bash docs/diagrams/render.sh` | bloquant (diagramme non rendu) | -1 « manque un diagramme UML » |
+Les résultats GitHub Actions attestent uniquement les contrôles exécutés sur GitHub et sur le commit concerné. Ils ne prouvent ni un pipeline GitLab IUT ni l’approbation d’une MR GitLab. Pour une PR GitHub, les contrôles sont consultés avant fusion dans l’onglet *Checks* ou avec `gh pr checks <n>`. Les réexécutions sont réservées à un run annulé, une correction poussée ou une panne d’infrastructure ; le statut exact reste consultable dans GitHub Actions.
 
-Artefacts conservés par la CI : `tests/sql/rapport_tests_sql.md` et `tests/sql/out/` (4 semaines),
-`phpunit.xml` (rapport JUnit), `docs/diagrams/` (1 semaine).
-
-**Règle « pas de re-run » (économie de CI, tracée ici et rappelée dans `README.md` et l'annexe 17.9).**
-*Si la CI/CD est verte avant le merge, aucun re-run n'est nécessaire après le merge.* Le pipeline déclenché
-sur `main` par un merge est un **relais de traçabilité**, pas un contrôle : il rejoue les mêmes jobs, avec les
-mêmes images, sur le **même arbre de fichiers** — GitHub Actions et GitLab CI exécutent déjà la PR/MR sur le
-commit de fusion (`refs/pull/<n>/merge` côté GitHub, *merge result* côté GitLab), donc l'état validé avant le
-merge **est** l'état de `main` après le merge. Un re-run manuel ne peut rien révéler de plus, et coûte 5 à 8 min
-de machine par MR (dont un service `mysql:8.0`), à multiplier par le nombre de lots du §13.3 : c'est du temps
-pris sur la démo et sur le quota d'Actions. Il est donc remplacé par les six vérifications ci-dessous.
-
-| Situation | Relancer ? | Pourquoi / comment vérifier |
-|---|---|---|
-| MR verte → merge immédiat (cas nominal) | **non** | l'arbre fusionné est exactement celui qui vient d'être testé ; on ne clique ni « Re-run jobs », ni « Retry », ni `gh run rerun` |
-| `main` a avancé entre le run de la MR et le merge (deux MR enchaînées) | **oui, automatiquement** | le commit de fusion n'est plus celui testé : le `push` sur `main` re-déclenche la chaîne ; contrôler `gh pr checks <n>` avant de merger |
-| run **annulé / interrompu** (`interruptible: true`, `concurrency.cancel-in-progress`) | oui | un job annulé n'est pas une preuve : relancer la MR **avant** de merger, sinon la preuve manque à l'annexe 17.8 |
-| `style` (PSR-12) seul en échec | **non** | `allow_failure: true` : non bloquant par construction (ligne 2 du tableau ci-dessus) |
-| échec de code **déjà corrigé et poussé** | **non** | c'est le `push` qui relance la chaîne ; un re-run manuel rejouerait l'**ancien** commit et fausserait la preuve |
-| panne d'infrastructure (miroir PlantUML, paquets `apt`, registre Docker) | oui, **une fois** | échec d'outillage, pas de code : `gh run rerun <id> --failed` (GitLab : *Retry* sur le job) ; l'anomalie est consignée au registre `A-0x` du document de tests |
-
-Contrôle avant de merger, en une commande : `gh pr checks <n>` (GitHub) ou l'onglet *Pipelines* de la MR
-(GitLab — « Pipeline passed » débloque le bouton *Merge*). **Aucun re-run n'est déclenché après le merge.**
+Le workflow versionné définit les jobs et leurs commandes : lint PHP, tests, contrôles de sécurité, bases de données et navigateur. Cette section ne garantit pas la présence d’un pipeline GitLab ni une intégration automatique entre GitHub et le dépôt IUT.
 
 ### 14.3 Répartition des commits attendue (auto-contrôle avant le rendu)
 
@@ -1653,7 +1615,7 @@ Répartition cible, cohérente avec le RACI §3.3 : B ≈ 45 % des commits de `s
 | | |
 |---|---|
 | **ID / titre** | `F-18` — Validation de commande avec stock insuffisant sur la **deuxième** ligne |
-| **Préconditions** | base chargée ; `MICRO-007` en stock = 2 ; client `bruno@example.com` connecté ; panier = {`CASQ-005` × 1, `MICRO-007` × 3} |
+| **Préconditions** | base chargée ; `MICRO-007` en stock = 2 ; client `bruno@example.test` connecté ; panier = {`CASQ-005` × 1, `MICRO-007` × 3} |
 | **Étapes** | 1. `/panier` → « Passer la commande » ; 2. sélectionner l'adresse ; 3. confirmer |
 | **Résultat attendu** | HTTP 409, message reprenant le code `STOCK_INSUFFISANT` traduit, **aucune** commande créée, stock de `CASQ-005` inchangé (rollback prouvé), panier conservé pour correction |
 | **Preuves** | (a) `SELECT COUNT(*) FROM commande WHERE id_client = 2 AND date_commande > NOW() - INTERVAL 1 MINUTE;` → 0 ; (b) `SELECT stock FROM produit WHERE reference = 'CASQ-005';` → inchangé ; (c) capture d'écran ; (d) ligne de journal `RULE_REJECTED / STOCK_INSUFFISANT` |
@@ -1703,7 +1665,7 @@ grep -c 'verifieJeton' app/Controller/*.php
 | 4 | `NEW.prix_unitaire` ciblé par un `SELECT … INTO` dans un trigger | syntaxe non permise par MySQL/MariaDB | variable locale dans le trigger, puis `SET NEW.prix_unitaire = …` |
 | 5 | un `DELETE FROM ligne_commande` dont la sous-requête lisait `PRODUIT` échouait (trigger écrivant sur `PRODUIT`) | limitation « table déjà utilisée par la requête appelante » | en test : purge via table temporaire ; en application : la restitution passe par les triggers, jamais par une écriture croisée |
 | 6 | `CALL sp_search_products` renvoyait une erreur de syntaxe sur `LIMIT :lim` | les requêtes préparées MySQL/MariaDB n'acceptent que des marqueurs `?` | procédure réécrite en marqueurs positionnels avec nombre de paramètres constant |
-| 7 | `v_catalogue` renvoyait `ERROR 1356` (vue référencant une colonne inexistante) **uniquement dans la base de test** : le test `T-26` redéfinissait `v_etat_stock` à son profit et cassait la vue livrée dont dépend `v_catalogue` ; le même test révélait des `montant_total` non recalculés sur les commandes rescapées, parce que la fixture supprime des lignes par `DELETE` direct (la sous-requête sur `produit` est interdite par le trigger) et que `trg_ligne_decrement_stock` ne se déclenche donc pas | un test ne doit jamais redéfinir un objet de production ; un `DELETE` contournant la procédure contourne aussi ses effets de bord | `T-26` lit la vue livrée au lieu de la recréer ; la fixture normalise `montant_total = SUM(total_ligne)` en fin de purge ; **`T-27` (nouveau)** vérifie l'existence et la cohérence des 3 vues, y compris ce recalcul |
+| 7 | `v_catalogue` renvoyait `ERROR 1356` (vue référencant une colonne inexistante) **pendant la campagne de tests SQL** : le test `T-26` redéfinissait `v_etat_stock` à son profit et cassait la vue livrée dont dépend `v_catalogue` ; le même test révélait des `montant_total` non recalculés sur les commandes rescapées, parce que la fixture supprime des lignes par `DELETE` direct (la sous-requête sur `produit` est interdite par le trigger) et que `trg_ligne_decrement_stock` ne se déclenche donc pas | un test ne doit jamais redéfinir un objet de production ; un `DELETE` contournant la procédure contourne aussi ses effets de bord | `T-26` lit la vue livrée au lieu de la recréer ; la fixture normalise `montant_total = SUM(total_ligne)` en fin de purge ; **`T-27` (nouveau)** vérifie l'existence et la cohérence des 3 vues, y compris ce recalcul |
 
 Ces sept lignes sont **à montrer en soutenance** : elles prouvent que la base a été testée réellement (et pas seulement écrite), et chacune a un test qui la verrouille (§17.8).
 
@@ -1729,7 +1691,7 @@ Ces sept lignes sont **à montrer en soutenance** : elles prouvent que la base a
 | manque des solutions de sécurité (**-2**) | §8 « théorique » | 9 sous-sections `SEC-01…SEC-13` avec **code** + matrice menaces et **10 tests offensifs** `S-01…S-10` | §8, §15.3, `docs/02-document-tests-validation.md` §3.2 |
 | manque de règle métier (**-2**) | règles du sujet non listées | 20 règles dont les **11 imposées** citées à l'identique, avec traduction SQL + test | §6.1 (11/11 visibles) |
 | manque de contrainte technique (**-2**) | §7 bâclé | 12 contraintes `CT-*` imposées + 14 choix d'environnement + contraintes données/ergonomie/exploitation | §7.1 à §7.5 |
-| manque d'analyse d'architecture (**-2**) | pas de MVC détaillé | §9 : 3 couches + rôle de la base, diagramme, arborescence, conventions, déploiement, sauvegarde | §9.1→§9.6 |
+| manque d'analyse d'architecture (**-2**) | pas de MVC détaillé | §9 : 3 couches + rôle de la base, diagramme, arborescence, conventions, environnements et sauvegarde | §9.1→§9.6 |
 | manque une procédure stockée — **conception BD** (**-1**, max -5, barème ii) | < 5 | **17 procédures + 1 fonction** couvrant les 3 de l'exemple du sujet — `sp_create_order`, `sp_add_order_item` → **`sp_add_order_line`**, `sp_update_order_status` (noms intacts pour 2 sur 3, correspondance §12.5.2) | compteur `load_db.sh`, §12.5, §12.5.2 |
 | manque un déclencheur — **conception BD** (**-1**, max -5, barème ii) | < 5 | **16 triggers**, dont les 2 imposés (stock `stock - quantité`, historique `ORDER_STATUS_HISTORY` au format `id, order_id, old_status, new_status, changed_at`) | §12.6, `T-03/08/11/14/15/21/22/24` |
 | manque une procédure stockée — **application** (**-1**, max -5, barème iii) | < 5 (non appelées) | mêmes 17 procédures, **effectivement appelées** par les contrôleurs (aucun SQL métier en dur côté PHP, `SEC-01`) | §10, §15.3 contrôle 1, `S-01` |
@@ -1769,7 +1731,7 @@ Toute demande nouvelle (fonctionnalité, règle, écran) est traitée en 4 quest
 | 17.6 | Déclencheurs (16) | `sql/03_minishop_triggers.sql` + texte intégral en `docs/annexes/annexe-sql.md` §C |
 | 17.7 | Patterns PHP/PDO/sécurité de référence | `docs/annexes/annexe-php-patterns.md` |
 | 17.8 | Cas de test (29 SQL exécutés, 33 fonctionnels, 10 offensifs, perf/charge), registre d'anomalies, PV de recette, matrice de traçabilité | `docs/02-document-tests-validation.md` + `tests/sql/**` (rapport et journaux) |
-| 17.9 | Charte GitLab, modèle de MR, `README.md` livrable, `.gitlab-ci.yml` et `.gitignore` (textes intégraux) | `README.md`, `.gitlab-ci.yml`, `.gitignore`, `docs/annexes/annexe-gitlab.md` (recopiés en `annexe-sql.md` §G et §H) |
+| 17.9 | Charte GitLab, modèle de MR, registre de revue croisée, `README.md` livrable et `.gitignore` | `README.md`, `docs/20-charte-gitlab-revues-croisees.md`, `.gitignore`, `docs/annexes/annexe-gitlab.md` |
 | 17.10 | Glossaire et abréviations | §17.10 ci-dessous |
 | 17.11 | Trame de soutenance (15 min) et questions anticipées | `docs/03-support-soutenance.md` |
 
@@ -1794,7 +1756,7 @@ Toute demande nouvelle (fonctionnalité, règle, écran) est traitée en 4 quest
 
 Les annexes ne sont pas résumées ici : elles existent en tant que fichiers **complets** du dépôt, reliés ci-dessous.
 `docs/annexes/annexe-sql.md` reproduit **verbatim** les 4 scripts SQL joués avec succès, la fixture et le
-`manifest.txt` des 29 tests, puis `.gitlab-ci.yml` (§G) et `.gitignore` (§H) ; `docs/annexes/annexe-cas-usage.md` contient les 14 fiches de cas d'utilisation ;
+`manifest.txt` des 29 tests et `.gitignore` (annexe SQL) ; le workflow CI conservé est `.github/workflows/ci.yml` ; `docs/annexes/annexe-cas-usage.md` contient les 14 fiches de cas d'utilisation ;
 `docs/annexes/annexe-enf.md` les 22 exigences non fonctionnelles ; `docs/annexes/annexe-php-patterns.md` les
 patterns PHP/PDO/sécurité de référence ; `docs/annexes/annexe-gitlab.md` la charte GitLab et le modèle de MR.
 

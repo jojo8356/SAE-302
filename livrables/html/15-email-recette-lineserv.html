@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="SAÉ 302 — MiniShop : E-mail à envoyer à la collègue — recette pré-démo MiniShop sur LineServ#">
+<title>E-mail à envoyer à la collègue — recette pré-démo MiniShop sur LineServ# — MiniShop</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --papier: #fbfaf7;
+  --carte: #ffffff;
+  --trait: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-clair: #dbeafe;
+  --code: #f1f5f9;
+  --mesure: 72ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
+    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
+    --accent-clair: #1e3a8a; --code: #16223a;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  max-width: calc(var(--mesure) + 6rem);
+  background: var(--papier);
+  color: var(--encre);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
+h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
+p, li { max-width: var(--mesure); }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+}
+pre {
+  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
+  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.35rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+thead th { background: var(--accent-clair); }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
+img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li input[type="checkbox"] { margin-right: 0.4rem; }
+.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
+.toc > ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1rem; }
+footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+@media print {
+  :root { --papier: #fff; --carte: #fff; }
+  @page { size: A4; margin: 18mm 16mm; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<h1 id="e-mail-a-envoyer-a-la-collegue-recette-pre-demo-minishop-sur-lineserv">E-mail à envoyer à la collègue — recette pré-démo MiniShop sur LineServ<a class="headerlink" href="#e-mail-a-envoyer-a-la-collegue-recette-pre-demo-minishop-sur-lineserv" title="Permanent link">#</a></h1>
+<p>L'e-mail ci-dessous demande une recette manuelle sur l'instance <strong>de production LineServ et sa base réellement configurée</strong>. Il ne présuppose ni que le site est en ligne ni que la recette a été jouée. Ne l'envoyer qu'une fois la cible, l'accès restreint, la sauvegarde et la procédure de retour à l'état de démonstration confirmés. <code>minishop_test</code> reste réservée aux tests automatisés GitHub CI.</p>
+<hr />
+<p><strong>Objet : Recette pré-démo de MiniShop sur LineServ</strong></p>
+<p>Salut,</p>
+<p>Est-ce que tu pourrais tester MiniShop sur <strong>LineServ</strong> pendant la fenêtre de recette pré-démo que nous aurons confirmée ensemble, puis me signaler ce qui fonctionne, bloque ou pourrait être amélioré ? Il s'agit de l'instance de production de notre projet et de la base réellement utilisée par cette instance — pas d'une nouvelle base de test.</p>
+<p>Le site n'est pas déclaré disponible par ce message. Le lien prévu est celui communiqué pour LineServ :</p>
+<p>https://linserv-info-01.campus.unice.fr/~pj509414/s302/</p>
+<p>Avant toute écriture, nous devons confirmer en privé que la configuration de l'application et la base sélectionnée dans phpMyAdmin/Adminer désignent bien la même base de production MiniShop, que l'accès au site est limité aux testeurs et qu'elle ne contient que des données fictives/de démonstration. Une sauvegarde complète de l'état de démonstration et une procédure autorisée pour la restaurer dans <strong>cette même base</strong> doivent aussi être prêtes. Si la cible n'est pas certaine, si tu vois des données réelles ou si un utilisateur non prévu peut accéder au site, arrête-toi et préviens-moi.</p>
+<p>Utilise uniquement des comptes et données fictifs créés pour la recette (<code>example.test</code>, références de test), sans vraie adresse, donnée personnelle ni moyen de paiement. Si un compte autorisé est nécessaire, je te transmettrai son accès séparément par un canal privé : ne mets aucun mot de passe dans un e-mail, document, ticket ou capture.</p>
+<p>Voici les vérifications prévues sur ordinateur (pas de campagne responsive multi-tailles : elle est couverte par les tests automatisés) :</p>
+<ol>
+<li><strong>Catalogue et visuels</strong> : parcourir les catégories, rechercher un produit, essayer les filtres et leur réinitialisation, puis ouvrir une fiche produit.</li>
+<li><strong>Compte de test</strong> : créer un compte fictif ou utiliser le compte de test autorisé, modifier uniquement ses données synthétiques, puis se déconnecter.</li>
+<li><strong>Panier et commande</strong> : ajouter un article de test, changer sa quantité, le retirer, puis passer une commande simulée en vérifiant l'adresse fictive, les frais de port et la confirmation.</li>
+<li><strong>Historique et annulation en deux étapes</strong> : retrouver une commande de test, ouvrir son détail et, si elle n'est pas expédiée, vérifier l'écran de confirmation, l'annulation et la conservation de ses lignes dans l'historique.</li>
+<li><strong>Administration</strong>, uniquement si tu disposes d'un accès explicitement autorisé : tester produits, catégories, stocks et statuts de commandes sur les éléments de test prévus, jamais sur des données réelles ou non identifiées.</li>
+<li><strong>Langue FR/EN et fuseau (<code>/preferences</code>)</strong> : passer en anglais, vérifier les pages accessibles, revenir en français, essayer un changement de fuseau, puis réinitialiser les préférences du navigateur.</li>
+<li><strong>Informations et mentions légales</strong> : ouvrir les liens du pied de page et signaler les liens cassés ou les textes peu clairs.</li>
+</ol>
+<p>Ne lance aucun SQL direct, fixture, import, commande de reset (<code>run.sh --db</code>, <code>scripts/db_init.php</code>, <code>scripts/load_db.sh</code>), test automatisé SQL, purge, outil de volumétrie ou script de charge contre la base de production. Les scénarios qui exigent une intervention de ce type sont à marquer <code>BLOQUÉ</code> dans le suivi ; ils ne justifient pas de contourner ces consignes.</p>
+<p>Pour chaque problème, peux-tu préciser :</p>
+<ul>
+<li>la page concernée et les étapes pour reproduire le problème ;</li>
+<li>ce que tu attendais et ce qui s'est réellement passé ;</li>
+<li>le message affiché et, si possible, une capture expurgée de données, identifiants, cookies, mots de passe et valeurs de configuration ;</li>
+<li>ton navigateur ;</li>
+<li>si le problème arrive à chaque fois et s'il bloque la suite.</li>
+</ul>
+<p>Après la recette, arrête les tests et préviens-moi. <strong>Avant la démo, la base de production LineServ devra obligatoirement être restaurée à l'état de démonstration à partir de la sauvegarde pré-recette</strong>, par la personne autorisée et selon la procédure validée. Ne la réinitialise pas toi-même si la cible ou la procédure n'est pas certaine. L'accès restera restreint jusqu'à la vérification de la restauration ; si elle échoue, nous ne présenterons pas la base comme prête.</p>
+<p>Tu peux me répondre avec un problème par paragraphe. Dis-moi aussi quelles pages sont correctes, lesquelles tu n'as pas pu tester et si tu as dû marquer des cas <code>BLOQUÉ</code>.</p>
+<p>Les <strong>fiches des 14 cas d'utilisation</strong>, le <strong>tableau de suivi</strong> et le <strong>guide LineServ</strong> sont dans le dépôt si tu veux davantage de détails.</p>
+<p>Merci beaucoup pour ton aide !</p>
+<p>Johan</p>
+<footer class="doc">
+  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/15-email-recette-lineserv.md</code>
+  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+</footer>
+</main>
+</body>
+</html>

@@ -8,8 +8,8 @@ au dépôt GitLab du rendu (hors périmètre du barème) — d'où le dossier ca
 |---|---|---|
 | `build_doc04.py` | `docs/04-conception-bd-et-sql.md` | `docs/01-cahier-des-charges-MiniShop.md` (§12) + `docs/annexes/annexe-sql.md` (titres d'annexes) + inventaire de `sql/`, `tests/` |
 | `build_doc04_html.py` | `artefacts/04-conception-bd-et-sql.html` | `docs/04-conception-bd-et-sql.md` (images MCD/MLD intégrées en base64) |
-| `build_wbs.py` | `docs/05-wbs-projet.md` + `artefacts/05-wbs-projet.html` | données WBS embarquées (6 divisions, 16 lots, 86 tâches, assertions bottom-up 360 h) |
-| `build_todolist.py` | `docs/06-todolist.md` + `artefacts/06-todolist.html` | statuts réels des 86 tâches (fait/partiel/à faire) + classification asynchrone vs dépendante ; assertions : 162 h faites / 198 h restantes / 360 h total |
+| `build_wbs.py` | `docs/05-wbs-projet.md` + `artefacts/05-wbs-projet.html` | données WBS embarquées (6 divisions, 16 lots, 84 tâches, assertions bottom-up 355 h) |
+| `build_todolist.py` | `docs/06-todolist.md` + `artefacts/06-todolist.html` | 84 tâches WBS ; D1-L1-01/04/05/07 actualisées selon attestations/preuves explicites ; classification asynchrone vs dépendante ; assertions : 165 h faites / 190 h restantes / 355 h total |
 
 ## Régénération complète
 
@@ -17,7 +17,10 @@ au dépôt GitLab du rendu (hors périmètre du barème) — d'où le dossier ca
 python3 .tools/build_doc04.py        # doc de conception (.md officiel)
 python3 .tools/build_doc04_html.py   # artefact HTML autoportant
 python3 .tools/build_wbs.py          # WBS (.md officiel + artefact HTML)
+python3 .tools/build_todolist.py     # todolist (.md officiel + artefact HTML)
 ```
+
+Les chemins de sortie sont résolus depuis la racine du dépôt ; aucune écriture n’est envoyée hors du checkout.
 
 Dépendance : `pip install markdown` (les assertions de cohérence échouent volontairement
 si les totaux ne remontent plus exactement — garde-fou anti-dérive des charges).

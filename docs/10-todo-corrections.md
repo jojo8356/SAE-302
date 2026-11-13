@@ -7,6 +7,9 @@
 > **Dernière vérification :** 2026-10-28 · branche `arena/6e1d3706-sae-302`.
 > Cette version remplace la précédente, qui cochait des livrables **absents du dépôt** (voir §8).
 
+> **Note de portée (révision du 23/10/2026).** Ce suivi conserve des constats historiques. La tâche/configuration GitLab CI a été retirée du périmètre courant ; ses références ci-dessous ne sont pas des exigences actives. La CI GitHub Actions reste séparée et ne vaut pas preuve d’un pipeline GitLab.
+
+
 ---
 
 ## 0. Bloquants — installation, CI, base
@@ -29,7 +32,7 @@
 - [x] `tests/perf/mesurer.sh` — présent (+ `mesurer_sql.sh`).
 - [x] `.gitlab/merge_request_templates/{Lot,Bugfix,Docs,Release}.md` — présents.
 - [x] **PHPUnit** — `composer.json` (`phpunit/phpunit ^11`), `phpunit.xml`, `tests/phpunit/` (6 classes, 34 tests) + runner hors ligne.
-- [ ] CI GitLab — `base-tests` et `unit` ont désormais leurs scripts, mais le job `docs` échoue encore (`render.sh` absent) ; aucun pipeline n'a été exécuté ici.
+- [~] CI GitLab — configuration et exigence retirées du périmètre le 23/10/2026 ; les constats historiques de jobs incomplets ci-dessous ne décrivent plus une exigence à réaliser. La CI GitHub Actions reste séparée.
 - [ ] CI GitHub — le job `unit` reste tolérant : aucun PHPUnit réel n'a été joué dans cette sandbox.
 - [x] `var/.gitkeep` — présent.
 
@@ -83,7 +86,7 @@
 - [x] **Récursion infinie** dans `scripts/db_init.php` : `erreur()` s'appelait elle-même au lieu d'écrire sur `STDERR` (`fwrite(STDERR, …)`) — tout message d'erreur en CLI faisait exploser la pile. Corrigé.
 - [x] **E2E réellement joué** par `php scripts/run-all-tests.php` : l'étape Node est lancée quand `node` et `@php-wasm/node` sont présents, et annoncée **NON JOUÉE** avec la commande exacte sinon (le message conseillait un `./run.sh --e2e` qui n'existe pas). `intl` et `pdo_mysql` sont signalées comme facultatives, pas comme des échecs.
 - [x] **Bug intl corrigé** : `Text.php` écrivait `Transliterator::create()` et `new Collator()` sans barre oblique initiale — dans l'espace de noms `App\Model\Data`, PHP cherchait donc `App\Model\Data\Transliterator`. Invisible dans la sandbox (intl absente, `class_exists()` renvoie faux), **fatal sur toute machine où intl est chargée** — c'est-à-dire la machine de rendu. Corrigé en `\Transliterator` / `\Collator`, et un contrat statique vérifie désormais que les classes globales d'extension sont référencées en absolu dans `app/` (test de non-régression validé en réintroduisant le bug).
-- [x] **Piège fermé** : `scripts/run-all-tests.php` avait été créé sans balise `<?php` (PHP affichait donc son contenu au lieu de l'exécuter) — le linter ne couvrait pas `scripts/` autrement que par `seed.php`. Cible par défaut étendue aux scripts applicatifs (95 fichiers analysés au lieu de 90) ; `deploy.php` et `gen_volumes*.php`, antérieurs et non applicatifs, restent hors périmètre et c'est documenté.
+- [x] **Piège fermé** : `scripts/run-all-tests.php` avait été créé sans balise `<?php` (PHP affichait donc son contenu au lieu de l'exécuter) — le linter ne couvrait pas `scripts/` autrement que par `seed.php`. Cible par défaut étendue aux scripts applicatifs (95 fichiers analysés au lieu de 90) ; les outils de volumétrie `gen_volumes*.php`, non applicatifs, restent hors périmètre et c'est documenté.
 - [x] `npm run test:all` exécute **10 suites** + l'autotest du harnais + l'E2E (moteur, règles, unitaires, fonctionnalités, catalogue-stock, nouveautés, design, responsive, contrats HTTP, PHPUnit) ; le linter strict-types est un contrôle séparé. L'**intégration SQL** est jouée quand un serveur est joignable, annoncée NON JOUÉ sinon.
 
 ## 4 bis. Campagne SQL : sept scénarios qui ne testaient pas ce qu'ils annonçaient

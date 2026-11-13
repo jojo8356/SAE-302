@@ -72,7 +72,7 @@
 - **Intégration PHP** : moteur JSON, règles de gestion, unitaires, fonctionnalités UC-01 → UC-14
 - **Contrats** : design system (28 vérifications) et responsive (48 vérifications)
 - **E2E HTTP** : 185 vérifications sur l'application complète (cookies, CSRF, refus)
-- **CI** : GitHub Actions (6 jobs) et pipeline GitLab équivalent
+- **CI** : GitHub Actions (`.github/workflows/ci.yml`) ; aucun pipeline GitLab équivalent n’est revendiqué
 > `npm run test:all` ▶ tout doit être vert avant chaque commit.
 
 ---
@@ -93,7 +93,7 @@
 - **Client** : recherche → fiche produit → ajout au panier (sans rechargement) → commande → suivi
 - **Gestionnaire** : expédition d'une commande → journal de statut mis à jour automatiquement
 - **Super-admin** : création d'un produit → contrôle du stock et de l'alerte de rupture
-> Comptes livrés : `alice@example.com` / `Demo2026!` et `admin@minishop.fr` / `Admin2026!`.
+> Les identifiants de démonstration ne sont pas reproduits dans ce support. Pour une recette, utiliser uniquement des comptes de test autorisés et transmettre tout accès séparément par canal privé.
 
 ---
 
