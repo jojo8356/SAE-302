@@ -4,7 +4,7 @@
 
 > **Conclusion courte : non, la todolist n’est ni à jour ni suffisamment complète pour affirmer que toutes ses tâches sont achevées à 100 %.** L’application et les livrables sont bien présents, et de nombreuses vérifications automatisées existent. Il reste toutefois des écarts d’implémentation à une exigence explicite du CDC, des tests humains non joués, des mesures et actions externes non prouvées, ainsi que des incohérences de comptage et de dates entre documents.
 >
-> Ce rapport audite les fichiers versionnés de ce checkout. Il ne consulte pas le dépôt IUT, ne présume pas l’état du clone local de l’utilisateur et ne transforme pas une tâche externe ou humaine en tâche accomplie sans preuve.
+> Ce rapport audite les fichiers versionnés de ce checkout et ne consulte pas directement le dépôt IUT. Les éléments externes rapportés sont distingués selon leur provenance ; ils ne présument pas l’état du clone local de l’utilisateur et ne transforment pas une tâche externe ou humaine en tâche accomplie sans preuve.
 
 ## 1. Périmètre et verdict global
 
@@ -13,9 +13,9 @@
 | Statut d’audit | Nombre sur 86 | Sens |
 |---|---:|---|
 | `OK*` | 52 | Livrable présent et preuve automatisée/structurelle repérée dans le dépôt ou la CI. **Ce n’est pas une certification absolue** ; le périmètre des preuves CI et l’échec structurel relevé lors de l’ajout du rapport sont explicités ci-dessous. |
-| `PARTIEL` | 21 | Une partie existe, mais un critère, une intégration, une preuve ou une cohérence reste à résoudre. |
+| `PARTIEL` | 22 | Une partie existe, mais un critère, une intégration, une preuve ou une cohérence reste à résoudre. |
 | `ÉCART` | 6 | Écart explicite entre la tâche/contrainte du CDC et l’application présente. |
-| `[!]` | 7 | Tâche humaine, externe, mesure cible ou état impossible à vérifier depuis ce checkout. |
+| `[!]` | 6 | Tâche humaine, externe, mesure cible ou état impossible à vérifier depuis ce checkout. |
 | **Total** | **86** | Les tâches non `OK*` empêchent de conclure à une réalisation à 100 %. |
 
 Ces statuts évaluent les **86 tâches de la WBS**, pas tout le travail ultérieur. Les ajouts ultérieurs (langue/fuseau, informations légales, contact, conservation, etc.) ne figurent pas correctement dans cette WBS et doivent eux aussi être rattachés à des exigences ou à une liste d’évolutions.
@@ -23,6 +23,10 @@ Ces statuts évaluent les **86 tâches de la WBS**, pas tout le travail ultérie
 **Datation des preuves :** plusieurs sources du dépôt portent le 28/10/2026 ; les runs CI cités sont horodatés des 12 et 13/11/2026. Ces dates sont retranscrites depuis leurs métadonnées. Elles ne permettent pas, à elles seules, de fixer une date de coupure pour l’audit ni de réconcilier les divergences de branches relevées ci-dessous.
 
 ## 2. Vérifications effectuées et limites
+
+### Preuve externe fournie par l’utilisateur — clone IUT
+
+Le relevé terminal communiqué montre `origin` configuré sur `https://iut-git.unice.fr/but2_s302/s302.git` et une requête `git ls-remote --heads origin` réussie. Les références visibles sont `chahd`, `dev`, `pj509414/dev` (SHA `bcca4d1d527b2ef859295a44dd1c65134aa93ab5`) et `pj509414/poc-auth-jwt` ; aucune référence `main` n’apparaît dans cette sortie. Cela prouve que le dépôt existe et est lisible depuis ce clone, mais pas les invitations, les règles de protection ni l’envoi du courriel.
 
 ### Vérifications rejouées dans cette sandbox
 
@@ -54,7 +58,7 @@ Les 200 scénarios des fiches de recette restent au statut `NON JOUÉ` dans le C
 
 | ID | État audité | Constat et preuve |
 |---|---|---|
-| `D1-L1-01` | `[!]` | Création/configuration du GitLab IUT, invitations, protection de branche et courriel de composition : informations externes à ce dépôt, non vérifiées. |
+| `D1-L1-01` | `PARTIEL` | Relevé fourni par l’utilisateur : `origin` pointe vers le projet IUT et `git ls-remote` confirme son accessibilité ainsi que plusieurs branches (aucun `main` visible dans la sortie). La liste des membres/invitations, la protection de branche et le courriel de composition restent à vérifier dans GitLab et la messagerie. |
 | `D1-L1-02` | `OK*` | `app/` et `public/` existent et sont peuplés ; le besoin d’un squelette vide est dépassé. |
 | `D1-L1-03` | `PARTIEL` | Le README décrit prérequis et installation, mais pas la composition et les rôles d’équipe demandés. Aucun nom/rôle n’est inventé pour compléter ce champ. |
 | `D1-L1-04` | `[!]` | L’issue GitLab épinglée ne peut pas être vérifiée depuis le dépôt GitHub. |
