@@ -8,6 +8,8 @@ Valider `scripts/deploy.php` sur une instance de **staging isolée** : renouvell
 
 La procédure ne demande ni ne permet de promouvoir le changement en production. Ne pas utiliser de données personnelles ou de sauvegarde de production : préparer une base de staging avec des données synthétiques. Si l’hôte, le nom de base ou les identifiants ne sont pas confirmés comme étant ceux du staging, **arrêter sans exécuter le script**.
 
+La page MiniShop `/admin/diagnostic` (SUPER uniquement) donne des indications sur le runtime web sans lancer `scripts/deploy.php` ni effectuer de requête SQL de diagnostic. Elle est désactivée par défaut : pour la consulter, définir `MINISHOP_STAGING_DIAGNOSTIC=1` uniquement dans la configuration privée d’une instance de staging isolée. Ce drapeau est une activation explicite, pas une preuve d’isolation. Les variables du PHP web peuvent différer de celles du PHP CLI ; la page n’inspecte ni n’affiche les valeurs de configuration sensibles. Elle ne valide pas la cible SQL, les tables ou les comptes, et ne remplace aucune étape ci-dessous. L’authentification SUPER et le gabarit utilisent les lectures de session habituelles de MiniShop ; le diagnostic n’effectue aucune écriture applicative.
+
 ## 2. Préparer un environnement isolé
 
 1. Utiliser un clone de travail ou un conteneur réservé au staging, sur un réseau qui ne peut pas joindre la base de production. Les identifiants de production ne doivent pas y être disponibles.

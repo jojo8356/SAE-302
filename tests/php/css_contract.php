@@ -208,6 +208,12 @@ $check(
     $nonDefinies === [],
     implode(', ', $nonDefinies),
 );
+$check('diagnostic : styles des cinq états définis',
+    str_contains($css, '.diagnostic__etat--ok')
+    && str_contains($css, '.diagnostic__etat--attention')
+    && str_contains($css, '.diagnostic__etat--bloque')
+    && str_contains($css, '.diagnostic__etat--manuel')
+    && str_contains($css, '.diagnostic__etat--info'));
 
 // --------------------------------------------------------- 4. accessibilité
 echo "\n4. Accessibilité et robustesse (DA §9)\n";

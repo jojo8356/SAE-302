@@ -1,6 +1,7 @@
 """Contrats HTTP réels : copie et serveur PHP temporaires, aucun accès au SQL."""
 import hashlib
 import http.cookiejar
+import json
 import os
 from pathlib import Path
 import re
@@ -38,7 +39,12 @@ class Acces403Http(unittest.TestCase):
         (cls.root / 'sessions').mkdir()
         # Ne pas importer de .env, DATA_PATH, variables SQL ou configuration hôte.
         cls.env = {'PATH': os.environ.get('PATH', ''), 'HOME': str(cls.root),
-                   'TMPDIR': str(cls.root), 'MINISHOP_TESTS': '1', 'STORAGE_DRIVER': 'json'}
+                   'TMPDIR': str(cls.root), 'MINISHOP_TESTS': '1', 'STORAGE_DRIVER': 'json',
+                   'MINISHOP_STAGING_DIAGNOSTIC': '1',
+                   'DB_HOST': 'DIAGNOSTIC_HOST_DO_NOT_RENDER', 'DB_PORT': '3306',
+                   'DB_NAME': 'DIAGNOSTIC_DATABASE_DO_NOT_RENDER',
+                   'DB_USER': 'DIAGNOSTIC_USER_DO_NOT_RENDER',
+                   'DB_PASS': 'DIAGNOSTIC_SECRET_DO_NOT_RENDER'}
         subprocess.run([PHP, 'scripts/seed.php'], cwd=cls.root, env=cls.env,
                        check=True, capture_output=True, text=True, timeout=60)
         fixture = r'''require 'app/bootstrap.php';
@@ -140,6 +146,56 @@ $store->insert('administrateur', ['nom' => 'Test', 'prenom' => 'Gestionnaire',
         status, _, page = self.requete(super_admin, '/admin/equipe')
         self.assertEqual(status, 200)
         self.assertNotIn('<h1>Accès refusé</h1>', page)
+
+    def test_diagnostic_staging_reserve_a_super_et_lecture_seule(self):
+        visiteur = self.navigateur()
+        status, headers, _ = self.requete(visiteur, '/admin/diagnostic')
+        self.assertEqual(status, 302)
+        self.assertEqual(headers.get('Location'), '/admin/connexion')
+
+        gestionnaire = self.connexion('gestionnaire@example.test', 'Test403!x')
+        status, _, page = self.requete(gestionnaire, '/admin/diagnostic')
+        self.assertEqual(status, 403)
+        self.assertIn('<h1>Accès refusé</h1>', page)
+        status, _, page = self.requete(gestionnaire, '/admin/produits')
+        self.assertEqual(status, 200)
+        self.assertNotIn('href="/admin/diagnostic"', page)
+
+        super_admin = self.connexion('admin@minishop.fr', 'Admin2026!')
+        donnees = self.root / 'data/minishop'
+        fichiers_avant = {f.name: hashlib.sha256(f.read_bytes()).hexdigest()
+                          for f in donnees.glob('*.json')}
+        valeurs_privees = []
+
+        def collecter(valeur):
+            if isinstance(valeur, dict):
+                for cle, enfant in valeur.items():
+                    if cle in ('email', 'mot_de_passe_hash') and isinstance(enfant, str):
+                        valeurs_privees.append(enfant)
+                    else:
+                        collecter(enfant)
+            elif isinstance(valeur, list):
+                for enfant in valeur:
+                    collecter(enfant)
+
+        for fichier in donnees.glob('*.json'):
+            collecter(json.loads(fichier.read_text(encoding='utf-8')))
+
+        status, headers, page = self.requete(super_admin, '/admin/diagnostic')
+        self.assertEqual(status, 200)
+        self.assertIn('no-store', headers.get('Cache-Control', ''))
+        self.assertIn('D1-L15-01', page)
+        self.assertIn('scripts/deploy.php', page)
+        self.assertNotIn('<form', page.lower())
+        for valeur in ('DIAGNOSTIC_HOST_DO_NOT_RENDER', 'DIAGNOSTIC_DATABASE_DO_NOT_RENDER',
+                       'DIAGNOSTIC_USER_DO_NOT_RENDER', 'DIAGNOSTIC_SECRET_DO_NOT_RENDER',
+                       'Admin2026!', 'Test403!x', *valeurs_privees):
+            if valeur:
+                self.assertNotIn(valeur, page)
+
+        fichiers_apres = {f.name: hashlib.sha256(f.read_bytes()).hexdigest()
+                          for f in donnees.glob('*.json')}
+        self.assertEqual(fichiers_apres, fichiers_avant)
 
 
 if __name__ == '__main__':

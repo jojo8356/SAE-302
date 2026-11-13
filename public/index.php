@@ -25,6 +25,7 @@ require_once dirname(__DIR__) . '/app/bootstrap.php';
 use App\Controller\Admin\CategorieAdminController;
 use App\Controller\Admin\CommandeAdminController;
 use App\Controller\Admin\DashboardController;
+use App\Controller\Admin\DiagnosticAdminController;
 use App\Controller\Admin\EquipeAdminController;
 use App\Controller\Admin\ProduitAdminController;
 use App\Controller\Admin\ParametreAdminController;
@@ -137,6 +138,7 @@ $routeur->post('/admin/commandes/{id}/statut', [CommandeAdminController::class, 
 $routeur->get('/admin/parametres', [ParametreAdminController::class, 'index'], 'admin');
 $routeur->post('/admin/parametres', [ParametreAdminController::class, 'enregistrer'], 'admin');
 
+$routeur->get('/admin/diagnostic', [DiagnosticAdminController::class, 'index'], 'super');
 $routeur->get('/admin/equipe', [EquipeAdminController::class, 'index'], 'super');
 $routeur->post('/admin/equipe', [EquipeAdminController::class, 'creer'], 'super');
 $routeur->post('/admin/equipe/{id}/basculer', [EquipeAdminController::class, 'basculer'], 'super');
