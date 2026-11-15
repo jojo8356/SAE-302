@@ -495,13 +495,13 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 <tr>
 <td><code>D4-L9-04</code></td>
-<td><code>ÉCART</code></td>
-<td>Le contrôleur/repository crée un compte via le magasin générique ; aucun appel applicatif à <code>sp_create_account</code> n’est trouvé.</td>
+<td><code>PARTIEL</code></td>
+<td><code>ClientRepository</code> délègue à <code>ClientAccountGateway</code> ; la stratégie SQL appelle <code>sp_create_account</code> via <code>StoredProcedureExecutor</code>. Le pilote par défaut reste JSON ; le test SQL d’intégration a été ajouté mais n’a pas été joué ici (client <code>mariadb</code>/<code>mysql</code> absent).</td>
 </tr>
 <tr>
 <td><code>D4-L9-05</code></td>
-<td><code>ÉCART</code></td>
-<td>La connexion lit le magasin via le repository ; aucun appel applicatif à <code>sp_get_credentials</code> n’est trouvé.</td>
+<td><code>PARTIEL</code></td>
+<td>La stratégie SQL appelle <code>sp_get_credentials</code> ; <code>password_verify()</code> reste en PHP. Le pilote par défaut reste JSON et l’appel PDO réel n’a pas été vérifié dans cet environnement.</td>
 </tr>
 <tr>
 <td><code>D4-L9-06</code></td>
@@ -687,11 +687,11 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <h2 id="4-ecart-majeur-entre-le-cdc-et-la-realisation">4. Écart majeur entre le CDC et la réalisation<a class="headerlink" href="#4-ecart-majeur-entre-le-cdc-et-la-realisation" title="Permanent link">#</a></h2>
 <p>Le point bloquant le plus important n’est pas l’absence des procédures SQL : elles sont dans <code>sql/02_minishop_procedures.sql</code>. C’est <strong>leur non-raccordement à l’application</strong> :</p>
 <ol>
-<li><code>app/Model/Data/StorageDriver.php</code> déclare <code>JSON</code> comme <code>DEFAULT</code> et décrit SQL comme cible de migration ; le README confirme JSON par défaut et SQL optionnel.</li>
-<li>Une recherche des appels applicatifs <code>callProcedure()</code>, <code>appeler()</code> et <code>CALL sp_…</code> ne trouve que les méthodes définies dans <code>SqlStore</code> et des appels du générateur de volumétrie ; aucun appel de procédure par les repositories applicatifs n’est présent.</li>
-<li><code>tests/php/sql_integration.php</code> valide des procédures/triggers et certaines intégrations <code>SqlStore</code>, mais le parcours HTTP/E2E principal est initialisé sur un magasin JSON. Cela <strong>ne prouve pas</strong> l’application complète en mode PDO/MySQL exécutant les procédures demandées.</li>
+<li><code>app/Model/Data/StorageDriver.php</code> déclare toujours <code>JSON</code> comme <code>DEFAULT</code> et SQL comme pilote optionnel ; les procédures ne sont donc utilisées que lorsque la configuration sélectionne un pilote SQL.</li>
+<li><code>ClientAccountGatewayFactory</code> sélectionne la stratégie SQL par la capacité <code>StoredProcedureExecutor</code>. <code>SqlClientAccountGateway</code> appelle maintenant <code>sp_create_account</code> et <code>sp_get_credentials</code> ; les autres procédures non raccordées restent un écart séparé.</li>
+<li><code>tests/php/sql_integration.php</code> contient désormais un scénario <code>ClientRepository</code> qui appelle ces deux procédures, vérifie le doublon, le compte bloqué et <code>password_verify()</code>. Ce scénario n’a pas été joué ici (client <code>mariadb</code>/<code>mysql</code> absent). Le parcours HTTP/E2E principal reste initialisé en JSON : cela <strong>ne prouve pas</strong> le parcours complet en PDO/MySQL.</li>
 </ol>
-<p>Cela reste un écart d’implémentation aux critères du sujet et aux tâches D4-L9-04/05, D4-L10-04 et D4-L11-02/03/04. Les documents révisés le nomment explicitement ; ils ne le résolvent pas. Il faudra soit raccorder les procédures et prouver le parcours HTTP/PDO/MySQL sur base isolée, soit faire valider formellement une modification du CDC. Les seuls tests SQL directs ne suffisent pas pour cocher ces tâches à 100 %.</p>
+<p>Le raccordement applicatif des procédures de compte est maintenant présent en mode SQL, mais D4-L9-04/05 restent <code>PARTIEL</code> faute de rejeu PDO/MySQL sur base isolée et parce que JSON reste le pilote par défaut. Les écarts D4-L10-04 et D4-L11-02/03/04 restent ouverts. Il faut rejouer le scénario d’intégration SQL et prouver le parcours requis avant de cocher ces tâches à 100 % ; les tests SQL directs seuls ne suffisent pas.</p>
 <h2 id="5-constats-reconcilies-au-23102026">5. Constats réconciliés au 23/10/2026<a class="headerlink" href="#5-constats-reconcilies-au-23102026" title="Permanent link">#</a></h2>
 <ol>
 <li><strong>Tâches et périmètre :</strong> 84 tâches de niveau 4 ; le déploiement/staging est retiré sans remplacement. Après clôture de D1-L1-07 comme synthèse asynchrone sur attestation utilisateur, le suivi généré compte 37 terminées, 8 partielles et 39 à faire.</li>
@@ -719,14 +719,14 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <p>Ces éléments peuvent être <strong>déjà livrés</strong> dans le code et les tests : leur absence de la todolist signifie que la liste n’est pas exhaustive, pas qu’il faut les re-développer. La partie responsive reste à suivre uniquement dans les tests automatisés, conformément à la décision projet.</p>
 <h2 id="7-prochaines-actions-recommandees">7. Prochaines actions recommandées<a class="headerlink" href="#7-prochaines-actions-recommandees" title="Permanent link">#</a></h2>
 <ol>
-<li>Traiter séparément l’écart <strong>JSON / PDO / MySQL / procédures stockées</strong> : intégration applicative avec preuve isolée, ou modification formelle du CDC approuvée par l’équipe pédagogique.</li>
+<li>Rejouer <code>tests/php/sql_integration.php</code> sur une base de test isolée pour prouver les appels <code>sp_create_account</code>/<code>sp_get_credentials</code> via <code>ClientRepository</code> ; garder JSON par défaut et les procédures non raccordées comme écarts distincts tant qu’ils ne sont pas arbitrés.</li>
 <li>Garder les heures WBS comme estimations de planification ; revalider les états historiques et la disponibilité avant d’utiliser le graphe ou le planning S6.</li>
 <li>Ne pas compter le rapport SQL daté du 27/10 ni les références CI de novembre comme preuves à la coupure du 23/10 ; les revalider uniquement après les dates portées, avec run, SHA et sorties vérifiables.</li>
 <li>Laisser les 200 scénarios manuels <code>NON JOUÉ</code> tant que des testeurs ne les ont pas exécutés ; aucune validation LineServ, déploiement ou restauration n’est à ajouter rétrospectivement.</li>
 <li>Laisser <code>D2-L2-06</code> ouvert jusqu’à une trace de relecture croisée entre étudiants distincts ; le pointage de l’assistant dans le CDC n’est pas cette relecture.</li>
 <li>Faire attester séparément les tâches GitLab restantes, la validation pédagogique et les répétitions de soutenance. Le courriel de composition est une attestation utilisateur non vérifiée dans la boîte d’envoi ; le dépôt IUT n’a pas été consulté ici.</li>
 </ol>
-<p><strong>Portée de cette révision :</strong> clarification des preuves, dates et références de tests dans les documents, correction des générateurs WBS/todolist et du contrôle statique de sécurité ; aucun code métier applicatif n’a été modifié. Les sorties WBS/todolist ont été régénérées. D1-L1-07 est clos pour la synthèse écrite des retours asynchrones, sur attestation utilisateur ; aucune réunion complète n’est revendiquée. Les affirmations archivées de <code>docs/11</code> ne sont pas retenues comme résultats courants sans run/SHA. Aucun déploiement, test manuel LineServ, restauration de base, relecture étudiante ou validation pédagogique n’est revendiqué ; les suites impossibles faute d’outils restent explicitement non jouées.</p>
+<p><strong>Portée de cette révision :</strong> le raccordement des parcours de compte aux procédures SQL a été ajouté avec stratégies séparées, interfaces de capacité et tests ; les lignes D4-L9-04/05 restent partielles jusqu’au rejeu SQL isolé. La mise à jour de l’audit ne requalifie pas les autres écarts ni les validations humaines. D1-L1-07 demeure clos pour la synthèse écrite des retours asynchrones, sur attestation utilisateur ; aucune réunion complète n’est revendiquée. Aucun déploiement, test manuel LineServ, restauration de base, relecture étudiante ou validation pédagogique n’est revendiqué ; l’intégration SQL n’a pas été jouée ici faute de client MySQL/MariaDB.</p>
 <footer class="doc">
   <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/19-audit-cahier-des-charges-todolist.md</code>
   par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>

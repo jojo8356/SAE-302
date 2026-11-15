@@ -662,9 +662,9 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 <tr>
 <td>Application PHP/MySQL/PDO <strong>MVC</strong>, GitLab et document de tests/validation</td>
-<td>Le sujet fixe la cible ; dans le checkout, <code>StorageDriver::DEFAULT</code> est JSON, SQL est optionnel et aucun appel applicatif aux procédures n’a été établi par l’audit</td>
+<td>Le sujet fixe la cible ; <code>StorageDriver::DEFAULT</code> reste JSON et SQL opt-in. <code>sp_create_account</code>/<code>sp_get_credentials</code> sont maintenant raccordées à la stratégie SQL, mais l’appel PDO réel n’a pas été rejoué et les autres procédures applicatives restent à raccorder</td>
 <td><code>README.md</code>, <code>StorageDriver.php</code>, repositories, <code>sql/</code> et <code>docs/02</code></td>
-<td><strong>écart d’intégration application SQL à résoudre ; pas de conformité MySQL/PDO revendiquée</strong></td>
+<td><strong>raccordement partiel ; aucun parcours complet MySQL/PDO ni conformité globale revendiquée</strong></td>
 </tr>
 <tr>
 <td>Soutenance <strong>15 min</strong></td>
@@ -2590,7 +2590,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 </tbody>
 </table>
-<p><strong>État d’implémentation constaté dans les sources :</strong> le dépôt contient un pilote SQL et des scripts MySQL/MariaDB, mais l’application démarre en JSON et l’audit n’a pas établi d’appels applicatifs aux procédures stockées. Les tests SQL CI utilisent des bases temporaires et restent distincts de la cible manuelle LineServ ; ils ne constituent pas une preuve d’intégration PDO/MySQL du parcours HTTP complet. L’écart reste ouvert au regard de CT-02/CT-03 et du barème applicatif. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.</p>
+<p><strong>État d’implémentation constaté dans les sources :</strong> le pilote SQL et les scripts MySQL/MariaDB sont présents ; l’application démarre toujours en JSON. Les parcours compte/connexion sont raccordés à <code>sp_create_account</code> et <code>sp_get_credentials</code> lorsque le pilote SQL est sélectionné, mais l’intégration PDO/MySQL n’a pas été rejouée ici et les autres procédures applicatives ne sont pas toutes raccordées. Les tests SQL CI utilisent des bases temporaires et restent distincts de la cible manuelle LineServ ; ils ne constituent pas une preuve d’intégration PDO/MySQL du parcours HTTP complet. L’écart reste partiel au regard de CT-02/CT-03 et du barème applicatif. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.</p>
 <h3 id="73-contraintes-de-donnees-precisions-demandees-au-12">7.3 Contraintes de données (précisions demandées au §12)<a class="headerlink" href="#73-contraintes-de-donnees-precisions-demandees-au-12" title="Permanent link">#</a></h3>
 <ul>
 <li><strong>Nommage</strong> : tables en MAJUSCULES au pluriel dans la conception (MLD) et en minuscules au pluriel dans le DDL MySQL (<code>client</code>, <code>produit</code>, <code>ligne_commande</code>) ; clés primaires <code>id_&lt;singulier&gt;</code> ; clés étrangères <code>&lt;table_référencée&gt;_id</code> ; index <code>idx_*</code>, uniques <code>uk_*</code>, FK <code>fk_*</code>, CHECK <code>ck_*</code>.</li>
@@ -4966,8 +4966,8 @@ git log --numstat --format= | awk '{print $4}' | sort | uniq -c | sort -rn | hea
 <tr>
 <td>Procédure stockée manquante — application (−1, max −5)</td>
 <td>procédures non appelées par le parcours demandé</td>
-<td>les procédures sont définies dans le livrable SQL</td>
-<td>aucun appel applicatif complet n’est établi par l’audit ; JSON par défaut, SQL opt-in : point de pénalité applicative non réputé neutralisé</td>
+<td>les procédures sont définies dans le livrable SQL ; <code>sp_create_account</code> et <code>sp_get_credentials</code> sont raccordées à la stratégie SQL</td>
+<td>deux procédures de compte sont câblées lorsque SQL est sélectionné ; JSON reste par défaut, l’appel PDO réel et le parcours complet ne sont pas prouvés : pénalité applicative non réputée neutralisée</td>
 </tr>
 <tr>
 <td>Déclencheur manquant — application (−1, max −5)</td>
