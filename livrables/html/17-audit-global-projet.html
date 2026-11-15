@@ -90,6 +90,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <main id="contenu">
 <nav class="toc" aria-label="Sommaire"><div class="toc">
 <ul>
+<li><a href="#addendum-etat-du-checkout-verifie-le-15-novembre-2026">Addendum — état du checkout vérifié le 15 novembre 2026</a></li>
 <li><a href="#constats-corriges">Constats corrigés</a><ul>
 <li><a href="#alternatives-dimage-et-aide-cli">Alternatives d’image et aide CLI</a></li>
 <li><a href="#accesseur-de-code-derreur-sql-supprime">Accesseur de code d’erreur SQL supprimé</a></li>
@@ -106,6 +107,17 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <h1 id="rapport-daudit-global-du-projet">Rapport d’audit global du projet<a class="headerlink" href="#rapport-daudit-global-du-projet" title="Permanent link">#</a></h1>
 <p><strong>Date portée par le rapport :</strong> 28 octobre 2026, postérieure à la coupure documentaire du 23/10/2026 ; les affirmations d’audit/tests/CI de cette archive ne sont donc pas retenues comme preuves acquises à cette coupure. <strong>Périmètre du CSV d’inventaire :</strong> chemins versionnés indiqués par l’archive, pas la copie locale ni les fichiers ignorés de l’utilisateur. <a href="17-inventaire-projet.csv">Inventaire</a> · <a href="16-audit-code-mort.html">Revue initiale du code potentiellement inutilisé</a> · <a href="10-todo-corrections.html">Todolist</a>.</p>
 <p>Le rapport d’archive porte un décompte historique de <strong>532 chemins versionnés</strong> après retrait d’éléments hors périmètre. Depuis, le CSV <code>docs/17-inventaire-projet.csv</code> a été synchronisé avec les <strong>542 chemins suivis dans l’index courant</strong> ; le contrôle structurel vérifie cette égalité, la présence et la non-vacuité, sans certifier le contenu. Les deux nombres se rapportent donc à des états différents ; le rapport daté du 28/10/2026 reste postérieur à la coupure documentaire du 23/10 et n’est pas une preuve d’audit acquise à cette date.</p>
+<h2 id="addendum-etat-du-checkout-verifie-le-15-novembre-2026">Addendum — état du checkout vérifié le 15 novembre 2026<a class="headerlink" href="#addendum-etat-du-checkout-verifie-le-15-novembre-2026" title="Permanent link">#</a></h2>
+<p>Cet addendum décrit le checkout vérifié le 15/11/2026 ; il est distinct du rapport historique daté du 28/10/2026 et de la coupure documentaire du 23/10. Les résultats d’exécution ci-dessous sont limités aux commandes explicitement citées.</p>
+<ul>
+<li><strong>Stockage :</strong> SQL/MySQL/PDO est le pilote applicatif par défaut ; JSON reste une option explicite.</li>
+<li><strong>Inventaire statique SQL :</strong> 9 tables, 3 vues, 18 procédures, 1 fonction et 16 triggers. Le scan des repositories repère un point d’appel pour chacune des 18 procédures ; il ne prouve ni leur exécution ni un parcours HTTP SQL complet.</li>
+<li><strong>Tests locaux (15/11/2026) :</strong> <code>node scripts/run-all-tests.mjs --sans-sql</code> a terminé avec le code 0 via PHP-WASM 8.2 : T-01…T-29 sur JSON (29/29), 297 vérifications OK, 57 tests PHPUnit, linter strict sur 167 fichiers sans violation et E2E HTTP isolé (338 vérifications, fichiers hôte témoins inchangés). <code>node tests/node/preferences_test.mjs</code> a également terminé avec le code 0 (DOM FR/EN, 48 vues et 45 messages métier). <code>--sans-sql</code> exclut l’intégration SQL ; aucun rejeu PDO/MySQL n’est revendiqué. PHP CLI natif et navigateur réel ne sont pas disponibles/joués ; l’analyse de compilation native est NON JOUÉE. Aucun déploiement, essai manuel LineServ ou restauration de base n’est revendiqué.</li>
+<li><strong>CI SQL :</strong> les campagnes SQL CI utilisent une base temporaire, distincte de toute cible manuelle ; un résultat CI historique ne prouve pas un chargement ou une recette sur LineServ.</li>
+<li><strong>Inventaire des chemins :</strong> <code>docs/17-inventaire-projet.csv</code> contient 542 chemins uniques, égaux aux 542 chemins suivis dans l’index Git courant. Le contrôle vérifie les chemins, leur présence et leur non-vacuité, pas le contenu fonctionnel.</li>
+<li><strong>Planification documentaire :</strong> <code>docs/05</code> décrit 84 tâches et 355 h estimées ; <code>docs/06</code> classe 164 h comme terminées, 191 h restantes et 12 tâches comme asynchrones. Il s’agit d’estimations/classifications, pas de pointages horaires ni de preuve d’événements humains.</li>
+</ul>
+<p>Les paragraphes qui suivent restent l’archive de l’audit antérieur et ses vérifications historiques ; ils ne remplacent pas l’état courant ci-dessus.</p>
 <p>Cet audit combine un inventaire automatisé de tout le dépôt et une revue manuelle ciblée sur les anomalies et risques découverts. Il <strong>ne démontre pas l’absence de tous les défauts</strong> et n’est pas une lecture fonctionnelle ligne par ligne de chaque livrable. L’inventaire indique des contrôles de structure, pas une certification du contenu.</p>
 <h2 id="constats-corriges">Constats corrigés<a class="headerlink" href="#constats-corriges" title="Permanent link">#</a></h2>
 <table>
@@ -128,9 +140,9 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <td>Tests de génération seule avec entrées d’injection, sans exécuter SQL ni sudo.</td>
 </tr>
 <tr>
-<td>E2E</td>
-<td>La photographie/restauration pouvait écraser des modifications concurrentes ou échouer après interruption. L’E2E crée son jeu de démonstration dans le FS PHP-WASM uniquement : pas de chargement ni rapatriement du dossier <code>data/</code> hôte. L’ancien utilitaire est conservé mais avertit de son danger.</td>
-<td>303 contrôles HTTP WASM réussis en copie jetable contenant trois fichiers hôte témoins inchangés. Pas de navigateur.</td>
+<td>E2E (constat d’archive)</td>
+<td>La photographie/restauration pouvait écraser des modifications concurrentes ou échouer après interruption. Le protocole courant isole le jeu de démonstration dans le FS PHP-WASM ; aucune copie du dossier <code>data/</code> hôte n’est faite.</td>
+<td>L’archive postérieure à la coupure rapporte 303 contrôles HTTP WASM ; ce compte n’est pas le run courant. L’addendum rapporte séparément 338 vérifications E2E sur le checkout. Aucun navigateur réel.</td>
 </tr>
 <tr>
 <td>Tests SQL</td>
@@ -143,9 +155,9 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <td>Cas JSON rejoué localement ; validation MySQL en CI sur base jetable.</td>
 </tr>
 <tr>
-<td>Contrat HTTP</td>
-<td>Un test affirmait tester « 403/500 » en cherchant seulement <code>page404</code> ou <code>erreur</code>. Il vérifie désormais le code et la vue 500 ; la garde SUPER déclenche désormais une réponse 403 et la page dédiée ; les visiteurs non connectés restent redirigés vers la connexion.</td>
-<td>309 contrôles E2E WASM ; tests HTTP natifs ajoutés en CI. Contrat 500 statique, pas une injection d’erreur 500 réelle.</td>
+<td>Contrat HTTP (constat d’archive)</td>
+<td>Un test affirmait tester « 403/500 » en cherchant seulement <code>page404</code> ou <code>erreur</code>. Le protocole vérifie désormais le code et la vue 500 ; la garde SUPER renvoie 403 et les visiteurs non connectés sont redirigés.</td>
+<td>309 contrôles E2E WASM étaient rapportés dans l’archive ; l’addendum distingue le run courant de 338 vérifications. Contrat 500 statique, pas une injection d’erreur 500 réelle.</td>
 </tr>
 <tr>
 <td>Git / sécurité</td>
@@ -203,7 +215,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <p><code>tests/python/test_audit_structurel.py</code> prend la liste <code>git ls-files</code> et vérifie présence/non-vide, synchronisation de l’inventaire CSV, compilation Python sans exécution, analyse JSON, XML et SVG, intégrité interne ZIP des formats bureautiques, <code>bash -n</code> et <code>node --check</code> si présents. Il ne vérifie ni le comportement ni la qualité visuelle, et n’ouvre pas les fichiers ignorés. Les scripts PHP sont analysés séparément par <code>scripts/verifier_deprecations.py</code> et la CI.</p>
 <ul>
 <li>Sandbox : suites isolées PHP-WASM 8.2 vertes, dont 43 tests PHPUnit avec l’exécuteur local ; analyse PHP-WASM 8.5.10 sur 10 fichiers PHP modifiés sans erreur de syntaxe ou dépréciation détectée. Le code de retour WASM n’est pas une preuve native ; diagnostics examinés et CI native nécessaire.</li>
-<li>E2E : 309 vérifications réussies sans navigateur, données témoins inchangées. Security scan : 10 contrôles et autotest conformes. Tests structurels Python conformes.</li>
+<li>E2E : l’archive rapporte 303 contrôles pour un parcours E2E et 309 pour des contrôles de contrat HTTP, sans navigateur ; ces comptes ne sont pas ceux du run local du 15/11, qui est consigné dans l’addendum (338 vérifications, fichiers témoins inchangés). Security scan : les 10 contrôles et l’autotest cités restent des résultats d’archive, distincts du contrôle statique local documenté dans <code>docs/19</code>. Tests structurels Python conformes selon l’archive.</li>
 <li>PHP natif, navigateur réel/WAVE, MariaDB et LineServ : <strong>non joués dans cette sandbox</strong>. La CI éventuelle utilise MySQL 8, pas MariaDB. Les anciennes campagnes ou mesures datées des autres documents restent historiques.</li>
 </ul>
 <h2 id="risques-restants-et-auto-evaluation">Risques restants et auto-évaluation<a class="headerlink" href="#risques-restants-et-auto-evaluation" title="Permanent link">#</a></h2>

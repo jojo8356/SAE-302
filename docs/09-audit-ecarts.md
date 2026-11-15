@@ -5,15 +5,29 @@
 > vérifiable par la commande citée. Les points sont classés par impact sur le barème
 > (i spécification 20 · ii base de données 20 · iii application 30 · iv soutenance 10 · v GitLab 10).
 >
-> **Méthode.** Audit statique du dépôt + exécution réelle de `node scripts/run-all-tests.mjs`
-> et `bash tests/security/controles.sh` le 23/10/2026.
+> **Méthode de l’archive.** Les constats et commandes des sections A→J ci-dessous décrivent une photographie antérieure du dépôt. Ils ne sont pas un relevé complet du checkout actuel ; les exécutions historiques ne sont pas réutilisées comme preuve de la révision présente. La photographie vérifiée pour le checkout courant est séparée ci-dessous.
 
 > **Statut historique.** Les constats ci-dessous décrivent une photographie antérieure et ne constituent pas un audit de l’état actuel du checkout. En particulier, les lignes du §B qui déclarent SQL non raccordé et JSON par défaut sont dépassées : SQL/MySQL/PDO est désormais le pilote par défaut, JSON est une option explicite et le scan statique repère un point d’appel repository pour chacune des 18 procédures. Cela ne prouve pas leur exécution PDO/MySQL ni un parcours HTTP complet. Les anciens nombres de tests et constats des autres sections ne doivent pas être repris comme résultats actuels ; consulter `docs/01`, `docs/02`, `docs/04` et `docs/21` pour l’état révisé.
 >
 > **Note de portée (révision du 23/10/2026).** Les références à `.gitlab-ci.yml`, aux jobs GitLab et à une « cible notée » ci-dessous décrivent l’état antérieur examiné par cet audit. La configuration GitLab CI et son exigence ont depuis été retirées du CDC ; la CI GitHub Actions est distincte et ne prouve pas un pipeline GitLab.
 
 
-## 0. Synthèse
+## État courant vérifié — 15 novembre 2026
+
+Cette section décrit les contrôles consignés pour le checkout vérifié le 15/11/2026 ; elle ne transforme pas les constats historiques A→J en résultats actuels. Les sections A→J conservent la photographie antérieure au 23/10/2026. Les exécutions du 15/11 sont distinctes du run restreint du 23/10 et ne requalifient pas l’audit historique.
+
+| Domaine | État vérifié | Limite de preuve |
+|---|---|---|
+| Pilote applicatif | SQL/MySQL/PDO est le pilote par défaut ; JSON reste une option explicite. | La configuration ne prouve pas qu’une connexion MySQL a été ouverte. |
+| Sources SQL | Inventaire statique : 9 tables, 3 vues, 18 procédures, 1 fonction et 16 triggers. Les repositories contiennent un point d’appel statiquement repéré pour chacune des 18 procédures. | Les compteurs et références de code ne prouvent ni chargement, ni exécution PDO/MySQL, ni parcours HTTP SQL complet. |
+| Tests automatisés (15/11) | `node scripts/run-all-tests.mjs --sans-sql` : code 0 via PHP-WASM 8.2 ; T-01…T-29 sur JSON (29/29), 297 vérifications, 57 tests PHPUnit, linter strict 167 fichiers/0 violation et E2E HTTP isolé (338 vérifications). `node tests/node/preferences_test.mjs` : code 0, DOM FR/EN (48 vues, 45 messages métier). | Le run du 15/11 exclut SQL ; aucun résultat PDO/MySQL n’en est déduit. L’E2E WASM/DOM n’est pas une recette navigateur réelle. PHP CLI natif est absent ; son analyse de compilation reste non jouée. |
+| Inventaire | `docs/17-inventaire-projet.csv` contient 542 chemins uniques, identiques aux 542 chemins suivis par Git dans le checkout. | Le contrôle porte sur les chemins et la présence, pas sur la justesse fonctionnelle du contenu. |
+| WBS / todolist | `docs/05` : 84 tâches et 355 h estimées. `docs/06` : 164 h classées terminées, 191 h restantes et 12 tâches classées asynchrones. | Les heures sont des estimations/classifications de planification, pas des pointages ni une mesure de travail humain. |
+| Environnement réel | Aucun déploiement, essai manuel LineServ ou restauration de base n’est revendiqué. Les tests SQL de CI, lorsqu’ils sont exécutés, utilisent une base temporaire distincte de toute cible manuelle. | Les limites ci-dessus restent à lever par un run SQL/PDO daté sur environnement isolé et par les parcours E2E correspondants. |
+
+Les sections A→J qui suivent sont conservées comme **audit historique** : leurs diagnostics, nombres de tests et plans de correction décrivent l’état antérieur et ne doivent pas être lus comme le statut actuel.
+
+## 0. Synthèse historique
 
 **Statut vérifié le 23/10/2026** (les détails et les commandes de preuve sont dans `10-todo-corrections.md`).
 

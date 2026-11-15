@@ -1,7 +1,7 @@
 # Annexe 17.4/17.5/17.6 — Extraits explicatifs des scripts SQL
 
 Sources canoniques : `sql/01_minishop_schema.sql` (DDL + données), `sql/02_minishop_procedures.sql`
-(**18 procédures + 1 fonction** dans l’état statique du 23/10/2026), `sql/03_minishop_triggers.sql`
+(**18 procédures + 1 fonction** dans l’état statique vérifié le 15/11/2026), `sql/03_minishop_triggers.sql`
 (16 déclencheurs), `sql/04_minishop_demo.sql` (commandes de démonstration créées **par les procédures**),
 `tests/perf/mesurer.sh` (protocole `ENF-01`) et `scripts/gen_volumes.sh` (jeu de mesure de volumétrie).
 

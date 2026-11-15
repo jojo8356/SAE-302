@@ -52,7 +52,7 @@
 - `RB-01…RB-11` sont classées par convention du CDC comme règles du sujet ; `RB-12…RB-20` sont neuf compléments (PDF source non suivi dans le dépôt).
 - `T-01…T-29` sont des scénarios SQL, pas 29 règles ni un résultat d’exécution courant.
 - Cinq séquences sont présentes : quatre séquences prévues comme imposées et une bonus catalogue ; aucune sixième n’est annoncée.
-> Le fichier de rapport porte une mention 29/29 datée du 27/10/2026, date future à la coupure du 23/10 ; cette mention n’est pas présentée comme un résultat acquis.
+> Le fichier `tests/sql/rapport_tests_sql.md` porte une mention 29/29 datée du 27/10/2026, future à la coupure historique du 23/10 ; elle ne prouve pas SQL sur le checkout vérifié le 15/11. Le run non-SQL du 15/11 a réussi T-01…T-29 sur le moteur JSON (29/29), mais excluait explicitement l’intégration PDO/MySQL.
 
 ---
 
@@ -72,7 +72,7 @@
 - `tests/sql/rapport_tests_sql.md` contient une revendication de résultat au 27/10/2026, date future à la coupure du 23/10 ; elle n’est pas présentée comme acquise à cette date.
 - `F-*` et `S-*` relient les exigences aux scénarios dans `docs/02`; leurs identifiants ne prouvent pas leur exécution.
 - Le registre manuel contient 200 entrées `NON JOUÉ`. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.
-> Seul le contrôle statique sécurité 11/11 a été rejoué localement le 23/10/2026 dans cette révision ; aucun run global ou CI 15/15 n’est déclaré.
+> Le run restreint du 23/10 (`--sans-sql --sans-e2e`) et le contrôle statique sécurité 11/11 sont historiques. Un run distinct du 15/11 (`node scripts/run-all-tests.mjs --sans-sql`) a terminé avec le code 0 via PHP-WASM et inclut l’E2E HTTP isolé (338 vérifications) ; SQL/PDO et PHP CLI natif restent non joués, et aucune CI globale ou recette navigateur n’est revendiquée.
 
 ---
 

@@ -100,7 +100,10 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li><a href="#5-protocoles-de-performance-de-concurrence-dinstallation-et-de-sauvegarde-non-executes-ici">5. Protocoles de performance, de concurrence, d'installation et de sauvegarde (non exécutés ici)</a></li>
 <li><a href="#6-tests-unitaires-phpunit-9-classes-50-tests">6. Tests unitaires PHPUnit (9 classes, 50 tests)</a></li>
 <li><a href="#7-registre-des-anomalies-issues-reelles-resolues-et-verrouillees">7. Registre des anomalies (issues réelles résolues et verrouillées)</a></li>
-<li><a href="#8-etat-de-preuve-a-la-coupure-et-trame-de-proces-verbal">8. État de preuve à la coupure et trame de procès-verbal</a></li>
+<li><a href="#8-etat-de-preuve-a-la-coupure-et-trame-de-proces-verbal">8. État de preuve à la coupure et trame de procès-verbal</a><ul>
+<li><a href="#addendum-executions-posterieures-a-la-coupure-15112026">Addendum — exécutions postérieures à la coupure, 15/11/2026</a></li>
+</ul>
+</li>
 <li><a href="#9-matrice-de-tracabilite-fonctionnalites-scenarios-et-annexes">9. Matrice de traçabilité fonctionnalités, scénarios et annexes</a></li>
 <li><a href="#10-conclusion">10. Conclusion</a></li>
 </ul>
@@ -117,7 +120,7 @@ Complément du §15 du cahier des charges et compagnon des <strong>fiches de rec
 - préférences personnelles sur <code>/preferences</code> accessibles sans compte (<code>localStorage</code> seul, aucun cookie de suivi) : choix manuel ou géolocalisation navigateur locale sans tiers (<code>public/js/tz-lookup.js</code> CC0), traduction complète FR ↔ EN des 48 vues et du panier AJAX (<code>public/js/i18n-en.js</code>, <code>public/js/panier.js</code>), stockage UTC de bout en bout et affichage/filtrage selon le fuseau local choisi ;
 - compatibilité responsive à 320, 375, 768 et 1440 px avec tableaux administrateur et clients repliés en cartes mobiles étiquetées (<code>data-label</code>) et double implémentation décorative/informative des visuels produits ;
 - mentions légales de la maquette étudiante conformes à l'article 6, III, 2 de la LCEN (co-éditeurs <strong>Johan Polsinelli</strong> et <strong>Chahd Gouiaa</strong>, hébergeur pédagogique IUT Nice Côte d'Azur <code>linserv-info-01.campus.unice.fr</code>), transparence RGPD de la maquette scolaire et outils CLI de conservation/purge (<code>24 mois</code> comptes sans commande, <code>12 mois</code> contact, <code>6 mois</code> journaux, <code>30 jours</code> sauvegardes dédiées).</p>
-<p>Les mentions « automatisé » dans les tableaux désignent des scripts ou tests associés ; elles ne signifient pas que tous les scénarios ont réussi sur la révision examinée. Un run local restreint <code>node scripts/run-all-tests.mjs --sans-sql --sans-e2e</code> a toutefois réussi via PHP-WASM 8.2 le 23/10 ; son périmètre exact est indiqué en §8. Les 200 entrées de <a href="13-suivi-recette-uc.csv"><code>13-suivi-recette-uc.csv</code></a> sont <code>NON JOUÉ</code>. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué. Les tests SQL automatisés doivent utiliser une base temporaire isolée, distincte de toute cible manuelle.</p>
+<p>Les mentions « automatisé » dans les tableaux désignent des scripts ou tests associés ; elles ne signifient pas que tous les scénarios ont réussi sur la révision examinée. Deux runs distincts sont à distinguer : le run restreint du 23/10/2026 (<code>node scripts/run-all-tests.mjs --sans-sql --sans-e2e</code>), sans SQL ni E2E, et celui du 15/11/2026 (<code>node scripts/run-all-tests.mjs --sans-sql</code>), avec E2E HTTP isolé (338 vérifications) mais sans intégration SQL. Le compte rendu conservé du run d’octobre ne fixe pas de SHA et ne vaut donc pas preuve du checkout actuel ; le run du 15/11 est rattaché au commit testé dans l’addendum §8. Les limites de chaque périmètre y sont consignées. Les 200 entrées de <a href="13-suivi-recette-uc.csv"><code>13-suivi-recette-uc.csv</code></a> sont <code>NON JOUÉ</code>. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué. Les tests SQL automatisés doivent utiliser une base temporaire isolée, distincte de toute cible manuelle.</p>
 <h2 id="1-dispositif">1. Dispositif<a class="headerlink" href="#1-dispositif" title="Permanent link">#</a></h2>
 <table>
 <thead>
@@ -167,7 +170,7 @@ Complément du §15 du cahier des charges et compagnon des <strong>fiches de rec
 </table>
 <h2 id="2-scenarios-de-regles-de-gestion-base-de-donnees-resultats-dates-separement">2. Scénarios de règles de gestion (base de données) — résultats datés séparément<a class="headerlink" href="#2-scenarios-de-regles-de-gestion-base-de-donnees-resultats-dates-separement" title="Permanent link">#</a></h2>
 <p>Le manifeste <code>tests/sql/manifest.txt</code> référence 29 scénarios <code>T-01</code>…<code>T-29</code>. Les scripts <code>./scripts/run_sql_tests.sh</code> et <code>php tests/php/sql_integration.php</code>, lorsqu’ils sont lancés, doivent travailler sur une base temporaire isolée ; ils ne doivent pas viser LineServ ni une base applicative. La table ci-dessous décrit les assertions attendues, pas des résultats actuels.</p>
-<p><strong>Éléments datés à ne pas confondre :</strong> <code>docs/04-conception-bd-et-sql.md</code> relate une validation historique du 23/09/2026 sur MariaDB 11.8.6. Le fichier <code>tests/sql/rapport_tests_sql.md</code> affirme un rejeu daté du 27/10/2026 et 29/29, mais cette date est future par rapport à la coupure du 23/10 ; au vu de cette révision, le texte du rapport ne prouve pas qu’un rejeu a eu lieu. Aucun rejeu SQL courant n’est revendiqué ici.</p>
+<p><strong>Éléments datés à ne pas confondre :</strong> <code>docs/04-conception-bd-et-sql.md</code> relate une validation historique du 23/09/2026 sur MariaDB 11.8.6. Le fichier <code>tests/sql/rapport_tests_sql.md</code> affirme un rejeu daté du 27/10/2026 et 29/29 ; cette date était future à la coupure du 23/10. Le texte du rapport n’établit pas un rejeu sur le checkout vérifié le 15/11. Aucun rejeu SQL n’était établi à la coupure, et le run local du 15/11 a lui-même explicitement exclu SQL (<code>--sans-sql</code>, voir §8).</p>
 <table>
 <thead>
 <tr>
@@ -1244,14 +1247,14 @@ Complément du §15 du cahier des charges et compagnon des <strong>fiches de rec
 </tbody>
 </table>
 <h2 id="8-etat-de-preuve-a-la-coupure-et-trame-de-proces-verbal">8. État de preuve à la coupure et trame de procès-verbal<a class="headerlink" href="#8-etat-de-preuve-a-la-coupure-et-trame-de-proces-verbal" title="Permanent link">#</a></h2>
-<p><strong>Date de coupure documentaire : 23/10/2026.</strong> Le contenu de cette section distingue les sources versionnées des résultats vérifiés sur la révision courante.</p>
+<p><strong>Date de coupure documentaire : 23/10/2026.</strong> Les lignes qui suivent décrivent uniquement les preuves disponibles à cette coupure ; les contrôles postérieurs du 15/11/2026 sont consignés dans un addendum séparé.</p>
 <ul>
 <li><code>docs/04-conception-bd-et-sql.md</code> rapporte une validation SQL du <strong>23/09/2026</strong> sur MariaDB 11.8.6 ; il s’agit d’un résultat historique, non rejoué ici.</li>
 <li><code>tests/sql/rapport_tests_sql.md</code> contient une mention de rejeu au <strong>27/10/2026</strong>, date future à la coupure du 23/10 ; le fichier ne constitue donc pas une preuve d’exécution acquise à cette date.</li>
 <li>Les scénarios manuels du registre <code>docs/13-suivi-recette-uc.csv</code> : <strong>200 <code>NON JOUÉ</code></strong>. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.</li>
 <li><code>bash tests/security/controles.sh</code> : <strong>11/11 contrôles statiques</strong> rejoués localement dans cette révision le 23/10/2026. La portée est limitée aux sources inspectées par le script ; cela ne vaut ni test offensif <code>S-01…S-10</code>, ni recette applicative complète, ni preuve sur LineServ.</li>
-<li><code>node scripts/run-all-tests.mjs --sans-sql --sans-e2e</code> : code de sortie <strong>0</strong> le 23/10/2026 via PHP-WASM 8.2. Toutes les suites activées hors SQL/E2E sont vertes, dont T-01…T-29 sur le pilote JSON (<strong>29/29</strong>), <code>unit_tests.php</code> (<strong>297/297 vérifications</strong>), PHPUnit local (<strong>57 tests</strong>) et le linter strict (<strong>167 fichiers, 0 violation</strong>). L’analyse avec PHP CLI natif est NON JOUÉE ; l’intégration SQL et l’E2E ont été volontairement sautés.</li>
-<li>Aucun résultat CI pour le working tree n’est revendiqué. Aucun rejeu PDO/MySQL, parcours HTTP complet sous SQL, test navigateur réel, test manuel LineServ, déploiement ou restauration de base n’est attesté ici.</li>
+<li><code>node scripts/run-all-tests.mjs --sans-sql --sans-e2e</code> : compte rendu de code de sortie <strong>0</strong> daté du 23/10/2026 via PHP-WASM 8.2. Les suites activées hors SQL/E2E sont rapportées vertes, dont T-01…T-29 sur le moteur JSON (<strong>29/29</strong>), <code>unit_tests.php</code> (<strong>297/297 vérifications</strong>), PHPUnit local (<strong>57 tests</strong>) et le linter strict (<strong>167 fichiers, 0 violation</strong>). La trace conservée ne fixe pas le SHA testé ; elle est historique et n’atteste pas le checkout actuel. La commande excluait explicitement SQL et E2E ; l’analyse avec PHP CLI natif est NON JOUÉE.</li>
+<li>À la coupure du 23/10, aucun résultat CI pour le working tree n’était revendiqué. Aucun rejeu PDO/MySQL, parcours HTTP complet sous SQL, test navigateur réel, test manuel LineServ, déploiement ou restauration de base n’était attesté à cette date ; les contrôles postérieurs sont séparés dans l’addendum ci-dessous.</li>
 </ul>
 <table>
 <thead>
@@ -1268,9 +1271,9 @@ Complément du §15 du cahier des charges et compagnon des <strong>fiches de rec
 <td>29/29 conformes sur le pilote JSON ; ne valide pas SQL</td>
 </tr>
 <tr>
-<td>Suites PHP restreintes</td>
+<td>Suites PHP restreintes (hors SQL/E2E)</td>
 <td><code>node scripts/run-all-tests.mjs --sans-sql --sans-e2e</code></td>
-<td>code 0 ; tests hors SQL/E2E activés verts, dont 297 vérifications unitaires et 57 tests PHPUnit ; pas une CI native</td>
+<td>code 0 rapporté le 23/10 via PHP-WASM 8.2 ; SHA non consigné ; T-01…T-29 JSON 29/29, 297 vérifications, 57 tests PHPUnit, linter 167 fichiers/0 violation ; ni E2E, ni validation SQL, ni CI native</td>
 </tr>
 <tr>
 <td>Base de données</td>
@@ -1279,8 +1282,8 @@ Complément du §15 du cahier des charges et compagnon des <strong>fiches de rec
 </tr>
 <tr>
 <td>Application PHP/MySQL/PDO</td>
-<td>SQL est le pilote par défaut ; les repositories contiennent statiquement des appels aux 18 procédures</td>
-<td>aucun rejeu PDO/MySQL de cette révision ni parcours HTTP SQL complet n’est établi ; le scan statique ne vaut pas validation d’exécution</td>
+<td>À la coupure du 23/10, aucun rejeu SQL/PDO n’est établi ; l’état de configuration vérifié après la coupure est décrit dans l’addendum du 15/11</td>
+<td>Aucun parcours HTTP SQL n’est revendiqué. La sélection du pilote et le repérage statique d’appels aux procédures ne prouvent pas leur exécution.</td>
 </tr>
 <tr>
 <td>Sécurité statique</td>
@@ -1304,6 +1307,13 @@ Complément du §15 du cahier des charges et compagnon des <strong>fiches de rec
 </tr>
 </tbody>
 </table>
+<h3 id="addendum-executions-posterieures-a-la-coupure-15112026">Addendum — exécutions postérieures à la coupure, 15/11/2026<a class="headerlink" href="#addendum-executions-posterieures-a-la-coupure-15112026" title="Permanent link">#</a></h3>
+<p>Cet addendum ne modifie pas les constats historiques du 23/10 ci-dessus. Dans le checkout vérifié le 15/11/2026, SQL/MySQL/PDO est le pilote applicatif par défaut ; JSON reste une option explicite (<code>STORAGE_DRIVER=json</code>). La présence de ce raccordement ne vaut pas validation SQL.</p>
+<ul>
+<li><code>node scripts/run-all-tests.mjs --sans-sql</code> : code de sortie <strong>0</strong> via PHP-WASM 8.2. Les suites non SQL activées ont réussi, notamment T-01…T-29 exécutés sur JSON (<strong>29/29</strong>), <code>unit_tests.php</code> (<strong>297/297 vérifications</strong>), PHPUnit local (<strong>57 tests</strong>), linter strict (<strong>167 fichiers, 0 violation</strong>) et l’E2E HTTP isolé (<strong>338 vérifications</strong>, fichiers témoins de l’hôte inchangés). Ce run inclut l’E2E exclu le 23/10, mais saute explicitement l’intégration SQL.</li>
+<li><code>node tests/node/preferences_test.mjs</code> : code de sortie <strong>0</strong> ; contrôles DOM bilingues FR↔EN sur <strong>48 vues</strong>, choix de langue/fuseau et <strong>45 messages métier</strong> vérifiés. Ce résultat est un test DOM, pas une recette dans un navigateur réel.</li>
+<li>L’E2E passe par le front controller sous PHP-WASM, sur stockage JSON et système de fichiers isolé ; il ne prouve ni connexion ou parcours PDO/MySQL, ni exécution PHP CLI native, ni fonctionnement sur serveur web ou navigateur réel. Dans cette sandbox, l’analyse de compilation PHP CLI native reste <strong>NON JOUÉE</strong>. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.</li>
+</ul>
 <p>Le procès-verbal de recette reste une <strong>trame à compléter</strong> après exécution réelle : date, commit/SHA, environnement isolé, commandes, résultats, anomalies et auteur. La présence de la matrice ci-dessous n’est pas une signature ni une approbation.</p>
 <hr />
 <h2 id="9-matrice-de-tracabilite-fonctionnalites-scenarios-et-annexes">9. Matrice de traçabilité fonctionnalités, scénarios et annexes<a class="headerlink" href="#9-matrice-de-tracabilite-fonctionnalites-scenarios-et-annexes" title="Permanent link">#</a></h2>
@@ -1372,10 +1382,10 @@ Complément du §15 du cahier des charges et compagnon des <strong>fiches de rec
 <h2 id="10-conclusion">10. Conclusion<a class="headerlink" href="#10-conclusion" title="Permanent link">#</a></h2>
 <ul>
 <li>Le dépôt contient des spécifications, scénarios et scripts de test avec des références croisées vers les UC et les annexes ; un identifiant ou une matrice ne vaut pas preuve d’exécution.</li>
-<li>Le document de conception relate une validation SQL historique du 23/09/2026 ; le rapport versionné porte une date future du 27/10/2026 et n’est pas repris comme résultat acquis à la coupure du 23/10.</li>
+<li>Le document de conception relate une validation SQL historique du 23/09/2026 ; le rapport versionné porte une date du 27/10/2026, future à la coupure du 23/10, et n’est pas repris comme résultat acquis à cette coupure.</li>
 <li>Les 11 contrôles statiques de sécurité ont été rejoués localement le 23/10/2026 ; <code>S-11</code> est un contrôle statique ciblé relié à <code>SEC-14</code>, distinct des dix scénarios offensifs.</li>
 <li>Les 200 entrées du registre manuel sont <code>NON JOUÉ</code>. Aucun test LineServ, déploiement, restauration de base, relecture croisée étudiante ou validation pédagogique n’est revendiqué.</li>
-<li>SQL/MySQL/PDO est le pilote applicatif par défaut et JSON reste une option explicite. Le scan statique trouve un point d’appel repository pour les 18 procédures, mais aucun rejeu PDO/MySQL ni parcours HTTP complet n’est revendiqué pour cette révision.</li>
+<li>Dans le checkout vérifié le 15/11/2026, SQL/MySQL/PDO est le pilote applicatif par défaut et JSON reste une option explicite. Le scan statique trouve un point d’appel repository pour les 18 procédures, sans prouver leur exécution. Le run du 15/11 utilisait <code>--sans-sql</code> : aucun rejeu PDO/MySQL ni parcours HTTP complet sous SQL n’est revendiqué.</li>
 </ul>
 <footer class="doc">
   <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/02-document-tests-validation.md</code>

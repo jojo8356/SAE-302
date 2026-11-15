@@ -75,7 +75,7 @@ a { color:var(--accent2); }
 </tr>
 <tr>
 <td><strong>Version</strong></td>
-<td>1.2 — 23 octobre 2026 (comptages statiques synchronisés ; aucun nouveau rejeu SQL revendiqué)</td>
+<td>1.3 — 15 novembre 2026 (références CT/ENF et état du pilote synchronisés ; inventaire statique actualisé ; aucun rejeu SQL revendiqué)</td>
 </tr>
 </tbody>
 </table>
@@ -102,12 +102,12 @@ a { color:var(--accent2); }
 <td><code>docs/01</code> §8</td>
 </tr>
 <tr>
-<td><code>CT-01…CT-09</code></td>
+<td><code>CT-01…CT-12</code></td>
 <td>contraintes techniques</td>
 <td><code>docs/01</code> §7</td>
 </tr>
 <tr>
-<td><code>ENF-01…ENF-19</code></td>
+<td><code>ENF-01…ENF-22</code></td>
 <td>exigences non fonctionnelles</td>
 <td><code>docs/01</code> annexe 17.3 (<code>docs/annexes/annexe-enf.md</code>)</td>
 </tr>
@@ -871,7 +871,7 @@ ELSE
 END IF;
 </code></pre>
 <h3>B.2 Réponse à la question pédagogique : pourquoi une procédure stockée plutôt que tout faire en PHP ?</h3>
-<p>Le tableau décrit le <strong>raisonnement de conception pour la cible MySQL/PDO</strong> exigée par le sujet. SQL est maintenant le pilote par défaut et les repositories comportent des appels aux procédures. Le scan statique repère un point d’appel pour les 18 procédures ; aucun résultat d’exécution n’en est déduit. Les scénarios <code>T-*</code> cités sont des références, pas des résultats de rejeu courant.</p>
+<p>Le tableau décrit le <strong>raisonnement de conception pour la cible MySQL/PDO</strong> exigée par le sujet. Dans le checkout vérifié le 15/11/2026, SQL/MySQL via PDO est le pilote applicatif par défaut ; JSON reste une option explicite sélectionnée par <code>STORAGE_DRIVER=json</code>. Les repositories comportent des appels aux procédures ; le scan statique du 15/11 repère un point d’appel pour chacune des 18 procédures. Cela n’atteste ni leur exécution PDO/MySQL ni un rejeu courant des scénarios <code>T-*</code>, qui restent des références de test.</p>
 <table>
 <thead>
 <tr>
@@ -1282,7 +1282,7 @@ avec leurs montants exacts (324,60 / 0,00 / 405,48 / 63,70 EUR dont 4,90 de port
 d'historique ; les gardes RB-01/02/03/05/06/09/11/14/15/18 vérifiés <strong>en SQL direct</strong> (rejets attendus) ;
 rollback intégral du panier confirmé (stock inchangé, aucune commande créée) ; les 4 hashes du seed
 reconnus comme sorties réelles de <code>password_hash()</code> (bcrypt) pour les mots de passe de démonstration.</p>
-<p><strong>État statique des sources au 23/10/2026 :</strong> <code>sql/01</code> définit 9 tables (8 entités métier et une table technique d’audit du stock), 3 vues, 1 fonction, 18 procédures et 16 triggers. Le scan des repositories relève un point d’appel pour chacune des 18 procédures ; il ne prouve ni chargement de la base, ni exécution PDO/MySQL, ni parcours HTTP complet. Aucun rejeu SQL de cette révision n’est revendiqué ici.</p>
+<p><strong>État statique des sources vérifié le 15/11/2026 :</strong> <code>sql/01</code> définit 9 tables (8 entités métier et une table technique d’audit du stock), 3 vues, 1 fonction, 18 procédures et 16 triggers. Le scan des repositories repère un point d’appel pour chacune des 18 procédures ; il ne prouve ni chargement de la base, ni exécution PDO/MySQL, ni parcours HTTP complet. SQL/MySQL via PDO est le pilote par défaut et JSON reste une option explicite (<code>STORAGE_DRIVER=json</code>). Aucun rejeu SQL de cette révision n’est revendiqué ici.</p>
 <p><strong>Corrections v1.1 apportées aux scripts</strong> (blocantes au chargement direct, détectées par ce rejeu) :
 (i) ajout des directives <code>DELIMITER $$ … DELIMITER ;</code> dans <code>sql/02</code> et <code>sql/03</code>, promises par l'en-tête
 du 01 mais absentes — <code>mysql &lt; sql/02…</code> échouait sinon ; (ii) le déclencheur <code>trg_history_creation</code>

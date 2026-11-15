@@ -13,7 +13,7 @@ Le code, scripts, protocoles et références de tests listés ci-dessous sont de
 - compatibilité responsive à 320, 375, 768 et 1440 px avec tableaux administrateur et clients repliés en cartes mobiles étiquetées (`data-label`) et double implémentation décorative/informative des visuels produits ;
 - mentions légales de la maquette étudiante conformes à l'article 6, III, 2 de la LCEN (co-éditeurs **Johan Polsinelli** et **Chahd Gouiaa**, hébergeur pédagogique IUT Nice Côte d'Azur `linserv-info-01.campus.unice.fr`), transparence RGPD de la maquette scolaire et outils CLI de conservation/purge (`24 mois` comptes sans commande, `12 mois` contact, `6 mois` journaux, `30 jours` sauvegardes dédiées).
 
-Les mentions « automatisé » dans les tableaux désignent des scripts ou tests associés ; elles ne signifient pas que tous les scénarios ont réussi sur la révision examinée. Un run local restreint `node scripts/run-all-tests.mjs --sans-sql --sans-e2e` a toutefois réussi via PHP-WASM 8.2 le 23/10 ; son périmètre exact est indiqué en §8. Les 200 entrées de [`13-suivi-recette-uc.csv`](13-suivi-recette-uc.csv) sont `NON JOUÉ`. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué. Les tests SQL automatisés doivent utiliser une base temporaire isolée, distincte de toute cible manuelle.
+Les mentions « automatisé » dans les tableaux désignent des scripts ou tests associés ; elles ne signifient pas que tous les scénarios ont réussi sur la révision examinée. Deux runs distincts sont à distinguer : le run restreint du 23/10/2026 (`node scripts/run-all-tests.mjs --sans-sql --sans-e2e`), sans SQL ni E2E, et celui du 15/11/2026 (`node scripts/run-all-tests.mjs --sans-sql`), avec E2E HTTP isolé (338 vérifications) mais sans intégration SQL. Le compte rendu conservé du run d’octobre ne fixe pas de SHA et ne vaut donc pas preuve du checkout actuel ; le run du 15/11 est rattaché au commit testé dans l’addendum §8. Les limites de chaque périmètre y sont consignées. Les 200 entrées de [`13-suivi-recette-uc.csv`](13-suivi-recette-uc.csv) sont `NON JOUÉ`. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué. Les tests SQL automatisés doivent utiliser une base temporaire isolée, distincte de toute cible manuelle.
 
 ## 1. Dispositif
 
@@ -33,7 +33,7 @@ Les mentions « automatisé » dans les tableaux désignent des scripts ou tests
 
 Le manifeste `tests/sql/manifest.txt` référence 29 scénarios `T-01`…`T-29`. Les scripts `./scripts/run_sql_tests.sh` et `php tests/php/sql_integration.php`, lorsqu’ils sont lancés, doivent travailler sur une base temporaire isolée ; ils ne doivent pas viser LineServ ni une base applicative. La table ci-dessous décrit les assertions attendues, pas des résultats actuels.
 
-**Éléments datés à ne pas confondre :** `docs/04-conception-bd-et-sql.md` relate une validation historique du 23/09/2026 sur MariaDB 11.8.6. Le fichier `tests/sql/rapport_tests_sql.md` affirme un rejeu daté du 27/10/2026 et 29/29, mais cette date est future par rapport à la coupure du 23/10 ; au vu de cette révision, le texte du rapport ne prouve pas qu’un rejeu a eu lieu. Aucun rejeu SQL courant n’est revendiqué ici.
+**Éléments datés à ne pas confondre :** `docs/04-conception-bd-et-sql.md` relate une validation historique du 23/09/2026 sur MariaDB 11.8.6. Le fichier `tests/sql/rapport_tests_sql.md` affirme un rejeu daté du 27/10/2026 et 29/29 ; cette date était future à la coupure du 23/10. Le texte du rapport n’établit pas un rejeu sur le checkout vérifié le 15/11. Aucun rejeu SQL n’était établi à la coupure, et le run local du 15/11 a lui-même explicitement exclu SQL (`--sans-sql`, voir §8).
 
 | Test | Règle | Vérification visée | État à la coupure du 23/10/2026 |
 |---|---|---|---|
@@ -213,25 +213,33 @@ Commande : `vendor/bin/phpunit` (JUnit en CI) ou `php tests/phpunit/run-local.ph
 
 ## 8. État de preuve à la coupure et trame de procès-verbal
 
-**Date de coupure documentaire : 23/10/2026.** Le contenu de cette section distingue les sources versionnées des résultats vérifiés sur la révision courante.
+**Date de coupure documentaire : 23/10/2026.** Les lignes qui suivent décrivent uniquement les preuves disponibles à cette coupure ; les contrôles postérieurs du 15/11/2026 sont consignés dans un addendum séparé.
 
 - `docs/04-conception-bd-et-sql.md` rapporte une validation SQL du **23/09/2026** sur MariaDB 11.8.6 ; il s’agit d’un résultat historique, non rejoué ici.
 - `tests/sql/rapport_tests_sql.md` contient une mention de rejeu au **27/10/2026**, date future à la coupure du 23/10 ; le fichier ne constitue donc pas une preuve d’exécution acquise à cette date.
 - Les scénarios manuels du registre `docs/13-suivi-recette-uc.csv` : **200 `NON JOUÉ`**. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.
 - `bash tests/security/controles.sh` : **11/11 contrôles statiques** rejoués localement dans cette révision le 23/10/2026. La portée est limitée aux sources inspectées par le script ; cela ne vaut ni test offensif `S-01…S-10`, ni recette applicative complète, ni preuve sur LineServ.
-- `node scripts/run-all-tests.mjs --sans-sql --sans-e2e` : code de sortie **0** le 23/10/2026 via PHP-WASM 8.2. Toutes les suites activées hors SQL/E2E sont vertes, dont T-01…T-29 sur le pilote JSON (**29/29**), `unit_tests.php` (**297/297 vérifications**), PHPUnit local (**57 tests**) et le linter strict (**167 fichiers, 0 violation**). L’analyse avec PHP CLI natif est NON JOUÉE ; l’intégration SQL et l’E2E ont été volontairement sautés.
-- Aucun résultat CI pour le working tree n’est revendiqué. Aucun rejeu PDO/MySQL, parcours HTTP complet sous SQL, test navigateur réel, test manuel LineServ, déploiement ou restauration de base n’est attesté ici.
+- `node scripts/run-all-tests.mjs --sans-sql --sans-e2e` : compte rendu de code de sortie **0** daté du 23/10/2026 via PHP-WASM 8.2. Les suites activées hors SQL/E2E sont rapportées vertes, dont T-01…T-29 sur le moteur JSON (**29/29**), `unit_tests.php` (**297/297 vérifications**), PHPUnit local (**57 tests**) et le linter strict (**167 fichiers, 0 violation**). La trace conservée ne fixe pas le SHA testé ; elle est historique et n’atteste pas le checkout actuel. La commande excluait explicitement SQL et E2E ; l’analyse avec PHP CLI natif est NON JOUÉE.
+- À la coupure du 23/10, aucun résultat CI pour le working tree n’était revendiqué. Aucun rejeu PDO/MySQL, parcours HTTP complet sous SQL, test navigateur réel, test manuel LineServ, déploiement ou restauration de base n’était attesté à cette date ; les contrôles postérieurs sont séparés dans l’addendum ci-dessous.
 
 | Domaine | Artefact / résultat daté | État et limite à la coupure |
 |---|---|---|
 | Règles métier PHP sur JSON | `tests/php/run_tests.php` exécuté via PHP-WASM 8.2 | 29/29 conformes sur le pilote JSON ; ne valide pas SQL |
-| Suites PHP restreintes | `node scripts/run-all-tests.mjs --sans-sql --sans-e2e` | code 0 ; tests hors SQL/E2E activés verts, dont 297 vérifications unitaires et 57 tests PHPUnit ; pas une CI native |
+| Suites PHP restreintes (hors SQL/E2E) | `node scripts/run-all-tests.mjs --sans-sql --sans-e2e` | code 0 rapporté le 23/10 via PHP-WASM 8.2 ; SHA non consigné ; T-01…T-29 JSON 29/29, 297 vérifications, 57 tests PHPUnit, linter 167 fichiers/0 violation ; ni E2E, ni validation SQL, ni CI native |
 | Base de données | Scénarios `T-01`…`T-29` et scripts SQL présents ; validation historique relatée dans `docs/04` le 23/09 | pas de rejeu SQL de cette révision ; le rapport du 27/10 est postérieur à la coupure |
-| Application PHP/MySQL/PDO | SQL est le pilote par défaut ; les repositories contiennent statiquement des appels aux 18 procédures | aucun rejeu PDO/MySQL de cette révision ni parcours HTTP SQL complet n’est établi ; le scan statique ne vaut pas validation d’exécution |
+| Application PHP/MySQL/PDO | À la coupure du 23/10, aucun rejeu SQL/PDO n’est établi ; l’état de configuration vérifié après la coupure est décrit dans l’addendum du 15/11 | Aucun parcours HTTP SQL n’est revendiqué. La sélection du pilote et le repérage statique d’appels aux procédures ne prouvent pas leur exécution. |
 | Sécurité statique | `bash tests/security/controles.sh` | 11/11 rejoués localement le 23/10 ; contrôle ciblé, non équivalent aux scénarios offensifs |
 | Sécurité offensive | Scénarios documentés `S-01`…`S-10` | aucun rejeu offensif/LineServ revendiqué dans cette révision |
 | Recette fonctionnelle humaine | Fiches UC et registre CSV | 200 entrées `NON JOUÉ` ; aucune validation par un testeur étudiant n’est inférée |
 | Performance, hébergement et sauvegarde | Scripts et protocoles référencés | aucune mesure sur cible, opération de déploiement, recette LineServ ou restauration attestée |
+
+### Addendum — exécutions postérieures à la coupure, 15/11/2026
+
+Cet addendum ne modifie pas les constats historiques du 23/10 ci-dessus. Dans le checkout vérifié le 15/11/2026, SQL/MySQL/PDO est le pilote applicatif par défaut ; JSON reste une option explicite (`STORAGE_DRIVER=json`). La présence de ce raccordement ne vaut pas validation SQL.
+
+- `node scripts/run-all-tests.mjs --sans-sql` : code de sortie **0** via PHP-WASM 8.2. Les suites non SQL activées ont réussi, notamment T-01…T-29 exécutés sur JSON (**29/29**), `unit_tests.php` (**297/297 vérifications**), PHPUnit local (**57 tests**), linter strict (**167 fichiers, 0 violation**) et l’E2E HTTP isolé (**338 vérifications**, fichiers témoins de l’hôte inchangés). Ce run inclut l’E2E exclu le 23/10, mais saute explicitement l’intégration SQL.
+- `node tests/node/preferences_test.mjs` : code de sortie **0** ; contrôles DOM bilingues FR↔EN sur **48 vues**, choix de langue/fuseau et **45 messages métier** vérifiés. Ce résultat est un test DOM, pas une recette dans un navigateur réel.
+- L’E2E passe par le front controller sous PHP-WASM, sur stockage JSON et système de fichiers isolé ; il ne prouve ni connexion ou parcours PDO/MySQL, ni exécution PHP CLI native, ni fonctionnement sur serveur web ou navigateur réel. Dans cette sandbox, l’analyse de compilation PHP CLI native reste **NON JOUÉE**. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.
 
 Le procès-verbal de recette reste une **trame à compléter** après exécution réelle : date, commit/SHA, environnement isolé, commandes, résultats, anomalies et auteur. La présence de la matrice ci-dessous n’est pas une signature ni une approbation.
 
@@ -257,7 +265,7 @@ Les références `F-*`, `T-*` et `S-*` sont des identifiants de scénarios. Les 
 ## 10. Conclusion
 
 - Le dépôt contient des spécifications, scénarios et scripts de test avec des références croisées vers les UC et les annexes ; un identifiant ou une matrice ne vaut pas preuve d’exécution.
-- Le document de conception relate une validation SQL historique du 23/09/2026 ; le rapport versionné porte une date future du 27/10/2026 et n’est pas repris comme résultat acquis à la coupure du 23/10.
+- Le document de conception relate une validation SQL historique du 23/09/2026 ; le rapport versionné porte une date du 27/10/2026, future à la coupure du 23/10, et n’est pas repris comme résultat acquis à cette coupure.
 - Les 11 contrôles statiques de sécurité ont été rejoués localement le 23/10/2026 ; `S-11` est un contrôle statique ciblé relié à `SEC-14`, distinct des dix scénarios offensifs.
 - Les 200 entrées du registre manuel sont `NON JOUÉ`. Aucun test LineServ, déploiement, restauration de base, relecture croisée étudiante ou validation pédagogique n’est revendiqué.
-- SQL/MySQL/PDO est le pilote applicatif par défaut et JSON reste une option explicite. Le scan statique trouve un point d’appel repository pour les 18 procédures, mais aucun rejeu PDO/MySQL ni parcours HTTP complet n’est revendiqué pour cette révision.
+- Dans le checkout vérifié le 15/11/2026, SQL/MySQL/PDO est le pilote applicatif par défaut et JSON reste une option explicite. Le scan statique trouve un point d’appel repository pour les 18 procédures, sans prouver leur exécution. Le run du 15/11 utilisait `--sans-sql` : aucun rejeu PDO/MySQL ni parcours HTTP complet sous SQL n’est revendiqué.

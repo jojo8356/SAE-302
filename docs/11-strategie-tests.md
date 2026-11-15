@@ -2,11 +2,13 @@
 
 Ce document ne remplace pas le [document de tests et de validation](02-document-tests-validation.md) (cas détaillés, registre d'anomalies, PV de recette) : il explique **comment** la vérification est construite, **pourquoi** à ce niveau-là, et **ce qu'elle ne prouve pas**. C'est le document qu'on lit quand on se demande « vos tests, ils servent à quoi ? ».
 
-> **Portée des preuves — coupure documentaire 23/10/2026.** Les volumes et résultats d’archive sans run rattaché ne valent pas preuve sur le working tree examiné. Le 23/10, `node scripts/run-all-tests.mjs --sans-sql --sans-e2e` a terminé avec succès via PHP-WASM 8.2 : les suites activées hors SQL/E2E sont vertes (notamment T-01…T-29 en JSON, 297 vérifications unitaires et 57 tests PHPUnit). Cette commande exclut explicitement l’intégration SQL et l’E2E ; l’analyse de compilation avec PHP CLI natif est également non jouée. PHP CLI, Composer, MySQL/MariaDB et navigateur réel n’étaient pas disponibles ; aucune validation PDO/MySQL, recette manuelle ou mesure cible n’est revendiquée.
+> **Portée historique — coupure documentaire 23/10/2026.** Les volumes et résultats d’archive sans run rattaché ne valent pas preuve sur le checkout examiné. Le compte rendu du run du 23/10, `node scripts/run-all-tests.mjs --sans-sql --sans-e2e`, rapporte un code de sortie 0 via PHP-WASM 8.2 : T-01…T-29 sur JSON (29/29), 297 vérifications, 57 tests PHPUnit et linter strict (167 fichiers, 0 violation). Il excluait explicitement SQL et E2E ; l’analyse de compilation avec PHP CLI natif n’était pas jouée. Le SHA testé n’est pas conservé dans cette trace, qui ne vaut donc pas preuve sur le checkout actuel.
+>
+> **Addendum — exécutions du 15/11/2026.** `node scripts/run-all-tests.mjs --sans-sql` a terminé avec le code 0 via PHP-WASM 8.2 : T-01…T-29 sur JSON (29/29), 297 vérifications, 57 tests PHPUnit, linter strict (167 fichiers, 0 violation) et E2E HTTP isolé (338 vérifications, fichiers hôte témoins inchangés). `node tests/node/preferences_test.mjs` a également terminé avec le code 0 (48 vues bilingues FR/EN, 45 messages métier). SQL est le pilote applicatif par défaut et JSON une option explicite, mais ces runs ne valident pas PDO/MySQL : le run-all excluait SQL, le PHP CLI natif et la base MySQL/MariaDB étaient absents, et l’analyse de compilation native reste NON JOUÉE. Aucun navigateur réel, test manuel LineServ, déploiement, mesure sur cible ou restauration de base n’est revendiqué.
 
 ## 1. Le principe : la pyramide des tests et son protocole
 
-La pyramide des tests décrit les niveaux et les protocoles visés. Les volumes ci-dessous sont des chiffres de couverture décrite, pas tous des résultats d’exécution. Le résultat du run restreint `node scripts/run-all-tests.mjs --sans-sql --sans-e2e` du 23/10 est consigné en §4 et dans `docs/19` ; il n’inclut ni intégration SQL ni E2E.
+La pyramide des tests décrit les niveaux et les protocoles visés. Les volumes ci-dessous sont des chiffres de couverture décrite, pas tous des résultats d’exécution. Le run historique du 23/10 (`--sans-sql --sans-e2e`) excluait SQL et E2E ; le run distinct du 15/11 (`--sans-sql`) inclut l’E2E HTTP isolé sous PHP-WASM, mais pas l’intégration SQL/PDO ni un navigateur réel. Les résultats sont séparés en §4 et dans `docs/02`/`docs/19`.
 
 | Étage | Nature | Suite | Volume | Durée |
 |---|---|---|---|---|
@@ -16,7 +18,7 @@ La pyramide des tests décrit les niveaux et les protocoles visés. Les volumes 
 | 3 | Règles de gestion sur le moteur | `tests/php/run_tests.php` (`T-01` → `T-29` du CDC §6), `tests/php/engine_smoke.php`, `tests/php/json_concurrency_stress.php` | 29 scénarios référencés ; leur résultat doit être établi par un rejeu daté sur le SHA concerné | non mesurée ici |
 | 4 | Fonctionnalités via dépôts & fixtures isolées | `tests/php/features_test.php` (UC-01 → UC-14), `catalogue_stock_test.php`, `nouveautes_test.php` (fixtures prévues en magasins temporaires) | Périmètre de scénarios annoncé dans cette archive ; les nombres de cas ne sont pas des résultats de passage | non mesurée ici |
 | 5 | Intégration SQL réelle & migrations | `tests/php/sql_integration.php` (`tests/sql/run_tests.sh` et assertions PDO) + `tests/php/migration_mariadb_test.php` | Scénarios et migrations à exécuter sur une base temporaire ; aucun rejeu SQL/MySQL/MariaDB n’est revendiqué pour cette révision | non mesurée ici |
-| 6 | Parcours HTTP E2E, DOM bilingue FR↔EN & CLI Python | `scripts/wasm-e2e.mjs` + suites `scripts/ui-e2e-*.mjs` + `tests/node/` + `tests/python/` | Scénarios et fichiers de test présents ; les volumes de l’archive ne sont pas des résultats de passage sur ce working tree | non mesurée ici |
+| 6 | Parcours HTTP E2E, DOM bilingue FR↔EN & CLI Python | `scripts/wasm-e2e.mjs` + suites `scripts/ui-e2e-*.mjs` + `tests/node/` + `tests/python/` | Run PHP-WASM du 15/11 : E2E isolé 338 vérifications ; `preferences_test.mjs` séparé : DOM FR/EN sur 48 vues et 45 messages métier. Les autres volumes restent des scénarios/références. | résultats locaux datés en tête et §4 ; navigateur réel et CI non joués |
 | 6 bis | Navigateur réel headless (CI) | `tests/node/responsive_navigateur.mjs` (Playwright Chromium, largeurs prévues 320, 375 et 1440 px) | Protocole décrit ; aucun résultat de navigateur réel ou de CI n’est revendiqué pour cette révision | non mesurée ici |
 | 7 | Performance & volumétrie | `scripts/capture_perf.sh` → `gen_volumes.sh` + `tests/perf/mesurer_sql.sh` | Protocole de mesure ; aucun p95 cible ni résultat de performance actuel n’est établi ici | non mesurée ici |
 | 8 | Suites de recette manuelle humaine | [`docs/13-fiches-recette-uc.md`](13-fiches-recette-uc.md) + [`docs/13-suivi-recette-uc.csv`](13-suivi-recette-uc.csv) + [`docs/14-guide-lineserv.md`](14-guide-lineserv.md) | **164 scénarios** (`UC-01..14` + `TCX-01..24`, hors responsive multi-largeurs) + **36 couples** = **200 lignes `NON JOUÉ`** | campagne humaine |
@@ -29,13 +31,13 @@ Pourquoi cette forme, et pas 400 tests unitaires avec des doublures partout : l'
 
 ### 2.1 Tests de règles (étage 3) — le moteur, sans HTTP
 
-`tests/php/run_tests.php` est conçu pour exécuter les 29 scénarios `T-01` → `T-29` du cahier des charges sur `app/Model/Data/JsonStore.php`, qui réimplémente contraintes, déclencheurs et transactions. L'objectif est de contrôler les règles indépendamment des contrôleurs et des sessions ; la présence du harnais ne démontre pas qu'elles ont été rejouées ou qu'elles tiennent dans le checkout examiné.
+`tests/php/run_tests.php` exécute les 29 scénarios `T-01` → `T-29` du cahier des charges sur `app/Model/Data/JsonStore.php`, qui réimplémente contraintes, déclencheurs et transactions. Les runs PHP-WASM du 23/10 et du 15/11 ont rapporté **29/29** sur cette voie JSON. Cela établit le résultat de ces scénarios sur le magasin JSON dans les exécutions citées, pas leur comportement sur le pilote SQL/MySQL/PDO par défaut.
 
 `tests/php/engine_smoke.php` vise à contrôler les hypothèses de cette réimplémentation : API des pilotes (`JSON` et `SQL`), absence de connexion sans PDO, absence de concaténation SQL et comportement de `LIKE`. Ces contrôles exigent un résultat de run daté et rattaché au SHA avant d'être présentés comme réussis.
 
 ### 2.2 Intégration SQL (étage 5) — protocole à rejouer pour établir le résultat
 
-`tests/php/sql_integration.php` est conçu comme une **enveloppe mince** autour de `tests/sql/run_tests.sh` : le protocole prévoit de créer une base temporaire dédiée `minishop_test`, d’y charger `sql/01` → `sql/04`, de contrôler le repository sur `SqlStore` et la procédure de recherche, de jouer les 29 scénarios, puis de supprimer la base. La commande passée le 23/10 comportait `--sans-sql` : cette enveloppe et ces scripts n’ont donc pas été exécutés et aucun rejeu PDO/MySQL de cette révision n’est revendiqué.
+`tests/php/sql_integration.php` est conçu comme une **enveloppe mince** autour de `tests/sql/run_tests.sh` : le protocole prévoit de créer une base temporaire dédiée `minishop_test`, d’y charger `sql/01` → `sql/04`, de contrôler le repository sur `SqlStore` et la procédure de recherche, de jouer les 29 scénarios, puis de supprimer la base. Le run historique du 23/10 (`--sans-sql --sans-e2e`) et celui du 15/11 (`--sans-sql`) ont tous deux exclu SQL ; cette enveloppe n’a été jouée dans aucun de ces runs et aucun rejeu PDO/MySQL de la révision actuelle n’est revendiqué.
 
 Depuis l’audit global, cette enveloppe refuse par défaut une base existante et refuse toujours le nom `DB_NAME` configuré. `--reinitialiser-base-existante` autorise explicitement la suppression : serveur de test jetable uniquement. La protection du nom ne détecte pas les bases utilisées par d’autres applications. Le harnais shell appelé directement ne bénéficie pas de ces garde-fous.
 
@@ -45,13 +47,11 @@ L'isolation est le point délicat : `tests/sql/fixture.sql` réinitialise l'éta
 
 Une note d’archive rapporte un refus `1044 Access denied` lors de la création de `minishop_test` par un compte applicatif limité à `minishop.*`. Ce récit n’est pas rattaché ici à un run daté/SHA et n’est pas une preuve de l’environnement actuel. Le protocole décrit une création explicite par `php scripts/db_init.php --test-db`, sans élargir les droits sur la base applicative ; à vérifier sur serveur jetable avant toute réinitialisation.
 
-Comportement attendu : sans client `mariadb`/`mysql` dans le `PATH`, ou sans serveur joignable, le harnais doit annoncer **NON JOUÉ** et sortir en code 2. Le run `--sans-sql` du 23/10 a délibérément sauté cette enveloppe ; il ne vérifie donc pas ce comportement ni ne vaut intégration SQL.
+Comportement attendu : sans client `mariadb`/`mysql` dans le `PATH`, ou sans serveur joignable, le harnais doit annoncer **NON JOUÉ** et sortir en code 2. Les deux runs mentionnés ci-dessus ont délibérément sauté cette enveloppe (`--sans-sql`) ; ils ne vérifient donc pas ce comportement ni ne valent intégration SQL.
 
 ### 2.3 Tests de bout en bout (étage 6) — ce que l'utilisateur voit
 
-`scripts/e2e.mjs` décrit un parcours WASM où les requêtes passent par le front controller dans PHP-WASM, sans navigateur ni serveur HTTP réel. Il vise à contrôler codes HTTP, contenu, jetons CSRF et persistance JSON ; le volume de 268 vérifications est une mention de l’archive, pas un résultat revendiqué pour le working tree examiné.
-
-Le protocole vise à isoler les données dans un système de fichiers PHP-WASM temporaire ; `tests/node/e2e_isolation.mjs` est prévu pour contrôler, sur copie temporaire, que des fichiers hôte factices restent inchangés. La présence de ces tests ne vaut pas rejeu.
+Le run du 15/11 a exécuté `tests/node/e2e_isolation.mjs` : parcours HTTP via le front controller dans PHP-WASM, sans navigateur ni serveur HTTP réel, **338 vérifications réussies** et fichiers hôte témoins inchangés. `tests/node/preferences_test.mjs`, exécuté séparément le même jour, a validé le DOM FR/EN sur 48 vues et 45 messages métier. Ces résultats portent sur les parcours et le stockage JSON isolés ; ils ne valident ni PDO/MySQL, ni un serveur web natif, ni LineServ ou un navigateur réel.
 
 ## 3. Les tests de contrat — la partie qui attrape ce que les autres laissent passer
 
@@ -65,21 +65,21 @@ Trois suites sont prévues pour analyser des artefacts **sans exécuter l'applic
 
 Ces tests sont **statiques** : ils analysent les fichiers et ne remplacent pas une validation de navigateur. Un scénario Chromium headless (`tests/node/responsive_navigateur.mjs`, largeurs 320, 375 et 1440 px) est décrit séparément ; aucune exécution CI ou validation multi-largeurs n’est revendiquée ici.
 
-## 4. Ce qui n'est pas joué en sandbox, et pourquoi c'est écrit
+## 4. État des suites jouées et non jouées en sandbox
 
-PHP CLI, Composer, MySQL/MariaDB et navigateur réel ne sont pas disponibles dans cette sandbox. Le runtime PHP-WASM a toutefois été fourni par les dépendances Node installées pour ce contrôle. Le 23/10, `node scripts/run-all-tests.mjs --sans-sql --sans-e2e` s’est terminé avec le code 0 : toutes les suites activées hors SQL/E2E ont réussi via PHP-WASM 8.2. Ce résultat restreint ne constitue pas une CI native ni une validation globale des parcours SQL.
+PHP CLI, Composer, MySQL/MariaDB et navigateur réel ne sont pas disponibles dans cette sandbox. Le runtime PHP-WASM a été fourni par les dépendances Node installées. Le run restreint du 23/10 (`node scripts/run-all-tests.mjs --sans-sql --sans-e2e`) a réussi hors SQL/E2E. Le run distinct du 15/11 (`node scripts/run-all-tests.mjs --sans-sql`) s’est terminé avec le code 0 et a inclus l’E2E HTTP isolé. Les deux runs excluent l’intégration SQL ; aucun ne constitue une CI native, une validation PDO/MySQL ou une recette navigateur.
 
 | Suite | État dans cette révision | Limite |
 |---|---|---|
-| Suites PHP non SQL dans `run-all-tests.mjs` | Réussies via PHP-WASM 8.2 avec `--sans-sql --sans-e2e` ; T-01…T-29 JSON conformes, 297 vérifications unitaires et 57 tests PHPUnit verts | Pas de PHP CLI natif ; l’analyse de compilation native est NON JOUÉE |
+| Suites PHP non SQL dans `run-all-tests.mjs` | Run du 15/11 réussi via PHP-WASM 8.2 avec `--sans-sql` ; T-01…T-29 JSON 29/29, 297 vérifications unitaires, 57 tests PHPUnit, linter strict 167 fichiers/0 violation. Le run du 23/10 (`--sans-sql --sans-e2e`) est distinct et excluait aussi l’E2E. | Pas de PHP CLI natif ; l’analyse de compilation native est NON JOUÉE. Aucun résultat PDO/MySQL. |
 | Contrôles Python/documentaires du runner | Réussis selon les sorties de `docs/19` | Ne constituent pas une CI externe ni une recette humaine |
 | `sql_integration.php` et scripts SQL | NON JOUÉ ; explicitement exclus avec `--sans-sql` | Client/serveur MySQL/MariaDB absents ; aucune base temporaire n’a été créée |
-| E2E HTTP | NON JOUÉ ; explicitement exclu avec `--sans-e2e` | Pas de parcours HTTP déclaré dans ce run |
+| E2E HTTP isolé | Run du 15/11 via PHP-WASM : 338 vérifications réussies, fichiers hôte témoins inchangés. Le run du 23/10 l’excluait avec `--sans-e2e`. | Stockage JSON isolé ; pas de PDO/MySQL, navigateur réel, serveur web natif ou LineServ |
 | `coverage.php` | NON JOUÉ | PHP CLI absent |
 | `capture_perf.sh` et mesures de charge | NON JOUÉ | serveur et cible de mesure absents |
 | Navigateur réel, lecteur d'écran | NON JOUÉ | aucune recette humaine revendiquée |
 
-Le contrôle `node scripts/wasm_verdict.mjs` a passé 9/9 cas dans le même run. Cela vérifie les verdicts de l’adaptateur WASM ; le résultat complet demeure limité aux options choisies et ne prouve ni SQL, ni E2E, ni l’analyse avec PHP CLI natif.
+Le contrôle `node scripts/wasm_verdict.mjs` a passé 9/9 cas dans le même run. Cela vérifie les verdicts de l’adaptateur WASM ; le résultat demeure limité aux options choisies et ne prouve ni SQL/PDO, ni une exécution PHP native, ni un navigateur réel.
 
 ## 5. La couverture, mesurée honnêtement
 
@@ -99,7 +99,7 @@ Ce que cette mesure ne dit pas, et qu'il faut dire à sa place : un fichier char
 
 Un dispositif de test qui ne peut pas échouer ne prouve rien. Cette archive rapporte qu’un défaut du verdict PHP-WASM aurait pu traiter des sorties d’échec comme des succès ; ce récit n’est pas rattaché ici à un run daté/SHA.
 
-Le script `scripts/wasm_verdict.mjs` décrit un classement à partir de signaux observables : erreur fatale ou de syntaxe PHP → 255 ; marqueur « ❌ » → 1 ; « NON JOUÉ » sans « ✅ » → 2 ; sinon → 0. Il a passé **9/9 cas de verdict**, et l’orchestrateur restreint `node scripts/run-all-tests.mjs --sans-sql --sans-e2e` a terminé avec le code 0 le 23/10. Cette réussite ne couvre pas les suites SQL et E2E sautées, ni PHP CLI natif.
+Le script `scripts/wasm_verdict.mjs` décrit un classement à partir de signaux observables : erreur fatale ou de syntaxe PHP → 255 ; marqueur « ❌ » → 1 ; « NON JOUÉ » sans « ✅ » → 2 ; sinon → 0. Le contrôle dédié `node scripts/wasm_verdict.mjs` a passé **9/9 cas de verdict** le 23/10. Ce run historique de l’orchestrateur utilisait `--sans-sql --sans-e2e` ; le run du 15/11 a utilisé `--sans-sql`, terminé avec le code 0 et inclus l’E2E HTTP isolé. Aucun des deux ne valide SQL/PDO ni l’analyse de compilation avec PHP CLI natif.
 
 Les scénarios de sabotage/restauration de l’orchestrateur décrits dans l’archive restent à rattacher à un run et un SHA avant de les présenter comme résultat.
 
@@ -121,7 +121,7 @@ php tests/php/run_tests.php
 
 ## 8. Auto-évaluation
 
-**Ce que la stratégie vise à établir, sous réserve de rejeux datés.** Les scénarios `T-01`…`T-29` ciblent les règles sur le moteur ; les scénarios SQL directs visent à contrôler les contraintes sans passer par l’application. Les parcours E2E décrivent des appels HTTP en runtime WASM. Ces objectifs et scripts présents ne prouvent pas que les règles, l’intégration SQL ou les parcours HTTP ont réussi dans la révision examinée.
+**Ce que les preuves locales établissent, avec leurs limites.** Le run non-SQL du 15/11 a réussi T-01…T-29 sur le moteur JSON et l’E2E HTTP isolé PHP-WASM (338 vérifications). Le SQL/MySQL/PDO est le pilote applicatif par défaut, mais les scénarios SQL directs et l’intégration PDO/MySQL n’ont pas été joués. Les résultats JSON/WASM ne démontrent ni le comportement SQL, ni celui d’un serveur web natif ou d’un navigateur réel.
 
 **Ce qui ne tient pas, et qu'on assume.**
 
@@ -130,20 +130,20 @@ php tests/php/run_tests.php
 3. **Pas d'accessibilité automatisée.** Contrastes et cibles tactiles sont calculés ; la navigation au lecteur d'écran reste manuelle.
 4. **Fiabilité du verdict.** L’archive rapporte un défaut antérieur du harnais ; le scénario de sabotage de l’orchestrateur reste à relier à une exécution datée. Le contrôle courant 9/9 porte uniquement sur `wasm_verdict.mjs`.
 5. **Pas de test de charge HTTP revendiqué.** `C-01` décrit un protocole de 20 réservations concurrentes ; l'application sous charge réelle n'est pas mesurée dans cette révision.
-6. **La campagne SQL dépend de l'environnement.** Aucun rejeu SQL courant n’est revendiqué. Le rapport versionné porte une mention du 27/10/2026, future à la coupure du 23/10 ; elle ne constitue pas une preuve à cette date.
+6. **La campagne SQL dépend de l'environnement.** Aucun rejeu PDO/MySQL n’est revendiqué pour le checkout du 15/11. Le rapport versionné daté du 27/10 est postérieur à la coupure historique du 23/10 et ne prouve pas l’exécution SQL sur la révision testée le 15/11 ; la commande de ce run utilisait `--sans-sql`.
 
 L’archive mentionne aussi une mesure de 17 ms pour `sp_revenue_report` (anomalie A-08). Faute de run, SHA, matériel, jeu de données et sortie rattachés ici, cette valeur reste historique et ne vaut pas mesure actuelle.
 
 
 ## Information juridique, mentions légales LCEN et protection des données
 
-`tests/php/information_juridique_test.php` et `tests/php/mentions_legales_test.php` sont prévus pour contrôler les contrats statiques de navigation, contenu, cookies/stockage local, mentions légales étudiantes, information précontractuelle et design ; ces contrôles ne constituent pas un avis juridique. Le parcours `scripts/wasm-e2e.mjs` et `scripts/ui-e2e-mentions.mjs` décrivent des scénarios pour les pages d'information/légales, `/preferences`, les garanties, la rétractation, le contact, CSRF et XSS. Les volumes consignés dans d’autres versions de cette archive ne sont pas des résultats revendiqués ici ; les exécutions doivent être rattachées à un run daté et à un SHA. Détails et réserves dans `docs/12-information-juridique.md`.
+`tests/php/information_juridique_test.php` et `tests/php/mentions_legales_test.php` définissent des contrôles automatisés de navigation, contenu, cookies/stockage local, mentions et information précontractuelle. Le run restreint du 23/10 excluait l’E2E ; l’E2E HTTP isolé a été joué séparément le 15/11 via PHP-WASM, sans navigateur réel. Ni ces scripts ni les résultats décrits dans `docs/02` ne constituent un avis juridique ou une validation humaine. Détails et réserves dans `docs/12-information-juridique.md`.
 
 
 ## Dates UTC, fuseau horaire local et traduction intégrale FR ↔ EN
 
-- Les suites `date_ajout_test.php`, `heure_test.php` et `ConservationEtFuseauTest.php` sont prévues pour contrôler le stockage UTC, les conversions `Europe/Paris`/IANA et les bornes des filtres d'administration ; aucune exécution PHP/SQL n’est revendiquée dans cette révision.
-- `tests/node/preferences_test.mjs` décrit des cas JSDOM pour `/preferences`, le choix manuel de langue/fuseau, `localStorage`, le parcours `FR -> EN -> FR` et les erreurs métier. Les comptes de vues et d’erreurs figurant dans cette archive sont des volumes documentaires, pas des résultats actuels.
+- Les suites `date_ajout_test.php`, `heure_test.php` et `ConservationEtFuseauTest.php` décrivent des contrôles de dates/fuseaux ; aucun des runs cités ne valide des timestamps réellement stockés par MySQL/PDO, puisque SQL est explicitement exclu.
+- `tests/node/preferences_test.mjs` a réussi séparément le 15/11 : traduction FR ↔ EN sur 48 vues, 45 messages métier, choix manuel de langue/fuseau, `localStorage` et tests DOM.
 - `tests/node/responsive_navigateur.mjs` définit des contrôles Chromium headless aux largeurs **320, 375 et 1440 px**, avec et sans JavaScript. Aucun run CI ni validation par navigateur réel n’est revendiqué dans cette révision.
 
 
@@ -164,7 +164,7 @@ La commande normale est conçue pour comparer les candidats au référentiel `sc
 
 ## Page 403 et rôles administrateurs
 
-Le code et les scénarios versionnés décrivent un refus HTTP 403 pour un administrateur sans rôle SUPER et une redirection pour un visiteur non connecté. Des tests HTTP/E2E et un contrôle Python sur serveur natif sont mentionnés dans l’archive, mais aucun run CI ou rejeu applicatif correspondant n’est revendiqué dans cette révision. Ces références ne remplacent pas une vérification dans un navigateur réel.
+Le code et les scénarios versionnés décrivent un refus HTTP 403 pour un administrateur sans rôle SUPER et une redirection pour un visiteur non connecté. Le run E2E PHP-WASM du 15/11 a réussi 338 vérifications, couvrant les parcours d’accès HTTP présents dans `scripts/wasm-e2e.mjs`. Il s’agit de l’application sur stockage JSON isolé : pas de serveur PHP natif, de CI, de PDO/MySQL ou de navigateur réel. La vérification d’un rendu navigateur reste à effectuer séparément.
 
 ## Articulation avec les suites de tests manuels (`docs/13-*`)
 

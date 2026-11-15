@@ -12,7 +12,7 @@
 | **Chiffres clés** | Inventaire statique : 9 tables SQL (8 entités métier + table technique d’audit du stock), 3 vues · 1 fonction + **18 procédures stockées** (min. 5) · **16 déclencheurs** (min. 5) · 29 scénarios SQL référencés |
 | **Documents liés** | `docs/01-cahier-des-charges-MiniShop.md` (spécification) · `docs/02-document-tests-validation.md` · `README.md` |
 | **Fichiers SQL liés** | `sql/01…04` (schéma, procédures, déclencheurs, démo) · `tests/sql/` (fixture, manifeste) — liens en fin de document |
-| **Version** | 1.2 — 23 octobre 2026 (comptages statiques synchronisés ; aucun nouveau rejeu SQL revendiqué) |
+| **Version** | 1.3 — 15 novembre 2026 (références CT/ENF et état du pilote synchronisés ; inventaire statique actualisé ; aucun rejeu SQL revendiqué) |
 
 ---
 
@@ -24,8 +24,8 @@
 |---|---|---|
 | `RB-01…RB-20` | règles métier | `docs/01` §6 |
 | `SEC-01…SEC-14` | exigences de sécurité | `docs/01` §8 |
-| `CT-01…CT-09` | contraintes techniques | `docs/01` §7 |
-| `ENF-01…ENF-19` | exigences non fonctionnelles | `docs/01` annexe 17.3 (`docs/annexes/annexe-enf.md`) |
+| `CT-01…CT-12` | contraintes techniques | `docs/01` §7 |
+| `ENF-01…ENF-22` | exigences non fonctionnelles | `docs/01` annexe 17.3 (`docs/annexes/annexe-enf.md`) |
 | `UC-01…UC-14` | cas d'utilisation | `docs/01` §5.1 + annexe 17.1 |
 | `T-xx` / `F-xx` / `S-xx` / `EF-xxx` | cas de test (règles / fonctionnels / sécurité) | `docs/02` |
 | `V1…V7` | variantes de conception (arbitrages) | **partie D du présent document** |
@@ -337,7 +337,7 @@ END IF;
 
 ### B.2 Réponse à la question pédagogique : pourquoi une procédure stockée plutôt que tout faire en PHP ?
 
-Le tableau décrit le **raisonnement de conception pour la cible MySQL/PDO** exigée par le sujet. SQL est maintenant le pilote par défaut et les repositories comportent des appels aux procédures. Le scan statique repère un point d’appel pour les 18 procédures ; aucun résultat d’exécution n’en est déduit. Les scénarios `T-*` cités sont des références, pas des résultats de rejeu courant.
+Le tableau décrit le **raisonnement de conception pour la cible MySQL/PDO** exigée par le sujet. Dans le checkout vérifié le 15/11/2026, SQL/MySQL via PDO est le pilote applicatif par défaut ; JSON reste une option explicite sélectionnée par `STORAGE_DRIVER=json`. Les repositories comportent des appels aux procédures ; le scan statique du 15/11 repère un point d’appel pour chacune des 18 procédures. Cela n’atteste ni leur exécution PDO/MySQL ni un rejeu courant des scénarios `T-*`, qui restent des références de test.
 
 | Aspect exigé par le sujet | Apport visé par la procédure dans la conception cible | Ce qui se passerait si on la remplaçait par du PHP |
 |---|---|---|
@@ -457,7 +457,7 @@ d'historique ; les gardes RB-01/02/03/05/06/09/11/14/15/18 vérifiés **en SQL d
 rollback intégral du panier confirmé (stock inchangé, aucune commande créée) ; les 4 hashes du seed
 reconnus comme sorties réelles de `password_hash()` (bcrypt) pour les mots de passe de démonstration.
 
-**État statique des sources au 23/10/2026 :** `sql/01` définit 9 tables (8 entités métier et une table technique d’audit du stock), 3 vues, 1 fonction, 18 procédures et 16 triggers. Le scan des repositories relève un point d’appel pour chacune des 18 procédures ; il ne prouve ni chargement de la base, ni exécution PDO/MySQL, ni parcours HTTP complet. Aucun rejeu SQL de cette révision n’est revendiqué ici.
+**État statique des sources vérifié le 15/11/2026 :** `sql/01` définit 9 tables (8 entités métier et une table technique d’audit du stock), 3 vues, 1 fonction, 18 procédures et 16 triggers. Le scan des repositories repère un point d’appel pour chacune des 18 procédures ; il ne prouve ni chargement de la base, ni exécution PDO/MySQL, ni parcours HTTP complet. SQL/MySQL via PDO est le pilote par défaut et JSON reste une option explicite (`STORAGE_DRIVER=json`). Aucun rejeu SQL de cette révision n’est revendiqué ici.
 
 **Corrections v1.1 apportées aux scripts** (blocantes au chargement direct, détectées par ce rejeu) :
 (i) ajout des directives `DELIMITER $$ … DELIMITER ;` dans `sql/02` et `sql/03`, promises par l'en-tête

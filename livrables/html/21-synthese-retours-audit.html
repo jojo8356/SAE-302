@@ -113,8 +113,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tbody>
 <tr>
 <td>Dates et preuves</td>
-<td>Coupure documentaire au 23/10/2026 ; contrôles locaux datés du 23/10/2026 sur le working tree. La date Git du commit de base (13/11/2026) est postérieure à la coupure. Les mentions futures et les résultats sans run/SHA ne sont pas repris comme preuves acquises.</td>
-<td><code>docs/02</code>, <code>docs/07</code>, <code>docs/19</code></td>
+<td>Coupure historique au 23/10/2026 ; le run restreint de cette date utilisait <code>--sans-sql --sans-e2e</code>. Un run ultérieur daté du 15/11 (<code>--sans-sql</code>, E2E isolé inclus, 338 vérifications) est consigné séparément ; il ne requalifie pas l’audit historique et ne prouve pas SQL/PDO. Les mentions sans run/SHA ne sont pas reprises comme preuves acquises.</td>
+<td><code>docs/02</code>, <code>docs/11</code>, <code>docs/19</code></td>
 </tr>
 <tr>
 <td>Périmètre</td>
@@ -133,7 +133,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 <tr>
 <td>Traçabilité et tests</td>
-<td>Les identifiants T-* décrivent des scénarios, pas des résultats. Les contrôles SQL ne sont déclarés exécutés qu’avec un run daté et rattaché à un SHA ; aucun rejeu SQL de cette révision n’est revendiqué.</td>
+<td>Les identifiants T-* décrivent des scénarios, pas des résultats. Le run local du 15/11 est non-SQL ; il ne valide ni PDO/MySQL ni parcours HTTP SQL. Un résultat SQL ne peut être revendiqué qu’avec un run daté et rattaché à un SHA.</td>
 <td><code>docs/02</code>, <code>docs/11</code>, <code>docs/19</code></td>
 </tr>
 <tr>

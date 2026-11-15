@@ -75,7 +75,7 @@ out += [
 "| **Chiffres clés** | Inventaire statique : 9 tables SQL (8 entités métier + table technique d’audit du stock), 3 vues · 1 fonction + **18 procédures stockées** (min. 5) · **16 déclencheurs** (min. 5) · 29 scénarios SQL référencés |",
 "| **Documents liés** | `docs/01-cahier-des-charges-MiniShop.md` (spécification) · `docs/02-document-tests-validation.md` · `README.md` |",
 "| **Fichiers SQL liés** | `sql/01…04` (schéma, procédures, déclencheurs, démo) · `tests/sql/` (fixture, manifeste) — liens en fin de document |",
-"| **Version** | 1.2 — 23 octobre 2026 (comptages statiques synchronisés ; aucun nouveau rejeu SQL revendiqué) |",
+"| **Version** | 1.3 — 15 novembre 2026 (références CT/ENF et état du pilote synchronisés ; inventaire statique actualisé ; aucun rejeu SQL revendiqué) |",
 "",
 "---",
 "",
@@ -87,8 +87,8 @@ out += [
 "|---|---|---|",
 "| `RB-01…RB-20` | règles métier | `docs/01` §6 |",
 "| `SEC-01…SEC-14` | exigences de sécurité | `docs/01` §8 |",
-"| `CT-01…CT-09` | contraintes techniques | `docs/01` §7 |",
-"| `ENF-01…ENF-19` | exigences non fonctionnelles | `docs/01` annexe 17.3 (`docs/annexes/annexe-enf.md`) |",
+"| `CT-01…CT-12` | contraintes techniques | `docs/01` §7 |",
+"| `ENF-01…ENF-22` | exigences non fonctionnelles | `docs/01` annexe 17.3 (`docs/annexes/annexe-enf.md`) |",
 "| `UC-01…UC-14` | cas d'utilisation | `docs/01` §5.1 + annexe 17.1 |",
 "| `T-xx` / `F-xx` / `S-xx` / `EF-xxx` | cas de test (règles / fonctionnels / sécurité) | `docs/02` |",
 "| `V1…V7` | variantes de conception (arbitrages) | **partie D du présent document** |",
@@ -250,7 +250,7 @@ annex_lines.append("d'historique ; les gardes RB-01/02/03/05/06/09/11/14/15/18 v
 annex_lines.append("rollback intégral du panier confirmé (stock inchangé, aucune commande créée) ; les 4 hashes du seed")
 annex_lines.append("reconnus comme sorties réelles de `password_hash()` (bcrypt) pour les mots de passe de démonstration.")
 annex_lines.append("")
-annex_lines.append("**État statique des sources au 23/10/2026 :** `sql/01` définit 9 tables (8 entités métier et une table technique d’audit du stock), 3 vues, 1 fonction, 18 procédures et 16 triggers. Le scan des repositories relève un point d’appel pour chacune des 18 procédures ; il ne prouve ni chargement de la base, ni exécution PDO/MySQL, ni parcours HTTP complet. Aucun rejeu SQL de cette révision n’est revendiqué ici.")
+annex_lines.append("**État statique des sources vérifié le 15/11/2026 :** `sql/01` définit 9 tables (8 entités métier et une table technique d’audit du stock), 3 vues, 1 fonction, 18 procédures et 16 triggers. Le scan des repositories repère un point d’appel pour chacune des 18 procédures ; il ne prouve ni chargement de la base, ni exécution PDO/MySQL, ni parcours HTTP complet. SQL/MySQL via PDO est le pilote par défaut et JSON reste une option explicite (`STORAGE_DRIVER=json`). Aucun rejeu SQL de cette révision n’est revendiqué ici.")
 annex_lines.append("")
 annex_lines.append("**Corrections v1.1 apportées aux scripts** (blocantes au chargement direct, détectées par ce rejeu) :")
 annex_lines.append("(i) ajout des directives `DELIMITER $$ … DELIMITER ;` dans `sql/02` et `sql/03`, promises par l'en-tête")
