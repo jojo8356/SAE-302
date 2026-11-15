@@ -25,8 +25,8 @@ namespace App\Repository;
 
 use App\Model\Data\BusinessError;
 use App\Model\Data\Filter;
+use App\Model\Data\RowLockingStore;
 use App\Model\Data\StoreInterface;
-use App\Model\Data\SqlStore;
 use App\Model\Data\Triggers;
 use App\Tools\Heure;
 
@@ -337,7 +337,7 @@ final class CommandeRepository
     /** @return array<string,mixed>|null */
     private function trouverVerrouille(string $table, int $id): ?array
     {
-        if ($this->store instanceof SqlStore) {
+        if ($this->store instanceof RowLockingStore) {
             return $this->store->findForUpdate($table, $id);
         }
 

@@ -40,7 +40,7 @@ Le contrôle détecte les paramètres non cités et certaines variables locales 
 
 ## Inventaire fichier par fichier
 
-Tailles en octets historiques mesurées lors du premier audit (`870dda5`) ; les fichiers ont pu être modifiés depuis. L’exception d’accès refusé a été ajoutée ensuite. `—` : fichier non PHP. Les références listées sont des exemples, pas une liste exhaustive.
+Tailles en octets historiques mesurées lors du premier audit (`870dda5`) ; les fichiers ont pu être modifiés depuis. Pour les fichiers ajoutés depuis, la taille est mesurée au relevé du 23/10/2026. L’exception d’accès refusé a été ajoutée ensuite. `—` : fichier non PHP. Les références listées sont des exemples, pas une liste exhaustive.
 
 | Fichier | Octets | Fonctions avec corps | Rôle et indice d’utilisation |
 |---|---:|---:|---|
@@ -74,21 +74,27 @@ Tailles en octets historiques mesurées lors du premier audit (`870dda5`) ; les 
 | `app/Model/Data/JsonStore.php` | 30823 | 44 | Stockage JSON, requêtes, contraintes et transactions. Références : `app/Config/Database.php`, `app/Model/Data/Schema.php`, `app/Model/Data/SqlStore.php`…. |
 | `app/Model/Data/JsonTable.php` | 5990 | 16 | Table JSON : données, index, persistance et état de modification. Références : `app/Model/Data/JsonStore.php`, `docs/08-fiche-suivi-commits.md`, `scripts/code_mort_reference.json`. |
 | `app/Model/Data/QueryError.php` | 406 | 0 | Type d’exception de requête incorrecte ; classe vide héritant de RuntimeException. Références : `app/Model/Data/Errors.php`, `app/Model/Data/JsonStore.php`, `docs/07-note-cybersecurite.md`…. |
+| `app/Model/Data/RowLockingStore.php` | 336 | 0 | Capacité optionnelle de verrouillage de ligne ; utilisée par le pilote SQL, les dépôts et le service de rétention sans référence à `SqlStore`. |
 | `app/Model/Data/Schema.php` | 12118 | 4 | Description des tables, colonnes, clés et contraintes. Références : `app/Model/Data/Errors.php`, `app/Model/Data/JsonStore.php`, `app/Model/Data/SchemaError.php`…. |
 | `app/Model/Data/SchemaError.php` | 413 | 0 | Type d’exception de schéma inconnu ; classe vide héritant de RuntimeException. Références : `app/Model/Data/Errors.php`, `app/Model/Data/Schema.php`, `docs/08-fiche-suivi-commits.md`…. |
 | `app/Model/Data/Seed.php` | 12280 | 4 | Données de démonstration et initialisation du magasin JSON. Références : `docs/05-wbs-projet.md`, `docs/06-todolist.md`, `docs/08-fiche-suivi-commits.md`…. |
 | `app/Model/Data/SqlStore.php` | 25378 | 35 | Implémentation du stockage SQL/PDO ; choix alternatif à JSON. Références : `app/Config/Database.php`, `app/Config/DbConnexion.php`, `app/Model/Data/Errors.php`…. |
 | `app/Model/Data/StorageDriver.php` | 2064 | 3 | Énumération et sélection des pilotes JSON et SQL. Références : `app/Config/Database.php`, `app/Config/env.example.php`, `app/Model/Data/BusinessError.php`…. |
 | `app/Model/Data/StoreInterface.php` | 6374 | 0 | Contrat de stockage : signatures abstraites sans corps, implémentées par les pilotes. Références : `app/Config/Database.php`, `app/Model/Data/Filter.php`, `app/Model/Data/JsonStore.php`…. |
+| `app/Model/Data/StoredProcedureExecutor.php` | 755 | 0 | Capacité optionnelle d’exécution des procédures stockées ; implémentée par le pilote SQL, sans imposer d’API SQL au pilote JSON. |
 | `app/Model/Data/Text.php` | 6548 | 5 | Pliage de texte, comparaison et génération de slugs. Références : `app/Model/Data/JsonStore.php`, `app/Model/Data/Triggers.php`, `app/Repository/CategorieRepository.php`…. |
 | `app/Model/Data/Triggers.php` | 14972 | 3 | Déclencheurs et invariants métier du pilote JSON. Références : `app/Controller/Admin/CommandeAdminController.php`, `app/Model/Data/BusinessError.php`, `app/Model/Data/JsonStore.php`…. |
 | `app/Model/Data/Views.php` | 5105 | 5 | Vues calculées du catalogue, des stocks et des commandes. Références : `app/Controller/Admin/CommandeAdminController.php`, `app/Controller/Admin/StockAdminController.php`, `app/Controller/CatalogueController.php`…. |
 | `app/Model/PanierSession.php` | 6462 | 12 | Panier en session ; AuthSession, classe interne au même fichier, délègue l’ouverture de session. Références : `app/Controller/ApiController.php`, `app/Controller/CommandeController.php`, `app/Controller/PanierController.php`…. |
 | `app/Repository/CategorieRepository.php` | 3943 | 6 | Accès et règles métier des catégories. Références : `app/Controller/Admin/CategorieAdminController.php`, `app/Controller/Admin/ProduitAdminController.php`, `app/Controller/CatalogueController.php`…. |
-| `app/Repository/ClientRepository.php` | 5125 | 8 | Comptes clients et identifiants. Références : `app/Controller/AuthController.php`, `app/Controller/CommandeController.php`, `app/Controller/CompteController.php`…. |
+| `app/Repository/ClientAccountGateway.php` | 799 | 0 | Port métier des stratégies de création de compte et de lecture des identifiants. Implémentations : stratégies SQL et générique. |
+| `app/Repository/ClientAccountGatewayFactory.php` | 701 | 1 | Sélectionne la stratégie de compte à partir de la capacité `StoredProcedureExecutor`, sans coupler le repository à `SqlStore`. |
+| `app/Repository/ClientRepository.php` | 5125 | 8 | Comptes clients et identifiants ; délègue la persistance à `ClientAccountGateway`. Références : `app/Controller/AuthController.php`, `app/Controller/CommandeController.php`, `app/Controller/CompteController.php`…. |
 | `app/Repository/CommandeRepository.php` | 18042 | 14 | Commandes, lignes, transitions et règles métier. Références : `app/Controller/Admin/CommandeAdminController.php`, `app/Controller/Admin/DashboardController.php`, `app/Controller/CommandeController.php`…. |
 | `app/Repository/ParametreRepository.php` | 3110 | 6 | Paramètres et calcul des frais de port. Références : `app/Controller/Admin/ParametreAdminController.php`, `app/Controller/Admin/ProduitAdminController.php`, `app/Model/PanierSession.php`…. |
 | `app/Repository/ProduitRepository.php` | 11040 | 11 | Recherche, produits et ajustements de stock. Références : `app/Controller/Admin/DashboardController.php`, `app/Controller/Admin/ProduitAdminController.php`, `app/Controller/Admin/StockAdminController.php`…. |
+| `app/Repository/SqlClientAccountGateway.php` | 2432 | 2 | Adaptateur SQL des procédures `sp_create_account` et `sp_get_credentials` vers le port métier `ClientAccountGateway`. |
+| `app/Repository/StoreClientAccountGateway.php` | 1476 | 2 | Stratégie générique de persistance des comptes, utilisée par le pilote JSON et les stores sans capacité de procédure. |
 | `app/Router.php` | 3089 | 4 | Associe routes, paramètres, gardes et contrôleurs ; affiche la 404. Références : `public/index.php`, `docs/01-cahier-des-charges-MiniShop.md`, `docs/07-note-cybersecurite.md`…. |
 | `app/Security/AccesRefuse.php` | 207 | 0 | Exception de contrôle d’accès : levée par la garde SUPER et traitée par le contrôleur frontal en réponse HTTP 403. |
 | `app/Security/Auth.php` | 10330 | 16 | Session, authentification et gardes de rôles. Références : `app/Controller/Admin/CategorieAdminController.php`, `app/Controller/Admin/CommandeAdminController.php`, `app/Controller/Admin/DashboardController.php`…. |

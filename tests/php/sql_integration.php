@@ -367,11 +367,36 @@ try {
     }
     $repoClients = new \App\Repository\ClientRepository($storeParcours);
     $emailInactif = 'sql.inactif.' . bin2hex(random_bytes(4)) . '@example.test';
-    $idInactif = $repoClients->createAccount('Inactif', 'Sql', $emailInactif, password_hash('MotDePasse2026!', PASSWORD_BCRYPT, ['cost' => 4]));
+    $motDePasseTest = 'MotDePasse2026!';
+    $hashTest = password_hash($motDePasseTest, PASSWORD_BCRYPT, ['cost' => 4]);
+    $idInactif = $repoClients->createAccount('Inactif', 'Sql', $emailInactif, $hashTest);
+    $identifiantsSql = $repoClients->getCredentials($emailInactif);
+    if ($identifiantsSql['statut'] !== 'OK'
+        || $identifiantsSql['id_client'] !== $idInactif
+        || !password_verify($motDePasseTest, (string) $identifiantsSql['hash'])) {
+        throw new RuntimeException('Le parcours applicatif SQL createAccount/getCredentials est invalide.');
+    }
+    $inconnuSql = $repoClients->getCredentials('absent.' . bin2hex(random_bytes(4)) . '@example.test');
+    if ($inconnuSql !== ['id_client' => null, 'hash' => null, 'statut' => 'INCONNU']) {
+        throw new RuntimeException('sp_get_credentials doit renvoyer INCONNU sans identifiants.');
+    }
+    $doublonSql = '';
+    try {
+        $repoClients->createAccount('Autre', 'Compte', $emailInactif, $hashTest);
+    } catch (\App\Model\Data\BusinessError $erreurMetier) {
+        $doublonSql = $erreurMetier->businessCode;
+    }
+    if ($doublonSql !== 'EMAIL_DEJA_UTILISE') {
+        throw new RuntimeException('sp_create_account doit traduire le doublon en EMAIL_DEJA_UTILISE.');
+    }
     $storeParcours->update('client', [\App\Model\Data\Filter::eq('id_client', $idInactif)], [
+        'actif' => false,
         'date_creation' => '2021-02-01 08:00:00',
         'derniere_connexion' => '2021-03-01 08:00:00',
     ]);
+    if ($repoClients->getCredentials($emailInactif)['statut'] !== 'COMPTE_BLOQUE') {
+        throw new RuntimeException('sp_get_credentials doit refuser un compte inactif.');
+    }
     $retentionSql = new \App\Service\RetentionComptes($storeParcours);
     $simSql = $retentionSql->traiter(\App\Tools\Heure::maintenantUtc(), false);
     if ($simSql['supprimés'] !== 0 || $simSql['éligibles'] < 1 || $storeParcours->find('client', $idInactif) === null) {
@@ -381,7 +406,7 @@ try {
     if ($execSql['supprimés'] < 1 || $storeParcours->find('client', $idInactif) !== null || $storeParcours->find('client', 1) === null) {
         throw new RuntimeException('Exécution RetentionComptes SQL invalide.');
     }
-    echo "   ✅ sp_cancel_order, garde sp_update_order_status, annulation EXPEDIEE sans retour stock, bornes UTC et RetentionComptes SQL\n";
+    echo "   ✅ sp_create_account / sp_get_credentials via ClientRepository, sp_cancel_order, garde sp_update_order_status, annulation EXPEDIEE sans retour stock, bornes UTC et RetentionComptes SQL\n";
 } catch (Throwable $erreur) {
     $echecsParcoursSql = 1;
     echo '   ❌ parcours SQL étape 6 : ' . $erreur->getMessage() . "\n";

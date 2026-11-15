@@ -5,9 +5,11 @@ declare(strict_types=1);
 /**
  * MiniShop — pilote SQL (MySQL / MariaDB via PDO).
  *
- * Implémente EXACTEMENT le contrat StoreInterface : les contrôleurs, les
- * dépôts, les vues et les tests fonctionnels sont inchangés. Le pilote est
- * choisi par la configuration (`storage_driver = 'sql'`, cf. StorageDriver) :
+ * Implémente le contrat commun StoreInterface et expose séparément les
+ * capacités SQL spécialisées (procédures stockées et verrouillage de lignes).
+ * Les contrôleurs et repositories consomment ces capacités via des interfaces,
+ * sans dépendre de cette classe concrète. Le pilote est choisi par la configuration
+ * (`storage_driver = 'sql'`, cf. StorageDriver) :
  *
  *   « JSON » → JsonStore  : moteur natif, règles appliquées en PHP
  *   « SQL »  → SqlStore   : MySQL, règles appliquées par la base
@@ -35,7 +37,7 @@ use PDO;
 use PDOException;
 use RuntimeException;
 
-final class SqlStore implements StoreInterface
+final class SqlStore implements StoreInterface, StoredProcedureExecutor, RowLockingStore
 {
     /** Correspondance opérateur déclaratif → fragment SQL (liste fermée). */
     private const OPERATEURS = [
@@ -409,7 +411,6 @@ final class SqlStore implements StoreInterface
         }
 
         $marqueurs = array_fill(0, count($entrees), '?');
-        $variables = [];
         $select = [];
         foreach ($sorties as $indice => $nom) {
             if (preg_match('/^p_[a-z0-9_]+$/', $nom) !== 1) {
@@ -417,19 +418,26 @@ final class SqlStore implements StoreInterface
             }
             $variable = 'out' . $indice;
             $marqueurs[] = '@' . $variable;
-            $variables[$nom] = '@' . $variable;
             $select[] = '@' . $variable . ' AS ' . $this->identifiant($nom);
         }
 
         $sql = 'CALL ' . $procedure . '(' . implode(', ', $marqueurs) . ')';
-        $this->executer($sql, $entrees);
+        $statement = $this->executer($sql, $entrees);
+        do {
+            if ($statement->columnCount() > 0) {
+                $statement->fetchAll();
+            }
+        } while ($statement->nextRowset());
+        $statement->closeCursor();
 
         if ($select === []) {
             return [];
         }
 
         $requeteSorties = 'SELECT ' . implode(', ', $select);
-        $ligne = $this->pdo()->query($requeteSorties)->fetch();
+        $statementSorties = $this->pdo()->query($requeteSorties);
+        $ligne = $statementSorties->fetch(PDO::FETCH_ASSOC);
+        $statementSorties->closeCursor();
 
         if (is_array($ligne)) {
             return $ligne;

@@ -5,12 +5,12 @@ declare(strict_types=1);
 /**
  * MiniShop — contrat commun des pilotes de gestion des données.
  *
- * Ce contrat est l'unique frontière entre le modèle (Repository) et le
- * stockage. Il est écrit pour être implémentable AU CHOIX par des opérations
- * JSON natives (JsonStore, pilote actif) ou par un SGBD relationnel
- * (SqlStore, migration finale) : chaque méthode correspond à une opération
- * relationnelle standard, mais AUCUNE méthode ne reçoit ni ne produit du
- * SQL — les filtres sont déclaratifs (tableaux associatifs sérialisables).
+ * Ce contrat définit la frontière commune des opérations de stockage entre
+ * le modèle (Repository) et les pilotes JSON/SQL : chaque méthode correspond
+ * à une opération relationnelle standard, mais AUCUNE méthode ne reçoit ni ne
+ * produit du SQL — les filtres sont déclaratifs (tableaux sérialisables).
+ * Les capacités propres à certains pilotes (procédures stockées, verrous de
+ * lignes) sont des interfaces séparées : un pilote JSON n'a pas à les simuler.
  *
  * ---------------------------------------------------------------------------
  * Spécification déclarative des filtres (« where »)
