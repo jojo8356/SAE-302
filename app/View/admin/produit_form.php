@@ -33,7 +33,7 @@ if ($valeurs !== []) {
     <?= csrf_field() ?>
     <fieldset>
         <legend>Fiche produit (référence et slug uniques,
-            prix HT &gt; 0, stock ≥ 0, prix TTC dérivé automatiquement)</legend>
+            prix HT &gt; 0, stock initial ≥ 0 à la création, prix TTC dérivé automatiquement)</legend>
         <p class="champ"><label for="reference">Référence *</label>
             <input id="reference" name="reference" maxlength="30" required value="<?= $v('reference') ?>"></p>
         <p class="champ"><label for="nom">Nom *</label>
@@ -57,8 +57,12 @@ if ($valeurs !== []) {
         <p class="champ"><label for="tva">TVA (%) *</label>
             <input type="number" id="tva" name="tva" min="0" max="100" step="0.01" required
                    value="<?= $v('tva', $tvaDefautFormatee) ?>"></p>
-        <p class="champ"><label for="stock">Stock *</label>
-            <input type="number" id="stock" name="stock" min="0" required value="<?= $v('stock', '0') ?>"></p>
+        <?php if ($estCreation): ?>
+            <p class="champ"><label for="stock">Stock initial *</label>
+                <input type="number" id="stock" name="stock" min="0" required value="<?= $v('stock', '0') ?>"></p>
+        <?php else: ?>
+            <p class="champ"><strong>Stock actuel :</strong> <?= (int) ($produit['stock'] ?? 0) ?> unité(s)</p>
+        <?php endif; ?>
         <p class="champ"><label for="seuil_alerte">Seuil d'alerte *</label>
             <input type="number" id="seuil_alerte" name="seuil_alerte" min="0" required value="<?= $v('seuil_alerte', '3') ?>"></p>
         <p class="champ"><label for="image_url">Image (URL)</label>

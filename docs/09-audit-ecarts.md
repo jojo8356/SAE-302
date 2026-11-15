@@ -8,6 +8,8 @@
 > **Méthode.** Audit statique du dépôt + exécution réelle de `node scripts/run-all-tests.mjs`
 > et `bash tests/security/controles.sh` le 23/10/2026.
 
+> **Statut historique.** Les constats ci-dessous décrivent une photographie antérieure et ne constituent pas un audit de l’état actuel du checkout. En particulier, les lignes du §B qui déclarent SQL non raccordé et JSON par défaut sont dépassées : SQL/MySQL/PDO est désormais le pilote par défaut, JSON est une option explicite et le scan statique repère un point d’appel repository pour chacune des 18 procédures. Cela ne prouve pas leur exécution PDO/MySQL ni un parcours HTTP complet. Les anciens nombres de tests et constats des autres sections ne doivent pas être repris comme résultats actuels ; consulter `docs/01`, `docs/02`, `docs/04` et `docs/21` pour l’état révisé.
+>
 > **Note de portée (révision du 23/10/2026).** Les références à `.gitlab-ci.yml`, aux jobs GitLab et à une « cible notée » ci-dessous décrivent l’état antérieur examiné par cet audit. La configuration GitLab CI et son exigence ont depuis été retirées du CDC ; la CI GitHub Actions est distincte et ne prouve pas un pipeline GitLab.
 
 

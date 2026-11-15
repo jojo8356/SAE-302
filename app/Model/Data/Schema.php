@@ -7,9 +7,8 @@ declare(strict_types=1);
  *
  * Le schéma est décrit en DONNÉES (pas en SQL) : chaque table, colonne,
  * contrainte UNIQUE, CHECK, ENUM et clé étrangère est déclaré ici une seule
- * fois. Le pilote JSON (JsonStore) l'applique à chaque écriture ; le pilote
- * SQL de la migration finale le traduira en DDL (l'équivalent existe déjà
- * dans sql/01, chargé par scripts/load_db.sh).
+ * fois. JsonStore l'applique en PHP ; SqlStore s'appuie sur les DDL, routines
+ * et déclencheurs installés depuis les scripts SQL versionnés.
  *
  * Types gérés : int, decimal (2 décimales, arrondi américain), string,
  * bool (0/1), datetime ('Y-m-d H:i:s'), text.
@@ -119,6 +118,32 @@ final class Schema
                     'id_categorie' => ['table' => 'categorie', 'column' => 'id_categorie', 'onDelete' => 'RESTRICT'],
                 ],
                 'indexes' => ['id_categorie', 'visible', 'reference', 'slug'],
+            ],
+            // Audit transactionnel des mouvements manuels ; pas de FK produit,
+            // afin de préserver la trace après suppression d'un article.
+            'stock_movement_history' => [
+                'pk' => 'id_mouvement', 'autoIncrement' => true,
+                'columns' => [
+                    'id_mouvement' => ['type' => 'int', 'required' => true],
+                    'id_produit' => ['type' => 'int', 'required' => true],
+                    'reference_produit' => ['type' => 'string', 'required' => true, 'max' => 30],
+                    'nom_produit' => ['type' => 'string', 'required' => true, 'max' => 150],
+                    'mode_mouvement' => ['type' => 'string', 'required' => true, 'enum' => ['SET', 'DELTA']],
+                    'quantite' => ['type' => 'int', 'required' => true],
+                    'stock_avant' => ['type' => 'int', 'required' => true],
+                    'stock_apres' => ['type' => 'int', 'required' => true],
+                    'motif' => ['type' => 'string', 'required' => true, 'max' => 200],
+                    'changed_by' => ['type' => 'int'],
+                    'changed_by_role' => ['type' => 'string', 'default' => 'SYSTEME', 'enum' => ['CLIENT', 'ADMIN', 'SYSTEME']],
+                    'changed_at' => ['type' => 'datetime'],
+                ],
+                'unique' => [],
+                'checks' => [
+                    'ck_stock_movement_stock_avant' => [['stock_avant', '>=', 0]],
+                    'ck_stock_movement_stock_apres' => [['stock_apres', '>=', 0]],
+                ],
+                'foreignKeys' => [],
+                'indexes' => ['id_produit', 'changed_at'],
             ],
             'parametre' => [
                 'pk' => 'cle', 'autoIncrement' => false,

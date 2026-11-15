@@ -2,7 +2,7 @@
 
 [![CI GitHub Actions](https://github.com/jojo8356/SAE-302/actions/workflows/ci.yml/badge.svg)](https://github.com/jojo8356/SAE-302/actions/workflows/ci.yml)
 
-> **MiniShop** est une application Web de boutique en ligne réalisée dans un cadre pédagogique : catalogue, panier, commandes et back-office. Le projet est développé en **PHP** et propose un stockage JSON par défaut ainsi qu’un pilote SQL via PDO.
+> **MiniShop** est une application Web de boutique en ligne réalisée dans un cadre pédagogique : catalogue, panier, commandes et back-office. Le projet est développé en **PHP** et utilise MySQL/MariaDB via PDO comme pilote de stockage par défaut ; un mode JSON secondaire reste disponible pour les démonstrations et tests isolés.
 
 > **Cadre** — SAE — BUT Informatique (BUT2), Université Côte d'Azur.
 
@@ -36,31 +36,35 @@ Les décisions d’interface s’appuient sur l’étude de design de [`docs/DA.
 | Domaine | Technologies / choix |
 |---|---|
 | Application | PHP **8.2 ou plus récent**, architecture MVC, HTML, CSS et JavaScript natif |
-| Stockage par défaut | Fichiers JSON, sans serveur de base de données |
-| Stockage SQL optionnel | MySQL **8.0.16+** ou MariaDB **10.6+**, via PDO (`pdo_mysql`) |
-| Base de données | Schéma relationnel, procédures stockées, déclencheurs et migrations dans `sql/` |
+| Stockage par défaut | MySQL **8.0.16+** ou MariaDB **10.6+**, via PDO (`pdo_mysql`) |
+| Stockage secondaire explicite | Fichiers JSON sous `data/minishop/`, sans serveur de base de données |
+| Base de données | Schéma relationnel, procédures stockées, déclencheurs et scripts d’initialisation dans `sql/` |
 | Tests | Suites PHP et Python ; contrôles complémentaires dans GitHub Actions |
 
-Le pilote JSON est celui utilisé par défaut. Le mode SQL est sélectionné dans `.env` avec `STORAGE_DRIVER=sql`. Les secrets et réglages propres à une machine doivent rester dans `.env`, qui n’est pas destiné à être versionné ; seul le modèle `.env.example` est suivi par Git. **Node.js et npm ne sont pas nécessaires pour lancer l’application.**
+Le mode SQL est celui utilisé par défaut (`STORAGE_DRIVER=sql` dans `.env.example`) : MySQL/MariaDB, PDO et une base initialisée sont donc requis pour démarrer l’application. Pour choisir le mode JSON sans serveur, définir explicitement `STORAGE_DRIVER=json`. Les secrets et réglages propres à une machine doivent rester dans `.env`, qui n’est pas destiné à être versionné ; seul le modèle `.env.example` est suivi par Git. **Node.js et npm ne sont pas nécessaires pour lancer l’application.**
 
 ## Lancer l’application en local
 
 ### Prérequis
 
-- PHP **8.2+** avec les extensions `json` et `mbstring` ;
+- PHP **8.2+** avec les extensions `json`, `mbstring` et `pdo_mysql` ;
+- serveur MySQL **8.0.16+** ou MariaDB **10.6+**, base locale dédiée et accès configuré dans `.env` ;
 - Bash pour `run.sh`.
 
-L’extension `pdo_mysql` et un serveur MySQL/MariaDB sont nécessaires uniquement pour utiliser le stockage SQL. Python 3 est requis pour lancer l’ensemble des suites PHP avec le runner présenté ci-dessous.
+Le SQL est le pilote par défaut. Pour le mode JSON secondaire, définir `STORAGE_DRIVER=json` dans `.env` ; ce mode n’exige ni `pdo_mysql` ni serveur SQL. Python 3 est requis pour lancer l’ensemble des suites PHP avec le runner présenté ci-dessous.
 
 ### Démarrage rapide
 
 ```bash
 git clone https://github.com/jojo8356/SAE-302.git
 cd SAE-302
+cp .env.example .env
+# Renseigner les accès à une base locale dédiée dans .env, puis :
+./run.sh --db
 ./run.sh
 ```
 
-Au premier lancement, `run.sh` prépare le fichier local `.env` s’il est absent, initialise le jeu de démonstration JSON si nécessaire, puis démarre le serveur PHP de développement. Ouvrir ensuite <http://localhost:8000/>.
+`run.sh --db` installe le schéma et les données de démonstration dans la base configurée, puis le second lancement démarre le serveur PHP de développement. Si la base existe déjà avec des tables, l’installateur demande confirmation avant de la supprimer : vérifier la cible et les données avant toute validation. Pour une base déjà initialisée, configurer `.env` et lancer directement `./run.sh`. Le serveur de développement n’est pas destiné à être exposé sur Internet. Ouvrir ensuite <http://localhost:8000/>.
 
 Pour choisir un autre port :
 
@@ -82,7 +86,7 @@ Le serveur PHP intégré est réservé au développement local. Ne pas l’expos
 
 Les comptes du seed sont réservés aux environnements locaux isolés. Les adresses, mots de passe et hashes ne sont pas reproduits dans la documentation ni dans les supports. Pour une recette LineServ, utiliser uniquement un compte de test autorisé, avec les accès transmis séparément par canal privé ; ne pas réutiliser les comptes du seed sur une instance de production ou accessible au public.
 
-## Configuration et mode SQL
+## Configuration et pilote SQL par défaut
 
 Pour personnaliser la configuration locale, copier le modèle puis modifier `.env` :
 
@@ -92,14 +96,14 @@ cp .env.example .env
 
 Les paramètres disponibles incluent le pilote (`STORAGE_DRIVER`), le chemin des données JSON et, pour SQL, les coordonnées de connexion (`DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_SOCKET`). Garder les mots de passe et autres secrets hors du dépôt.
 
-Le mode JSON ne demande aucun service supplémentaire. Pour essayer le mode SQL, installer et démarrer localement un serveur MySQL/MariaDB ainsi que l’extension PHP `pdo_mysql`, configurer l’accès dans `.env`, puis utiliser :
+Le fichier `.env.example` active déjà SQL. Renseigner les paramètres `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` et éventuellement `DB_SOCKET`, puis initialiser une base locale dédiée :
 
 ```bash
 ./run.sh --db
 ./run.sh
 ```
 
-`./run.sh --db` crée la base configurée et bascule le pilote local sur SQL ; le second lancement démarre l’application. À utiliser uniquement sur une base locale dédiée aux essais. Les commandes de réinitialisation et les scripts SQL de création peuvent supprimer des données : ne jamais les exécuter sur une base partagée ou à conserver. Les détails du schéma sont dans [`docs/04-conception-bd-et-sql.md`](docs/04-conception-bd-et-sql.md).
+L’installation charge `sql/01` à `sql/04`. `./run.sh --db` peut supprimer une base existante après confirmation ; l’utiliser uniquement sur une cible locale vérifiée et dédiée. Pour activer le mode secondaire sans base, définir `STORAGE_DRIVER=json` dans `.env` ; ce mode utilise les fichiers de `data/minishop/`. Les détails du schéma et les limites des procédures sont dans [`docs/04-conception-bd-et-sql.md`](docs/04-conception-bd-et-sql.md).
 
 ## Tests
 
@@ -121,7 +125,7 @@ Le runner complet est :
 php scripts/run-all-tests.php
 ```
 
-L’intégration SQL nécessite un serveur de test isolé : elle crée et supprime une base dédiée. L’E2E PHP-WASM et certains tests JavaScript ne sont exécutés que si leurs outils optionnels sont présents. Vérifier le résumé final du runner pour distinguer les tests **joués**, **non joués** et **en échec**. Ne jamais lancer de tests SQL contre une base de données contenant des informations à conserver.
+L’intégration SQL nécessite un serveur de test isolé : elle crée puis supprime une base dédiée nommée `minishop_test` par défaut, distincte de `DB_NAME`. Vérifier la configuration avant le lancement ; ne jamais utiliser une base de développement ou de production. L’E2E PHP-WASM et certains tests JavaScript ne sont exécutés que si leurs outils optionnels sont présents. Vérifier le résumé final du runner pour distinguer les tests **joués**, **non joués** et **en échec**.
 
 Le workflow automatisé du dépôt est défini dans [`ci.yml`](.github/workflows/ci.yml). Il couvre notamment la syntaxe PHP, les suites de tests, des contrôles de sécurité, SQL sur bases jetables et des vérifications responsive en navigateur. Cette CI GitHub ne constitue pas une preuve de pipeline GitLab IUT.
 
@@ -155,7 +159,7 @@ app/          contrôleurs, services, dépôts, sécurité et vues
 public/       point d’entrée HTTP, feuilles CSS, JavaScript et visuels
 data/         données du moteur JSON
 docs/         cahier des charges, conception, tests et livrables documentaires
-sql/          schéma, procédures, déclencheurs, données de démonstration et migrations
+sql/          schéma, procédures, déclencheurs, données de démonstration et scripts d’initialisation
 scripts/      lancement, configuration, tests et outils de développement
 tests/        tests PHP, Python, JavaScript et scénarios SQL
 ```

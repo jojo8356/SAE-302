@@ -28,7 +28,7 @@ class IgnoreSecretsTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             repo = pathlib.Path(tmp) / 'repo'
             repo.mkdir()
-            for directory in ['app', 'public', 'scripts', 'tests/security']:
+            for directory in ['app', 'public', 'scripts', 'sql', 'tests/security']:
                 shutil.copytree(ROOT / directory, repo / directory, dirs_exist_ok=True)
             for name in ['.gitignore', '.env.example']:
                 shutil.copy2(ROOT / name, repo / name)
@@ -45,7 +45,7 @@ class IgnoreSecretsTest(unittest.TestCase):
             result = subprocess.run(['bash', 'tests/security/controles.sh'], cwd=worktree,
                                     capture_output=True, text=True)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            self.assertIn('10 contrôles conformes', result.stdout)
+            self.assertIn('11 contrôles conformes', result.stdout)
 
 
 if __name__ == '__main__':

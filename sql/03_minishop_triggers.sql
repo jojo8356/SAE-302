@@ -138,9 +138,9 @@ BEFORE UPDATE ON produit
 FOR EACH ROW
   SET NEW.prix_ttc = ROUND(NEW.prix_ht * (1 + NEW.tva / 100), 2);
 
--- TRG-B5 — garde-fou sur le stock saisi en Back-office (RB-03). Le CHECK
+-- TRG-B5 — garde-fou sur le stock modifié (RB-03). Le CHECK
 --          ck_produit_stock bloque déjà la valeur ; ce trigger fournit un
---          message explicite à l'IHM.
+--          message explicite à l'IHM, même hors sp_adjust_stock.
 DROP TRIGGER IF EXISTS trg_produit_regles $$
 CREATE TRIGGER trg_produit_regles
 BEFORE UPDATE ON produit

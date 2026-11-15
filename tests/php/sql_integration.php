@@ -11,9 +11,9 @@ declare(strict_types=1);
  *       # DESTRUCTIF : autorise explicitement la suppression d’une base de test existante
  *
  * Les autres suites tournent sur le moteur JSON : elles valident la logique,
- * jamais le SQL. Ce test est le seul qui exécute réellement les 17 procédures,
- * la fonction, les 16 déclencheurs et les 3 vues — c'est-à-dire la partie que
- * le correcteur SQL du PDO ne voit pas.
+ * jamais le SQL. Ce test exécute réellement les 18 procédures, la fonction,
+ * les 16 déclencheurs et les 3 vues — c'est-à-dire les objets SQL que le
+ * correcteur de types PDO ne peut pas valider à lui seul.
  *
  * **Isolation.** Le harnais `tests/sql/run_tests.sh` réinitialise l'état via
  * `fixture.sql` avant chaque scénario : le lancer sur la base de développement
@@ -287,7 +287,67 @@ try {
     $idProdTest = (int) $ligneProduit['id_produit'];
     $stockReference = (int) $ligneProduit['stock'];
 
-    // 6a. sp_cancel_order (client) restitue le stock et solde les montants.
+    // 6a. Une modification de fiche ne contourne pas le parcours d'ajustement motivé.
+    $repoProduit = new \App\Repository\ProduitRepository($storeParcours);
+    $ficheProduit = $repoProduit->find($idProdTest);
+    if ($ficheProduit === null) {
+        throw new RuntimeException('Produit SQL de test introuvable.');
+    }
+    $descriptionProduit = null;
+    if (isset($ficheProduit['description'])) {
+        $descriptionProduit = (string) $ficheProduit['description'];
+    }
+    $imageUrlProduit = null;
+    if (isset($ficheProduit['image_url'])) {
+        $imageUrlProduit = (string) $ficheProduit['image_url'];
+    }
+    $repoProduit->saveProduct(
+        $idProdTest,
+        (string) $ficheProduit['reference'],
+        (string) $ficheProduit['nom'],
+        (string) $ficheProduit['slug'],
+        $descriptionProduit,
+        (float) $ficheProduit['prix_ht'],
+        (float) $ficheProduit['tva'],
+        $stockReference + 99,
+        (int) $ficheProduit['seuil_alerte'],
+        (int) $ficheProduit['id_categorie'],
+        (bool) $ficheProduit['visible'],
+        $imageUrlProduit,
+    );
+    $stockApresFiche = (int) $pdoParcours->query('SELECT stock FROM produit WHERE id_produit = ' . $idProdTest)->fetchColumn();
+    if ($stockApresFiche !== $stockReference) {
+        throw new RuntimeException('sp_save_product a modifié le stock sans motif.');
+    }
+
+    // 6b. sp_adjust_stock valide l'obligation de motif et journalise en SQL.
+    $storeParcours->setActor(['id' => 1, 'role' => 'ADMIN', 'nom' => 'Test SQL']);
+    $motifSql = 'intégration SQL : contrôle d’inventaire';
+    $stockApresAjustement = $repoProduit->adjustStock($idProdTest, 'DELTA', 1, $motifSql);
+    $mouvementSql = $storeParcours->findOne('stock_movement_history', [
+        \App\Model\Data\Filter::eq('id_produit', $idProdTest),
+        \App\Model\Data\Filter::eq('motif', $motifSql),
+    ]);
+    if ($stockApresAjustement !== $stockReference + 1 || $mouvementSql === null
+        || (int) $mouvementSql['stock_avant'] !== $stockReference
+        || (int) $mouvementSql['stock_apres'] !== $stockReference + 1
+        || ($mouvementSql['changed_by_role'] ?? '') !== 'ADMIN'
+        || (int) ($mouvementSql['changed_by'] ?? 0) !== 1) {
+        throw new RuntimeException('sp_adjust_stock ou son audit SQL est incohérent.');
+    }
+    $motifVideSql = '';
+    try {
+        $storeParcours->callProcedure('sp_adjust_stock', [$idProdTest, 'DELTA', 1, ''], ['p_stock', 'p_code_retour']);
+    } catch (\App\Model\Data\BusinessError $erreurMetier) {
+        $motifVideSql = $erreurMetier->businessCode;
+    }
+    if ($motifVideSql !== 'MOTIF_STOCK_REQUIS') {
+        throw new RuntimeException('sp_adjust_stock doit refuser un motif vide.');
+    }
+    $storeParcours->setActor(['id' => null, 'role' => 'SYSTEME']);
+    $stockReference = $stockApresAjustement;
+
+    // 6c. sp_cancel_order (client) restitue le stock et solde les montants.
     $cmdClient = $repoCmd->createOrderFromBasket(1, '10 rue de la République, 06000 Nice', [['id_produit' => $idProdTest, 'quantite' => 2]], true);
     $idCmdClient = (int) $cmdClient['id_commande'];
     $pdoParcours->exec("CALL sp_cancel_order($idCmdClient, 1, @code_cancel_sql)");
@@ -299,7 +359,7 @@ try {
         throw new RuntimeException('sp_cancel_order incorrect : code=' . $codeCancelSql . ', stock=' . $stockApresClient);
     }
 
-    // 6b. Garde ANNULATION_VIA_PARCOURS_DEDIE sur sp_update_order_status + annulation admin PAYEE (stock restitué).
+    // 6d. Garde ANNULATION_VIA_PARCOURS_DEDIE + annulation admin PAYEE (stock restitué).
     $cmdAdminPayee = $repoCmd->createOrderFromBasket(1, '12 avenue Jean Médecin, 06000 Nice', [['id_produit' => $idProdTest, 'quantite' => 1]], true);
     $idCmdPayee = (int) $cmdAdminPayee['id_commande'];
     $gardeActive = false;
@@ -321,7 +381,7 @@ try {
         throw new RuntimeException('Annulation admin PAYEE : stock non restitué.');
     }
 
-    // 6c. Annulation admin d'une commande EXPEDIEE : stock non restitué, client bloqué.
+    // 6e. Annulation admin d'une commande EXPEDIEE : stock non restitué, client bloqué.
     $cmdExp = $repoCmd->createOrderFromBasket(1, '14 boulevard Victor Hugo, 06000 Nice', [['id_produit' => $idProdTest, 'quantite' => 2]], true);
     $idCmdExp = (int) $cmdExp['id_commande'];
     $repoCmd->updateOrderStatus($idCmdExp, 'EXPEDIEE', 'Colis expédié', 1, 'ADMIN');
@@ -341,7 +401,7 @@ try {
         throw new RuntimeException('Annulation admin EXPEDIEE incorrecte (le stock ne devait pas revenir).');
     }
 
-    // 6d. Filtrage UTC strict par bornes [debut, fin[ sur revenueReport.
+    // 6f. Filtrage UTC strict par bornes [debut, fin[ sur revenueReport.
     $jourUtc = \App\Tools\Heure::maintenantUtc()->format('Y-m-d');
     $debutJour = \App\Tools\Heure::borneJourUtc($jourUtc, false);
     $finJour = \App\Tools\Heure::borneJourUtc($jourUtc, true);
@@ -355,7 +415,7 @@ try {
         throw new RuntimeException('Filtrage par bornes UTC de revenueReport incohérent.');
     }
 
-    // 6e. RetentionComptes sur SqlStore : simulation puis suppression sélective d'un compte inactif sans commande.
+    // 6g. RetentionComptes sur SqlStore : simulation puis suppression sélective d'un compte inactif sans commande.
     if ($storeParcours->find('parametre', 'conservation_compte') === null) {
         $storeParcours->insert('parametre', [
             'cle' => 'conservation_compte',
@@ -367,11 +427,36 @@ try {
     }
     $repoClients = new \App\Repository\ClientRepository($storeParcours);
     $emailInactif = 'sql.inactif.' . bin2hex(random_bytes(4)) . '@example.test';
-    $idInactif = $repoClients->createAccount('Inactif', 'Sql', $emailInactif, password_hash('MotDePasse2026!', PASSWORD_BCRYPT, ['cost' => 4]));
+    $motDePasseTest = 'MotDePasse2026!';
+    $hashTest = password_hash($motDePasseTest, PASSWORD_BCRYPT, ['cost' => 4]);
+    $idInactif = $repoClients->createAccount('Inactif', 'Sql', $emailInactif, $hashTest);
+    $identifiantsSql = $repoClients->getCredentials($emailInactif);
+    if ($identifiantsSql['statut'] !== 'OK'
+        || $identifiantsSql['id_client'] !== $idInactif
+        || !password_verify($motDePasseTest, (string) $identifiantsSql['hash'])) {
+        throw new RuntimeException('Le parcours applicatif SQL createAccount/getCredentials est invalide.');
+    }
+    $inconnuSql = $repoClients->getCredentials('absent.' . bin2hex(random_bytes(4)) . '@example.test');
+    if ($inconnuSql !== ['id_client' => null, 'hash' => null, 'statut' => 'INCONNU']) {
+        throw new RuntimeException('sp_get_credentials doit renvoyer INCONNU sans identifiants.');
+    }
+    $doublonSql = '';
+    try {
+        $repoClients->createAccount('Autre', 'Compte', $emailInactif, $hashTest);
+    } catch (\App\Model\Data\BusinessError $erreurMetier) {
+        $doublonSql = $erreurMetier->businessCode;
+    }
+    if ($doublonSql !== 'EMAIL_DEJA_UTILISE') {
+        throw new RuntimeException('sp_create_account doit traduire le doublon en EMAIL_DEJA_UTILISE.');
+    }
     $storeParcours->update('client', [\App\Model\Data\Filter::eq('id_client', $idInactif)], [
+        'actif' => false,
         'date_creation' => '2021-02-01 08:00:00',
         'derniere_connexion' => '2021-03-01 08:00:00',
     ]);
+    if ($repoClients->getCredentials($emailInactif)['statut'] !== 'COMPTE_BLOQUE') {
+        throw new RuntimeException('sp_get_credentials doit refuser un compte inactif.');
+    }
     $retentionSql = new \App\Service\RetentionComptes($storeParcours);
     $simSql = $retentionSql->traiter(\App\Tools\Heure::maintenantUtc(), false);
     if ($simSql['supprimés'] !== 0 || $simSql['éligibles'] < 1 || $storeParcours->find('client', $idInactif) === null) {
@@ -381,7 +466,7 @@ try {
     if ($execSql['supprimés'] < 1 || $storeParcours->find('client', $idInactif) !== null || $storeParcours->find('client', 1) === null) {
         throw new RuntimeException('Exécution RetentionComptes SQL invalide.');
     }
-    echo "   ✅ sp_cancel_order, garde sp_update_order_status, annulation EXPEDIEE sans retour stock, bornes UTC et RetentionComptes SQL\n";
+    echo "   ✅ garde du stock hors fiche, sp_adjust_stock + audit SQL, comptes, annulations, bornes UTC et RetentionComptes\n";
 } catch (Throwable $erreur) {
     $echecsParcoursSql = 1;
     echo '   ❌ parcours SQL étape 6 : ' . $erreur->getMessage() . "\n";

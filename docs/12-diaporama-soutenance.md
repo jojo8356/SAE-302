@@ -1,9 +1,9 @@
 # MiniShop — soutenance SAÉ 302
-## Application de vente en ligne en PHP · 12 diapositives · 20 min + questions
-- Une application **100 % PHP / MySQL**, sans framework ni dépendance runtime
+## Application de vente en ligne · 12 diapositives · cible 15 min + questions
+- Une application PHP sans framework ; stockage MySQL/PDO (SQL) par défaut, JSON comme option explicite pour les tests portables et démonstrations isolées
 - Un **cahier des charges** de 16 sections, des règles de gestion numérotées RB-01 → RB-20
 - **Une base de démonstration** livrée : 36 produits (3 pages de 12), 3 clients, un back-office
-> Tout ce qui est annoncé dans ce diaporama est exécutable depuis le dépôt.
+> Le support résume la conception et les preuves disponibles ; il ne constitue pas un procès-verbal de démonstration ni de validation.
 
 ---
 
@@ -31,49 +31,48 @@
 - `public/` = seul dossier exposé (front controller, CSS, JS, images)
 - `app/Controller` → `app/Repository` → magasin de données ; `app/View` sans logique
 - Routeur à **liste blanche** : aucune route administrative par convention implicite
-- Interface `StoreInterface` : deux implémentations — JSON (démo) et **PDO/MySQL** (production)
+- `StoreInterface` : deux pilotes ; **PDO/MySQL** est le défaut, `JsonStore` reste une option explicite pour les tests portables et démos sans serveur SQL
 ![Architecture MVC](docs/diagrams/architecture_mvc.png)
 > Le choix du magasin se fait par configuration, sans toucher aux contrôleurs.
 
 ---
 
 # Modèle de données
-## 8 entités, 3 vues, 17 procédures, 16 déclencheurs
-- Entités : client, administrateur, catégorie, produit, commande, ligne_commande, historique_statut, paramètre
+## 8 entités métier, 9 tables SQL, 3 vues, 18 procédures, 16 déclencheurs
+- 8 entités métier : client, administrateur, catégorie, produit, commande, ligne_commande, historique_statut, paramètre ; `stock_movement_history` est une table technique d’audit supplémentaire
 - Contraintes portées par la base : `CHECK`, clés étrangères, unicité, prix ≥ 0, stock ≥ 0
 - Déclencheurs : décrémentation de stock, journal de statut, interdiction de suppression d'un produit commandé
 - Procédures : création de commande transactionnelle, annulation, alertes de stock, purge
-> La cohérence ne repose pas sur l'interface : elle est garantie par le SGBD.
+> Les repositories appellent les procédures SQL sur le chemin par défaut ; leur exécution PDO/MySQL n’a pas été rejouée dans cette révision, donc ce raccordement statique n’est pas une preuve de fonctionnement de bout en bout.
 
 ---
 
 # Règles de gestion
-## 20 règles, testées une par une
-- RB-01 à RB-20 : prix TTC calculé côté serveur, plafonnement au stock, frais de port offerts, transitions d'état, suppression logique
-- **29 tests SQL** : contraintes, déclencheurs, procédures, vues, port, rollback
-- Matrice de transitions : `BROUILLON → EN_PREPARATION → PAYEE → EXPEDIEE → LIVREE`, `ANNULEE` en sortie
-> Une règle non testée est une règle qui n'existe pas.
+## 20 règles décrites, scénarios référencés
+- `RB-01…RB-11` sont classées par convention du CDC comme règles du sujet ; `RB-12…RB-20` sont neuf compléments (PDF source non suivi dans le dépôt).
+- `T-01…T-29` sont des scénarios SQL, pas 29 règles ni un résultat d’exécution courant.
+- Cinq séquences sont présentes : quatre séquences prévues comme imposées et une bonus catalogue ; aucune sixième n’est annoncée.
+> Le fichier de rapport porte une mention 29/29 datée du 27/10/2026, date future à la coupure du 23/10 ; cette mention n’est pas présentée comme un résultat acquis.
 
 ---
 
 # Sécurité
-## Dix contrôles statiques, exécutés à chaque commit
+## Onze contrôles statiques définis, portée limitée
 - Mots de passe **bcrypt**, sessions `HttpOnly` + `SameSite=Lax`, identifiant régénéré à la connexion
 - **CSRF** sur tous les formulaires et sur l'API (comparaison `hash_equals`, jeton CSPRNG)
 - SQL **préparé** partout (aucune concaténation), sorties échappées par `e()`, CSP stricte
 - Contrôle d'accès : route `admin`/`super`, vérification d'appartenance des commandes (IDOR)
-> `bash tests/security/controles.sh` → 10/10 conformes.
+> `tests/security/controles.sh` contient 11 contrôles statiques, dont `S-11`/`SEC-14`. Le rejeu local du 23/10/2026 a réussi 11/11 ; ce résultat ne remplace pas les 10 scénarios offensifs `S-01…S-10` ni une recette LineServ.
 
 ---
 
 # Tests
 ## Une pyramide, pas un slogan
-- **PHPUnit** : 6 classes, 34 tests (texte, filtres, prix, transitions, magasin JSON, contrats de sécurité)
-- **Intégration PHP** : moteur JSON, règles de gestion, unitaires, fonctionnalités UC-01 → UC-14
-- **Contrats** : design system (28 vérifications) et responsive (48 vérifications)
-- **E2E HTTP** : 185 vérifications sur l'application complète (cookies, CSRF, refus)
-- **CI** : GitHub Actions (`.github/workflows/ci.yml`) ; aucun pipeline GitLab équivalent n’est revendiqué
-> `npm run test:all` ▶ tout doit être vert avant chaque commit.
+- `T-01…T-29` : scénarios SQL spécifiés ; `docs/04` rapporte une campagne historique du 23/09/2026.
+- `tests/sql/rapport_tests_sql.md` contient une revendication de résultat au 27/10/2026, date future à la coupure du 23/10 ; elle n’est pas présentée comme acquise à cette date.
+- `F-*` et `S-*` relient les exigences aux scénarios dans `docs/02`; leurs identifiants ne prouvent pas leur exécution.
+- Le registre manuel contient 200 entrées `NON JOUÉ`. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.
+> Seul le contrôle statique sécurité 11/11 a été rejoué localement le 23/10/2026 dans cette révision ; aucun run global ou CI 15/15 n’est déclaré.
 
 ---
 
@@ -99,8 +98,8 @@
 
 # Difficultés et arbitrages
 ## Ce que nous avons appris
-- Deux magasins (JSON et PDO) derrière une même interface : la démo reste possible sans serveur MySQL
-- Le bac à sable sans PHP natif a imposé un runtime WebAssembly : les tests sont identiques sur machine réelle
+- Deux magasins (JSON et PDO) derrière une même interface ; SQL est le pilote par défaut et les repositories appellent statiquement les 18 procédures, mais le chemin PDO/MySQL reste à valider par un rejeu isolé
+- Le dépôt prévoit des tests PHP natifs et des outils de substitution ; aucun résultat de test PHP ou MySQL n’est déduit de ce support
 - Accessibilité et tableaux de données : le défilement d'un tableau est admis par WCAG 1.4.10, à condition de le documenter
 - Arbitrages assumés : pas de paiement réel, images produits générées, volumétrie limitée
 > Un arbitrage écrit et justifié vaut mieux qu'une fonctionnalité à moitié faite.
@@ -109,8 +108,8 @@
 
 # Bilan et suites
 ## Où en est le projet
-- Application **livrée et testée** : 6 suites + E2E, contrôles de sécurité, design system
-- Documentation complète : cahier des charges, tests, conception, support de soutenance, dossier d'architecture
-- Écarts restants suivis publiquement dans `docs/10-todo-corrections.md`
-- Suites : rendu documentaire automatisé en PDF/DOCX, bascule PDO par défaut, couverture de code
+- Le dépôt contient l’application, les suites automatisées et les documents de conception ; cette présence n’atteste pas une recette intégrale.
+- Le code sélectionne SQL par défaut et les repositories ont des points d’appel pour les 18 procédures ; aucun rejeu PDO/MySQL ni parcours HTTP SQL complet n’est validé dans cette révision.
+- Les 200 scénarios manuels restent `NON JOUÉ` ; aucune validation étudiante ou pédagogique n’est revendiquée.
+- Aucune recette LineServ, aucun déploiement et aucune restauration de base ne sont attestés.
 > Questions ?

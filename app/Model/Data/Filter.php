@@ -6,9 +6,9 @@ declare(strict_types=1);
  * MiniShop — constructeur déclaratif de conditions (helper de StoreInterface).
  *
  * Les Repository décrivent leurs filtres avec ces helpers plutôt qu'en
- * écrivant des tableaux à la main : l'intention reste lisible ET la
- * spécification reste sérialisable (transposable telle quelle en clause
- * SQL préparée le jour du basculement StorageDriver::SQL).
+ * écrivant des tableaux à la main : l'intention reste lisible et la
+ * spécification sérialisable. JsonStore l'évalue en PHP ; SqlStore la traduit
+ * actuellement en clauses SQL préparées pour les opérations génériques.
  *
  * Exemple :
  *   $store->select('produit', [

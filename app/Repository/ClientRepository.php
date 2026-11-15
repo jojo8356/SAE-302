@@ -15,15 +15,20 @@ namespace App\Repository;
 
 use App\Model\Data\BusinessError;
 use App\Model\Data\Filter;
+use App\Model\Data\RowLockingStore;
 use App\Model\Data\StoreInterface;
-use App\Model\Data\SqlStore;
 use App\Service\RetentionComptes;
 use App\Tools\Heure;
 
 final class ClientRepository
 {
-    public function __construct(private readonly StoreInterface $store)
-    {
+    private readonly ClientAccountGateway $accountGateway;
+
+    public function __construct(
+        private readonly StoreInterface $store,
+        ?ClientAccountGateway $accountGateway = null,
+    ) {
+        $this->accountGateway = $accountGateway ?? ClientAccountGatewayFactory::forStore($store);
     }
 
     /**
@@ -34,24 +39,18 @@ final class ClientRepository
      */
     public function createAccount(string $nom, string $prenom, string $email, string $hash): int
     {
-        if (trim($nom) === '' || trim($prenom) === '') {
+        $nom = trim($nom);
+        $prenom = trim($prenom);
+        $email = self::normaliserEmail($email);
+        if ($nom === '' || $prenom === '') {
             throw new BusinessError('CHAMPS_OBLIGATOIRES');
         }
         if (strlen($hash) < 60) {
             // garde-fou : refuser une chaîne qui n'est pas une sortie de password_hash()
             throw new BusinessError('HASH_MOT_DE_PASSE_INVALIDE');
         }
-        if ($this->store->exists('client', [Filter::eq('email', $email)])) {
-            throw new BusinessError('EMAIL_DEJA_UTILISE');
-        }
 
-        return $this->store->insert('client', [
-            'nom' => trim($nom),
-            'prenom' => trim($prenom),
-            'email' => trim(strtolower($email)),
-            'mot_de_passe_hash' => $hash,
-            'date_creation' => Heure::horodatageStockage(),
-        ]);
+        return $this->accountGateway->createAccount($nom, $prenom, $email, $hash);
     }
 
     /**
@@ -61,7 +60,7 @@ final class ClientRepository
      */
     public function emailExiste(string $email): bool
     {
-        return $this->store->exists('client', [Filter::eq('email', trim(strtolower($email)))]);
+        return $this->store->exists('client', [Filter::eq('email', self::normaliserEmail($email))]);
     }
 
     /**
@@ -72,22 +71,7 @@ final class ClientRepository
      */
     public function getCredentials(string $email): array
     {
-        $row = $this->store->findOne('client', [Filter::eq('email', trim(strtolower($email)))]);
-        if ($row === null) {
-            // message volontairement identique à « mot de passe erroné » côté IHM (SEC-05)
-            return ['id_client' => null, 'hash' => null, 'statut' => 'INCONNU'];
-        }
-
-        $statut = 'COMPTE_BLOQUE';
-        if ($row['actif']) {
-            $statut = 'OK';
-        }
-
-        return [
-            'id_client' => (int) $row['id_client'],
-            'hash' => (string) $row['mot_de_passe_hash'],
-            'statut' => $statut,
-        ];
+        return $this->accountGateway->getCredentials(self::normaliserEmail($email));
     }
 
     /** Client complet par id (le hash n'est jamais affiché par les vues). */
@@ -145,22 +129,16 @@ final class ClientRepository
             throw new BusinessError('CLIENT_INTROUVABLE');
         }
         $email = trim(strtolower($email));
-        $doublon = $this->store->findOne('client', [
-            Filter::eq('email', $email),
-            Filter::neq('id_client', $idClient),
-        ]);
-        if ($doublon !== null) {
-            throw new BusinessError('EMAIL_DEJA_UTILISE');
-        }
-        $this->store->update('client', [Filter::eq('id_client', $idClient)], [
-            'nom' => trim($nom),
-            'prenom' => trim($prenom),
-            'email' => $email,
-            'telephone' => $telephone,
-            'adresse_livraison' => $adresse,
-            'code_postal' => $codePostal,
-            'ville' => $ville,
-        ]);
+        $this->accountGateway->updateClient(
+            $idClient,
+            trim($nom),
+            trim($prenom),
+            $email,
+            $telephone,
+            $adresse,
+            $codePostal,
+            $ville,
+        );
     }
 
     /**
@@ -185,7 +163,7 @@ final class ClientRepository
     public function clientActif(int $idClient): ?array
     {
         return $this->store->transactional(function () use ($idClient): ?array {
-            if ($this->store instanceof SqlStore) {
+            if ($this->store instanceof RowLockingStore) {
                 $client = $this->store->findForUpdate('client', $idClient);
             } else {
                 $client = $this->store->find('client', $idClient);
@@ -214,5 +192,10 @@ final class ClientRepository
     public function listerTous(): array
     {
         return $this->store->select('client', ['order' => [Filter::sort('nom'), Filter::sort('prenom')]]);
+    }
+
+    private static function normaliserEmail(string $email): string
+    {
+        return trim(strtolower($email));
     }
 }

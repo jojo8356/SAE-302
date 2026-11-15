@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """Génère la todolist MiniShop (Markdown + HTML dans le dépôt).
-Les mesures de septembre restent une photographie historique ; les changements de périmètre
-et validations attestées sont explicitement datés dans le document généré."""
+Les mesures de septembre restent historiques ; les statuts et preuves datées sont qualifiés dans le document généré."""
 import pathlib, re, markdown
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -9,33 +8,32 @@ DOCS = ROOT / "docs"
 OUT_MD = DOCS / "06-todolist.md"
 OUT_HTML = ROOT / "artefacts" / "06-todolist.html"
 SCOPE_DATE = "23 octobre 2026"
-MEETING_DATE = "13 novembre 2026"
 
-# (id, libellé, resp, h_rest, statut, deps, prio, note_async)
+# (id, libellé, rôle de planification, h_rest, statut, deps, prio, note_async)
 # statut : "F" fait · "P" partiel · "T" à faire  |  async = classification du graphe de référence, pas disponibilité actuelle
 T = {
  "L1": [
-  ("D1-L1-01","Créer le dépôt GitLab privé, inviter l'équipe + enseignante, protéger main, envoyer le courriel « Composition SAE »","A",0,"F","—","—","ASYNC"),
+  ("D1-L1-01","Partager l’URL et l’accès GitLab requis, communiquer la composition ; visibilité privée et protection de branche non exigées par le sujet","A",0,"F","—","—","ASYNC"),
   ("D1-L1-02","Compléter le squelette : arborescence app/ + public/ vides (.gitkeep) — le reste (docs/sql/tests/scripts) est en place","A",1,"P","D1-L1-01","P2","ASYNC"),
   ("D1-L1-03","README v0 (prérequis, installation cible, membres et rôles)","A",0,"F","—","—",""),
   ("D1-L1-04","Issue GitLab de conformité renseignée : cinq livrables et pénalités du barème (CDC §16)","A",0,"F","D1-L1-01","—",""),
   ("D1-L1-05","Charte GitLab : branches, MR croisées, commits conventionnels, 1 issue par UC/EF (docs/20)","A",0,"F","—","—",""),
-  ("D1-L1-07","Réunion de vérification de l'audit complet et de validation simple (compte rendu docs/21-compte-rendu-reunion-audit-2026-11-13.md)","A",0,"F","—","—",""),
+  ("D1-L1-07","Synthèse des retours continus sur l’audit (mode asynchrone ; aucune réunion complète revendiquée ; docs/21-synthese-retours-audit.md)","A",0,"F","—","—",""),
  ],
  "L2": [
-  ("D2-L2-01","Rédiger §1 Présentation + §2 Objectifs","A",0,"F","—","—",""),
-  ("D2-L2-02","Rédiger §3 Acteurs + RACI","A",0,"F","—","—",""),
-  ("D2-L2-03","Rédiger §4 Fonctionnalités (table exigence ↔ UC ↔ écran ↔ test)","C",0,"F","—","—",""),
-  ("D2-L2-04","Rédiger §7 Contraintes techniques","A",0,"F","—","—",""),
-  ("D2-L2-05","Rédiger §8 Sécurité (SEC-01…14 + matrice menaces)","C",0,"F","—","—",""),
-  ("D2-L2-06","Relecture croisée §1→§8 + pointage des pénalités","A",0,"F","—","—",""),
+  ("D2-L2-01","Rédiger §1-§2 avec dates et niveaux de preuve cohérents","A",0,"F","—","—",""),
+  ("D2-L2-02","Rédiger §3 et RACI par rôles A/B/C, sans affectation nominative","A",0,"F","—","—",""),
+  ("D2-L2-03","Traçabilité EF/EV ↔ UC ↔ écran ↔ test ↔ annexe","C",0,"F","—","—",""),
+  ("D2-L2-04","Distinguer l'exigence MySQL/PDO de l'état actuel : SQL par défaut, JSON explicitement optionnel","A",0,"F","—","—",""),
+  ("D2-L2-05","SEC-01…SEC-14 ; 10 scénarios offensifs S-01…S-10 ; 11 contrôles statiques dont S-11/SEC-14","C",0,"F","—","—",""),
+  ("D2-L2-06","Pointage documentaire fait ; relecture croisée étudiante §1→§8 à effectuer","A",3,"T","—","P1",""),
  ],
  "L3": [
   ("D2-L3-01","Diagrammes de cas d'utilisation (vue globale + 2 zooms)","B",0,"F","—","—",""),
   ("D2-L3-02","Descriptions textuelles des 3 UC imposés + fiches des 11 autres","B",0,"F","—","—",""),
   ("D2-L3-03","Diagramme de classes + justifications","B",0,"F","—","—",""),
-  ("D2-L3-04","Formaliser RB-01…RB-20","C",0,"F","—","—",""),
-  ("D2-L3-05","5 diagrammes de séquence (SP/triggers visibles)","C",0,"F","—","—",""),
+  ("D2-L3-04","20 identifiants : 11 classés comme issus du sujet + 9 compléments ; PDF source non versionné","C",0,"F","—","—",""),
+  ("D2-L3-05","5 séquences présentes : 4 imposées + 1 bonus ; pas de sixième","C",0,"F","—","—",""),
   ("D2-L3-06","Versionner les sources .puml + docs/diagrams/render.sh (le README les annonce : à livrer)","B",4,"P","—","P1","ASYNC"),
  ],
  "L4": [
@@ -47,10 +45,10 @@ T = {
   ("D3-L4-06","Relecture croisée du document de conception (docs/04)","A",0,"F","—","—",""),
  ],
  "L5": [
-  ("D3-L5-01","DDL : 8 tables, CHECK, InnoDB utf8mb4","B",0,"F","—","—",""),
+  ("D3-L5-01","DDL : 9 tables SQL (8 entités métier + table technique d’audit du stock), CHECK, InnoDB utf8mb4","B",0,"F","—","—",""),
   ("D3-L5-02","FK (CASCADE/RESTRICT) + index (FULLTEXT, filtres)","B",0,"F","—","—",""),
   ("D3-L5-03","3 vues (v_etat_stock, v_catalogue, v_commandes_client)","B",0,"F","—","—",""),
-  ("D3-L5-04","Seed : catégories, 12 produits, 3 clients, 1 admin (hashes vérifiés bcrypt)","B",0,"F","—","—",""),
+  ("D3-L5-04","Seed : 4 catégories, 36 produits, 3 clients, 1 admin (hashes vérifiés bcrypt)","B",0,"F","—","—",""),
   ("D3-L5-05","Écrire scripts/load_db.sh (encapsule DELIMITER, chargement 01→04, comptages de contrôle)","B",3,"T","—","P1","ASYNC"),
  ],
  "L6": [
@@ -58,7 +56,7 @@ T = {
   ("D3-L6-02","sp_search_products (filtres, tri liste blanche, pagination)","B",0,"F","—","—",""),
   ("D3-L6-03","sp_save/delete_product, sp_save/delete_category, sp_adjust_stock","B",0,"F","—","—",""),
   ("D3-L6-04","sp_create_order, sp_add_order_line, sp_create_order_from_basket, sp_confirm_order","B",0,"F","—","—",""),
-  ("D3-L6-05","sp_update_order_status, sp_cancel_order, sp_revenue_report, sp_compute_shipping","B",0,"F","—","—",""),
+  ("D3-L6-05","sp_update_order_status, sp_cancel_order, sp_cancel_order_admin, sp_revenue_report, sp_compute_shipping","B",0,"F","—","—",""),
   ("D3-L6-06","Écrire les fichiers tNN_*.sql pour T-01…T-12 (le manifeste existe)","A",2,"P","—","P1","ASYNC"),
   ("D3-L6-07","Écrire tests/sql/run_tests.sh + tNN T-25…T-29 (fixture déjà livrée)","A",2,"P","D3-L6-06","P1","ASYNC"),
  ],
@@ -67,7 +65,7 @@ T = {
   ("D3-L7-02","Triggers produit/catégorie (TRG-B3…B6, C1, C2)","B",0,"F","—","—",""),
   ("D3-L7-03","Triggers commande (TRG-D1…D5, historique automatique)","B",0,"F","—","—",""),
   ("D3-L7-04","Documentation des 16 déclencheurs (doc 04, partie C)","B",0,"F","—","—",""),
-  ("D3-L7-05","Formaliser en tNN rejouables les tests SQL directs T-02…T-24 (campagne du 23/09 déjà exécutée et rapportée)","A",2,"P","—","P1","ASYNC"),
+  ("D3-L7-05","Formaliser en tNN rejouables T-02…T-24 ; validation du 23/09 historique, fichier rapport portant une date future 27/10 non recevable comme preuve à la coupure","A",4,"P","—","P1","ASYNC"),
  ],
  "L8": [
   ("D4-L8-01","Front controller + routeur (listes blanches de routes et de tri)","A",5,"T","—","P1","ASYNC"),
@@ -105,7 +103,7 @@ T = {
   ("D4-L12-02","Autorisation : contrôle d'appartenance, 404 sur id étranger (IDOR)","C",5,"T","L9;L10","P1",""),
   ("D4-L12-03","Échappement systématique : revue des vues","C",4,"T","L9;L10;L11","P1",""),
   ("D4-L12-04","En-têtes durcis, cookie HttpOnly/SameSite, erreurs génériques","C",3,"T","L9","P2",""),
-  ("D4-L12-05","Écrire tests/security/controles.sh (10 contrôles) : préparation indépendante, validation liée à l'application","C",4,"T","—","P1","ASYNC*"),
+  ("D4-L12-05","11 contrôles statiques sécurité rejoués localement ; S-11/SEC-14 ciblé, sans portée de recette applicative","C",0,"F","—","—","ASYNC*"),
  ],
  "L13": [
   ("D4-L13-01","JS panier : badge, MAJ AJAX, repli sans JS","C",5,"T","D4-L10-03","P2",""),
@@ -134,7 +132,7 @@ T = {
 
 LOT_NOM = {
  "L1":"Pilotage & dépôt","L2":"CDC : spécification","L3":"Diagrammes UML & règles","L4":"MCD/MLD/normalisation",
- "L5":"Script SQL & seed","L6":"17 procédures + tests","L7":"16 déclencheurs + tests","L8":"Socle applicatif MVC",
+ "L5":"Script SQL & seed","L6":"18 procédures + tests","L7":"16 déclencheurs + tests","L8":"Socle applicatif MVC",
  "L9":"Front-office","L10":"Panier & commande","L11":"Back-office","L12":"Durcissement sécurité",
  "L13":"JavaScript client","L14":"Tests & validation","L15":"README final & rendu","L16":"Soutenance"}
 DIV_LOTS = {"D1":["L1","L15"],"D2":["L2","L3"],"D3":["L4","L5","L6","L7"],
@@ -173,26 +171,26 @@ for lot, tasks in T.items():
         if h: continue
 for r in "ABC":
     pass
-# charge faite par personne = (charge WBS par personne) - restante ; charge WBS révisée : A120 B117 C121 (WBS §6.2)
+# charge faite par rôle = charge WBS de référence - charge résiduelle ; A/B/C restent non nominatifs (WBS §6.2)
 WBS_PERS = {"A":117,"B":117,"C":121}
 for lot, tasks in T.items():
     for (tid, lbl, r, h, st, dep, prio, async_) in tasks:
         pass
-# somme par personne des h de la WBS d'origine = restantes + faites → recalcul direct des faites :
+# totalisation des charges estimées par rôle dans la WBS ; les h classées terminées ne sont pas un relevé de temps réel :
 for lot, tasks in T.items():
     reste_lot = sum(t[3] for t in tasks)
     for (tid, lbl, r, h, st, dep, prio, async_) in tasks:
         pass
-# faites par personne : proportionnelle à la part de la personne dans chaque lot (h WBS connues via build_wbs) →
+# charge de référence par rôle issue de build_wbs.py ; aucune attribution nominative →
 # simplification exacte : faites = WBS_PERS[r] - PERS_REST[r]
 for r in "ABC": PERS_FAIT[r] = WBS_PERS[r] - PERS_REST[r]
 FAIT = sum(PERS_FAIT.values())
 TOTAL = FAIT + REST
 assert TOTAL == 355, TOTAL
-assert (PERS_REST["A"], PERS_REST["B"], PERS_REST["C"]) == (76, 17, 97), (PERS_REST["A"], PERS_REST["B"], PERS_REST["C"])
-assert sum(DIV_REST.values()) == REST == 190
-assert sum(DIV_FAIT.values()) == FAIT == 165
-assert PERS_FAIT == {"A":41,"B":100,"C":24}, PERS_FAIT
+assert (PERS_REST["A"], PERS_REST["B"], PERS_REST["C"]) == (81, 17, 93), (PERS_REST["A"], PERS_REST["B"], PERS_REST["C"])
+assert sum(DIV_REST.values()) == REST == 191
+assert sum(DIV_FAIT.values()) == FAIT == 164
+assert PERS_FAIT == {"A":36,"B":100,"C":28}, PERS_FAIT
 
 N_TASKS = sum(len(tasks) for tasks in T.values())
 COUNTS = {status: sum(1 for tasks in T.values() for task in tasks if task[4] == status) for status in ("F", "P", "T")}
@@ -208,42 +206,42 @@ STATUT_NOM = {"F":"fait","P":"partiel","T":"à faire"}
 md = [] ; A = md.append
 A("# MiniShop — Todolist projet : suivi de base et planification historique")
 A("")
-A(f"**Périmètre :** révision du {SCOPE_DATE} ; la mise en ligne de démonstration et les contrôles staging associés sont retirés sans remplacement ; la WBS compte désormais {N_TASKS} tâches. **D1-L1-01** est `OK*` sur attestation utilisateur de l'envoi du courriel (la boîte d'envoi n'a pas été vérifiée indépendamment) ; **D1-L1-07** est terminée sur attestation utilisateur, réunion datée du {MEETING_DATE}.")
+A(f"**Périmètre :** révision du {SCOPE_DATE} ; la mise en ligne de démonstration et les contrôles staging associés sont retirés sans remplacement ; la WBS compte {N_TASKS} tâches. **D1-L1-01** est `OK*` sur attestation utilisateur de l'envoi du courriel (boîte d'envoi non vérifiée). **D1-L1-07** est clos par la synthèse écrite des retours continus dans `docs/21-synthese-retours-audit.md`, sur attestation utilisateur ; aucune réunion complète n’est revendiquée." )
 A("Le statut **D1-L1-04** porte sur l'issue contenant les cinq livrables et pénalités ; l'épinglage n'est pas attesté et n'est pas requis par ce critère. **D1-L1-05** est terminé sur le livrable documentaire uniquement : l'usage réel de MR/revues croisées n'est pas démontré.")
-A("Les états non révisés restent ceux de la photographie du 23/09/2026 ; les statuts D1-L1-01/04/05/07 sont actualisés uniquement selon les attestations ou preuves décrites ici et dans l'audit docs/19. Les mesures MariaDB sont historiques et n'ont pas été rejouées. Les catégories dépendantes/asynchrones, le graphe et les plans S6 ci-dessous décrivent le planning de base à cette date : ils ne valent ni état d'exécution ni priorité actuelle. Revalider les dépendances, les statuts et les disponibilités avant toute action. La todolist comprend les tâches de la WBS révisée, classées en")
+A("Les états non révisés restent ceux de la photographie du 23/09/2026 ; les statuts D1-L1-01/04/05/07 sont actualisés uniquement selon les attestations ou preuves décrites ici et dans l’audit docs/19. Pour D1-L1-07, la clôture porte sur la synthèse asynchrone des retours continus, pas sur la tenue d’une réunion. Les dates postérieures à la coupure et les rapports qui les portent ne sont pas traités comme des événements ou résultats acquis. D2-L2-01…05 et D2-L3-04/05 sont clos au seul niveau documentaire ; cela ne vaut ni revue étudiante ni validation pédagogique. Les catégories dépendantes/asynchrones, le graphe et les plans S6 décrivent le planning de base, pas l’exécution ni une priorité actuelle. Revalider les dépendances, statuts et disponibilités avant toute action. La todolist comprend les tâches de la WBS révisée, classées en")
 A("**tâches dépendantes** (ordre prévu dans le graphe) et **tâches asynchrones** (aucune dépendance restante identifiée dans la photographie de référence ; cela ne signifie pas qu'elles sont disponibles aujourd'hui).")
 A("")
 A("| | |")
 A("|---|---|")
-A(f"| **Avancement global** | **{FAIT} h faites / {TOTAL} h planifiées ({FAIT/TOTAL:.0%})** — {COUNTS['F']} terminées, {COUNTS['P']} partielles, {COUNTS['T']} à faire ({N_TASKS} tâches) |")
-A(f"| **Reste à faire** | **{REST} h estimées**, dont 146 h pour l'application Web ; les autres postes restent issus de la photographie historique |")
+A(f"| **Avancement du suivi de référence** | **{FAIT} h classées terminées / {TOTAL} h estimées ({FAIT/TOTAL:.0%})** — {COUNTS['F']} tâches terminées, {COUNTS['P']} partielles, {COUNTS['T']} à faire ({N_TASKS} tâches) |")
+A(f"| **Reste à faire** | **{REST} h estimées**, dont {DIV_REST['D4']} h pour l'application Web ; les autres postes restent issus de la photographie historique |")
 A(f"| **Backlog asynchrone du plan de base** | **{ASYNC_H} h** classées sans dépendance restante dans la photographie du 23/09 ; statuts et disponibilité à revérifier |")
 A("| **Chaîne planifiée** | L8 → L9 → L10 → L11 → L12 → L14 → L15 → L16 ; jalons du planning de base à revalider |")
-A("| **Documents liés** | `docs/05-wbs-projet.md` (WBS) · `docs/20-charte-gitlab-revues-croisees.md` · `docs/21-compte-rendu-reunion-audit-2026-11-13.md` |")
-A("| **Version** | 1.3 — périmètre du 23 octobre, validation attestée le 13 novembre 2026 |")
+A("| **Documents liés** | `docs/05-wbs-projet.md` (WBS) · `docs/20-charte-gitlab-revues-croisees.md` · `docs/21-synthese-retours-audit.md` |")
+A("| **Version** | 1.4 — révision documentaire du 23 octobre 2026 ; D1-L1-07 clos en mode asynchrone sur attestation utilisateur, sans réunion complète revendiquée |")
 A("")
 A("---")
 A("")
-A("## 1. État d'avancement (statuts documentés ; mesures techniques datées séparément)")
+A("## 1. État du suivi de référence (statuts de tâches ; heures réelles non mesurées)")
 A("")
 A("### 1.1 Par division")
 A("")
-A("| Division | Charge | Fait | Reste | Avancement |")
+A("| Division | Charge estimée | Classée terminée | Reste estimé | Avancement du suivi |")
 A("|---|---:|---:|---:|---|")
 for d in ["D1","D2","D3","D4","D5","D6"]:
     tot = sum(LOT_H[l] for l in DIV_LOTS[d])
     A(f"| **{d} — {DIV_NOM[d]}** | {tot} h | {DIV_FAIT[d]} h | {DIV_REST[d]} h | {'█'*round(DIV_FAIT[d]/tot*20)}{'░'*(20-round(DIV_FAIT[d]/tot*20))} {DIV_FAIT[d]/tot:.0%} |")
 A(f"| **Total** | **{TOTAL} h** | **{FAIT} h** | **{REST} h** | **{FAIT/TOTAL:.0%}** |")
 A("")
-A("### 1.2 Répartition par rôle de planification (A/B/C ; aucune correspondance nominative établie)")
+A("### 1.2 Répartition estimée par rôle de planification (A/B/C ; aucune correspondance nominative établie)")
 A("")
-A("| Rôle | Charge WBS | Reste | Fait | Remarque (photographie du 23/09) |")
+A("| Rôle de planification | Charge WBS estimée | Reste du suivi de référence | Classée terminée | Remarque (photographie du 23/09) |")
 A("|---|---:|---:|---:|---|")
 A(f"| **A** | 117 h | {PERS_REST['A']} h | {PERS_FAIT['A']} h | rôle de planification chargé du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |")
 A(f"| **B** | 117 h | {PERS_REST['B']} h | {PERS_FAIT['B']} h | rôle de planification base de données/tests ; états et disponibilité après la photographie non revérifiés |")
 A(f"| **C** | 121 h | {PERS_REST['C']} h | {PERS_FAIT['C']} h | rôle de planification front-office/sécurité/JS ; disponibilité et attribution nominative non établies |")
 A("")
-A("> **Lecture de la photographie** : le reste du projet était concentré sur D4 (146 h) et une chaîne L8→L16.")
+A("> **Lecture de la photographie** : le reste estimé du plan était concentré sur D4 (146 h) et une chaîne L8→L16. Les heures classées « terminées » découlent des statuts de référence, pas d'un relevé du temps réellement passé.")
 A("> Cette vue du 23/09 ne décrit pas l'avancement actuel ; les priorités et le plan S6→S12 doivent être réévalués avant utilisation.")
 A("")
 A("**Légende des statuts utilisés partout ci-dessous :** ✅ fait (0 h restante) · 🟡 partiel (reste chiffré) · ⬜ à faire ·")
@@ -266,23 +264,23 @@ for i, (tid, lbl, r, h, prio, mark) in enumerate(async_sorted, 1):
       "D1-L1-01":"le plan de base l'identifiait comme préalable aux tâches de dépôt ; la preuve utilisateur de l'envoi est distinguée dans l'audit docs/19",
       "D1-L1-02":"les dossiers docs/, sql/, tests/ et scripts/ étaient indiqués comme déjà présents dans la photographie",
       "D1-L1-04":"l'issue atteste le suivi des cinq livrables et pénalités ; l'épinglage n'est pas revendiqué",
-      "D1-L1-07":"réunion attestée par l'utilisateur ; compte rendu daté du 13/11/2026, sans noms de participants inventés",
+"D1-L1-07":"synthèse écrite de retours continus en mode asynchrone ; l’utilisateur atteste les feedbacks, aucune réunion complète n’est revendiquée",
       "D2-L3-06":"constat du 23/09 : les PNG existaient ; les sources et le script de rendu étaient alors signalés manquants (voir les corrections ultérieures de l'audit)",
       "D3-L5-05":"le rapport de la campagne du 23/09 indiquait les quatre fichiers SQL corrigés ; cela ne remplace pas un contrôle actuel",
       "D3-L6-06":"le manifeste et la fixture étaient signalés présents dans la photographie",
       "D3-L6-07":"le manifeste et la fixture étaient signalés présents dans la photographie",
-      "D3-L7-05":"un rapport versionné consigne la campagne historique ; la procédure de rejeu et son état doivent être vérifiés séparément",
+"D3-L7-05":"la validation du 23/09 est historique ; le fichier rapport porte une date future 27/10 et ne prouve pas de rejeu à la coupure 23/10",
       "D4-L8-01":"les dépendances étaient marquées faites dans la photographie ; leur état n'a pas été revérifié dans cette liste",
       "D6-L16-01":"docs/03 était déjà présent dans la photographie ; le statut des diapositives est à vérifier dans la todolist",
-      "D4-L12-05":"le plan considérait la préparation du script séparément ; contrôles et application ont depuis évolué",
+      "D4-L12-05":"11 contrôles statiques rejoués localement le 23/10/2026 ; preuve limitée aux sources contrôlées, pas une recette applicative ou LineServ",
       "D5-L14-04":"le scénario de charge était défini dans la planification ; vérifier l'état actuel du harnais",
       "D5-L14-06":"la mesure SQL seule était séparée de la mesure HTTP dans le plan ; ni la base ni les mesures n'ont été rejouées ici",
     }.get(tid, "dépendances déjà satisfaites")
     A(f"| {i} | `{tid}` | {lbl} | {r} | {h} | {prio} | {pourquoi} |")
 A("")
-A(f"**Total backlog asynchrone : {ASYNC_H} h** (A {ASYNC_BY_PERSON['A']} h, B {ASYNC_BY_PERSON['B']} h, C {ASYNC_BY_PERSON['C']} h, préparations `ASYNC*` incluses).")
+A(f"**Total backlog asynchrone du plan de référence : {ASYNC_H} h** (rôles A {ASYNC_BY_PERSON['A']} h, B {ASYNC_BY_PERSON['B']} h, C {ASYNC_BY_PERSON['C']} h, préparations `ASYNC*` incluses).")
 A("")
-A("**Pistes de parallélisation du plan de référence** (règle des ≥ 5 commits par zone, WBS §10 ; aucune disponibilité actuelle n'est affirmée) :")
+A("**Pistes de parallélisation du plan de référence** (aucune disponibilité actuelle ni contribution effective n'est affirmée) :")
 A("")
 A("1. **B peut contribuer au socle L8** selon les rôles de planification ; les lettres ne sont pas rattachées à des personnes nommées ici.")
 A("2. **Une revue distincte de l'auteur est prévue par la charte** ; cette proposition ne prouve pas qu'une MR ou une revue ait eu lieu.")
@@ -315,7 +313,7 @@ A("- **L9-04/05 exigent L8-04** (middleware d'authentification) : ne pas « temp
 A("- **L11-01 exige L8-04** : le back-office doit monter sur le **même** middleware, pas un second.")
 A("- **L12 s'écrit au fil de l'eau mais se *valide* en bloc** : chaque vue poussée dans L9-L11 doit déjà être")
 A("  échappée (D4-L8-03 fournit le helper) sinon L12-03 deviendra une re-chasse aux 30 vues.")
-A("- **L14-02 (29/29)** ne peut tourner qu'une fois les `tNN` écrits (§2 : tâches async de B/A) — d'où l'intérêt")
+A("- **L14-02 (29 scénarios)** ne peut tourner qu'une fois les `tNN` écrits (§2 : tâches async de B/A) ; consigner un résultat avec run/SHA et date — d'où l'intérêt")
 A("  de les solder **avant** la fin de L8 : le harnais sera prêt quand l'app arrivera.")
 A("")
 A("---")
@@ -326,11 +324,11 @@ A("```text")
 A(" ASYNC (classification du plan de base)  CHAÎNE DÉPENDANTE (ordre planifié)")
 A(" ─────────────────────────────          ─────────────────────────────────")
 A(" D1-L1-01 GitLab (2h, photo) ──┐        L8 socle (22h, A) ──┬─> L9 front (32h, C) ──┬─> L10 panier/cmd (28h, A+C)")
-A(" D1-L1-02/04/07 (5h, photo)│                                │                       │        │")
+A(" D1-L1-02/04 (plan de base) ─┘                            │                       │        │")
 A(" D2-L3-06 puml (4h, B)  ├─ tout cela tourne                │                       │        └─> L13 JS (14h, C)")
 A(" D3-L5-05 load_db (3h,B)│   EN PARALLÈLE                   ├─> L11 back (30h, A+C) ┘")
 A(" D3-L6-06/07 tNN (4h,A) │   de la chaîne ────────────────> │")
-A(" D3-L7-05 tNN (2h, A)   │                                   └─> L12 sécu (20h, C) ──> L14 tests (15h) ──> L15 rendu (3h)")
+A(" D3-L7-05 tNN (4h, A)   │                                   └─> L12 sécu (20h, C) ──> L14 tests (15h) ──> L15 rendu (3h)")
 A(" D6-L16-01 slides (4h,A)                                                                   └─> L16-03 répét (5h)")
 A(" D4-L12-05* / L14-04* / L14-06* (préparations)")
 A("```")
@@ -341,7 +339,7 @@ A("## 5. Détail complet — les 84 tâches de la WBS et leur statut de suivi")
 A("")
 for d in ["D1","D2","D3","D4","D5","D6"]:
     tot = sum(LOT_H[l] for l in DIV_LOTS[d])
-    A(f"### {d} — {DIV_NOM[d]} ({DIV_FAIT[d]}/{tot} h faites, reste {DIV_REST[d]} h)")
+    A(f"### {d} — {DIV_NOM[d]} ({DIV_FAIT[d]} h estimées classées terminées sur {tot} h, reste estimé {DIV_REST[d]} h)")
     A("")
     for lot in DIV_LOTS[d]:
         tasks = T[lot]
@@ -349,7 +347,7 @@ for d in ["D1","D2","D3","D4","D5","D6"]:
         icone = "✅" if reste == 0 else ("🟡" if any(t[4]=="P" for t in tasks) else "⬜")
         A(f"#### {icone} Lot {lot} — {LOT_NOM[lot]} ({LOT_H[lot]-reste}/{LOT_H[lot]} h · reste {reste} h)")
         A("")
-        A("| ID | Tâche | Pers. | h rest. | Statut | Dépend de | Prio |")
+        A("| ID | Tâche | Rôle | h restantes (estim.) | Statut | Dépend de | Prio |")
         A("|---|---|---|---:|---|---|---|")
         for (tid, lbl, r, h, st, dep, prio, mark) in tasks:
             badge = BADGE[st] + ("*" if tid == "D1-L1-01" else "") + (" `ASYNC`" if mark.startswith("ASYNC") else "")
@@ -381,16 +379,16 @@ A("| Jour | A | B | C |")
 A("|---|---|---|---|")
 A("| **J1** | `D1-L1-01` GitLab + push de ce qui existe (2 h) | `D3-L5-05` load_db.sh (3 h) | revue du doc 04 + prépa L9 (catalogue) |")
 A("| **J2** | `D4-L8-01` routeur (5 h) | `D2-L3-06` puml + render.sh (4 h) | revue MR routeur + stubs vues |")
-A("| **J3** | `D4-L8-02` Database PDO (3 h) | `D3-L6-06/07` + `D3-L7-05` tNN (6 h) | `D4-L12-05` controles.sh (4 h) |")
+A("| **J3** | `D4-L8-02` Database PDO (3 h) | `D3-L6-06/07` + `D3-L7-05` tNN (8 h estimées restantes) | `D4-L12-05` controles.sh (4 h) |")
 A("| **J4** | `D4-L8-03` vues + échappement (4 h) | `D5-L14-06` mesure perf base seule + rapport | revue MR + prépa L9-01 |")
-A("| **J5** | `D4-L8-04` auth/CSRF (6 h, déborde S7 si besoin) | aide sur les stubs CommandeRepository (rôle B dans le plan) | vérifier les preuves de recette ; `D1-L1-07` a déjà été consignée le 13/11 selon l'attestation utilisateur |")
+A("| **J5** | `D4-L8-04` auth/CSRF (6 h, déborde S7 si besoin) | aide sur les stubs CommandeRepository (rôle B du plan) | vérifier les preuves de recette ; synthèse asynchrone D1-L1-07 consignée dans docs/21-synthese-retours-audit.md, sans réunion complète revendiquée |")
 A("")
 A("**Objectif du plan historique : L8 terminé et harnais de tests prêt.** Ce plan n'atteste ni l'exécution des tâches ni des commits et doit être replanifié avant tout usage.")
 A("Dans le scénario historique, L8 devait débloquer la chaîne jusqu'au jalon J6 ; ce calendrier ne doit pas être repris sans replanification.")
 A("")
 A("---")
 A("")
-A("*Todolist MiniShop v1.3 — états autres que D1-L1-01/04/05/07 issus de la photographie du 23/09/2026, non revérifiés ici ; périmètre WBS révisé au 23/10/2026, sans remplacement des tâches de déploiement staging retirées ; D1-L1-01 : envoi attesté par l'utilisateur (boîte d'envoi non vérifiée) ; D1-L1-04 : preuve de l'issue et des cinq livrables ; D1-L1-05 : livrable documentaire uniquement ; D1-L1-07 : réunion du 13/11/2026 attestée, sans prétendre à des vérifications externes. Charge WBS : 355 h (A 117 / B 117 / C 121).*")
+A("*Todolist MiniShop v1.4 — états hérités hors D1-L1-01/04/05/07, D2-L2-01…05 et D2-L3-04/05 de la photographie du 23/09/2026 ; coupure documentaire au 23/10/2026 ; déploiement/staging retirés sans remplacement. D1-L1-01 : envoi du courriel attesté par l’utilisateur (boîte d’envoi non vérifiée) ; D1-L1-04 : issue documentée ; D1-L1-05 : charte/modèles présents, usage réel des MR non prouvé ; D1-L1-07 : synthèse écrite des retours continus, clôture asynchrone sur attestation utilisateur, aucune réunion complète revendiquée ; D2-L2-06 reste ouvert. Les charges A/B/C sont des estimations de rôles, sans correspondance nominative, capacité ni relevé d’heures.*")
 
 OUT_MD.write_text("\n".join(md), encoding="utf-8")
 print(f"OK MD : {OUT_MD} ({len(md)} lignes) — restant {REST} h, fait {FAIT} h, async {len(ASYNC_TASKS)} tâches")

@@ -5,6 +5,8 @@
 **Version** : 1.0 — 23 septembre 2026
 **Base** : MariaDB 11.8, schéma `minishop`, charset `utf8mb4`
 
+> **Archive historique, non-todolist.** Ce document décrit une photographie de conception du 23/09/2026 et ne doit pas être utilisé comme liste actuelle de SQL à écrire ni comme inventaire complet. Les sources `sql/` ont depuis évolué : l’état statique courant compte 9 tables SQL et 18 procédures ; un point d’appel repository est repéré pour chacune. SQL est le pilote applicatif par défaut, JSON reste une option explicite. Cela ne prouve pas l’exécution PDO/MySQL. Voir `docs/01`, `docs/04` et `docs/21` pour l’état actuel.
+
 ---
 
 ## 0. Ce qui est DÉJÀ FAIT (à ne pas réécrire)

@@ -72,10 +72,10 @@ out += [
 "| **Référente** | Thanh-Phuong Nguyen — `thanh-phuong.nguyen@univ-cotedazur.fr` |",
 "| **Barème visé** | 20 points — pénalités couvertes : script SQL manquant (−3), procédure stockée manquante (−1, max −5), déclencheur manquant (−1, max −5), entité MCD manquante (−2), mauvaise cardinalité (−1) |",
 "| **Plan imposé par le sujet** | **A)** Analyse de BD : i) MCD · ii) MLD · iii) Normalisation · iv) Script SQL — **B)** Procédures stockées (≥ 5) + question pédagogique — **C)** Triggers (≥ 5) |",
-"| **Chiffres clés** | 8 tables + 3 vues · 1 fonction + **17 procédures stockées** (min. 5) · **16 déclencheurs** (min. 5) · 29 tests SQL conformes |",
+"| **Chiffres clés** | Inventaire statique : 9 tables SQL (8 entités métier + table technique d’audit du stock), 3 vues · 1 fonction + **18 procédures stockées** (min. 5) · **16 déclencheurs** (min. 5) · 29 scénarios SQL référencés |",
 "| **Documents liés** | `docs/01-cahier-des-charges-MiniShop.md` (spécification) · `docs/02-document-tests-validation.md` · `README.md` |",
 "| **Fichiers SQL liés** | `sql/01…04` (schéma, procédures, déclencheurs, démo) · `tests/sql/` (fixture, manifeste) — liens en fin de document |",
-"| **Version** | 1.1 — 23 septembre 2026 (scripts livrés en fichiers, plus de recopie verbatim) |",
+"| **Version** | 1.2 — 23 octobre 2026 (comptages statiques synchronisés ; aucun nouveau rejeu SQL revendiqué) |",
 "",
 "---",
 "",
@@ -104,7 +104,7 @@ out += [
 "| ii) MLD — transformation en relations | A.2 (8 relations + 3 vues) | — |",
 "| iii) Normalisation — DF, 1FN/2FN/3FN, clés primaires **et** étrangères justifiées, redondances | A.3.1 → A.3.4 (+ preuve exécutable A.3.5) | — |",
 "| iv) Script SQL **avec insertion de données** | A.4 + [`sql/01_minishop_schema.sql`](../sql/01_minishop_schema.sql) (DDL + données) + [`sql/04_minishop_demo.sql`](../sql/04_minishop_demo.sql) (jeu créé par `CALL`) | script SQL manquant −3 |",
-"| B) ≥ 5 procédures stockées (ex. `sp_create_order`, `sp_add_order_item`, `sp_update_order_status`) | B.1 : **17 livrées + 1 fonction** ; correspondance nom à nom avec les exemples du sujet en B.3 | procédure manquante −1 (max −5) |",
+"| B) ≥ 5 procédures stockées (ex. `sp_create_order`, `sp_add_order_item`, `sp_update_order_status`) | B.1 : **18 livrées + 1 fonction** ; correspondance nom à nom avec les exemples du sujet en B.3 | procédure manquante −1 (max −5) |",
 "| Question pédagogique (centralisation, sécurité, transactions, réutilisabilité, contrôle des accès) | B.2 (table aspect par aspect, limites comprises) | — |",
 "| C) ≥ 5 triggers (ex. « Trigger 1 — Stock », « Trigger 2 — Historique » sur `ORDER_STATUS_HISTORY`) | C.1 : **16 livrés** ; couverture explicite des deux triggers imposés en C.2 | déclencheur manquant −1 (max −5) |",
 "",
@@ -186,10 +186,10 @@ def nlines(p): return len(p.read_text(encoding="utf-8").splitlines())
 
 fichiers = [
  ("[`sql/01_minishop_schema.sql`](../sql/01_minishop_schema.sql)",
-  "DDL : 8 tables, 3 vues, index FULLTEXT + jeu de données de référence (4 catégories, 12 produits, 3 clients, 1 admin, hashes `password_hash()`, table `parametre`)",
+  "DDL : 9 tables SQL (8 entités métier et `stock_movement_history`, table technique d’audit du stock), 3 vues, index FULLTEXT + jeu de données de référence (4 catégories, 36 produits, 3 clients, 1 admin, hashes `password_hash()`, table `parametre`)",
   "A.1 · A.2 · A.4 · A.5", nlines(SQLDIR/"01_minishop_schema.sql")),
  ("[`sql/02_minishop_procedures.sql`](../sql/02_minishop_procedures.sql)",
-  "directive `DELIMITER` + 1 fonction (`fn_param`) + 17 procédures stockées",
+  "directive `DELIMITER` + 1 fonction (`fn_param`) + 18 procédures stockées",
   "B.1 · B.2 · B.3", nlines(SQLDIR/"02_minishop_procedures.sql")),
  ("[`sql/03_minishop_triggers.sql`](../sql/03_minishop_triggers.sql)",
   "directive `DELIMITER` + 16 déclencheurs (blocs A stock, B prix/immuabilité, C catégories, D commandes/historique)",
@@ -201,7 +201,7 @@ fichiers = [
   "jeu de données des tests (état de référence mémorisé dans `stock_initial`)",
   "C.3 · doc 02", nlines(ROOT / "tests/sql/fixture.sql")),
  ("[`tests/sql/manifest.txt`](../tests/sql/manifest.txt)",
-  "manifeste des 29 tests SQL (résultat attendu par test)",
+  "manifeste des 29 scénarios SQL (résultat attendu par scénario ; pas une preuve de rejeu)",
   "C.3 · doc 02", nlines(ROOT / "tests/sql/manifest.txt")),
  ("[`tests/perf/mesurer.sh`](../tests/perf/mesurer.sh)",
   "protocole de mesure p95 HTTP (`ENF-01`)",
@@ -243,12 +243,14 @@ annex_lines.append("mysql -u root -p minishop < sql/03_minishop_triggers.sql")
 annex_lines.append("mysql -u root -p minishop < sql/04_minishop_demo.sql")
 annex_lines.append("```")
 annex_lines.append("")
-annex_lines.append("**Validation exécutée (23/09/2026, MariaDB 11.8.6)** — chaîne rejouée de zéro : 8 tables, 3 vues,")
+annex_lines.append("**Validation historique rapportée pour le 23/09/2026 (MariaDB 11.8.6 ; porte sur l’état antérieur des scripts et ne constitue pas un rejeu de la révision du 23/10)** — chaîne décrite comme rejouée de zéro : 8 tables, 3 vues,")
 annex_lines.append("1 fonction, **17 procédures** et **16 déclencheurs** chargés ; les 4 commandes de démonstration retrouvées")
 annex_lines.append("avec leurs montants exacts (324,60 / 0,00 / 405,48 / 63,70 EUR dont 4,90 de port) et les 9 traces")
 annex_lines.append("d'historique ; les gardes RB-01/02/03/05/06/09/11/14/15/18 vérifiés **en SQL direct** (rejets attendus) ;")
 annex_lines.append("rollback intégral du panier confirmé (stock inchangé, aucune commande créée) ; les 4 hashes du seed")
 annex_lines.append("reconnus comme sorties réelles de `password_hash()` (bcrypt) pour les mots de passe de démonstration.")
+annex_lines.append("")
+annex_lines.append("**État statique des sources au 23/10/2026 :** `sql/01` définit 9 tables (8 entités métier et une table technique d’audit du stock), 3 vues, 1 fonction, 18 procédures et 16 triggers. Le scan des repositories relève un point d’appel pour chacune des 18 procédures ; il ne prouve ni chargement de la base, ni exécution PDO/MySQL, ni parcours HTTP complet. Aucun rejeu SQL de cette révision n’est revendiqué ici.")
 annex_lines.append("")
 annex_lines.append("**Corrections v1.1 apportées aux scripts** (blocantes au chargement direct, détectées par ce rejeu) :")
 annex_lines.append("(i) ajout des directives `DELIMITER $$ … DELIMITER ;` dans `sql/02` et `sql/03`, promises par l'en-tête")

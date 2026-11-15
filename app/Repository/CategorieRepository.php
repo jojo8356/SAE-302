@@ -11,8 +11,10 @@ namespace App\Repository;
 
 use App\Model\Data\BusinessError;
 use App\Model\Data\Filter;
+use App\Model\Data\StoredProcedureExecutor;
 use App\Model\Data\StoreInterface;
 use App\Model\Data\Text;
+use UnexpectedValueException;
 
 final class CategorieRepository
 {
@@ -78,6 +80,33 @@ final class CategorieRepository
             $slug = Text::slug($nom);
         }
 
+        if ($this->store instanceof StoredProcedureExecutor) {
+            return $this->store->transactional(function () use ($idCategorie, $nom, $slug, $description): int {
+                if (!$this->store instanceof StoredProcedureExecutor) {
+                    throw new UnexpectedValueException('Le pilote SQL ne fournit pas l’exécution de procédures.');
+                }
+                $resultat = $this->store->callProcedure(
+                    'sp_save_category',
+                    [$idCategorie, $nom, $slug, $description],
+                    ['p_id_resultat', 'p_code_retour'],
+                );
+                $sorties = $resultat['out'] ?? [];
+                $code = $sorties['p_code_retour'] ?? null;
+                if ($code !== 'OK') {
+                    if (is_string($code) && preg_match('/^[A-Z][A-Z0-9_]+$/', $code) === 1) {
+                        throw new BusinessError($code);
+                    }
+                    throw new UnexpectedValueException('Réponse inattendue de sp_save_category.');
+                }
+                $idResultat = $sorties['p_id_resultat'] ?? null;
+                if (!is_numeric($idResultat) || (int) $idResultat < 1) {
+                    throw new UnexpectedValueException('sp_save_category n’a pas retourné un identifiant valide.');
+                }
+
+                return (int) $idResultat;
+            });
+        }
+
         if ($idCategorie !== null && $this->store->find('categorie', $idCategorie) === null) {
             throw new BusinessError('CATEGORIE_INTROUVABLE');
         }
@@ -112,6 +141,17 @@ final class CategorieRepository
      */
     public function deleteCategory(int $idCategorie): void
     {
+        if ($this->store instanceof StoredProcedureExecutor) {
+            $this->store->transactional(function () use ($idCategorie): void {
+                if (!$this->store instanceof StoredProcedureExecutor) {
+                    throw new UnexpectedValueException('Le pilote SQL ne fournit pas l’exécution de procédures.');
+                }
+                $this->store->callProcedure('sp_delete_category', [$idCategorie]);
+            });
+
+            return;
+        }
+
         if ($this->store->find('categorie', $idCategorie) === null) {
             throw new BusinessError('CATEGORIE_INTROUVABLE');
         }

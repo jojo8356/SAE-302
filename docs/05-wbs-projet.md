@@ -1,16 +1,16 @@
-# MiniShop — WBS (Work Breakdown Structure) : divisions, lots et tâches individuelles
+# MiniShop — WBS (Work Breakdown Structure) : divisions, lots et tâches de travail
 
 **Structure de découpage du projet MiniShop selon la méthode WBS/OTP : 4 niveaux (projet → divisions → lots → tâches),
-estimation *bottom-up* de chaque tâche individuelle, plan de charge par personne, Gantt, chemin critique et coûts.**
+estimation *bottom-up* de chaque tâche, répartition indicative par rôle A/B/C, Gantt, chemin critique et coûts.**
 
 | | |
 |---|---|
 | **Projet** | MiniShop — site e-commerce avec back-office (SAE — BUT Informatique / L3, Université Côte d'Azur) |
-| **Équipe** | 3 développeurs : **A** chef de projet & back-office · **B** modèle & base de données · **C** présentation, sécurité & tests |
-| **Effort total** | **355 h planifiées**, sous la capacité nominale de 360 h (3 × 120 h) ; somme des 84 tâches de niveau 4 · calendrier **S1 → S12** |
+| **Rôles de planification** | **A** pilotage/back-office · **B** modèle/base de données · **C** présentation/sécurité/tests ; deux membres sont nommés dans le README, sans correspondance nominative A/B/C |
+| **Effort total** | **355 h estimées** sur les 84 tâches de niveau 4, réparties par rôle de planification · calendrier de référence **S1 → S12** ; aucune capacité ou heure réalisée n'est établie |
 | **Divisions (niveau 2)** | 6 — alignées une à une sur les 5 lignes du barème + la gestion de projet |
 | **Lots (niveau 3)** | 16 (L1→L16, identiques au CDC §13.3, charges réconciliées) |
-| **Tâches (niveau 4)** | **84 tâches individuelles** — chacune est assignable, estimable et vérifiable (règle d'arrêt WBS) |
+| **Tâches (niveau 4)** | **84 tâches** avec rôle de planification, estimation et critère de fin ; l'affectation individuelle reste à confirmer |
 | **Documents liés** | `docs/01-cahier-des-charges-MiniShop.md` (§13.3/§13.4) · `docs/02-document-tests-validation.md` · `docs/03-support-soutenance.md` · `docs/04-conception-bd-et-sql.md` · `README.md` |
 | **Version** | 1.2 — 23 octobre 2026 (révision de périmètre) |
 
@@ -25,10 +25,10 @@ La **Work Breakdown Structure** (structure de découpage de projet, ou organigra
 | **1** | le projet (produit final) | MiniShop : boutique + back-office + dossier de conception et de validation |
 | **2** | les **divisions** = livrables majeurs | 6 divisions D1→D6, une par ligne du barème (+ pilotage) |
 | **3** | les **lots** = sous-livrables | 16 lots L1→L16 (reprend le CDC §13.3) |
-| **4** | les **tâches individuelles** | **84 tâches**, estimées en heures et assignées à A, B ou C |
+| **4** | les tâches de travail | **84 tâches**, estimées en heures et réparties entre les rôles A/B/C, sans affectation nominative |
 
-**Règle d'arrêt** (jusqu'où descendre) : on ne descend pas plus bas que le niveau 4, car chaque tâche y satisfait les trois critères de la méthode —
-1. **assignable** à une ou plusieurs ressources (colonne *Resp.*),
+**Règle d'arrêt** (jusqu'où descendre) : le niveau 4 rend chaque tâche estimable et vérifiable ; l'affectation nominative relève d'une décision d'équipe distincte —
+1. **rattachée** à un ou plusieurs codes de rôle de planification (colonne *Rôle(s)*),
 2. **estimable** en charge (colonne *h*),
 3. **vérifiable** (colonne *Définition de fini* — le livrable de la tâche est observable).
 
@@ -36,10 +36,10 @@ La **Work Breakdown Structure** (structure de découpage de projet, ou organigra
 C'est l'inverse d'une estimation globale « au doigt mouillé » : chaque heure du total projet remonte d'une tâche nommée.
 
 **Identification** : `D<n>-L<lot>-<nn>` (ex. `D3-L6-04`). Chaque tâche devient une **issue GitLab** portant ce titre
-(cf. §10), ce qui relie WBS, barème et trace de contribution individuelle.
+(cf. §10), ce qui relie la WBS au barème ; la trace de contribution réelle reste distincte des rôles A/B/C.
 
 **Note de version** — le livrable GitLab CI (2 h) avait déjà été retiré du périmètre. La présente révision retire aussi, sans remplacement, le déploiement de démonstration et sa validation staging (3 h) ;
-la charge révisée est de 355 h pour 84 tâches, dans une capacité nominale de 360 h. Aucun déploiement réel n'est revendiqué.
+les 355 h sont une estimation de planification pour 84 tâches, sans capacité d'équipe, affectation nominative ou heures réalisées établies. Aucun déploiement réel n'est revendiqué.
 
 ---
 
@@ -47,18 +47,18 @@ la charge révisée est de 355 h pour 84 tâches, dans une capacité nominale de
 
 **MiniShop** : un site e-commerce (catalogue, panier, commandes) + un back-office (produits, catégories, stocks, commandes)
 en **PHP 8 / MySQL (PDO) / MVC 3 couches**, avec procédures stockées et déclencheurs, livré avec son dossier de
-spécification, sa base conçue et normalisée (3FN), son application testée et validée, et une soutenance de 15 minutes.
+spécification, sa base conçue et normalisée (3FN), son application à tester et à valider, et une soutenance de 15 minutes.
 
 > Critère de succès global : **zéro pénalité** sur les 5 lignes du barème (i 20 pts · ii 20 pts · iii 30 pts · iv 10 pts · v 10 pts),
 > ce qui suppose : 3 types de diagrammes UML présents, sécurité traitée (SQLi, mots de passe, XSS, sessions, autorisation),
-> 20 règles métier appliquées **en base**, script SQL rejouable, ≥ 5 procédures, ≥ 5 déclencheurs, MVC réel, README d'installation,
+> 20 identifiants de règles métier décrits (11 classés par convention comme issus du sujet + 9 compléments), script SQL reproductible, ≥ 5 procédures, ≥ 5 déclencheurs, application MVC et README ; ces éléments sont des critères à vérifier, pas un état validé.
 > document de tests et dépôt GitLab avec contribution régulière.
 
 ---
 
 ## 3. Niveau 2 — les 6 divisions du projet
 
-| Div. | Division (livrable majeur) | Point du barème | Resp. | Lots | Charge |
+| Div. | Division (livrable majeur) | Point du barème | Rôles | Lots | Charge estimée |
 |---|---|---|---|---|---:|
 | **D1** | Pilotage, dépôt GitLab & collaboration | barème v — contribution GitLab + README (10 pts, individuel) | A | L1 + L15 | **19 h** |
 | **D2** | Document de spécification du système | barème i — 20 points | A + C | L2 + L3 | **54 h** |
@@ -73,29 +73,29 @@ spécification, sa base conçue et normalisée (3FN), son application testée et
 <!--ARBRE_WBS-->
 
 ```text
-MiniShop — 355 h · 3 développeurs · 12 semaines (S1→S12)
+MiniShop — 355 h estimées · rôles A/B/C · 12 semaines de référence (S1→S12)
 │
-├── D1 Pilotage, dépôt GitLab & collaboration — 19 h · resp. A · [barème v — contribution GitLab + README (10 pts, individuel)]
+├── D1 Pilotage, dépôt GitLab & collaboration — 19 h · rôles A · [barème v — contribution GitLab + README (10 pts, individuel)]
 │   ├── L1 Cadrage, relecture du sujet, grille de conformité, squelette du dépôt, README (14 h · A · S1)
 │   └── L15 README final, arborescence propre, préparation du rendu (5 h · A · S11)
-├── D2 Document de spécification du système — 54 h · resp. A + C · [barème i — 20 points]
+├── D2 Document de spécification du système — 54 h · rôles A + C · [barème i — 20 points]
 │   ├── L2 CDC : présentation, objectifs, acteurs, fonctionnalités (26 h · A + C · S1/S2)
 │   └── L3 Diagrammes UML (cas, classes, séquences) + règles métier formalisées (28 h · B + C · S2/S3)
-├── D3 Conception de la base de données & SQL — 98 h · resp. B · [barème ii — 20 points]
+├── D3 Conception de la base de données & SQL — 98 h · rôles B · [barème ii — 20 points]
 │   ├── L4 MCD → MLD → normalisation, jeu de données (28 h · B (+ relecture A) · S3)
 │   ├── L5 Script SQL complet (DDL, vues, index, seed) (20 h · B · S4)
-│   ├── L6 17 procédures stockées + 1 fonction + tests SQL associés (30 h · B (+ tests A) · S5)
+│   ├── L6 18 procédures stockées + 1 fonction + tests SQL associés (30 h · B (+ tests A) · S5)
 │   └── L7 16 déclencheurs + tests SQL associés (20 h · B (+ tests A) · S5/S6)
-├── D4 Application Web PHP / MySQL / PDO — 146 h · resp. A + C · [barème iii — 30 points (avec D5)]
+├── D4 Application Web PHP / MySQL / PDO — 146 h · rôles A + C · [barème iii — 30 points (avec D5)]
 │   ├── L8 Socle applicatif : front controller, routeur, PDO, Database, vues de base (22 h · A · S6)
 │   ├── L9 Front-office : catalogue, recherche, fiche, inscription, connexion (32 h · C · S7)
 │   ├── L10 Panier + commande (session, PanierController, CommandeController) (28 h · A + C · S8)
 │   ├── L11 Back-office : produits, catégories, stocks, commandes, statuts, indicateurs (30 h · A + C · S9)
 │   ├── L12 Durcissement sécurité (CSRF, échappement, autorisation, en-têtes, journaux) (20 h · C · S9/S10)
 │   └── L13 JavaScript client (panier, filtres, validation live, accessibilité) (14 h · C · S10)
-├── D5 Tests & validation (document de tests) — 24 h · resp. B + A · [barème iii — −3 pts si le document manque]
+├── D5 Tests & validation (document de tests) — 24 h · rôles B + A · [barème iii — −3 pts si le document manque]
 │   └── L14 Tests & validation : harnais, 29 tests SQL, cas fonctionnels, plan de recette, doc (24 h · B + A · S10/S11)
-└── D6 Soutenance (15 min + questions) — 14 h · resp. A + B + C · [barème iv — 10 points]
+└── D6 Soutenance (15 min + questions) — 14 h · rôles A + B + C · [barème iv — 10 points]
     └── L16 Soutenance : support, trame, répétitions chronométrées, questions anticipées (14 h · A + B + C · S12)
 ```
 
@@ -106,14 +106,14 @@ le niveau 4 — le travail lui-même — est détaillé section 5.*
 
 ## 4. Niveau 3 — les 16 lots
 
-| Lot | Contenu | Div. | Resp. | Semaines | Charge |
+| Lot | Contenu | Div. | Rôles | Semaines de référence | Charge estimée |
 |---|---|---|---|---|---:|
 | **L1** | Cadrage, relecture du sujet, grille de conformité, squelette du dépôt, README | D1 | A | S1 | 14 h |
 | **L2** | CDC : présentation, objectifs, acteurs, fonctionnalités | D2 | A + C | S1/S2 | 26 h |
 | **L3** | Diagrammes UML (cas, classes, séquences) + règles métier formalisées | D2 | B + C | S2/S3 | 28 h |
 | **L4** | MCD → MLD → normalisation, jeu de données | D3 | B (+ relecture A) | S3 | 28 h |
 | **L5** | Script SQL complet (DDL, vues, index, seed) | D3 | B | S4 | 20 h |
-| **L6** | 17 procédures stockées + 1 fonction + tests SQL associés | D3 | B (+ tests A) | S5 | 30 h |
+| **L6** | 18 procédures stockées + 1 fonction + tests SQL associés | D3 | B (+ tests A) | S5 | 30 h |
 | **L7** | 16 déclencheurs + tests SQL associés | D3 | B (+ tests A) | S5/S6 | 20 h |
 | **L8** | Socle applicatif : front controller, routeur, PDO, Database, vues de base | D4 | A | S6 | 22 h |
 | **L9** | Front-office : catalogue, recherche, fiche, inscription, connexion | D4 | C | S7 | 32 h |
@@ -128,67 +128,67 @@ le niveau 4 — le travail lui-même — est détaillé section 5.*
 
 ---
 
-## 5. Niveau 4 — les tâches individuelles, division par division
+## 5. Niveau 4 — les tâches de travail, division par division
 
-*Lecture : chaque table liste les tâches du lot, leur responsable (A/B/C), la charge estimée en heures,
+*Lecture : chaque table liste les tâches du lot, leur rôle de planification (A/B/C), la charge estimée en heures,
 la **définition de fini** (livrable observable) et les dépendances (tâches ou lots préalables).
 La ligne de sous-total de chaque lot redonne la charge du lot : la somme **remonte** — rien n'est ajouté au niveau lot qui ne vienne d'une tâche.*
 
-### D1 — Pilotage, dépôt GitLab & collaboration (19 h · resp. A · barème v — contribution GitLab + README (10 pts, individuel))
+### D1 — Pilotage, dépôt GitLab & collaboration (19 h · rôles A · barème v — contribution GitLab + README (10 pts, individuel))
 
 #### Lot L1 — Cadrage, relecture du sujet, grille de conformité, squelette du dépôt, README (14 h · A · S1)
 
-| ID | Tâche individuelle | Resp. | h | Définition de fini | Dépend de |
+| ID | Tâche de travail | Rôle(s) de planification | h estimées | Définition de fini | Dépend de |
 |---|---|---|---:|---|---|
-| `D1-L1-01` | Ouvrir le dépôt privé GitLab, inviter les 3 développeurs et l'enseignante (Reporter), protéger main, désactiver le squash | A | 2 | accès effectifs + courriel « Composition SAE » envoyé | — |
+| `D1-L1-01` | Configurer le dépôt GitLab, partager l'accès requis à l'enseignante et consigner la composition déclarée | A | 2 | dépôt lisible et éléments demandés par le sujet tracés ; aucun choix de visibilité/protection supposé | — |
 | `D1-L1-02` | Squelette du dépôt : arborescence app/ public/ sql/ tests/ docs/ scripts/ + .gitignore | A | 2 | arborescence conforme au CDC §9.2 | 01 |
-| `D1-L1-03` | README v0 : prérequis, installation cible, membres et rôles (RACI) | A | 3 | README visible à la racine, lu par les 3 membres | 02 |
+| `D1-L1-03` | README v0 : prérequis, installation, membres et permissions GitLab, distincts des rôles RACI A/B/C | A | 3 | README présent ; aucune correspondance nominative entre membres et codes de rôle n'est inventée | 02 |
 | `D1-L1-04` | Grille de conformité au barème (CDC §16) suivie dans une issue GitLab | A | 3 | issue créée : 5 livrables + pénalités suivis | 01 |
 | `D1-L1-05` | Charte GitLab : branches, MR croisées, commits conventionnels, 1 issue par UC/EF | A | 2 | charte versionnée dans docs/20 + modèles de MR dans .gitlab/merge_request_templates/ | 01 |
-| `D1-L1-07` | Réunion de vérification de l'audit complet et de validation simple | A | 2 | compte rendu versionné dans docs/21-compte-rendu-reunion-audit-2026-11-13.md | — |
+| `D1-L1-07` | Synthétiser les retours continus sur l’audit en mode asynchrone ; aucune réunion complète n’est requise ni revendiquée | A | 2 | synthèse écrite des choix et limites documentés dans docs/21-synthese-retours-audit.md ; clôture sur attestation utilisateur, sans inventer réunion, participants ou approbation | — |
 | | **Sous-total L1** | | **14** | répartition : A 14 h | |
 
 #### Lot L15 — README final, arborescence propre, préparation du rendu (5 h · A · S11)
 
-| ID | Tâche individuelle | Resp. | h | Définition de fini | Dépend de |
+| ID | Tâche de travail | Rôle(s) de planification | h estimées | Définition de fini | Dépend de |
 |---|---|---|---:|---|---|
 | `D1-L15-02` | README final : installation 5 commandes, comptes, tests, sauvegarde | A | 3 | un tiers installe et lance en ≤ 15 min (ENF-13) | D5-L14-05 |
 | `D1-L15-03` | Nettoyage de l'arborescence + tag v1.0-rendu | A | 2 | shortlog équilibré, tag posé, MR mergées | 02 |
 | | **Sous-total L15** | | **5** | répartition : A 5 h | |
 
 
-### D2 — Document de spécification du système (54 h · resp. A + C · barème i — 20 points)
+### D2 — Document de spécification du système (54 h · rôles A + C · barème i — 20 points)
 
 #### Lot L2 — CDC : présentation, objectifs, acteurs, fonctionnalités (26 h · A + C · S1/S2)
 
-| ID | Tâche individuelle | Resp. | h | Définition de fini | Dépend de |
+| ID | Tâche de travail | Rôle(s) de planification | h estimées | Définition de fini | Dépend de |
 |---|---|---|---:|---|---|
-| `D2-L2-01` | Rédiger §1 Présentation + §2 Objectifs (objectifs techniques mesurables) | A | 4 | sections relues, conformité au sujet pointée | L1 |
-| `D2-L2-02` | Rédiger §3 Acteurs (3 primaires + 2 secondaires) et RACI de l'équipe | A | 3 | tableau RACI 3 personnes validé | 01 |
-| `D2-L2-03` | Rédiger §4 Fonctionnalités : table exigence ↔ UC ↔ écran ↔ test (EF-VIS/CLI/ADM) | C | 6 | couverture des 14 UC vérifiable ligne à ligne | 02 |
-| `D2-L2-04` | Rédiger §7 Contraintes techniques (CT-01…CT-09) | A | 4 | contraintes imposées vs retenues séparées | 01 |
-| `D2-L2-05` | Rédiger §8 Sécurité : SEC-01…SEC-14 + matrice menaces → contre-mesures | C | 6 | les 5 exigences du sujet (SQLi, mots de passe, XSS, sessions, autorisation) couvertes | 01 |
-| `D2-L2-06` | Relecture croisée §1→§8 + pointage des pénalités du barème | A | 3 | grille §16.2 entièrement au vert | 01–05 |
+| `D2-L2-01` | Rédiger §1 Présentation + §2 Objectifs ; dater les affirmations et distinguer cible, état et preuve | A | 4 | dates et niveaux de preuve explicités ; les sources postérieures à la date de revue ne sont pas présentées comme acquises | L1 |
+| `D2-L2-02` | Rédiger §3 Acteurs et RACI par rôles A/B/C, sans affectation nominative non confirmée | A | 3 | composition et permissions GitLab séparées du RACI ; charges décrites comme estimations par rôle | 01 |
+| `D2-L2-03` | Rédiger §4 et la traçabilité exigence/évolution ↔ UC ↔ écran ↔ test ↔ annexe | C | 6 | EF-* et EV-* renvoient aux tests et annexes ; identifiant de test distingué d'une exécution | 02 |
+| `D2-L2-04` | Rédiger §7 en distinguant l'exigence MySQL/PDO du choix actuel : SQL par défaut, JSON explicitement optionnel | A | 4 | CT-02/CT-03 reflètent le pilote SQL par défaut ; les appels statiques ne sont pas présentés comme une validation PDO/MySQL | 01 |
+| `D2-L2-05` | Rédiger §8 : SEC-01…SEC-14, scénarios offensifs S-01…S-10 et contrôles statiques (11 au total, dont S-11/SEC-14) | C | 6 | SEC-14 reliée à S-11 ; les 10 scénarios offensifs sont distincts des 11 contrôles statiques et leurs limites sont précisées | 01 |
+| `D2-L2-06` | Relecture croisée étudiante §1→§8 et pointage documentaire des pénalités | A | 3 | pointage sourcé ; la revue reste ouverte jusqu'à une trace datée d'un auteur et d'un relecteur distincts | 01–05 |
 | | **Sous-total L2** | | **26** | répartition : A 14 h · C 12 h | |
 
 #### Lot L3 — Diagrammes UML (cas, classes, séquences) + règles métier formalisées (28 h · B + C · S2/S3)
 
-| ID | Tâche individuelle | Resp. | h | Définition de fini | Dépend de |
+| ID | Tâche de travail | Rôle(s) de planification | h estimées | Définition de fini | Dépend de |
 |---|---|---|---:|---|---|
 | `D2-L3-01` | Diagrammes de cas d'utilisation : vue globale (3 acteurs, 14 UC) + 2 zooms (commandes, catalogue) | B | 6 | PNG + sources .puml versionnés, rendus par render.sh | L2 |
 | `D2-L3-02` | Descriptions textuelles des 3 UC imposés (UC-07, UC-02, UC-14) + fiches des 11 autres | B | 4 | annexe 17.1 complète (les 14 cas) | 01 |
 | `D2-L3-03` | Diagramme de classes (domaine, contrôle, repositories) + justification des choix et cardinalités | B | 6 | 8 classes du domaine + cardinalités argumentées | 01 |
-| `D2-L3-04` | Formaliser RB-01…RB-20 : énoncé, forme formelle, point d'application, test associé | C | 4 | chaque règle a un point de contrôle et un test | L2 |
-| `D2-L3-05` | 5 diagrammes de séquence (authentification, recherche, catalogue, panier, commande) avec SP/triggers | C | 6 | les 4 séquences imposées + 1 bonus, SP et triggers visibles | 03–04 |
-| `D2-L3-06` | Diagramme d'activité (UC-07) + diagramme d'états de la commande + rendu PNG complet | C | 2 | 8 diagrammes rendus par docs/diagrams/render.sh | 05 |
+| `D2-L3-04` | Formaliser RB-01…RB-20 et distinguer 11 règles du sujet / 9 compléments | C | 4 | 20 identifiants, provenance et tests référencés ; classification du CDC, non validation pédagogique | L2 |
+| `D2-L3-05` | Documenter les 5 séquences présentes (4 cas imposés + 1 bonus catalogue), pas de sixième | C | 6 | cinq sources/rendus concordent ; les appels repository aux procédures sont repérés statiquement, sans preuve d’exécution PDO/MySQL | 03–04 |
+| `D2-L3-06` | Diagramme d'activité, diagramme d'états, architecture et rendus/sources UML | C | 2 | 12 diagrammes UML rendus ; 14 PNG en comptant les rendus MCD/MLD | 05 |
 | | **Sous-total L3** | | **28** | répartition : B 16 h · C 12 h | |
 
 
-### D3 — Conception de la base de données & SQL (98 h · resp. B · barème ii — 20 points)
+### D3 — Conception de la base de données & SQL (98 h · rôles B · barème ii — 20 points)
 
 #### Lot L4 — MCD → MLD → normalisation, jeu de données (28 h · B (+ relecture A) · S3)
 
-| ID | Tâche individuelle | Resp. | h | Définition de fini | Dépend de |
+| ID | Tâche de travail | Rôle(s) de planification | h estimées | Définition de fini | Dépend de |
 |---|---|---|---:|---|---|
 | `D3-L4-01` | Identifier entités et associations ; dessiner le MCD (PlantUML) | B | 6 | 7 entités + table parametre, associations nommées | L3 |
 | `D3-L4-02` | Justifier chaque cardinalité ligne à ligne + consigner les refus de conception | B | 5 | tableau cardinalité/justification/test complet | 01 |
@@ -200,31 +200,31 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme **remon
 
 #### Lot L5 — Script SQL complet (DDL, vues, index, seed) (20 h · B · S4)
 
-| ID | Tâche individuelle | Resp. | h | Définition de fini | Dépend de |
+| ID | Tâche de travail | Rôle(s) de planification | h estimées | Définition de fini | Dépend de |
 |---|---|---|---:|---|---|
-| `D3-L5-01` | DDL : 8 tables, types, CHECK (RB-02/03/05), InnoDB utf8mb4 | B | 6 | sql/01 charge sans erreur sur MySQL 8 et MariaDB 11 | L4 |
+| `D3-L5-01` | DDL : 9 tables SQL (8 entités métier + table technique d’audit du stock), types, CHECK, InnoDB utf8mb4 | B | 6 | schéma vérifié statiquement ; aucun rejeu MySQL/MariaDB de cette révision n’est revendiqué | L4 |
 | `D3-L5-02` | Clés étrangères (CASCADE/RESTRICT au bon endroit) + index (FULLTEXT, filtres) | B | 4 | plans d'exécution justifiant chaque index | 01 |
 | `D3-L5-03` | 3 vues : v_etat_stock, v_catalogue, v_commandes_client | B | 4 | vues créées et comptées par load_db.sh | 01 |
-| `D3-L5-04` | Seed : 4 catégories, 12 produits (1 rupture, 1 masqué), 3 clients (password_hash), 1 admin | B | 3 | jeu de démonstration RB-04/RB-19 jouable | 01 |
+| `D3-L5-04` | Seed : 4 catégories, 36 produits (3 pages de 12), 3 clients (password_hash), 1 admin | B | 3 | comptage aligné sur sql/01 et app/Model/Data/Seed.php ; jeu de démonstration documenté | 01 |
 | `D3-L5-05` | scripts/load_db.sh : chargement 01→04 + comptages de contrôle | B | 3 | sortie « base chargée, procédures ≥ 5, déclencheurs ≥ 5 » | 02–04 |
 | | **Sous-total L5** | | **20** | répartition : B 20 h | |
 
-#### Lot L6 — 17 procédures stockées + 1 fonction + tests SQL associés (30 h · B (+ tests A) · S5)
+#### Lot L6 — 18 procédures stockées + 1 fonction + tests SQL associés (30 h · B (+ tests A) · S5)
 
-| ID | Tâche individuelle | Resp. | h | Définition de fini | Dépend de |
+| ID | Tâche de travail | Rôle(s) de planification | h estimées | Définition de fini | Dépend de |
 |---|---|---|---:|---|---|
 | `D3-L6-01` | fn_param + sp_create_account, sp_get_credentials, sp_update_client | B | 4 | comptes créés/bloqués selon RB-01/RB-12 | L5 |
 | `D3-L6-02` | sp_search_products : filtres, tri liste blanche, pagination, 2 jeux de résultats | B | 4 | T-25 : page bornée, tri jamais injecté | 01 |
 | `D3-L6-03` | sp_save_product, sp_delete_product, sp_save_category, sp_delete_category, sp_adjust_stock | B | 5 | RB-02/03/07/14 appliqués côté base | 01 |
 | `D3-L6-04` | sp_create_order, sp_add_order_line, sp_create_order_from_basket, sp_confirm_order | B | 6 | transaction complète, ROLLBACK si stock manque | 01 |
-| `D3-L6-05` | sp_update_order_status, sp_cancel_order, sp_revenue_report, sp_compute_shipping | B | 3 | matrice RB-11 + port calculé/franchisé (T-28) | 04 |
+| `D3-L6-05` | sp_update_order_status, sp_cancel_order, sp_cancel_order_admin, sp_revenue_report, sp_compute_shipping | B | 3 | matrice RB-11 et annulation admin ; les appels repository des 18 procédures sont repérés statiquement, sans preuve d’exécution PDO/MySQL (T-28) | 04 |
 | `D3-L6-06` | Tests SQL T-01…T-12 (règles compte/produit/ligne) + manifeste du harnais | A | 4 | manifeste : attendu ERREUR:<motif> ou OK par test | 01–03 |
 | `D3-L6-07` | Tests SQL T-25…T-29 (pagination, vues, frais de port) + run_tests.sh | A | 4 | harnais rejouable : rapport généré | 05 |
 | | **Sous-total L6** | | **30** | répartition : A 8 h · B 22 h | |
 
 #### Lot L7 — 16 déclencheurs + tests SQL associés (20 h · B (+ tests A) · S5/S6)
 
-| ID | Tâche individuelle | Resp. | h | Définition de fini | Dépend de |
+| ID | Tâche de travail | Rôle(s) de planification | h estimées | Définition de fini | Dépend de |
 |---|---|---|---:|---|---|
 | `D3-L7-01` | Triggers ligne_commande : TRG-A1/A2/A3 (contrôle, décrément, restitution) + B1/B2 (immuabilité, snapshot) | B | 5 | stock jamais négatif, prix figé (RB-03/06/18) | L5 |
 | `D3-L7-02` | Triggers produit/catégorie : TRG-B3…B6, C1, C2 (TTC, stock, suppressions protégées) | B | 4 | RB-14/16 appliqués, slug généré | 01 |
@@ -234,11 +234,11 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme **remon
 | | **Sous-total L7** | | **20** | répartition : A 4 h · B 16 h | |
 
 
-### D4 — Application Web PHP / MySQL / PDO (146 h · resp. A + C · barème iii — 30 points (avec D5))
+### D4 — Application Web PHP / MySQL / PDO (146 h · rôles A + C · barème iii — 30 points (avec D5))
 
 #### Lot L8 — Socle applicatif : front controller, routeur, PDO, Database, vues de base (22 h · A · S6)
 
-| ID | Tâche individuelle | Resp. | h | Définition de fini | Dépend de |
+| ID | Tâche de travail | Rôle(s) de planification | h estimées | Définition de fini | Dépend de |
 |---|---|---|---:|---|---|
 | `D4-L8-01` | Front controller + routeur (listes blanches de routes et de tri) | A | 5 | une seule porte d'entrée, routes inconnues → 404 | L2–L3 |
 | `D4-L8-02` | app/Config/Database.php : PDO, ERRMODE_EXCEPTION, EMULATE_PREPARES = false | A | 3 | connexion centralisée, aucune requête hors repository | 01 |
@@ -249,7 +249,7 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme **remon
 
 #### Lot L9 — Front-office : catalogue, recherche, fiche, inscription, connexion (32 h · C · S7)
 
-| ID | Tâche individuelle | Resp. | h | Définition de fini | Dépend de |
+| ID | Tâche de travail | Rôle(s) de planification | h estimées | Définition de fini | Dépend de |
 |---|---|---|---:|---|---|
 | `D4-L9-01` | UC-01 Catalogue : v_catalogue + pagination (12 par défaut, borne 60) | C | 6 | filtres conservés dans l'URL (ENF-05) | L8 + L5 |
 | `D4-L9-02` | UC-02 Recherche/filtres : SearchRequest (validation serveur, tri liste blanche) | C | 6 | aucun tri injecté, page bornée (CT/SEC-02) | 01 |
@@ -261,7 +261,7 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme **remon
 
 #### Lot L10 — Panier + commande (session, PanierController, CommandeController) (28 h · A + C · S8)
 
-| ID | Tâche individuelle | Resp. | h | Définition de fini | Dépend de |
+| ID | Tâche de travail | Rôle(s) de planification | h estimées | Définition de fini | Dépend de |
 |---|---|---|---:|---|---|
 | `D4-L10-01` | PanierSession : ajout, quantités, retrait, plafond au stock, total recalculé côté serveur | A | 6 | panier jamais cohérent avec un stock fantôme | L8 |
 | `D4-L10-02` | UC-06 PanierController : contrôles serveur (disponible()) avant tout ajout | A | 5 | 409 STOCK_INSUFFISANT avec reste retourné | 01 |
@@ -273,7 +273,7 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme **remon
 
 #### Lot L11 — Back-office : produits, catégories, stocks, commandes, statuts, indicateurs (30 h · A + C · S9)
 
-| ID | Tâche individuelle | Resp. | h | Définition de fini | Dépend de |
+| ID | Tâche de travail | Rôle(s) de planification | h estimées | Définition de fini | Dépend de |
 |---|---|---|---:|---|---|
 | `D4-L11-01` | AdminController + authentification admin (rôles SUPER/GESTIONNAIRE) | A | 4 | aucune route d'inscription admin (S-08) | L8 |
 | `D4-L11-02` | UC-10 Produits : création/modification/masquage via sp_save_product / sp_delete_product | A | 5 | F-22 : formulaire re-rendu sans perte de saisie | 01 |
@@ -285,18 +285,18 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme **remon
 
 #### Lot L12 — Durcissement sécurité (CSRF, échappement, autorisation, en-têtes, journaux) (20 h · C · S9/S10)
 
-| ID | Tâche individuelle | Resp. | h | Définition de fini | Dépend de |
+| ID | Tâche de travail | Rôle(s) de planification | h estimées | Définition de fini | Dépend de |
 |---|---|---|---:|---|---|
 | `D4-L12-01` | CSRF vérifié sur chaque méthode mutative | C | 4 | S-01/S-02 : POST sans jeton → 419 | L9–L11 |
 | `D4-L12-02` | Autorisation : contrôle d'appartenance, 404 sur id étranger (IDOR) | C | 5 | T-18 : commande.php?id=étranger → 404 | 01 |
 | `D4-L12-03` | Échappement systématique : revue des vues + htmlspecialchars partout | C | 4 | contrôle statique n°2 vert | L9–L11 |
 | `D4-L12-04` | En-têtes durcis, cookie HttpOnly/SameSite, messages d'erreur génériques | C | 3 | SEC-10/12 : aucune fuite d'information | 02 |
-| `D4-L12-05` | tests/security/controles.sh : 10 contrôles statiques au vert en CI | C | 4 | aucune concaténation SQL, session durcie… | 01–04 |
+| `D4-L12-05` | tests/security/controles.sh : 11 contrôles statiques dont S-11/SEC-14 | C | 4 | résultat associé à un run/SHA précis ; un contrôle statique ne certifie ni l'application entière ni LineServ | 01–04 |
 | | **Sous-total L12** | | **20** | répartition : C 20 h | |
 
 #### Lot L13 — JavaScript client (panier, filtres, validation live, accessibilité) (14 h · C · S10)
 
-| ID | Tâche individuelle | Resp. | h | Définition de fini | Dépend de |
+| ID | Tâche de travail | Rôle(s) de planification | h estimées | Définition de fini | Dépend de |
 |---|---|---|---:|---|---|
 | `D4-L13-01` | JS panier : badge, MAJ AJAX, repli fonctionnel sans JS | C | 5 | F-13 : parcours complet JS désactivé | L10 |
 | `D4-L13-02` | Validation live des formulaires + écoute clavier des quantités | C | 4 | la borne serveur reste la seule qui compte | 01 |
@@ -305,14 +305,14 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme **remon
 | | **Sous-total L13** | | **14** | répartition : C 14 h | |
 
 
-### D5 — Tests & validation (document de tests) (24 h · resp. B + A · barème iii — −3 pts si le document manque)
+### D5 — Tests & validation (document de tests) (24 h · rôles B + A · barème iii — −3 pts si le document manque)
 
 #### Lot L14 — Tests & validation : harnais, 29 tests SQL, cas fonctionnels, plan de recette, doc (24 h · B + A · S10/S11)
 
-| ID | Tâche individuelle | Resp. | h | Définition de fini | Dépend de |
+| ID | Tâche de travail | Rôle(s) de planification | h estimées | Définition de fini | Dépend de |
 |---|---|---|---:|---|---|
 | `D5-L14-01` | Doc de tests : dispositif, stratégie, niveaux, environnement | B | 4 | structure §1–§2 du document 02 | L6 |
-| `D5-L14-02` | Rejouer les 29 tests SQL + rapport final versionné | B | 4 | 29/29 conformes, rapport_tests_sql.md à jour | L5–L7 |
+| `D5-L14-02` | Rejouer les 29 scénarios SQL sur une base temporaire isolée et versionner le rapport | B | 4 | rapport lié à un run daté et un SHA ; le fichier versionné porte une date future (27/10/2026) par rapport à la coupure 23/10 et ne prouve aucun rejeu à cette coupure | L5–L7 |
 | `D5-L14-03` | Cas fonctionnels F-01…F-31 : exécution et preuves (captures) | B | 3 | chaque EF-* a au moins un test exécuté | L9–L11 |
 | `D5-L14-04` | Concurrence : reserver.sh (20 demandes / 12 exemplaires → 12 OK, 8 refus) | B | 3 | pas de survente prouvée | L10 |
 | `D5-L14-05` | Matrice de traçabilité exigence → test + PV de recette | A | 5 | traçabilité §9 du document 02 complète | 02–04 |
@@ -320,11 +320,11 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme **remon
 | | **Sous-total L14** | | **24** | répartition : A 10 h · B 14 h | |
 
 
-### D6 — Soutenance (15 min + questions) (14 h · resp. A + B + C · barème iv — 10 points)
+### D6 — Soutenance (15 min + questions) (14 h · rôles A + B + C · barème iv — 10 points)
 
 #### Lot L16 — Soutenance : support, trame, répétitions chronométrées, questions anticipées (14 h · A + B + C · S12)
 
-| ID | Tâche individuelle | Resp. | h | Définition de fini | Dépend de |
+| ID | Tâche de travail | Rôle(s) de planification | h estimées | Définition de fini | Dépend de |
 |---|---|---|---:|---|---|
 | `D6-L16-01` | Support de soutenance : déroulé minute par minute, choix des démos | A | 4 | docs/03 : 15 min couvrant barème et démos | L15 |
 | `D6-L16-02` | Questions anticipées : sécurité, règles métier, choix de conception, réponses courtes | B | 5 | §3 du docs/03 connu par cœur | L14 |
@@ -340,25 +340,23 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme **remon
 
 | Niveau | Détail | Charge |
 |---|---|---:|
-| Tâches (niveau 4) | 84 tâches individuelles estimées | **355 h** |
+| Tâches (niveau 4) | 84 tâches de travail estimées | **355 h** |
 | Lots (niveau 3) | 16 lots (L1→L16), sous-totaux des tâches | 355 h |
 | Divisions (niveau 2) | 6 divisions : D1 19 h · D2 54 h · D3 98 h · D4 146 h · D5 24 h · D6 14 h | 355 h |
-| Projet (niveau 1) | 3 personnes × ~120 h sur 12 semaines | **355 h** |
+| Projet (niveau 1) | somme des estimations par rôle ; capacité et disponibilité non évaluées | **355 h** |
 
-### 6.2 Charge par personne (pas de sur-allocation)
+### 6.2 Estimation par rôle de planification (pas une capacité individuelle)
 
-| Personne | Rôle (RACI CDC §3.3) | Charge | Part | Plafond | Verdict |
-|---|---|---:|---:|---:|---|
-| **A** | chef de projet, back-office, intégration GitHub Actions | 117 h | 33.0% | 122 h | ✅ |
-| **B** | modèle et base de données, tests SQL | 117 h | 33.0% | 122 h | ✅ |
-| **C** | présentation, sécurité, JS, tests | 121 h | 34.1% | 122 h | ✅ |
-| | **Total** | **355 h** | 100 % | 3 × 122 h | équilibré (écart max 4 h) |
+| Code de rôle | Responsabilités prévues dans la WBS | Charge estimée | Part indicative |
+|---|---|---:|---:|
+| **A** | pilotage, intégration et back-office | 117 h | 33.0% |
+| **B** | modèle et base de données | 117 h | 33.0% |
+| **C** | présentation, sécurité et tests | 121 h | 34.1% |
+| | **Total estimé** | **355 h** | 100 % |
 
-Chaque personne porte sa division principale **et** intervient dans les deux autres
-(ex. : A relit le document de conception D3 et exécute des tests SQL ; B rédige des questions de soutenance ;
-C formalise les règles métier et exécute le parcours admin) — condition d'une évaluation individuelle non ambiguë.
+Les codes A/B/C répartissent les estimations entre fonctions de planification ; une même personne peut porter plusieurs rôles. Ils ne décrivent ni les personnes, ni la contribution réelle, ni la disponibilité de l'équipe.
 
-### 6.3 Plan de charge hebdomadaire
+### 6.3 Planification hebdomadaire par rôle
 
 *Les charges des lots pluri-hebdomadaires (L2, L3, L7, L12, L14) sont réparties également sur leurs semaines.
 Valeurs arrondies à l'heure.*
@@ -370,10 +368,8 @@ Valeurs arrondies à l'heure.*
 | **C** | 6 | 12 | 6 | 0 | 0 | 0 | 32 | 14 | 22 | 24 | 0 | 5 | **121** |
 | **Équipe** | **27** | **27** | **42** | **20** | **40** | **32** | **32** | **28** | **40** | **36** | **17** | **14** | **355** |
 
-**Pics assumés et anticipés** : S3 (B ≈ 32 h, lot L4 MCD/MLD), S5 (B ≈ 30 h, procédures), S7 (C = 32 h, front-office), S9 (équipe 40 h, back-office + sécurité).
-Trois parades, revues chaque vendredi (CDC §13.5) : (i) les tâches amont des lots critiques démarrent dès la quinzaine précédente,
-(ii) L13 (14 h) reste ajustable ; L15 (5 h) est réservé au README final, au nettoyage et au tag après la validation L14,
-(iii) au-delà de 15 h/personne/semaine pendant deux semaines consécutives, le chef de projet applique la règle de réduction de périmètre du CDC §13.3 (jamais par suppression d'une pénalité).
+**Pics du scénario de planification par rôle** : S3 (B ≈ 32 h, lot L4 MCD/MLD), S5 (B ≈ 30 h, procédures), S7 (C = 32 h, front-office), S9 (charge agrégée d'environ 40 h). Ces valeurs ne sont ni des horaires individuels ni des disponibilités confirmées.
+Le calendrier et les charges hebdomadaires sont une base de discussion ; les replanifier après confirmation des disponibilités, sans déduire de capacité à partir du nombre de membres.
 
 ---
 
@@ -439,8 +435,7 @@ L1 ── L2 ── L3 ── L4 ── L5 ── L6 ── L7 ── L8 ── 
 | Licences, hébergement, données | tout open source / poste personnel | 0 € |
 | **Budget externe réel** | | **0 €** |
 
-Le suivi réel se fait en **heures** : la table §6.3 est pointée chaque vendredi par A dans le wiki GitLab
-(charge restante par lot), conformément au CDC §13.5.
+Cette WBS propose un suivi des estimations par lot ; aucun relevé d'heures ni pointage hebdomadaire n'est attesté dans ce dépôt.
 
 ---
 
@@ -452,13 +447,11 @@ Le suivi réel se fait en **heures** : la table §6.3 est pointée chaque vendre
 3. **Board** : colonnes *À faire → En cours → En revue (MR) → Fermé* ; une colonne par jalon en vue *Listes de jalons*.
 4. **MR** : une MR par lot minimum, **mergée par un autre développeur que l'auteur** (auto-merge interdit) ;
    les contrôles GitHub Actions doivent être verts sur le commit vérifié ; aucun pipeline GitLab n'est revendiqué.
-5. **Suivi individuel** (barème v) : `git shortlog -sne main` doit montrer 3 auteurs > 20 commits ;
-   la répartition cible par zone (B ≈ 45 % de `sql/`, A ≈ 40 % de `app/Controller/`, C ≈ 45 % de `app/View/` et `public/js/`)
-   est celle du CDC §14.3 ; chacun garde ≥ 5 commits dans les trois zones.
+5. **Contribution GitLab** (barème v) : consulter l'historique du dépôt IUT et le rapprocher de la composition réellement confirmée ; aucun nombre d'auteurs ni contribution individuelle n'est déduit des codes A/B/C.
 
 ---
 
-## 11. Gouvernance : définition de « terminé » et règle de repli
+## 11. Gouvernance : définition de « terminé » et replanification
 
 **Une tâche de niveau 4 est fermée lorsque sa définition de fini est observée** (colonne dédiée au §5) et que les preuves annoncées correspondent réellement au livrable.
 Pour un changement traité par MR, consigner la revue croisée et, lorsqu'applicable, le statut CI du commit ; ces éléments ne sont pas inférés de la seule présence de la charte ou des modèles.
@@ -466,15 +459,7 @@ Le critère documentaire de `D1-L1-05` porte uniquement sur la charte versionné
 La CI automatisée du dépôt est GitHub Actions (`.github/workflows/ci.yml`) ; elle ne constitue pas une preuve de pipeline GitLab IUT.
 La documentation liée (CDC, conception, tests, README) est mise à jour avec le livrable concerné.
 
-**Règle de repli si groupe de 2** (CDC §13.3) — la WBS se réduit ainsi, sans supprimer une exigence pénalisée :
-
-| Retrait | Tâches concernées | Économie |
-|---|---|---:|
-| L13 réduit à la validation live du panier | `D4-L13-02…04` supprimées | −6 h |
-| L8 simplifié (table de routes minimale, pas de routeur maison) | `D4-L8-01` réduite | −3 h |
-| `EF-ADM-09` (indicateurs) et `EF-ADM-10` (comptes admin) non livrés | `D4-L11-04` réduite | −2 h |
-| Procédures réduites à 8, triggers à 8 (en gardant TRG-A1/A2/A3, B2, B5, D1, D4) | `D3-L6-*` et `D3-L7-*` allégées | −25 h |
-| **Total repli** | | **≈ −36 h → 319 h pour 2 personnes (estimation révisée)** |
+**Replanification de l'équipe** — le README nomme deux membres alors que la WBS répartit 355 h entre trois rôles A/B/C. Aucun rôle n'est attribué à une personne sans confirmation. Le nombre de membres ne déclenche aucun retrait automatique d'exigences ; une répartition révisée exige une décision explicite de l'équipe.
 
 ---
 

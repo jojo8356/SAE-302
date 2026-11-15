@@ -1,27 +1,27 @@
 # Audit de conformité — cahier des charges, todolist et preuves
 
-**Révision examinée :** base `b54ab9833eb5e7d5116a21a1f21cb3b7c845eb31` (`main`) et révision documentaire courante. Les exécutions antérieures sont distinguées des décisions et attestations utilisateur ; aucune vérification du dépôt IUT n’a été effectuée.
+**Révision examinée :** date de coupure documentaire retenue pour l’analyse : 23/10/2026. La branche active est `arena/10afc76d-sae-302`, sur un working tree basé sur `e0c554f` avec modifications locales ; les métadonnées Git de ce commit indiquent le 13/11/2026, date postérieure à la coupure. Le checkout n’est donc pas présenté comme un instantané qui aurait existé au 23/10 : cette date sert uniquement à qualifier les mentions et résultats datés des documents. Les contrôles locaux de §2 ont été rejoués le 23/10/2026 sur le working tree présent dans la sandbox ; ils attestent uniquement les commandes et fichiers concernés lors de ce run, pas une CI globale ni un état historique au 23/10. Aucun accès au dépôt IUT ni au clone personnel inaccessible n’a été effectué.
 
-> **Conclusion courte : non, la todolist n’est ni à jour ni suffisamment complète pour affirmer que toutes ses tâches sont achevées à 100 %.** L’application et les livrables sont bien présents, et de nombreuses vérifications automatisées existent. Il reste toutefois des écarts d’implémentation à une exigence explicite du CDC, des tests humains non joués, des mesures et actions externes non prouvées, ainsi que des incohérences de comptage et de dates entre documents.
+> **Conclusion courte : non, la todolist n’est ni à jour ni suffisamment complète pour affirmer que toutes ses tâches sont achevées à 100 %.** SQL/MySQL/PDO est maintenant le pilote par défaut, JSON une option explicite, et le scan statique repère un point d’appel repository pour chacune des 18 procédures. Ce raccordement n’a pas été rejoué sous PDO/MySQL et ne prouve pas un parcours HTTP complet. Les tests humains, mesures de cible et actions externes restent distincts ; les mentions futures ne sont pas des preuves à la coupure. Les heures et statuts de la todolist demeurent une photographie de planification, pas un relevé d’exécution.
 >
-> Ce rapport audite les fichiers versionnés de ce checkout et ne consulte pas directement le dépôt IUT. Les éléments externes rapportés sont distingués selon leur provenance ; ils ne présument pas l’état du clone local de l’utilisateur et ne transforment pas une tâche externe ou humaine en tâche accomplie sans preuve.
+> Ce rapport audite les fichiers versionnés et le working tree de ce checkout, sans consulter directement le dépôt IUT. Les éléments externes rapportés sont distingués selon leur provenance ; ils ne présument pas l’état du clone local de l’utilisateur et ne transforment pas une tâche externe ou humaine en tâche accomplie sans preuve.
 
 ## 1. Périmètre et verdict global
 
-`docs/06-todolist.md` a été régénérée en version 1.3 : les 84 tâches actuelles de la WBS totalisent 355 h planifiées. Après actualisation des attestations/preuves D1-L1-01/04/05/07, le suivi compte 37 tâches terminées, 8 partielles et 39 à faire ; 165 h sont déclarées acquises et 190 h restantes. Pour toutes les autres tâches, les états et métriques MariaDB restent ceux de la photographie historique du 23/09/2026, non rejouée pendant cette révision. La fonctionnalité de déploiement/staging a été retirée sans remplacement ; ce retrait ne signifie pas qu’un déploiement a été effectué.
+`docs/06-todolist.md` et `docs/05-wbs-projet.md` ont été régénérées en version 1.4/1.2 : 84 tâches, 355 h estimées. Après révision de D1-L1-07 pour accepter un suivi asynchrone, les statuts sont 37 terminées, 8 partielles et 39 à faire ; 164 h sont **classées terminées** et 191 h restent estimées. Ces heures découlent des estimations résiduelles, pas d’un relevé de temps réel. D1-L1-07 est clos sur la synthèse des retours continus attestés par l’utilisateur ; aucune réunion complète n’est revendiquée. La relecture croisée de D2-L2-06 reste ouverte. Dans D3, 11/98 h restent estimées, dont les 4 h de référence de D3-L7-05 non créditées comme réalisées ; dans D4, 4/146 h sont classées terminées (le contrôle de sécurité) et 142 h restent. Cela ne signifie ni que l’application est achevée ni que les autres tâches sont rejouées. Le périmètre déploiement/staging est retiré sans tâche de remplacement ; aucun déploiement n’est revendiqué.
 
 | Statut d’audit | Nombre sur 84 | Sens |
 |---|---:|---|
-| `OK` | 3 | Critère de fin explicite satisfait pour le périmètre documentaire ou événement attesté, sans élargir la portée de la preuve. |
-| `OK*` | 54 | Livrable présent ou confirmation humaine fournie, avec preuve repérée dans le dépôt/la CI ou par l’utilisateur. **Ce n’est pas une certification absolue** ; le périmètre des preuves CI et les éléments déclaratifs sont explicités ci-dessous. |
-| `PARTIEL` | 17 | Une partie existe, mais un critère, une intégration, une preuve ou une cohérence reste à résoudre. |
-| `ÉCART` | 6 | Écart explicite entre la tâche/contrainte du CDC et l’application présente. |
-| `[!]` | 4 | Tâche humaine, externe, mesure cible ou état impossible à vérifier depuis ce checkout. |
-| **Total** | **84** | Les tâches `PARTIEL`, `ÉCART` et `[!]` restent inachevées ; les réserves des `OK*` sont précisées dans les constats. |
+| `OK` | 3 | Critère de fin documentaire attesté selon la définition révisée de la WBS, sans élargir la portée de la preuve. |
+| `OK*` | 61 | Livrable documentaire ou contrôle ciblé présent ; les limites et attestations déclaratives sont précisées ci-dessous. **Ce n’est pas une certification absolue ni une validation pédagogique.** |
+| `PARTIEL` | 16 | Le code ou le livrable est présent, mais l’exécution PDO/MySQL, un critère, une preuve ou une validation humaine reste à établir. |
+| `ÉCART` | 0 | Aucun écart statique de raccordement de procédure n’est retenu après le scan repository ; les validations d’exécution restent ouvertes. |
+| `[!]` | 4 | Tâche humaine, externe ou mesure cible impossible à vérifier depuis ce checkout. |
+| **Total** | **84** | Les tâches `PARTIEL`, `ÉCART` et `[!]` restent ouvertes ; les réserves des `OK*` sont précisées dans les constats. |
 
-Ces statuts évaluent les **84 tâches de la WBS courante**, pas tout le travail ultérieur. Les ajouts ultérieurs (langue/fuseau, informations légales, contact, conservation, etc.) ne figurent pas correctement dans cette WBS et doivent eux aussi être rattachés à des exigences ou à une liste d’évolutions.
+Ces statuts évaluent les **84 tâches de la WBS de référence**, pas toutes les évolutions postérieures. Les ajouts (langue/fuseau, informations légales, contact, conservation, etc.) sont reliés dans le CDC aux `EV-*` et aux scénarios `F-*`, mais leur absence de la WBS ne prouve ni leur exécution ni leur validation.
 
-**Datation des preuves :** plusieurs sources du dépôt portent le 28/10/2026 ; les runs CI cités sont horodatés des 12 et 13/11/2026. Ces dates sont retranscrites depuis leurs métadonnées. Elles ne permettent pas, à elles seules, de fixer une date de coupure pour l’audit ni de réconcilier les divergences de branches relevées ci-dessous.
+**Datation des contenus et des contrôles :** la coupure documentaire retenue est le 23/10/2026 ; le commit de base porte une date Git du 13/11/2026, postérieure à cette coupure, et ne peut donc être présenté comme un instantané historique du 23/10. Des fichiers versionnés portent aussi des dates postérieures à la coupure (rapport SQL du 27/10, archives/to-do du 28/10 et références CI des 12–13/11). Ces métadonnées ne prouvent aucun événement ni résultat acquis au 23/10. Les contrôles locaux de §2 ont été rejoués le 23/10/2026 sur le working tree consulté et n’établissent pas l’état d’un autre SHA. Les métriques de résultat sans run/SHA — notamment les tableaux de la stratégie de tests — sont traitées comme contenu d’archive, pas comme preuve courante.
 
 ## 2. Vérifications effectuées et limites
 
@@ -33,27 +33,30 @@ Le relevé terminal communiqué montre `origin` configuré sur `https://iut-git.
 
 Le PDF officiel joint a été lu pour vérifier les exigences pédagogiques concernées. À la **page 8**, il demande d’envoyer par courriel la composition du groupe à `thanh-phuong.nguyen@univ-cotedazur.fr` avec l’objet `Composition SAE`, puis de communiquer l’adresse GitLab et de partager l’accès avec l’enseignante. Il demande aussi de livrer un script SQL de génération de la base (absence pénalisée de 3 points) et un document de tests/validation ; la page 9 rappelle la pénalité pour l’absence de ce document et demande une contribution régulière sur GitLab ainsi qu’un README d’installation. **Le sujet ne demande ni base de test distincte ni nom/suffixe particulier tel que `*_test`.** Le CDC a donc été épuré de toute base séparée pour la CI GitHub ; il indique le plan de réaliser les essais pré-démo sur l’instance LineServer puis de la réinitialiser avant la démonstration. Les détails techniques des campagnes automatisées restent dans le document de tests/validation, et ne constituent pas une exigence pédagogique. Le PDF ne demande pas de dépôt privé, ne mentionne pas de branche `main` protégée, de blocage du push direct, de squash ou de suppression automatique de branche source. La mention « pages privées » à la page 5 concerne les pages de l’application, pas la visibilité du dépôt. Le privé et les règles de branche figurant dans la WBS/annexe GitLab sont donc des choix ajoutés par les documents de projet, pas des exigences vérifiées du sujet officiel.
 
-### Vérifications rejouées dans cette sandbox
+### Contrôles locaux du working tree — rejoués le 23/10/2026
 
-- `bash tests/security/controles.sh` : **10/10** contrôles statiques réussis.
-- `node scripts/wasm_verdict.mjs` : **9/9** cas du calcul de verdict réussis.
-- `node --check` : **41** fichiers JavaScript/ES modules sans erreur de syntaxe.
-- `bash -n` : **13** scripts shell sans erreur de syntaxe.
-- Suite Python complète rejouée après correction de l’inventaire : **43 tests**, dont **22 réussis** et **21 sautés** faute de PHP natif ou de ses extensions POSIX. Le comptage inclut désormais la suite structurelle et le nouvel audit.
-- `python3 scripts/verifier_fiches_uc.py` : **46 contrôles documentaires** réussis ; 14 UC, 164 scénarios, 36 couples de transitions, 200 entrées de suivi.
-- `docs/13-suivi-recette-uc.csv` : **200 lignes**, toutes au statut `NON JOUÉ`, aucun identifiant dupliqué.
+- `python3 scripts/verifier_fiches_uc.py` : **46 contrôles documentaires** réussis ; 14 UC, 164 scénarios, 36 couples de transitions.
+- `docs/13-suivi-recette-uc.csv` : **200 entrées `NON JOUÉ`** ; aucune campagne manuelle n’est déclarée.
+- `node scripts/wasm_verdict.mjs` : **9/9** cas de verdict réussis.
+- `node scripts/run-all-tests.mjs --sans-sql --sans-e2e` : terminé avec le code **0** via PHP-WASM 8.2. Toutes les suites activées hors SQL/E2E sont vertes, dont T-01…T-29 sur JSON (**29/29**), `unit_tests.php` (**297/297 vérifications**), PHPUnit local (**57 tests**) et `strict_types_lint.php` (**167 fichiers, 0 violation**). Cette commande a explicitement sauté l’intégration SQL et l’E2E ; l’analyse de compilation avec PHP CLI natif reste NON JOUÉE.
+- `python3 -m unittest discover -s tests/python -v` : **42 tests**, 22 réussis et 20 ignorés faute de PHP CLI natif ou d’extensions POSIX. Aucun test natif n’est réputé passé par les tests ignorés.
+- `bash -n tests/security/controles.sh && bash tests/security/controles.sh` : **11/11 contrôles statiques** réussis ; ce n’est ni un test offensif ni une recette applicative.
+- `node --check` : **41** fichiers JavaScript/ES modules sans erreur de syntaxe ; `bash -n` : **13** scripts Shell sans erreur ; `py_compile` : 3 outils Python compilés sans erreur.
+- `.tools/build_wbs.py` et `.tools/build_todolist.py` compilés et rejoués avec Markdown 3.11.3 issu de `requirements-docs.txt` : WBS/todolist Markdown et HTML générés ; 84 tâches, 355 h estimées, 37/8/39 statuts, 164 h classées terminées et 191 h restantes. A/B/C sont des rôles de planification, pas des personnes.
+- `bash scripts/build-docs.sh` a produit **91 rendus** HTML/PDF/DOCX/diaporama sans erreur après mise à jour des sources, dont `docs/02`, `docs/05`, `docs/06`, `docs/11`, `docs/14` et `docs/19`. Les HTML `artefacts/README.html` et `artefacts/01`…`06` sont régénérés ; les sorties versionnées correspondantes sont dans `livrables/`.
+- `git diff --check` a été exécuté après les corrections documentaires et n’a signalé aucun problème d’espacement. Le run restreint PHP-WASM a réussi ; aucune suite SQL/E2E, validation native ou CI globale n’est revendiquée.
 
-### Exécution complète impossible localement
+### Limites de l’exécution locale
 
-Dans cette sandbox, `php`, `composer`, `mysql`, `mariadb`, `node_modules/` et `vendor/` sont absents. Je n’ai donc pas prétendu rejouer les suites PHP, PHPUnit, l’E2E PHP-WASM, les tests navigateur ou SQL localement et je n’ai installé aucune dépendance.
+Dans cette sandbox, `php`, `composer`, `mysql` et `mariadb` sont absents. Les suites PHP non SQL ont été exécutées via PHP-WASM après installation des dépendances Node ; l’analyse de compilation PHP native est NON JOUÉE. L’intégration SQL et l’E2E HTTP ont été explicitement sautés (`--sans-sql --sans-e2e`) : aucune base temporaire n’a été créée et aucun parcours HTTP SQL n’est établi. `node_modules/` et `vendor/` ne sont pas des livrables versionnés.
 
-GitHub Actions fournit un enregistrement **15/15 jobs réussis** pour le SHA de base audité, incluant MySQL 8, MariaDB 11.8, PHP, PHPUnit, sécurité, E2E et Chromium : [run 43200590421](https://github.com/jojo8356/SAE-302/actions/runs/43200590421) (horodatage API : **12/11/2026** ; commit également horodaté du 12/11).
+### CI et contenus futurs
 
-Après l’ajout de ce rapport, la CI a échoué dans les deux jobs « suites isolées » PHP 8.2 et 8.5, les **13 autres jobs ayant réussi** : [run 43394472738](https://github.com/jojo8356/SAE-302/actions/runs/43394472738) (horodatage API : **13/11/2026**). J’ai reproduit localement un échec de `tests/python/test_audit_structurel.py` : le rapport nouvellement versionné manquait dans `docs/17-inventaire-projet.csv`. Après ajout à l’inventaire et mise à jour de son résumé, la suite Python complète repasse localement (43 tests, 21 ignorés). Le run de suivi sur le SHA corrigé `dc527d34b8962572ae64f58578967cc081c14a0c` est ensuite vert **15/15 jobs** : [run 43395560490](https://github.com/jojo8356/SAE-302/actions/runs/43395560490). Le journal détaillé du run en échec n’est pas accessible depuis cette sandbox (réponse EOF du service de logs) ; je ne peux donc pas confirmer que le défaut reproduit explique à lui seul les deux jobs initiaux.
+Aucun résultat CI global pour le working tree courant n’est revendiqué. Les références à des exécutions datées des 12–13/11/2026 présentes dans des rapports versionnés sont postérieures à la coupure et ne sont pas utilisées ici comme preuve. De même, `tests/sql/rapport_tests_sql.md` porte une mention de 29/29 datée du 27/10/2026 ; à la date de cette revue, cette mention future ne prouve pas un rejeu. La validation SQL du 23/09 relatée par `docs/04` demeure historique et n’a pas été rejouée dans cette révision.
 
 ### Résultat humain / cible réelle
 
-Les 200 scénarios des fiches de recette restent au statut `NON JOUÉ` dans le CSV. La campagne responsive multi-largeurs **n’est pas** à réintroduire dans les fiches manuelles : selon la décision projet, elle relève des tests automatisés, où des contrôles Chromium sont prévus. Les essais sur hébergement réel, mesures de performance cible, restauration chronométrée, validation pédagogique et répétitions de soutenance ne sont pas démontrés ici.
+Les 200 scénarios du registre de recette restent `NON JOUÉ`. La campagne responsive multi-largeurs relève des tests automatisés prévus, pas des fiches manuelles. Aucun test manuel LineServ, déploiement, restauration de base, mesure de performance cible, relecture croisée étudiante, approbation, validation pédagogique ou répétition de soutenance n’est attesté.
 
 ## 3. Revue tâche par tâche — les 84 identifiants de `docs/06-todolist.md`
 
@@ -68,7 +71,7 @@ Les 200 scénarios des fiches de recette restent au statut `NON JOUÉ` dans le C
 | `D1-L1-03` | `OK*` | Le README présente les deux membres nommés et les permissions GitLab indiquées (`Owner` pour Johan Polsinelli, `Developer` pour Chahd Gouiaa), séparément des lettres A/B/C du RACI. Aucune correspondance nominative A/B/C n’est affirmée. L’enseignante NGUYEN Thanh-Phuong (`Reporter`) est indiquée séparément. Le livrable est présent ; sa lecture effective par chaque membre n’est pas vérifiable depuis le dépôt. |
 | `D1-L1-04` | `OK` | La capture utilisateur montre l’issue GitLab `s302#2` créée avec les cinq livrables du barème et les pénalités §16.2 ; cela satisfait la définition de fin explicite de la WBS (« issue créée : 5 livrables + pénalités suivis »). L’épinglage n’est pas confirmé par la capture et n’est pas revendiqué ; ce `OK` porte sur ce critère de fin. |
 | `D1-L1-05` | `OK` | La charte versionnée `docs/20-charte-gitlab-revues-croisees.md` et les modèles MR livrent le critère documentaire demandé. Ce `OK` valide uniquement la documentation ; aucune utilisation réelle de MR ni revue croisée n’est prouvée. |
-| `D1-L1-07` | `OK` | L’utilisateur atteste la réunion de vérification de l’audit et de validation simple du 13/11/2026 ; le compte rendu `docs/21-compte-rendu-reunion-audit-2026-11-13.md` consigne les choix communiqués. Aucun participant ou validation individuelle n’est inventé ; l’événement n’a pas été vérifié indépendamment. |
+| `D1-L1-07` | `OK` | Critère de fin révisé avec l’utilisateur : consigner les retours continus en mode asynchrone plutôt que prétendre à une réunion complète. `docs/21-synthese-retours-audit.md` rassemble les choix documentés ; l’utilisateur atteste que des feedbacks continus ont eu lieu. Ce `OK` clôt la synthèse écrite, sans affirmer qu’une réunion, une approbation collective ou une validation pédagogique s’est tenue. |
 | `D1-L15-02` | `OK*` | README final présent ; `scripts/build-docs.sh` et l’aide des comptes de démonstration existent. La composition et les permissions GitLab sont indiquées séparément du RACI ; aucune correspondance nominative A/B/C n’est inventée. |
 | `D1-L15-03` | `[!]` | Aucun tag n’est présent dans les références de ce checkout ; nettoyage et tag final sur le dépôt IUT non vérifiables sans accès/demande explicite. |
 
@@ -76,17 +79,17 @@ Les 200 scénarios des fiches de recette restent au statut `NON JOUÉ` dans le C
 
 | ID | État audité | Constat et preuve |
 |---|---|---|
-| `D2-L2-01` | `PARTIEL` | §1–§2 existent, mais les dates et les affirmations d’état ne sont pas réconciliées entre les documents (voir §5). |
-| `D2-L2-02` | `PARTIEL` | Le README et la capture GitLab identifient les deux étudiants (Johan Polsinelli et Chahd Gouiaa), avec leurs permissions séparées du RACI. La todolist conserve des lettres A/B de planification, sans correspondance nominative établie. Le CDC/WBS initial conserve un RACI à trois personnes et des charges/plans contradictoires : réconcilier ces documents avant d’attribuer les lettres. |
-| `D2-L2-03` | `PARTIEL` | Matrice fonctionnelle présente, mais le CDC, les annexes de tests et les nouvelles fonctionnalités ne forment pas encore une trace unique et sans contradictions. |
-| `D2-L2-04` | `PARTIEL` | Contraintes écrites, mais le CDC présente MySQL/PDO comme contrainte alors que le README et `StorageDriver` indiquent JSON par défaut et SQL optionnel / en migration. |
-| `D2-L2-05` | `PARTIEL` | Mesures de sécurité détaillées, mais la numérotation SEC et les preuves ne sont pas alignées partout ; SEC-14 est notamment cité sans fiche de contrôle dédiée. |
-| `D2-L2-06` | `PARTIEL` | La relecture croisée et le pointage des pénalités ne disposent pas d’une preuve de revue ; des contradictions documentaires demeurent. |
+| `D2-L2-01` | `OK*` | §1–§2 distinguent la coupure documentaire du 23/10/2026, les contrôles locaux rejoués ce jour-là et la date Git du commit de base (13/11, postérieure). Le checkout n’est pas présenté comme un instantané historique au 23/10 ; les mentions futures et les métriques sans SHA restent hors preuve. |
+| `D2-L2-02` | `OK*` | Le CDC/WBS décrivent les codes A/B/C comme rôles de planification non nominatifs ; R/A/C/I du RACI et permissions GitLab sont séparés. Les 355 h (A 117, B 117, C 121) sont des estimations par rôle, sans correspondance avec les deux membres nommés ni capacité ou temps réel attribués. |
+| `D2-L2-03` | `OK*` | CDC §4.1 relie EF/EV aux UC, écrans, règles et identifiants F/T/S ; chaque UC renvoie à l’annexe 17.1, les scénarios à `docs/02` et les fiches/registre à `docs/13`. La matrice `docs/02` §9 récapitule ces liens. La traçabilité documentaire ne vaut pas exécution ; 200 entrées restent `NON JOUÉ`. |
+| `D2-L2-04` | `OK*` | Le CDC distingue la cible contractuelle PHP/MySQL/PDO de l’état du checkout : SQL est le pilote par défaut et JSON reste une option explicite. Le scan statique relève un point d’appel repository pour les 18 procédures, sans prétendre à une validation d’exécution PDO/MySQL. |
+| `D2-L2-05` | `OK*` | SEC-14 possède une fiche et est reliée au contrôle statique ciblé S-11 ; les 10 scénarios offensifs S-01…S-10 sont distingués des 11 contrôles statiques. Le rejeu local 11/11 du 23/10 est limité à ce script et ne prouve ni test offensif ni sécurité générale. |
+| `D2-L2-06` | `PARTIEL` | Le pointage documentaire des pénalités est présent dans §16.2 ; aucune relecture croisée entre étudiants distincts n’est attestée. La tâche reste ouverte jusqu’à une trace datée d’auteur et relecteur distincts. |
 | `D2-L3-01` | `OK*` | Les trois vues de diagrammes de cas d’utilisation sont présentes sous `docs/diagrams/`. |
 | `D2-L3-02` | `OK*` | Les 14 UC et descriptions sont documentés ; le vérificateur documentaire passe 46 contrôles. Cela valide la structure des fiches, pas leur exécution manuelle. |
 | `D2-L3-03` | `OK*` | Diagramme de classes et justifications documentés et rendus. |
-| `D2-L3-04` | `PARTIEL` | RB-01…RB-20 sont écrites, mais les nombres de règles complémentaires annoncés dans le CDC ne concordent pas avec les identifiants listés. |
-| `D2-L3-05` | `PARTIEL` | Cinq séquences sont présentes. C’est supérieur au minimum sujet de quatre et au nombre demandé dans cette tâche, mais le CDC prétend ailleurs en livrer six (annulation et back-office inclus) : il faut corriger la déclaration ou ajouter les diagrammes manquants. |
+| `D2-L3-04` | `OK*` | Le CDC compte 20 identifiants : RB-01…RB-11 classées par convention comme venant du sujet et RB-12…RB-20 comme neuf compléments. Le PDF source n’est pas versionné dans le checkout ; la classification est explicite, sans prétendre à une validation pédagogique. |
+| `D2-L3-05` | `OK*` | Cinq séquences sont listées et rendues : quatre prévues pour les cas imposés et une bonus catalogue/fiche. Les activités/états sont des types distincts ; aucune sixième séquence n’est annoncée. Elles restent des conceptions, pas une preuve d’intégration SQL. |
 | `D2-L3-06` | `OK*` | Sources `.puml` et `docs/diagrams/render.sh` présents ; le job PlantUML existe dans la CI. |
 
 ### D3 — Conception de données et SQL
@@ -108,7 +111,7 @@ Les 200 scénarios des fiches de recette restent au statut `NON JOUÉ` dans le C
 | `D3-L6-02` | `OK*` | `sp_search_products` présent ; recherche et tests de catalogue présents. |
 | `D3-L6-03` | `OK*` | Procédures produit, catégorie et stock présentes dans le SQL livré. |
 | `D3-L6-04` | `OK*` | Procédures de commande présentes dans le SQL livré. Réserve d’intégration applicative en D4. |
-| `D3-L6-05` | `OK*` | Procédures de statut, annulation, rapport et frais de port présentes. |
+| `D3-L6-05` | `OK*` | Procédures de statut, annulation client et administrateur (`sp_cancel_order_admin`), rapport et frais de port présentes ; le nombre actuel est de 18 procédures. |
 | `D3-L6-06` | `OK*` | Fichiers SQL `T-01`…`T-12` présents. |
 | `D3-L6-07` | `OK*` | Harnais et tests SQL `T-25`…`T-29` présents. |
 | `D3-L7-01` | `OK*` | Triggers de ligne de commande présents et associés aux scénarios SQL. |
@@ -129,26 +132,26 @@ Les 200 scénarios des fiches de recette restent au statut `NON JOUÉ` dans le C
 | `D4-L9-01` | `OK*` | Catalogue, pagination et tests correspondants présents. |
 | `D4-L9-02` | `OK*` | Recherche/filtres/tri avec validation serveur et tests présents. |
 | `D4-L9-03` | `OK*` | Fiche produit, visibilité et contrôles de stock présents. |
-| `D4-L9-04` | `ÉCART` | Le contrôleur/repository crée un compte via le magasin générique ; aucun appel applicatif à `sp_create_account` n’est trouvé. |
-| `D4-L9-05` | `ÉCART` | La connexion lit le magasin via le repository ; aucun appel applicatif à `sp_get_credentials` n’est trouvé. |
-| `D4-L9-06` | `PARTIEL` | Parcours et tests automatisés présents, mais le parcours complet n’est pas consigné comme recette humaine ; la configuration par défaut est JSON, pas la chaîne SQL imposée par le CDC. |
+| `D4-L9-04` | `PARTIEL` | `ClientRepository` délègue à `ClientAccountGateway` ; la stratégie SQL appelle `sp_create_account` via `StoredProcedureExecutor`. SQL est le défaut ; le test d’intégration SQL et l’appel PDO réel restent à rejouer dans cet environnement. |
+| `D4-L9-05` | `PARTIEL` | La stratégie SQL appelle `sp_get_credentials` ; `password_verify()` reste en PHP. SQL est le défaut, mais l’appel PDO réel et le parcours ne sont pas validés par exécution ici. |
+| `D4-L9-06` | `PARTIEL` | Parcours et tests automatisés présents, mais aucune recette humaine complète n’est consignée et le parcours HTTP SQL n’a pas été rejoué. Les tests configurés en JSON restent une voie de test isolée, pas le pilote applicatif par défaut. |
 | `D4-L10-01` | `OK*` | Panier de session, calculs serveur et tests présents. |
 | `D4-L10-02` | `OK*` | Contrôles serveur de disponibilité avant ajout présents et testés. |
 | `D4-L10-03` | `OK*` | Vues panier/récapitulatif/badge présents et couverts par les tests UI/HTTP. |
-| `D4-L10-04` | `ÉCART` | Le parcours applicatif de création de commande ne passe pas par `sp_create_order_from_basket` ; le repository réalise les opérations via le magasin. |
-| `D4-L10-05` | `PARTIEL` | Écrans et tests existent, mais le chemin applicatif SQL/procédure exigé n’est pas démontré de bout en bout. |
-| `D4-L10-06` | `PARTIEL` | Historique/annulation et tests existent, mais les routes de l’application ne démontrent pas l’appel à la procédure SQL prévue ; les scénarios humains restent non joués. |
+| `D4-L10-04` | `PARTIEL` | `CommandeRepository` appelle statiquement `sp_create_order_from_basket` sur le pilote SQL. L’appel n’a pas été rejoué sous PDO/MySQL et aucun parcours HTTP SQL complet n’est revendiqué. |
+| `D4-L10-05` | `PARTIEL` | Écrans, tests et appels repository aux procédures de commande sont présents statiquement ; le chemin PDO/MySQL n’est pas démontré de bout en bout. |
+| `D4-L10-06` | `PARTIEL` | Historique/annulation et appels repository aux procédures client/admin sont présents ; les scénarios humains restent non joués et l’exécution PDO/MySQL n’est pas validée. |
 | `D4-L11-01` | `OK*` | Authentification et rôles administratifs présents, avec contrôles d’accès. |
-| `D4-L11-02` | `ÉCART` | Les opérations produit de l’application passent par le repository/store ; aucun appel applicatif à `sp_save_product`/`sp_delete_product` n’est trouvé. |
-| `D4-L11-03` | `ÉCART` | Les opérations catégorie/stock de l’application passent par le repository/store ; appels à `sp_save_category`/`sp_adjust_stock` non trouvés. |
-| `D4-L11-04` | `ÉCART` | Les changements de commande utilisent le magasin/repository ; appel applicatif à `sp_update_order_status` non trouvé. |
+| `D4-L11-02` | `PARTIEL` | `ProduitRepository` contient des appels statiques aux procédures d’enregistrement et de suppression ; leur exécution PDO/MySQL n’a pas été validée. |
+| `D4-L11-03` | `PARTIEL` | `CategorieRepository` et `ProduitRepository` appellent statiquement les procédures catégorie/stock ; leur exécution PDO/MySQL reste à vérifier. |
+| `D4-L11-04` | `PARTIEL` | `CommandeRepository` contient l’appel statique à `sp_update_order_status` ; l’exécution SQL et le parcours HTTP restent à valider. |
 | `D4-L11-05` | `OK*` | Vues back-office et tests de tableaux/formulaires présents. |
 | `D4-L11-06` | `PARTIEL` | Parcours admin automatisé et interfaces présents ; aucune preuve de démonstration/recette humaine complète n’est inscrite au suivi. |
 | `D4-L12-01` | `OK*` | Vérification CSRF sur les mutations, testée par les contrôles sécurité et tests HTTP. |
 | `D4-L12-02` | `OK*` | Contrôle d’appartenance/IDOR présent et testé. |
 | `D4-L12-03` | `OK*` | Échappement des vues contrôlé par le scanner statique et les tests. |
 | `D4-L12-04` | `OK*` | En-têtes, cookies et erreurs génériques sont contrôlés par les tests disponibles. |
-| `D4-L12-05` | `OK*` | `tests/security/controles.sh` existe et ses **10/10** contrôles viennent d’être rejoués avec succès localement. La todolist le laissait encore à faire. |
+| `D4-L12-05` | `OK*` | `tests/security/controles.sh` contient **11 contrôles statiques** ; 11/11 ont été rejoués localement le 23/10, dont S-11/SEC-14. Le périmètre reste celui des sources inspectées par le script. |
 | `D4-L13-01` | `OK*` | JavaScript panier/AJAX présent, avec tests DOM/HTTP annoncés. |
 | `D4-L13-02` | `OK*` | Validation côté client présente ; la validation serveur demeure la source d’autorité. |
 | `D4-L13-03` | `OK*` | Labels, annonces et comportements clavier/focus couverts par les contrats disponibles. |
@@ -158,8 +161,8 @@ Les 200 scénarios des fiches de recette restent au statut `NON JOUÉ` dans le C
 
 | ID | État audité | Constat et preuve |
 |---|---|---|
-| `D5-L14-01` | `PARTIEL` | Docs de stratégie et de recette présents, mais des affirmations de complétude/date et de nombres doivent être réconciliées. |
-| `D5-L14-02` | `OK*` | 29 scénarios SQL existent ; le run CI du SHA de base inclut les jobs MySQL/MariaDB verts (§2). |
+| `D5-L14-01` | `OK*` | `docs/02` distingue stratégie, scénarios, rapports historiques, preuve locale de sécurité et recette humaine ; le CSV reste explicitement `NON JOUÉ`. |
+| `D5-L14-02` | `PARTIEL` | Classement d’audit documentaire : les 29 scénarios et leur harnais sont présents, mais aucun rejeu SQL de cette révision n’a été possible. Dans `docs/06-todolist.md`, la tâche reste explicitement `⬜` avec 4 h estimées à faire ; le rapport du 27/10 et les références CI de novembre sont postérieurs à la coupure et ne prouvent pas un rejeu. |
 | `D5-L14-03` | `PARTIEL` | Couverture automatisée élargie au-delà de F-01…F-31 ; cependant les 200 scénarios manuels restent `NON JOUÉ`, donc « exécution + preuves » n’est pas intégralement achevé. |
 | `D5-L14-04` | `PARTIEL` | `tests/charge/reserver.sh` existe et le stress JSON est couvert ; l’essai HTTP/SQL 20 demandes sur 12 unités reste à exécuter sur une base isolée/cible. |
 | `D5-L14-05` | `PARTIEL` | Matrice de traçabilité présente ; PV non signé et campagne manuelle non renseignée. |
@@ -173,29 +176,27 @@ Les 200 scénarios des fiches de recette restent au statut `NON JOUÉ` dans le C
 | `D6-L16-02` | `OK*` | Trame et questions/réponses présentes dans `docs/03-support-soutenance.md`. |
 | `D6-L16-03` | `[!]` | Les deux répétitions chronométrées avec la démo réelle ne sont pas attestées. |
 
-## 4. Écart majeur entre le CDC et la réalisation
+## 4. Intégration SQL et limites de validation
 
-Le point bloquant le plus important n’est pas l’absence des procédures SQL : elles sont dans `sql/02_minishop_procedures.sql`. C’est **leur non-raccordement à l’application** :
+L’état actuel n’est plus celui de l’audit initial : SQL/MySQL/PDO est le pilote par défaut et JSON reste une option explicite (`STORAGE_DRIVER=json`). Les sources SQL définissent 18 procédures ; le scan statique des repositories repère un point d’appel pour chacune, dont `sp_cancel_order_admin`. Les capacités SQL spécialisées restent séparées par interfaces, notamment pour l’exécution de procédures et les résultats multiples.
 
-1. `app/Model/Data/StorageDriver.php` déclare `JSON` comme `DEFAULT` et décrit SQL comme cible de migration ; le README confirme JSON par défaut et SQL optionnel.
-2. Une recherche des appels applicatifs `callProcedure()`, `appeler()` et `CALL sp_…` ne trouve que les méthodes définies dans `SqlStore` et des appels du générateur de volumétrie ; aucun appel de procédure par les repositories applicatifs n’est présent.
-3. `tests/php/sql_integration.php` valide des procédures/triggers et certaines intégrations `SqlStore`, mais le parcours HTTP/E2E principal est initialisé sur un magasin JSON. Cela **ne prouve pas** l’application complète en mode PDO/MySQL exécutant les procédures demandées.
+Ce constat est **statique**. Aucun rejeu PDO/MySQL de cette révision ni parcours HTTP complet sur SQL n’est revendiqué. Les tests SQL sont configurés sur des bases temporaires, distinctes d’une cible manuelle ; l’absence de client MySQL/MariaDB dans cette sandbox empêche le rejeu local. Les tests JSON restent explicitement isolés et ne démontrent pas l’exécution SQL.
 
-Cela contredit notamment les critères du CDC CT-02/CT-03 et les tâches D4-L9-04/05, D4-L10-04 et D4-L11-02/03/04, ainsi que les affirmations de §16.2 selon lesquelles les procédures sont effectivement appelées par l’application. Il faut soit raccorder réellement ces procédures et ajouter une recette applicative SQL de bout en bout, soit faire valider une modification formelle du CDC. Les seuls tests SQL de la base ne suffisent pas pour cocher ces tâches à 100 %.
+En conséquence, D4-L9-04/05, D4-L10-04/05/06 et D4-L11-02/03/04 sont classées `PARTIEL` : les appels repository sont repérés, mais leur exécution réelle et la validation de bout en bout restent à établir. Aucun écart statique de raccordement n’est retenu à ce scan ; les tests SQL directs seuls ne suffisent pas à prouver le parcours HTTP.
 
-## 5. Incohérences à corriger dans le CDC et la todolist
+## 5. Constats réconciliés au 23/10/2026
 
-1. **Comptage des tâches — recalé :** `docs/06` compte 84 identifiants après suppression du périmètre de déploiement/staging, sans tâche de remplacement ; les statuts détaillés comptent 37 terminées, 8 partielles et 39 à faire (84 au total).
-2. **Heures — réconciliées pour le suivi révisé :** 355 h planifiées = 165 h acquises + 190 h restantes (46,5 % faites). La ventilation par personne et division est générée depuis les mêmes tâches ; les anciennes valeurs 169/191 et 162/198 ne sont plus reprises comme état courant.
-3. **Progression D4 périmée :** `docs/06` affiche encore 0/146 h et 0 %, malgré l’application complète présente. `scripts/load_db.sh`, `tests/security/controles.sh` et le diaporama existent également alors que leurs lignes sont encore « à faire »/« partiel ».
-4. **Équipe :** la WBS et le CDC conservent un modèle de charge A/B/C à trois personnes, tandis que d’autres documents décrivent une équipe de deux. La présente révision ne déduit pas de correspondance entre A/B/C, permissions GitLab et identités ; une rebaselining d’équipe distincte reste nécessaire.
-5. **Exigences non fonctionnelles :** §4.2 et l’annexe 17.3 du CDC annoncent `ENF-01…ENF-16`, alors que `docs/annexes/annexe-enf.md` contient `ENF-01…ENF-22`.
-6. **Sécurité :** `SEC-14` est cité dans §8.9, mais n’a pas de fiche dédiée dans la séquence §8.1–§8.7 ni de test identifié dans la stratégie de tests. Clarifier si cet identifiant est une exigence, puis lui attribuer un contrôle.
-7. **Règles métier :** §6.1 annonce 8 règles complémentaires, puis l’encadré en annonce 9 ; `RB-09` et `RB-12…RB-20` représentent dix identifiants. Le partage « imposées / ajoutées » doit être recalculé.
-8. **Séquences UML :** cinq PNG/sources de séquence sont présents, mais le pointage §1.7 affirme six diagrammes rendus. Le minimum de quatre est satisfait ; c’est le compte annoncé et les deux diagrammes bonus qui sont à mettre en cohérence.
-9. **Dates/branche :** le CDC §16.4, `docs/10-todo-corrections.md` et `docs/17-audit-global-projet.md` portent des références au 28/10/2026 ; `docs/10` nomme aussi une autre branche (`arena/6e1d3706-sae-302`). Les exécutions CI consultées sont horodatées des 12 et 13/11/2026. Ces dates sont retranscrites comme métadonnées et ne servent pas à imposer une coupure chronologique non justifiée ; leur provenance et leur correspondance avec les branches restent à réconcilier.
-10. **Inventaire global (actualisé) :** le CSV `docs/17-inventaire-projet.csv` recense 532 chemins versionnés après retrait de la fonctionnalité de déploiement/staging et de ses artefacts associés ; le contrôle structurel vérifie l’inventaire sans doublon.
-11. **Source officielle hors dépôt :** `sujetSAE.pdf` n’est toujours pas suivi dans le checkout, mais la pièce jointe fournie par l’utilisateur a permis de vérifier le point GitLab (p. 8–9). Elle demande l’accès GitLab partagé et le courriel de composition, sans exiger la visibilité privée ni la protection de `main` ; garder cette source jointe au dossier de rendu si le pointage doit être reproductible.
+1. **Tâches et périmètre :** 84 tâches de niveau 4 ; le déploiement/staging est retiré sans remplacement. Après clôture de D1-L1-07 comme synthèse asynchrone sur attestation utilisateur, le suivi généré compte 37 terminées, 8 partielles et 39 à faire.
+2. **Heures :** 355 h estimées = 164 h classées terminées + 191 h restantes. Ventilation des estimations par rôle A/B/C : 117/117/121 h ; heures classées terminées : 36/100/28 ; restantes : 81/17/93. Ce sont des calculs de statut/estimations résiduelles, pas des heures réellement travaillées.
+3. **D3/D4 :** les 11/98 h restantes en D3 et 142/146 h en D4 sont des estimations historiques de la todolist, pas un relevé du code ou du temps réalisé. D3-L7-05 n’est pas créditée sur la base du rapport futur du 27/10. Le pilote actuel est SQL ; les appels repository aux 18 procédures sont repérés statiquement, mais les tâches de validation PDO/MySQL et de recette restent ouvertes.
+4. **Équipe et RACI :** le README nomme deux membres ; le CDC/WBS garde des rôles de planification A/B/C et des valeurs R/A/C/I du RACI explicitement distincts. Aucune lettre n’est attribuée nominativement et aucune capacité individuelle n’est déduite.
+5. **Identifiants de contraintes :** le CDC et l’annexe listent ENF-01…ENF-22 ; les contraintes techniques sont CT-01…CT-12.
+6. **Sécurité :** SEC-14 est décrit et relié au contrôle statique ciblé S-11. Les 10 scénarios offensifs S-01…S-10 sont distincts des 11 contrôles statiques ; seul le script statique a été rejoué ici.
+7. **Règles métier :** 20 identifiants, RB-01…RB-11 classées par le CDC comme issues du sujet et RB-12…RB-20 comme 9 compléments. Le PDF pédagogique n’est pas versionné dans le checkout ; le pointage ne prétend pas remplacer une vérification pédagogique.
+8. **Séquences UML :** cinq sources/rendus, soit quatre séquences prévues comme imposées et une bonus ; les diagrammes d’activité et d’état ne sont pas des séquences. Aucune sixième n’est revendiquée.
+9. **Dates et branches :** la coupure documentaire retenue est le 23/10/2026 ; le commit de base `e0c554f` porte une date Git du 13/11/2026 et le checkout n’est donc pas présenté comme un snapshot disponible au 23/10. Les références au rapport du 27/10, aux archives du 28/10 et aux runs de novembre sont exclues des preuves à cette coupure. Les contrôles locaux listés en §2 ont été rejoués le 23/10 sur le working tree consulté. `docs/10` contient un ancien nom de branche, distinct de la branche active `arena/10afc76d-sae-302`.
+10. **Inventaire :** le CSV comprend 542 chemins suivis dans l’index courant ; les contrôles structurels réussis vérifient sa synchronisation et l’absence de doublons. Cela ne constitue pas une revue du contenu de chaque fichier. Le compte historique 532 du rapport daté du 28/10 correspond à un autre état et reste exclu des preuves à la coupure du 23/10.
+11. **Source officielle :** le PDF du sujet, fourni par l’utilisateur mais non versionné dans le dépôt, demande le courriel de composition et le partage de l’URL GitLab ; la visibilité privée et la protection de `main` ne sont pas présentées comme des exigences du sujet.
 
 ## 6. Éléments de travail absents de la todolist d’origine
 
@@ -212,11 +213,11 @@ Ces éléments peuvent être **déjà livrés** dans le code et les tests : leur
 
 ## 7. Prochaines actions recommandées
 
-1. Traiter en priorité l’écart **JSON / PDO / procédures stockées** et décider si le CDC reste contractuel sur l’exécution MySQL par l’application.
-2. `docs/06-todolist.md` a été régénérée avec 84 tâches et les totaux cohérents ; conserver ses mesures SQL datées comme historiques, et tracer séparément les évolutions post-WBS encore absentes.
-3. Les nombres WBS/todolist, la date du compte rendu et les références CI ont été révisés ici ; les autres identifiants, dates et preuves listés au §5 restent à vérifier avant toute nouvelle clôture.
-4. Garder `[!]` pour les 200 scénarios manuels tant que l’équipe ne les a pas exécutés ; ne pas marquer « recette 100 % » sur la seule base de la CI.
-5. Planifier sur environnement isolé les tests de performance, la charge SQL et l’installation/restauration ; les scénarios manuels LineServ restent distincts et non joués.
-6. Faire attester séparément les tâches GitLab restantes, la validation pédagogique et les répétitions de soutenance. L’utilisateur confirme l’envoi du courriel de composition ; le dépôt IUT n’a pas été interrogé dans cet audit.
+1. Rejouer les tests d’intégration SQL sur une base temporaire dédiée, puis valider le parcours HTTP SQL ; le scan actuel repère un appel repository pour chacune des 18 procédures, mais ne prouve pas l’exécution PDO/MySQL. Conserver les tests JSON comme voie explicitement isolée, sans les confondre avec le pilote applicatif SQL par défaut.
+2. Garder les heures WBS comme estimations de planification ; revalider les états historiques et la disponibilité avant d’utiliser le graphe ou le planning S6.
+3. Ne pas compter le rapport SQL daté du 27/10 ni les références CI de novembre comme preuves à la coupure du 23/10 ; les revalider uniquement après les dates portées, avec run, SHA et sorties vérifiables.
+4. Laisser les 200 scénarios manuels `NON JOUÉ` tant que des testeurs ne les ont pas exécutés ; aucune validation LineServ, déploiement ou restauration n’est à ajouter rétrospectivement.
+5. Laisser `D2-L2-06` ouvert jusqu’à une trace de relecture croisée entre étudiants distincts ; le pointage de l’assistant dans le CDC n’est pas cette relecture.
+6. Faire attester séparément les tâches GitLab restantes, la validation pédagogique et les répétitions de soutenance. Le courriel de composition est une attestation utilisateur non vérifiée dans la boîte d’envoi ; le dépôt IUT n’a pas été consulté ici.
 
-**L’audit initial n’a pas modifié le code applicatif.** Cette mise à jour de périmètre retire le diagnostic et le script de mise en ligne, supprime la tâche de déploiement/staging sans remplacement, puis régénère les documents concernés. Aucun déploiement, test manuel LineServ ni restauration de base n’est revendiqué ; les autres statuts historiques ne sont pas reclassés et aucune vérification non effectuée n’est revendiquée.
+**Portée de cette révision :** SQL/MySQL/PDO est le pilote par défaut et JSON reste une option explicite. Le scan statique repère des appels repository pour les 18 procédures ; cela n’atteste ni l’exécution PDO/MySQL ni un parcours HTTP complet. Les tâches de parcours restent partielles jusqu’à un rejeu sur base temporaire et une validation de bout en bout. D1-L1-07 demeure clos pour la synthèse écrite des retours asynchrones, sur attestation utilisateur ; aucune réunion complète n’est revendiquée. Aucun déploiement, test manuel LineServ, restauration de base, relecture étudiante ou validation pédagogique n’est revendiqué ; le rejeu PDO/MySQL n’a pas été effectué dans cette révision.

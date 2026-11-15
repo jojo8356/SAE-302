@@ -36,6 +36,9 @@ chdir($racine);
 // Le drapeau bloque la provision applicative (DbProvision::contexteDeTest()).
 // Attention : la suite SQL explicite peut créer et supprimer minishop_test.
 putenv('MINISHOP_TESTS=1');
+// Les suites fonctionnelles utilisent un store JSON isolé ; l'intégration SQL
+// construit ses SqlStore directement sur la base jetable qu'elle provisionne.
+putenv('STORAGE_DRIVER=json');
 
 const SUITES = [
     ['Linter strict types', 'scripts/strict_types_lint.php'],

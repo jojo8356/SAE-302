@@ -2,14 +2,14 @@
 # =====================================================================
 # MiniShop — lancement local en une commande.
 #
-#   ./run.sh                 # http://localhost:8000 (pilote lu dans .env)
+#   ./run.sh                 # http://localhost:8000 (SQL par défaut ; pilote lu dans .env)
 #   ./run.sh --check         # diagnostic complet, ne démarre rien
-#   ./run.sh --db            # crée la base MySQL locale puis bascule .env sur sql
+#   ./run.sh --db            # installe la base MySQL locale (cible dédiée uniquement)
 #                            # (crée aussi un compte applicatif via sudo si « root »
 #                            #  n'accepte pas le TCP : greffon unix_socket de Debian)
-#   ./run.sh --db-reset      # idem en supprimant la base existante (--yes)
+#   ./run.sh --db-reset      # réinstalle la base existante (--yes requis, DESTRUCTIF)
 #   ./run.sh --db-check      # diagnostic de la base MySQL seulement
-#   ./run.sh --reset         # réinstalle le jeu de démonstration JSON
+#   ./run.sh --reset         # réinstalle les données si STORAGE_DRIVER=json
 #   ./run.sh --no-seed       # ne touche pas aux données
 #   PORT=8080 ./run.sh       # autre port (prioritaire sur .env)
 #
@@ -93,7 +93,7 @@ fi
 CONFIG="$(php -r '
     require "app/bootstrap.php";
     $config = \App\Config\Database::config();
-    echo (string) ($config["storage_driver"] ?? "json"), "\n";
+    echo \App\Config\Database::driver(), "\n";
     echo (string) ($config["db_host"] ?? "127.0.0.1"), "\n";
     echo (string) ($config["db_port"] ?? "3306"), "\n";
     echo (string) ($config["db_name"] ?? "minishop"), "\n";
@@ -117,7 +117,7 @@ PORT_CONFIG="$(ligne_config 6)"
 HOST_CONFIG="$(ligne_config 7)"
 SOURCES="$(ligne_config 8)"
 
-PILOTE="${PILOTE:-json}"
+PILOTE="${PILOTE:-sql}"
 DB_HOTE="${DB_HOTE:-127.0.0.1}"
 DB_PORT="${DB_PORT:-3306}"
 DB_NOM="${DB_NOM:-minishop}"
@@ -262,15 +262,20 @@ case "$ACTION" in
 esac
 
 # --- 5. données ------------------------------------------------------------
+if [ "$ACTION" = "reset" ] && [ "$PILOTE" = "sql" ]; then
+    rouge "✘ --reset réinstalle uniquement le jeu JSON ; le pilote SQL est actif."
+    echo "  Pour réinitialiser SQL, utilisez ./run.sh --db-reset --yes sur une base dédiée."
+    exit 2
+fi
+
+BASE_SQL_PRETE=1
 if [ "$PILOTE" = "sql" ]; then
     if php scripts/db_init.php --check >/dev/null 2>&1; then
         echo "   données    : MySQL ($DB_NOM @ $DB_HOTE:$DB_PORT)"
     else
+        BASE_SQL_PRETE=0
         jaune "→ base MySQL absente ou incomplète."
         echo "  création : ./run.sh --db"
-        if [ "$ACTION" = "diagnostic" ]; then
-            php scripts/db_init.php --check
-        fi
     fi
 else
     if [ "$ACTION" = "reset" ]; then
@@ -288,7 +293,9 @@ fi
 if [ "$ACTION" = "diagnostic" ]; then
     echo
     if [ "$PILOTE" = "sql" ]; then
-        php scripts/db_init.php --check || true
+        if ! php scripts/db_init.php --check; then
+            exit 1
+        fi
         echo
     fi
     if ! command -v npm >/dev/null 2>&1; then
@@ -296,11 +303,16 @@ if [ "$ACTION" = "diagnostic" ]; then
     fi
     vert "✓ environnement prêt — lancez : ./run.sh"
     echo "  ouvrir   : http://localhost:$PORT/  ·  /catalogue  ·  /admin/connexion"
-    echo "  comptes  : alice@example.com / Demo2026!   ·   admin@minishop.fr / Admin2026!"
     if [ "$CREATION_ENV" -eq 1 ]; then
-        echo "  .env créé : relisez-le si vous passez sur MySQL (DB_USER / DB_PASSWORD)."
+        echo "  .env créé : vérifiez les accès MySQL (DB_USER / DB_PASSWORD / DB_SOCKET)."
     fi
     exit 0
+fi
+
+if [ "$PILOTE" = "sql" ] && [ "$BASE_SQL_PRETE" -ne 1 ]; then
+    rouge "✘ la base SQL n’est pas prête ; le serveur applicatif ne sera pas lancé."
+    echo "  Vérifiez les accès dans .env, puis initialisez une base locale dédiée avec ./run.sh --db."
+    exit 1
 fi
 
 # --- 7. serveur ------------------------------------------------------------
@@ -309,7 +321,6 @@ vert "✓ serveur : http://localhost:$PORT/"
 echo "   front    : http://localhost:$PORT/"
 echo "   catalogue: http://localhost:$PORT/catalogue"
 echo "   admin    : http://localhost:$PORT/admin/connexion"
-echo "   comptes  : alice@example.com / Demo2026!   ·   admin@minishop.fr / Admin2026!"
 echo "   arrêt    : Ctrl+C"
 echo
 

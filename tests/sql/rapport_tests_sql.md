@@ -1,8 +1,10 @@
 # Rapport de la campagne de tests SQL — MiniShop
 
-*PV de recette côté base — généré par le harnais `tests/sql/` (source de vérité : `tests/sql/manifest.txt`).*
+*Rapport versionné associé au harnais `tests/sql/` (manifeste : `tests/sql/manifest.txt`).*
 
-> **Rejeu du 27/10/2026 sur cette révision — 29/29 conformes.** La campagne lancée par
+> **Avertissement de datation — coupure documentaire 23/10/2026 :** ce fichier porte une mention de rejeu datée du 27/10/2026, date future à la coupure. Le texte ci-dessous ne peut donc pas être considéré comme preuve d’un événement ou résultat acquis au 23/10 ; sa date, sa révision et ses sorties doivent être confirmées après la date portée par le fichier.
+>
+> **Mention portée par l’artefact, non vérifiée à la coupure : rejeu du 27/10/2026 sur cette révision — 29/29 conformes.** La campagne lancée par
 > `php tests/php/sql_integration.php` (base `minishop_test`, MariaDB 11.8.6, Debian 13) a d'abord
 > donné **22/29** : sept scénarios dépendaient d'un état qu'ils ne créaient pas eux-mêmes
 > (commandes de démonstration renumérotées, brouillon vide supprimé par la fixture, hash de
@@ -16,7 +18,7 @@
 | | |
 |---|---|
 | **SGBD** | MariaDB 11.8.6 (Debian) — cible : MySQL 8.0.16+ ou MariaDB 10.6+ |
-| **Date de la campagne** | 23/09/2026 (campagne initiale) · **27/10/2026 (rejeu sur cette révision : 29/29)** |
+| **Dates mentionnées dans le rapport** | 23/09/2026 (campagne historique) · 27/10/2026 (mention future à la coupure 23/10 ; résultat non vérifié) |
 | **Jeu de données** | `sql/01` (référence) + `sql/04` (commandes créées par `CALL`) + `tests/sql/fixture.sql` (état déterministe) |
 
 ## 1. Chargement et inventaire (chaîne rejouée de zéro)

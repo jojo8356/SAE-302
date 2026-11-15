@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<meta name="description" content="SAÉ 302 — MiniShop : Annexe 17.4/17.5/17.6 — Scripts SQL livrés (générés depuis les fichiers du dépôt)#">
-<title>Annexe 17.4/17.5/17.6 — Scripts SQL livrés (générés depuis les fichiers du dépôt)# — MiniShop</title>
+<meta name="description" content="SAÉ 302 — MiniShop : Annexe 17.4/17.5/17.6 — Extraits explicatifs des scripts SQL#">
+<title>Annexe 17.4/17.5/17.6 — Extraits explicatifs des scripts SQL# — MiniShop</title>
 <style>
 :root {
   --encre: #0f172a;
@@ -104,14 +104,16 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </ul>
 </div>
 </nav>
-<h1 id="annexe-174175176-scripts-sql-livres-generes-depuis-les-fichiers-du-depot">Annexe 17.4/17.5/17.6 — Scripts SQL livrés (générés depuis les fichiers du dépôt)<a class="headerlink" href="#annexe-174175176-scripts-sql-livres-generes-depuis-les-fichiers-du-depot" title="Permanent link">#</a></h1>
-<p>Fichiers sources : <code>sql/01_minishop_schema.sql</code> (DDL + données), <code>sql/02_minishop_procedures.sql</code>
-(17 procédures + 1 fonction), <code>sql/03_minishop_triggers.sql</code> (16 déclencheurs), <code>sql/04_minishop_demo.sql</code>
-(commandes de démonstration créées <strong>par les procédures</strong>, donc avec triggers actifs), <code>tests/perf/mesurer.sh</code>
-(protocole de mesure <code>ENF-01</code>) et <code>scripts/gen_volumes.sh</code> (jeu de mesure de volumétrie).</p>
-<p>(A→F : scripts SQL, fixture et manifeste de tests ; G→H : mesures de performance et volumétrie ;
-I : fichiers hors dépôt.)
-Les extraits ci-dessous reprennent la structure des scripts pour l’explication pédagogique. Les identifiants, hashes et coordonnées des comptes de démonstration sont expurgés ; les marqueurs rendent les lignes concernées non exécutables. Le dépôt reste la source de vérité, mais cette annexe n’est pas un export restaurable.</p>
+<h1 id="annexe-174175176-extraits-explicatifs-des-scripts-sql">Annexe 17.4/17.5/17.6 — Extraits explicatifs des scripts SQL<a class="headerlink" href="#annexe-174175176-extraits-explicatifs-des-scripts-sql" title="Permanent link">#</a></h1>
+<p>Sources canoniques : <code>sql/01_minishop_schema.sql</code> (DDL + données), <code>sql/02_minishop_procedures.sql</code>
+(<strong>18 procédures + 1 fonction</strong> dans l’état statique du 23/10/2026), <code>sql/03_minishop_triggers.sql</code>
+(16 déclencheurs), <code>sql/04_minishop_demo.sql</code> (commandes de démonstration créées <strong>par les procédures</strong>),
+<code>tests/perf/mesurer.sh</code> (protocole <code>ENF-01</code>) et <code>scripts/gen_volumes.sh</code> (jeu de mesure de volumétrie).</p>
+<p>(A→F : exemples SQL, fixture et manifeste de tests ; G→H : mesures de performance et volumétrie ;
+I : fichiers hors dépôt.)</p>
+<blockquote>
+<p><strong>Limite importante :</strong> les blocs ci-dessous proviennent d’une photographie antérieure des scripts ; ils sont expurgés, abrégés, non exhaustifs et non exécutables. Certains comptages internes (notamment 8 tables et 17 procédures) décrivent cet extrait historique, pas les sources actuelles. Pour l’état courant, consulter <code>docs/04-conception-bd-et-sql.md</code> et exécuter/relire uniquement les fichiers canoniques de <code>sql/</code>. Les identifiants, hashes et coordonnées de démonstration sont expurgés ; l’annexe n’est pas un export restaurable.</p>
+</blockquote>
 <h2 id="a-script-de-creation-et-de-peuplement-sql01_minishop_schemasql">A. Script de création et de peuplement — <code>sql/01_minishop_schema.sql</code><a class="headerlink" href="#a-script-de-creation-et-de-peuplement-sql01_minishop_schemasql" title="Permanent link">#</a></h2>
 <p><em>(Extrait abrégé et expurgé des valeurs de comptes et de coordonnées ; non exécutable.)</em></p>
 <pre><code class="language-sql">-- =====================================================================
