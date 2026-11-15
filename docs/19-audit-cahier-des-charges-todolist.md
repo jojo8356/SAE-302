@@ -131,8 +131,8 @@ Les 200 scénarios du registre de recette restent `NON JOUÉ`. La campagne respo
 | `D4-L9-01` | `OK*` | Catalogue, pagination et tests correspondants présents. |
 | `D4-L9-02` | `OK*` | Recherche/filtres/tri avec validation serveur et tests présents. |
 | `D4-L9-03` | `OK*` | Fiche produit, visibilité et contrôles de stock présents. |
-| `D4-L9-04` | `ÉCART` | Le contrôleur/repository crée un compte via le magasin générique ; aucun appel applicatif à `sp_create_account` n’est trouvé. |
-| `D4-L9-05` | `ÉCART` | La connexion lit le magasin via le repository ; aucun appel applicatif à `sp_get_credentials` n’est trouvé. |
+| `D4-L9-04` | `PARTIEL` | `ClientRepository` délègue à `ClientAccountGateway` ; la stratégie SQL appelle `sp_create_account` via `StoredProcedureExecutor`. Le pilote par défaut reste JSON ; le test SQL d’intégration a été ajouté mais n’a pas été joué ici (client `mariadb`/`mysql` absent). |
+| `D4-L9-05` | `PARTIEL` | La stratégie SQL appelle `sp_get_credentials` ; `password_verify()` reste en PHP. Le pilote par défaut reste JSON et l’appel PDO réel n’a pas été vérifié dans cet environnement. |
 | `D4-L9-06` | `PARTIEL` | Parcours et tests automatisés présents, mais le parcours complet n’est pas consigné comme recette humaine ; la configuration par défaut est JSON, pas la chaîne SQL imposée par le CDC. |
 | `D4-L10-01` | `OK*` | Panier de session, calculs serveur et tests présents. |
 | `D4-L10-02` | `OK*` | Contrôles serveur de disponibilité avant ajout présents et testés. |
@@ -179,11 +179,11 @@ Les 200 scénarios du registre de recette restent `NON JOUÉ`. La campagne respo
 
 Le point bloquant le plus important n’est pas l’absence des procédures SQL : elles sont dans `sql/02_minishop_procedures.sql`. C’est **leur non-raccordement à l’application** :
 
-1. `app/Model/Data/StorageDriver.php` déclare `JSON` comme `DEFAULT` et décrit SQL comme cible de migration ; le README confirme JSON par défaut et SQL optionnel.
-2. Une recherche des appels applicatifs `callProcedure()`, `appeler()` et `CALL sp_…` ne trouve que les méthodes définies dans `SqlStore` et des appels du générateur de volumétrie ; aucun appel de procédure par les repositories applicatifs n’est présent.
-3. `tests/php/sql_integration.php` valide des procédures/triggers et certaines intégrations `SqlStore`, mais le parcours HTTP/E2E principal est initialisé sur un magasin JSON. Cela **ne prouve pas** l’application complète en mode PDO/MySQL exécutant les procédures demandées.
+1. `app/Model/Data/StorageDriver.php` déclare toujours `JSON` comme `DEFAULT` et SQL comme pilote optionnel ; les procédures ne sont donc utilisées que lorsque la configuration sélectionne un pilote SQL.
+2. `ClientAccountGatewayFactory` sélectionne la stratégie SQL par la capacité `StoredProcedureExecutor`. `SqlClientAccountGateway` appelle maintenant `sp_create_account` et `sp_get_credentials` ; les autres procédures non raccordées restent un écart séparé.
+3. `tests/php/sql_integration.php` contient désormais un scénario `ClientRepository` qui appelle ces deux procédures, vérifie le doublon, le compte bloqué et `password_verify()`. Ce scénario n’a pas été joué ici (client `mariadb`/`mysql` absent). Le parcours HTTP/E2E principal reste initialisé en JSON : cela **ne prouve pas** le parcours complet en PDO/MySQL.
 
-Cela reste un écart d’implémentation aux critères du sujet et aux tâches D4-L9-04/05, D4-L10-04 et D4-L11-02/03/04. Les documents révisés le nomment explicitement ; ils ne le résolvent pas. Il faudra soit raccorder les procédures et prouver le parcours HTTP/PDO/MySQL sur base isolée, soit faire valider formellement une modification du CDC. Les seuls tests SQL directs ne suffisent pas pour cocher ces tâches à 100 %.
+Le raccordement applicatif des procédures de compte est maintenant présent en mode SQL, mais D4-L9-04/05 restent `PARTIEL` faute de rejeu PDO/MySQL sur base isolée et parce que JSON reste le pilote par défaut. Les écarts D4-L10-04 et D4-L11-02/03/04 restent ouverts. Il faut rejouer le scénario d’intégration SQL et prouver le parcours requis avant de cocher ces tâches à 100 % ; les tests SQL directs seuls ne suffisent pas.
 
 ## 5. Constats réconciliés au 23/10/2026
 
@@ -214,11 +214,11 @@ Ces éléments peuvent être **déjà livrés** dans le code et les tests : leur
 
 ## 7. Prochaines actions recommandées
 
-1. Traiter séparément l’écart **JSON / PDO / MySQL / procédures stockées** : intégration applicative avec preuve isolée, ou modification formelle du CDC approuvée par l’équipe pédagogique.
+1. Rejouer `tests/php/sql_integration.php` sur une base de test isolée pour prouver les appels `sp_create_account`/`sp_get_credentials` via `ClientRepository` ; garder JSON par défaut et les procédures non raccordées comme écarts distincts tant qu’ils ne sont pas arbitrés.
 2. Garder les heures WBS comme estimations de planification ; revalider les états historiques et la disponibilité avant d’utiliser le graphe ou le planning S6.
 3. Ne pas compter le rapport SQL daté du 27/10 ni les références CI de novembre comme preuves à la coupure du 23/10 ; les revalider uniquement après les dates portées, avec run, SHA et sorties vérifiables.
 4. Laisser les 200 scénarios manuels `NON JOUÉ` tant que des testeurs ne les ont pas exécutés ; aucune validation LineServ, déploiement ou restauration n’est à ajouter rétrospectivement.
 5. Laisser `D2-L2-06` ouvert jusqu’à une trace de relecture croisée entre étudiants distincts ; le pointage de l’assistant dans le CDC n’est pas cette relecture.
 6. Faire attester séparément les tâches GitLab restantes, la validation pédagogique et les répétitions de soutenance. Le courriel de composition est une attestation utilisateur non vérifiée dans la boîte d’envoi ; le dépôt IUT n’a pas été consulté ici.
 
-**Portée de cette révision :** clarification des preuves, dates et références de tests dans les documents, correction des générateurs WBS/todolist et du contrôle statique de sécurité ; aucun code métier applicatif n’a été modifié. Les sorties WBS/todolist ont été régénérées. D1-L1-07 est clos pour la synthèse écrite des retours asynchrones, sur attestation utilisateur ; aucune réunion complète n’est revendiquée. Les affirmations archivées de `docs/11` ne sont pas retenues comme résultats courants sans run/SHA. Aucun déploiement, test manuel LineServ, restauration de base, relecture étudiante ou validation pédagogique n’est revendiqué ; les suites impossibles faute d’outils restent explicitement non jouées.
+**Portée de cette révision :** le raccordement des parcours de compte aux procédures SQL a été ajouté avec stratégies séparées, interfaces de capacité et tests ; les lignes D4-L9-04/05 restent partielles jusqu’au rejeu SQL isolé. La mise à jour de l’audit ne requalifie pas les autres écarts ni les validations humaines. D1-L1-07 demeure clos pour la synthèse écrite des retours asynchrones, sur attestation utilisateur ; aucune réunion complète n’est revendiquée. Aucun déploiement, test manuel LineServ, restauration de base, relecture étudiante ou validation pédagogique n’est revendiqué ; l’intégration SQL n’a pas été jouée ici faute de client MySQL/MariaDB.
