@@ -145,7 +145,7 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme **remon
 | `D1-L1-03` | README v0 : prérequis, installation, membres et permissions GitLab, distincts des rôles RACI A/B/C | A | 3 | README présent ; aucune correspondance nominative entre membres et codes de rôle n'est inventée | 02 |
 | `D1-L1-04` | Grille de conformité au barème (CDC §16) suivie dans une issue GitLab | A | 3 | issue créée : 5 livrables + pénalités suivis | 01 |
 | `D1-L1-05` | Charte GitLab : branches, MR croisées, commits conventionnels, 1 issue par UC/EF | A | 2 | charte versionnée dans docs/20 + modèles de MR dans .gitlab/merge_request_templates/ | 01 |
-| `D1-L1-07` | Préparer la trame d’audit et ne consigner un compte rendu qu’après un point effectivement tenu ; date et tenue à confirmer | A | 2 | compte rendu postérieur à l’événement, limité aux informations confirmées ; aucune présence ou validation déduite | — |
+| `D1-L1-07` | Synthétiser les retours continus sur l’audit en mode asynchrone ; aucune réunion complète n’est requise ni revendiquée | A | 2 | synthèse écrite des choix et limites documentés dans docs/21-synthese-retours-audit.md ; clôture sur attestation utilisateur, sans inventer réunion, participants ou approbation | — |
 | | **Sous-total L1** | | **14** | répartition : A 14 h | |
 
 #### Lot L15 — README final, arborescence propre, préparation du rendu (5 h · A · S11)

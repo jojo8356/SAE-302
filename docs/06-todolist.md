@@ -1,18 +1,18 @@
 # MiniShop — Todolist projet : suivi de base et planification historique
 
-**Périmètre :** révision du 23 octobre 2026 ; la mise en ligne de démonstration et les contrôles staging associés sont retirés sans remplacement ; la WBS compte 84 tâches. **D1-L1-01** est `OK*` sur attestation utilisateur de l'envoi du courriel (boîte d'envoi non vérifiée). **D1-L1-07** reste à faire : `docs/21` est une trame préparatoire ; date et tenue du point d’audit ne sont pas confirmées, aucun événement n’est réputé réalisé.
+**Périmètre :** révision du 23 octobre 2026 ; la mise en ligne de démonstration et les contrôles staging associés sont retirés sans remplacement ; la WBS compte 84 tâches. **D1-L1-01** est `OK*` sur attestation utilisateur de l'envoi du courriel (boîte d'envoi non vérifiée). **D1-L1-07** est clos par la synthèse écrite des retours continus dans `docs/21-synthese-retours-audit.md`, sur attestation utilisateur ; aucune réunion complète n’est revendiquée.
 Le statut **D1-L1-04** porte sur l'issue contenant les cinq livrables et pénalités ; l'épinglage n'est pas attesté et n'est pas requis par ce critère. **D1-L1-05** est terminé sur le livrable documentaire uniquement : l'usage réel de MR/revues croisées n'est pas démontré.
-Les états non révisés restent ceux de la photographie du 23/09/2026 ; les statuts D1-L1-01/04/05 sont actualisés uniquement selon les attestations ou preuves décrites ici et dans l’audit docs/19. Les dates postérieures à la coupure et les rapports qui les portent ne sont pas traités comme des événements ou résultats acquis. D2-L2-01…05 et D2-L3-04/05 sont clos au seul niveau documentaire ; cela ne vaut ni revue étudiante ni validation pédagogique. Les catégories dépendantes/asynchrones, le graphe et les plans S6 décrivent le planning de base, pas l’exécution ni une priorité actuelle. Revalider les dépendances, statuts et disponibilités avant toute action. La todolist comprend les tâches de la WBS révisée, classées en
+Les états non révisés restent ceux de la photographie du 23/09/2026 ; les statuts D1-L1-01/04/05/07 sont actualisés uniquement selon les attestations ou preuves décrites ici et dans l’audit docs/19. Pour D1-L1-07, la clôture porte sur la synthèse asynchrone des retours continus, pas sur la tenue d’une réunion. Les dates postérieures à la coupure et les rapports qui les portent ne sont pas traités comme des événements ou résultats acquis. D2-L2-01…05 et D2-L3-04/05 sont clos au seul niveau documentaire ; cela ne vaut ni revue étudiante ni validation pédagogique. Les catégories dépendantes/asynchrones, le graphe et les plans S6 décrivent le planning de base, pas l’exécution ni une priorité actuelle. Revalider les dépendances, statuts et disponibilités avant toute action. La todolist comprend les tâches de la WBS révisée, classées en
 **tâches dépendantes** (ordre prévu dans le graphe) et **tâches asynchrones** (aucune dépendance restante identifiée dans la photographie de référence ; cela ne signifie pas qu'elles sont disponibles aujourd'hui).
 
 | | |
 |---|---|
-| **Avancement du suivi de référence** | **162 h classées terminées / 355 h estimées (46%)** — 36 tâches terminées, 8 partielles, 40 à faire (84 tâches) |
-| **Reste à faire** | **193 h estimées**, dont 142 h pour l'application Web ; les autres postes restent issus de la photographie historique |
+| **Avancement du suivi de référence** | **164 h classées terminées / 355 h estimées (46%)** — 37 tâches terminées, 8 partielles, 39 à faire (84 tâches) |
+| **Reste à faire** | **191 h estimées**, dont 142 h pour l'application Web ; les autres postes restent issus de la photographie historique |
 | **Backlog asynchrone du plan de base** | **33 h** classées sans dépendance restante dans la photographie du 23/09 ; statuts et disponibilité à revérifier |
 | **Chaîne planifiée** | L8 → L9 → L10 → L11 → L12 → L14 → L15 → L16 ; jalons du planning de base à revalider |
-| **Documents liés** | `docs/05-wbs-projet.md` (WBS) · `docs/20-charte-gitlab-revues-croisees.md` · `docs/21-compte-rendu-reunion-audit-2026-11-13.md` |
-| **Version** | 1.4 — révision documentaire du 23 octobre 2026 ; D1-L1-07 reste ouvert, événement/date non confirmés |
+| **Documents liés** | `docs/05-wbs-projet.md` (WBS) · `docs/20-charte-gitlab-revues-croisees.md` · `docs/21-synthese-retours-audit.md` |
+| **Version** | 1.4 — révision documentaire du 23 octobre 2026 ; D1-L1-07 clos en mode asynchrone sur attestation utilisateur, sans réunion complète revendiquée |
 
 ---
 
@@ -22,19 +22,19 @@ Les états non révisés restent ceux de la photographie du 23/09/2026 ; les sta
 
 | Division | Charge estimée | Classée terminée | Reste estimé | Avancement du suivi |
 |---|---:|---:|---:|---|
-| **D1 — Pilotage, dépôt GitLab & collaboration** | 19 h | 13 h | 6 h | ██████████████░░░░░░ 68% |
+| **D1 — Pilotage, dépôt GitLab & collaboration** | 19 h | 15 h | 4 h | ████████████████░░░░ 79% |
 | **D2 — Document de spécification du système** | 54 h | 47 h | 7 h | █████████████████░░░ 87% |
 | **D3 — Conception de la base de données & SQL** | 98 h | 87 h | 11 h | ██████████████████░░ 89% |
 | **D4 — Application Web PHP / MySQL / PDO** | 146 h | 4 h | 142 h | █░░░░░░░░░░░░░░░░░░░ 3% |
 | **D5 — Tests & validation** | 24 h | 6 h | 18 h | █████░░░░░░░░░░░░░░░ 25% |
 | **D6 — Soutenance** | 14 h | 5 h | 9 h | ███████░░░░░░░░░░░░░ 36% |
-| **Total** | **355 h** | **162 h** | **193 h** | **46%** |
+| **Total** | **355 h** | **164 h** | **191 h** | **46%** |
 
 ### 1.2 Répartition estimée par rôle de planification (A/B/C ; aucune correspondance nominative établie)
 
 | Rôle de planification | Charge WBS estimée | Reste du suivi de référence | Classée terminée | Remarque (photographie du 23/09) |
 |---|---:|---:|---:|---|
-| **A** | 117 h | 83 h | 34 h | rôle de planification chargé du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |
+| **A** | 117 h | 81 h | 36 h | rôle de planification chargé du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |
 | **B** | 117 h | 17 h | 100 h | rôle de planification base de données/tests ; états et disponibilité après la photographie non revérifiés |
 | **C** | 121 h | 93 h | 28 h | rôle de planification front-office/sécurité/JS ; disponibilité et attribution nominative non établies |
 
@@ -127,9 +127,9 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 
 ## 5. Détail complet — les 84 tâches de la WBS et leur statut de suivi
 
-### D1 — Pilotage, dépôt GitLab & collaboration (13 h estimées classées terminées sur 19 h, reste estimé 6 h)
+### D1 — Pilotage, dépôt GitLab & collaboration (15 h estimées classées terminées sur 19 h, reste estimé 4 h)
 
-#### 🟡 Lot L1 — Pilotage & dépôt (11/14 h · reste 3 h)
+#### 🟡 Lot L1 — Pilotage & dépôt (13/14 h · reste 1 h)
 
 | ID | Tâche | Rôle | h restantes (estim.) | Statut | Dépend de | Prio |
 |---|---|---|---:|---|---|---|
@@ -138,7 +138,7 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | `D1-L1-03` | README v0 (prérequis, installation cible, membres et rôles) | A | 0 | ✅ | — | — |
 | `D1-L1-04` | Issue GitLab de conformité renseignée : cinq livrables et pénalités du barème (CDC §16) | A | 0 | ✅ | D1-L1-01 | — |
 | `D1-L1-05` | Charte GitLab : branches, MR croisées, commits conventionnels, 1 issue par UC/EF (docs/20) | A | 0 | ✅ | — | — |
-| `D1-L1-07` | Préparer la trame d’audit ; compléter le compte rendu seulement après un point effectivement tenu (date et tenue à confirmer ; docs/21) | A | 2 | ⬜ | — | P2 |
+| `D1-L1-07` | Synthèse des retours continus sur l’audit (mode asynchrone ; aucune réunion complète revendiquée ; docs/21-synthese-retours-audit.md) | A | 0 | ✅ | — | — |
 
 #### 🟡 Lot L15 — README final & rendu (2/5 h · reste 3 h)
 
@@ -336,11 +336,11 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | **J2** | `D4-L8-01` routeur (5 h) | `D2-L3-06` puml + render.sh (4 h) | revue MR routeur + stubs vues |
 | **J3** | `D4-L8-02` Database PDO (3 h) | `D3-L6-06/07` + `D3-L7-05` tNN (8 h estimées restantes) | `D4-L12-05` controles.sh (4 h) |
 | **J4** | `D4-L8-03` vues + échappement (4 h) | `D5-L14-06` mesure perf base seule + rapport | revue MR + prépa L9-01 |
-| **J5** | `D4-L8-04` auth/CSRF (6 h, déborde S7 si besoin) | aide sur les stubs CommandeRepository (rôle B du plan) | vérifier les preuves de recette ; point D1-L1-07 éventuel à confirmer, sans événement réputé tenu |
+| **J5** | `D4-L8-04` auth/CSRF (6 h, déborde S7 si besoin) | aide sur les stubs CommandeRepository (rôle B du plan) | vérifier les preuves de recette ; synthèse asynchrone D1-L1-07 consignée dans docs/21-synthese-retours-audit.md, sans réunion complète revendiquée |
 
 **Objectif du plan historique : L8 terminé et harnais de tests prêt.** Ce plan n'atteste ni l'exécution des tâches ni des commits et doit être replanifié avant tout usage.
 Dans le scénario historique, L8 devait débloquer la chaîne jusqu'au jalon J6 ; ce calendrier ne doit pas être repris sans replanification.
 
 ---
 
-*Todolist MiniShop v1.4 — états hérités hors D1-L1-01/04/05, D2-L2-01…05 et D2-L3-04/05 de la photographie du 23/09/2026 ; coupure documentaire au 23/10/2026 ; déploiement/staging retirés sans remplacement. D1-L1-01 : envoi du courriel attesté par l’utilisateur (boîte d’envoi non vérifiée) ; D1-L1-04 : issue documentée ; D1-L1-05 : charte/modèles présents, usage réel des MR non prouvé ; D1-L1-07 et D2-L2-06 restent ouverts. Les charges A/B/C sont des estimations de rôles, sans correspondance nominative, capacité ni relevé d’heures.*
+*Todolist MiniShop v1.4 — états hérités hors D1-L1-01/04/05/07, D2-L2-01…05 et D2-L3-04/05 de la photographie du 23/09/2026 ; coupure documentaire au 23/10/2026 ; déploiement/staging retirés sans remplacement. D1-L1-01 : envoi du courriel attesté par l’utilisateur (boîte d’envoi non vérifiée) ; D1-L1-04 : issue documentée ; D1-L1-05 : charte/modèles présents, usage réel des MR non prouvé ; D1-L1-07 : synthèse écrite des retours continus, clôture asynchrone sur attestation utilisateur, aucune réunion complète revendiquée ; D2-L2-06 reste ouvert. Les charges A/B/C sont des estimations de rôles, sans correspondance nominative, capacité ni relevé d’heures.*

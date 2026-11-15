@@ -123,7 +123,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <p>Ce rapport audite les fichiers versionnés et le working tree de ce checkout, sans consulter directement le dépôt IUT. Les éléments externes rapportés sont distingués selon leur provenance ; ils ne présument pas l’état du clone local de l’utilisateur et ne transforment pas une tâche externe ou humaine en tâche accomplie sans preuve.</p>
 </blockquote>
 <h2 id="1-perimetre-et-verdict-global">1. Périmètre et verdict global<a class="headerlink" href="#1-perimetre-et-verdict-global" title="Permanent link">#</a></h2>
-<p><code>docs/06-todolist.md</code> et <code>docs/05-wbs-projet.md</code> ont été régénérées en version 1.4/1.2 : 84 tâches, 355 h estimées. Les statuts de suivi sont 36 terminées, 8 partielles et 40 à faire ; 162 h sont <strong>classées terminées</strong> et 193 h restent estimées. Ces heures découlent des estimations résiduelles, pas d’un relevé de temps réel. Dans D3, 11/98 h restent estimées, dont les 4 h de référence de D3-L7-05 non créditées comme réalisées ; dans D4, 4/146 h sont classées terminées (le contrôle de sécurité) et 142 h restent. Cela ne signifie ni que l’application est achevée ni que les autres tâches sont rejouées. D1-L1-07 et la relecture croisée de D2-L2-06 restent ouvertes. Le périmètre déploiement/staging est retiré sans tâche de remplacement ; aucun déploiement n’est revendiqué.</p>
+<p><code>docs/06-todolist.md</code> et <code>docs/05-wbs-projet.md</code> ont été régénérées en version 1.4/1.2 : 84 tâches, 355 h estimées. Après révision de D1-L1-07 pour accepter un suivi asynchrone, les statuts sont 37 terminées, 8 partielles et 39 à faire ; 164 h sont <strong>classées terminées</strong> et 191 h restent estimées. Ces heures découlent des estimations résiduelles, pas d’un relevé de temps réel. D1-L1-07 est clos sur la synthèse des retours continus attestés par l’utilisateur ; aucune réunion complète n’est revendiquée. La relecture croisée de D2-L2-06 reste ouverte. Dans D3, 11/98 h restent estimées, dont les 4 h de référence de D3-L7-05 non créditées comme réalisées ; dans D4, 4/146 h sont classées terminées (le contrôle de sécurité) et 142 h restent. Cela ne signifie ni que l’application est achevée ni que les autres tâches sont rejouées. Le périmètre déploiement/staging est retiré sans tâche de remplacement ; aucun déploiement n’est revendiqué.</p>
 <table>
 <thead>
 <tr>
@@ -135,8 +135,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tbody>
 <tr>
 <td><code>OK</code></td>
-<td style="text-align: right;">2</td>
-<td>Critère de fin documentaire attesté selon la définition de la WBS, sans élargir la portée de la preuve.</td>
+<td style="text-align: right;">3</td>
+<td>Critère de fin documentaire attesté selon la définition révisée de la WBS, sans élargir la portée de la preuve.</td>
 </tr>
 <tr>
 <td><code>OK*</code></td>
@@ -155,8 +155,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 <tr>
 <td><code>[!]</code></td>
-<td style="text-align: right;">5</td>
-<td>Tâche humaine, externe, mesure cible ou événement impossible à vérifier depuis ce checkout.</td>
+<td style="text-align: right;">4</td>
+<td>Tâche humaine, externe ou mesure cible impossible à vérifier depuis ce checkout.</td>
 </tr>
 <tr>
 <td><strong>Total</strong></td>
@@ -166,7 +166,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tbody>
 </table>
 <p>Ces statuts évaluent les <strong>84 tâches de la WBS de référence</strong>, pas toutes les évolutions postérieures. Les ajouts (langue/fuseau, informations légales, contact, conservation, etc.) sont reliés dans le CDC aux <code>EV-*</code> et aux scénarios <code>F-*</code>, mais leur absence de la WBS ne prouve ni leur exécution ni leur validation.</p>
-<p><strong>Datation des contenus et des contrôles :</strong> la coupure documentaire retenue est le 23/10/2026 ; le commit de base porte une date Git du 13/11/2026, postérieure à cette coupure, et ne peut donc être présenté comme un instantané historique du 23/10. Des fichiers versionnés portent aussi des dates postérieures à la coupure (rapport SQL du 27/10, archives/to-do du 28/10, réunion envisagée le 13/11 et références CI des 12–13/11). Ces métadonnées ne prouvent aucun événement ni résultat acquis au 23/10. Les contrôles locaux de §2 ont été rejoués le 23/10/2026 sur le working tree consulté et n’établissent pas l’état d’un autre SHA. Les métriques de résultat sans run/SHA — notamment les tableaux de la stratégie de tests — sont traitées comme contenu d’archive, pas comme preuve courante.</p>
+<p><strong>Datation des contenus et des contrôles :</strong> la coupure documentaire retenue est le 23/10/2026 ; le commit de base porte une date Git du 13/11/2026, postérieure à cette coupure, et ne peut donc être présenté comme un instantané historique du 23/10. Des fichiers versionnés portent aussi des dates postérieures à la coupure (rapport SQL du 27/10, archives/to-do du 28/10 et références CI des 12–13/11). Ces métadonnées ne prouvent aucun événement ni résultat acquis au 23/10. Les contrôles locaux de §2 ont été rejoués le 23/10/2026 sur le working tree consulté et n’établissent pas l’état d’un autre SHA. Les métriques de résultat sans run/SHA — notamment les tableaux de la stratégie de tests — sont traitées comme contenu d’archive, pas comme preuve courante.</p>
 <h2 id="2-verifications-effectuees-et-limites">2. Vérifications effectuées et limites<a class="headerlink" href="#2-verifications-effectuees-et-limites" title="Permanent link">#</a></h2>
 <h3 id="preuve-externe-fournie-par-lutilisateur-clone-iut">Preuve externe fournie par l’utilisateur — clone IUT<a class="headerlink" href="#preuve-externe-fournie-par-lutilisateur-clone-iut" title="Permanent link">#</a></h3>
 <p>Le relevé terminal communiqué montre <code>origin</code> configuré sur <code>https://iut-git.unice.fr/but2_s302/s302.git</code> et une requête <code>git ls-remote --heads origin</code> réussie. Les références visibles sont <code>chahd</code>, <code>dev</code>, <code>pj509414/dev</code> (SHA <code>bcca4d1d527b2ef859295a44dd1c65134aa93ab5</code>) et <code>pj509414/poc-auth-jwt</code> ; aucune référence <code>main</code> n’apparaît dans cette sortie. Cela prouve que le dépôt existe et est lisible depuis ce clone. La capture GitLab « Membres » fournie montre l’enseignante NGUYEN Thanh-Phuong comme membre direct avec le rôle <code>Reporter</code>, et Chahd comme <code>Developer</code> hérité du groupe ; elle confirme l’accès de l’enseignante au projet. L’utilisateur confirme avoir envoyé le courriel de composition rédigé dans la conversation, qui comprenait l’adresse GitLab ; cette confirmation n’a pas été vérifiée indépendamment dans la boîte d’envoi.</p>
@@ -180,8 +180,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li><code>docs/13-suivi-recette-uc.csv</code> : <strong>200 entrées <code>NON JOUÉ</code></strong> ; aucune campagne manuelle n’est déclarée.</li>
 <li><code>node scripts/wasm_verdict.mjs</code> : <strong>9/9</strong> cas de verdict réussis.</li>
 <li><code>node --check</code> : <strong>41</strong> fichiers JavaScript/ES modules sans erreur de syntaxe ; <code>bash -n</code> : <strong>13</strong> scripts Shell sans erreur ; <code>py_compile</code> : 3 outils Python compilés sans erreur.</li>
-<li><code>.tools/build_wbs.py</code> et <code>.tools/build_todolist.py</code> compilés et rejoués avec Markdown 3.11.3 issu de <code>requirements-docs.txt</code> : WBS/todolist Markdown et HTML générés ; 84 tâches, 355 h estimées, 36/8/40 statuts, 162 h classées terminées et 193 h restantes. A/B/C sont des rôles de planification, pas des personnes.</li>
-<li><code>PYTHONPATH=.cache/doc-markdown bash scripts/build-docs.sh</code> : <strong>91 rendus</strong> HTML/PDF/DOCX/diaporama produits sans erreur ; les HTML <code>artefacts/01</code>…<code>04</code> ont aussi été régénérés. Les rendus <code>livrables/</code> des sources modifiées sont synchronisés.</li>
+<li><code>.tools/build_wbs.py</code> et <code>.tools/build_todolist.py</code> compilés et rejoués avec Markdown 3.11.3 issu de <code>requirements-docs.txt</code> : WBS/todolist Markdown et HTML générés ; 84 tâches, 355 h estimées, 37/8/39 statuts, 164 h classées terminées et 191 h restantes. A/B/C sont des rôles de planification, pas des personnes.</li>
+<li>Le build documentaire complet a produit <strong>91 rendus</strong> HTML/PDF/DOCX/diaporama sans erreur ; les HTML <code>artefacts/01</code>…<code>04</code> ont aussi été régénérés. Après la clôture asynchrone de D1-L1-07, les sources modifiées 05, 06, 19 et 21 ont été reconstruites dans leurs formats HTML/PDF/DOCX et les HTML <code>artefacts/05</code>/<code>06</code> ont été mis à jour par leurs générateurs.</li>
 <li><code>git diff --check</code> a été exécuté après les corrections documentaires et n’a signalé aucun problème d’espacement. Aucune suite applicative globale n’est revendiquée ici.</li>
 </ul>
 <h3 id="execution-complete-impossible-localement">Exécution complète impossible localement<a class="headerlink" href="#execution-complete-impossible-localement" title="Permanent link">#</a></h3>
@@ -229,8 +229,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 <tr>
 <td><code>D1-L1-07</code></td>
-<td><code>[!]</code></td>
-<td><code>docs/21-compte-rendu-reunion-audit-2026-11-13.md</code> est une trame préparatoire ; sa date est à confirmer et aucun événement, participant, compte rendu ou décision n’est attesté à la coupure du 23/10.</td>
+<td><code>OK</code></td>
+<td>Critère de fin révisé avec l’utilisateur : consigner les retours continus en mode asynchrone plutôt que prétendre à une réunion complète. <code>docs/21-synthese-retours-audit.md</code> rassemble les choix documentés ; l’utilisateur atteste que des feedbacks continus ont eu lieu. Ce <code>OK</code> clôt la synthèse écrite, sans affirmer qu’une réunion, une approbation collective ou une validation pédagogique s’est tenue.</td>
 </tr>
 <tr>
 <td><code>D1-L15-02</code></td>
@@ -694,8 +694,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <p>Cela reste un écart d’implémentation aux critères du sujet et aux tâches D4-L9-04/05, D4-L10-04 et D4-L11-02/03/04. Les documents révisés le nomment explicitement ; ils ne le résolvent pas. Il faudra soit raccorder les procédures et prouver le parcours HTTP/PDO/MySQL sur base isolée, soit faire valider formellement une modification du CDC. Les seuls tests SQL directs ne suffisent pas pour cocher ces tâches à 100 %.</p>
 <h2 id="5-constats-reconcilies-au-23102026">5. Constats réconciliés au 23/10/2026<a class="headerlink" href="#5-constats-reconcilies-au-23102026" title="Permanent link">#</a></h2>
 <ol>
-<li><strong>Tâches et périmètre :</strong> 84 tâches de niveau 4 ; le déploiement/staging est retiré sans remplacement. Suivi courant généré : 36 terminées, 8 partielles, 40 à faire.</li>
-<li><strong>Heures :</strong> 355 h estimées = 162 h classées terminées + 193 h restantes. Ventilation des estimations par rôle A/B/C : 117/117/121 h ; heures classées terminées : 34/100/28 ; restantes : 83/17/93. Ce sont des calculs de statut/estimations résiduelles, pas des heures réellement travaillées.</li>
+<li><strong>Tâches et périmètre :</strong> 84 tâches de niveau 4 ; le déploiement/staging est retiré sans remplacement. Après clôture de D1-L1-07 comme synthèse asynchrone sur attestation utilisateur, le suivi généré compte 37 terminées, 8 partielles et 39 à faire.</li>
+<li><strong>Heures :</strong> 355 h estimées = 164 h classées terminées + 191 h restantes. Ventilation des estimations par rôle A/B/C : 117/117/121 h ; heures classées terminées : 36/100/28 ; restantes : 81/17/93. Ce sont des calculs de statut/estimations résiduelles, pas des heures réellement travaillées.</li>
 <li><strong>D3/D4 :</strong> D3 compte 11/98 h restantes ; D3-L7-05 reste estimée à 4 h (même estimation que dans la WBS) sans crédit de progression lié au rapport futur du 27/10. D4 compte 4/146 h classées terminées par le contrôle de sécurité et 142 h restantes. Le code présent ne transforme pas une tâche d’intégration ou de recette en tâche achevée. Le stockage par défaut est JSON, SQL optionnel.</li>
 <li><strong>Équipe et RACI :</strong> le README nomme deux membres ; le CDC/WBS garde des rôles de planification A/B/C et des valeurs R/A/C/I du RACI explicitement distincts. Aucune lettre n’est attribuée nominativement et aucune capacité individuelle n’est déduite.</li>
 <li><strong>Identifiants de contraintes :</strong> le CDC et l’annexe listent ENF-01…ENF-22 ; les contraintes techniques sont CT-01…CT-12.</li>
@@ -726,7 +726,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li>Laisser <code>D2-L2-06</code> ouvert jusqu’à une trace de relecture croisée entre étudiants distincts ; le pointage de l’assistant dans le CDC n’est pas cette relecture.</li>
 <li>Faire attester séparément les tâches GitLab restantes, la validation pédagogique et les répétitions de soutenance. Le courriel de composition est une attestation utilisateur non vérifiée dans la boîte d’envoi ; le dépôt IUT n’a pas été consulté ici.</li>
 </ol>
-<p><strong>Portée de cette révision :</strong> clarification des preuves, dates et références de tests dans les documents, correction des générateurs WBS/todolist et du contrôle statique de sécurité ; aucun code métier applicatif n’a été modifié. Les sorties WBS/todolist ont été régénérées. Les affirmations archivées de <code>docs/11</code> ne sont pas retenues comme résultats courants sans run/SHA. Aucun déploiement, test manuel LineServ, restauration de base, relecture étudiante ou validation pédagogique n’est revendiqué ; les suites impossibles faute d’outils restent explicitement non jouées.</p>
+<p><strong>Portée de cette révision :</strong> clarification des preuves, dates et références de tests dans les documents, correction des générateurs WBS/todolist et du contrôle statique de sécurité ; aucun code métier applicatif n’a été modifié. Les sorties WBS/todolist ont été régénérées. D1-L1-07 est clos pour la synthèse écrite des retours asynchrones, sur attestation utilisateur ; aucune réunion complète n’est revendiquée. Les affirmations archivées de <code>docs/11</code> ne sont pas retenues comme résultats courants sans run/SHA. Aucun déploiement, test manuel LineServ, restauration de base, relecture étudiante ou validation pédagogique n’est revendiqué ; les suites impossibles faute d’outils restent explicitement non jouées.</p>
 <footer class="doc">
   <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/19-audit-cahier-des-charges-todolist.md</code>
   par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>

@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="SAÉ 302 — MiniShop : Synthèse des retours continus sur l’audit — suivi asynchrone#">
+<title>Synthèse des retours continus sur l’audit — suivi asynchrone# — MiniShop</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --papier: #fbfaf7;
+  --carte: #ffffff;
+  --trait: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-clair: #dbeafe;
+  --code: #f1f5f9;
+  --mesure: 72ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
+    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
+    --accent-clair: #1e3a8a; --code: #16223a;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  max-width: calc(var(--mesure) + 6rem);
+  background: var(--papier);
+  color: var(--encre);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
+h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
+p, li { max-width: var(--mesure); }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+}
+pre {
+  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
+  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.35rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+thead th { background: var(--accent-clair); }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
+img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li input[type="checkbox"] { margin-right: 0.4rem; }
+.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
+.toc > ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1rem; }
+footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+@media print {
+  :root { --papier: #fff; --carte: #fff; }
+  @page { size: A4; margin: 18mm 16mm; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#choix-de-cadrage-consignes">Choix de cadrage consignés</a></li>
+<li><a href="#statut-de-la-tache">Statut de la tâche</a></li>
+<li><a href="#limites-maintenues">Limites maintenues</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="synthese-des-retours-continus-sur-laudit-suivi-asynchrone">Synthèse des retours continus sur l’audit — suivi asynchrone<a class="headerlink" href="#synthese-des-retours-continus-sur-laudit-suivi-asynchrone" title="Permanent link">#</a></h1>
+<blockquote>
+<p><strong>Source et portée :</strong> l’utilisateur indique que des retours continus ont eu lieu, sans réunion complète. Cette note rassemble les choix de cadrage déjà exprimés et appliqués dans le dossier. Elle n’est pas le procès-verbal d’une réunion ; aucune date de réunion, liste de participants, approbation ou validation pédagogique n’est inventée.</p>
+<p><strong>D1-L1-07 :</strong> tâche clôturée selon la modalité asynchrone convenue : synthèse écrite des retours continus. Le statut <code>OK</code> ne signifie pas qu’une réunion complète s’est tenue.</p>
+</blockquote>
+<h2 id="choix-de-cadrage-consignes">Choix de cadrage consignés<a class="headerlink" href="#choix-de-cadrage-consignes" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Sujet</th>
+<th>Choix retenu et limite</th>
+<th>Référence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dates et preuves</td>
+<td>Coupure documentaire au 23/10/2026 ; contrôles locaux datés du 23/10/2026 sur le working tree. La date Git du commit de base (13/11/2026) est postérieure à la coupure. Les mentions futures et les résultats sans run/SHA ne sont pas repris comme preuves acquises.</td>
+<td><code>docs/02</code>, <code>docs/07</code>, <code>docs/19</code></td>
+</tr>
+<tr>
+<td>Périmètre</td>
+<td>Déploiement et staging retirés sans tâche de remplacement. Aucun déploiement, essai LineServ ni restauration de base n’est revendiqué.</td>
+<td><code>docs/05</code>, <code>docs/06</code>, <code>docs/19</code></td>
+</tr>
+<tr>
+<td>Équipe et rôles</td>
+<td>Permissions GitLab, valeurs R/A/C/I du RACI et rôles de planification A/B/C restent distincts. Aucune lettre A/B/C n’est attribuée nominativement à Johan Polsinelli ou Chahd Gouiaa sans confirmation.</td>
+<td><code>docs/01</code>, <code>docs/05</code>, <code>docs/19</code></td>
+</tr>
+<tr>
+<td>CDC et stockage</td>
+<td>PHP/MySQL/PDO reste la cible du cahier des charges ; le stockage applicatif par défaut est JSON et le SQL reste optionnel. Cet écart est ouvert et n’est pas déclaré résolu.</td>
+<td><code>docs/01</code>, <code>docs/02</code>, <code>docs/19</code></td>
+</tr>
+<tr>
+<td>Traçabilité et tests</td>
+<td>Les identifiants T-* décrivent des scénarios, pas des résultats. Les contrôles SQL ne sont déclarés exécutés qu’avec un run daté et rattaché à un SHA ; aucun rejeu SQL de cette révision n’est revendiqué.</td>
+<td><code>docs/02</code>, <code>docs/11</code>, <code>docs/19</code></td>
+</tr>
+<tr>
+<td>Sécurité</td>
+<td>Les dix scénarios offensifs S-01…S-10 sont distincts des onze contrôles statiques. S-11/SEC-14 est un contrôle statique ciblé, pas une recette offensive ni une certification générale.</td>
+<td><code>docs/01</code>, <code>docs/02</code>, <code>docs/07</code></td>
+</tr>
+<tr>
+<td>Règles métier</td>
+<td>Le CDC dénombre 20 identifiants : RB-01…RB-11 classées par le document comme issues du sujet, plus RB-12…RB-20 comme compléments. Le PDF source n’étant pas dans le dépôt, cette classification n’est pas présentée comme vérifiée indépendamment ni validée pédagogiquement.</td>
+<td><code>docs/01</code>, <code>docs/19</code></td>
+</tr>
+<tr>
+<td>Séquences UML</td>
+<td>Cinq séquences sont documentées : quatre prévues comme imposées et une bonus. Aucune sixième séquence n’est annoncée.</td>
+<td><code>docs/01</code>, <code>docs/05</code>, <code>docs/19</code></td>
+</tr>
+<tr>
+<td>Relecture croisée</td>
+<td>Le pointage documentaire ne remplace pas une relecture croisée entre étudiants. Aucune relecture de ce type n’est attestée ; D2-L2-06 reste ouverte.</td>
+<td><code>docs/05</code>, <code>docs/19</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="statut-de-la-tache">Statut de la tâche<a class="headerlink" href="#statut-de-la-tache" title="Permanent link">#</a></h2>
+<p><strong>D1-L1-07 — OK, dans le périmètre révisé.</strong> Le livrable demandé est cette synthèse des retours continus, rédigée à partir des choix explicitement communiqués et des limites consignées dans les documents. La clôture ne prétend pas qu’une réunion complète a eu lieu, ne nomme pas de participants et ne vaut ni approbation collective ni validation pédagogique.</p>
+<h2 id="limites-maintenues">Limites maintenues<a class="headerlink" href="#limites-maintenues" title="Permanent link">#</a></h2>
+<ul>
+<li>Aucune réunion complète ni aucun compte rendu de réunion n’est revendiqué.</li>
+<li>Aucun participant, auteur de revue distinct, vote, approbation ou validation n’est inféré.</li>
+<li>D2-L2-06 reste ouverte jusqu’à une preuve de relecture croisée par des étudiants distincts.</li>
+<li>Aucun test manuel LineServ, déploiement, restauration de base ou rejeu SQL n’est ajouté à la suite des retours.</li>
+</ul>
+<footer class="doc">
+  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/21-synthese-retours-audit.md</code>
+  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+</footer>
+</main>
+</body>
+</html>
