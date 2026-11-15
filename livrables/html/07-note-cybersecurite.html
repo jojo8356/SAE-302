@@ -121,13 +121,14 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </nav>
 <h1 id="minishop-note-de-cybersecurite">MiniShop — Note de cybersécurité<a class="headerlink" href="#minishop-note-de-cybersecurite" title="Permanent link">#</a></h1>
 <blockquote>
-<p><strong>Objet</strong> : failles testées, corrections apportées et code correspondant.
-<strong>Périmètre</strong> : application MiniShop livrée (PHP 8.2, moteur de données JSON, zéro dépendance runtime), d'après le plan d'attaques S-01…S-10 du document de tests (<code>docs/02</code>, §5) et les exigences SEC-01…SEC-13 du cahier des charges (<code>docs/01</code>, §8).
-<strong>Date</strong> : 28/09/2026 · <strong>Rejouable</strong> : <code>npm run test:all</code> (toutes les attaques ci-dessous sont rejouées en continu par la suite E2E — aucune n'est vérifiée « à la main »).</p>
+<p><strong>Objet</strong> : scénarios d’attaque, mesures prévues et références de contrôle.
+<strong>Périmètre documentaire</strong> : application MiniShop et exigences SEC-01…SEC-13 ; les références S-01…S-10 sont des scénarios offensifs décrits dans <code>docs/02</code>, pas des résultats de cette révision.
+<strong>Date inscrite dans l’archive</strong> : 28/09/2026. Aucun SHA ni journal d’exécution n’est rattaché à cette date ; les mentions de tests, sorties et volumes qui suivent ne prouvent pas leur rejeu sur le working tree examiné. La commande <code>npm run test:all</code> est un protocole proposé, pas une preuve qu’il a été lancé.</p>
+<p><strong>Portée de sécurité à la coupure 23/10/2026 :</strong> seul le script statique <code>tests/security/controles.sh</code> a été rejoué localement dans cette révision (11/11 contrôles, dont S-11/SEC-14). Les scénarios offensifs S-01…S-10, l’E2E, LineServ et les essais manuels n’ont pas été rejoués ; aucun avis général de sécurité n’est revendiqué.</p>
 </blockquote>
 <hr />
 <h2 id="1-strategie-defense-en-profondeur-preuve-par-lattaque">1. Stratégie : défense en profondeur, preuve par l'attaque<a class="headerlink" href="#1-strategie-defense-en-profondeur-preuve-par-lattaque" title="Permanent link">#</a></h2>
-<p>La sécurité de MiniShop repose sur <strong>quatre lignes de défense indépendantes</strong>, et chaque ligne est <em>attaquée</em> par la suite E2E (<code>scripts/wasm-e2e.mjs</code>, batteries T6, T12, T13 — 155 vérifications) :</p>
+<p>La conception décrit <strong>quatre lignes de défense indépendantes</strong> que les scénarios E2E (<code>scripts/wasm-e2e.mjs</code>, batteries T6, T12, T13) visent à contrôler. Les 155 vérifications mentionnées dans cette archive ne sont pas des résultats rattachés au SHA examiné :</p>
 <table>
 <thead>
 <tr>
@@ -159,7 +160,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 </tbody>
 </table>
-<p><strong>Principe directeur</strong> : la sécurité n'est pas <em>documentée</em>, elle est <strong>exécutée</strong>. Chaque faille ci-dessous est accompagnée du test qui la rejoue — une régression est donc détectée par <code>npm run test:all</code>, pas par une relecture.</p>
+<p><strong>Principe directeur</strong> : les mesures de sécurité doivent être éprouvées par des tests et des revues dont les résultats sont conservés. Cette note associe des mesures à des scénarios ; elle ne prouve pas que ceux-ci ont été rejoués sur le working tree examiné.</p>
 <hr />
 <h2 id="2-fondation-structurante-il-ny-a-rien-a-injecter-s-01">2. Fondation structurante : il n'y a rien à injecter (S-01)<a class="headerlink" href="#2-fondation-structurante-il-ny-a-rien-a-injecter-s-01" title="Permanent link">#</a></h2>
 <p>Avant même de parler de filtrage : <strong>l'application n'embarque aucun interpréteur de requêtes</strong>. La couche de données (§ contrainte de projet : « pas de SQL ») est un moteur JSON dont les requêtes sont <em>construites en PHP</em>, jamais <em>écrites en texte</em>.</p>
@@ -197,7 +198,7 @@ if (!array_is_list($condition)) {
 <ol start="3">
 <li><strong>Contraintes de schéma en profondeur</strong> : même une donnée malveillante qui franchit les contrôleurs est confrontée au moteur (NOT NULL, types, ENUM de statuts, CHECK <code>prix_ht &gt; 0</code> / <code>stock &gt;= 0</code>, UNIQUE référence/email/slug, FK RESTRICT/CASCADE) — cf. <code>tests/php/engine_smoke.php</code>, vert.</li>
 </ol>
-<p><strong>Preuves (E2E T12)</strong> : <code>q=' OR 1=1 --</code> → 200, « 0 produit trouvé », la table <code>client</code> intacte ; <code>q=%'; DROP TABLE produit;--</code> → 200, aucune donnée perdue. <strong>Tests fonctionnels</strong> : tri inconnu (<code>?tri=prix_desc;DROP TABLE produit</code>) → repli sur la liste blanche <code>TRIS = ['nom','prix_asc','prix_desc','nouveaute','stock']</code> sans erreur.</p>
+<p><strong>Résultats rapportés dans l’archive (non revalidés, E2E T12)</strong> : <code>q=' OR 1=1 --</code> → 200, « 0 produit trouvé », la table <code>client</code> intacte ; <code>q=%'; DROP TABLE produit;--</code> → 200, aucune donnée perdue. <strong>Tests fonctionnels</strong> : tri inconnu (<code>?tri=prix_desc;DROP TABLE produit</code>) → repli sur la liste blanche <code>TRIS = ['nom','prix_asc','prix_desc','nouveaute','stock']</code> sans erreur.</p>
 <hr />
 <h2 id="3-les-10-attaques-du-plan-de-validation-detail-par-faille">3. Les 10 attaques du plan de validation — détail par faille<a class="headerlink" href="#3-les-10-attaques-du-plan-de-validation-detail-par-faille" title="Permanent link">#</a></h2>
 <h3 id="s-01-injection-sqlrequete-neutralisee-par-construction">S-01 — Injection (SQL/requête) — ✅ neutralisée par construction<a class="headerlink" href="#s-01-injection-sqlrequete-neutralisee-par-construction" title="Permanent link">#</a></h3>
@@ -214,7 +215,7 @@ if (!array_is_list($condition)) {
 <td>un payload dans un paramètre modifie la sémantique d'une requête pour lire/écrire la base</td>
 </tr>
 <tr>
-<td><strong>Attaque testée</strong></td>
+<td><strong>Scénario d’attaque décrit</strong></td>
 <td>E2E T12 : <code>GET /recherche?q=' OR 1=1 --</code> et <code>GET /recherche?q=%'; DROP TABLE produit;--</code> ; catalogue : <code>?tri=prix_desc;DROP TABLE produit</code></td>
 </tr>
 <tr>
@@ -222,7 +223,7 @@ if (!array_is_list($condition)) {
 <td>§2 ci-dessus : moteur JSON sans interpréteur, opérateurs en liste blanche, contraintes de schéma ; en aval, <code>filter_var(FILTER_VALIDATE_EMAIL)</code> sur les emails, <code>max</code>/<code>step</code> HTML complétés par les bornes serveur (<code>str('email', 190)</code>, etc.)</td>
 </tr>
 <tr>
-<td><strong>Preuve</strong></td>
+<td><strong>Référence rapportée dans l’archive</strong></td>
 <td>E2E T12 (2 vérifications) + <code>features_test.php</code> « tri inconnu → repli liste blanche » + <code>run_tests.php</code> T-25</td>
 </tr>
 </tbody>
@@ -241,7 +242,7 @@ if (!array_is_list($condition)) {
 <td>un script injecté en base est exécuté dans le navigateur d'autres utilisateurs (vol de cookie/session)</td>
 </tr>
 <tr>
-<td><strong>Attaque testée</strong></td>
+<td><strong>Scénario d’attaque décrit</strong></td>
 <td>E2E T12 : l'admin crée un produit nommé <code>&lt;script&gt;alert("xss")&lt;/script&gt; Bombe</code>, puis un visiteur ouvre <code>GET /recherche?q=Bombe</code></td>
 </tr>
 <tr>
@@ -266,7 +267,7 @@ function e(mixed $valeur): string
 </thead>
 <tbody>
 <tr>
-<td><strong>Preuve</strong></td>
+<td><strong>Référence rapportée dans l’archive</strong></td>
 <td>E2E T12 : la page contient <code>&amp;lt;script&amp;gt;</code> (littéral) et <strong>aucune</strong> occurrence de <code>&lt;script&gt;alert</code></td>
 </tr>
 </tbody>
@@ -285,7 +286,7 @@ function e(mixed $valeur): string
 <td><code>GET /mes-commandes/42</code> d'un autre client livre ses données</td>
 </tr>
 <tr>
-<td><strong>Attaque testée</strong></td>
+<td><strong>Scénario d’attaque décrit</strong></td>
 <td>E2E T12 : le client <em>bruno</em> boucle sur <code>/mes-commandes/1..4</code> ; E2E T6 : accès direct à une commande d'autrui ; fonctionnels : <code>cancelOrder</code> sur la commande d'un autre</td>
 </tr>
 <tr>
@@ -308,7 +309,7 @@ if ($idClient !== null &amp;&amp; (int) $commande['id_client'] !== $idClient) {
 </thead>
 <tbody>
 <tr>
-<td><strong>Preuve</strong></td>
+<td><strong>Référence rapportée dans l’archive</strong></td>
 <td>E2E T12 « boucle IDOR 1..4 : toujours redirigé » + T6 + <code>features_test.php</code> (refus <code>ACCES_NON_AUTORISE</code> sur annulation/validation d'autrui)</td>
 </tr>
 </tbody>
@@ -327,7 +328,7 @@ if ($idClient !== null &amp;&amp; (int) $commande['id_client'] !== $idClient) {
 <td>ajouter <code>prix_unitaire: 0.01</code> au POST du panier pour acheter à 1 centime</td>
 </tr>
 <tr>
-<td><strong>Attaque testée</strong></td>
+<td><strong>Scénario d’attaque décrit</strong></td>
 <td>E2E T9 : <code>POST /panier/ajouter { id_produit: 5, quantite: 1, prix_unitaire: '0.01' }</code></td>
 </tr>
 <tr>
@@ -349,7 +350,7 @@ $prixTtc = round((float) $produit['prix_ht'] * (1 + (float) $produit['tva'] / 10
 </thead>
 <tbody>
 <tr>
-<td><strong>Preuve</strong></td>
+<td><strong>Référence rapportée dans l’archive</strong></td>
 <td>E2E T9 : « prix serveur 154,80, pas 0,01 » ; <code>run_tests.php</code> (prix TTC figé, RB-06)</td>
 </tr>
 </tbody>
@@ -368,7 +369,7 @@ $prixTtc = round((float) $produit['prix_ht'] * (1 + (float) $produit['tva'] / 10
 <td>imposer un identifiant de session connu avant la connexion (fixation), ou rejouer un cookie volé</td>
 </tr>
 <tr>
-<td><strong>Attaque testée</strong></td>
+<td><strong>Scénario d’attaque décrit</strong></td>
 <td>E2E T12 : un « pirate » impose son cookie <code>MINISHOPSESS=sid-pirate-fixe-123</code> puis se connecte en Alice</td>
 </tr>
 <tr>
@@ -402,7 +403,7 @@ public static function connecterClient(int $idClient): void
 </thead>
 <tbody>
 <tr>
-<td><strong>Preuve</strong></td>
+<td><strong>Référence rapportée dans l’archive</strong></td>
 <td>E2E T12 : « session régénérée (anti-fixation) » (le sid final ≠ sid imposé) et « le panier volé est vide » (nouvelle session)</td>
 </tr>
 </tbody>
@@ -421,7 +422,7 @@ public static function connecterClient(int $idClient): void
 <td>un site tiers fait poster un formulaire authentifié à l'insu du client (ajout au panier, validation de commande…)</td>
 </tr>
 <tr>
-<td><strong>Attaque testée</strong></td>
+<td><strong>Scénario d’attaque décrit</strong></td>
 <td>E2E T6 : <code>POST /connexion</code> sans jeton <code>_csrf</code></td>
 </tr>
 <tr>
@@ -452,7 +453,7 @@ public static function verifier(): void
 </thead>
 <tbody>
 <tr>
-<td><strong>Preuve</strong></td>
+<td><strong>Référence rapportée dans l’archive</strong></td>
 <td>E2E T6 « POST sans CSRF rejeté » ; la totalité des ~30 formulaires de l'app exige un jeton (chaque test E2E le extrait d'abord) ; <code>unit_tests.php</code> (section Csrf)</td>
 </tr>
 <tr>
@@ -475,7 +476,7 @@ public static function verifier(): void
 <td>atteindre des fichiers hors périmètre (<code>.git</code>, sources SQL, config, logs), être encadré (clickjacking), ou lire des en-têtes bavards</td>
 </tr>
 <tr>
-<td><strong>Attaques testées</strong></td>
+<td><strong>Scénarios d’attaque décrits</strong></td>
 <td>E2E T12 : <code>/../etc/passwd</code>, <code>/produit/../../etc/passwd</code>, <code>/%2e%2e/%2e%2e/etc/passwd</code>, <code>/.git/config</code>, <code>/sql/01_minishop_schema.sql</code>, <code>/app/Config/env.php</code>, <code>/var/log/application.log</code>, <code>/phpinfo.php</code> → <strong>tous 404</strong> ; vérification des 4 en-têtes défensifs</td>
 </tr>
 <tr>
@@ -529,7 +530,7 @@ http_response_code(404); // rien n'a matché → 404, et c'est le SEUL comportem
 <td>une erreur verbeuse révèle schéma, chemins, requêtes ou existence de comptes (aide à l'attaque)</td>
 </tr>
 <tr>
-<td><strong>Attaques testées</strong></td>
+<td><strong>Scénarios d’attaque décrits</strong></td>
 <td>E2E T2/T8 : mauvais mot de passe, email inconnu, compte bloqué, ancien mot de passe incorrect ; erreurs métier (RB-02 prix invalide, STOCK_INSUFFISANT, transitions interdites) affichées sur toutes les batteries</td>
 </tr>
 <tr>
@@ -562,7 +563,7 @@ $erreur = $identifiants['statut'] === 'COMPTE_BLOQUE'
 </thead>
 <tbody>
 <tr>
-<td><strong>Preuve</strong></td>
+<td><strong>Référence rapportée dans l’archive</strong></td>
 <td>E2E T2/T8 (« message générique », « ancien mot de passe désormais refusé ») ; les 5 suites exécutent des dizaines de refus métier sans jamais voir un détail interne. Le journal d'audit ne contient ni mot de passe ni hash (EF-GEN-04, vérifié T11)</td>
 </tr>
 </tbody>
@@ -615,7 +616,7 @@ $erreur = $identifiants['statut'] === 'COMPTE_BLOQUE'
 <td><code>POST /inscription</code> avec <code>role=ADMIN</code> (ou <code>role=SUPER</code>) crée un administrateur</td>
 </tr>
 <tr>
-<td><strong>Attaque testée</strong></td>
+<td><strong>Scénario d’attaque décrit</strong></td>
 <td>E2E T12 : inscription d'« Ida » avec <code>role: 'SUPER'</code> glissé dans le POST ; T13 : un GESTIONNAIRE tente <code>POST /admin/equipe</code> pour créer un SUPER</td>
 </tr>
 <tr>
@@ -657,7 +658,7 @@ public static function exigeSuper(): array
 </thead>
 <tbody>
 <tr>
-<td><strong>Preuve</strong></td>
+<td><strong>Référence rapportée dans l’archive</strong></td>
 <td>E2E T12 (« champ role=ADMIN ignoré », « le faux admin reste un simple client », table <code>administrateur</code> inchangée) + T13 (GESTIONNAIRE : back-office OK, <code>/admin/equipe</code> refusé, création d'admin impossible, SUPER peut désactiver un compte)</td>
 </tr>
 </tbody>
@@ -666,9 +667,9 @@ public static function exigeSuper(): array
 <h2 id="4-mesures-structurelles-transverses">4. Mesures structurelles transverses<a class="headerlink" href="#4-mesures-structurelles-transverses" title="Permanent link">#</a></h2>
 <h3 id="41-mots-de-passe-rb-12-sec-04">4.1 Mots de passe (RB-12, SEC-04)<a class="headerlink" href="#41-mots-de-passe-rb-12-sec-04" title="Permanent link">#</a></h3>
 <ul>
-<li>Jamais stockés en clair : <code>password_hash($mdp, PASSWORD_BCRYPT)</code> (vérifié en E2E : le hash persisté commence par <code>$2y$</code> et fait 60 caractères).</li>
+<li>Le code de référence utilise <code>password_hash($mdp, PASSWORD_BCRYPT)</code> ; une vérification E2E du hash est décrite dans l’archive, sans résultat rattaché au SHA de cette révision.</li>
 <li>Comparaison uniquement par <code>password_verify()</code> (temps constant) ; le repository <strong>refuse</strong> un hash qui n'est pas une sortie de <code>password_hash()</code> (<code>HASH_MOT_DE_PASSE_INVALIDE</code>).</li>
-<li>Changement de mot de passe : ancien exigé et vérifié, confirmation requise (E2E T8 couvre : mauvais ancien refusé, ancien mot de passe révoqué après changement).</li>
+<li>Changement de mot de passe : scénario E2E T8 décrit le refus d’un ancien mot de passe erroné et la révocation après changement ; résultat non revalidé ici.</li>
 <li>Politique : 8 caractères minimum côté serveur (le <code>minlength</code> HTML n'est que du confort).</li>
 </ul>
 <h3 id="42-sessions-et-espaces-separes-sec-05-rb-13">4.2 Sessions et espaces séparés (SEC-05, RB-13)<a class="headerlink" href="#42-sessions-et-espaces-separes-sec-05-rb-13" title="Permanent link">#</a></h3>
@@ -687,7 +688,7 @@ public static function exigeSuper(): array
 <h3 id="44-validation-des-entrees-en-profondeur-sec-02">4.4 Validation des entrées en profondeur (SEC-02)<a class="headerlink" href="#44-validation-des-entrees-en-profondeur-sec-02" title="Permanent link">#</a></h3>
 <ul>
 <li>Accesseurs typés bornés dans le contrôleur de base : <code>$this-&gt;int('quantite')</code>, <code>$this-&gt;str('nom', 100)</code>, <code>$this-&gt;float('prix_min')</code>, <code>$this-&gt;bool('cgv')</code> — troncature et transtypage explicites <strong>avant</strong> tout usage.</li>
-<li>Puis contraintes du moteur (schéma) : types, NOT NULL, ENUM (<code>statut</code>), CHECK (<code>prix_ht &gt; 0</code>, <code>stock &gt;= 0</code>, <code>montant_total &gt;= 0</code>), UNIQUE (<code>reference</code>, <code>slug</code>, <code>email</code>, <code>numero</code>), FK (RESTRICT/CASCADE) — testées par <code>engine_smoke.php</code> et <code>run_tests.php</code>.</li>
+<li>Puis contraintes du moteur (schéma) : types, NOT NULL, ENUM (<code>statut</code>), CHECK (<code>prix_ht &gt; 0</code>, <code>stock &gt;= 0</code>, <code>montant_total &gt;= 0</code>), UNIQUE (<code>reference</code>, <code>slug</code>, <code>email</code>, <code>numero</code>), FK (RESTRICT/CASCADE) — contrôles visés par <code>engine_smoke.php</code> et <code>run_tests.php</code>, sans résultat de rejeu revendiqué ici.</li>
 <li>Les montants traversent <code>round(..., 2)</code> et les comparaisons d'égalité monétaire des tests tolèrent <code>0.001</code>.</li>
 </ul>
 <h3 id="45-hygiene-du-code">4.5 Hygiène du code<a class="headerlink" href="#45-hygiene-du-code" title="Permanent link">#</a></h3>
@@ -704,7 +705,7 @@ public static function exigeSuper(): array
 <tr>
 <th>Exigence</th>
 <th>Contre-mesure (code)</th>
-<th>Preuve exécutée</th>
+<th>Référence de contrôle (archive, non revalidée)</th>
 </tr>
 </thead>
 <tbody>
@@ -830,8 +831,8 @@ public static function exigeSuper(): array
 </table>
 <hr />
 <h2 id="7-annexe-rejouer-les-attaques">7. Annexe — rejouer les attaques<a class="headerlink" href="#7-annexe-rejouer-les-attaques" title="Permanent link">#</a></h2>
-<pre><code class="language-bash">npm run test:all          # 5 suites : moteur, règles 29/29, unitaires 98/98,
-                          # fonctionnalités 108/108, E2E 155/155
+<pre><code class="language-bash">npm run test:all          # exécuter les suites configurées ; consigner date, SHA,
+                          # environnement, sorties et statut des tests non joués
                           # (T6+T12+T13 = 45 vérifications de sécurité)
 </code></pre>
 <p>Attaques rejouables individuellement (extraits de <code>scripts/wasm-e2e.mjs</code>) :</p>

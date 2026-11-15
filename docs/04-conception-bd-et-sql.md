@@ -9,7 +9,7 @@
 | **Référente** | Thanh-Phuong Nguyen — `thanh-phuong.nguyen@univ-cotedazur.fr` |
 | **Barème visé** | 20 points — pénalités couvertes : script SQL manquant (−3), procédure stockée manquante (−1, max −5), déclencheur manquant (−1, max −5), entité MCD manquante (−2), mauvaise cardinalité (−1) |
 | **Plan imposé par le sujet** | **A)** Analyse de BD : i) MCD · ii) MLD · iii) Normalisation · iv) Script SQL — **B)** Procédures stockées (≥ 5) + question pédagogique — **C)** Triggers (≥ 5) |
-| **Chiffres clés** | 8 tables + 3 vues · 1 fonction + **17 procédures stockées** (min. 5) · **16 déclencheurs** (min. 5) · 29 tests SQL conformes |
+| **Chiffres clés** | 8 tables + 3 vues · 1 fonction + **17 procédures stockées** (min. 5) · **16 déclencheurs** (min. 5) · 29 scénarios SQL référencés ; résultat historique daté en §A.5 |
 | **Documents liés** | `docs/01-cahier-des-charges-MiniShop.md` (spécification) · `docs/02-document-tests-validation.md` · `README.md` |
 | **Fichiers SQL liés** | `sql/01…04` (schéma, procédures, déclencheurs, démo) · `tests/sql/` (fixture, manifeste) — liens en fin de document |
 | **Version** | 1.1 — 23 septembre 2026 (scripts livrés en fichiers, plus de recopie verbatim) |
@@ -24,8 +24,8 @@
 |---|---|---|
 | `RB-01…RB-20` | règles métier | `docs/01` §6 |
 | `SEC-01…SEC-14` | exigences de sécurité | `docs/01` §8 |
-| `CT-01…CT-09` | contraintes techniques | `docs/01` §7 |
-| `ENF-01…ENF-19` | exigences non fonctionnelles | `docs/01` annexe 17.3 (`docs/annexes/annexe-enf.md`) |
+| `CT-01…CT-12` | contraintes techniques | `docs/01` §7 |
+| `ENF-01…ENF-22` | exigences non fonctionnelles | `docs/01` annexe 17.3 (`docs/annexes/annexe-enf.md`) |
 | `UC-01…UC-14` | cas d'utilisation | `docs/01` §5.1 + annexe 17.1 |
 | `T-xx` / `F-xx` / `S-xx` / `EF-xxx` | cas de test (règles / fonctionnels / sécurité) | `docs/02` |
 | `V1…V7` | variantes de conception (arbitrages) | **partie D du présent document** |
@@ -209,25 +209,13 @@ SELECT id_produit FROM produit WHERE stock < 0;
 
 ### A.4 Script SQL (DDL + données) — `sql/01_minishop_schema.sql`
 
-**Installation (la commande fait foi, exécutée sur MariaDB 11.8 dans notre environnement de développement) :**
+**Commande d’installation de référence — non exécutée dans cette révision :**
 
 ```bash
 ./scripts/load_db.sh
-# [1/4] DDL + données de reference     sql/01_minishop_schema.sql
-# [2/4] 16 declencheurs               sql/03_minishop_triggers.sql
-# [3/4] 1 fonction + 17 procedures    sql/02_minishop_procedures.sql
-# [4/4] commandes de demonstration    sql/04_minishop_demo.sql
-#
-# objet                nombre
-# tables               8     ← entités du MLD (A.2), dont `parametre`
-# vues                 3     ← v_etat_stock, v_catalogue, v_commandes_client
-# fonctions            1     ← fn_param : lecture typée des règles chiffrées
-# procedures stockees  17    ← CT-03 (minimum 5)
-# declencheurs         16    ← CT-04 (minimum 5)
-# produits             12   clients 3   commandes 4
-# lignes de commande   5     traces de statut 9
-# OK — base 'minishop' chargee (verifiez : procedures >= 5, declencheurs >= 5).
 ```
+
+Le script source déclare 36 produits dans `sql/01_minishop_schema.sql` ; il s’agit d’un comptage statique des lignes versionnées, pas d’un chargement vérifié. La campagne historique du 23/09/2026 relatée dans ce livrable est distincte et n’a pas été rejouée sur le checkout examiné. Toute sortie d’installation doit être consignée avec date, SHA, SGBD et environnement avant d’être utilisée comme preuve.
 
 Extraits représentatifs du DDL (le fichier complet est dans le dépôt et dans le fichier `sql/01_minishop_schema.sql`, livré à la racine du dépôt) :
 
@@ -285,7 +273,7 @@ Contrôles de cohérence livrés avec le script (dans `load_db.sh`) : comptage d
 |---|---|---|
 | 4 catégories | Informatique, Audio, Accessoires, Objets connectés | `RB-08` (une catégorie vide est créée par les tests de suppression) |
 | 36 produits (3 pages de 12) | prix de 8.50 à 1249 € HT, dont **`POWER-010`, `POWER-030` et `MONTRE-032` en rupture (`stock = 0`)**, `MICRO-007` au seuil de réassort, `BRAC-012` **masqué** | `RB-19`, `EF-ADM-05`, `F-12/13`, `T-25`, `T-26` |
-| 3 clients | alice / bruno / carla | `RB-01`, `SEC-08`, `T-18` (deux clients différents suffisent à prouver l'IDOR) |
+| 3 clients | alice / bruno / carla | `RB-01`, `SEC-08`, `T-18` (scénario prévu pour vérifier l’isolation entre clients ; pas de résultat de rejeu revendiqué ici) |
 | 1 administrateur | rôle `SUPER` | `RB-13` |
 | 4 commandes | deux `EN_PREPARATION` validées (2 lignes et 1 ligne), un brouillon vide, une `EXPEDIEE` (2 lignes) | `RB-11`, `RB-06`, `RB-15`, `EF-CLI-10` |
 
@@ -374,7 +362,7 @@ troisième est **renommée en français pour être cohérente avec le reste du m
 | `sp_add_order_item` — ajout d'un produit dans une commande | `sp_add_order_line(id_commande, id_produit, qte, OUT id_ligne, OUT total, OUT code)` | renommer **`_line`** : la table s'appelle `ligne_commande`, les triggers `trg_ligne_*` ; garder un nom anglais isolé dans un modèle français serait la vraie incohérence. Dérivé : `sp_create_order_from_basket` = le panier entier en un appel | `T-06`, `T-08`, `T-09`, `T-29` |
 | `sp_update_order_status` — modification du statut | `sp_update_order_status(id_commande, statut, commentaire, auteur, role, OUT code)` | **nom et rôle identiques** ; + matrice de transitions (`RB-11`), idempotence, auteur tracé | `T-12`, `T-13`, `F-29` |
 | « Trigger 1 — Stock » : à la création d'une ligne, `stock - quantité commandée` | `trg_ligne_decrement_stock` (`AFTER INSERT`) **et** `trg_ligne_restore_stock` (`AFTER DELETE`) | même formule, **et son inverse** : sans la restitution, annuler une commande perdrait du stock (`T-21`) | `T-07`, `T-21` |
-| « Trigger 2 — Historique » sur `ORDER_STATUS_HISTORY(id, order_id, old_status, new_status, changed_at)` | `trg_history_statut` (`AFTER UPDATE`) **et** `trg_history_creation` (`AFTER INSERT`) | **colonnes du sujet conservées à l'identique**, plus `changed_by`, `changed_by_role`, `commentaire` (qui, sous quel rôle, pourquoi) ; écriture **uniquement** par trigger (`V7`, `T-22`) | `T-22`, `T-23` |
+| « Trigger 2 — Historique » sur `ORDER_STATUS_HISTORY(id, order_id, old_status, new_status, changed_at)` | `trg_history_statut` (`AFTER UPDATE`) **et** `trg_history_creation` (`AFTER INSERT`) | colonnes du sujet conservées à l'identique, plus `changed_by`, `changed_by_role`, `commentaire` ; dans la conception cible, l'écriture est confiée aux triggers. `T-22` est le scénario prévu pour contrôler l’absence de doublon, pas un résultat de rejeu | `T-22`, `T-23` |
 | `CLIENT(…, password, date_creation)` | `client(…, mot_de_passe_hash, date_creation)` | le sujet interdit lui-même le mot de passe en clair (`Interdire password = "123456"`) : la colonne est un **hash** `password_hash()` (`RB-12`) | `T-05`, `F-08` |
 
 
@@ -407,9 +395,9 @@ troisième est **renommée en français pour être cohérente avec le reste du m
 
 L'exigence « Trigger 1 — Stock » est couverte par `TRG-A1`+`TRG-A2` (et `TRG-A3` pour l'annulation) ; l'exigence « Trigger 2 — Historique » par `TRG-D4` (+ `TRG-D5`), avec la table `order_status_history(id, order_id, old_status, new_status, changed_at, …)` **exactement** au format demandé par le sujet, complétée de l'auteur et du rôle pour la traçabilité.
 
-### C.3 Preuves par les tests SQL directs
+### C.3 Scénarios de contrôle SQL direct (hors application)
 
-Les tests `T-02`, `T-03`, `T-07`, `T-08`, `T-10`, `T-11`, `T-14`, `T-15`, `T-17` attaquent la base **en SQL direct**, hors application. Les règles tiennent quand même — c'est la démonstration attendue, et la raison pour laquelle la `PROCÉDURE` ne fait que compléter (message + transaction), elle ne remplace pas la contrainte.
+`T-02`, `T-03`, `T-07`, `T-08`, `T-10`, `T-11`, `T-14`, `T-15` et `T-17` sont conçus pour attaquer la base **en SQL direct**, hors application, et vérifier les contraintes décrites. Ce sont des identifiants de scénarios, pas des résultats d’exécution : aucun rejeu courant n’est revendiqué ici. La procédure complète la contrainte (message + transaction) dans la conception cible, sans la remplacer ; la présence des scénarios ne prouve ni leur succès ni l’intégration au parcours HTTP.
 
 
 ---
@@ -421,12 +409,12 @@ Les tests `T-02`, `T-03`, `T-07`, `T-08`, `T-10`, `T-11`, `T-14`, `T-15`, `T-17`
 | # | Question posée par le besoin | Option retenue | Option écartée | Arbitrage |
 |---|---|---|---|---|
 | V1 | Panier : en session ou en base ? | **session** (`PanierSession`) par défaut ; tables `PANIER`/`LIGNE_PANIER` fournies et jouables | panier 100 % en base | la session suffit au cahier des charges et évite d'écrire des règles de péremption de panier ; la variante est livrée (script commenté) pour prouver que l'architecture n'est pas fragilisée |
-| V2 | Une ligne de commande = une ligne par unité ou quantité agrégée ? | **quantité agrégée** avec snapshot | une ligne par unité (1..N inserts) | 1 ligne = 1 produit = 1 prix au moment de l'achat : plus simple à facturer, `T-23` vérifie le snapshot ; l'unité par unité serait possible mais multiplie les lignes mortes |
+| V2 | Une ligne de commande = une ligne par unité ou quantité agrégée ? | **quantité agrégée** avec snapshot | une ligne par unité (1..N inserts) | 1 ligne = 1 produit = 1 prix au moment de l'achat : plus simple à facturer ; `T-23` est le scénario prévu pour contrôler le snapshot, sans résultat de rejeu revendiqué ici. L'unité par unité serait possible mais multiplie les lignes mortes |
 | V3 | `BROUILLON` parmi les états ? | **oui** | démarrer directement en `EN_PREPARATION` | sans état « panier convertible », `RB-04` serait violé à l'instant de la création de la commande ; le brouillon rend la règle cohérente (et `RB-04` n'est contrôlé qu'à la validation, cf. `T-16`) |
 | V4 | Deux tables d'acteurs ou une table `UTILISATEUR` + rôle ? | **deux tables** | une table + colonne `role` | champs réellement disjoints (téléphone/adresse/CGV vs rôle) ; `SEC-10` renforcé : le front-office ne peut même pas écrire dans la table `administrateur` ; jointure explicite sur la bonne table |
 | V5 | `statut` en `ENUM` ou table `STATUT` ? | **ENUM** (+ matrice en base) | table de référence | 6 valeurs stables, contrôle en base (`RB-11`), pas de jointure inutile ; une table de référence est décrite comme évolution possible si un état « EN_ATTENTE_VALIDATION_PAIEMENT » devait s'ajouter |
 | V6 | Prix TTC stocké ou calculé à la demande ? | stocké + trigger (cf. A.3.2 `PRODUIT`) | calculé à la lecture | filtrage de prix indexé et réponse `< 500 ms` (cf. `ENF-01`) |
-| V7 | Historique des statuts : écrit par la procédure ou par trigger ? | **uniquement par trigger** | écrit dans `sp_update_order_status` | avec écriture en procédure, un `UPDATE` manuel ne serait pas tracé ; l'essai `T-22` vérifie **l'absence de doublon** (donc que la procédure n'écrit pas) |
+| V7 | Historique des statuts : écrit par la procédure ou par trigger ? | **uniquement par trigger dans la conception cible** | écriture dans `sp_update_order_status` | un `UPDATE` manuel doit aussi être tracé ; `T-22` est le scénario prévu pour contrôler l’absence de doublon. Aucun résultat de rejeu n’est revendiqué ici. |
 
 ---
 
@@ -438,7 +426,7 @@ Le tableau relie chaque fichier aux parties du présent document qui l'analysent
 
 | Fichier | Contenu | Rattaché à | Lignes |
 |---|---|---|---:|
-| [`sql/01_minishop_schema.sql`](../sql/01_minishop_schema.sql) | DDL : 8 tables, 3 vues, index FULLTEXT + jeu de données de référence (4 catégories, 12 produits, 3 clients, 1 admin, hashes `password_hash()`, table `parametre`) | A.1 · A.2 · A.4 · A.5 | 344 |
+| [`sql/01_minishop_schema.sql`](../sql/01_minishop_schema.sql) | DDL : 8 tables, 3 vues, index FULLTEXT + jeu de données de référence (4 catégories, 36 produits déclarés dans le script, 3 clients, 1 admin, hashes `password_hash()`, table `parametre`) ; ce comptage statique ne prouve pas un chargement | A.1 · A.2 · A.4 · A.5 | 344 |
 | [`sql/02_minishop_procedures.sql`](../sql/02_minishop_procedures.sql) | directive `DELIMITER` + 1 fonction (`fn_param`) + 17 procédures stockées | B.1 · B.2 · B.3 | 867 |
 | [`sql/03_minishop_triggers.sql`](../sql/03_minishop_triggers.sql) | directive `DELIMITER` + 16 déclencheurs (blocs A stock, B prix/immuabilité, C catégories, D commandes/historique) | C.1 · C.2 · C.3 | 315 |
 | [`sql/04_minishop_demo.sql`](../sql/04_minishop_demo.sql) | 4 commandes de démonstration créées **par `CALL` des procédures** (déclencheurs réellement exécutés) | A.5 | 46 |
@@ -460,7 +448,7 @@ mysql -u root -p minishop < sql/03_minishop_triggers.sql
 mysql -u root -p minishop < sql/04_minishop_demo.sql
 ```
 
-**Validation exécutée (23/09/2026, MariaDB 11.8.6)** — chaîne rejouée de zéro : 8 tables, 3 vues,
+**Validation historique rapportée pour le 23/09/2026 (MariaDB 11.8.6 ; ne constitue pas un rejeu de la révision du 23/10)** — chaîne décrite comme rejouée de zéro : 8 tables, 3 vues,
 1 fonction, **17 procédures** et **16 déclencheurs** chargés ; les 4 commandes de démonstration retrouvées
 avec leurs montants exacts (324,60 / 0,00 / 405,48 / 63,70 EUR dont 4,90 de port) et les 9 traces
 d'historique ; les gardes RB-01/02/03/05/06/09/11/14/15/18 vérifiés **en SQL direct** (rejets attendus) ;

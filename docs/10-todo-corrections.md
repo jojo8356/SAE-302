@@ -1,10 +1,12 @@
-# 10 — Todolist des corrections (audit `09`) — état **vérifié**
+# 10 — Todolist des corrections (audit `09`) — archive versionnée, portée à vérifier
 
 > Suivi d'exécution de l'audit [`09-audit-ecarts.md`](09-audit-ecarts.md).
+>
+> **Avertissement de datation (coupure 23/10/2026) :** plusieurs entrées ci-dessous portent des dates postérieures (27–28/10/2026) et décrivent des résultats/événements non vérifiables à cette coupure. Elles sont conservées comme contenu d'archive, pas comme preuves acquises. La branche inscrite dans cette archive n'est pas la branche active de la présente révision.
 > Légende : `[x]` fait **et vérifié sur disque** · `[ ]` **toujours manquant** · `[~]` fait autrement, justifié · `[!]` bloqué par l'environnement.
 > Chaque ligne indique le fichier concerné et la commande qui permet de le constater.
 >
-> **Dernière vérification :** 2026-10-28 · branche `arena/6e1d3706-sae-302`.
+> **Date/branche portées par cette archive :** 2026-10-28 · `arena/6e1d3706-sae-302` (date future à la coupure 23/10/2026 ; branche différente de la branche active). Cette mention ne vaut pas une vérification actuelle.
 > Cette version remplace la précédente, qui cochait des livrables **absents du dépôt** (voir §8).
 
 > **Note de portée (révision du 23/10/2026).** Ce suivi conserve des constats historiques. La tâche/configuration GitLab CI a été retirée du périmètre courant ; ses références ci-dessous ne sont pas des exigences actives. La CI GitHub Actions reste séparée et ne vaut pas preuve d’un pipeline GitLab.
@@ -91,7 +93,7 @@
 
 ## 4 bis. Campagne SQL : sept scénarios qui ne testaient pas ce qu'ils annonçaient
 
-Rejouée sur une base réelle le 27/10 (`php tests/php/sql_integration.php`), la campagne a donné **22/29**. Aucun de ces sept échecs ne venait du schéma : tous venaient des **scénarios eux-mêmes**, qui supposaient une base différente de celle que produit `sql/01` + `sql/04`. Ils n'avaient jamais été rejoués sur les fichiers de cette branche — le 29/29 consigné provenait de la copie locale de l'équipe.
+Le texte de cette archive décrit un rejeu daté du 27/10 (`php tests/php/sql_integration.php`) et un résultat de **22/29**. Au 23/10/2026, cette date est future : ni le rejeu ni l’analyse des sept échecs ne sont vérifiables à la coupure et ils ne sont pas repris comme résultats acquis. Les commentaires ci-dessous restent à confirmer sur une campagne réelle, isolée et datée.
 
 | Test | Cause réelle | Correction |
 |---|---|---|
@@ -105,7 +107,7 @@ Rejouée sur une base réelle le 27/10 (`php tests/php/sql_integration.php`), la
 
 **Leçon retenue, et inscrite dans le code** : un test qui s'appuie sur un état qu'il ne crée pas lui-même ne teste rien — il constate. Les corrections remplacent les références au jeu de démonstration par des objets créés par le scénario, ce qui les rend indépendants de l'ordre des campagnes et de la fixture.
 
-**Rejeu du 27/10/2026 : 29/29 conformes** (`SQL : CAMPAGNE CONFORME ✅`), sur `minishop_test` créée puis supprimée — la base de développement n'est jamais touchée. Les sept causes sont donc soldées, et l'avertissement qui figurait dans `tests/sql/rapport_tests_sql.md` et `docs/02` a été remplacé par le compte rendu de ce rejeu.
+**Mention portée par l’archive :** un rejeu daté du 27/10/2026 aurait donné 29/29. Cette date étant future à la coupure du 23/10, ni le résultat ni la conclusion « causes soldées » ne sont retenus ici comme faits ; vérifier ultérieurement le run, le SHA et les journaux avant réutilisation.
 
 ## 4 ter. Une suite de tests a modifié la machine : garde-fou
 
@@ -129,22 +131,22 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] `livrables/README.md` — index généré (formats, documents, commandes de régénération).
 - Outillage : `scripts/md_to_{html,pdf,docx,pptx}.py` + `requirements-docs.txt` ; `bash scripts/build-docs.sh` rejoue tout en ~25 s.
 
-## 6. Cohérence documentaire — **soldé le 28/10/2026**
+## 6. Cohérence documentaire — section datée du 28/10/2026 (future à la coupure, état à confirmer)
 
 | Point | État | Preuve |
 |---|---|---|
-| 29 tests SQL partout | [x] | corrigé le 28/10 : `docs/03` (28/28, 27/27 → 29/29), `docs/08` (« 28 tests » de la CI) ; `.gitlab-ci.yml` vérifié |
+| 29 scénarios SQL partout | mention de correction future | la ligne de cette archive date ces corrections du 28/10, après la coupure 23/10 ; leur réalisation n’est pas établie ici |
 | E2E 185 | [x] | `README.md` corrigé (T1…T14, 185/185) |
 | PHP 8.2 minimum | [x] | prérequis README aligné sur `composer.json` |
 | `ENF-13` dupliqué → `ENF-22` | [x] | la seconde ligne (installation ≤ 15 min) est devenue `ENF-22` dans `annexe-enf.md` |
 | MCD 8 entités | [x] | `docs/03` corrigé (« MCD (8 entités) ») ; `docs/01` et `docs/04` disaient « 7 entités + `parametre` », alors que `PARAMETRE` est une entité du MCD (`mcd_minishop.puml` en compte 8) — formulation corrigée |
 | Noms `01_minishop_schema.sql` | [x] | `docs/07` corrigé, et surtout `scripts/wasm-e2e.mjs` : le test de traversée visait `01-minishop-schema.sql`, nom qui n'existe pas — il aurait donc prouvé un 404 sur un fichier inexistant |
 | CDC §16.1/§16.4 à jour | [x] | marqueurs d'état du §16 corrigés (« livrée et testée », « mesuré : E2E T6/T12/T13 ») ; le paragraphe « le code PHP n'est pas encore écrit » est conservé **barré et daté**, avec l'état réel à sa suite — on ne réécrit pas un CDC, on le date |
-| Doc `02` : 33 `F-xx` exécutés + PV | [x] | PV rempli le 28/10 avec la campagne réelle (11 étapes vertes, SQL 29/29, E2E 185) ; les 5 scénarios non joués sont nommés au lieu d'être cochés. **Total du tableau corrigé : 90, et non 71** — la somme des lignes ne correspondait pas |
+| Doc `02` : scénarios et PV | mention future-datée | cette archive affirme un PV au 28/10 et des résultats SQL/E2E ; ces éléments sont postérieurs à la coupure et non vérifiés, donc pas un état courant |
 | Doc `03` aligné sur l'application | [x] | le déroulé ne décrit plus de session MySQL manuelle pour les tests : il renvoie à `run_sql_tests.sh` (29/29) et à la sortie de `run-all-tests.php` |
 | README : arborescence, chiffres, badges | [x] | chiffres et « zéro CSS » corrigés ; badge GitLab pointé sur le dépôt réel (`iut-git.unice.fr/but2_s302/s302`) au lieu de `gitlab.example.com` |
 
-## 6 bis. Catalogue étendu à 3 pages (demande du 28/10/2026) — **fait**
+## 6 bis. Catalogue étendu à 3 pages — demande datée du 28/10/2026 (future à la coupure, statut à confirmer)
 
 | Point | État | Preuve |
 |---|---|---|
@@ -155,7 +157,7 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 | Compteurs documentaires alignés (36 produits, 3 pages, 3 ruptures) | [x] | `docs/01` (§9, §16, tableau du jeu de démo), `docs/02` (F-03, F-25, F-27, §1), `docs/03`, `docs/04`, `docs/05`, `docs/06`, `docs/12`, `docs/DA.md`, `README.md`, `scripts/seed.php` ; les messages de commit **historiques** (`docs/08`, `scripts/rejeu_gitlab.py`) restent inchangés — on ne réécrit pas un historique |
 | Suite complète au vert dans la sandbox | [x] | unitaires ✅ · features ✅ · `run_tests` 29/29 ✅ · `engine_smoke` ✅ · design 61 ✅ · contrats HTTP 26 ✅ · E2E 185 ✅ · linter 0 violation |
 
-## 6 ter. Icônes de catégorie (demande du 28/10/2026) — **fait**
+## 6 ter. Icônes de catégorie — demande datée du 28/10/2026 (future à la coupure, statut à confirmer)
 
 | Point | État | Preuve |
 |---|---|---|
@@ -212,9 +214,9 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] La définition de `sp_search_products` suit la même règle ; contrôle statique et scénarios intégrés à `sql_integration.php` sur base de test isolée.
 - [ ] Tests sur MariaDB non joués dans la sandbox. La définition SQL modifiée concerne les nouveaux chargements de scripts : une procédure déjà installée n'est pas modifiée automatiquement. L'accueil utilise le repository PHP et ne nécessite aucune réinitialisation de base.
 
-## 6 decies. Information e-commerce et données — livré pour la maquette
+## 6 decies. Information e-commerce et données — état de l’archive à vérifier (datation postérieure à la coupure)
 
-- [x] Recherche française au 28/10/2026 et structures Boulanger/Fnac/Back Market documentées dans `docs/12-information-juridique.md` et `docs/DA.md`.
+- [ ] Cette archive date la recherche française et l’ajout des références Boulanger/Fnac/Back Market du 28/10/2026 ; date future à la coupure, à vérifier avant de la traiter comme réalisée.
 - [x] Mentions, CGV et encadré réglementaire des garanties, CGU, livraison, rétractation et modèle, confidentialité et cookies ; liens footer, inscription, contact et commande.
 - [x] Contact : message réel enregistré jusqu’à 2 000 caractères, échec d’écriture signalé, aucun e-mail ni délai de réponse promis ; données et cookies réels expliqués. La fiche commande distingue annulation et rétractation. Champ de confirmation d’inscription aligné avec le contrôleur.
 - [x] Suite complète PHP-WASM : 46 contrats juridiques, 299 vérifications E2E HTTP (dont erreurs de stockage, CSRF, XSS et cookie de session), catalogue 7 656, design 69, responsive 50, HTTP 27 ; zéro échec. Tests sans écrasement des journaux locaux vérifié par empreintes. Auto-évaluation et sources : `docs/12-information-juridique.md` §4.

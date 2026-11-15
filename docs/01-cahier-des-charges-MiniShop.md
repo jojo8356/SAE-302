@@ -1,19 +1,20 @@
 # Cahier des charges — MiniShop
 
-**Site e-commerce avec Back-office — Spécification du système, conception de base de données, application Web PHP/MySQL/PDO**
+**Site e-commerce avec Back-office — spécification cible PHP/MySQL/PDO ; état réel du stockage et de l’intégration précisé ci-dessous**
 
 | | |
 |---|---|
 | **Projet** | MiniShop (SAE — Service d'Activités Étudiantes) |
 | **Commanditaire / maître d'ouvrage** | Département Informatique — IUT / Université Côte d'Azur |
 | **Référente pédagogique** | Thanh-Phuong Nguyen (`thanh-phuong.nguyen@univ-cotedazur.fr`) |
-| **Maîtrise d'œuvre** | Groupe de 3 étudiants (2 personnes toléré) |
-| **Version du document** | 1.0 |
-| **Date** | 21 septembre 2026 |
-| **Statut** | Prêt pour validation — voir §16 (grille de conformité) |
+| **Maîtrise d'œuvre** | Le sujet prévoit 3 étudiants et tolère 2 ; le README du checkout nomme 2 membres, sans attribuer de rôles RACI |
+| **Version du document** | 1.1 — révision documentaire |
+| **Date initiale** | 21 septembre 2026 |
+| **Révision de cohérence** | 23 octobre 2026 |
+| **Statut** | Version de travail révisée ; aucune validation pédagogique n’est attestée |
 | **Périmètre couvert** | Document de spécification (20 pts) **et** document d'analyse/conception de base de données (20 pts), comme exigé aux points 2) et 3) du sujet |
 
-> **Comment lire ce document.** Le sujet impose un plan en 9 parties (§1 à §9) et un plan de conception de base de données en 4 sous-parties (§12). Ce cahier des charges reprend **ces deux plans à l'identique**, et ajoute la méthode « 8 étapes » de rédaction d'un CDC (contexte, objectifs mesurables, périmètre, ressources, délais, budget) dans §13, ainsi que les annexes rejouables (scripts SQL, tests, code, GitLab) en §17. Chaque exigence porte un identifiant (`EF-*`, `ENF-*`, `RB-*`, `CT-*`, `SEC-*`) afin d'être **vérifiable** : aucune exigence n'est écrite si elle ne peut pas être testée.
+> **Comment lire ce document.** Le sujet impose un plan en 9 parties (§1 à §9) et un plan de conception de base de données en 4 sous-parties (§12). Le cahier des charges décrit la cible pédagogique ; il ne certifie pas que l’implémentation actuelle respecte chaque contrainte. Ce cahier des charges reprend **ces deux plans à l'identique**, et ajoute la méthode « 8 étapes » de rédaction d'un CDC (contexte, objectifs mesurables, périmètre, ressources, délais, budget) dans §13, ainsi que les annexes rejouables (scripts SQL, tests, code, GitLab) en §17. Chaque exigence porte un identifiant (`EF-*`, `ENF-*`, `RB-*`, `CT-*`, `SEC-*`) afin d'être **vérifiable** : aucune exigence n'est écrite si elle ne peut pas être testée.
 
 ---
 
@@ -46,18 +47,18 @@
 
 Un cahier des charges décrit **le besoin (le *quoi*)**, pas la solution (le *comment*). Il doit être : **nécessaire, réalisable, clair, vérifiable, cohérent**.
 
-Ce projet est double : il est à la fois un CDC « client » (MiniShop doit fonctionner) et un CDC « pédagogique » (MiniShop doit **prouver** que les 11 compétences du référentiel sont maîtrisées). La rédaction suit donc deux règles :
+Ce projet est double : il est à la fois un CDC « client » (MiniShop doit fonctionner) et un CDC « pédagogique » (le dossier doit rendre vérifiables les 11 compétences visées par le référentiel). Ce document spécifie une cible ; il ne certifie ni maîtrise individuelle ni validation pédagogique. La rédaction suit donc deux règles :
 
 1. **toute exigence est testable** : chaque `EF-*`/`ENF-*`/`RB-*`/`SEC-*` est rattachée à un moyen de vérification concret (requête SQL, commande shell, cas de test PHPUnit, requête HTTP) ;
-2. **la partie solution n'apparaît que là où le sujet l'exige explicitement** : le sujet demande un SQL/PDO/MySQL/PHP précis (§7, §8, §12) : ces choix sont donc des **contraintes contractuelles** et non des préférences techniques.
+2. **la partie solution n'apparaît que là où le sujet l'exige explicitement** : le sujet demande PHP, PDO et MySQL (§7, §8, §12) ; ces choix sont **contractuels**. Le checkout utilise actuellement JSON par défaut et le SQL reste optionnel : cet écart d’implémentation est explicite en §7.1 et §16.4, il n’est pas déclaré conforme par le présent CDC.
 
 | Qualité d'un bon CDC | Comment elle est garantie ici |
 |---|---|
 | Nécessaire | §4 recouvre **les 14 cas d'utilisation minimum** et les 3×n fonctionnalités du sujet, sans en retirer aucune |
-| Réalisable | §13.4 planning sur 12 semaines × 3 personnes = 360 h de capacité nominale ; charge planifiée révisée à 355 h |
+| Réalisable | §13 : 355 h d’effort estimé bottom-up ; capacité individuelle non établie, faute de correspondance nominative entre les rôles de planification et les membres nommés |
 | Clair | identifiants d'exigence, vocabulaire unique (§0.3), règles métier numérotées avec leur traduction SQL |
-| Vérifiable | §15 + annexe 17.8 : 29 tests SQL **exécutés** (29/29 conformes), tests fonctionnels, tests de sécurité |
-| Cohérent | matrice de traçabilité exigence → modèle → procédure → test (`docs/02-document-tests-validation.md` §6), aucune exigence orpheline |
+| Vérifiable | §15 + annexe 17.8 : 29 scénarios SQL et contrôles fonctionnels/sécurité référencés ; leur présence n’est pas une affirmation d’exécution récente |
+| Cohérent | matrice de traçabilité exigence → modèle → stockage → application → test (`docs/02-document-tests-validation.md` §9), avec les évolutions postérieures à la WBS distinguées du sujet |
 
 ### 0.2 Positionnement dans le cycle de projet
 
@@ -118,16 +119,16 @@ Le projet doit mettre en pratique les 11 connaissances du référentiel. Chaque 
 | 5 | Accès aux bases avec PDO | §8.1 et annexe 17.7 : `prepare`/`execute`, `CALL sp_*`, transactions | `grep` de conformité §15.3 (aucune interpolation dans le SQL) |
 | 6 | Programmation côté client avec JavaScript | §4.5.3 (panier dynamique, filtres, validation live, compteur de caractères) | test F-13 (JS désactivé : le site reste correct) |
 | 7 | Authentification et gestion des sessions | §8.4, séquence 1 (`seq_authentification.png`) | test S-04 (fixation), S-05 (CSRF), F-04 |
-| 8 | Sécurité des applications Web | §8 complet (9 points de vulnérabilité, tous chiffrés) | 10 tests offensifs `S-01…S-10` (§3.2 du document de tests) |
-| 9 | Procédures stockées | **17 procédures + 1 fonction** livrées (minimum demandé : 5) — §12.5, `sql/02_minishop_procedures.sql` | `scripts/load_db.sh` affiche le compteur ; appels prouvés par les séquences 2 et 4 |
-| 10 | Déclencheurs (triggers) | **16 triggers** livrés (minimum demandé : 5) — §12.6, `sql/03_minishop_triggers.sql` | tests SQL T-03, T-08, T-11, T-21, T-22 (29/29 conformes) |
-| 11 | Tests et validation d'une application Web | §15 + annexe 17.8 (harnais `scripts/run_sql_tests.sh`, 29 tests, plan de recette) | sortie du harnais, consignée dans `tests/sql/rapport_tests_sql.md` (généré par la campagne) |
+| 8 | Sécurité des applications Web | §8 décrit les mesures et leurs limites | 10 scénarios offensifs documentés `S-01…S-10` (§4 de `docs/02`) ; leur identifiant ne prouve pas leur exécution |
+| 9 | Procédures stockées | 17 procédures et 1 fonction figurent dans §12.5 et `sql/02_minishop_procedures.sql` (minimum demandé : 5) | sources présentes ; les séquences illustrent une conception, pas des appels applicatifs exécutés ; chargement à prouver par un run daté |
+| 10 | Déclencheurs (triggers) | 16 déclencheurs documentés dans §12.6 et `sql/03_minishop_triggers.sql` (minimum demandé : 5) | scénarios `T-03`, `T-08`, `T-11`, `T-21`, `T-22` référencés ; résultat à établir à partir d’un run daté |
+| 11 | Tests et validation d'une application Web | §15 + annexe 17.8 (29 scénarios SQL, stratégie et plan de recette) | rapports et scripts versionnés ; vérifier date/SHA du run, sans assimiler l’identifiant d’un test à son résultat |
 
 ### 1.4 Intérêt et bénéfices attendus
 
 **Côté entreprise :** un catalogue à jour en permanence, un stock rendu fiable par la base (et non par la discipline des utilisateurs), des commandes horodatées et tracées, une piste d'audit des changements de statut, une facturation défendable grâce au prix figé à l'achat.
 
-**Côté pédagogique :** l'application ne « marche pas grâce au PHP bien écrit », elle marche **parce que la base interdit le contraire** : c'est exactement la démonstration attendue par les points 9 et 10 du référentiel. Les 29 tests SQL le prouvent en contournant volontairement l'application (INSERT/UPDATE écrits à la main, déclenchement réel des triggers).
+**Côté pédagogique :** le dossier décrit comment les contraintes, procédures et déclencheurs SQL doivent protéger les règles, y compris contre des écritures directes. Les scénarios `T-*` en donnent une couverture prévue ; ils ne prouvent ni un résultat actuel ni l’intégration de ces mécanismes au parcours HTTP, qui démarre en JSON par défaut (§7.1).
 
 ### 1.5 Contexte légal et contractuel
 
@@ -142,14 +143,12 @@ Mentions obligatoires du cadre pédagogique : code rendu sous licence de l'étab
 | Maître d'ouvrage pédagogique (enseignante référente) | valide le périmètre, note | exhaustivité du plan demandé, respect des pénalités, traçabilité GitLab | §1 à §12, §14, §16 |
 | Client final de MiniShop (personnel de l'entreprise) | usage du back-office | fiabilité du stock, simplicité, historique des commandes | §4.5, §6, §15 |
 | Clients acheteurs | achat en ligne sans mauvaise surprise | catalogue à jour, prix correct, confirmation de commande | §4.2, §4.3, §4.4 |
-| Équipe de réalisation (3 étudiants) | conception, développement, tests, soutenance | périmètre clair, charges réparties, outillage rapide | §13, §14 |
+| Équipe de réalisation (le sujet prévoit 3 étudiants et tolère 2 ; le README du checkout nomme 2 membres) | conception, développement, tests, soutenance | périmètre clair, estimation de charge par rôle, outillage | §3.3, §13, §14 |
 | Jury de soutenance | évaluation | démonstration des 11 compétences en 15 min | §17.11 |
 
-### 1.7 Conformité au sujet — pointage ligne à ligne (sujet reçu, document `sujetSAE.pdf`)
+### 1.7 Pointage documentaire des exigences du sujet (source PDF non suivie dans le dépôt)
 
-Le pointage ci-dessous a été refait **contre le PDF du sujet** (6 rubriques énoncées, pas seulement la partie
-cahier des charges). « Preuve » = le moyen de vérifier soi-même, pas une promesse : **exécuté** = commande lancée
-sur la base, **conçu** = exigence spécifiée dont la vérification suppose l'application PHP (non écrite, §16.4).
+Le tableau distingue l’exigence du sujet, le livrable présent et l’état d’implémentation constaté dans le checkout au 23/10/2026. « Automatisé » décrit un contrôle défini dans les sources, pas une réussite de CI ; aucune validation pédagogique ni recette humaine n’est inférée. Le PDF source `sujetSAE.pdf` n’est pas suivi dans ce checkout.
 
 | Ce que demande le sujet | Où c'est traité | Preuve | État |
 |---|---|---|---|
@@ -158,21 +157,21 @@ sur la base, **conçu** = exigence spécifiée dont la vérification suppose l'a
 | Diagramme de cas d'utilisation, **14 cas** minimum | §5.1 (global + 2 zooms), annexe 17.1 : 14 fiches | `docs/diagrams/cas_utilisation_*.png` (3 rendus) | **documenté + rendu** |
 | **3 cas détaillés textuellement** (préconditions, scénario nominal, alternatifs) | §5.1.5.1 (UC-07, celui de l'exemple), §5.1.5.2 (UC-02), §5.1.5.3 (UC-14) | les **11 pas** de l'exemple repris pas à pas + les **5** scénarios alternatifs cités | **documenté** |
 | Diagramme de classes : classes, attributs, méthodes, associations, **cardinalités**, **choix justifiés** | §5.2 + tableau de justification ligne à ligne | `diagramme_classes.png` + §12.8 (7 arbitrages justifiés) | **documenté + rendu** |
-| **≥ 4 diagrammes de séquences** intégrant procédure stockée et déclencheur | §5.3 : authentification, recherche produit, ajout au panier, passer commande (+2 bonus : annulation, back-office) | 6 séquences rendues, chaque flèche nomme `CALL sp_…` ou `trg_…` | **documenté + rendu** |
-| Les **11 contraintes métier** (email unique, prix > 0, stock ≥ 0, commande ≥ 1 ligne, quantité > 0, prix figé, 1 catégorie, …) | §6 (RB-01…RB-11 citées **à l'identique**) | `T-01`…`T-16` | **exécuté (29/29)** |
+| **≥ 4 diagrammes de séquences** | §5.3 : quatre séquences prévues pour les cas imposés et une séquence bonus de consultation du catalogue ; les diagrammes d’activités et d’états sont d’autres types | 5 sources `seq_*.puml` et 5 rendus correspondant aux cinq séquences listées en §5.3 | **minimum documentaire couvert ; aucune sixième séquence revendiquée** |
+| **20 règles métier** : 11 identifiées comme venant du sujet et 9 compléments | §6.1 : `RB-01`…`RB-11` / `RB-12`…`RB-20` ; la liste des états de RB-11 est un arbitrage documenté | `T-01`…`T-29` sont des identifiants de scénarios, pas 29 règles ni une preuve d’exécution | **classification documentée ; PDF source à joindre pour vérification indépendante** |
 | **MCD** avec entités, associations, cardinalités justifiées | §12.1 | `mcd_minishop.png` (8 entités) | **documenté + rendu** |
 | **MLD**, exemples du sujet (`CLIENT(id_client PK, nom, prenom, email, password, date_creation)`) | §12.2 | même table, `password` → `mot_de_passe_hash` (le sujet interdit le mot de passe en clair) | **documenté** |
-| **Normalisation** : dépendances fonctionnelles, 1FN/2FN/3FN, clés primaires **et** étrangères justifiées, redondances | §12.3.1 → §12.3.5 | 4 requêtes de preuve renvoyant 0 ligne | **exécuté** |
-| **Script SQL** traduisant le MLD **avec insertion de données** | §12.4, `sql/01`, `sql/04` | `./scripts/load_db.sh` (sortie en §15.4) | **exécuté** |
-| **≥ 5 procédures stockées** dont `sp_create_order`, `sp_add_order_item`, `sp_update_order_status` | §12.5 (17) + correspondance des noms au §12.5.2 | compteur du chargeur, `T-06`…`T-29` | **exécuté** |
+| **Normalisation** : dépendances fonctionnelles, 1FN/2FN/3FN, clés primaires **et** étrangères justifiées, redondances | §12.3.1 → §12.3.5 | 4 requêtes de preuve définies en §12.3.5 ; résultat à rattacher à un run daté | **méthode documentée ; non rejouée dans cette révision** |
+| **Script SQL** traduisant le MLD **avec insertion de données** | §12.4, `sql/01`, `sql/04` | fichiers SQL et `scripts/load_db.sh` présents ; le résultat d'exécution dépend du run et du SHA cités | **scripts présents ; chargement non rejoué dans cette révision** |
+| **≥ 5 procédures stockées** dont `sp_create_order`, `sp_add_order_item`, `sp_update_order_status` | §12.5 (17) + correspondance des noms au §12.5.2 | sources SQL et scénarios `T-06`…`T-29` présents ; succès à vérifier sur un run daté | **17 procédures documentées ; exécution non revendiquée ici** |
 | **Question pédagogique** : procédure stockée plutôt que PHP — logique centralisée, sécurité, transactions, réutilisabilité, contrôle des accès | §12.5.1 (**6 axes**, dont les 5 du sujet + le coût) | démonstration chiffrée `2N+2 → 1` aller-retour | **documenté** |
-| **≥ 5 triggers**, dont « Trigger 1 — Stock » (`stock - quantité commandée`) et « Trigger 2 — Historique » sur `ORDER_STATUS_HISTORY` | §12.6 (16) + §12.5.2 (colonnes exactes du sujet + 4 utiles) | `T-07`, `T-21`, `T-22` | **exécuté** |
-| Sécurité : `PDO::prepare`/`execute`, `password_hash`/`password_verify`, `htmlspecialchars`, `$_SESSION['user_id']`, `commande.php?id=25` | §8.1, §8.4, §8.5, §8.7 | `bash tests/security/controles.sh` (**10/10**) | **exécuté (statique)** |
+| **≥ 5 triggers**, dont « Trigger 1 — Stock » (`stock - quantité commandée`) et « Trigger 2 — Historique » sur `ORDER_STATUS_HISTORY` | §12.6 (16) + §12.5.2 (colonnes exactes du sujet + 4 utiles) | sources SQL et scénarios `T-07`, `T-21`, `T-22` présents ; succès à vérifier sur un run daté | **16 déclencheurs documentés ; exécution non revendiquée ici** |
+| Sécurité : `PDO::prepare`/`execute`, `password_hash`/`password_verify`, `htmlspecialchars`, sessions et contrôle d’appartenance | §8.1–§8.8 | `bash tests/security/controles.sh` : 11 contrôles statiques, dont S-11/SEC-14 ; cas offensifs S-01…S-10 distincts | **11/11 contrôles statiques rejoués localement dans cette révision ; aucune recette humaine ni LineServ** |
 | Architecture **3 couches MVC** | §9 + §4.5 | `architecture_mvc.png` | **documenté + rendu** |
-| Application PHP/MySQL/PDO **MVC**, GitLab (participation de chacun), **document de tests et validation** | §10 (procédures et triggers **réellement utilisés** par l'app), §14.2 (commits par développeur et CI GitHub Actions), §15 + `docs/02` | `.github/workflows/ci.yml`, `README.md` d'installation | **spécifié et livré** |
+| Application PHP/MySQL/PDO **MVC**, GitLab et document de tests/validation | Le sujet fixe la cible ; dans le checkout, `StorageDriver::DEFAULT` est JSON, SQL est optionnel et aucun appel applicatif aux procédures n’a été établi par l’audit | `README.md`, `StorageDriver.php`, repositories, `sql/` et `docs/02` | **écart d’intégration application SQL à résoudre ; pas de conformité MySQL/PDO revendiquée** |
 | Soutenance **15 min** | §17.11 + `docs/03-support-soutenance.md` (déroulé minute par minute) | minutage affiché | **documenté** |
-| Barème 20/20/30/10/10 **et ses pénalités** | §16 : chaque pénalité du sujet a une ligne « comment elle est évitée » | §16.1 à §16.3 | **documenté** |
-| Groupe de 3, **composition envoyée par courriel** (`sujet : Composition SAE`), **URL GitLab partagée** avec l'enseignante | §14.2, annexe 17.7 (§GitLab) | checklist S1 du planning (§14.4) | **à réaliser par l'équipe** |
+| Barème 20/20/30/10/10 **et ses pénalités** | §16 : pointage documentaire des pénalités et limites de preuve | §16.1 à §16.3 ; le PDF source n'est pas suivi dans ce checkout | **pointage documentaire présent ; aucune validation pédagogique ou revue étudiante attestée** |
+| Composition du groupe conformément au sujet (3 personnes prévues, 2 tolérées), courriel `Composition SAE` et **URL GitLab partagée** avec l'enseignante | §14.2, annexe 17.7 (§GitLab) | README : deux membres nommés ; `docs/19` rapporte l'attestation de courriel et d'accès, non vérifiée indépendamment | **état externe rapporté, non vérifié par le dépôt ; aucune validation pédagogique inférée** |
 
 ---
 
@@ -192,29 +191,32 @@ sur la base, **conçu** = exigence spécifiée dont la vérification suppose l'a
 |---|---|
 | Modéliser puis normaliser une base relationnelle | MCD avec 8 entités et cardinalités justifiées ; MLD en 3FN démontrée (§12.3) ; 0 anomalie de mise à jour identifiée |
 | Traduire le modèle en SQL MySQL complet | `scripts/load_db.sh` s'exécute sans erreur et affiche tables 8, vues 3, fonctions 1, procédures 17, déclencheurs 16, avec données de démonstration |
-| Implémenter 5 règles de gestion dans la base (pas seulement en PHP) | 29 tests SQL conformes, dont 15 tests qui **contournent l'application** (INSERT/UPDATE directs) |
-| Sécuriser une application PHP/PDO réelle | 0 requête SQL concaténée, 0 mot de passe en clair, 0 affichage non échappé, 0 accès à la ressource d'autrui : 10 tests offensifs `S-01…S-10` en échec |
-| Développer une application MVC fonctionnelle | 14 cas d'utilisation démontrables de bout en bout, 3 rôles distincts, plan de recette §15 exécuté |
-| Travailler en équipe avec GitLab | ≥ 60 commits, 3 auteurs distincts, merges par merge request, README d'installation à jour (1 commit/semaine/personne minimum) |
+| Implémenter 5 règles de gestion dans la base (pas seulement en PHP) | cible : 29 scénarios SQL, dont 15 cas d'écriture directe ; résultats à rattacher à un run daté sur base isolée |
+| Sécuriser une application PHP/PDO réelle | objectif : 0 requête SQL concaténée, 0 mot de passe en clair, 0 affichage non échappé et 0 accès non autorisé ; scénarios offensifs `S-01…S-10` définis ; ce critère n'est pas déclaré atteint ici |
+| Développer une application MVC fonctionnelle | cible : démontrer les 14 UC et exécuter le plan de recette §15 ; 200 lignes de suivi manuel restent `NON JOUÉ` dans le CSV vérifié |
+| Travailler en équipe avec GitLab | contributions régulières des membres réellement confirmés, README à jour et historique consultable ; le nombre d'auteurs et les merges doivent être vérifiés sur le dépôt IUT, sans déduire de noms depuis A/B/C |
 
 ### 2.3 Objectifs techniques mesurables (extraits de la palette de recettes)
 
 | Indicateur | Cible | Comment on mesure |
 |---|---|---|
 | Temps de réponse des pages catalogue (une page = 12 produits, 100 lignes de données) | < 500 ms p95 | `ab -n 200 -c 4` ou `curl -w '%{time_total}'` en local, consigné dans `docs/02-document-tests-validation.md` (§3.3, mesures `tests/perf/mesurer.sh`) |
-| Nombre de requêtes SQL par page | ≤ 5 (dont 1 `CALL`) | journal `general_log` activé pendant la mesure |
-| Couverture des règles de gestion par la base | 19/19 (100 %) | colonne « niveau d'application » du tableau §6 |
+| Nombre de requêtes SQL par page | ≤ 5 (dont 1 `CALL`) | cible de mesure ; préciser le mode SQL, l’environnement et le run avant toute conclusion |
+| Règles métier recensées | 20 identifiants documentés : 11 classés par convention comme issus du sujet + 9 compléments | §6.1 ; ni couverture effective 20/20 ni conformité d’exécution ne sont établies par le comptage |
 | Requêtes non préparées | 0 | deux `grep` bloquants en CI : recherche d'une interpolation et d'une concaténation dans `query(` / `exec(` (§15.3, contrôles 1 et 1b) |
 | Mots de passe stockés en clair | 0 | `SELECT COUNT(*) FROM client WHERE CHAR_LENGTH(mot_de_passe_hash) < 60;` → 0 |
-| Cas d'utilisation livrés | 14/14 | table §5.1 et annexe 17.1 |
-| Fonctionnalités demandées couvertes | 100 % | matrice §4.1 |
-| Test de charge de réservation concurrente | aucune survente | `tests/charge/reserver.sh` : 20 demandes simultanées sur 12 exemplaires → 12 commandes, 8 refus |
+| Cas d'utilisation spécifiés | 14 identifiants dans §5.1 et l'annexe 17.1 | couverture documentaire ; les résultats de recette sont suivis séparément dans `docs/13-suivi-recette-uc.csv` |
+| Traçabilité des fonctionnalités | `EF-*` et `EV-*` reliées à des UC, écrans et références de test en §4.1 | matrice documentaire, non taux d’exécution ou de conformité à 100 % |
+| Test de charge de réservation concurrente | au plus 12 réservations acceptées sur 12 exemplaires ; les autres demandes sont refusées sans survente | protocole visé : `tests/charge/reserver.sh` avec 20 demandes simultanées ; aucun résultat de charge n’est revendiqué ici |
 
-### 2.4 Calendrier de l'objectif (jalons du référentiel)
+### 2.4 Objectifs de jalons (planification, pas état d'avancement)
 
-- J1 (fin S2) : CDC validé, périmètre figé. — J2 (fin S4) : MCD/MLD + script SQL + 5 procédures + 5 triggers.
-- J3 (fin S7) : application MVC utilisable (front-office complet). — J4 (fin S9) : back-office + sécurité durcie.
-- J5 (fin S10) : tests et validation écrits et rejoués. — J6 (S12) : soutenance.
+- J1 (fin S2) : CDC préparé pour revue et arbitrage du périmètre ; toute validation pédagogique doit être attestée séparément.
+- J2 (fin S4) : MCD/MLD et scripts SQL à examiner ; les procédures et déclencheurs sont des livrables prévus.
+- J3 (fin S7) : parcours front-office visé ; J4 (fin S9) : parcours back-office et sécurité visés.
+- J5 (fin S10) : tests et plan de recette à exécuter puis documenter ; J6 (S12) : soutenance prévue.
+
+Ces jalons décrivent le calendrier de référence. Ils n'attestent ni réalisation, ni relecture croisée, ni approbation, ni exécution de la recette.
 
 ---
 
@@ -246,9 +248,11 @@ sur la base, **conçu** = exigence spécifiée dont la vérification suppose l'a
 | Modifier son propre mot de passe | n/a | ✅ | ✅ | RB-12 |
 | Créer/bloquer un compte administrateur | ❌ | ❌ | ✅ si rôle `SUPER` | RB-13 |
 
-### 3.3 Responsabilités de l'équipe (RACI — 3 personnes)
+### 3.3 RACI de planification (rôles A/B/C, non nominatifs)
 
-| Lot de travaux | Développeur A *(chef de projet)* | Développeur B *(modèle + BD)* | Développeur C *(présentation + tests)* |
+Les colonnes A/B/C sont des **codes de rôle de planification**, pas des personnes ni des permissions GitLab. Dans les cellules, R/A/C/I sont les valeurs de la matrice RACI (*Réalise / Approuve / Consulté / Informé*) : le `A` RACI n’est pas le code du rôle A. Le README nomme deux membres du projet ; aucune correspondance de ces noms aux codes A/B/C n’est confirmée ici. Une même personne peut porter plusieurs rôles ; cette matrice ne constitue pas une répartition nominative des charges.
+
+| Lot de travaux | Rôle A *(pilotage / back-office)* | Rôle B *(modèle + BD)* | Rôle C *(présentation + tests)* |
 |---|---|---|---|
 | CDC, arbitrages de périmètre, planning | **R/A** | C | C |
 | MCD, MLD, normalisation, script SQL | C | **R/A** | I |
@@ -261,7 +265,7 @@ sur la base, **conçu** = exigence spécifiée dont la vérification suppose l'a
 | Tests & validation, harnais SQL, revue de recette | C | **R** | **R** |
 | Soutenance, maquette, README GitLab, démo | **A/R** | **R** | **R** |
 
-> R = réalise, A = approuve, C = consulté, I = informé. Répartition volontairement **transverse** : chaque personne livre des commits dans les trois couches (modèle, contrôles, vues) pour que la contribution individuelle soit visible dans GitLab (§14).
+> R = réalise, A = responsable de l’acceptation dans le scénario de planification, C = consulté, I = informé. Cette matrice est une répartition de responsabilités prévue ; elle ne prouve ni une approbation réelle, ni une revue croisée, ni l’identité de la personne qui a réalisé chaque tâche. Les permissions GitLab (Owner/Developer/Reporter) sont consignées séparément dans le README.
 
 ### 3.4 Conditions d'entrée par acteur (pour la démo et la recette)
 
@@ -273,9 +277,9 @@ sur la base, **conçu** = exigence spécifiée dont la vérification suppose l'a
 
 ## 4. Fonctionnalités
 
-### 4.1 Table de correspondance exigence ↔ cas d'utilisation ↔ écran ↔ test
+### 4.1 Table de traçabilité exigence ↔ UC ↔ écran ↔ scénario ↔ annexe
 
-Chaque exigence fonctionnelle est numérotée, rattachée à l'énoncé du sujet, à un cas d'utilisation, à une route applicative, aux règles métier qui la contraignent et au test de recette.
+Chaque `EF-*` est reliée ci-dessous à son cas d’utilisation, écran, règles et identifiants de scénarios. Pour le détail, suivre l’UC vers l’annexe 17.1 (`docs/annexes/annexe-cas-usage.md`) et les fiches manuelles `docs/13-fiches-recette-uc.md` ; les scénarios fonctionnels `F-*`, SQL `T-*` et sécurité `S-*` sont décrits respectivement dans `docs/02` §3, §2 et §4, et la matrice de synthèse est en `docs/02` §9. L’annexe SQL détaillée est `docs/annexes/annexe-sql.md`. Un identifiant prouve une référence documentaire, pas une exécution ; l’état du registre reste dans `docs/13-suivi-recette-uc.csv`.
 
 **Visiteur**
 
@@ -332,9 +336,19 @@ Chaque exigence fonctionnelle est numérotée, rattachée à l'énoncé du sujet
 | `EF-GEN-05` | Pages CGV / mentions légales / contact | — | §1.5 | F-24 |
 | `EF-GEN-06` | Installateur/seed : `scripts/load_db.sh` remet la base à l'état de démonstration | — | §12.4 | F-00 |
 
+**Évolutions documentées après la WBS (EV-01…EV-05 ; hors exigences initiales du sujet).** Elles sont conservées dans le plan de tests, sans les présenter comme des fonctionnalités imposées par le sujet.
+
+| ID | Évolution / exigence de traçabilité | Route / composant | Test |
+|---|---|---|---|
+| `EV-01` | Informations légales et identité éditoriale de la maquette étudiante | `/mentions-legales`, `/cgu` | F-24, F-49 |
+| `EV-02` | Préférences locales de langue et de fuseau, localisation volontaire sans tiers, traductions FR/EN | `/preferences`, `localStorage`, `tz-lookup.js`, `i18n-en.js` | F-50…F-52 |
+| `EV-03` | Stockage des horodatages en UTC et affichage/filtrage selon le fuseau choisi | `Heure`, sessions SQL | F-53 |
+| `EV-04` | Conservation et nettoyage des données/journaux/sauvegardes de la maquette | `RetentionComptes`, outils CLI | F-54, F-55 |
+| `EV-05` | Minimisation des journaux et transparence de la page de confidentialité/erreur | `Journal`, `/confidentialite`, `/500` | F-56 |
+
 ### 4.2 Exigences non fonctionnelles (complètes, en annexe 17.3)
 
-Résumé : `ENF-01` à `ENF-16` couvrent les performances, la volumétrie, la disponibilité, l'ergonomie, l'accessibilité (RGAA 40 % minimum sur les parcours clés), la compatibilité navigateur, la portabilité d'hébergement, la maintenabilité (PSR-12, `declare(strict_types=1)`), la journalisation, la sauvegarde/restauration, la sécurité (§8), l'audit, l'internationalisation (EUR, fr-FR) et l'exploitabilité des codes d'erreur. Détail et moyen de vérification dans l'annexe 17.3.
+Résumé : l’annexe 17.3 contient `ENF-01`…`ENF-22` (18 critères principaux et 4 exigences complémentaires de qualité logicielle). Les ajouts de préférences, conformité légale, conservation et bilinguisme sont également tracés séparément comme évolutions `EV-*` et tests `F-49`…`F-56`; aucun statut d’exécution n’est déduit de leur présence.
 
 ### 4.3 Description détaillée — espace Visiteur
 
@@ -372,7 +386,7 @@ Résumé : `ENF-01` à `ENF-16` couvrent les performances, la volumétrie, la di
 | `EF-ADM-04` | Modifier le stock | mode (`SET`/`DELTA`), quantité, motif | `CALL sp_adjust_stock(…)` avec verrou de ligne | nouveau stock, motif tracé dans le commentaire de l'action | `RB03_STOCK_NE_PEUT_PAS_ETRE_NEGATIF` |
 | `EF-ADM-05` | Alertes de stock | filtre `etat` | état calculé (`RUPTURE`, `TRES_BAS`, `DISPONIBLE`) dans la procédure de recherche | liste triée, accès direct à la réapprovisionnement | — |
 | `EF-ADM-06` | Consulter les commandes | statut, client, période, montant | `sp_search_products`-like pour commandes (filtres paramétrés) | liste paginée, total du montant filtré | période incohérente (`deb > fin`) → inversion demandée |
-| `EF-ADM-07` | Modifier le statut | `id_commande`, statut cible, commentaire | `CALL sp_update_order_status(…)` : matrice de transitions vérifiée **deux fois** (procédure + trigger) | statut à jour, commentaire, ligne d'historique | `RB11_TRANSITION_STATUT_INTERDITE`, `COMMANDE_INTROUVABLE` |
+| `EF-ADM-07` | Modifier le statut | `id_commande`, statut cible, commentaire | `CALL sp_update_order_status(…)` : contrôle prévu à deux niveaux (procédure + trigger) dans la cible SQL | statut à jour, commentaire, ligne d'historique | `RB11_TRANSITION_STATUT_INTERDITE`, `COMMANDE_INTROUVABLE` |
 | `EF-ADM-08` | Piste d'audit | `id_commande` | lecture de `order_status_history` (aucune écriture possible par l'app) | chronologie `ancien → nouveau`, auteur, horodatage | — |
 | `EF-ADM-09` | Indicateurs | période | `CALL sp_revenue_report(deb, fin)` | CA par statut, panier moyen, top 5 produits | — |
 | `EF-ADM-10` | Comptes du back-office | nom, email, mot de passe, rôle | création/blocage réservés au rôle `SUPER` | compte actif/inactif | non-`SUPER` → 403 ; email dupliqué → refus |
@@ -414,7 +428,7 @@ Résumé : `ENF-01` à `ENF-16` couvrent les performances, la volumétrie, la di
 
 ## 5. Les diagrammes UML
 
-> Les sources modifiables sont livrées dans `docs/diagrams/src/*.puml` (PlantUML) et rendues par `docs/diagrams/render.sh` ; les images ci-dessous sont les rendus `png` versionnés dans le dépôt. Le chapitre compte **8 diagrammes** rendus et rejouables : 3 de cas d'utilisation (vue globale + 2 zooms), 1 de classes, 5 de séquence, 1 d'activités, 1 de transitions d'états, 1 d'architecture, plus le MCD et le MLD au §12 — aucun des trois types exigés par le sujet n'est absent (pénalité « manque un diagramme UML » : 0).
+> Les sources modifiables sont livrées dans `docs/diagrams/src/*.puml` (PlantUML) et rendues par `docs/diagrams/render.sh` ; les images PNG sont versionnées. Le §5 présente 12 diagrammes : 3 vues de cas d’utilisation, 1 classes, **5 séquences**, 1 activité, 1 états et 1 architecture. Le dossier contient en plus les rendus MCD et MLD (14 PNG au total). Le minimum de types requis est documenté ; cela n’est pas une appréciation de note.
 
 ### 5.1 Cas d'utilisation
 
@@ -490,13 +504,12 @@ Le sujet demande d'en détailler **trois** (et non les 14). Choix justifié : un
   - **A3 — Panier vide** : la validation est refusée avant tout appel à la base (`RB-04`) ; message et retour au catalogue.
   - **A4 — Client non authentifié** : redirection vers `/connexion?return=/commande/valider`, panier conservé en
     session, reprise automatique après connexion (`SEC-05`).
-  - **A5 — Erreur lors de la création de la commande** (le cinquième scénario du sujet) : toute levée de signal en
+  - **A5 — Erreur lors de la création de la commande** (le cinquième scénario du sujet) : la cible prévoit que toute levée de signal en
     cours de transaction (`SIGNAL` d'un déclencheur, contrainte `CHECK`/`UNIQUE`, incident serveur en milieu de
-    parcours) déclenche le `ROLLBACK` de `sp_create_order_from_basket` : **aucune donnée partielle** ne subsiste —
-    pas de commande orpheline, aucun stock décrémenté, aucune ligne d'historique. **Vérifié par `T-29`** (5
-    assertions : code renvoyé, `p_id_commande` remis à `NULL`, aucune commande sur l'adresse de test, comptage de
-    la table inchangé, stock de la ligne **valide** intact, aucune trace écrite) et par `T-21` (stock restitué
-    ligne par ligne) ; exigé par `ENF-16`, arbitré en `V7`/`V3`.
+    parcours) déclenche le `ROLLBACK` de `sp_create_order_from_basket`, sans donnée partielle. Les scénarios `T-29`
+    (code renvoyé, identifiant remis à `NULL`, absence de commande, stock intact, aucune trace) et `T-21`
+    (restitution du stock ligne par ligne) sont prévus pour vérifier ce comportement ; aucun rejeu n’est revendiqué
+    dans cette révision. Exigence `ENF-16`, arbitrage `V7`/`V3`.
   - **A6 — Franchise de port atteinte en cours de route** (étape 8) : tant que la commande est `BROUILLON`, le port
     est **recalculé** à chaque ajout ou retrait de ligne (`sp_compute_shipping`) ; à la validation il est **figé**
     (`RB-20`), comme le prix unitaire (`RB-06`), et toute réécriture manuelle est refusée par le trigger.
@@ -550,7 +563,7 @@ Le sujet demande d'en détailler **trois** (et non les 14). Choix justifié : un
   7. le trigger `trg_history_statut` insère automatiquement `EN_PREPARATION → EXPEDIEE` dans `order_status_history` ;
   8. le système affiche le nouveau statut, l'horodatage et la chronologie complète.
 - **Scénarios alternatifs :**
-  - **A1 — Transition interdite** (par ex. `LIVREE → EN_PREPARATION`) : `RB11_TRANSITION_STATUT_INTERDITE`, statut inchangé, message explicite avec la liste des destinations autorisées ; vérification : `order_status_history` ne contient **pas** de nouvelle ligne (test T-12/T-13).
+  - **A1 — Transition interdite** (par ex. `LIVREE → EN_PREPARATION`) : résultat attendu `RB11_TRANSITION_STATUT_INTERDITE`, statut inchangé et message explicite ; les scénarios `T-12/T-13` sont prévus pour vérifier qu'aucune nouvelle ligne n'est ajoutée à `order_status_history`, sans résultat de rejeu revendiqué ici.
   - **A2 — Statut déjà à jour** : `STATUT_DEJA_A_JOUR`, aucune écriture, aucun doublon d'historique.
   - **A3 — Commande en `BROUILLON`** (jamais validée par le client) : refus `COMMANDE_NON_TRAITABLE` ; l'administration n'intervient pas sur un panier en cours.
   - **A4 — Annulation** : passage en `ANNULEE` autorisé depuis `EN_PREPARATION`/`PAYEE` ; le retrait des lignes n'a pas lieu (historique conservé), mais la restitution du stock est déclenchée si l'annulation s'accompagne d'une purge du brouillon (`sp_cancel_order`).
@@ -594,7 +607,7 @@ Le sujet demande d'identifier les classes, d'en définir attributs et méthodes,
 
 ### 5.3 Diagrammes de séquence
 
-Le sujet impose **4 séquences intégrant procédure stockée et déclencheur** : authentification, recherche d'un produit, ajout au panier, passer une commande. Elles sont livrées ci-dessous (numérotées 1 à 4) **augmentées** d'une cinquième (consultation de la fiche produit) et de deux diagrammes complémentaires (activités et états) parce que l'énoncé demande explicitement les scénarios alternatifs du cas « Passer une commande », qui ne tiennent pas dans une séquence linéaire.
+Le CDC prévoit **4 séquences** pour les cas imposés (authentification, recherche, ajout au panier, commande) et **1 séquence bonus** de consultation du catalogue/fiche produit. Les diagrammes d’activité et d’états sont deux autres types de diagrammes, pas des séquences bonus. Le checkout contient exactement ces cinq sources `seq_*.puml` ; aucune séquence annulation ou back-office n’est revendiquée. Ces diagrammes décrivent une **conception cible** : ils ne prouvent ni un appel de procédure depuis le parcours HTTP, ni une exécution SQL. Le checkout démarre en JSON par défaut et l’intégration PDO/MySQL des procédures reste un écart ouvert (§7.1 et §16.4).
 
 #### 5.3.1 Séquence 1 — Authentification
 
@@ -618,7 +631,7 @@ Le contrôle de disponibilité est fait **avant** l'écriture en session, et le 
 
 ![Séquence 4 — passer une commande](diagrams/seq_passer_commande.png)
 
-C'est la séquence « preuve » du projet : un seul appel applicatif (`CALL sp_create_order_from_basket`) déclenche, dans **une** transaction, l'insertion de la commande, la boucle sur les lignes, le snapshot de prix et le décrément de stock (2 triggers), le calcul du montant, le changement de statut et la trace d'audit (2 triggers), avec `ROLLBACK` intégral si le stock manque.
+Cette séquence est une **illustration de conception**, pas une preuve d’exécution : elle montre la cible envisagée où un appel PDO (`CALL sp_create_order_from_basket`) exécuterait, dans une transaction SQL, l’insertion de la commande, les lignes, le snapshot de prix, le décrément de stock, le calcul du montant, la transition et sa trace. Aucun raccordement de ce parcours au magasin SQL par défaut n’est établi ; le stockage actif par défaut est JSON. Le `ROLLBACK` décrit le comportement attendu de la procédure lorsqu’elle est exécutée sur une base isolée.
 
 #### 5.3.5 Séquence 5 (bonus) — Consulter la fiche produit
 
@@ -632,7 +645,7 @@ C'est la séquence « preuve » du projet : un seul appel applicatif (`CALL sp_c
 
 ![États d'une commande](diagrams/etats_commande.png)
 
-La matrice des transitions de ce diagramme est **la** spécification : elle est écrite en trois endroits cohérents (documentée ici, dans `sp_update_order_status`, et dans `trg_commande_transition_statut`) et testée par T-12/T-13.
+La matrice des transitions de ce diagramme est **la** spécification décrite ici et dans `sp_update_order_status` / `trg_commande_transition_statut` ; `T-12` et `T-13` sont les scénarios référencés, pas la preuve d’un rejeu dans cette révision.
 
 ---
 
@@ -640,7 +653,7 @@ La matrice des transitions de ce diagramme est **la** spécification : elle est 
 
 ### 6.1 Méthode : une règle = une énoncé, une traduction formelle, des points de contrôle, un test
 
-Les 11 règles du sujet (dont la n° 11 laissée ouverte « Une commande peut avoir les états : … », complétée par RB-11) sont **toutes** spécifiées, et 8 règles complémentaires sont ajoutées parce qu'elles découlent directement des exigences de sécurité et de traçabilité du sujet. Pour chacune, la colonne « niveau d'application » est cruciale : le jury vérifie que la règle n'est pas seulement écrite dans le PHP.
+Le tableau §1.7 identifie les onze règles du sujet comme `RB-01`…`RB-11` ; la liste des états de `RB-11` reste un arbitrage documenté, car le PDF laisse la phrase inachevée. `RB-12`…`RB-20` sont neuf règles complémentaires. Le PDF source n’étant pas suivi dans ce checkout, cette répartition reprend l’identification explicite du CDC §1.7 et n’est pas présentée comme une nouvelle vérification indépendante du PDF.
 
 | ID | Règle (énoncé) | Traduction formelle | Niveau d'application (défense en profondeur) | Traduction SQL / code | Test |
 |---|---|---|---|---|---|
@@ -652,7 +665,7 @@ Les 11 règles du sujet (dont la n° 11 laissée ouverte « Une commande peut av
 | `RB-06` | Le prix enregistré dans `LIGNE_COMMANDE` est le **prix au moment de l'achat** | `l.prix_unitaire = PRODUIT.prix_ttc(T_achat)` | trigger (source de vérité), non modifiable ensuite | `trg_ligne_prix_snapshot` (BEFORE INSERT) + `trg_ligne_immutable` (BEFORE UPDATE) | `T-11`, `T-23` |
 | `RB-07` | Un produit appartient à **une seule** catégorie | `∀ p ∃! c : p.id_categorie = c.id` | selecteur unique + FK `NOT NULL` | `id_categorie INT UNSIGNED NOT NULL` + FK `RESTRICT` | F-22, revue MLD |
 | `RB-08` | Une catégorie peut contenir **plusieurs** produits | `∀ c : \|PRODUIT(c)\| ∈ 0..N` | modèle + SQL | aucune contrainte d'occupation ; catégorie vide autorisée et affichée | F-25 |
-| `RB-09` | *(complément)* Une commande ne se **réécrit** pas : lignes, produit, quantités et prix sont définitifs ; elle ne se supprime pas après validation | `UPDATE`/`DELETE` sur lignes et commandes validées ⇒ refus | triggers | `trg_ligne_immutable`, `trg_commande_delete` | `T-11`, `T-24`, F-29 |
+| `RB-09` | Une commande ne se **réécrit** pas : lignes, produit, quantités et prix sont définitifs ; elle ne se supprime pas après validation | `UPDATE`/`DELETE` sur lignes et commandes validées ⇒ refus | triggers | `trg_ligne_immutable`, `trg_commande_delete` | `T-11`, `T-24`, F-29 |
 | `RB-10` | Une commande appartient à **un seul client** | `o.id_client` NOT NULL et existant | modèle + FK + trigger | `fk_commande_client … ON DELETE RESTRICT` + `trg_commande_controle_insert` | `T-17` |
 | `RB-11` | Une commande peut avoir les états `BROUILLON`, `EN_PREPARATION`, `PAYEE`, `EXPEDIEE`, `LIVREE`, `ANNULEE`, avec transitions **uniques et tracées** *(le sujet laisse la liste des états **incomplète** — la ligne « Une commande peut avoir les états : » se termine par un deux-points dans le PDF : la liste ci-contre est donc un **arbitrage documenté**, §12.8 V5, et non une reprise du texte)* | machine à états §5.3.7 | contrôleur (liste des transitions) + `sp_update_order_status` + **trigger** + **ENUM** | `statut ENUM(…)` + `trg_commande_transition_statut` + `trg_history_statut`/`trg_history_creation` | `T-12`, `T-13`, `T-22`, F-29 |
 | `RB-12` | *(complément)* Aucun mot de passe n'est stocké en clair ; la vérification est faite par `password_verify()` | `len(hash) ≥ 60 AND hash LIKE '$2y$%'` | modèle + procédure + contrôle d'installation | `sp_create_account` refuse une valeur de moins de 60 caractères (`HASH_MOT_DE_PASSE_INVALIDE`) ; requête de recette `ENF-11` | `T-05`, F-00 |
@@ -661,29 +674,21 @@ Les 11 règles du sujet (dont la n° 11 laissée ouverte « Une commande peut av
 | `RB-15` | *(complément)* Le `montant_total` d'une commande est une **somme calculée**, jamais une saisie | `o.montant_total = Σ l.total_ligne + o.frais_port` | procédure + trigger | `trg_commande_transition_statut` (refus `RB15_MONTANT_CALCULE_INTERDIT`), `trg_commande_controle_insert` (montant forcé à 0) | `T-10`, F-16 |
 | `RB-16` | *(complément)* Le `prix_ttc` d'un produit est **dérivé** : `prix_ttc = ROUND(prix_ht × (1 + tva/100), 2)` | idem | triggers | `trg_produit_ttc`, `trg_produit_ttc_update` | F-22 + requête de cohérence §12.4 |
 | `RB-17` | *(complément)* Un produit du catalogue peut être **retiré sans être détruit** (masquage `visible = 0`) ; la commande déjà passée reste explicable | `visible` booléen, pas de purge physique | modèle + procédure | `sp_delete_product` bascule `visible = 0` | `T-20`, F-23 |
-| `RB-18` | La quantité **réservée** ne peut excéder le stock disponible : `stock ≥ Σ quantités` (par commande et globalement à l'instant de la commande) | `∀ p : p.stock ≥ Σ l.quantite` sur les commandes non annulées | `sp_add_order_line` + triggers + verrou de ligne (`FOR UPDATE`) | `trg_ligne_controle_insert`, `trg_ligne_decrement_stock`, `trg_ligne_restore_stock` | `T-08`, `T-09`, `T-21`, test de charge |
-| `RB-19` | Seuls les produits `visible = 1` sont exposés au front-office (recherche, catalogue, fiche) | `SELECT … WHERE visible = 1` côté client | `sp_search_products(p_admin = 0)` + contrôleur | paramètre `p_admin` de la procédure ; vue `v_catalogue` | `T-25`, F-23 |
+| `RB-18` | *(complément)* La quantité **réservée** ne peut excéder le stock disponible : `stock ≥ Σ quantités` (par commande et globalement à l'instant de la commande) | `∀ p : p.stock ≥ Σ l.quantite` sur les commandes non annulées | `sp_add_order_line` + triggers + verrou de ligne (`FOR UPDATE`) | `trg_ligne_controle_insert`, `trg_ligne_decrement_stock`, `trg_ligne_restore_stock` | `T-08`, `T-09`, `T-21`, test de charge |
+| `RB-19` | *(complément)* Seuls les produits `visible = 1` sont exposés au front-office (recherche, catalogue, fiche) | `SELECT … WHERE visible = 1` côté client | `sp_search_products(p_admin = 0)` + contrôleur | paramètre `p_admin` de la procédure ; vue `v_catalogue` | `T-25`, F-23 |
 | `RB-20` | *(complément, origine légale)* Les **frais de livraison** sont une donnée de la commande : calculés **avant** la validation (obligation d'affichage), **figés** à la validation comme le prix (`RB-06`), jamais saisissables, **annulés** avec la commande | `o.frais_port ≥ 0` et `o.montant_total = Σ l.total_ligne + o.frais_port`, à tout instant | `sp_compute_shipping` (règle lue dans `parametre`) + **trigger** + **CHECK** | `frais_port DECIMAL(10,2) NOT NULL DEFAULT 0` + `ck_commande_port (frais_port >= 0)` + `trg_commande_transition_statut` (`RB15_MONTANT_CALCULE_INTERDIT` sur toute rupture de la formule) | `T-28`, F-33 |
 
-> **9 règles « complément » (RB-09, RB-12 à RB-20) n'étaient pas listées dans le sujet** : elles rendent cohérentes les règles demandées et la section Sécurité. Elles sont explicitement signalées comme telles pour que le jury puisse distinguer ce qui est imposé de ce qui est ajouté par l'équipe.
+> **Neuf règles complémentaires : `RB-12` à `RB-20`.** Les onze règles identifiées par le CDC comme venant du sujet sont `RB-01` à `RB-11`. Cette convention produit un total contrôlable de 20 règles = 11 identifiées comme sujet + 9 ajouts. Le PDF d’origine doit être joint au dossier de rendu si une vérification indépendante de cette classification est requise.
 
-### 6.2 Où chaque règle est-elle *vraiment* appliquée ?
+### 6.2 Décompte et traçabilité des règles (conception, pas résultat d’exécution)
 
-| Règle | JS (confort) | Contrôleur PHP | Modèle / procédure | Contrainte SQL | Trigger | Test |
-|---|---|---|---|---|---|---|
-| RB-01 email unique | ✅ format | ✅ message clair | ✅ `sp_create_account` | ✅ `UNIQUE` | — | T-04 |
-| RB-02 prix > 0 | ✅ `min=0.01` | ✅ | ✅ `SIGNAL` | ✅ `CHECK` | ✅ (TTC recalculé) | T-01 |
-| RB-03 stock ≥ 0 | ✅ `min=0` | ✅ | ✅ `sp_adjust_stock` | ✅ `CHECK` | ✅ | T-02/03/19 |
-| RB-04 ≥ 1 ligne | — | ✅ | ✅ `sp_confirm_order` | FK `CASCADE` | ✅ purge | T-16/24 |
-| RB-05 qté > 0 | ✅ `min=1` | ✅ | ✅ | ✅ `CHECK` | ✅ (contrôle + décrément) | T-06/07 |
-| RB-06 prix figé | — | — | ✅ INSERT simple | ✅ `CHECK` | ✅✅ (snapshot + immuabilité) | T-11/23 |
-| RB-09/10/11 | — | ✅ (transitions proposées) | ✅ | ✅ `ENUM` + FK | ✅✅ | T-12/13/22 |
-| RB-12 hash | politique de mot de passe | ✅ `password_hash()` | ✅ refus < 60 car. | longueur `CHAR(60)` | — | T-05 |
-| RB-14 | — | — | ✅ | ✅ `RESTRICT` | ✅ | T-14/15/20 |
-| RB-15/16/20 | — | ✅ (aucun champ saisi, ni prix ni port) | ✅ recalcul + `sp_compute_shipping` | — | ✅✅ | T-10, T-28 |
-| RB-18 | `max=stock` | ✅ message | ✅ `FOR UPDATE` | `CHECK` | ✅✅ | T-08/09/21 |
+| Groupe documentaire | Identifiants | Nombre | Qualification et limite |
+|---|---|---:|---|
+| Règles classées par le CDC comme provenant du sujet | `RB-01`…`RB-11` | 11 | Classement documentaire repris du CDC ; le PDF source n’est pas suivi dans ce dépôt et cette origine n’est pas vérifiée indépendamment ici. La liste des états de `RB-11` contient en outre un arbitrage signalé en §6.1. |
+| Compléments de projet | `RB-12`…`RB-20` | 9 | Règles ajoutées au modèle documentaire, dont certaines découlent des choix de conception ou du périmètre légal décrit. |
+| **Total des identifiants listés** | `RB-01`…`RB-20` | **20** | Le total porte sur les identifiants, pas sur le nombre de règles effectivement exécutées ou satisfaites. |
 
-Lecture de la table : les règles `RB-06`, `RB-11`, `RB-18` sont appliquées **deux fois** côté base (contrainte + trigger) **et** par la procédure. C'est ce que le sujet cherche à évaluer (« procédures stockées, déclencheurs ») : le mécanisme de base n'est pas décoratif, il est le seul qui tienne face à une écriture qui ne passe pas par PHP — et les tests T-02, T-03, T-07, T-08, T-10, T-11, T-14, T-15, T-17, T-24 l'attaquent exactement ainsi.
+Pour la traçabilité, le tableau §6.1 associe chaque identifiant à un mécanisme visé et à une référence de scénario. `T-*` désigne des cas SQL, `F-*` des cas fonctionnels et `S-*` des scénarios offensifs ; ces identifiants ne sont pas des comptes rendus d’exécution. Les détails SQL sont dans `docs/02` §2 et `docs/annexes/annexe-sql.md`, les scénarios fonctionnels dans `docs/02` §3 et les fiches UC en annexe 17.1 / `docs/13-*`. Enfin, le stockage JSON est le défaut de l’application et SQL reste optionnel (§7.1) : les mécanismes SQL décrits ici ne prouvent donc pas leur application par le parcours HTTP par défaut.
 
 ### 6.3 Règles non fonctionnelles qui se lisent comme des règles métier
 
@@ -700,19 +705,19 @@ Lecture de la table : les règles `RB-06`, `RB-11`, `RB-18` sont appliquées **d
 | ID | Contrainte | Détail / justification | Moyen de vérification |
 |---|---|---|---|
 | `CT-01` | **PHP** (8.1+) en développement orienté objet | aucune structure procédurale mixte ; `declare(strict_types=1)` en tête de chaque fichier | `find app -name '*.php' -exec head -3 {} \; \| grep -c strict_types` = nb fichiers |
-| `CT-02` | **MySQL** comme SGBD, accès par **PDO** | `PDO::prepare()` / `PDO::execute()` exclusivement pour les requêtes paramétrées ; `PDO::ERRMODE_EXCEPTION` ; `ATTR_EMULATE_PREPARES = false` | `grep -R "new PDO" -A 8 app/Config/Database.php` |
-| `CT-03` | **SQL écrit aussi dans la base** : 5 procédures stockées minimum | **16 livrées** (§12.5) | `SELECT COUNT(*) FROM information_schema.ROUTINES …` |
+| `CT-02` | **MySQL** comme SGBD applicatif, accès par **PDO** | Exigence du sujet : le parcours applicatif doit utiliser MySQL/PDO. État du checkout : `StorageDriver::DEFAULT` vaut `JSON`; SQL est opt-in via `STORAGE_DRIVER=sql`. Les préparations PDO présentes ne prouvent pas que le parcours complet emploie le SQL exigé. | `app/Model/Data/StorageDriver.php`, README et tests d’intégration SQL ; le mode par défaut reste JSON |
+| `CT-03` | **SQL écrit aussi dans la base** : 5 procédures stockées minimum | **17 décrites** (§12.5) ; l'application n'établit pas encore leur emploi comme parcours par défaut | source SQL et requête de comptage à exécuter sur une instance SQL isolée |
 | `CT-04` | **5 déclencheurs minimum** | **16 livrés** (§12.6), dont ceux imposés (stock, historique) | `SELECT COUNT(DISTINCT TRIGGER_NAME) FROM information_schema.TRIGGERS …` |
 | `CT-05` | **Architecture MVC 3 couches** | §9 ; aucune SQL dans les vues, aucun HTML dans les contrôleurs | revue + `grep` (§15.3) |
 | `CT-06` | **JavaScript côté client** | ES2022 natif, sans framework, sur le panier / filtres / validations | §4.5.3, test F-13 |
 | `CT-07` | **Authentification + sessions** PHP | `session_*` durcis, `$_SESSION['user_id']`, régénération d'ID | §8.4, tests S-05/S-06 |
-| `CT-08` | **Sécurité des applications Web** (9 points du sujet) | §8, un sous-chapitre par point demandé, avec code | 10 tests offensifs `S-01…S-10` + `tests/security/controles.sh` |
+| `CT-08` | **Sécurité des applications Web** (exigences du sujet et compléments documentés) | §8, fiches `SEC-01…SEC-14` et matrice des menaces | scénarios offensifs définis `S-01…S-10` ; 11 contrôles statiques, dont S-11 pour SEC-14 ; les sorties ne certifient pas la sécurité générale |
 | `CT-09` | **Travail sur GitLab**, participation de chaque développeur comptée, historique conservé | §14 : branches, MR et commits ; CI GitHub Actions distincte | `git shortlog -sne`, `README.md` |
 | `CT-10` | **Document de tests et de validation** | §15 + annexe 17.8 | harnais rejouable |
 | `CT-11` | **Livrer le script SQL de création de la base** (avec insertion de données) | `sql/01_minishop_schema.sql` + `02` (procédures) + `03` (triggers) + `04` (démonstration) | `scripts/load_db.sh` |
 | `CT-12` | Soutenance de 15 min + questions | §17.11 | plan de soutenance |
 
-### 7.2 Contraintes techniques retenues (environnement et outillage)
+### 7.2 Choix d’environnement visés (distincts de l’état livré)
 
 | Domaine | Choix | Alternative écartée (pourquoi) |
 |---|---|---|
@@ -726,8 +731,10 @@ Lecture de la table : les règles `RB-06`, `RB-11`, `RB-18` sont appliquées **d
 | Front | HTML5 sémantique, CSS natif (variables, grille/flexbox), **JavaScript ES2022 en modules**, pas de bundleur | React/Vue (build required, aucune plus-value pédagogique) |
 | Contrôle de version | **GitLab** (hébergé ou local), une MR par lot, merges **squash** interdits pour ne pas effacer les auteurs | GitHub (le sujet impose GitLab) |
 | CI | GitHub Actions : workflow versionné dans `.github/workflows/ci.yml` ; ses résultats ne valent pas preuve d’un pipeline GitLab | GitLab CI retirée du périmètre du CDC le 23/10/2026 |
-| Environnements | `dev` (poste local isolé, seed de démonstration), CI GitHub Actions (base jetable), `prod` (LineServ : campagne manuelle prévue sur la base réelle, uniquement après autorisation) | mélanger les données/identifiants locaux avec la base réelle ; aucun scénario manuel LineServ ni aucune restauration n’a été exécuté |
-| Contrainte de périmètre physique | **volumétrie retenue avec le client (arbitrage du 21/09/2026) : 200 produits au catalogue et 1 000 commandes par an** (soit ≈ 3 lignes par commande, ≈ 4 commandes/jour en moyenne, 40/jour en pointe). À cette échelle : aucune partition, aucun cache applicatif, aucun index FULLTEXT supplémentaire — mais des mesures faites sur un **jeu de données de taille réelle**, pas sur la démo : `scripts/gen_volumes.sh` (§15.3) | — (noté ici pour justifier l'absence d'infrastructure lourde) |
+| Environnements | mode JSON local par défaut ; les scénarios SQL automatisés doivent utiliser une base temporaire isolée ; LineServ est une cible distincte qui n’a pas été utilisée ici | les bases temporaires de test sont distinctes de toute cible manuelle ; aucun essai LineServ, déploiement ou restauration de base n’est revendiqué |
+| Contrainte de périmètre physique | **volumétrie cible de conception** : 200 produits et 1 000 commandes/an, selon l'hypothèse de projet documentée. À cette échelle, le plan prévoit des mesures reproductibles via `scripts/gen_volumes.sh` ; les chiffres de mesure ne sont pas réaffirmés sans rapport horodaté rattaché à un environnement et à un SHA. | — (hypothèse de dimensionnement, non mesure d'une instance cible) |
+
+**État d’implémentation constaté dans les sources :** le dépôt contient un pilote SQL et des scripts MySQL/MariaDB, mais l’application démarre en JSON et l’audit n’a pas établi d’appels applicatifs aux procédures stockées. Les tests SQL CI utilisent des bases temporaires et restent distincts de la cible manuelle LineServ ; ils ne constituent pas une preuve d’intégration PDO/MySQL du parcours HTTP complet. L’écart reste ouvert au regard de CT-02/CT-03 et du barème applicatif. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.
 
 ### 7.3 Contraintes de données (précisions demandées au §12)
 
@@ -752,7 +759,7 @@ Formulaire d'inscription avec retour d'erreur **champ par champ** ; aucun champ 
 
 ## 8. Sécurité
 
-> Le sujet qualifie cette partie de « particulièrement intéressante avec PHP/PDO/MySQL ». Chaque exigence du sujet est reprise **en tête de sous-section**, suivie du dispositif, du code de référence, des limites assumées et du **test qui prouve** qu'elle tient. La numérotation `SEC-01…SEC-13` est reprise dans la matrice de traçabilité (annexe 17.8 → `docs/02-document-tests-validation.md` §6).
+> Le sujet qualifie cette partie de « particulièrement intéressante avec PHP/PDO/MySQL ». Chaque exigence du sujet est reprise **en tête de sous-section**, suivie du dispositif, du code de référence, des limites assumées et d’un moyen de vérification défini. La numérotation `SEC-01…SEC-14` est reprise dans la matrice de traçabilité (annexe 17.8 → `docs/02-document-tests-validation.md` §9). Une référence de test n’est pas un résultat d’exécution.
 
 ### 8.1 `SEC-01` — Injection SQL : requêtes préparées uniquement
 
@@ -770,7 +777,7 @@ public function search(SearchQuery $q): array
 {
     // Aucune valeur utilisateur dans le texte SQL : uniquement des marqueurs.
     $stmt = $this->pdo->prepare(
-        'CALL sp_search_products(?, ?, ?, ?, ?, ?, ?, ?, ?)'   -- 9 marqueurs = 9 paramètres IN, jamais un de plus
+        'CALL sp_search_products(?, ?, ?, ?, ?, ?, ?, ?, ?)'   // 9 marqueurs = 9 paramètres IN, jamais un de plus
     );
     $stmt->execute([
         $q->keyword, $q->categoryId, $q->priceMin, $q->priceMax,
@@ -829,7 +836,7 @@ Dispositif complémentaire : `e()` est obligatoire dans les vues (test `grep` en
 
 **Test :** `S-02` — nom de produit `<script>alert(1)</script>` créé via le back-office : la fiche client affiche le texte littéral, la vue admin idem, et aucun en-tête `Location` n'est modifiable (pas d'injection HTTP via le champ commentaire).
 
-### 8.4 `SEC-04` `SEC-05` `SEC-06` — Mots de passe, sessions, anti-force-brute
+### 8.4 `SEC-04` `SEC-05` `SEC-06` — Mots de passe, sessions et CSRF
 
 **Exigences du sujet :** interdire `password = "123456"`, exiger `password_hash()` / `password_verify()` ; « les pages privées doivent vérifier `$_SESSION['user_id']` ».
 
@@ -863,7 +870,7 @@ function ouvre_session_client(int $id): void {
 }
 ```
 
-Compléments spécifiés : politique de mot de passe (≥ 12 caractères, refus des 10 000 mots de passe les plus courants — liste fournie hors dépôt en dev, bloquante seulement si le mot de passe est **identique** à l'email ou au nom) ; **temps de vie d'inactivité 30 min** et 12 h maximum, vérifiés à chaque requête ; **CSRF** : jeton aléatoire par session, vérifié sur **toute** méthode mutative, jeton consommé à la validation de commande (`SEC-06`, cf. scénario E2 d'UC-07) ; temporisation après 5 échecs sur 15 min (compteur en session + en base sur le compte) avec message neutre ; cookies `HttpOnly`, `Secure` en production, `SameSite=Lax` ; la déconnexion détruit la session (`session_destroy()`) **et** le panier ; aucune donnée sensible dans l'URL (pas d'email ni d'identifiant de commande « devinable » utilisé comme secret : `numero` est un identifiant, pas une autorisation).
+Politique appliquée aux créations et changements de mot de passe : **12 caractères minimum** côté serveur et dans les formulaires. Le dépôt ne contient pas de liste des 10 000 mots de passe courants ni de contrôle documenté contre cette liste ; aucune règle de composition « lettre + chiffre » n’est annoncée. Le limiteur de tentatives après échecs n’est pas implémenté et n’est pas revendiqué. Les mesures effectivement présentes sont le hachage avec `password_hash()`, la vérification par `password_verify()`, les sessions durcies, `HttpOnly`, `SameSite=Lax`, `Secure` en production et la protection CSRF sur les méthodes mutatives. La durée d’inactivité et la durée maximale ne sont pas revendiquées tant qu’elles ne sont pas contrôlées à chaque requête. La déconnexion détruit la session et le panier ; les données sensibles ne doivent pas figurer dans les URL.
 
 **Tests :** `S-05` (cookie volé mais IP/agent différents → revalidation), `S-06` (réémission du formulaire sans jeton → 419), `F-08` (mot de passe erroné et email inconnu produisent des réponses strictement identiques : même texte, même code, temps de réponse comparables).
 
@@ -902,28 +909,30 @@ Le message renvoyé est un **404** (et non un 403) : une réponse « interdit »
 - pas de requêtes administratives depuis PHP : la liste des comptes, les grants et les journaux d'erreurs ne sont consultés que par le développeur/la DBA ;
 - les comptes de démonstration du seed sont réservés aux environnements locaux isolés ; le projet ne fournit aucun mécanisme de déploiement public ni de rotation automatisée de ces comptes. Sur LineServ, n'utiliser que des comptes de test explicitement autorisés.
 
-### 8.7 `SEC-10` `SEC-11` `SEC-12` `SEC-13` — En-têtes, durcissement, fuites d'information, journalisation
+### 8.7 `SEC-10` à `SEC-14` — Autorisation, durcissement, fuites, journaux et données de paiement
 
 | ID | Dispositif | Détail |
 |---|---|---|
 | `SEC-10` | Pas d'élévation de privilège possible depuis le site | aucune route d'inscription admin, aucun champ `role` accepté dans le formulaire d'inscription (liste stricte des clés) ; les comptes `administrateur` ne sont créés que par l'installation |
 | `SEC-11` | Durcissement applicatif | en-têtes `X-Frame-Options: DENY`, `Referrer-Policy: same-origin`, `Permissions-Policy`, `Content-Security-Policy` (§8.3) ; `ServerTokens Prod` et `expose_php = Off` ; aucune énumération de répertoires (`Options -Indexes`) ; upload d'images limité en type (mime + extension), taille (2 Mo) et stockage hors `DocumentRoot` |
 | `SEC-12` | Aucune fuite d'information | `display_errors = Off` en mode démo, erreurs PHP capturées par le front controller et rendues en page 500 générique ; les `PDOException` sont traduites en code métier (`RB*_*` / `STOCK_INSUFFISANT`) **sans** afficher le SQL ; messages d'authentification unifiés |
-| `SEC-13` | Journalisation utile et sobre | `var/log/application.log` en JSON lines : `ts`, `level`, `event` (`AUTH_FAIL`, `RULE_REJECTED`, `CSRF_REJECTED`, `ADMIN_STATUS_CHANGE`), `user_id`, `route`, `code` ; **jamais** de mot de passe, de hash, de numéro de commande complet dans les logs d'erreur applicatifs (identifiant interne tronqué) ; rétention 30 jours |
+| `SEC-13` | Journalisation utile et sobre | Les nouvelles entrées sont minimisées ; aucune affirmation d’une rétention effective uniforme n’est faite sans preuve opérationnelle. Ne jamais y écrire mot de passe, hash ou données de carte. |
+| `SEC-14` | Ne pas recueillir ni stocker de données de carte ; le paiement est simulé | Le parcours prévu n'intègre pas de paiement réel. S-11 cherche des identifiants usuels de champs PAN/expiration/CVV/cryptogramme dans les sources PHP/HTML/JS/SQL de `app/`, `public/`, `sql/` et `migrations/`. C'est un contrôle statique ciblé : il ne lit pas les données runtime, une base configurée, les requêtes réseau ni LineServ et ne prouve pas à lui seul l'absence de collecte. |
 
 ### 8.8 Matrice menaces → contre-mesures (synthèse de la section)
 
 | # | Menace (catégorie OWASP) | Scénario d'attaque concret | Contre-mesure(s) | Preuve |
 |---|---|---|---|---|
 | 1 | A03 Injection SQL | `?q=' OR 1=1 -- ` dans la recherche | `SEC-01/02`, `CALL` paramétré, `EMULATE_PREPARES=false` | S-01, T-* |
-| 2 | A02 Identification | force brute sur `/connexion` | `password_verify` + temporisation + verrouillage compteur + captcha optionnel | S-06 |
+| 2 | A07 Identification | tentatives répétées sur `/connexion` | réponse neutre et hachage ; aucun limiteur de débit applicatif n’est implémenté ni revendiqué | S-09 (limite documentée) |
 | 3 | A07 XSS | produit nommé `<script>…</script>` | `e()` à la sortie + CSP sans `unsafe-inline` + `textContent` en JS | S-02 |
 | 4 | A01 Contrôle d'accès | `commande.php?id=25` | `SEC-08` sur 3 couches, 404 et non 403 | S-03, T-18 |
 | 5 | A05 Mauvaise config | `phpinfo()`, dépôt `.git` en ligne, annuaire listé | `SEC-11`, `.htaccess`, `public/` seul exposé | S-07 |
 | 6 | A04 XXE/injection de masse | POST surchargé, clés inattendues (`role`, `montant`) | liste stricte des clés, taille maximale, `filter_var` | F-29 |
-| 7 | A08 Intégrité (rejeu) | rejeu du `POST /commande/valider` | jeton CSRF consommé, statut `BROUILLON` unique, `FOR UPDATE` | E2 d'UC-07, S-05 |
+| 7 | A08 Intégrité (rejeu) | rejeu d’un POST mutatif | jeton CSRF vérifié et garde transactionnelle prévue par le parcours SQL ; vérifier les journaux/tests propres au mode utilisé | S-06, E2 d’UC-07 |
 | 8 | A06 Journaux et surveillance | erreur SQL affichée avec requête | `SEC-12/13`, page 500 générique | S-08 |
-| 9 | Logique métier contournée | client qui « offre » un prix via le formulaire, ou `UPDATE produit SET stock=-1` | `RB-06/15/16` (triggers) + `RB-03` (CHECK + trigger) | T-10, T-11, T-02 |
+| 9 | Logique métier contournée | client qui forge un prix ou un stock | règles décrites et contraintes SQL ; l’application utilise JSON par défaut, l’intégration SQL complète n’est pas démontrée | F-15, T-10, T-11, T-02 (portée de chaque mode à distinguer) |
+| 10 | Données de paiement sensibles | ajout d’un identifiant de carte à un formulaire ou au schéma | parcours de paiement simulé ; contrôle statique ciblé S-11/SEC-14, avec limites de portée décrites en §8.7 | S-11 |
 
 ### 8.9 Cadre juridique applicable (sources citées, exigences qui en découlent)
 
@@ -936,13 +945,13 @@ conséquence sur MiniShop et le test qui le vérifie.
 | **Directive 2011/83/UE**, art. 5 §1 (c) et (e) ; art. 5 §6 ; art. 13 §1-2 | Avant la conclusion du contrat : prix **total TTC** *et* « tous les frais supplémentaires de transport, de livraison ou d'affranchissement » ; à défaut d'information, **le consommateur ne les supporte pas** ; en cas de rétractation, remboursement de « tous les paiements reçus, **y compris les frais de livraison** » (sauf choix d'un mode plus coûteux que le standard proposé) | `ENF-14` (affichage du port **avant** validation), `RB-20` (port = donnée de la commande), `EF-CLI-10` (annulation = restitution du stock **et** du port) | `T-28` (port calculé avant validation, soldé à la validation), `F-33` |
 | **Code de la consommation**, art. **L221-5 4°** (information précontractuelle), **L221-4**, **L242-2** (double clic + mention « commande avec obligation de paiement »), **L112-1** (prix affiché = prix TTC **et conditions de vente**, dont le coût des prestations complémentaires) | Le prix affiché doit être TTC et le port soit inclus, soit indiqué en sus **avant** la validation ; le bouton de commande doit lever toute ambiguïté sur l'obligation de payer | `EF-CLI-06` (récapitulatif calculé **côté serveur**), `EF-VIS-08` (page CGV/mentions), libellé imposé du bouton `Valider et payer` | `F-15`, `F-16`, revue de maquette |
 | **Code de la consommation**, art. **L221-18** à **L221-24** | Rétractation **14 jours** à compter de la réception ; à défaut d'information : délai porté à **12 mois** (L221-20) ; frais de renvoi à la charge du consommateur **sauf** omission d'en informer (L221-23) ; `R221-1` impose le formulaire type | `EF-CLI-10` + `RB-11` : annulation libre avant expédition, **refusée après** (`COMMANDE_NON_ANNULABLE`) ; mention du délai et du formulaire dans les CGV livrées | `F-21`, `T-21`, `F-24` |
-| **RGPD** art. 5 §1 (c) et (e) (minimisation, limitation de la conservation) ; **référentiel CNIL « gestion commerciale »** ; art. **L123-22 du code de commerce** ; art. **L213-1 du code de la consommation** | Données du client : base active pendant la relation, puis **3 ans** après le dernier contact pour la prospection ; **factures et bons de commande conservés 10 ans** (comptabilité) ; **10 ans** pour un contrat électronique ≥ 120 € ; **les données bancaires ne sont pas stockées** (et, si emprise de paiement, 13 mois maximum, numéro tronqué, jamais le cryptogramme) | `ENF-19` (durées de conservation écrites dans la table `parametre` : `conservation_compte` 36 mois, voyant annexe 17.3), `SEC-14` (aucune colonne de carte bancaire dans le MLD), `RB-09` (on n'efface pas une commande : elle est la pièce comptable) | revue du MLD (§12.2 : aucune colonne de paiement), `T-24`/`T-15` (suppressions refusées) |
+| **RGPD** art. 5 §1 (c) et (e) (minimisation, limitation de la conservation) ; **référentiel CNIL « gestion commerciale »** ; art. **L123-22 du code de commerce** ; art. **L213-1 du code de la consommation** | Données du client : base active pendant la relation, puis **3 ans** après le dernier contact pour la prospection ; **factures et bons de commande conservés 10 ans** (comptabilité) ; **10 ans** pour un contrat électronique ≥ 120 € ; **les données bancaires ne sont pas stockées** (et, si emprise de paiement, 13 mois maximum, numéro tronqué, jamais le cryptogramme) | `EV-04` (politique de conservation de la maquette, 24 mois selon `docs/18`), `SEC-14` (aucune donnée de paiement dans l’application ou le schéma), `RB-09` (on n'efface pas une commande : elle est la pièce comptable) | revue du MLD (§12.2 : aucune colonne de paiement), `T-24`/`T-15` (suppressions refusées) |
 | **LCEN** art. 6 I 3 (mention d'identité de l'éditeur, hébergeur) ; **CNIL** — journaux de connexion : **6 mois à 1 an** | Pages mentions légales et **journalisation bornée** (les journaux applicatifs ne sont pas conservés sans limite) | `EF-GEN-05`, `SEC-13` (rétention des journaux ramenée à **12 mois maximum**, alignée sur la doctrine CNIL, et non plus 30 jours seulement) | `F-24`, revue `var/log` |
 | **OWASP ASVS** V4.1.3 (moindre privilège), V1.4.4 (**mécanisme d'autorisation unique**), V4.3.1 (**MFA sur les interfaces d'administration**) ; **ANSSI** — guide d'administration sécurisée des SI (R27/R29/R36/R39 : comptes d'administration dédiés, moindre privilège, journalisation des actions d'administration, MFA pour les actions d'administration) | Deux rôles dans le back-office (**SUPER** et **GESTIONNAIRE**) plutôt qu'un seul compte « dieu » : c'est la justification de `RB-13` et de l'écran `EF-ADM-10` ; **la MFA est explicitement hors périmètre** (documentée comme écart, §8.11) | `SEC-10` (rôles et garde d'accès unique), `RB-13`, `EF-ADM-10` | §3.2, §8.7, `F-32` |
 
 > Le sujet ne demande pas d'étude juridique : il demande un **cahier des charges vérifiable**. Un prix affiché
 > sans le port, ou une suppression de commande qui détruirait une pièce comptable de dix ans, seraient des
-> **non-conformités légales** avant d'être des choix de conception — d'où `RB-09`, `RB-20` et `ENF-19`.
+> **non-conformités légales** avant d'être des choix de conception — d'où `RB-09`, `RB-20`, `EV-04` et `ENF-14`.
 
 ### 8.10 Écarts assumés face à ce cadre (à dire au jury plutôt que de les cacher)
 
@@ -960,8 +969,8 @@ Aucun chiffrement au repos des données de profil (HTTPS couvre la transmission 
 **Un comportement de `RB-20` à connaître (limitation assumée, pas un défaut caché)** : le port est recalculé tant que la commande est
 `BROUILLON`, puis **figé à la validation** — donc ajouter une ligne à une commande déjà validée (opération réservée à l'administrateur,
 `RB-11`) **ne recalcule pas** les frais de port. C'est la **même** logique de photographie que `RB-06` sur le prix unitaire : la commande
-validée est le document signé, elle ne se renégocie pas a posteriori. Vérifié par `T-28` (assertion 3 : franchise atteinte **avant**
-validation → port offert ; assertion 5 : toute réécriture du port après validation est refusée par le trigger, `RB15_MONTANT_CALCULE_INTERDIT`).
+validée est le document signé, elle ne se renégocie pas a posteriori. Le scénario `T-28` prévoit notamment de vérifier que la franchise atteinte **avant**
+validation rend le port nul et qu'une réécriture après validation est refusée par le trigger (`RB15_MONTANT_CALCULE_INTERDIT`) ; aucun résultat de rejeu actuel n’est revendiqué.
 
 ---
 
@@ -1020,7 +1029,7 @@ minishop/
 │   ├── php/                      # PHPUnit : modèles, repositories, sécurité
 │   ├── charge/reserver.sh        # C-01 : N tentatives simultanées sur M exemplaires (anti-survente)
 │   ├── perf/mesurer.sh           # ENF-01 : p95 par URL (ab ou curl)
-│   └── security/controles.sh     # 10 contrôles statiques bloquants en CI (§15.3)
+│   └── security/controles.sh     # 11 contrôles statiques en CI (§15.3), dont S-11/SEC-14
 ├── var/{log/, cache/}        # créés par l'installeur, jamais versionnés (.gitignore)
 ├── .gitignore                # secrets + artefacts (voir §14.1 règle 7)
 └── .github/workflows/ci.yml # CI du dépôt sur GitHub Actions
@@ -1064,7 +1073,7 @@ Procédure de sauvegarde/restauration spécifiée mais non exécutée ni chronom
 
 Cette section est la synthèse lisible du **document de conception de base de données** demandé au point 3) du sujet ; les détails complets (MCD/MLD, normalisation, script, procédures, triggers, argumentation pédagogique) sont au **§12**, qui reprend plan par plan le document attendu, et sont livrés en **document autonome** `docs/04-conception-bd-et-sql.md` (livrable n°3, 20 points).
 
-**Synthèse en 6 chiffres vérifiés :** 8 tables (+3 vues), 1 fonction + 17 procédures stockées (min. 5), 16 déclencheurs (min. 5), 20 règles de gestion dont 11 imposées, 29 tests SQL exécutés (29 conformes), 3FN démontrée sans dénormalisation non tracée.
+**Repères de conception (pas un PV de recette) :** 8 tables (+3 vues), 1 fonction + 17 procédures décrites, 16 déclencheurs décrits, 20 règles numérotées (11 classées par le CDC comme venant du sujet + 9 compléments), 29 scénarios SQL `T-01`…`T-29`. Le fichier de rapport versionné contient une mention de rejeu datée du 27/10/2026, date future à la coupure du 23/10 ; cette mention n’atteste pas un résultat acquis. La normalisation est argumentée au §12.3.
 
 ---
 
@@ -1095,7 +1104,7 @@ Cette section est la synthèse lisible du **document de conception de base de do
 
 ### 11.3 Pré-conditions de recette (ce que l'équipe doit avoir livré avant de tester)
 
-`PRÉ-1` base chargée sans erreur par `scripts/load_db.sh` avec compteurs affichés (tables 8, vues 3, fonctions 1, procédures 17, triggers 16, 36 produits, 3 clients, 1 admin, 4 commandes de démo) ; `PRÉ-2` `scripts/run_sql_tests.sh` → 29/29 ; `PRÉ-3` `php -l` sur 100 % des fichiers ; `PRÉ-4` les 10 contrôles statiques de sécurité au vert (`bash tests/security/controles.sh`) ; `PRÉ-5` `README.md` à jour, testé sur une machine propre ; `PRÉ-6` 3 auteurs distincts dans `git shortlog`.
+`PRÉ-1` charger la base d'essai isolée par `scripts/load_db.sh` et vérifier les compteurs (tables 8, vues 3, fonction 1, procédures 17, triggers 16, 36 produits, 3 clients, 1 admin, commandes de démo) ; `PRÉ-2` exécuter `scripts/run_sql_tests.sh` et archiver son résultat daté ; `PRÉ-3` lancer `php -l` sur les fichiers concernés ; `PRÉ-4` lancer les 11 contrôles statiques (`bash tests/security/controles.sh`) ; `PRÉ-5` vérifier l'installation depuis le README sur une machine propre ; `PRÉ-6` rapprocher les comptes contributeurs du dépôt IUT de la composition réellement déclarée, sans en déduire les rôles A/B/C. Ce sont des préconditions de recette, pas des résultats acquis. Les suites SQL CI restent sur des bases temporaires ; la cible manuelle LineServ est distincte et aucune campagne/restauration n'est attestée ici.
 
 ---
 
@@ -1228,7 +1237,9 @@ Le sujet demande explicitement les quatre points suivants ; ils sont traités s�
 | FK `order_status_history.order_id` | `CASCADE` | l'audit suit sa commande (une commande supprimable = brouillon vide) | audit orphelin, ou purge de commande impossible |
 | index | `FULLTEXT(nom, description)`, `idx_produit_categorie`, `idx_produit_visible(visible, stock)`, `idx_commande_client`, `idx_commande_statut`, `idx_ligne_commande` | alignés sur les requêtes réelles (`WHERE visible = 1 AND stock > 0 ORDER BY …`, « mes commandes », « commandes par statut ») : justifiés par le plan d'exécution, pas par superstition | recherche en `LIKE %…%` sur 1 000 produits : acceptable mais `ENF-01` non garanti |
 
-#### 12.3.4 Redondances identifiées (et ce qui en est fait)
+#### 12.3.4 Redondances identifiées (et contrôles prévus)
+
+Les références `T-*` ci-dessous désignent des scénarios/assertions à rejouer sur une base isolée ; elles ne valent pas un résultat courant. Les vérifications SQL de cette révision ne sont pas revendiquées.
 
 | Redondance | Nature | Décision | Contrôle de non-contradiction |
 |---|---|---|---|
@@ -1240,7 +1251,7 @@ Le sujet demande explicitement les quatre points suivants ; ils sont traités s�
 | `nom`/`slug` de catégorie dans les jointures | non redondant (jamais dupliqué) | jointures systématiques | — |
 | `v_etat_stock` (vue) | dérivée (RUPTURE / TRES_BAS / DISPONIBLE) | vue fournie pour que Back-office et procédure partagent la même formule | définition unique dans la base |
 
-**Anomalies vérifiées comme absentes :** (i) anomalie d'insertion : aucune (toutes les FK NOT NULL ont un parent obligatoire et réel, test `T-17`) ; (ii) anomalie de suppression : les `RESTRICT` empêchent une suppression qui casserait un historique (`T-14`, `T-15`) ; (iii) anomalie de mise à jour : impossible sur les prix figés (`T-11`), sur les montants (`T-10`) et sur le stock négatif (`T-02`, `T-03`, `T-19`).
+**Anomalies ciblées par les scénarios de contrôle :** (i) insertion avec parent manquant (`T-17`) ; (ii) suppression qui casserait un historique (`T-14`, `T-15`) ; (iii) mise à jour des prix figés (`T-11`), des montants (`T-10`) ou du stock négatif (`T-02`, `T-03`, `T-19`). Ces références décrivent des contrôles prévus ; elles ne constituent pas des résultats d’exécution dans cette révision. Les requêtes de preuve du §12.3.5 restent à exécuter et à consigner sur un environnement isolé.
 
 #### 12.3.5 Requête de preuve (à exécuter en soutenance)
 
@@ -1260,25 +1271,13 @@ SELECT id_produit FROM produit WHERE stock < 0;
 
 ### 12.4 Script SQL (DDL + données) — `sql/01_minishop_schema.sql`
 
-**Installation (la commande fait foi, exécutée sur MariaDB 11.8 dans notre environnement de développement) :**
+**Commande d'installation de référence — non exécutée dans cette révision :**
 
 ```bash
 ./scripts/load_db.sh
-# [1/4] DDL + données de reference     sql/01_minishop_schema.sql
-# [2/4] 16 declencheurs               sql/03_minishop_triggers.sql
-# [3/4] 1 fonction + 17 procedures    sql/02_minishop_procedures.sql
-# [4/4] commandes de demonstration    sql/04_minishop_demo.sql
-#
-# objet                nombre
-# tables               8     ← entités du MLD (§12.2), dont `parametre`
-# vues                 3     ← v_etat_stock, v_catalogue, v_commandes_client
-# fonctions            1     ← fn_param : lecture typée des règles chiffrées
-# procedures stockees  17    ← CT-03 (minimum 5)
-# declencheurs         16    ← CT-04 (minimum 5)
-# produits             12   clients 3   commandes 4
-# lignes de commande   5     traces de statut 9
-# OK — base 'minishop' chargee (verifiez : procedures >= 5, declencheurs >= 5).
 ```
+
+Le script source déclare 36 produits dans `sql/01_minishop_schema.sql` ; il s’agit d’un comptage statique des lignes versionnées, pas d’un chargement vérifié. La campagne historique du 23/09/2026 relatée dans `docs/04-conception-bd-et-sql.md` est distincte et n’a pas été rejouée sur le checkout examiné au 23/10. Les sorties d’installation doivent être consignées avec date, SHA et environnement avant d’être utilisées comme preuve.
 
 Extraits représentatifs du DDL (le fichier complet est dans le dépôt et en annexe 17.4) :
 
@@ -1379,13 +1378,15 @@ END IF;
 
 #### 12.5.1 Réponse à la question pédagogique : pourquoi une procédure stockée plutôt que tout faire en PHP ?
 
-| Aspect exigé par le sujet | Ce que la procédure apporte **ici**, concrètement | Ce qui se passe si on la remplace par du PHP |
+Le tableau décrit le **raisonnement de conception pour la cible MySQL/PDO** exigée par le sujet. Il ne décrit pas l’architecture active par défaut : le checkout démarre sur JSON, le SQL est optionnel et l’intégration des procédures au parcours HTTP reste à établir (§7.1). Les scénarios `T-*` cités sont des références, pas des résultats de rejeu courant.
+
+| Aspect exigé par le sujet | Apport visé par la procédure dans la conception cible | Ce qui se passerait si on la remplaçait par du PHP |
 |---|---|---|
 | **Centralisation de la logique** | `sp_create_order_from_basket` porte une seule fois l'ordre exact : créer → verrouiller → insérer → décrémenter → sommer → valider. Le front-office, le back-office (commande manuelle « téléphone ») et un futur import CSV partagent le même code | l'ordre est recopié dans chaque contrôleur ; un import écrit « à la main » saute le calcul du montant ou le snapshot ⇒ `RB-15`/`RB-06` violés sans erreur visible |
 | **Sécurité** | le PHP ne possède que `EXECUTE` sur les procédures : il ne peut pas écrire `UPDATE produit SET stock = -1` ni `DELETE FROM commande`, même en cas d'injection dans un autre point du code (défense en profondeur) ; les requêtes du repository sont des appels, pas du SQL dynamique | les privilèges `UPDATE/DELETE` sur `PRODUIT`/`COMMANDE` rendent un défaut applicatif **exploitable** ; l'injection SQL devient un moyen de falsifier le stock et les montants |
 | **Transactions** | `START TRANSACTION / COMMIT / ROLLBACK` dans la procédure : l'atomicité est garantie **côté serveur** et ne dépend pas de la fiabilité du client (ni d'un `beginTransaction()` oublié) ; un deadlock MySQL ne laisse qu'à réessayer l'appel | un crash PHP **entre** l'insertion de la commande et le décrément laisse un stock faux — l'état le plus coûteux à réparer |
 | **Réutilisabilité** | `sp_add_order_line` sert au panier persistant, à la commande en ligne, à la reprise d'un import et au script de test ; `sp_search_products` sert au visiteur (avec `p_admin = 0`) et à l'admin (`p_admin = 1`) sans changer une ligne de PHP | deux implémentations de la disponibilité (une dans `PanierController`, une dans `CommandeController`) divergent dès le premier correctif |
-| **Contrôle des accès** | `sp_confirm_order` vérifie `id_client` de la commande : la route `commande.php?id=25` ne peut pas fuiter même avec un contrôleur oublié (test `T-18`) ; `sp_delete_category` refuse la suppression d'une catégorie occupée (`T-14`) | la sécurité repose entièrement sur la discipline de chaque développeur et sur des tests d'intégration |
+| **Contrôle des accès** | La conception prévoit que `sp_confirm_order` vérifie `id_client` et que `sp_delete_category` refuse une catégorie occupée ; `T-18` et `T-14` sont les scénarios associés. Leur présence ne démontre ni le rejeu actuel ni l’intégration au parcours HTTP par défaut. | sans contrôles centralisés, la sécurité dépendrait des vérifications des appelants ; les scénarios d’intégration restent à rejouer |
 | **Performance et volume réseau** | un seul aller-retour pour un panier de N lignes (`CALL` + JSON) au lieu de `2N + 2` requêtes préparées ; les calculs se font près des données | latence multipliée sur les paniers volumineux (mesure `ENF-01`) |
 | **Coûts assumés / limites (à dire aussi)** | dépendance au SGBD (pas portables sur SQLite/PostgreSQL sans réécriture), debuggage moins outillé qu'en PHP, versionnement du SQL à surveiller dans GitLab, logique dupliquée si l'IHM a besoin de la même formule (ex. `etat_stock` : même formule dans la procédure **et** dans la classe `Produit`) | — |
 
@@ -1405,7 +1406,7 @@ troisième est **renommée en français pour être cohérente avec le reste du m
 | `sp_add_order_item` — ajout d'un produit dans une commande | `sp_add_order_line(id_commande, id_produit, qte, OUT id_ligne, OUT total, OUT code)` | renommer **`_line`** : la table s'appelle `ligne_commande`, les triggers `trg_ligne_*` ; garder un nom anglais isolé dans un modèle français serait la vraie incohérence. Dérivé : `sp_create_order_from_basket` = le panier entier en un appel | `T-06`, `T-08`, `T-09`, `T-29` |
 | `sp_update_order_status` — modification du statut | `sp_update_order_status(id_commande, statut, commentaire, auteur, role, OUT code)` | **nom et rôle identiques** ; + matrice de transitions (`RB-11`), idempotence, auteur tracé | `T-12`, `T-13`, `F-29` |
 | « Trigger 1 — Stock » : à la création d'une ligne, `stock - quantité commandée` | `trg_ligne_decrement_stock` (`AFTER INSERT`) **et** `trg_ligne_restore_stock` (`AFTER DELETE`) | même formule, **et son inverse** : sans la restitution, annuler une commande perdrait du stock (`T-21`) | `T-07`, `T-21` |
-| « Trigger 2 — Historique » sur `ORDER_STATUS_HISTORY(id, order_id, old_status, new_status, changed_at)` | `trg_history_statut` (`AFTER UPDATE`) **et** `trg_history_creation` (`AFTER INSERT`) | **colonnes du sujet conservées à l'identique**, plus `changed_by`, `changed_by_role`, `commentaire` (qui, sous quel rôle, pourquoi) ; écriture **uniquement** par trigger (`V7`, `T-22`) | `T-22`, `T-23` |
+| « Trigger 2 — Historique » sur `ORDER_STATUS_HISTORY(id, order_id, old_status, new_status, changed_at)` | `trg_history_statut` (`AFTER UPDATE`) **et** `trg_history_creation` (`AFTER INSERT`) | colonnes du sujet conservées à l'identique, plus `changed_by`, `changed_by_role`, `commentaire` ; dans la conception cible, l'écriture est confiée aux triggers. `T-22` est le scénario prévu pour contrôler l’absence de doublon, pas un résultat de rejeu | `T-22`, `T-23` |
 | `CLIENT(…, password, date_creation)` | `client(…, mot_de_passe_hash, date_creation)` | le sujet interdit lui-même le mot de passe en clair (`Interdire password = "123456"`) : la colonne est un **hash** `password_hash()` (`RB-12`) | `T-05`, `F-08` |
 
 ### 12.6 Déclencheurs (16 livrés — minimum demandé : 5)
@@ -1431,7 +1432,7 @@ troisième est **renommée en français pour être cohérente avec le reste du m
 
 L'exigence « Trigger 1 — Stock » est couverte par `TRG-A1`+`TRG-A2` (et `TRG-A3` pour l'annulation) ; l'exigence « Trigger 2 — Historique » par `TRG-D4` (+ `TRG-D5`), avec la table `order_status_history(id, order_id, old_status, new_status, changed_at, …)` **exactement** au format demandé par le sujet, complétée de l'auteur et du rôle pour la traçabilité.
 
-**Ce que les triggers prouvent dans les tests** : `T-02`, `T-03`, `T-07`, `T-08`, `T-10`, `T-11`, `T-14`, `T-15`, `T-17` attaquent la base **en SQL direct**, hors application. Les règles tiennent quand même — c'est la démonstration attendue, et la raison pour laquelle la `PROCÉDURE` ne fait que compléter (message + transaction), elle ne remplace pas la contrainte.
+**Ce que les scénarios de triggers visent à vérifier :** `T-02`, `T-03`, `T-07`, `T-08`, `T-10`, `T-11`, `T-14`, `T-15` et `T-17` décrivent des écritures SQL directes, hors application. Ils sont conçus pour vérifier les contraintes au niveau de la base ; aucun rejeu courant de ces scénarios n’est revendiqué, et les tests SQL sur base temporaire ne prouvent pas l’intégration au parcours HTTP.
 
 ### 12.7 Données de démonstration et précautions
 
@@ -1439,7 +1440,7 @@ L'exigence « Trigger 1 — Stock » est couverte par `TRG-A1`+`TRG-A2` (et `TRG
 |---|---|---|
 | 4 catégories | Informatique, Audio, Accessoires, Objets connectés | `RB-08` (une catégorie vide est créée par les tests de suppression) |
 | 36 produits (3 pages de 12) | prix de 8.50 à 1249 € HT, dont **`POWER-010`, `POWER-030` et `MONTRE-032` en rupture (`stock = 0`)**, `MICRO-007` au seuil de réassort, `BRAC-012` **masqué** | `RB-19`, `EF-ADM-05`, `F-12/13`, `T-25`, `T-26` |
-| 3 clients | alice / bruno / carla | `RB-01`, `SEC-08`, `T-18` (deux clients différents suffisent à prouver l'IDOR) |
+| 3 clients | alice / bruno / carla | `RB-01`, `SEC-08`, `T-18` (scénario prévu pour vérifier l’isolation entre deux clients) |
 | 1 administrateur | rôle `SUPER` | `RB-13` |
 | 4 commandes | deux `EN_PREPARATION` validées (2 lignes et 1 ligne), un brouillon vide, une `EXPEDIEE` (2 lignes) | `RB-11`, `RB-06`, `RB-15`, `EF-CLI-10` |
 
@@ -1450,12 +1451,12 @@ L'exigence « Trigger 1 — Stock » est couverte par `TRG-A1`+`TRG-A2` (et `TRG
 | # | Question posée par le besoin | Option retenue | Option écartée | Arbitrage |
 |---|---|---|---|---|
 | V1 | Panier : en session ou en base ? | **session** (`PanierSession`) par défaut ; tables `PANIER`/`LIGNE_PANIER` fournies et jouables | panier 100 % en base | la session suffit au cahier des charges et évite d'écrire des règles de péremption de panier ; la variante est livrée (script commenté) pour prouver que l'architecture n'est pas fragilisée |
-| V2 | Une ligne de commande = une ligne par unité ou quantité agrégée ? | **quantité agrégée** avec snapshot | une ligne par unité (1..N inserts) | 1 ligne = 1 produit = 1 prix au moment de l'achat : plus simple à facturer, `T-23` vérifie le snapshot ; l'unité par unité serait possible mais multiplie les lignes mortes |
+| V2 | Une ligne de commande = une ligne par unité ou quantité agrégée ? | **quantité agrégée** avec snapshot | une ligne par unité (1..N inserts) | 1 ligne = 1 produit = 1 prix au moment de l'achat : plus simple à facturer ; le scénario `T-23` vise le contrôle du snapshot, sans résultat d’exécution revendiqué ici. L'unité par unité serait possible mais multiplie les lignes mortes |
 | V3 | `BROUILLON` parmi les états ? | **oui** | démarrer directement en `EN_PREPARATION` | sans état « panier convertible », `RB-04` serait violé à l'instant de la création de la commande ; le brouillon rend la règle cohérente (et `RB-04` n'est contrôlé qu'à la validation, cf. `T-16`) |
 | V4 | Deux tables d'acteurs ou une table `UTILISATEUR` + rôle ? | **deux tables** | une table + colonne `role` | champs réellement disjoints (téléphone/adresse/CGV vs rôle) ; `SEC-10` renforcé : le front-office ne peut même pas écrire dans la table `administrateur` ; jointure explicite sur la bonne table |
 | V5 | `statut` en `ENUM` ou table `STATUT` ? | **ENUM** (+ matrice en base) | table de référence | 6 valeurs stables, contrôle en base (`RB-11`), pas de jointure inutile ; une table de référence est décrite comme évolution possible si un état « EN_ATTENTE_VALIDATION_PAIEMENT » devait s'ajouter |
 | V6 | Prix TTC stocké ou calculé à la demande ? | stocké + trigger (V. §12.3.2 `PRODUIT`) | calculé à la lecture | filtrage de prix indexé et réponse `< 500 ms` (cf. `ENF-01`) |
-| V7 | Historique des statuts : écrit par la procédure ou par trigger ? | **uniquement par trigger** | écrit dans `sp_update_order_status` | avec écriture en procédure, un `UPDATE` manuel ne serait pas tracé ; l'essai `T-22` vérifie **l'absence de doublon** (donc que la procédure n'écrit pas) |
+| V7 | Historique des statuts : écrit par la procédure ou par trigger ? | **uniquement par trigger dans la conception cible** | écriture dans `sp_update_order_status` | un `UPDATE` manuel doit aussi être tracé ; `T-22` est le scénario prévu pour contrôler l’absence de doublon. Aucun résultat de rejeu n’est revendiqué ici. |
 
 ---
 
@@ -1475,7 +1476,7 @@ L'exigence « Trigger 1 — Stock » est couverte par `TRG-A1`+`TRG-A2` (et `TRG
 | Commande | validation, adresse, numéro, historique, détail, annulation | `EF-CLI-07…10` |
 | Back-office | produits, catégories, stocks, commandes, statuts, indicateurs, comptes admin | `EF-ADM-01…10` |
 | Base de données | MCD, MLD, 3FN, DDL + seed, **17 procédures + 1 fonction**, **16 triggers**, 3 vues, index | §12 |
-| Sécurité | 9 exigences du sujet + durcissement + 10 tests offensifs | §8 |
+| Sécurité | exigences du sujet et compléments `SEC-01…SEC-14`, 10 scénarios offensifs `S-01…S-10` et 11 contrôles statiques, dont S-11/SEC-14 | §8 ; résultats par run, aucune recette humaine revendiquée |
 | Architecture | MVC 3 couches, front controller, dépôt, conventions | §9 |
 | Qualité | harnais SQL (29 tests), tests fonctionnels, tests de charge + `scripts/gen_volumes.sh`, CI, `README.md` | §15, §14 |
 | Docs | CDC (ce document), doc. tests & validation, support de soutenance | §16.1 |
@@ -1484,23 +1485,25 @@ L'exigence « Trigger 1 — Stock » est couverte par `TRG-A1`+`TRG-A2` (et `TRG
 
 **Contraintes de départ (rappel contractuel) :** le sujet est figé ; la note est amputée par pénalités listées au §16.2 ; le dépôt GitLab doit recevoir **les documents et le code** de façon régulière, avec un `README.md` d'installation ; la restitution comprend une soutenance de 15 min et une réponse aux questions.
 
-**Suppositions :** les étudiants disposent d'un poste LAMP ou Docker (aucune acquisition matérielle), d'un accès GitLab, et d'environ 8 à 12 h/semaine chacun selon les semaines (moyenne 10 h/semaine sur 12 semaines, cf. WBS `docs/05-wbs-projet.md`) ; aucune donnée personnelle réelle n'est manipulée.
+**Hypothèses de planification :** un poste de développement et un accès GitLab sont disponibles ; la WBS estime 355 h de travail sur un calendrier de référence de 12 semaines. Cette estimation n'établit ni capacité réelle, ni disponibilité hebdomadaire, ni heures effectuées. Le README nomme deux membres ; aucune correspondance nominative A/B/C n'est confirmée. Les données utilisées par la maquette sont synthétiques.
 
-### 13.2 Ressources
+### 13.2 Ressources et codes de planification
 
-| Ressource | Rôle | Charge prévue | Livrables portés |
-|---|---|---|---|
-| Développeur A — chef de projet, back-office | arbitrages, contrôles back-office, intégration GitLab/GitHub Actions | ~ 120 h | §13/§14, `AdminController`, `CommandeController`, CI |
-| Développeur B — modèle et base de données | MCD/MLD, SQL, procédures, triggers, repositories, tests SQL | ~ 120 h | §12, `sql/**`, `app/Repository/**`, `tests/sql/**` |
-| Développeur C — présentation, sécurité, tests | vues, JS, sessions/CSRF/échappement, doc de tests, maquette | ~ 120 h | §8/§15, `app/View/**`, `public/js/**`, `docs/02-*` |
-| Enseignante référente (maîtrise d'ouvrage pédagogique) | validation des jalons, réponses aux questions techniques | 1 h/semaine (cours) | arbitrages J1/J2/J3 |
+Les lettres A/B/C sont des **rôles de planification** utilisés dans la WBS, pas des personnes. Le README identifie deux membres ; aucune correspondance entre leurs noms, leurs permissions GitLab et ces codes n’est établie.
+
+| Code de rôle | Responsabilités prévues | Charge estimée dans la WBS | Livrables associés (cibles) |
+|---|---|---:|---|
+| A | pilotage, intégration et back-office | 117 h | §13/§14, `AdminController`, `CommandeController`, CI |
+| B | modèle et base de données | 117 h | §12, `sql/**`, `app/Repository/**`, `tests/sql/**` |
+| C | présentation, sécurité, tests | 121 h | §8/§15, `app/View/**`, `public/js/**`, `docs/02-*` |
+| Enseignante référente (maîtrise d'ouvrage pédagogique) | encadrement et avis pédagogiques éventuels | selon le calendrier du cours | aucun jalon n’est réputé validé sans preuve |
 | Environnement | poste personnel, PHP 8.2, MySQL 8 (ou MariaDB 11), Apache, GitLab, VS Code, PlantUML | 0 € | — |
 
-Total révisé : **355 h planifiées** pour le scénario à 3 personnes, dans une capacité nominale de 360 h. Le scénario à 2 personnes est rebasé séparément à **319 h estimées** après les réductions listées au §13.3 ; la répartition A/B/C n’est pas une correspondance nominative.
+Total estimé : **355 h** sur les 84 tâches de la WBS. Ce total est un effort de planification, pas une mesure d’heures réalisées ni une capacité confirmée. Le README identifie deux membres ; faute de répartition nominative confirmée, aucun plafond individuel ni scénario « 2 personnes = 319 h » n’est présenté comme validé.
 
-### 13.3 Répartition de la charge par lot (vérification d'équilibre)
+### 13.3 Répartition estimée par lot et rôle (sans mesure de capacité individuelle)
 
-| Lot | Description | Charge (h) | Responsable | Semaine |
+| Lot | Description | Charge estimée (h) | Rôles de planification | Semaine de référence |
 |---|---|---:|---|---|
 | L1 | Cadrage, relecture du sujet, grille de conformité, squelette du dépôt, `README` | 14 | A | S1 |
 | L2 | CDC : présentation, objectifs, acteurs, fonctionnalités | 26 | A + C | S1-S2 |
@@ -1520,34 +1523,36 @@ Total révisé : **355 h planifiées** pour le scénario à 3 personnes, dans un
 | L16 | soutenance : support, trame, répétitions chronométrées, questions anticipées | 14 | A + B + C | S12 |
 | | **Total** | **355** | | |
 
-**Totaux révisés avec la WBS** (`docs/05-wbs-projet.md` — estimation *bottom-up* des 84 tâches de niveau 4) : **355 h planifiées** dans une capacité nominale de 360 h, réparties **A 117 h, B 117 h, C 121 h** — personne au-delà du plafond de 122 h. Les pics de charge de S3, S5, S7 et S9 sont anticipés : tâches amont démarrées dès la quinzaine précédente, revue chaque vendredi (§13.5), L13 pouvant servir d’ajustement ; L15 est réservé au README final et à la préparation du rendu après L14.
+**Totaux de planification** (`docs/05-wbs-projet.md`) : **355 h** au total, réparties par codes A 117 h, B 117 h et C 121 h. Ces montants sont des estimations de charge par rôle, pas des heures réelles attribuées à des personnes. Les échéances et pics hebdomadaires restent un calendrier de référence à replanifier ; aucune disponibilité actuelle n’est affirmée.
 
-**Réduction de périmètre si groupe de 2 (règle de repli, pas une option de confort) :** suppression des lots L13 (JS réduit à la validation live du panier), L8 simplifié (pas de routeur maison : tableau de routes minimal), `EF-ADM-09` (indicateurs) et `EF-ADM-10` (comptes admin) non livrés, procédures réduites à 8, triggers à 8 (en gardant impérativement `TRG-A1/A2/A3/B2/B5/D1/D4` qui portent les règles notées). Aucune pénalité listée au §16.2 n'est autorisée à disparaître : ce sont les exigences « bonus » qui sautent.
+**Réduction éventuelle de périmètre :** la table historique de repli du WBS n’est pas une décision appliquée à l’équipe actuelle. Aucune exigence pénalisante n’est supprimée et aucune estimation de capacité à deux n’est validée sans accord et plan de charge révisé.
 
-### 13.4 Planning et jalons
+### 13.4 Planning de référence et jalons (prévisions, pas état d'avancement)
 
-| Semaine | Période | Phase | Jalons / livrables de fin de semaine | Sorties de semaine (démo) |
+> Les périodes ci-dessous reprennent le calendrier de planification historique. Elles ne valent ni attestation d'événement, ni validation pédagogique, ni preuve d'exécution. Le calendrier officiel et l'avancement réel doivent être confirmés séparément.
+
+| Semaine | Période de référence | Phase | Jalons / livrables visés (non attestés) | Sorties visées |
 |---|---|---|---|---|
-| S1 | 22 → 28/09 | Initialisation | dépôt GitLab créé, 3 membres + enseignante en accès, composition du groupe envoyée par courriel, L1/L2 entamés | arborescence + README v0 |
-| S2 | 29/09 → 05/10 | Analyse | **J1 : CDC §1-§4 et §6-§7 validés**, cas d'utilisation listés | relecture croisée des pénalités §16.2 |
-| S3 | 06 → 12/10 | Conception UML | **J2 bis : 3 types de diagrammes livrés** (cas, classes, séquences) | PNG + sources dans `docs/diagrams/` |
-| S4 | 13 → 19/10 | Conception BD | MCD, MLD, normalisation, script SQL de création + seed | `load_db.sh` vert |
-| S5 | 20/10 → 26/10 | Base avancée | 17 procédures + 1 fonction, 16 triggers, tests SQL T-01…T-29 | 29/29 tests conformes |
-| S6 | 27/10 → 02/11 | Réalisation socle | front controller, routeur, PDO, `Database`, gabarit de vues, CI | page d'accueil servie |
-| S7 | 03 → 09/11 | Front-office | **J3 : catalogue + recherche + fiche + inscription + connexion** | parcours visiteur complet |
-| S8 | 10 → 16/11 | Panier/commande | UC-06, UC-07 (transaction + triggers), UC-08 | commande de démonstration créée dans l'app |
-| S9 | 17 → 23/11 | Back-office + sécurité | **J4 : produits, catégories, stocks, commandes, statuts** + durcissement | parcours admin complet, `S-01…S-08` au vert |
-| S10 | 24 → 30/11 | Tests & validation | harnais rejoué, doc de tests, JS, accessibilité, correctifs | **J5 : plan de recette exécuté** |
-| S11 | 01 → 07/12 | Stabilisation | README final, arborescence propre, préparation du tag et merges des dernières MR | état réel des tests documenté |
-| S12 | 08 → 14/12 | Restitution | **J6 : soutenance** + dépôt final taggé `v1.0-rendu` | support, réponses aux questions |
+| S1 | 22 → 28/09 | Initialisation | préparer le dépôt, le README, l'accès de l'enseignante et l'envoi de la composition selon la procédure retenue | arborescence + README v0 |
+| S2 | 29/09 → 05/10 | Analyse | CDC §1-§4 et §6-§7 prêts pour relecture ; cas d'utilisation listés | revue des pénalités §16.2 à organiser |
+| S3 | 06 → 12/10 | Conception UML | diagrammes de cas, de classes et de séquence à préparer | sources et rendus à vérifier dans `docs/diagrams/` |
+| S4 | 13 → 19/10 | Conception BD | MCD, MLD, normalisation, scripts SQL et seed à examiner | résultat de `load_db.sh` à dater/archiver |
+| S5 | 20/10 → 26/10 | Base avancée | 17 procédures + 1 fonction, 16 triggers et scénarios T-01…T-29 à vérifier | résultat SQL par run/SHA à consigner |
+| S6 | 27/10 → 02/11 | Réalisation socle | routes, gabarits, configuration et stockage à vérifier ; le JSON est le défaut actuel (§7.1) | contrôles de syntaxe/CI à dater |
+| S7 | 03 → 09/11 | Front-office | parcours catalogue, recherche, fiche, inscription et connexion visés | automatisation et/ou recette à tracer séparément |
+| S8 | 10 → 16/11 | Panier/commande | UC-06…UC-08 visés | aucun ordre de démonstration ou de base réelle présumé |
+| S9 | 17 → 23/11 | Back-office + sécurité | parcours admin et durcissement visés ; S-01…S-10 sont des scénarios définis | résultats à rattacher à un run sûr et autorisé |
+| S10 | 24 → 30/11 | Tests & validation | plan de tests à compléter ; suivi manuel : 200 lignes `NON JOUÉ` dans le CSV au relevé présent | J5 non réputé atteint par la seule CI |
+| S11 | 01 → 07/12 | Stabilisation | README, documentation et préparation du rendu à planifier | aucune mise en ligne, staging ou restauration revendiquée |
+| S12 | 08 → 14/12 | Restitution | soutien oral et dépôt final envisagés selon calendrier à confirmer | support présent ; soutenance/tag non attestés ici |
 
-Trois dates sont figées par le calendrier pédagogique : S2 (validation du CDC), S10 (fin des tests), S12 (soutenance).
+Ces dates sont une base de planification, pas des échéances pédagogiques confirmées par ce document. Aucune relecture croisée étudiante, recette manuelle LineServ ou restauration de base n'est déduite de ce calendrier.
 
 ### 13.5 Budget (projet pédagogique : ce qui est demandé, ce qui est chiffré, ce qui est nul)
 
 | Poste | Base de calcul | Montant | Commentaire |
 |---|---|---:|---|
-| Ressources humaines internes | 3 × 120 h à 60 €/h (indice pédagogique de coût théorique d'un développeur, **valeur indicative**) | **21 600 €** (théorique) | aucun paiement n'est effectué : c'est le coût d'opportunité du travail étudiant, unique chiffre « financier » du projet |
+| Ressources humaines internes (hypothèse de valorisation) | 355 h estimées × 60 €/h (indice pédagogique, non nominatif) | **21 300 €** théoriques | aucun paiement n’est effectué ; ce calcul ne décrit ni la composition réelle de l’équipe ni les heures effectivement travaillées |
 | Licences logicielles | PHP, MySQL/MariaDB, Apache, GitLab Community, PlantUML, VS Code | **0 €** | tous en open source ou gratuits pour l'usage pédagogique |
 | Hébergement / infrastructure | postes étudiants + serveur de l'IUT pour la démo | **0 €** | aucun abonnement |
 | Prestataires | aucune | **0 €** | pas d'externalité prévue, et aucune souhaitable : le référentiel doit rester 100 % interne |
@@ -1556,7 +1561,7 @@ Trois dates sont figées par le calendrier pédagogique : S2 (validation du CDC)
 | Coûts de maintenance future (après le rendu) | correction d'anomalies estimée à 1 h/semaine/groupe pendant 4 semaines | 480 € théoriques | non engagé : le projet se termine à la soutenance ; ligne conservée pour la cohérence de la méthode |
 | **Budget externe réel** | | **0 €** | |
 
-Suivi budgétaire : dans ce contexte, le « budget » à suivre est celui du **temps** : la table §13.3 est pointée chaque vendredi (charge réelle vs prévue) par le chef de projet dans un tableau du wiki du dépôt GitLab, afin d'anticiper tout dépassement (la seule ressource rare du projet).
+Suivi budgétaire prévu : le temps réel pourrait être comparé à l'estimation de la table §13.3 dans un support partagé si l'équipe choisit de le faire. Aucun relevé d'heures ni pointage hebdomadaire n'est attesté dans ce checkout ; les 355 h restent une estimation, non une charge réalisée ou une capacité disponible.
 
 ---
 
@@ -1570,7 +1575,7 @@ Suivi budgétaire : dans ce contexte, le « budget » à suivre est celui du **t
 4. Un commit **au moins par personne et par semaine** (sinon l'évaluation individuelle de contribution est mécaniquement faible) ; merges squash **désactivés** pour conserver les commits d'origine.
 5. Les livrables « papier » sont versionnés dans le dépôt : `docs/01-cahier-des-charges-MiniShop.md`, `docs/02-document-tests-validation.md`, `docs/03-support-soutenance.md`, les PNG **et** les sources `.puml`, les scripts SQL, les tests.
 6. `README.md` à la racine : prérequis, installation (5 commandes), chargement de la base, comptes de démonstration, exécution des tests, arborescence, membres du groupe et rôle (§14.3).
-7. `.gitignore` (livré à la racine du dépôt) : `app/Config/env.php`, `config/env.php`, `.env`, `var/`, `vendor/`, `node_modules/`, `dist/`, `*.log`, `tests/sql/out/*` — **jamais** de mot de passe, même de démonstration, dans un fichier de configuration versionné (seul `app/Config/env.example.php` l'est, sans valeur). **Arbitrage tracé** : les journaux bruts par test (`tests/sql/out/*.log`) ne sont **pas** versionnés car régénérables, mais `tests/sql/rapport_tests_sql.md` **l'est** (avec une exception `!` dans le `.gitignore`) puisqu'il constitue la preuve de recette demandée au barème iii et citée au §15.4.
+7. `.gitignore` (livré à la racine du dépôt) : `app/Config/env.php`, `config/env.php`, `.env`, `var/`, `vendor/`, `node_modules/`, `dist/`, `*.log`, `tests/sql/out/*` — **jamais** de mot de passe, même de démonstration, dans un fichier de configuration versionné (seul `app/Config/env.example.php` l'est, sans valeur). **Arbitrage de versionnement** : les journaux bruts par test (`tests/sql/out/*.log`) ne sont **pas** versionnés car régénérables ; `tests/sql/rapport_tests_sql.md` l’est comme compte rendu daté. Sa présence ne prouve pas que la campagne s’applique à cette révision : lire la date et le SHA du run (§15.4).
 8. Une **issue GitLab par exigence** `EF-*` (au moins les 14 cas d'utilisation) et par pénalité du §16.2, refermées par un MR : c'est la traçabilité la plus lisible pour le jury.
 
 ### 14.2 Intégration continue — GitHub Actions
@@ -1584,138 +1589,135 @@ Le workflow versionné définit les jobs et leurs commandes : lint PHP, tests, c
 ### 14.3 Répartition des commits attendue (auto-contrôle avant le rendu)
 
 ```bash
-git shortlog -sne main         # 3 auteurs attendus, chacun > 20 commits
+git shortlog -sne main         # auteurs conformes à la composition effectivement confirmée ; aucun nombre d’auteurs n’est déduit des codes A/B/C
 git log --since='2 weeks ago' --pretty='%an %s' | sort | uniq -c   # rythme hebdomadaire
 git log --numstat --format= | awk '{print $4}' | sort | uniq -c | sort -rn | head   # qui touche à quoi
 ```
 
-Répartition cible, cohérente avec le RACI §3.3 : B ≈ 45 % des commits de `sql/` et `tests/sql/`, A ≈ 40 % de `app/Controller/` et `README/CI`, C ≈ 45 % de `app/View/`, `public/js/` et `docs/02-*` ; chaque personne ayant au moins 5 commits dans les trois zones (front, back, base) pour ne pas rendre l'évaluation individuelle ambiguë.
+La répartition A/B/C de §3.3 est un découpage de responsabilités, pas une consigne de volume de commits ni un relevé d’auteurs. La contribution individuelle doit être évaluée à partir des comptes réels des membres confirmés, sans convertir les permissions GitLab en rôles RACI.
 
 ---
 
 ## 15. Document de tests et de validation (synthèse)
 
-> Le document complet (cas de test détaillés, exécution, PV de recette) est **`docs/02-document-tests-validation.md`**, joint au rendu et versionné dans le dépôt ; l'annexe 17.8 en reprend les tables de référence. Cette section fixe le **plan** et les preuves déjà obtenues.
+> Le plan détaillé, les identifiants de scénarios, leurs suites et leur suivi figurent dans **`docs/02-document-tests-validation.md`**, les fiches `docs/13-*` et le registre CSV. Un identifiant `T-*`, `F-*` ou `S-*` établit une référence de test ; il ne prouve pas que le scénario a été exécuté. Toute preuve d’exécution doit indiquer le résultat, la date et le commit/run concerné.
 
 ### 15.1 Stratégie et niveaux
 
-| Niveau | Objet | Outil | Critère de sortie |
+| Niveau | Objet | Outil / référence | État de preuve à la coupure du 23/10/2026 |
 |---|---|---|---|
-| Unitaires (objets PHP) | `Produit::estDisponible()`, `PanierSession`, `Commande::statutSuivantAutorise()`, `e()`, `Hasher` | PHPUnit (optionnel mais recommandé) | 0 échec ; les cas « limites » (0, seuil, seuil+1, stock négatif) couverts |
-| Intégration base | procédures, triggers, contraintes, transactions, vues, frais de port | `scripts/run_sql_tests.sh` (29 tests) | **29/29 conformes (obtenu)** |
-| Fonctionnel de bout en bout | les 14 cas d'utilisation, côté navigateur | plan de recette à 33 cas (F-01…F-33), exécuté à la main + captures | 33/33 attendus, aucune anomalie bloquante ou majeure |
-| Conformité légale (prix, port, rétractation) | mentions d'information précontractuelle | recette `F-33` + revue des pages CGV/mentions (`EF-GEN-05`) | port affiché **avant** validation, récapitulatif conforme à `ENF-14` ; **conçu, à exécuter avec l'application** (la partie base est prouvée par `T-28`) |
-| Sécurité | 9 catégories de menaces de la matrice §8.8, couvertes par 10 tests offensifs `S-01…S-10` | `tests/security/controles.sh` (10 contrôles statiques, exécutés) + tests offensifs à dérouler sur l'application (L12) | 10/10 attaques échouent — **mesuré** : rejouées par l'E2E (T6, T12, T13) sur l'application, 185 vérifications vertes le 28/10/2026 |
-| Performance / concurrence | `ENF-01` (base : `tests/perf/mesurer_sql.sh`, mesuré ; HTTP : `tests/perf/mesurer.sh`, à dérouler avec l'application), absence de survente | `tests/charge/reserver.sh` | 20 requêtes simultanées sur 12 unités ⇒ 12 commandes, 8 refus, `stock = 0` |
-| Installation / portabilité | `README.md`, `scripts/*` | machine propre (nouveau compte OS) | installation ≤ 15 min, démo complète ensuite |
-| Validation finale | exigence par exigence | matrice §4.1 ↔ tests (annexe 17.8 → `docs/02-document-tests-validation.md` §6) | 100 % des exigences couvertes, 0 exigence non testée |
+| Tests unitaires | objets PHP et règles isolées | PHPUnit / suites de `tests/php*` | suites définies dans le dépôt ; résultat à rattacher à un run daté et au commit testé |
+| Intégration base | procédures, déclencheurs, contraintes, transactions, vues, frais de port | `scripts/run_sql_tests.sh`, scénarios `T-01`…`T-29` | 29 identifiants de scénarios ; le fichier de rapport porte une mention de campagne au 27/10/2026, future à la coupure du 23/10 et non recevable comme preuve d’exécution à cette date |
+| Fonctionnel de bout en bout | parcours des 14 UC et évolutions documentées | scénarios `F-*`, `docs/13-fiches-recette-uc.md` | identifiants et scripts présents ; les 200 scénarios du registre `docs/13-suivi-recette-uc.csv` sont `NON JOUÉ` selon ce fichier |
+| Conformité légale | information précontractuelle, port, rétractation | `F-33`, `T-28`, pages CGV/mentions | exigences et scénarios documentés ; aucune revue humaine ou validation pédagogique n’est revendiquée |
+| Sécurité | 10 scénarios offensifs `S-01`…`S-10` ; contrôles statiques distincts | `tests/security/controles.sh` (11 contrôles statiques, dont S-11/SEC-14) | un résultat statique ne vaut pas recette offensive, analyse générale de sécurité ou essai LineServ |
+| Performance / concurrence | mesures SQL/HTTP et absence de survente | `tests/perf/*`, `tests/charge/*`, `P-*`, `C-*` | protocoles et scripts présents ; aucune mesure LineServ ni charge sur une base cible n’est revendiquée |
+| Installation / portabilité | installation et documentation | `README.md`, `scripts/*`, `I-01` | installation humaine sur poste vierge et chronométrage restent à consigner séparément |
+| Validation finale | couverture exigence ↔ scénario ↔ preuve | `docs/02` §9, `docs/13-*` | matrice de traçabilité = couverture documentaire ; elle ne vaut pas 100 % d’exécution |
 
 ### 15.2 Exemple de cas de test détaillé (extrait du document de tests)
 
 | | |
 |---|---|
 | **ID / titre** | `F-18` — Validation de commande avec stock insuffisant sur la **deuxième** ligne |
-| **Préconditions** | base chargée ; `MICRO-007` en stock = 2 ; client `bruno@example.test` connecté ; panier = {`CASQ-005` × 1, `MICRO-007` × 3} |
+| **Préconditions** | base de test chargée ; `MICRO-007` en stock = 2 ; client synthétique connecté ; panier = {`CASQ-005` × 1, `MICRO-007` × 3} |
 | **Étapes** | 1. `/panier` → « Passer la commande » ; 2. sélectionner l'adresse ; 3. confirmer |
-| **Résultat attendu** | HTTP 409, message reprenant le code `STOCK_INSUFFISANT` traduit, **aucune** commande créée, stock de `CASQ-005` inchangé (rollback prouvé), panier conservé pour correction |
-| **Preuves** | (a) `SELECT COUNT(*) FROM commande WHERE id_client = 2 AND date_commande > NOW() - INTERVAL 1 MINUTE;` → 0 ; (b) `SELECT stock FROM produit WHERE reference = 'CASQ-005';` → inchangé ; (c) capture d'écran ; (d) ligne de journal `RULE_REJECTED / STOCK_INSUFFISANT` |
+| **Résultat attendu** | HTTP 409, message traduit, aucune commande créée, stock de `CASQ-005` inchangé, panier conservé |
+| **Preuves à joindre** | journal du run, requêtes de contrôle sur la base de test, capture issue du navigateur de test ; aucune donnée réelle |
 | **Règles** | `RB-04`, `RB-18`, `RB-15`, `ENF-16` |
-| **Résultat / statut** | **conforme** (rejoué par `T-09` au niveau SQL + `F-18` au niveau IHM) |
+| **État à la coupure** | scénario documenté ; aucune exécution manuelle de `F-18` n’est consignée dans le registre. `T-09` est un scénario SQL distinct, pas une preuve de la recette IHM |
 
-### 15.3 Contrôles statiques de sécurité (exécutés en CI — tous au vert sur le dépôt rendu)
+### 15.3 Contrôles statiques de sécurité (distincts des scénarios offensifs)
+
+Le script `tests/security/controles.sh` contient **11 contrôles statiques**. Le contrôle `S-11` recherche des identifiants usuels de champs de données de carte et est rattaché à `SEC-14` ; ce n’est pas un 11e scénario offensif `S-01`…`S-10`. Les vérifications portent sur les sources contrôlées et ne lisent ni les données runtime, ni le trafic réseau, ni une instance LineServ. Exécution :
 
 ```bash
-# 1. aucune concaténation/interpolation dans du SQL
-! grep -rnE '(query|exec)\s*\(\s*"[^"]*\$' app/ public/
-! grep -rnE "(query|exec)\s*\(\s*'[^']*'" app/ --include='*.php' | grep -E '\.(id|q|_GET|_POST)'
-# 2. aucune fonction d'échappement contournée dans les vues
-! grep -rn 'echo \$' app/View/ | grep -v ' e('
-# 3. aucun mot de passe en clair écrit par l'application
-! grep -rn "INSERT INTO client" app/ ; grep -rn 'password_hash' app/Security/Hasher.php
-# 4. PDO : préparations réelles et mode exception
-grep -n 'ATTR_EMULATE_PREPARES => false' app/Config/Database.php
-# 5. contrôle d'appartenance systématique sur les commandes
-grep -n 'id_client = ?' app/Repository/CommandeRepository.php
-# 6. session durcie
-grep -n 'httponly.*true' app/Security/Auth.php ; grep -n 'session_regenerate_id' app/Security/Auth.php
-# 7. CSRF vérifié sur chaque méthode mutative
-grep -c 'verifieJeton' app/Controller/*.php
-# 8. aucune route d'inscription admin
-! grep -rn "inscription.*admin" app/Router.php
+bash tests/security/controles.sh
 ```
 
-### 15.4 Résultats obtenus (état au jour du rendu du document)
+Un succès confirme uniquement les assertions statiques du script sur l’arborescence examinée ; il ne certifie ni une sécurité générale, ni le comportement complet de l’application en production. Consigner la sortie avec une date et un SHA lorsqu’elle est utilisée comme preuve.
 
-| Campagne | Commande | Résultat |
+### 15.4 Résultats et limites à la date de revue
+
+La date de coupure documentaire est le **23/10/2026**. Le fichier `tests/sql/rapport_tests_sql.md` porte une mention de campagne au **27/10/2026**, date future à cette coupure. Cette mention est conservée comme contenu versionné, mais n’est ni un événement acquis ni une preuve de résultat au 23/10 ; elle doit être réexaminée après la date portée par le fichier. Le compte rendu historique du 23/09 dans la conception BD reste distinct et n’a pas été rejoué ici. Les résultats de la présente révision sont limités aux commandes réellement rejouées sur le checkout et consignées avec leur portée ; un test non exécuté reste à faire.
+
+| Domaine | Preuve présente | Limite / statut |
 |---|---|---|
-| Chargement de la base | `./scripts/load_db.sh` | tables 8 · vues 3 · fonctions 1 · procédures 17 · triggers 16 · produits 12 · clients 3 · commandes 4 · lignes 5 · traces 9 — **succès** |
-| Tests SQL (règles de gestion, vues, frais de port) | `./scripts/run_sql_tests.sh` | **29 / 29 conformes** (rapport `tests/sql/rapport_tests_sql.md`, régénéré à chaque campagne) |
-| Volumétrie de mesure (ENF-01/ENF-02) | `./scripts/gen_volumes.sh` (200 produits, 1 000 commandes, **par appels de procédures**) | jeu généré en **6 s** : 212 produits · 992 commandes · 1 954 lignes · 1 983 traces ; `ttc_incoherents = 0`, `montants_incoherents = 0` — les règles tiennent à l'échelle réelle |
-| Performances **base seule** (rejouable sans PHP) | `DB=minishop_perf ./tests/perf/mesurer_sql.sh 50` | 5 requêtes types entre **15 et 17 ms** en moyenne (catalogue paginé 16 ms, recherche `LIKE` 16 ms, mes 10 commandes 15 ms, indicateurs 17 ms, vue d'état du stock 16 ms) ; une commande complète (`create` + ligne + `confirm`, donc verrou + triggers + port) en **20 ms** ; `EXPLAIN` sans balayage complet sur 3 requêtes sur 4 |
-| Cohérence des redondances | les 4 requêtes de preuve §12.3.5 + `T-27` sur les vues | 0 ligne chacune — **succès** |
-| Syntaxe PHP | `php -l` sur l'ensemble | non exécuté dans l'environnement de rédaction (PHP absent) ; **à exécuter par l'équipe avant le rendu** (indiqué explicitement, §16.4) |
+| Scripts SQL et base | fichiers `sql/`, harnais et scénarios `T-01`…`T-29` | aucun rejeu SQL n’est revendiqué dans cette révision ; la base utilisée par les tests CI est temporaire et distincte de toute cible manuelle |
+| Application PHP/MySQL/PDO | pilote SQL et scénarios d’intégration présents | `StorageDriver::DEFAULT` est JSON et SQL est opt-in ; les tests SQL ne prouvent pas un parcours HTTP complet sous PDO/MySQL (§7.1) |
+| Contrôles statiques de sécurité | `tests/security/controles.sh` | ne rapporter un résultat que si la commande est réellement rejouée dans cette révision ; la portée reste statique et limitée à `S-11/SEC-14` pour les données de carte |
+| Recette fonctionnelle humaine | registre `docs/13-suivi-recette-uc.csv` | les 200 entrées y sont `NON JOUÉ` ; aucune recette navigateur/LineServ n’est revendiquée |
+| Performance, déploiement et restauration | scripts et protocoles documentés | pas de mesure cible, déploiement, test manuel LineServ ou restauration de base attestés ici |
 
-### 15.5 Anomalies « attendues » et comment elles sont traitées (exemples réels du projet)
+### 15.5 Anomalies consignées dans l’historique documentaire
 
-| # | Constat pendant les tests | Cause | Correction livrée |
+Le tableau ci-dessous reprend des corrections documentées dans les fichiers du projet ; il décrit un historique de conception, pas une nouvelle campagne exécutée lors de cette révision.
+
+| # | Constat rapporté | Correction décrite | Référence à vérifier lors d’un rejeu |
 |---|---|---|---|
-| 1 | un `UPDATE` de prix sur une ligne existante était « réparé » silencieusement au lieu d'être rejeté | le trigger de snapshot avait été **créé après** le trigger d'immutabilité : MySQL exécute les triggers d'un même évènement dans l'ordre de création | ordre d'installation corrigé (`trg_ligne_immutable` avant `trg_ligne_prix_snapshot`) + test `T-11` qui vérifie le **rejet** |
-| 2 | l'historique des statuts contenait des doublons | la procédure **et** le trigger écrivaient dans `ORDER_STATUS_HISTORY` | écriture laissée **au seul trigger** ; assertion `t22_pas_de_doublon` dans `T-22` |
-| 3 | annulation de commande : le stock était restitué deux fois | la procédure ajoutait le stock **et** le trigger `AFTER DELETE` le rendait aussi | restitution laissée au trigger ; la procédure ne fait plus que la purge et le statut (`T-21` : stock restauré exactement) |
-| 4 | `NEW.prix_unitaire` ciblé par un `SELECT … INTO` dans un trigger | syntaxe non permise par MySQL/MariaDB | variable locale dans le trigger, puis `SET NEW.prix_unitaire = …` |
-| 5 | un `DELETE FROM ligne_commande` dont la sous-requête lisait `PRODUIT` échouait (trigger écrivant sur `PRODUIT`) | limitation « table déjà utilisée par la requête appelante » | en test : purge via table temporaire ; en application : la restitution passe par les triggers, jamais par une écriture croisée |
-| 6 | `CALL sp_search_products` renvoyait une erreur de syntaxe sur `LIMIT :lim` | les requêtes préparées MySQL/MariaDB n'acceptent que des marqueurs `?` | procédure réécrite en marqueurs positionnels avec nombre de paramètres constant |
-| 7 | `v_catalogue` renvoyait `ERROR 1356` (vue référencant une colonne inexistante) **pendant la campagne de tests SQL** : le test `T-26` redéfinissait `v_etat_stock` à son profit et cassait la vue livrée dont dépend `v_catalogue` ; le même test révélait des `montant_total` non recalculés sur les commandes rescapées, parce que la fixture supprime des lignes par `DELETE` direct (la sous-requête sur `produit` est interdite par le trigger) et que `trg_ligne_decrement_stock` ne se déclenche donc pas | un test ne doit jamais redéfinir un objet de production ; un `DELETE` contournant la procédure contourne aussi ses effets de bord | `T-26` lit la vue livrée au lieu de la recréer ; la fixture normalise `montant_total = SUM(total_ligne)` en fin de purge ; **`T-27` (nouveau)** vérifie l'existence et la cohérence des 3 vues, y compris ce recalcul |
-
-Ces sept lignes sont **à montrer en soutenance** : elles prouvent que la base a été testée réellement (et pas seulement écrite), et chacune a un test qui la verrouille (§17.8).
+| 1 | ordre des triggers pouvant masquer un rejet de mise à jour du prix | ordre de création et assertion d’immutabilité documentés | `T-11` |
+| 2 | risque de doublon dans l’historique des statuts | écriture confiée au trigger seul selon le document de conception | `T-22` |
+| 3 | risque de double restitution du stock ou de perte des lignes à l’annulation | procédure dédiée et conservation des lignes décrites | `T-21`, `F-21` |
+| 4 | incompatibilité de syntaxe `SELECT … INTO NEW.prix_unitaire` | variable locale puis affectation décrites | script SQL à rejouer |
+| 5 | erreur de purge de fixture liée à une table modifiée par trigger | fixture de test documentée comme corrigée | harnais SQL à rejouer |
+| 6 | marqueurs nommés dans `LIMIT` de requête préparée | marqueurs positionnels décrits | `T-25` |
+| 7 | vues/collation incohérentes lors d’une campagne SQL | assertions sur les vues et alignement de collation décrits | `T-26`, `T-27` |
 
 ---
 
-## 16. Grille de conformité / auto-validation des livrables et des pénalités
+## 16. Pointage documentaire des livrables et risques de pénalité (sans auto-attribution de note)
 
-### 16.1 Inventaire des livrables attendus vs livrés
+### 16.1 Présence documentaire et limites de preuve
 
-| # | Livrable (barème du sujet) | Points | Où dans le dépôt | Statut |
+| # | Livrable du barème | Points | Où dans le dépôt | Pointage documentaire à la date de revue |
 |---|---|---:|---|---|
-| i | Document de **spécification du système** (9 parties) | 20 | `docs/01-cahier-des-charges-MiniShop.md` §1→§9 (+ annexes) | ✅ complet |
-| ii | Document d'**analyse et conception de base de données** | 20 | `docs/04-conception-bd-et-sql.md` (document autonome au plan du sujet : MCD, MLD, normalisation, script SQL, procédures, triggers + annexes `sql/*` verbatim) — même contenu au §12 du présent document + `sql/*` | ✅ complet |
-| iii | **Application Web** PHP/MySQL/PDO fonctionnant selon le CDC + les deux documents | 30 | `app/`, `public/`, `sql/`, `tests/` | ✅ livrée et testée — campagne du 28/10/2026 : 11 suites vertes, SQL 29/29, E2E 185 |
-| iv | **Soutenance** (15 min + questions) | 10 | `docs/03-support-soutenance.md`, §17.11 | ✅ produite (support + diaporama 12 slides) |
-| v | **Contribution régulière sur GitLab** + `README.md` d'installation | 10 (individuel) | dépôt GitLab, §14 | ⚙️ continu (règle : ≥ 1 commit/semaine/personne) |
+| i | Document de **spécification du système** (9 parties) | 20 | `docs/01-cahier-des-charges-MiniShop.md` §1→§9 et annexes | document présent ; couverture et cohérence sont pointées ci-dessous, sans validation pédagogique |
+| ii | Document d'**analyse et conception de base de données** | 20 | `docs/04-conception-bd-et-sql.md`, §12 et `sql/*` | conception et fichiers présents ; résultats SQL restent attachés à leurs campagnes datées, pas à la seule présence des scripts |
+| iii | **Application Web** selon la cible PHP/MySQL/PDO et les documents | 30 | `app/`, `public/`, `sql/`, `tests/` | écart d’intégration non résolu : `StorageDriver::DEFAULT` est JSON, SQL est optionnel et aucun parcours HTTP complet PDO/MySQL n’est établi par ce pointage |
+| iv | **Soutenance** (15 min + questions) | 10 | `docs/03-support-soutenance.md`, `docs/12-diaporama-soutenance.md` | support documentaire présent ; soutenance, dépôt final et répétitions ne sont pas attestés |
+| v | **Contribution régulière sur GitLab** + `README.md` | 10 (individuel) | README et historique du dépôt IUT | README présent ; contributions individuelles ne sont pas vérifiées depuis ce checkout et ne se déduisent pas des rôles A/B/C |
 
-### 16.2 Auto-contrôle des pénalités annoncées par le barème
+### 16.2 Pointage des pénalités — couverture documentaire et preuves à fournir
 
-| Pénalité prévue par le sujet | Risque | Dispositif qui la neutralise | Preuve vérifiable |
+Ce tableau repère les livrables ou contrôles documentés associés aux pénalités. Il ne neutralise pas une pénalité, ne prédit pas la note et ne remplace ni la relecture étudiante ni l’évaluation du jury.
+
+| Pénalité du sujet | Risque concerné | Couverture/documentation repérée | Preuve ou limite à conserver |
 |---|---|---|---|
-| manque un diagramme UML (**-1**) | oubli d'un type | 7 diagrammes livrés : cas d'utilisation (3 vues), classes, 5 séquences, activités, états, architecture — tous en source `.puml` + PNG rendus | `docs/diagrams/*.png` (14 fichiers), `render.sh` sans erreur |
-| manque des solutions de sécurité (**-2**) | §8 « théorique » | 9 sous-sections `SEC-01…SEC-13` avec **code** + matrice menaces et **10 tests offensifs** `S-01…S-10` | §8, §15.3, `docs/02-document-tests-validation.md` §3.2 |
-| manque de règle métier (**-2**) | règles du sujet non listées | 20 règles dont les **11 imposées** citées à l'identique, avec traduction SQL + test | §6.1 (11/11 visibles) |
-| manque de contrainte technique (**-2**) | §7 bâclé | 12 contraintes `CT-*` imposées + 14 choix d'environnement + contraintes données/ergonomie/exploitation | §7.1 à §7.5 |
-| manque d'analyse d'architecture (**-2**) | pas de MVC détaillé | §9 : 3 couches + rôle de la base, diagramme, arborescence, conventions, environnements et sauvegarde | §9.1→§9.6 |
-| manque une procédure stockée — **conception BD** (**-1**, max -5, barème ii) | < 5 | **17 procédures + 1 fonction** couvrant les 3 de l'exemple du sujet — `sp_create_order`, `sp_add_order_item` → **`sp_add_order_line`**, `sp_update_order_status` (noms intacts pour 2 sur 3, correspondance §12.5.2) | compteur `load_db.sh`, §12.5, §12.5.2 |
-| manque un déclencheur — **conception BD** (**-1**, max -5, barème ii) | < 5 | **16 triggers**, dont les 2 imposés (stock `stock - quantité`, historique `ORDER_STATUS_HISTORY` au format `id, order_id, old_status, new_status, changed_at`) | §12.6, `T-03/08/11/14/15/21/22/24` |
-| manque une procédure stockée — **application** (**-1**, max -5, barème iii) | < 5 (non appelées) | mêmes 17 procédures, **effectivement appelées** par les contrôleurs (aucun SQL métier en dur côté PHP, `SEC-01`) | §10, §15.3 contrôle 1, `S-01` |
-| manque un déclencheur — **application** (**-1**, max -5, barème iii) | < 5 (non déclenchés) | mêmes 16 triggers, **déclenchés** par les écritures de l'application (stock + historique) | §10, `T-21`, `T-22` |
-| manque le script SQL (**-3**) | base non reproductible | `sql/01` (DDL + données) + `02` + `03` + `04` + `scripts/load_db.sh` | sortie de `load_db.sh` §12.4 |
-| MCD : manque une entité (**-2**) | entité oubliée | 8 entités (les 6 attendues + `ADMINISTRATEUR` et `ORDER_STATUS_HISTORY` exigés par l'énoncé) | §12.1.2, `mcd_minishop.png` |
-| MCD : mauvaise cardinalité (**-1**) | 0..N vs 1..N | tableau §12.1.3, chaque cardinalité justifiée + conséquence DDL | revue + tests `T-14/15/17` |
-| non MVC (**-5**) | SQL dans les vues, règles dans la vue | §9.1/§9.4 + `grep` de CI | §15.3 (contrôles 1, 2, 5) |
-| une requête mauvaise pour l'injection SQL (**-2**) | une concaténation oubliée | `SEC-01` en 4 verrous, tout SQL dynamique déplacé en procédure, grep bloquant en CI | §15.3 contrôle n° 1, `S-01` |
-| manque une fonctionnalité (**-3**) | fonctionnalité du sujet non listée | table de correspondance §4.1/§4.3/§4.4/§4.5 : **les 22 libellés du sujet** ont un `EF-*` | §4.1 (vérifier case par case en revue) |
-| manque un rôle d'utilisateur (**-5**) | un des 3 acteurs absent | §3 (Visiteur / Client / Administrateur) + routes gardées + `RB-13` | §3.1, §9.3, `F-32` |
-| manque le document de test et validation (**-3**) | pas de doc qualité | `docs/02-document-tests-validation.md` + §15 + harnais rejouable | §15.4 (29/29) |
-| manque l'authentification et session (**-3**) | pages privées non gardées | §8.4 (sessions durcies, `$_SESSION['user_id']`), séquence 1 | `S-05`, `S-06`, `F-08` |
-| contribution GitLab (note individuelle) | commits concentrés sur une personne | §14.1 règles + §14.3 contrôle chiffré | `git shortlog -sne` |
+| Diagramme UML manquant (−1) | type requis absent | diagrammes de cas d’utilisation (3 vues), classes, **5 séquences**, activité, états et architecture ; 14 PNG en comptant MCD/MLD | sources `.puml` et rendus présents ; le §5.3 compte quatre séquences prévues + un bonus, pas six ; la présence des fichiers ne prouve pas une évaluation pédagogique |
+| Solutions de sécurité manquantes (−2) | mesures seulement théoriques | `SEC-01`…`SEC-14`, matrice §8.8, 10 scénarios offensifs `S-01`…`S-10` et contrôles statiques distincts | `S-11`/`SEC-14` est le contrôle statique ciblé sur les identifiants usuels de données de carte ; il ne lit ni runtime ni trafic et ne constitue pas une recette offensive |
+| Règle métier manquante (−2) | exigences métier du sujet omises | 20 identifiants : `RB-01`…`RB-11` identifiées comme les règles du sujet et `RB-12`…`RB-20` comme 9 compléments | `T-01`…`T-29` sont des scénarios, pas 29 règles ; la source PDF n’est pas dans le dépôt, la classification est documentée mais doit rester vérifiable sur le sujet fourni |
+| Contrainte technique manquante (−2) | §7 incomplet | contraintes `CT-01`…`CT-12`, choix d’environnement et limites d’état indiquées | `CT-02/CT-03` disent explicitement que la cible du sujet est MySQL/PDO/procédures mais que le checkout démarre en JSON ; la conformité applicative reste un écart ouvert |
+| Analyse d’architecture manquante (−2) | MVC et séparation des couches insuffisamment décrits | §9, diagramme d’architecture, arborescence et limites de stockage | documentation présente ; contrôle d’implémentation à rattacher à un run/une revue datés |
+| Procédure stockée manquante — conception BD (−1, max −5) | moins de 5 procédures dans le modèle SQL | 17 procédures + 1 fonction décrites dans §12.5 et les sources SQL | les fichiers et nombres peuvent être inspectés ; le chargement SQL doit être prouvé par un run isolé daté |
+| Déclencheur manquant — conception BD (−1, max −5) | moins de 5 déclencheurs dans le modèle SQL | 16 déclencheurs décrits dans §12.6 et les sources SQL | résultat d’exécution à citer par run/SHA ; les identifiants `T-*` ne valent pas seuls résultat |
+| Procédure stockée manquante — application (−1, max −5) | procédures non appelées par le parcours demandé | les procédures sont définies dans le livrable SQL | aucun appel applicatif complet n’est établi par l’audit ; JSON par défaut, SQL opt-in : point de pénalité applicative non réputé neutralisé |
+| Déclencheur manquant — application (−1, max −5) | triggers non déclenchés par l’application | triggers et scénarios SQL décrits | les tests SQL de base ne prouvent pas le parcours applicatif PDO/MySQL ; point de pénalité applicative non réputé neutralisé |
+| Script SQL manquant (−3) | schéma/données non reproductibles | `sql/01`…`sql/04`, `scripts/load_db.sh` | présence des fichiers documentée ; chargement non réputé exécuté à la date de revue sans résultat daté |
+| Entité MCD manquante (−2) | entité requise absente | MCD §12.1 et rendu `mcd_minishop.png` | source/rendu présents ; contrôle pédagogique distinct |
+| Mauvaise cardinalité MCD (−1) | cardinalité incorrecte ou non justifiée | tableau §12.1.3 et conséquence MLD/DDL | justifications présentes ; aucun avis d’enseignant ou de jury inféré |
+| Non-MVC (−5) | responsabilités mélangées | §9.1/§9.4, arborescence et contrôles référencés | contrôle statique/configuration à dater ; ce pointage documentaire ne suffit pas à certifier l’architecture de l’exécution |
+| Injection SQL (−2) | requête concaténée vulnérable | `SEC-01`, requêtes préparées visées et contrôle statique | la couverture statique et les scénarios `S-01` ont des portées différentes ; aucun test LineServ ni approbation de sécurité n’est revendiqué |
+| Fonctionnalité manquante (−3) | libellé du sujet sans trace fonctionnelle | matrice `EF-*` en §4.1, cas d’utilisation et tests référencés | la matrice améliorée dans `docs/02` renvoie aux annexes et scénarios ; couverture documentaire ne signifie pas exécution de tous les cas |
+| Rôle utilisateur manquant (−5) | Visiteur, Client ou Administrateur absent | acteurs §3, rôles d’application et exigences transverses | la spécification est présente ; preuve d’exécution à établir séparément |
+| Document de tests/validation manquant (−3) | livrable qualité absent | `docs/02-document-tests-validation.md`, fiches de recette et CSV | document présent ; le registre indique 200 scénarios manuels `NON JOUÉ`, et les tests SQL/CI nécessitent leurs propres preuves datées |
+| Authentification/session manquante (−3) | pages privées non gardées | §8.4, modèle de session et références `S-05`, `S-06`, `F-08` | identifiants de contrôles distincts d’un résultat ; pas de recette humaine revendiquée |
+| Contribution GitLab (note individuelle) | historique individuel insuffisant | §14 et commande `git shortlog` proposées | le dépôt IUT n’est pas contrôlé par ce pointage ; ne pas convertir permissions GitLab ou rôles A/B/C en contribution réalisée |
+
+> **Portée de la relecture :** cette grille est un pointage documentaire de l’assistant sur les sources disponibles. Elle ne constitue pas une relecture croisée entre étudiants, une approbation, ni une validation pédagogique. La tâche `D2-L2-06` reste ouverte jusqu’à une trace datée d’un auteur et d’un relecteur étudiant distincts ; aucun participant ni accord n’est présumé.
 
 ### 16.3 Gestion des évolutions (pour éviter la dérive de périmètre)
 
 Toute demande nouvelle (fonctionnalité, règle, écran) est traitée en 4 questions avant acceptation : (1) fait-elle partie des 22 libellés du sujet ? (2) augmente-t-elle une note (i/ii/iii) ou seulement le plaisir de coder ? (3) touche-t-elle une règle `RB-*` existante (risque de régression) ? (4) combien de jours et qui ? Une réponse « non » à (1) ou (2) ⇒ **refus motivé**, consigné dans une issue GitLab (`wontfix`, avec le lien vers ce §11.2). C'est le garde-fou qui protège les points acquis plutôt que d'en ajouter.
 
-### 16.4 Limites assumées de ce document
+### 16.4 Limites et date de coupure
 
-1. ~~**le code PHP n'est pas encore écrit**~~ — **périmé depuis le 28/10/2026**. Ce paragraphe décrivait l'état du CDC au moment de sa rédaction ; l'application est depuis livrée et testée (11 suites vertes : linter 0 violation sur 101 fichiers, 29/29 règles SQL sur base réelle, 282 vérifications unitaires, 185 vérifications E2E). Les mentions d'état du §16 ont été mises à jour en conséquence, et le PV de recette du `docs/02` §8 porte les résultats de la campagne.
-2. Les tests **SQL** (29), le chargement de la base, les procédures, les triggers et les diagrammes **ont** été exécutés/rendus dans un environnement réel (MariaDB 11.8.6) ; les mesures **côté base** `ENF-01/ENF-02` (SQL sans PHP) sont **acquises** (`tests/perf/mesurer_sql.sh`, 15–17 ms sur 200 produits / 1 000 commandes) ; la mesure **HTTP** (`tests/perf/mesurer.sh`, p95) reste un protocole à exécuter une fois le PHP livré (§15.4).
-3. Le langage MySQL visé est **MySQL 8.0.16+** ; l'environnement de développement de l'équipe peut être MariaDB 10.6+/11.x : le script a été écrit pour être valide dans les deux (collation `utf8mb4_unicode_ci`, pas de `GENERATED ALWAYS`, marqueurs `?` dans les requêtes préparées de procédure) et c'est vérifié par le chargement réussi ci-dessus.
+**Date de coupure documentaire : 23/10/2026.** Le checkout contient des fichiers, rapports et métadonnées Git portant des dates postérieures ; ils sont conservés comme contenu versionné, mais ne sont pas traités comme événements ou résultats déjà acquis à cette date.
+
+1. Le code applicatif est présent dans le dépôt, mais la cible du sujet reste PHP/MySQL/PDO alors que `StorageDriver::DEFAULT` vaut `JSON` et que SQL est optionnel. Aucun parcours HTTP complet utilisant PDO/MySQL et les procédures du sujet n’est certifié par ce CDC. L’écart d’intégration reste ouvert.
+2. Les identifiants de tests, les fichiers de tests et les comptes rendus historiques ne sont pas interchangeables avec un run. Le rapport `tests/sql/rapport_tests_sql.md` mentionne une campagne datée du 27/10/2026, postérieure à la coupure ; son résultat n’est donc pas présenté ici comme acquis au 23/10. Les campagnes antérieures de septembre restent historiques et ne prouvent pas un rejeu de cette révision.
+3. Les **200 scénarios manuels** du suivi `docs/13-suivi-recette-uc.csv` sont `NON JOUÉ`. Aucune recette LineServ, opération de déploiement, restauration de base, relecture croisée étudiante, approbation ou validation pédagogique n’est revendiquée.
+4. Le pointage de §16 est documentaire. Il n’attribue aucune note et ne ferme pas `D2-L2-06` : la relecture croisée doit encore être attestée par des étudiants distincts.
+5. Les rôles A/B/C et leurs 355 h sont des estimations de planification. Les noms et permissions GitLab mentionnés dans le README ne leur sont pas associés ; aucune charge réelle, capacité individuelle ou disponibilité n’est déduite.
 
 ---
 
@@ -1725,12 +1727,12 @@ Toute demande nouvelle (fonctionnalité, règle, écran) est traitée en 4 quest
 |---|---|---|
 | 17.1 | Catalogue détaillé des 14 cas d'utilisation | `docs/annexes/annexe-cas-usage.md` |
 | 17.2 | Trois cas détaillés par description textuelle (UC-07, UC-02, UC-14) | §5.1.5 (dans le corps du document) |
-| 17.3 | Exigences non fonctionnelles `ENF-01…ENF-16` | `docs/annexes/annexe-enf.md` |
+| 17.3 | Exigences non fonctionnelles `ENF-01…ENF-22` | `docs/annexes/annexe-enf.md` |
 | 17.4 | Script SQL de création (DDL + données) et procédure d'installation | `sql/01_minishop_schema.sql` + texte intégral en `docs/annexes/annexe-sql.md` §A |
 | 17.5 | Procédures stockées (17 + 1 fonction) | `sql/02_minishop_procedures.sql` + texte intégral en `docs/annexes/annexe-sql.md` §B |
 | 17.6 | Déclencheurs (16) | `sql/03_minishop_triggers.sql` + texte intégral en `docs/annexes/annexe-sql.md` §C |
 | 17.7 | Patterns PHP/PDO/sécurité de référence | `docs/annexes/annexe-php-patterns.md` |
-| 17.8 | Cas de test (29 SQL exécutés, 33 fonctionnels, 10 offensifs, perf/charge), registre d'anomalies, PV de recette, matrice de traçabilité | `docs/02-document-tests-validation.md` + `tests/sql/**` (rapport et journaux) |
+| 17.8 | Scénarios SQL `T-01`…`T-29`, cas fonctionnels et offensifs référencés, protocoles de performance/charge, registre d'anomalies, trame de PV et matrice de traçabilité | `docs/02-document-tests-validation.md` + `tests/sql/**` (rapport daté à interpréter selon sa date et son SHA) |
 | 17.9 | Charte GitLab, modèle de MR, registre de revue croisée, `README.md` livrable et `.gitignore` | `README.md`, `docs/20-charte-gitlab-revues-croisees.md`, `.gitignore`, `docs/annexes/annexe-gitlab.md` |
 | 17.10 | Glossaire et abréviations | §17.10 ci-dessous |
 | 17.11 | Trame de soutenance (15 min) et questions anticipées | `docs/03-support-soutenance.md` |
@@ -1755,8 +1757,8 @@ Toute demande nouvelle (fonctionnalité, règle, écran) est traitée en 4 quest
 ### 17.1 bis → 17.9 bis — Contenu des annexes (fichiers liés)
 
 Les annexes ne sont pas résumées ici : elles existent en tant que fichiers **complets** du dépôt, reliés ci-dessous.
-`docs/annexes/annexe-sql.md` reproduit **verbatim** les 4 scripts SQL joués avec succès, la fixture et le
-`manifest.txt` des 29 tests et `.gitignore` (annexe SQL) ; le workflow CI conservé est `.github/workflows/ci.yml` ; `docs/annexes/annexe-cas-usage.md` contient les 14 fiches de cas d'utilisation ;
+`docs/annexes/annexe-sql.md` reproduit les scripts SQL, la fixture et le
+`manifest.txt` des 29 scénarios ; le workflow CI conservé est `.github/workflows/ci.yml` ; `docs/annexes/annexe-cas-usage.md` contient les 14 fiches de cas d'utilisation ;
 `docs/annexes/annexe-enf.md` les 22 exigences non fonctionnelles ; `docs/annexes/annexe-php-patterns.md` les
 patterns PHP/PDO/sécurité de référence ; `docs/annexes/annexe-gitlab.md` la charte GitLab et le modèle de MR.
 
@@ -1771,6 +1773,4 @@ patterns PHP/PDO/sécurité de référence ; `docs/annexes/annexe-gitlab.md` la 
 - [Rapport des 29 tests SQL (généré par la campagne)](../tests/sql/rapport_tests_sql.md)
 
 *(Pour la version Word : `./scripts/build-docs.sh` régénère l'annexe SQL depuis les fichiers du dépôt, les
-diagrammes depuis les sources `.puml`, puis produit `MiniShop-cahier-des-charges.docx` avec les images incrustées.)*
-, les
 diagrammes depuis les sources `.puml`, puis produit `MiniShop-cahier-des-charges.docx` avec les images incrustées.)*

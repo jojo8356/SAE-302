@@ -91,32 +91,33 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <nav class="toc" aria-label="Sommaire"><div class="toc">
 <ul>
 <li><a href="#1-dispositif">1. Dispositif</a></li>
-<li><a href="#2-tests-de-regles-de-gestion-base-de-donnees-executes">2. Tests de règles de gestion (base de données) — exécutés</a></li>
+<li><a href="#2-scenarios-de-regles-de-gestion-base-de-donnees-resultats-dates-separement">2. Scénarios de règles de gestion (base de données) — résultats datés séparément</a></li>
 <li><a href="#3-tests-fonctionnels-recette-de-lapplication-f-00-a-f-56">3. Tests fonctionnels (recette de l'application — F-00 à F-56)</a><ul>
 <li><a href="#31-trois-cas-detailles-au-format-complet">3.1 Trois cas détaillés au format complet</a></li>
 </ul>
 </li>
-<li><a href="#4-tests-de-securite-offensifs">4. Tests de sécurité (offensifs)</a></li>
-<li><a href="#5-tests-de-performance-de-concurrence-dinstallation-et-de-restauration">5. Tests de performance, de concurrence, d'installation et de restauration</a></li>
+<li><a href="#4-scenarios-de-securite-offensifs-definition-non-executes-ici">4. Scénarios de sécurité offensifs (définition, non exécutés ici)</a></li>
+<li><a href="#5-protocoles-de-performance-de-concurrence-dinstallation-et-de-sauvegarde-non-executes-ici">5. Protocoles de performance, de concurrence, d'installation et de sauvegarde (non exécutés ici)</a></li>
 <li><a href="#6-tests-unitaires-phpunit-9-classes-50-tests">6. Tests unitaires PHPUnit (9 classes, 50 tests)</a></li>
 <li><a href="#7-registre-des-anomalies-issues-reelles-resolues-et-verrouillees">7. Registre des anomalies (issues réelles résolues et verrouillées)</a></li>
-<li><a href="#8-etat-de-validation-et-proces-verbal-de-recette">8. État de validation et procès-verbal de recette</a></li>
-<li><a href="#9-matrice-de-tracabilite-exigence-modele-base-application-tests">9. Matrice de traçabilité exigence → modèle → base → application → tests</a></li>
+<li><a href="#8-etat-de-preuve-a-la-coupure-et-trame-de-proces-verbal">8. État de preuve à la coupure et trame de procès-verbal</a></li>
+<li><a href="#9-matrice-de-tracabilite-fonctionnalites-scenarios-et-annexes">9. Matrice de traçabilité fonctionnalités, scénarios et annexes</a></li>
 <li><a href="#10-conclusion">10. Conclusion</a></li>
 </ul>
 </div>
 </nav>
 <h1 id="document-de-tests-et-de-validation-minishop">Document de tests et de validation — MiniShop<a class="headerlink" href="#document-de-tests-et-de-validation-minishop" title="Permanent link">#</a></h1>
 <p>Deuxième document du rendu (barème iii : l'application <strong>et</strong> les deux documents ; pénalité « manque le document de test et de validation » : <strong>-3 points</strong>).
-Complément du §15 du cahier des charges et compagnon des <strong>suites détaillées de recette manuelle par cas d'utilisation</strong> (<a href="13-fiches-recette-uc.html"><code>13-fiches-recette-uc.md</code></a> et <a href="13-suivi-recette-uc.csv"><code>13-suivi-recette-uc.csv</code></a>) : dispositif, cas détaillés, exécution automatisée et protocole manuel, registre d'anomalies, PV de recette et traçabilité.</p>
-<p><strong>Mise à jour du 23/10/2026</strong> : le plan de recette et de validation ci-dessous est intégralement aligné sur l'application livrée :
+Complément du §15 du cahier des charges et compagnon des <strong>fiches de recette par cas d’utilisation</strong> (<a href="13-fiches-recette-uc.html"><code>13-fiches-recette-uc.md</code></a> et <a href="13-suivi-recette-uc.csv"><code>13-suivi-recette-uc.csv</code></a>) : scénarios, attentes, protocoles, historique documentaire et traçabilité. Les identifiants et scripts décrivent une couverture prévue ; ils ne valent pas, seuls, preuves d’exécution.</p>
+<p><strong>Coupure documentaire : 23/10/2026.</strong> Ce fichier ne certifie pas que toutes les fonctions ou suites ont été exécutées sur le commit courant. <code>docs/04-conception-bd-et-sql.md</code> rapporte une validation SQL historique datée du 23/09/2026 (MariaDB 11.8.6). Le fichier <code>tests/sql/rapport_tests_sql.md</code> porte une mention de rejeu datée du 27/10/2026, date future à cette coupure ; elle est conservée comme contenu versionné, mais n’est pas traitée comme un événement ou résultat acquis au 23/10.</p>
+<p>Le code, scripts, protocoles et références de tests listés ci-dessous sont des éléments présents dans le dépôt, non une validation intégrale de l’application :
 - messages humains en français et en anglais sans aucun code technique brut (<code>RB03_…</code>, <code>SQLSTATE</code>, <code>STOCK_INSUFFISANT</code>) ;
 - confirmations explicites en deux étapes fonctionnant <strong>même sans JavaScript</strong> avant toute action définitive (annulation client, suppression produit/catégorie, annulation administrateur avec retour de stock avant expédition et sans retour automatique sur commande <code>EXPEDIEE</code>, garde SQL <code>ANNULATION_VIA_PARCOURS_DEDIE</code>) et conservation de l'historique des lignes après annulation ;
 - mode d'ajustement de stock par défaut non destructif (<code>DELTA</code> « Ajouter / retirer ») et refus strict des doublons de catégories ;
 - préférences personnelles sur <code>/preferences</code> accessibles sans compte (<code>localStorage</code> seul, aucun cookie de suivi) : choix manuel ou géolocalisation navigateur locale sans tiers (<code>public/js/tz-lookup.js</code> CC0), traduction complète FR ↔ EN des 48 vues et du panier AJAX (<code>public/js/i18n-en.js</code>, <code>public/js/panier.js</code>), stockage UTC de bout en bout et affichage/filtrage selon le fuseau local choisi ;
 - compatibilité responsive à 320, 375, 768 et 1440 px avec tableaux administrateur et clients repliés en cartes mobiles étiquetées (<code>data-label</code>) et double implémentation décorative/informative des visuels produits ;
 - mentions légales de la maquette étudiante conformes à l'article 6, III, 2 de la LCEN (co-éditeurs <strong>Johan Polsinelli</strong> et <strong>Chahd Gouiaa</strong>, hébergeur pédagogique IUT Nice Côte d'Azur <code>linserv-info-01.campus.unice.fr</code>), transparence RGPD de la maquette scolaire et outils CLI de conservation/purge (<code>24 mois</code> comptes sans commande, <code>12 mois</code> contact, <code>6 mois</code> journaux, <code>30 jours</code> sauvegardes dédiées).</p>
-<p>Aucun résultat d'exécution humaine sur navigateur réel ou serveur LineServ n'est inventé : la colonne « Statut » distingue strictement ce qui est <strong>exécuté automatiquement en CI</strong> (15 jobs verts, y compris l'intégralité des contrôles responsive 320/375/1440 px sous Chromium) de ce qui <strong>reste à dérouler manuellement</strong> (<code>[!]</code>, et <code>NON JOUÉ</code> sur les 200 entrées de <a href="13-suivi-recette-uc.csv"><code>13-suivi-recette-uc.csv</code></a> — les campagnes responsive multi-largeurs ayant été volontairement retirées des suites manuelles car trop longues à jouer à la main).</p>
+<p>Les mentions « automatisé » dans les tableaux désignent des scripts ou tests associés ; elles ne signifient pas que le run a réussi sur la révision examinée. Les 200 entrées de <a href="13-suivi-recette-uc.csv"><code>13-suivi-recette-uc.csv</code></a> sont <code>NON JOUÉ</code>. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué. Les tests SQL automatisés doivent utiliser une base temporaire isolée, distincte de toute cible manuelle.</p>
 <h2 id="1-dispositif">1. Dispositif<a class="headerlink" href="#1-dispositif" title="Permanent link">#</a></h2>
 <table>
 <thead>
@@ -127,16 +128,20 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 </thead>
 <tbody>
 <tr>
-<td>Environnement de test CI &amp; cible</td>
-<td>Linux (Debian 13 / Ubuntu), PHP 8.2 et 8.5, MariaDB 11.8 et MySQL 8.0, Apache 2.4 / routeur de développement, Playwright Chromium (320, 375 et 1440 px, FR et EN, avec et sans JS)</td>
+<td>Environnements visés par les scripts CI</td>
+<td>Linux, versions PHP/MySQL/MariaDB et contrôles navigateur déclarés dans <code>.github/workflows/ci.yml</code> ; cette description de configuration ne constitue pas un résultat de run</td>
 </tr>
 <tr>
-<td>Jeu de données</td>
-<td>seed <code>sql/01</code> + commandes de démo <code>sql/04</code> : 4 catégories, 36 produits, 3 clients (<code>alice</code>, <code>bruno</code>, <code>carla</code>), 1 admin <code>SUPER</code>, 3 commandes ; base isolée <code>minishop_test</code> créée puis supprimée à chaque campagne</td>
+<td>Recette manuelle</td>
+<td>non jouée à la coupure ; aucune base LineServ ou de production n’a été utilisée ou validée dans cette révision</td>
 </tr>
 <tr>
-<td>Outillage automatisé</td>
-<td><code>scripts/run-all-tests.mjs</code> &amp; <code>scripts/run-all-tests.php</code>, <code>scripts/strict_types_lint.php</code> (158 fichiers), <code>tests/security/controles.sh</code> (10 contrôles + auto-test), PHPUnit 11 (9 classes, 50 tests), 42 suites PHP, <code>scripts/run_sql_tests.sh</code> + <code>tests/php/sql_integration.php</code> (29 tests SQL + étape 6 PDO) + <code>tests/php/migration_mariadb_test.php</code>, <code>tests/node/preferences_test.mjs</code> (48 vues FR↔EN + AJAX), <code>scripts/wasm-e2e.mjs</code> (338 contrôles HTTP isolés), 23 parcours <code>scripts/ui-e2e-*.mjs</code>, <code>tests/node/responsive_navigateur.mjs</code>, <code>scripts/verifier_fiches_uc.py</code></td>
+<td>Jeu de données automatisé</td>
+<td>seed <code>sql/01</code> + commandes de démo <code>sql/04</code> : 4 catégories, 36 produits, 3 clients (<code>alice</code>, <code>bruno</code>, <code>carla</code>), 1 admin <code>SUPER</code>, 4 commandes ; base temporaire <code>minishop_test</code> créée/supprimée uniquement pour les tests SQL automatisés en CI</td>
+</tr>
+<tr>
+<td>Outillage et sources de tests</td>
+<td>Scripts présents dans le dépôt, dont <code>scripts/run-all-tests.mjs</code>, <code>tests/php/sql_integration.php</code>, <code>tests/security/controles.sh</code> (11 contrôles statiques + auto-test) et <code>scripts/verifier_fiches_uc.py</code> ; leur présence n’atteste pas un résultat courant</td>
 </tr>
 <tr>
 <td>Suites de recette manuelle</td>
@@ -144,32 +149,32 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 </tr>
 <tr>
 <td>Chaîne CI</td>
-<td>GitHub Actions : <code>.github/workflows/ci.yml</code> (<strong>15 jobs</strong> lors du dernier run cité) ; aucune configuration GitLab CI dans le périmètre courant</td>
+<td>workflow GitHub Actions versionné : <code>.github/workflows/ci.yml</code> ; aucun nombre de jobs réussis n’est revendiqué à la coupure documentaire</td>
 </tr>
 <tr>
-<td>Entrée en recette</td>
-<td>pré-conditions <code>PRÉ-1</code>…<code>PRÉ-6</code> du CDC §11.3 + réinitialisation préalable de <code>/preferences</code> (<code>Français</code>, <code>Europe/Paris</code>)</td>
+<td>Pré-conditions de tests isolés</td>
+<td><code>PRÉ-1</code>…<code>PRÉ-6</code> du CDC §11.3 à vérifier avant un run local/CI ; les tests SQL restent sur des bases temporaires et aucun essai LineServ, déploiement ou restauration n’est annoncé</td>
 </tr>
 <tr>
 <td>Critère de recette</td>
 <td>0 anomalie bloquante (perte de données, stock faux, contournement de sécurité) <strong>et</strong> 0 anomalie majeure (fonctionnalité du sujet indisponible) ; les limites propres à la maquette scolaire sont explicitement documentées</td>
 </tr>
 <tr>
-<td>Rejouabilité</td>
-<td>chaque test SQL journalise dans <code>tests/sql/out/&lt;ID&gt;.log</code> ; aucun test automatisé ne touche <code>data/minishop/*.json</code> ni la base applicative (magasins temporaires dédiés vérifiés par <code>scripts/e2e_isolation.mjs</code>)</td>
+<td>Rejouabilité visée</td>
+<td>les scénarios SQL doivent journaliser dans <code>tests/sql/out/&lt;ID&gt;.log</code> et utiliser une base temporaire isolée ; vérifier ce comportement sur le run concerné avant d’en tirer une conclusion</td>
 </tr>
 </tbody>
 </table>
-<h2 id="2-tests-de-regles-de-gestion-base-de-donnees-executes">2. Tests de règles de gestion (base de données) — <strong>exécutés</strong><a class="headerlink" href="#2-tests-de-regles-de-gestion-base-de-donnees-executes" title="Permanent link">#</a></h2>
-<p>Commande isolée : <code>./scripts/run_sql_tests.sh</code> ou <code>php tests/php/sql_integration.php</code> (base jetable <code>minishop_test</code> créée puis supprimée ; manifeste <code>tests/sql/manifest.txt</code>, fixture d'état avant chaque scénario).</p>
-<p><strong>Résultat vérifié en CI (MySQL 8.0 et MariaDB 11.8) : 29 tests / 29 conformes</strong>, complétés par l'<strong>étape 6 d'intégration PDO</strong> (<code>sp_cancel_order</code> avec conservation des lignes et restitution unique du stock, garde <code>ANNULATION_VIA_PARCOURS_DEDIE</code> sur <code>sp_update_order_status</code>, annulation administrateur d'une commande <code>EXPEDIEE</code> sans retour de stock, session PDO forcée en UTC <code>+00:00</code>, filtrage UTC de <code>revenueReport</code> et <code>RetentionComptes</code> sur <code>SqlStore</code>) ainsi que par <code>tests/php/migration_mariadb_test.php</code> sur schémas antérieurs. 15 de ces tests contournent volontairement l'application (<code>INSERT</code>/<code>UPDATE</code>/<code>DELETE</code> directs) : la conformité prouve que les règles tiennent dans le SGBD lui-même.</p>
+<h2 id="2-scenarios-de-regles-de-gestion-base-de-donnees-resultats-dates-separement">2. Scénarios de règles de gestion (base de données) — résultats datés séparément<a class="headerlink" href="#2-scenarios-de-regles-de-gestion-base-de-donnees-resultats-dates-separement" title="Permanent link">#</a></h2>
+<p>Le manifeste <code>tests/sql/manifest.txt</code> référence 29 scénarios <code>T-01</code>…<code>T-29</code>. Les scripts <code>./scripts/run_sql_tests.sh</code> et <code>php tests/php/sql_integration.php</code>, lorsqu’ils sont lancés, doivent travailler sur une base temporaire isolée ; ils ne doivent pas viser LineServ ni une base applicative. La table ci-dessous décrit les assertions attendues, pas des résultats actuels.</p>
+<p><strong>Éléments datés à ne pas confondre :</strong> <code>docs/04-conception-bd-et-sql.md</code> relate une validation historique du 23/09/2026 sur MariaDB 11.8.6. Le fichier <code>tests/sql/rapport_tests_sql.md</code> affirme un rejeu daté du 27/10/2026 et 29/29, mais cette date est future par rapport à la coupure du 23/10 ; au vu de cette révision, le texte du rapport ne prouve pas qu’un rejeu a eu lieu. Aucun rejeu SQL courant n’est revendiqué ici.</p>
 <table>
 <thead>
 <tr>
 <th>Test</th>
 <th>Règle</th>
-<th>Vérification — attendu</th>
-<th>Résultat</th>
+<th>Vérification visée</th>
+<th>État à la coupure du 23/10/2026</th>
 </tr>
 </thead>
 <tbody>
@@ -177,183 +182,184 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 <td>T-01</td>
 <td>RB-02</td>
 <td>prix HT = 0 refusé par le <code>CHECK ck_produit_prix</code> — refus par la base attendu</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-02</td>
 <td>RB-03</td>
 <td>stock négatif refusé (<code>CHECK</code>) en écriture directe — refus par la base attendu</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-03</td>
 <td>RB-03</td>
 <td>stock négatif refusé par <code>trg_produit_regles</code> — refus par la base attendu</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-04</td>
 <td>RB-01</td>
 <td>e-mail client dupliqué (contrainte <code>uk_client_email</code>) — refus par la base attendu</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-05</td>
 <td>RB-12</td>
 <td><code>sp_create_account</code> refuse un mot de passe non haché (60 car. bcrypt requis) — refus par la base attendu</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-06</td>
 <td>RB-05</td>
 <td>quantité = 0 refusée par <code>sp_add_order_line</code> — refus par la base attendu</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-07</td>
 <td>RB-05</td>
 <td>quantité = 0 refusée par le <code>CHECK ck_ligne_quantite</code> — refus par la base attendu</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-08</td>
 <td>RB-18</td>
 <td>stock insuffisant : <code>trg_ligne_controle_insert</code> bloque — refus par la base attendu</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-09</td>
 <td>RB-18</td>
 <td>stock insuffisant : code de retour <code>STOCK_INSUFFISANT</code> de la procédure — exécution contrôlée attendue</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-10</td>
 <td>RB-15</td>
 <td><code>montant_total</code> non saisissable (<code>trg_commande_montant</code>) — refus par la base attendu</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-11</td>
 <td>RB-06</td>
 <td><code>prix_unitaire</code> et quantité d'une ligne non modifiables (immutabilité) — refus par la base attendu</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-12</td>
 <td>RB-11</td>
 <td>transition <code>EN_PREPARATION -&gt; BROUILLON</code> interdite — refus par la base attendu</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-13</td>
 <td>RB-11</td>
 <td>transition <code>EXPEDIEE -&gt; BROUILLON</code> interdite — refus par la base attendu</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-14</td>
 <td>RB-14</td>
 <td>suppression d'une catégorie non vide — refus par la base attendu</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-15</td>
 <td>RB-14</td>
 <td>suppression physique d'un produit déjà commandé — refus par la base attendu</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-16</td>
 <td>RB-04</td>
 <td>validation d'une commande sans ligne — refus par la base attendu</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-17</td>
 <td>RB-10</td>
 <td>commande rattachée à un client inexistant (trigger + FK) — refus par la base attendu</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-18</td>
 <td>SEC-08</td>
 <td><code>sp_confirm_order</code> refuse l'accès à la commande d'un autre client (<code>ACCES_NON_AUTORISE</code>) — refus attendu</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-19</td>
 <td>RB-03</td>
 <td><code>sp_adjust_stock</code> refuse le passage en négatif (paramètre <code>OUT</code>) — exécution contrôlée attendue</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-20</td>
 <td>RB-09</td>
 <td>produit déjà commandé : <code>sp_delete_product</code> bascule <code>visible = 0</code> sans suppression — exécution attendue</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-21</td>
 <td>RB-18</td>
 <td>annulation avant expédition : stock restauré exactement une fois, lignes conservées — exécution attendue</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-22</td>
 <td>RB-11</td>
 <td>historique des statuts écrit automatiquement par <code>trg_history_statut</code> sans doublon — exécution attendue</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-23</td>
 <td>RB-06</td>
 <td>le prix unitaire figé de la ligne survit à une hausse tarifaire ultérieure — exécution attendue</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-24</td>
 <td>RB-04</td>
 <td>suppression d'une commande <code>BROUILLON</code> vide autorisée — exécution attendue</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-25</td>
 <td>EF-VIS-02</td>
 <td>recherche + filtres + exclusion des produits masqués (<code>sp_search_products</code>) — exécution attendue</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-26</td>
 <td>EF-ADM-05</td>
 <td>alertes de stock (<code>RUPTURE</code> / <code>TRES_BAS</code>) calculées sans conflit de collation — exécution attendue</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-27</td>
 <td>EF-VIS-01</td>
 <td>les 3 vues (<code>v_catalogue</code>, <code>v_etat_stock</code>, <code>v_commandes_client</code>) existent et sont cohérentes — exécution attendue</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-28</td>
 <td>ENF-14</td>
 <td>frais de port calculés avant validation, figés à la validation et non saisissables manuellement — refus d'altération attendu</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 <tr>
 <td>T-29</td>
 <td>ENF-16</td>
 <td>erreur en cours de commande : rollback intégral, aucune commande ni décrémentation partielle — exécution attendue</td>
-<td><strong>conforme</strong></td>
+<td>scénario documenté ; pas de résultat courant</td>
 </tr>
 </tbody>
 </table>
 <h2 id="3-tests-fonctionnels-recette-de-lapplication-f-00-a-f-56">3. Tests fonctionnels (recette de l'application — <code>F-00</code> à <code>F-56</code>)<a class="headerlink" href="#3-tests-fonctionnels-recette-de-lapplication-f-00-a-f-56" title="Permanent link">#</a></h2>
+<p>Aucun scénario de cette section n’est présenté comme une recette manuelle déjà jouée. Les mentions <code>[!]</code> désignent des vérifications humaines à effectuer dans un environnement explicitement autorisé et isolé ; elles ne prescrivent pas de test sur LineServ ou une base de production. Les 200 entrées de <code>docs/13-suivi-recette-uc.csv</code> sont <code>NON JOUÉ</code>.</p>
 <p>Lecture de la colonne <strong>Statut</strong> :
-- <strong>« automatisé (...) »</strong> : assertions exécutées automatiquement par <code>scripts/run-all-tests.mjs</code> et les 15 jobs CI (les vérifications responsive 320/375/1440 px et cartes mobiles <code>data-label</code> sont couvertes uniquement en automatisé par <code>responsive_contract.php</code> et <code>responsive_navigateur.mjs</code>, hors suites manuelles) ;
-- <strong>« automatisé (...) + test navigateur réel <code>[!]</code> »</strong> : logique et DOM prouvés automatiquement en JSDOM/Chromium, comportement natif de l'interface navigateur (invite de permission de géolocalisation, stockage local, relecture linguistique) restant à constater humainement (<code>NON JOUÉ</code> dans <a href="13-suivi-recette-uc.csv"><code>13-suivi-recette-uc.csv</code></a>) ;
-- <strong>« manuel à rejouer <code>[!]</code> »</strong> : scénario d'installation ou d'exploitation humaine sur poste cible / LineServ.</p>
+- <strong>« automatisé (…) »</strong> : le scénario est associé à un script/test automatisé dans le dépôt ; le libellé n’atteste pas qu’un run a réussi à la coupure ;
+- <strong>« automatisé (…) + test navigateur réel <code>[!]</code> »</strong> : le dépôt référence des contrôles automatisés et une vérification humaine restant à faire ;
+- <strong>« manuel à rejouer <code>[!]</code> »</strong> : le scénario requiert une exécution humaine, à organiser séparément sur un environnement de test autorisé.</p>
 <table>
 <thead>
 <tr>
@@ -433,7 +439,7 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 <tr>
 <td>F-07</td>
 <td>Inscription refusée (e-mail existant)</td>
-<td><code>alice@example.com</code> existe</td>
+<td><code>client-test@example.test</code> existe</td>
 <td><code>POST /inscription</code> avec le même e-mail</td>
 <td>message humain « Cet email est déjà utilisé. », saisies non sensibles conservées, aucun doublon créé</td>
 <td>RB-01</td>
@@ -895,13 +901,13 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 <tbody>
 <tr>
 <td>Préconditions</td>
-<td>seed chargé ; <code>alice@example.com</code> connectée, adresse au profil ; panier = {<code>CASQ-005</code> × 2}</td>
+<td>seed chargé ; C1 (compte fictif de test) connecté, adresse au profil ; panier = {<code>CASQ-005</code> × 2}</td>
 <td>panier = {<code>CASQ-005</code> × 1, <code>MICRO-007</code> × 3} avec <code>MICRO-007</code> en stock 2</td>
 <td>commande « En préparation » contenant <code>SAC-008</code> × 2 ; stock <code>SAC-008</code> = 22</td>
 </tr>
 <tr>
 <td>Données en entrée</td>
-<td><code>id_client</code> (session), adresse du profil « 12 rue de France, 06000 Nice » (pré-remplie), jeton CSRF</td>
+<td><code>id_client</code> (session), adresse fictive du profil « Adresse de test, 00000 Ville » (pré-remplie), jeton CSRF</td>
 <td>idem, lignes du panier en session</td>
 <td><code>id_commande</code>, confirmation explicite sur la page dédiée</td>
 </tr>
@@ -937,13 +943,14 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 </tr>
 </tbody>
 </table>
-<h2 id="4-tests-de-securite-offensifs">4. Tests de sécurité (offensifs)<a class="headerlink" href="#4-tests-de-securite-offensifs" title="Permanent link">#</a></h2>
+<h2 id="4-scenarios-de-securite-offensifs-definition-non-executes-ici">4. Scénarios de sécurité offensifs (définition, non exécutés ici)<a class="headerlink" href="#4-scenarios-de-securite-offensifs-definition-non-executes-ici" title="Permanent link">#</a></h2>
+<p>Les identifiants <code>S-01</code>…<code>S-10</code> décrivent dix scénarios offensifs ; leur présence ne signifie pas qu’ils ont été joués. Aucune attaque, recette manuelle LineServ ou action sur une base de production n’est revendiquée. Tout rejeu dynamique doit se faire sur un environnement isolé et autorisé.</p>
 <table>
 <thead>
 <tr>
 <th>ID</th>
 <th>Cas d'attaque</th>
-<th>Mode opératoire</th>
+<th>Mode opératoire prévu</th>
 <th>Résultat attendu</th>
 <th>Exigence</th>
 </tr>
@@ -952,29 +959,29 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 <tr>
 <td>S-01</td>
 <td>Injection SQL dans la recherche</td>
-<td>12 payloads (<code>' OR 1=1 --</code>, <code>UNION SELECT email,mot_de_passe_hash FROM client</code>, <code>; DROP TABLE client</code>, guillemets, etc.)</td>
-<td>réponses 200 avec 0 résultat ou message de validation ; <code>SELECT COUNT(*) FROM client</code> inchangé ; aucune erreur SQL affichée</td>
+<td>Les tentatives SQL destructives ou d'extraction (<code>UNION</code> sur les tables de comptes, <code>DROP</code>, etc.) sont <code>BLOQUÉ</code> sur la production ; sur LineServ, utiliser seulement une recherche littérale non destructive via l'interface.</td>
+<td>Réponse normale/validation sans erreur technique ni divulgation ; les payloads agressifs et vérifications par SQL direct restent aux tests automatisés isolés/CI.</td>
 <td>SEC-01, SEC-02</td>
 </tr>
 <tr>
 <td>S-02</td>
 <td>Script stocké puis affiché (XSS)</td>
-<td>créer en admin un produit nommé <code>&lt;script&gt;alert(document.cookie)&lt;/script&gt;</code>, ouvrir la fiche client puis la liste admin (FR et EN)</td>
-<td>texte affiché littéralement (<code>&amp;lt;script&amp;gt;</code>) ; cookie <code>HttpOnly</code> inaccessible ; CSP stricte (<code>script-src 'self'</code>, aucun inline) bloquant toute exécution</td>
+<td>Avec un compte admin de test, créer un produit de test nommé <code>&lt;script&gt;console.log('test')&lt;/script&gt;</code> puis ouvrir sa fiche et la liste admin avec un compte de test (FR et EN)</td>
+<td>Texte affiché littéralement (<code>&amp;lt;script&amp;gt;</code>) ; aucune exécution ni requête externe ; CSP stricte (<code>script-src 'self'</code>, aucun inline). Supprimer le produit uniquement via l'interface avant la restauration finale si nécessaire.</td>
 <td>SEC-03</td>
 </tr>
 <tr>
 <td>S-03</td>
 <td>IDOR sur les commandes</td>
-<td>itérer <code>/mes-commandes/1..20</code> et <code>/annulation</code> avec un autre compte client, puis appeler <code>sp_confirm_order</code></td>
-<td>404 systématique sur les commandes d'autrui ; la procédure renvoie <code>ACCES_NON_AUTORISE</code> (<code>T-18</code>) ; aucune donnée divulguée</td>
+<td>Avec deux comptes synthétiques C1/C2, ouvrir uniquement une commande de test de C2 depuis la session de C1 via l'interface/HTTP ; ne pas énumérer des identifiants réels ni appeler une procédure SQL</td>
+<td>404 sur la commande de test d'autrui ; aucune donnée divulguée. La vérification SQL de <code>sp_confirm_order</code> (<code>T-18</code>) reste en CI.</td>
 <td>SEC-08</td>
 </tr>
 <tr>
 <td>S-04</td>
 <td>Falsification du prix ou du port</td>
-<td><code>POST /commande/valider</code> et <code>POST /api/panier/ajouter</code> avec <code>prix_unitaire=0.01</code> et <code>frais_port=0</code> injectés</td>
-<td>ligne enregistrée au vrai prix serveur, port calculé côté serveur ; tout <code>UPDATE</code> ultérieur du prix est bloqué en base (<code>T-11</code>, <code>T-28</code>)</td>
+<td>Sur un panier/client de test, modifier les champs de prix/port dans une requête HTTP contrôlée ; ne pas effectuer d'<code>UPDATE</code> SQL</td>
+<td>Si une commande de test est créée, ses montants restent ceux calculés côté serveur ; la garde SQL contre <code>UPDATE</code> direct (<code>T-11</code>, <code>T-28</code>) est vérifiée uniquement en CI.</td>
 <td>SEC-10, RB-06</td>
 </tr>
 <tr>
@@ -1001,15 +1008,15 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 <tr>
 <td>S-08</td>
 <td>Fuite d'information dans les messages et journaux</td>
-<td>provoquer une erreur métier, une coupure DB ou une exception non gérée</td>
-<td>pages génériques sans SQL, chemin interne ni code <code>RB*</code> ; aucun mot de passe, hash ni coordonnée nominative dans les nouvelles traces d'audit</td>
+<td>Provoquer uniquement une erreur métier avec les données de test ; ne pas couper la base ni provoquer volontairement une panne de production</td>
+<td>Page générique sans SQL, chemin interne ni code <code>RB*</code> ; aucune donnée sensible dans les preuves/journaux. La coupure DB est <code>BLOQUÉ</code> sur LineServ.</td>
 <td>SEC-12, SEC-13</td>
 </tr>
 <tr>
 <td>S-09</td>
 <td>Force brute sur l'authentification</td>
-<td>rafale de tentatives sur <code>/connexion</code> et <code>/admin/connexion</code> sur instance isolée</td>
-<td>message neutre constant ; <strong>limite connue documentée</strong> : pas de limiteur de débit applicatif intégré dans la maquette scolaire (<code>TC05-09</code>)</td>
+<td>Aucune rafale ni script de force brute sur la production LineServ ; seuls quelques échecs manuels à faible cadence sur un compte de test sont permis selon <code>TC05-09</code>, sinon <code>BLOQUÉ</code></td>
+<td>message neutre constant ; <strong>limite connue documentée</strong> : pas de limiteur de débit applicatif intégré dans la maquette scolaire</td>
 <td>SEC-04, SEC-06</td>
 </tr>
 <tr>
@@ -1021,8 +1028,8 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 </tr>
 </tbody>
 </table>
-<p>Les 10 cas sont rejouables manuellement (<code>curl</code> + navigateur sur instance isolée, cf. <code>TCX-01</code>…<code>TCX-05</code>) et couverts par <code>scripts/wasm-e2e.mjs</code> (T6, T12, T13) ainsi que <code>tests/phpunit/SecurityContractTest.php</code> et <code>tests/php/contract_http.php</code>. Les <strong>10 contrôles statiques</strong> (+ auto-test sur fixtures fautives) sont bloquants en CI : <code>bash tests/security/controles.sh</code>.</p>
-<h2 id="5-tests-de-performance-de-concurrence-dinstallation-et-de-restauration">5. Tests de performance, de concurrence, d'installation et de restauration<a class="headerlink" href="#5-tests-de-performance-de-concurrence-dinstallation-et-de-restauration" title="Permanent link">#</a></h2>
+<p>Les scripts de test HTTP et <code>tests/phpunit/SecurityContractTest.php</code> référencent des contrôles automatisés ; aucun résultat général de ces suites n’est affirmé dans cette section. <code>tests/security/controles.sh</code> contient <strong>11 contrôles statiques</strong>, dont <code>S-11</code> rattaché à <code>SEC-14</code>. Le workflow CI appelle ce script, mais aucun statut de CI n’est déduit de sa seule présence. Un contrôle statique ne remplace pas les dix scénarios offensifs, ne lit pas les données runtime ou le trafic et ne certifie pas LineServ.</p>
+<h2 id="5-protocoles-de-performance-de-concurrence-dinstallation-et-de-sauvegarde-non-executes-ici">5. Protocoles de performance, de concurrence, d'installation et de sauvegarde (non exécutés ici)<a class="headerlink" href="#5-protocoles-de-performance-de-concurrence-dinstallation-et-de-sauvegarde-non-executes-ici" title="Permanent link">#</a></h2>
 <table>
 <thead>
 <tr>
@@ -1036,50 +1043,50 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 <tr>
 <td>P-01</td>
 <td>Catalogue filtré, 200 produits</td>
-<td><code>bash tests/perf/mesurer.sh '/catalogue?cat=1&amp;prix_max=500'</code></td>
-<td>p95 &lt; 500 ms, ≤ 5 requêtes (<code>ENF-01</code>) — protocole prêt, <strong>à mesurer sur le serveur cible <code>[!]</code></strong></td>
+<td><code>bash tests/perf/mesurer.sh '/catalogue?cat=1&amp;prix_max=500'</code> sur une application et base de test isolées</td>
+<td>p95 &lt; 500 ms, ≤ 5 requêtes (<code>ENF-01</code>) ; mesure non exécutée dans cette révision <code>[!]</code></td>
 </tr>
 <tr>
 <td>P-02</td>
 <td>Recherche « casque »</td>
-<td><code>bash tests/perf/mesurer.sh '/recherche?q=casque'</code></td>
-<td>p95 &lt; 500 ms ; <code>EXPLAIN</code> utilisant <code>idx_produit_visible</code> ou <code>FULLTEXT</code> (<code>ENF-02</code>) — <strong>à mesurer sur le serveur cible <code>[!]</code></strong></td>
+<td><code>bash tests/perf/mesurer.sh '/recherche?q=casque'</code> sur un environnement de test isolé</td>
+<td>p95 &lt; 500 ms ; <code>EXPLAIN</code> sur la base de test (<code>ENF-02</code>) ; mesure non exécutée dans cette révision <code>[!]</code></td>
 </tr>
 <tr>
 <td>P-03</td>
 <td>Validation de commande</td>
-<td><code>bash tests/perf/mesurer.sh '/commande/valider'</code> (POST)</td>
-<td>p95 &lt; 900 ms avec verrous — <strong>à mesurer sur le serveur cible <code>[!]</code></strong></td>
+<td><code>bash tests/perf/mesurer.sh '/commande/valider'</code> (POST) dans un environnement isolé avec compte synthétique</td>
+<td>p95 &lt; 900 ms ; mesure non exécutée dans cette révision <code>[!]</code></td>
 </tr>
 <tr>
 <td>P-06</td>
 <td>Performances côté base sur jeu de volumétrie</td>
-<td><code>sudo bash scripts/capture_perf.sh</code> (base dédiée <code>minishop_perf</code>, ne touche jamais <code>minishop</code>)</td>
-<td><code>EXPLAIN</code> sans <code>ALL</code> sur catalogue, recherche et « mes commandes » (un <code>ALL</code> documenté sur l'agrégation par statut, A-08) ; génère <code>tests/perf/dernieres_mesures.txt</code> hors Git</td>
+<td><code>sudo bash scripts/capture_perf.sh</code> (jeu local dédié, hors LineServ)</td>
+<td>Contrôle automatisé/local seulement ; ne pas créer de base secondaire ni lancer <code>EXPLAIN</code>/volumétrie sur la production LineServ dans la recette manuelle</td>
 </tr>
 <tr>
 <td>C-01</td>
 <td>Tentative de survente concurrente</td>
-<td><code>bash tests/charge/reserver.sh 20 12</code> (et <code>php tests/php/json_concurrency_stress.php</code>)</td>
-<td>12 commandes réussies, 8 refus <code>STOCK_INSUFFISANT</code>, stock final 0 (<code>RB-18</code>) — stress concurrent JSON exécuté en CI ; tir HTTP SQL <code>reserver.sh</code> <strong>à rejouer sur serveur cible <code>[!]</code></strong></td>
+<td><code>bash tests/charge/reserver.sh 20 12</code> sur un environnement isolé (et stress JSON sur données jetables)</td>
+<td>résultats attendus : 12 réservations acceptées au plus, 8 refus ; aucune exécution sur LineServ n’est revendiquée <code>[!]</code></td>
 </tr>
 <tr>
 <td>C-02</td>
 <td>Rejeu du POST de commande / double annulation</td>
-<td>rejouer le même <code>POST /commande/valider</code> ou <code>POST .../annulation</code></td>
-<td>au plus une commande / une seule restitution de stock (<code>TC07-08</code>, <code>TC09-02</code>, <code>TC09-09</code>)</td>
+<td>rejouer une fois un POST sur des données jetables dans un environnement isolé</td>
+<td>au plus une commande / une seule restitution de stock ; scénario non exécuté ici, aucune restauration n’est revendiquée <code>[!]</code></td>
 </tr>
 <tr>
 <td>I-01</td>
 <td>Durée d'installation sur poste vierge</td>
-<td>suivi du <code>README.md</code> seul puis <code>./scripts/run_sql_tests.sh</code></td>
-<td><strong>29/29</strong> tests SQL conformes ; chronométrage humain ≤ 15 min <strong>à relever <code>[!]</code></strong></td>
+<td>suivre le <code>README.md</code> sur une machine de test vierge puis consigner le résultat du harnais SQL isolé</td>
+<td>chronométrage humain ≤ 15 min <strong>à relever <code>[!]</code></strong> ; aucun résultat SQL actuel n’est présumé</td>
 </tr>
 <tr>
 <td>B-01</td>
 <td>Sauvegarde / restauration complète</td>
-<td><code>mysqldump --single-transaction --routines --triggers minishop &gt; b.sql</code>, restauration sur base vide puis <code>run_sql_tests.sh</code></td>
-<td><strong>29/29</strong> : prouve la survie de la fonction, des 17 procédures et des 16 triggers (<code>ENF-15</code>) — <strong>à rejouer sur poste SQL <code>[!]</code></strong></td>
+<td>protocole à vérifier sur une base jetable et un environnement de test isolé</td>
+<td>procédure et restauration non exécutées ni chronométrées dans cette révision <code>[!]</code></td>
 </tr>
 </tbody>
 </table>
@@ -1236,242 +1243,128 @@ Complément du §15 du cahier des charges et compagnon des <strong>suites détai
 </tr>
 </tbody>
 </table>
-<h2 id="8-etat-de-validation-et-proces-verbal-de-recette">8. État de validation et procès-verbal de recette<a class="headerlink" href="#8-etat-de-validation-et-proces-verbal-de-recette" title="Permanent link">#</a></h2>
-<p>Vérification automatisée complète exécutée le <strong>23/10/2026</strong> sur la branche de livraison : <code>node scripts/run-all-tests.mjs</code> 100 % vert et pipeline GitHub Actions <strong>15/15 jobs verts</strong> (PHP 8.2 et 8.5, MySQL 8.0, MariaDB 11.8, concurrence JSON, JSDOM 48 vues FR↔EN, Playwright Chromium 320/375/1440 px FR+EN avec et sans JS).</p>
+<h2 id="8-etat-de-preuve-a-la-coupure-et-trame-de-proces-verbal">8. État de preuve à la coupure et trame de procès-verbal<a class="headerlink" href="#8-etat-de-preuve-a-la-coupure-et-trame-de-proces-verbal" title="Permanent link">#</a></h2>
+<p><strong>Date de coupure documentaire : 23/10/2026.</strong> Le contenu de cette section distingue les sources versionnées des résultats vérifiés sur la révision courante.</p>
+<ul>
+<li><code>docs/04-conception-bd-et-sql.md</code> rapporte une validation SQL du <strong>23/09/2026</strong> sur MariaDB 11.8.6 ; il s’agit d’un résultat historique, non rejoué ici.</li>
+<li><code>tests/sql/rapport_tests_sql.md</code> contient une mention de rejeu au <strong>27/10/2026</strong>, date future à la coupure du 23/10 ; le fichier ne constitue donc pas une preuve d’exécution acquise à cette date.</li>
+<li>Les scénarios manuels du registre <code>docs/13-suivi-recette-uc.csv</code> : <strong>200 <code>NON JOUÉ</code></strong>. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.</li>
+<li><code>bash tests/security/controles.sh</code> : <strong>11/11 contrôles statiques</strong> rejoués localement dans cette révision le 23/10/2026. La portée est limitée aux sources inspectées par le script ; cela ne vaut ni test offensif <code>S-01…S-10</code>, ni recette applicative complète, ni preuve sur LineServ.</li>
+<li>Les tests SQL, PHP, navigateur et CI n’ont pas été globalement rejoués pour cette révision dans le cadre de la présente mise à jour documentaire. Aucun nombre de jobs verts n’est donc déclaré ici.</li>
+</ul>
 <table>
 <thead>
 <tr>
-<th>Zone</th>
-<th>Vérifications du plan</th>
-<th>Automatisées et vertes en CI</th>
-<th>À jouer / compléter manuellement <code>[!]</code></th>
-<th>Bloquantes</th>
-<th>Majeures</th>
-<th>Preuve principale</th>
+<th>Domaine</th>
+<th>Artefact / résultat daté</th>
+<th>État et limite à la coupure</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Base de données (contraintes, procédures, triggers, vues, UTC, migration)</td>
-<td>29 (<code>T-01</code>…<code>T-29</code>)</td>
-<td><strong>29</strong></td>
-<td>0 (rejouable sur LineServ via §5 de <code>14-guide-lineserv.md</code>)</td>
-<td>0</td>
-<td>0</td>
-<td>jobs CI MySQL 8.0 &amp; MariaDB 11.8 (<code>sql_integration.php</code> + étape 6 + <code>migration_mariadb_test.php</code>)</td>
+<td>Base de données</td>
+<td>Scénarios <code>T-01</code>…<code>T-29</code> et scripts SQL présents ; validation historique relatée dans <code>docs/04</code> le 23/09</td>
+<td>pas de rejeu SQL de cette révision ; le rapport du 27/10 est postérieur à la coupure</td>
 </tr>
 <tr>
-<td>Installation / sauvegarde</td>
-<td>2 (<code>F-00</code>/<code>I-01</code>, <code>B-01</code>)</td>
-<td><strong>1</strong> (chargement auto <code>db_init</code>)</td>
-<td><strong>2</strong> (chronométrage humain <code>I-01</code> ≤ 15 min et restauration <code>B-01</code>)</td>
-<td>0</td>
-<td>0</td>
-<td>jobs CI SQL ; protocole manuel §5</td>
+<td>Application PHP/MySQL/PDO</td>
+<td>Code, pilote SQL et tests d’intégration présents</td>
+<td><code>StorageDriver::DEFAULT</code> est JSON et SQL est optionnel ; aucun parcours HTTP complet PDO/MySQL n’est établi par cette revue</td>
 </tr>
 <tr>
-<td>Parcours fonctionnels front, client, admin (<code>F-01</code>…<code>F-48</code>)</td>
-<td>48</td>
-<td><strong>48</strong></td>
-<td><strong>0</strong> (responsive multi-largeurs délégué à la CI Chromium, hors suites manuelles)</td>
-<td>0</td>
-<td>0</td>
-<td>42 suites PHP + <code>wasm-e2e</code> (338 contrôles) + 23 <code>ui-e2e-*</code> + Chromium CI</td>
+<td>Sécurité statique</td>
+<td><code>bash tests/security/controles.sh</code></td>
+<td>11/11 rejoués localement le 23/10 ; contrôle ciblé, non équivalent aux scénarios offensifs</td>
 </tr>
 <tr>
-<td>Mentions LCEN, <code>/preferences</code>, FR↔EN, UTC, conservation &amp; RGPD maquette (<code>F-49</code>…<code>F-56</code>)</td>
-<td>8</td>
-<td><strong>8</strong></td>
-<td><strong>3</strong> contrôles humains navigateur réel (<code>F-50</code>, <code>F-51</code>, <code>F-52</code>)</td>
-<td>0</td>
-<td>0</td>
-<td><code>preferences_test.mjs</code>, <code>ConservationEtFuseauTest</code>, <code>mentions_legales_test.php</code>, suites Python CLI</td>
+<td>Sécurité offensive</td>
+<td>Scénarios documentés <code>S-01</code>…<code>S-10</code></td>
+<td>aucun rejeu offensif/LineServ revendiqué dans cette révision</td>
 </tr>
 <tr>
-<td>Sécurité (cas offensifs + contrôles statiques)</td>
-<td>20 (<code>S-01</code>…<code>S-10</code> + 10 contrôles)</td>
-<td><strong>20</strong></td>
-<td>rejeu exploratoire sur hébergement cible (<code>TCX-01</code>…<code>TCX-10</code>)</td>
-<td>0</td>
-<td>0</td>
-<td><code>tests/security/controles.sh</code> (10/10) + <code>wasm-e2e</code> T6/T12/T13 + PHPUnit</td>
+<td>Recette fonctionnelle humaine</td>
+<td>Fiches UC et registre CSV</td>
+<td>200 entrées <code>NON JOUÉ</code> ; aucune validation par un testeur étudiant n’est inférée</td>
 </tr>
 <tr>
-<td>Performance et charge</td>
-<td>6 (<code>P-01</code>…<code>P-03</code>, <code>P-06</code>, <code>C-01</code>, <code>C-02</code>)</td>
-<td><strong>2</strong> (<code>C-01</code> JSON + <code>C-02</code> E2E)</td>
-<td><strong>5</strong> mesures HTTP/SQL sur machine de recette (<code>P-01</code>…<code>P-03</code>, <code>P-06</code>, <code>C-01</code> SQL)</td>
-<td>0</td>
-<td>0</td>
-<td><code>json_concurrency_stress.php</code>, <code>wasm-e2e</code> ; scripts <code>tests/perf/*</code> prêts</td>
-</tr>
-<tr>
-<td><strong>Sous-total du présent document</strong></td>
-<td><strong>113 vérifications</strong> (29 + 2 + 48 + 8 + 20 + 6)</td>
-<td><strong>108 automatisées en CI</strong></td>
-<td><strong>10 compléments humains <code>[!]</code></strong></td>
-<td><strong>0</strong></td>
-<td><strong>0</strong></td>
-<td>pipeline CI 15/15 vert</td>
-</tr>
-<tr>
-<td><strong>Campagne manuelle complète par UC (<code>docs/13-*</code>)</strong></td>
-<td><strong>200 entrées</strong> (164 scénarios <code>TC*</code> + 36 couples <code>TC14-09/*</code>)</td>
-<td>structure vérifiée (<code>46/46</code> via <code>verifier_fiches_uc.py</code>)</td>
-<td><strong>200 <code>NON JOUÉ</code></strong> à dérouler par l'équipe</td>
-<td>—</td>
-<td>—</td>
-<td><a href="13-suivi-recette-uc.csv"><code>docs/13-suivi-recette-uc.csv</code></a></td>
+<td>Performance, hébergement et sauvegarde</td>
+<td>Scripts et protocoles référencés</td>
+<td>aucune mesure sur cible, opération de déploiement, recette LineServ ou restauration attestée</td>
 </tr>
 </tbody>
 </table>
-<p>Signature de l'équipe, date : ………………… Validation du maître d'ouvrage pédagogique (soutenance), date : …………………</p>
-<h2 id="9-matrice-de-tracabilite-exigence-modele-base-application-tests">9. Matrice de traçabilité exigence → modèle → base → application → tests<a class="headerlink" href="#9-matrice-de-tracabilite-exigence-modele-base-application-tests" title="Permanent link">#</a></h2>
+<p>Le procès-verbal de recette reste une <strong>trame à compléter</strong> après exécution réelle : date, commit/SHA, environnement isolé, commandes, résultats, anomalies et auteur. La présence de la matrice ci-dessous n’est pas une signature ni une approbation.</p>
+<hr />
+<h2 id="9-matrice-de-tracabilite-fonctionnalites-scenarios-et-annexes">9. Matrice de traçabilité fonctionnalités, scénarios et annexes<a class="headerlink" href="#9-matrice-de-tracabilite-fonctionnalites-scenarios-et-annexes" title="Permanent link">#</a></h2>
+<p>Les références <code>F-*</code>, <code>T-*</code> et <code>S-*</code> sont des identifiants de scénarios. Les détails des cas fonctionnels sont dans §3 et les fiches UC ; les scénarios SQL sont au §2 et dans <code>docs/annexes/annexe-sql.md</code> ; les scénarios offensifs sont au §4. L’annexe des 14 cas est <code>docs/annexes/annexe-cas-usage.md</code> (annexe 17.1 du CDC), et le suivi de recette manuelle est <code>docs/13-suivi-recette-uc.csv</code>. Une ligne ci-dessous établit la traçabilité documentaire, pas le résultat d’un test.</p>
 <table>
 <thead>
 <tr>
-<th>Exigence / volet</th>
-<th>Élément de modèle</th>
-<th>Mécanisme de base / stockage</th>
-<th>Point d'application PHP / JS / IHM</th>
-<th>Tests automatisés &amp; manuels</th>
+<th>Domaine / exigences</th>
+<th>Cas d’utilisation / éléments de modèle</th>
+<th>Références de scénarios</th>
+<th>Détail et annexe</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>EF-VIS-01/03/05</td>
-<td><code>Categorie</code>, <code>Produit</code></td>
-<td><code>sp_search_products</code>, <code>idx_produit_visible</code>, <code>v_catalogue</code></td>
-<td><code>CatalogueController</code>, visuels décoratifs en liste (<code>alt=""</code>)</td>
-<td>F-01, F-03, F-04, F-34, F-35, T-25, UC-01</td>
+<td>Visiteur <code>EF-VIS-01…09</code></td>
+<td>UC-01…05 ; catalogue, recherche, fiche, compte et accès visiteur</td>
+<td><code>F-01…F-09</code>, <code>S-01</code>, références associées dans §4.1 du CDC</td>
+<td><code>docs/01</code> §4.1/§4.3 ; <code>docs/annexes/annexe-cas-usage.md</code> ; <code>docs/13-fiches-recette-uc.md</code></td>
 </tr>
 <tr>
-<td>EF-VIS-02</td>
-<td><code>Produit</code></td>
-<td><code>sp_search_products</code> (marqueurs <code>?</code>)</td>
-<td>recherche + liste blanche de tri</td>
-<td>F-02, S-01, T-25, UC-02</td>
+<td>Client <code>EF-CLI-01…10</code></td>
+<td>UC-05…09 ; profil, panier, commande, historique et annulation</td>
+<td><code>F-10…F-21</code>, <code>T-*</code> correspondants</td>
+<td><code>docs/01</code> §4.1/§4.4 ; fiche UC dans l’annexe 17.1 et <code>docs/13-*</code></td>
 </tr>
 <tr>
-<td>EF-VIS-04</td>
-<td><code>Produit</code></td>
-<td><code>trg_produit_ttc</code></td>
-<td>fiche produit + visuel informatif indicatif</td>
-<td>F-05, F-35, UC-03</td>
+<td>Administration <code>EF-ADM-01…10</code></td>
+<td>UC-10…14 ; produits, catégories, stock, commandes et statuts</td>
+<td><code>F-22…F-32</code>, <code>T-*</code> correspondants</td>
+<td><code>docs/01</code> §4.1/§4.5 ; fiche UC dans l’annexe 17.1 et <code>docs/13-*</code></td>
 </tr>
 <tr>
-<td>EF-VIS-06/07</td>
-<td><code>Client</code></td>
-<td><code>sp_create_account</code>, <code>sp_get_credentials</code></td>
-<td><code>AuthController</code>, <code>Auth</code>, <code>Hasher</code></td>
-<td>F-06…F-08, F-42, T-04, T-05, UC-04, UC-05</td>
+<td>Exigences transverses <code>EF-GEN-01…06</code></td>
+<td>journalisation, informations, installation et comportement commun</td>
+<td><code>F-*</code>, <code>S-*</code>, <code>T-*</code> référencés au §4.1 du CDC</td>
+<td><code>docs/01</code> §4.1/§4.5 ; <code>docs/02</code> §3 et §7</td>
 </tr>
 <tr>
-<td>EF-CLI-01/02</td>
-<td><code>Client</code></td>
-<td><code>sp_update_client</code></td>
-<td><code>CompteController</code> (adresse structurée)</td>
-<td>F-10, F-11, F-39, UC-05</td>
+<td>Règles <code>RB-01…20</code></td>
+<td>Contraintes métier et mécanismes prévus par le modèle</td>
+<td><code>T-01…T-29</code> ; certains liens fonctionnels <code>F-*</code></td>
+<td><code>docs/01</code> §6.1 ; <code>docs/annexes/annexe-sql.md</code> ; <code>docs/02</code> §2</td>
 </tr>
 <tr>
-<td>EF-CLI-03…06</td>
-<td><code>PanierSession</code></td>
-<td><code>sp_search_products</code> (plafond de stock)</td>
-<td><code>PanierController</code> + <code>ApiController</code> + <code>public/js/panier.js</code> (<code>script-src 'self'</code>, repli complet sans JS)</td>
-<td>F-12…F-15, F-47, UC-06</td>
+<td>Sécurité <code>SEC-01…14</code></td>
+<td>Mesures, menaces, sessions, autorisations et données de paiement</td>
+<td>10 scénarios offensifs <code>S-01…S-10</code> ; 11 contrôles statiques du script, dont <code>S-11</code> → <code>SEC-14</code></td>
+<td><code>docs/01</code> §8 ; <code>docs/annexes/annexe-php-patterns.md</code> ; <code>docs/02</code> §4 et §8</td>
 </tr>
 <tr>
-<td>EF-CLI-07</td>
-<td><code>Commande</code>, <code>LigneCommande</code></td>
-<td><code>sp_create_order_from_basket</code>, <code>sp_add_order_line</code>, triggers A1/A2/B2/D1/D4</td>
-<td><code>CommandeController</code> + <code>CommandeRepository</code></td>
-<td>F-16…F-18, F-33, F-40, T-06…T-11, T-16, T-28, T-29, UC-07</td>
+<td>Évolutions <code>EV-01…05</code></td>
+<td>Informations légales, préférences, UTC, conservation et minimisation</td>
+<td><code>F-49…F-56</code> et références complémentaires listées au §3</td>
+<td><code>docs/01</code> §4.1 ; <code>docs/02</code> §3 ; fiches de recette dans <code>docs/13-*</code></td>
 </tr>
 <tr>
-<td>EF-CLI-08/09</td>
-<td><code>Commande</code></td>
-<td><code>trg_history_statut</code>, <code>v_commandes_client</code></td>
-<td><code>CommandeController</code> (filtre <code>id_client</code>, 404 sur autrui)</td>
-<td>F-19, F-20, F-41, S-03, T-18, UC-08</td>
-</tr>
-<tr>
-<td>EF-CLI-10</td>
-<td><code>Commande</code></td>
-<td><code>sp_cancel_order</code> + conservation lignes + <code>montant_avant_annulation</code></td>
-<td>confirmation GET sans effet + POST d'annulation</td>
-<td>F-21, F-38, T-21, UC-09</td>
-</tr>
-<tr>
-<td>EF-ADM-01/02</td>
-<td><code>Produit</code></td>
-<td><code>sp_save_product</code>, <code>sp_delete_product</code>, triggers B3–B6</td>
-<td><code>ProduitAdminController</code> (confirmation suppression 2 étapes)</td>
-<td>F-22, F-23, F-38, T-15, T-20, UC-10</td>
-</tr>
-<tr>
-<td>EF-ADM-03</td>
-<td><code>Categorie</code></td>
-<td><code>sp_save_category</code>, <code>sp_delete_category</code>, <code>uk_categorie_nom/slug</code></td>
-<td><code>CategorieAdminController</code> (refus doublon, confirmation 2 étapes)</td>
-<td>F-25, F-43, T-14, UC-11</td>
-</tr>
-<tr>
-<td>EF-ADM-04/05</td>
-<td><code>Produit.stock</code></td>
-<td><code>sp_adjust_stock</code>, <code>v_etat_stock</code></td>
-<td><code>StockAdminController</code> (mode par défaut <code>DELTA</code>)</td>
-<td>F-26, F-27, F-44, T-19, T-26, T-27, UC-12</td>
-</tr>
-<tr>
-<td>EF-ADM-06/08/09</td>
-<td><code>Commande</code></td>
-<td><code>sp_revenue_report</code>, <code>v_commandes_client</code>, bornes UTC</td>
-<td><code>DashboardController</code>, <code>CommandeAdminController</code>, cartes <code>data-label</code></td>
-<td>F-28, F-30, F-31, F-46, F-53, UC-13</td>
-</tr>
-<tr>
-<td>EF-ADM-07</td>
-<td><code>Commande.statut</code></td>
-<td><code>sp_update_order_status</code> (garde <code>ANNULATION_VIA_PARCOURS_DEDIE</code>), <code>sp_cancel_order</code></td>
-<td>confirmation 2 étapes d'annulation admin (avec/sans retour de stock selon <code>EXPEDIEE</code>)</td>
-<td>F-29, F-48, T-12, T-13, UC-14</td>
-</tr>
-<tr>
-<td>Préférences FR/EN &amp; fuseau</td>
-<td><code>Heure</code></td>
-<td>sessions SQL en UTC <code>+00:00</code>, <code>localStorage</code> navigateur seul</td>
-<td><code>/preferences</code>, <code>preferences.js</code>, <code>tz-lookup.js</code> (CC0 local), <code>i18n-en.js</code></td>
-<td>F-50, F-51, F-52, F-53, TCX-19…TCX-23</td>
-</tr>
-<tr>
-<td>Mentions LCEN &amp; conservation</td>
-<td><code>RetentionComptes</code>, <code>Nettoyage*</code>, <code>Journal</code></td>
-<td><code>conservation_compte = 24</code> mois, verrous atomiques, archives <code>sodium</code></td>
-<td><code>/mentions-legales</code> (Point 20), <code>/confidentialite</code>, <code>scripts/{purger_comptes,nettoyage_donnees,archive_restreinte}.php</code></td>
-<td>F-24, F-36, F-49, F-54…F-56, TCX-17, TCX-18, TCX-24</td>
-</tr>
-<tr>
-<td>SEC-01…SEC-13</td>
-<td>—</td>
-<td><code>CHECK</code> / <code>FK</code> / triggers / moindre privilège</td>
-<td>PDO préparé, <code>e()</code>, <code>Auth</code>, CSRF, CSP stricte, journaux minimisés</td>
-<td>S-01…S-10 + 10 contrôles CI + TCX-01…TCX-05</td>
-</tr>
-<tr>
-<td>ENF-01/02/15/16</td>
-<td>—</td>
-<td>index, <code>FULLTEXT</code>, transactions, <code>mysqldump --routines --triggers</code></td>
-<td>scripts <code>tests/perf/*</code>, <code>rollBack()</code></td>
-<td>P-01…P-06, B-01, F-18, T-09, T-29, TCX-14, TCX-15</td>
+<td>Exigences non fonctionnelles <code>ENF-01…22</code></td>
+<td>Performance, sécurité, accessibilité, exploitation et conservation</td>
+<td><code>P-*</code>, <code>C-*</code>, <code>B-*</code>, <code>F-*</code> selon le besoin</td>
+<td><code>docs/annexes/annexe-enf.md</code> (annexe 17.3), <code>docs/02</code> §5–§8</td>
 </tr>
 </tbody>
 </table>
+<p><strong>Limite d’intégration :</strong> les lignes de modèle/base/SQL représentent la conception et les interfaces disponibles. <code>StorageDriver::DEFAULT</code> est <code>JSON</code> et le chemin SQL reste optionnel ; la matrice ne certifie pas que le parcours HTTP appelle les procédures ou triggers. Les tests SQL sur base temporaire ne remplacent pas une preuve PDO/MySQL de bout en bout.</p>
 <h2 id="10-conclusion">10. Conclusion<a class="headerlink" href="#10-conclusion" title="Permanent link">#</a></h2>
 <ul>
-<li>la <strong>base de données</strong> est verrouillée par 29 scénarios SQL + l'étape 6 d'intégration PDO et la migration MariaDB, rejoués automatiquement à chaque push sur MySQL 8.0 et MariaDB 11.8 ;</li>
-<li>l'<strong>application complète</strong> (57 cas fonctionnels <code>F-00</code>…<code>F-56</code>, dont le bilinguisme intégral FR/EN, le fuseau horaire local sans tiers, les confirmations en 2 étapes, les tableaux mobiles <code>data-label</code>, les mentions légales LCEN et les outils de conservation) est couverte par les 15 jobs de CI ;</li>
-<li>la <strong>recette manuelle humaine</strong> dispose de suites actualisées et allégées (<a href="13-fiches-recette-uc.html"><code>docs/13-fiches-recette-uc.md</code></a> et <a href="13-suivi-recette-uc.csv"><code>docs/13-suivi-recette-uc.csv</code></a>, 164 scénarios + 36 couples = 200 lignes <code>NON JOUÉ</code> à exécuter sur navigateur réel et sur LineServ, les tests responsive multi-largeurs ayant été retirés du périmètre manuel et confiés aux seules suites automatisées) ;</li>
-<li>les copies versionnées de ce document dans <code>livrables/{html,pdf,docx}/02-document-tests-validation.*</code> se régénèrent avec <code>python3 scripts/md_to_{html,pdf,docx}.py</code>.</li>
+<li>Le dépôt contient des spécifications, scénarios et scripts de test avec des références croisées vers les UC et les annexes ; un identifiant ou une matrice ne vaut pas preuve d’exécution.</li>
+<li>Le document de conception relate une validation SQL historique du 23/09/2026 ; le rapport versionné porte une date future du 27/10/2026 et n’est pas repris comme résultat acquis à la coupure du 23/10.</li>
+<li>Les 11 contrôles statiques de sécurité ont été rejoués localement le 23/10/2026 ; <code>S-11</code> est un contrôle statique ciblé relié à <code>SEC-14</code>, distinct des dix scénarios offensifs.</li>
+<li>Les 200 entrées du registre manuel sont <code>NON JOUÉ</code>. Aucun test LineServ, déploiement, restauration de base, relecture croisée étudiante ou validation pédagogique n’est revendiqué.</li>
+<li>La cible contractuelle PHP/MySQL/PDO reste distincte de l’état du checkout : le stockage par défaut est JSON et le SQL optionnel. Cet écart d’intégration demeure ouvert.</li>
 </ul>
 <footer class="doc">
   <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/02-document-tests-validation.md</code>

@@ -90,13 +90,13 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <main id="contenu">
 <nav class="toc" aria-label="Sommaire"><div class="toc">
 <ul>
-<li><a href="#application-de-vente-en-ligne-en-php-12-diapositives-20-min-questions">Application de vente en ligne en PHP · 12 diapositives · 20 min + questions</a></li>
+<li><a href="#application-de-vente-en-ligne-12-diapositives-cible-15-min-questions">Application de vente en ligne · 12 diapositives · cible 15 min + questions</a></li>
 <li><a href="#un-mini-shop-credible-pas-une-maquette">Un mini-shop crédible, pas une maquette</a></li>
 <li><a href="#ce-que-fait-reellement-lapplication">Ce que fait réellement l'application</a></li>
 <li><a href="#mvc-strict-front-controller-zero-dependance">MVC strict, front controller, zéro dépendance</a></li>
 <li><a href="#8-entites-3-vues-17-procedures-16-declencheurs">8 entités, 3 vues, 17 procédures, 16 déclencheurs</a></li>
-<li><a href="#20-regles-testees-une-par-une">20 règles, testées une par une</a></li>
-<li><a href="#dix-controles-statiques-executes-a-chaque-commit">Dix contrôles statiques, exécutés à chaque commit</a></li>
+<li><a href="#20-regles-decrites-scenarios-references">20 règles décrites, scénarios référencés</a></li>
+<li><a href="#onze-controles-statiques-definis-portee-limitee">Onze contrôles statiques définis, portée limitée</a></li>
 <li><a href="#une-pyramide-pas-un-slogan">Une pyramide, pas un slogan</a></li>
 <li><a href="#un-systeme-pas-des-feuilles-de-style-empilees">Un système, pas des feuilles de style empilées</a></li>
 <li><a href="#trois-minutes-trois-parcours">Trois minutes, trois parcours</a></li>
@@ -106,12 +106,12 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </div>
 </nav>
 <h1 id="minishop-soutenance-sae-302">MiniShop — soutenance SAÉ 302<a class="headerlink" href="#minishop-soutenance-sae-302" title="Permanent link">#</a></h1>
-<h2 id="application-de-vente-en-ligne-en-php-12-diapositives-20-min-questions">Application de vente en ligne en PHP · 12 diapositives · 20 min + questions<a class="headerlink" href="#application-de-vente-en-ligne-en-php-12-diapositives-20-min-questions" title="Permanent link">#</a></h2>
+<h2 id="application-de-vente-en-ligne-12-diapositives-cible-15-min-questions">Application de vente en ligne · 12 diapositives · cible 15 min + questions<a class="headerlink" href="#application-de-vente-en-ligne-12-diapositives-cible-15-min-questions" title="Permanent link">#</a></h2>
 <ul>
-<li>Une application <strong>100 % PHP / MySQL</strong>, sans framework ni dépendance runtime</li>
+<li>Une application PHP sans framework ; stockage JSON par défaut, pilote MySQL/PDO optionnel</li>
 <li>Un <strong>cahier des charges</strong> de 16 sections, des règles de gestion numérotées RB-01 → RB-20</li>
 <li><strong>Une base de démonstration</strong> livrée : 36 produits (3 pages de 12), 3 clients, un back-office<blockquote>
-<p>Tout ce qui est annoncé dans ce diaporama est exécutable depuis le dépôt.</p>
+<p>Le support résume la conception et les preuves disponibles ; il ne constitue pas un procès-verbal de démonstration ni de validation.</p>
 </blockquote>
 </li>
 </ul>
@@ -159,30 +159,30 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li>Contraintes portées par la base : <code>CHECK</code>, clés étrangères, unicité, prix ≥ 0, stock ≥ 0</li>
 <li>Déclencheurs : décrémentation de stock, journal de statut, interdiction de suppression d'un produit commandé</li>
 <li>Procédures : création de commande transactionnelle, annulation, alertes de stock, purge<blockquote>
-<p>La cohérence ne repose pas sur l'interface : elle est garantie par le SGBD.</p>
+<p>Les règles SQL sont conçues pour protéger les écritures directes ; leur raccordement au parcours HTTP par défaut n’est pas démontré (JSON par défaut, SQL optionnel).</p>
 </blockquote>
 </li>
 </ul>
 <hr />
 <h1 id="regles-de-gestion">Règles de gestion<a class="headerlink" href="#regles-de-gestion" title="Permanent link">#</a></h1>
-<h2 id="20-regles-testees-une-par-une">20 règles, testées une par une<a class="headerlink" href="#20-regles-testees-une-par-une" title="Permanent link">#</a></h2>
+<h2 id="20-regles-decrites-scenarios-references">20 règles décrites, scénarios référencés<a class="headerlink" href="#20-regles-decrites-scenarios-references" title="Permanent link">#</a></h2>
 <ul>
-<li>RB-01 à RB-20 : prix TTC calculé côté serveur, plafonnement au stock, frais de port offerts, transitions d'état, suppression logique</li>
-<li><strong>29 tests SQL</strong> : contraintes, déclencheurs, procédures, vues, port, rollback</li>
-<li>Matrice de transitions : <code>BROUILLON → EN_PREPARATION → PAYEE → EXPEDIEE → LIVREE</code>, <code>ANNULEE</code> en sortie<blockquote>
-<p>Une règle non testée est une règle qui n'existe pas.</p>
+<li><code>RB-01…RB-11</code> sont classées par convention du CDC comme règles du sujet ; <code>RB-12…RB-20</code> sont neuf compléments (PDF source non suivi dans le dépôt).</li>
+<li><code>T-01…T-29</code> sont des scénarios SQL, pas 29 règles ni un résultat d’exécution courant.</li>
+<li>Cinq séquences sont présentes : quatre séquences prévues comme imposées et une bonus catalogue ; aucune sixième n’est annoncée.<blockquote>
+<p>Le fichier de rapport porte une mention 29/29 datée du 27/10/2026, date future à la coupure du 23/10 ; cette mention n’est pas présentée comme un résultat acquis.</p>
 </blockquote>
 </li>
 </ul>
 <hr />
 <h1 id="securite">Sécurité<a class="headerlink" href="#securite" title="Permanent link">#</a></h1>
-<h2 id="dix-controles-statiques-executes-a-chaque-commit">Dix contrôles statiques, exécutés à chaque commit<a class="headerlink" href="#dix-controles-statiques-executes-a-chaque-commit" title="Permanent link">#</a></h2>
+<h2 id="onze-controles-statiques-definis-portee-limitee">Onze contrôles statiques définis, portée limitée<a class="headerlink" href="#onze-controles-statiques-definis-portee-limitee" title="Permanent link">#</a></h2>
 <ul>
 <li>Mots de passe <strong>bcrypt</strong>, sessions <code>HttpOnly</code> + <code>SameSite=Lax</code>, identifiant régénéré à la connexion</li>
 <li><strong>CSRF</strong> sur tous les formulaires et sur l'API (comparaison <code>hash_equals</code>, jeton CSPRNG)</li>
 <li>SQL <strong>préparé</strong> partout (aucune concaténation), sorties échappées par <code>e()</code>, CSP stricte</li>
 <li>Contrôle d'accès : route <code>admin</code>/<code>super</code>, vérification d'appartenance des commandes (IDOR)<blockquote>
-<p><code>bash tests/security/controles.sh</code> → 10/10 conformes.</p>
+<p><code>tests/security/controles.sh</code> contient 11 contrôles statiques, dont <code>S-11</code>/<code>SEC-14</code>. Le rejeu local du 23/10/2026 a réussi 11/11 ; ce résultat ne remplace pas les 10 scénarios offensifs <code>S-01…S-10</code> ni une recette LineServ.</p>
 </blockquote>
 </li>
 </ul>
@@ -190,12 +190,11 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <h1 id="tests">Tests<a class="headerlink" href="#tests" title="Permanent link">#</a></h1>
 <h2 id="une-pyramide-pas-un-slogan">Une pyramide, pas un slogan<a class="headerlink" href="#une-pyramide-pas-un-slogan" title="Permanent link">#</a></h2>
 <ul>
-<li><strong>PHPUnit</strong> : 6 classes, 34 tests (texte, filtres, prix, transitions, magasin JSON, contrats de sécurité)</li>
-<li><strong>Intégration PHP</strong> : moteur JSON, règles de gestion, unitaires, fonctionnalités UC-01 → UC-14</li>
-<li><strong>Contrats</strong> : design system (28 vérifications) et responsive (48 vérifications)</li>
-<li><strong>E2E HTTP</strong> : 185 vérifications sur l'application complète (cookies, CSRF, refus)</li>
-<li><strong>CI</strong> : GitHub Actions (<code>.github/workflows/ci.yml</code>) ; aucun pipeline GitLab équivalent n’est revendiqué<blockquote>
-<p><code>npm run test:all</code> ▶ tout doit être vert avant chaque commit.</p>
+<li><code>T-01…T-29</code> : scénarios SQL spécifiés ; <code>docs/04</code> rapporte une campagne historique du 23/09/2026.</li>
+<li><code>tests/sql/rapport_tests_sql.md</code> contient une revendication de résultat au 27/10/2026, date future à la coupure du 23/10 ; elle n’est pas présentée comme acquise à cette date.</li>
+<li><code>F-*</code> et <code>S-*</code> relient les exigences aux scénarios dans <code>docs/02</code>; leurs identifiants ne prouvent pas leur exécution.</li>
+<li>Le registre manuel contient 200 entrées <code>NON JOUÉ</code>. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.<blockquote>
+<p>Seul le contrôle statique sécurité 11/11 a été rejoué localement le 23/10/2026 dans cette révision ; aucun run global ou CI 15/15 n’est déclaré.</p>
 </blockquote>
 </li>
 </ul>
@@ -227,8 +226,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <h1 id="difficultes-et-arbitrages">Difficultés et arbitrages<a class="headerlink" href="#difficultes-et-arbitrages" title="Permanent link">#</a></h1>
 <h2 id="ce-que-nous-avons-appris">Ce que nous avons appris<a class="headerlink" href="#ce-que-nous-avons-appris" title="Permanent link">#</a></h2>
 <ul>
-<li>Deux magasins (JSON et PDO) derrière une même interface : la démo reste possible sans serveur MySQL</li>
-<li>Le bac à sable sans PHP natif a imposé un runtime WebAssembly : les tests sont identiques sur machine réelle</li>
+<li>Deux magasins (JSON et PDO) derrière une même interface ; JSON est le défaut et SQL reste optionnel, ce qui laisse ouvert l’écart d’intégration à la cible du sujet</li>
+<li>Le dépôt prévoit des tests PHP natifs et des outils de substitution ; aucun résultat de test PHP ou MySQL n’est déduit de ce support</li>
 <li>Accessibilité et tableaux de données : le défilement d'un tableau est admis par WCAG 1.4.10, à condition de le documenter</li>
 <li>Arbitrages assumés : pas de paiement réel, images produits générées, volumétrie limitée<blockquote>
 <p>Un arbitrage écrit et justifié vaut mieux qu'une fonctionnalité à moitié faite.</p>
@@ -239,10 +238,10 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <h1 id="bilan-et-suites">Bilan et suites<a class="headerlink" href="#bilan-et-suites" title="Permanent link">#</a></h1>
 <h2 id="ou-en-est-le-projet">Où en est le projet<a class="headerlink" href="#ou-en-est-le-projet" title="Permanent link">#</a></h2>
 <ul>
-<li>Application <strong>livrée et testée</strong> : 6 suites + E2E, contrôles de sécurité, design system</li>
-<li>Documentation complète : cahier des charges, tests, conception, support de soutenance, dossier d'architecture</li>
-<li>Écarts restants suivis publiquement dans <code>docs/10-todo-corrections.md</code></li>
-<li>Suites : rendu documentaire automatisé en PDF/DOCX, bascule PDO par défaut, couverture de code<blockquote>
+<li>Le dépôt contient l’application, les suites automatisées et les documents de conception ; cette présence n’atteste pas une recette intégrale.</li>
+<li>L’intégration PDO/MySQL au parcours HTTP reste un écart : JSON est le stockage par défaut.</li>
+<li>Les 200 scénarios manuels restent <code>NON JOUÉ</code> ; aucune validation étudiante ou pédagogique n’est revendiquée.</li>
+<li>Aucune recette LineServ, aucun déploiement et aucune restauration de base ne sont attestés.<blockquote>
 <p>Questions ?</p>
 </blockquote>
 </li>

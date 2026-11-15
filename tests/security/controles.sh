@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# MiniShop — 10 contrôles statiques de sécurité (CDC §15.3, CT-08, PRÉ-4).
+# MiniShop — 11 contrôles statiques de sécurité (CDC §15.3, CT-08, PRÉ-4).
 # Exécuté par le job `security-scan` de .github/workflows/ci.yml.
 # Un contrôle rouge fait échouer le workflow GitHub Actions.
 #
@@ -19,7 +19,7 @@
 # apprend à ignorer la CI — ce qui est pire que pas de CI du tout.
 #
 # Usage :
-#   bash tests/security/controles.sh              # les 10 contrôles
+#   bash tests/security/controles.sh              # les 11 contrôles
 #   bash tests/security/controles.sh --verbose    # + détail des lignes inspectées
 #   bash tests/security/controles.sh --selftest   # prouve que les motifs mordent
 #                                                 # (fixtures jouets, hors dépôt)
@@ -28,7 +28,7 @@
 # (secrets absents de l'index). Testé sous alpine:3.20
 # (`apk add bash grep findutils git`) et ubuntu-latest.
 #
-# Sortie : 0 si les 10 contrôles sont conformes, 1 sinon (bloque le pipeline),
+# Sortie : 0 si les 11 contrôles sont conformes, 1 sinon (bloque le pipeline),
 # 2 en cas d'erreur d'usage.
 
 set -uo pipefail
@@ -71,7 +71,7 @@ NQ="[^\"']"
 
 titre() {
     NUMERO=$((NUMERO + 1))
-    printf '%s[%02d/10]%s %s\n' "$C_GRAS" "$NUMERO" "$C_RAZ" "$1"
+    printf '%s[%02d/11]%s %s\n' "$C_GRAS" "$NUMERO" "$C_RAZ" "$1"
 }
 
 ok() {
@@ -549,6 +549,24 @@ valeur_sensible_env() {
     grep -qiE "^[[:space:]]*(export[[:space:]]+)?[A-Z0-9_]*(PASSWORD|PASSWD|SECRET|TOKEN|API_KEY|DB_PASS)[A-Z0-9_]*[[:space:]]*=[[:space:]]*[\"']?[^#\"'[:space:]]" "$1"
 }
 
+# Recherche ciblée des identifiants usuels de données de carte dans le code,
+# les ressources du front et les scripts de schéma/migration. Les fichiers de
+# données runtime et les dépôts LineServ ne sont jamais lus.
+fichiers_code_et_schema() {
+    local dossier
+    for dossier in app public sql migrations; do
+        [ -d "$dossier" ] || continue
+        find "$dossier" -type f \
+            \( -name '*.php' -o -name '*.phtml' -o -name '*.html' -o -name '*.js' -o -name '*.sql' \) \
+            -not -path '*/vendor/*' \
+            -not -path '*/node_modules/*' 2>/dev/null
+    done | sort -u
+}
+
+motif_donnees_carte() {
+    printf '%s' '(^|[^[:alnum:]_])(pan|ccn|cc_number|ccnumber|cvv2?|cvc2?|cryptogram(me)?|credit[_ -]?card|creditCard|card[_ -]?(number|no|num|expiry|expiration|holder)|cardNumber|cardNo|cardExpiry|cardExpiration|cardHolder|numero[_ -]?(de[_ -]?)?carte|numeroCarte|num[_ -]?carte|numCarte|date[_ -]?expiration[_ -]?(carte|card)|dateExpirationCarte|code[_ -]?securite[_ -]?(carte|card)|codeSecuriteCarte|expiry[_ -]?date|payment[_ -]?token|token[_ -]?paiement)([^[:alnum:]_]|$)'
+}
+
 # =============================================================================
 #  CONTRÔLE 10 — Aucun secret dans le dépôt
 # =============================================================================
@@ -602,6 +620,30 @@ controle_secrets_depot() {
         else
             ok "app/Config/env.example.php ne contient aucune valeur secrète"
         fi
+    fi
+}
+
+# =============================================================================
+#  CONTRÔLE 11 — Aucune référence à des champs de données de carte
+# =============================================================================
+controle_donnees_paiement() {
+    titre "Paiement — aucun identifiant usuel de donnée de carte dans les sources et schémas"
+
+    local motif fichiers hits
+    motif="$(motif_donnees_carte)"
+    fichiers="$(fichiers_code_et_schema)"
+    hits=""
+    if [ -n "$fichiers" ]; then
+        hits="$(printf '%s\n' "$fichiers" | tr '\n' '\0' \
+            | xargs -0 grep -nHioE -e "$motif" 2>/dev/null || true)"
+    fi
+
+    if [ -n "$hits" ]; then
+        ko "identifiant de champ/collonne de carte repéré dans les sources contrôlées (SEC-14)"
+        extrait "$hits"
+    else
+        ok "aucun identifiant usuel de carte repéré dans app/, public/, sql/ ou migrations/ (sources seulement)"
+        info "ce contrôle statique ne lit ni données runtime, ni base configurée, ni LineServ"
     fi
 }
 
@@ -694,6 +736,18 @@ PHP
         erreurs=$((erreurs + 1))
     fi
 
+    local motif_carte
+    motif_carte="$(motif_donnees_carte)"
+    printf '%s\n' '<input name="card_number">' 'CREATE TABLE client (numero_carte VARCHAR(19), cvv CHAR(3));' > "$tmp/paiement-interdit"
+    printf '%s\n' 'PanierSession::ajouter()' 'paiement par carte bancaire simulé, aucune saisie' 'PAYEE' > "$tmp/paiement-sain"
+    if grep -qiE -e "$motif_carte" "$tmp/paiement-interdit" \
+        && ! grep -qiE -e "$motif_carte" "$tmp/paiement-sain"; then
+        printf '        %s✓%s S-11 détecte les champs de carte et ignore le texte « panier/carte simulée »\n' "$C_OK" "$C_RAZ"
+    else
+        printf '        %s✘ S-11 : détection des champs de carte incorrecte%s\n' "$C_KO" "$C_RAZ"
+        erreurs=$((erreurs + 1))
+    fi
+
     rm -rf "$tmp"
     trap - EXIT
     return "$erreurs"
@@ -702,7 +756,7 @@ PHP
 # =================================================================== main ====
 
 printf '%s╔════════════════════════════════════════════════════════════════════╗%s\n' "$C_GRAS" "$C_RAZ"
-printf '%s║  MiniShop — contrôles statiques de sécurité (CDC §15.3, 10 points) ║%s\n' "$C_GRAS" "$C_RAZ"
+printf '%s║  MiniShop — contrôles statiques de sécurité (CDC §15.3, 11 points) ║%s\n' "$C_GRAS" "$C_RAZ"
 printf '%s╚════════════════════════════════════════════════════════════════════╝%s\n' "$C_GRAS" "$C_RAZ"
 printf 'dépôt : %s\n\n' "$RACINE"
 
@@ -728,10 +782,11 @@ controle_csrf
 controle_back_office
 controle_fonctions_interdites
 controle_secrets_depot
+controle_donnees_paiement
 
 printf '\n%s────────────────────────────────────────────────────────────────────%s\n' "$C_GRAS" "$C_RAZ"
 if [ "$ECHECS" -eq 0 ]; then
-    printf '%s10 contrôles conformes%s — aucune règle de sécurité court-circuitée.\n' "$C_OK" "$C_RAZ"
+    printf '%s11 contrôles conformes%s — aucune règle de sécurité court-circuitée.\n' "$C_OK" "$C_RAZ"
     exit 0
 fi
 

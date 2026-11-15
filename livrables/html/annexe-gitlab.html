@@ -102,6 +102,9 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </div>
 </nav>
 <h1 id="annexe-179-charte-gitlab-modele-de-mr-et-readmemd-du-depot">Annexe 17.9 — Charte GitLab, modèle de MR et <code>README.md</code> du dépôt<a class="headerlink" href="#annexe-179-charte-gitlab-modele-de-mr-et-readmemd-du-depot" title="Permanent link">#</a></h1>
+<blockquote>
+<p><strong>Gabarit documentaire, pas journal d’exécution.</strong> Les étapes, commandes et cases cochées dans les exemples ne constituent pas des preuves de création de dépôt, de revue, de CI ou de test. Pour consigner un résultat, compléter un compte rendu avec date, SHA, environnement, commande et sortie ; une référence <code>T-*</code> décrit un scénario, pas son rejeu.</p>
+</blockquote>
 <h2 id="1-ouverture-et-acces-semaine-1">1. Ouverture et accès (semaine 1)<a class="headerlink" href="#1-ouverture-et-acces-semaine-1" title="Permanent link">#</a></h2>
 <ol>
 <li>Créer le dépôt <strong>privé</strong> <code>minishop-sae-&lt;groupe&gt;</code> sur le GitLab de l'établissement (ou <code>gitlab.com</code> si imposé).</li>
@@ -130,11 +133,11 @@ Règles touchées : RB-04, RB-05, RB-06, RB-15, RB-18
 - `CommandeRepository::confirmerDepuisPanier()` : un seul CALL, transaction, traduction des codes
 - `public/js/panier.js` : mises à jour par textContent (aucun innerHTML)
 
-## Preuves
-- ✅ `scripts/run_sql_tests.sh` → 29/29
-- ✅ `php -l` sur les fichiers modifiés
-- ✅ capture du parcours F-17 (commande créée, stock 16 → 14)
-- ✅ `grep` CI n° 1, 2, 5 : aucun résultat
+## Preuves (exemple à compléter après exécution)
+- ☐ `tests/sql/run_tests.sh` — consigner le résultat, la date, le SHA et le SGBD ; le compte `29/29` n’est pas un résultat prérempli
+- ☐ `php -l` sur les fichiers modifiés — consigner la sortie et le SHA
+- ☐ capture du parcours F-17 — uniquement après recette autorisée sur données synthétiques
+- ☐ `grep` CI n° 1, 2, 5 — consigner les commandes et sorties
 
 ## Régression vérifiée
 commande multi-lignes, annulation puis re-commande, panier hors session.
@@ -151,13 +154,13 @@ périmètre ∈ { base, sql, modele, repo, controller, vue, js, secu, tests, doc
 exemples :
 feat(sql): ajoute sp_create_order_from_basket avec transaction unique
 fix(vue): échappe le nom du produit dans la fiche (e() manquant)
-test(base): T-11 vérifie le rejet et non la réparation du prix d'une ligne
+test(base): ajoute un scénario T-11 de rejet d'une réécriture de prix
 security(session): régénère l'id de session à l'ouverture et à la montée de rôle
 </code></pre>
 <h2 id="5-ce-qui-ne-doit-jamais-etre-commite">5. Ce qui ne doit <strong>jamais</strong> être commité<a class="headerlink" href="#5-ce-qui-ne-doit-jamais-etre-commite" title="Permanent link">#</a></h2>
 <p><code>app/Config/env.php</code> (identifiants MySQL), tout fichier <code>.env</code> réel, les journaux <code>var/log/*</code>, les dumps SQL contenant des données réelles, <code>vendor/</code>, <code>node_modules/</code>, les captures d'écran de test (référencées par un lien wiki ou compressées dans <code>tests/captures/</code> si légères), les hashes de mots de passe autres que ceux de démonstration.</p>
 <h2 id="6-modele-de-readmemd-livre-exactement-ce-fichier-a-la-racine-du-depot">6. Modèle de <code>README.md</code> livré (exactement ce fichier à la racine du dépôt)<a class="headerlink" href="#6-modele-de-readmemd-livre-exactement-ce-fichier-a-la-racine-du-depot" title="Permanent link">#</a></h2>
-<p>Le fichier <code>README.md</code> du dépôt (reproduit intégralement dans le dépôt de ce rendu) contient : présentation du projet, membres et rôles, prérequis, installation en 5 commandes, comptes de démonstration avec <strong>mots de passe de démo</strong>, exécution des tests (SQL, charge, statiques), arborescence, lien vers les documents (CDC, tests, soutenance), procédure de sauvegarde/restauration, et la table des 29 tests SQL avec leur commande de rejeu. <strong>Critère d'acceptation</strong> : un tiers, sur une machine propre, doit pouvoir installer et lancer la démo en ≤ 15 min en suivant uniquement le README (<code>ENF-13</code>).</p>
+<p>Le fichier <code>README.md</code> du dépôt présente le projet, les membres et rôles, les prérequis, l'installation, les consignes d'accès aux comptes de démonstration <strong>sans publier de mots de passe ni de hashes</strong>, l'arborescence et les liens vers les documents. Les commandes de tests et de sauvegarde/restauration sont des protocoles, pas des résultats d'exécution ; le manifeste décrit les scénarios SQL sans leur attribuer un succès. <strong>Critère d'acceptation</strong> : un tiers, sur une machine propre, doit pouvoir installer et lancer la démo en ≤ 15 min suivant le README (<code>ENF-22</code>), après recette documentée.</p>
 <h2 id="7-ci-et-preuve-de-revue">7. CI et preuve de revue<a class="headerlink" href="#7-ci-et-preuve-de-revue" title="Permanent link">#</a></h2>
 <p>La charte complète et le registre réutilisable sont dans <a href="../20-charte-gitlab-revues-croisees.html"><code>docs/20-charte-gitlab-revues-croisees.md</code></a>. La CI conservée est GitHub Actions (<code>.github/workflows/ci.yml</code>). Elle ne prouve pas qu’une MR GitLab a reçu une revue ou qu’un pipeline GitLab IUT a été exécuté. Consigner séparément l’identifiant de la MR, le relecteur distinct, les commentaires résolus et le résultat de CI avec sa plateforme.</p>
 <h2 id="8-ce-que-le-jury-regarde-en-premier-auto-controle-avant-le-rendu">8. Ce que le jury regarde en premier (auto-contrôle avant le rendu)<a class="headerlink" href="#8-ce-que-le-jury-regarde-en-premier-auto-controle-avant-le-rendu" title="Permanent link">#</a></h2>

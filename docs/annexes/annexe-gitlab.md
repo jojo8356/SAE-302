@@ -1,5 +1,7 @@
 # Annexe 17.9 — Charte GitLab, modèle de MR et `README.md` du dépôt
 
+> **Gabarit documentaire, pas journal d’exécution.** Les étapes, commandes et cases cochées dans les exemples ne constituent pas des preuves de création de dépôt, de revue, de CI ou de test. Pour consigner un résultat, compléter un compte rendu avec date, SHA, environnement, commande et sortie ; une référence `T-*` décrit un scénario, pas son rejeu.
+
 ## 1. Ouverture et accès (semaine 1)
 
 1. Créer le dépôt **privé** `minishop-sae-<groupe>` sur le GitLab de l'établissement (ou `gitlab.com` si imposé).
@@ -33,11 +35,11 @@ Règles touchées : RB-04, RB-05, RB-06, RB-15, RB-18
 - `CommandeRepository::confirmerDepuisPanier()` : un seul CALL, transaction, traduction des codes
 - `public/js/panier.js` : mises à jour par textContent (aucun innerHTML)
 
-## Preuves
-- [x] `scripts/run_sql_tests.sh` → 29/29
-- [x] `php -l` sur les fichiers modifiés
-- [x] capture du parcours F-17 (commande créée, stock 16 → 14)
-- [x] `grep` CI n° 1, 2, 5 : aucun résultat
+## Preuves (exemple à compléter après exécution)
+- [ ] `tests/sql/run_tests.sh` — consigner le résultat, la date, le SHA et le SGBD ; le compte `29/29` n’est pas un résultat prérempli
+- [ ] `php -l` sur les fichiers modifiés — consigner la sortie et le SHA
+- [ ] capture du parcours F-17 — uniquement après recette autorisée sur données synthétiques
+- [ ] `grep` CI n° 1, 2, 5 — consigner les commandes et sorties
 
 ## Régression vérifiée
 commande multi-lignes, annulation puis re-commande, panier hors session.
@@ -57,7 +59,7 @@ périmètre ∈ { base, sql, modele, repo, controller, vue, js, secu, tests, doc
 exemples :
 feat(sql): ajoute sp_create_order_from_basket avec transaction unique
 fix(vue): échappe le nom du produit dans la fiche (e() manquant)
-test(base): T-11 vérifie le rejet et non la réparation du prix d'une ligne
+test(base): ajoute un scénario T-11 de rejet d'une réécriture de prix
 security(session): régénère l'id de session à l'ouverture et à la montée de rôle
 ```
 
@@ -67,7 +69,7 @@ security(session): régénère l'id de session à l'ouverture et à la montée d
 
 ## 6. Modèle de `README.md` livré (exactement ce fichier à la racine du dépôt)
 
-Le fichier `README.md` du dépôt (reproduit intégralement dans le dépôt de ce rendu) contient : présentation du projet, membres et rôles, prérequis, installation en 5 commandes, comptes de démonstration avec **mots de passe de démo**, exécution des tests (SQL, charge, statiques), arborescence, lien vers les documents (CDC, tests, soutenance), procédure de sauvegarde/restauration, et la table des 29 tests SQL avec leur commande de rejeu. **Critère d'acceptation** : un tiers, sur une machine propre, doit pouvoir installer et lancer la démo en ≤ 15 min en suivant uniquement le README (`ENF-13`).
+Le fichier `README.md` du dépôt présente le projet, les membres et rôles, les prérequis, l'installation, les consignes d'accès aux comptes de démonstration **sans publier de mots de passe ni de hashes**, l'arborescence et les liens vers les documents. Les commandes de tests et de sauvegarde/restauration sont des protocoles, pas des résultats d'exécution ; le manifeste décrit les scénarios SQL sans leur attribuer un succès. **Critère d'acceptation** : un tiers, sur une machine propre, doit pouvoir installer et lancer la démo en ≤ 15 min suivant le README (`ENF-22`), après recette documentée.
 
 ## 7. CI et preuve de revue
 

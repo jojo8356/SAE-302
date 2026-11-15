@@ -112,7 +112,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li><a href="#partie-c-declencheurs-16-livres-minimum-demande-5">Partie C — Déclencheurs (16 livrés — minimum demandé : 5)</a><ul>
 <li><a href="#c1-catalogue-des-16-declencheurs">C.1 Catalogue des 16 déclencheurs</a></li>
 <li><a href="#c2-couverture-des-deux-triggers-imposes-par-le-sujet">C.2 Couverture des deux triggers imposés par le sujet</a></li>
-<li><a href="#c3-preuves-par-les-tests-sql-directs">C.3 Preuves par les tests SQL directs</a></li>
+<li><a href="#c3-scenarios-de-controle-sql-direct-hors-application">C.3 Scénarios de contrôle SQL direct (hors application)</a></li>
 </ul>
 </li>
 <li><a href="#partie-d-variantes-de-conception-documentees-arbitrages">Partie D — Variantes de conception documentées (arbitrages)</a><ul>
@@ -155,7 +155,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 <tr>
 <td><strong>Chiffres clés</strong></td>
-<td>8 tables + 3 vues · 1 fonction + <strong>17 procédures stockées</strong> (min. 5) · <strong>16 déclencheurs</strong> (min. 5) · 29 tests SQL conformes</td>
+<td>8 tables + 3 vues · 1 fonction + <strong>17 procédures stockées</strong> (min. 5) · <strong>16 déclencheurs</strong> (min. 5) · 29 scénarios SQL référencés ; résultat historique daté en §A.5</td>
 </tr>
 <tr>
 <td><strong>Documents liés</strong></td>
@@ -194,12 +194,12 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <td><code>docs/01</code> §8</td>
 </tr>
 <tr>
-<td><code>CT-01…CT-09</code></td>
+<td><code>CT-01…CT-12</code></td>
 <td>contraintes techniques</td>
 <td><code>docs/01</code> §7</td>
 </tr>
 <tr>
-<td><code>ENF-01…ENF-19</code></td>
+<td><code>ENF-01…ENF-22</code></td>
 <td>exigences non fonctionnelles</td>
 <td><code>docs/01</code> annexe 17.3 (<code>docs/annexes/annexe-enf.md</code>)</td>
 </tr>
@@ -694,23 +694,10 @@ SELECT c.id_commande FROM commande c
 SELECT id_produit FROM produit WHERE stock &lt; 0;
 </code></pre>
 <h3 id="a4-script-sql-ddl-donnees-sql01_minishop_schemasql">A.4 Script SQL (DDL + données) — <code>sql/01_minishop_schema.sql</code><a class="headerlink" href="#a4-script-sql-ddl-donnees-sql01_minishop_schemasql" title="Permanent link">#</a></h3>
-<p><strong>Installation (la commande fait foi, exécutée sur MariaDB 11.8 dans notre environnement de développement) :</strong></p>
+<p><strong>Commande d’installation de référence — non exécutée dans cette révision :</strong></p>
 <pre><code class="language-bash">./scripts/load_db.sh
-# [1/4] DDL + données de reference     sql/01_minishop_schema.sql
-# [2/4] 16 declencheurs               sql/03_minishop_triggers.sql
-# [3/4] 1 fonction + 17 procedures    sql/02_minishop_procedures.sql
-# [4/4] commandes de demonstration    sql/04_minishop_demo.sql
-#
-# objet                nombre
-# tables               8     ← entités du MLD (A.2), dont `parametre`
-# vues                 3     ← v_etat_stock, v_catalogue, v_commandes_client
-# fonctions            1     ← fn_param : lecture typée des règles chiffrées
-# procedures stockees  17    ← CT-03 (minimum 5)
-# declencheurs         16    ← CT-04 (minimum 5)
-# produits             12   clients 3   commandes 4
-# lignes de commande   5     traces de statut 9
-# OK — base 'minishop' chargee (verifiez : procedures &gt;= 5, declencheurs &gt;= 5).
 </code></pre>
+<p>Le script source déclare 36 produits dans <code>sql/01_minishop_schema.sql</code> ; il s’agit d’un comptage statique des lignes versionnées, pas d’un chargement vérifié. La campagne historique du 23/09/2026 relatée dans ce livrable est distincte et n’a pas été rejouée sur le checkout examiné. Toute sortie d’installation doit être consignée avec date, SHA, SGBD et environnement avant d’être utilisée comme preuve.</p>
 <p>Extraits représentatifs du DDL (le fichier complet est dans le dépôt et dans le fichier <code>sql/01_minishop_schema.sql</code>, livré à la racine du dépôt) :</p>
 <pre><code class="language-sql">CREATE TABLE produit (
   id_produit   INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -778,7 +765,7 @@ CREATE TABLE ligne_commande (
 <tr>
 <td>3 clients</td>
 <td>alice / bruno / carla</td>
-<td><code>RB-01</code>, <code>SEC-08</code>, <code>T-18</code> (deux clients différents suffisent à prouver l'IDOR)</td>
+<td><code>RB-01</code>, <code>SEC-08</code>, <code>T-18</code> (scénario prévu pour vérifier l’isolation entre clients ; pas de résultat de rejeu revendiqué ici)</td>
 </tr>
 <tr>
 <td>1 administrateur</td>
@@ -1058,7 +1045,7 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 <tr>
 <td>« Trigger 2 — Historique » sur <code>ORDER_STATUS_HISTORY(id, order_id, old_status, new_status, changed_at)</code></td>
 <td><code>trg_history_statut</code> (<code>AFTER UPDATE</code>) <strong>et</strong> <code>trg_history_creation</code> (<code>AFTER INSERT</code>)</td>
-<td><strong>colonnes du sujet conservées à l'identique</strong>, plus <code>changed_by</code>, <code>changed_by_role</code>, <code>commentaire</code> (qui, sous quel rôle, pourquoi) ; écriture <strong>uniquement</strong> par trigger (<code>V7</code>, <code>T-22</code>)</td>
+<td>colonnes du sujet conservées à l'identique, plus <code>changed_by</code>, <code>changed_by_role</code>, <code>commentaire</code> ; dans la conception cible, l'écriture est confiée aux triggers. <code>T-22</code> est le scénario prévu pour contrôler l’absence de doublon, pas un résultat de rejeu</td>
 <td><code>T-22</code>, <code>T-23</code></td>
 </tr>
 <tr>
@@ -1216,8 +1203,8 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 </table>
 <h3 id="c2-couverture-des-deux-triggers-imposes-par-le-sujet">C.2 Couverture des deux triggers imposés par le sujet<a class="headerlink" href="#c2-couverture-des-deux-triggers-imposes-par-le-sujet" title="Permanent link">#</a></h3>
 <p>L'exigence « Trigger 1 — Stock » est couverte par <code>TRG-A1</code>+<code>TRG-A2</code> (et <code>TRG-A3</code> pour l'annulation) ; l'exigence « Trigger 2 — Historique » par <code>TRG-D4</code> (+ <code>TRG-D5</code>), avec la table <code>order_status_history(id, order_id, old_status, new_status, changed_at, …)</code> <strong>exactement</strong> au format demandé par le sujet, complétée de l'auteur et du rôle pour la traçabilité.</p>
-<h3 id="c3-preuves-par-les-tests-sql-directs">C.3 Preuves par les tests SQL directs<a class="headerlink" href="#c3-preuves-par-les-tests-sql-directs" title="Permanent link">#</a></h3>
-<p>Les tests <code>T-02</code>, <code>T-03</code>, <code>T-07</code>, <code>T-08</code>, <code>T-10</code>, <code>T-11</code>, <code>T-14</code>, <code>T-15</code>, <code>T-17</code> attaquent la base <strong>en SQL direct</strong>, hors application. Les règles tiennent quand même — c'est la démonstration attendue, et la raison pour laquelle la <code>PROCÉDURE</code> ne fait que compléter (message + transaction), elle ne remplace pas la contrainte.</p>
+<h3 id="c3-scenarios-de-controle-sql-direct-hors-application">C.3 Scénarios de contrôle SQL direct (hors application)<a class="headerlink" href="#c3-scenarios-de-controle-sql-direct-hors-application" title="Permanent link">#</a></h3>
+<p><code>T-02</code>, <code>T-03</code>, <code>T-07</code>, <code>T-08</code>, <code>T-10</code>, <code>T-11</code>, <code>T-14</code>, <code>T-15</code> et <code>T-17</code> sont conçus pour attaquer la base <strong>en SQL direct</strong>, hors application, et vérifier les contraintes décrites. Ce sont des identifiants de scénarios, pas des résultats d’exécution : aucun rejeu courant n’est revendiqué ici. La procédure complète la contrainte (message + transaction) dans la conception cible, sans la remplacer ; la présence des scénarios ne prouve ni leur succès ni l’intégration au parcours HTTP.</p>
 <hr />
 <h2 id="partie-d-variantes-de-conception-documentees-arbitrages">Partie D — Variantes de conception documentées (arbitrages)<a class="headerlink" href="#partie-d-variantes-de-conception-documentees-arbitrages" title="Permanent link">#</a></h2>
 <h3 id="128-variantes-de-conception-documentees-arbitrages">12.8 Variantes de conception documentées (arbitrages)<a class="headerlink" href="#128-variantes-de-conception-documentees-arbitrages" title="Permanent link">#</a></h3>
@@ -1244,7 +1231,7 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 <td>Une ligne de commande = une ligne par unité ou quantité agrégée ?</td>
 <td><strong>quantité agrégée</strong> avec snapshot</td>
 <td>une ligne par unité (1..N inserts)</td>
-<td>1 ligne = 1 produit = 1 prix au moment de l'achat : plus simple à facturer, <code>T-23</code> vérifie le snapshot ; l'unité par unité serait possible mais multiplie les lignes mortes</td>
+<td>1 ligne = 1 produit = 1 prix au moment de l'achat : plus simple à facturer ; <code>T-23</code> est le scénario prévu pour contrôler le snapshot, sans résultat de rejeu revendiqué ici. L'unité par unité serait possible mais multiplie les lignes mortes</td>
 </tr>
 <tr>
 <td>V3</td>
@@ -1277,9 +1264,9 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 <tr>
 <td>V7</td>
 <td>Historique des statuts : écrit par la procédure ou par trigger ?</td>
-<td><strong>uniquement par trigger</strong></td>
-<td>écrit dans <code>sp_update_order_status</code></td>
-<td>avec écriture en procédure, un <code>UPDATE</code> manuel ne serait pas tracé ; l'essai <code>T-22</code> vérifie <strong>l'absence de doublon</strong> (donc que la procédure n'écrit pas)</td>
+<td><strong>uniquement par trigger dans la conception cible</strong></td>
+<td>écriture dans <code>sp_update_order_status</code></td>
+<td>un <code>UPDATE</code> manuel doit aussi être tracé ; <code>T-22</code> est le scénario prévu pour contrôler l’absence de doublon. Aucun résultat de rejeu n’est revendiqué ici.</td>
 </tr>
 </tbody>
 </table>
@@ -1300,7 +1287,7 @@ Le tableau relie chaque fichier aux parties du présent document qui l'analysent
 <tbody>
 <tr>
 <td><a href="../sql/01_minishop_schema.sql"><code>sql/01_minishop_schema.sql</code></a></td>
-<td>DDL : 8 tables, 3 vues, index FULLTEXT + jeu de données de référence (4 catégories, 12 produits, 3 clients, 1 admin, hashes <code>password_hash()</code>, table <code>parametre</code>)</td>
+<td>DDL : 8 tables, 3 vues, index FULLTEXT + jeu de données de référence (4 catégories, 36 produits déclarés dans le script, 3 clients, 1 admin, hashes <code>password_hash()</code>, table <code>parametre</code>) ; ce comptage statique ne prouve pas un chargement</td>
 <td>A.1 · A.2 · A.4 · A.5</td>
 <td style="text-align: right;">344</td>
 </tr>
@@ -1373,7 +1360,7 @@ mysql -u root -p minishop &lt; sql/02_minishop_procedures.sql
 mysql -u root -p minishop &lt; sql/03_minishop_triggers.sql
 mysql -u root -p minishop &lt; sql/04_minishop_demo.sql
 </code></pre>
-<p><strong>Validation exécutée (23/09/2026, MariaDB 11.8.6)</strong> — chaîne rejouée de zéro : 8 tables, 3 vues,
+<p><strong>Validation historique rapportée pour le 23/09/2026 (MariaDB 11.8.6 ; ne constitue pas un rejeu de la révision du 23/10)</strong> — chaîne décrite comme rejouée de zéro : 8 tables, 3 vues,
 1 fonction, <strong>17 procédures</strong> et <strong>16 déclencheurs</strong> chargés ; les 4 commandes de démonstration retrouvées
 avec leurs montants exacts (324,60 / 0,00 / 405,48 / 63,70 EUR dont 4,90 de port) et les 9 traces
 d'historique ; les gardes RB-01/02/03/05/06/09/11/14/15/18 vérifiés <strong>en SQL direct</strong> (rejets attendus) ;

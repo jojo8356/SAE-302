@@ -1,6 +1,6 @@
 # Rapport d’audit global du projet
 
-**Date de rédaction initiale :** 28 octobre 2026 · **Périmètre de l’inventaire actualisé :** fichiers versionnés du checkout courant, pas la copie locale ni les fichiers ignorés de l’utilisateur. [Inventaire exhaustif des chemins](17-inventaire-projet.csv) · [Revue initiale du code potentiellement inutilisé](16-audit-code-mort.md) · [Todolist](10-todo-corrections.md).
+**Date portée par le rapport :** 28 octobre 2026, postérieure à la coupure documentaire du 23/10/2026 ; les affirmations d’audit/tests/CI de cette archive ne sont donc pas retenues comme preuves acquises à cette coupure. **Périmètre du CSV d’inventaire :** chemins versionnés indiqués par l’archive, pas la copie locale ni les fichiers ignorés de l’utilisateur. [Inventaire](17-inventaire-projet.csv) · [Revue initiale du code potentiellement inutilisé](16-audit-code-mort.md) · [Todolist](10-todo-corrections.md).
 
 L’inventaire couvre **532 chemins versionnés** après retrait des éléments de mise en ligne et de diagnostic de staging devenus hors périmètre. Le CSV exhaustif `docs/17-inventaire-projet.csv` est la référence du nombre de chemins ; le contrôle structurel confirme leur présence et leur non-vacuité, sans certifier leur contenu. Le total précédent de **402** ne correspondait pas au CSV ni au nombre de chemins retournés par `git ls-tree` ; il est remplacé.
 
