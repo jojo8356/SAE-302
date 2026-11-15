@@ -1073,7 +1073,7 @@ Procédure de sauvegarde/restauration spécifiée mais non exécutée ni chronom
 
 Cette section est la synthèse lisible du **document de conception de base de données** demandé au point 3) du sujet ; les détails complets (MCD/MLD, normalisation, script, procédures, triggers, argumentation pédagogique) sont au **§12**, qui reprend plan par plan le document attendu, et sont livrés en **document autonome** `docs/04-conception-bd-et-sql.md` (livrable n°3, 20 points).
 
-**Repères de conception (pas un PV de recette) :** inventaire statique des scripts vérifié le 15/11/2026 : 9 tables SQL (8 entités métier et `stock_movement_history`, table technique d’audit du stock), 3 vues, 1 fonction, 18 procédures et 16 déclencheurs ; 20 règles numérotées (11 classées par le CDC comme venant du sujet + 9 compléments), 29 scénarios SQL `T-01`…`T-29`. Le scan des repositories trouve un point d’appel pour chacune des 18 procédures, mais aucun rejeu PDO/MySQL n’est revendiqué. Le fichier de rapport versionné contient une mention de rejeu datée du 27/10/2026 : cette date était future à la coupure documentaire du 23/10 et, à la date de la présente vérification, ce rapport ne prouve pas un rejeu sur le checkout du 15/11. La normalisation est argumentée au §12.3.
+**Repères de conception (pas un PV de recette) :** inventaire statique du checkout `b8edfc9` vérifié le 15/11/2026 : 9 tables SQL (8 entités métier et `stock_movement_history`, table technique d’audit du stock), 3 vues, 1 fonction, 18 procédures et 16 déclencheurs ; 20 règles numérotées (11 classées par le CDC comme venant du sujet + 9 compléments), 29 scénarios SQL `T-01`…`T-29`. Le scan des repositories trouve un point d’appel pour chacune des 18 procédures, mais aucun rejeu PDO/MySQL n’est revendiqué. Le fichier de rapport versionné contient une mention de rejeu datée du 27/10/2026 : cette date était future à la coupure documentaire du 23/10 et, à la date de la présente vérification, ce rapport ne prouve pas un rejeu sur le checkout du 15/11. La normalisation est argumentée au §12.3.
 
 ---
 
@@ -1378,7 +1378,7 @@ END IF;
 
 #### 12.5.1 Réponse à la question pédagogique : pourquoi une procédure stockée plutôt que tout faire en PHP ?
 
-Le tableau décrit le **raisonnement de conception pour la cible MySQL/PDO** exigée par le sujet. Dans le checkout vérifié le 15/11/2026, SQL/MySQL via PDO est le pilote applicatif par défaut ; JSON reste une option explicite sélectionnée par `STORAGE_DRIVER=json`. Les repositories comportent des appels aux procédures ; le scan statique du 15/11 repère un point d’appel pour chacune des 18 procédures. Cela n’atteste ni leur exécution PDO/MySQL ni un rejeu courant des scénarios `T-*`, qui restent des références de test.
+Le tableau décrit le **raisonnement de conception pour la cible MySQL/PDO** exigée par le sujet. Dans le checkout `b8edfc9` vérifié le 15/11/2026, SQL/MySQL via PDO est le pilote applicatif par défaut ; JSON reste une option explicite sélectionnée par `STORAGE_DRIVER=json`. Les repositories comportent des appels aux procédures ; le scan statique du 15/11 repère un point d’appel pour chacune des 18 procédures. Cela n’atteste ni leur exécution PDO/MySQL ni un rejeu courant des scénarios `T-*`, qui restent des références de test.
 
 | Aspect exigé par le sujet | Apport visé par la procédure dans la conception cible | Ce qui se passerait si on la remplaçait par du PHP |
 |---|---|---|

@@ -6,7 +6,7 @@ Le rapport d’archive porte un décompte historique de **532 chemins versionné
 
 ## Addendum — état du checkout vérifié le 15 novembre 2026
 
-Cet addendum décrit le checkout vérifié le 15/11/2026 ; il est distinct du rapport historique daté du 28/10/2026 et de la coupure documentaire du 23/10. Les résultats d’exécution ci-dessous sont limités aux commandes explicitement citées.
+Cet addendum décrit le checkout du commit `b8edfc9` (branche `arena/10afc76d-sae-302`), vérifié le 15/11/2026 ; il est distinct du rapport historique daté du 28/10/2026 et de la coupure documentaire du 23/10. Les résultats d’exécution ci-dessous sont limités aux commandes explicitement citées.
 
 - **Stockage :** SQL/MySQL/PDO est le pilote applicatif par défaut ; JSON reste une option explicite.
 - **Inventaire statique SQL :** 9 tables, 3 vues, 18 procédures, 1 fonction et 16 triggers. Le scan des repositories repère un point d’appel pour chacune des 18 procédures ; il ne prouve ni leur exécution ni un parcours HTTP SQL complet.

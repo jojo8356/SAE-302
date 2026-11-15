@@ -962,7 +962,7 @@ ELSE
 END IF;
 </code></pre>
 <h3 id="b2-reponse-a-la-question-pedagogique-pourquoi-une-procedure-stockee-plutot-que-tout-faire-en-php">B.2 Réponse à la question pédagogique : pourquoi une procédure stockée plutôt que tout faire en PHP ?<a class="headerlink" href="#b2-reponse-a-la-question-pedagogique-pourquoi-une-procedure-stockee-plutot-que-tout-faire-en-php" title="Permanent link">#</a></h3>
-<p>Le tableau décrit le <strong>raisonnement de conception pour la cible MySQL/PDO</strong> exigée par le sujet. Dans le checkout vérifié le 15/11/2026, SQL/MySQL via PDO est le pilote applicatif par défaut ; JSON reste une option explicite sélectionnée par <code>STORAGE_DRIVER=json</code>. Les repositories comportent des appels aux procédures ; le scan statique du 15/11 repère un point d’appel pour chacune des 18 procédures. Cela n’atteste ni leur exécution PDO/MySQL ni un rejeu courant des scénarios <code>T-*</code>, qui restent des références de test.</p>
+<p>Le tableau décrit le <strong>raisonnement de conception pour la cible MySQL/PDO</strong> exigée par le sujet. Dans le checkout <code>b8edfc9</code> vérifié le 15/11/2026, SQL/MySQL via PDO est le pilote applicatif par défaut ; JSON reste une option explicite sélectionnée par <code>STORAGE_DRIVER=json</code>. Les repositories comportent des appels aux procédures ; le scan statique du 15/11 repère un point d’appel pour chacune des 18 procédures. Cela n’atteste ni leur exécution PDO/MySQL ni un rejeu courant des scénarios <code>T-*</code>, qui restent des références de test.</p>
 <table>
 <thead>
 <tr>
@@ -1373,7 +1373,7 @@ avec leurs montants exacts (324,60 / 0,00 / 405,48 / 63,70 EUR dont 4,90 de port
 d'historique ; les gardes RB-01/02/03/05/06/09/11/14/15/18 vérifiés <strong>en SQL direct</strong> (rejets attendus) ;
 rollback intégral du panier confirmé (stock inchangé, aucune commande créée) ; les 4 hashes du seed
 reconnus comme sorties réelles de <code>password_hash()</code> (bcrypt) pour les mots de passe de démonstration.</p>
-<p><strong>État statique des sources vérifié le 15/11/2026 :</strong> <code>sql/01</code> définit 9 tables (8 entités métier et une table technique d’audit du stock), 3 vues, 1 fonction, 18 procédures et 16 triggers. Le scan des repositories repère un point d’appel pour chacune des 18 procédures ; il ne prouve ni chargement de la base, ni exécution PDO/MySQL, ni parcours HTTP complet. SQL/MySQL via PDO est le pilote par défaut et JSON reste une option explicite (<code>STORAGE_DRIVER=json</code>). Aucun rejeu SQL de cette révision n’est revendiqué ici.</p>
+<p><strong>État statique des sources du commit <code>b8edfc9</code>, vérifié le 15/11/2026 :</strong> <code>sql/01</code> définit 9 tables (8 entités métier et une table technique d’audit du stock), 3 vues, 1 fonction, 18 procédures et 16 triggers. Le scan des repositories repère un point d’appel pour chacune des 18 procédures ; il ne prouve ni chargement de la base, ni exécution PDO/MySQL, ni parcours HTTP complet. SQL/MySQL via PDO est le pilote par défaut et JSON reste une option explicite (<code>STORAGE_DRIVER=json</code>). Aucun rejeu SQL de cette révision n’est revendiqué ici.</p>
 <p><strong>Corrections v1.1 apportées aux scripts</strong> (blocantes au chargement direct, détectées par ce rejeu) :
 (i) ajout des directives <code>DELIMITER $$ … DELIMITER ;</code> dans <code>sql/02</code> et <code>sql/03</code>, promises par l'en-tête
 du 01 mais absentes — <code>mysql &lt; sql/02…</code> échouait sinon ; (ii) le déclencheur <code>trg_history_creation</code>

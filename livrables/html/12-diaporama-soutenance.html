@@ -194,7 +194,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li><code>tests/sql/rapport_tests_sql.md</code> contient une revendication de résultat au 27/10/2026, date future à la coupure du 23/10 ; elle n’est pas présentée comme acquise à cette date.</li>
 <li><code>F-*</code> et <code>S-*</code> relient les exigences aux scénarios dans <code>docs/02</code>; leurs identifiants ne prouvent pas leur exécution.</li>
 <li>Le registre manuel contient 200 entrées <code>NON JOUÉ</code>. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.<blockquote>
-<p>Le run restreint du 23/10 (<code>--sans-sql --sans-e2e</code>) et le contrôle statique sécurité 11/11 sont historiques. Un run distinct du 15/11 (<code>node scripts/run-all-tests.mjs --sans-sql</code>) a terminé avec le code 0 via PHP-WASM et inclut l’E2E HTTP isolé (338 vérifications) ; SQL/PDO et PHP CLI natif restent non joués, et aucune CI globale ou recette navigateur n’est revendiquée.</p>
+<p>Le run restreint du 23/10 (<code>--sans-sql --sans-e2e</code>) et le contrôle statique sécurité 11/11 sont historiques. Un run distinct, exécuté le 15/11 sur le commit <code>b8edfc9</code> (<code>node scripts/run-all-tests.mjs --sans-sql</code>), a terminé avec le code 0 via PHP-WASM et inclut l’E2E HTTP isolé (338 vérifications) ; SQL/PDO et PHP CLI natif restent non joués, et aucune CI globale ou recette navigateur n’est revendiquée.</p>
 </blockquote>
 </li>
 </ul>

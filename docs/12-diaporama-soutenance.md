@@ -72,7 +72,7 @@
 - `tests/sql/rapport_tests_sql.md` contient une revendication de résultat au 27/10/2026, date future à la coupure du 23/10 ; elle n’est pas présentée comme acquise à cette date.
 - `F-*` et `S-*` relient les exigences aux scénarios dans `docs/02`; leurs identifiants ne prouvent pas leur exécution.
 - Le registre manuel contient 200 entrées `NON JOUÉ`. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.
-> Le run restreint du 23/10 (`--sans-sql --sans-e2e`) et le contrôle statique sécurité 11/11 sont historiques. Un run distinct du 15/11 (`node scripts/run-all-tests.mjs --sans-sql`) a terminé avec le code 0 via PHP-WASM et inclut l’E2E HTTP isolé (338 vérifications) ; SQL/PDO et PHP CLI natif restent non joués, et aucune CI globale ou recette navigateur n’est revendiquée.
+> Le run restreint du 23/10 (`--sans-sql --sans-e2e`) et le contrôle statique sécurité 11/11 sont historiques. Un run distinct, exécuté le 15/11 sur le commit `b8edfc9` (`node scripts/run-all-tests.mjs --sans-sql`), a terminé avec le code 0 via PHP-WASM et inclut l’E2E HTTP isolé (338 vérifications) ; SQL/PDO et PHP CLI natif restent non joués, et aucune CI globale ou recette navigateur n’est revendiquée.
 
 ---
 

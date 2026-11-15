@@ -8,7 +8,7 @@
 
 | Sujet | Choix retenu et limite | Référence |
 |---|---|---|
-| Dates et preuves | Coupure historique au 23/10/2026 ; le run restreint de cette date utilisait `--sans-sql --sans-e2e`. Un run ultérieur daté du 15/11 (`--sans-sql`, E2E isolé inclus, 338 vérifications) est consigné séparément ; il ne requalifie pas l’audit historique et ne prouve pas SQL/PDO. Les mentions sans run/SHA ne sont pas reprises comme preuves acquises. | `docs/02`, `docs/11`, `docs/19` |
+| Dates et preuves | Coupure historique au 23/10/2026 ; le run restreint de cette date utilisait `--sans-sql --sans-e2e`, sans SHA conservé. Un run ultérieur exécuté le 15/11 sur le commit `b8edfc9` (`--sans-sql`, E2E isolé inclus, 338 vérifications) est consigné séparément ; il ne requalifie pas l’audit historique et ne prouve pas SQL/PDO. | `docs/02`, `docs/11`, `docs/19` |
 | Périmètre | Déploiement et staging retirés sans tâche de remplacement. Aucun déploiement, essai LineServ ni restauration de base n’est revendiqué. | `docs/05`, `docs/06`, `docs/19` |
 | Équipe et rôles | Permissions GitLab, valeurs R/A/C/I du RACI et rôles de planification A/B/C restent distincts. Aucune lettre A/B/C n’est attribuée nominativement à Johan Polsinelli ou Chahd Gouiaa sans confirmation. | `docs/01`, `docs/05`, `docs/19` |
 | CDC et stockage | SQL/MySQL/PDO est désormais le pilote applicatif par défaut ; JSON reste une option explicite. Le scan statique des repositories relève un point d’appel pour chacune des 18 procédures stockées ; cela ne prouve pas leur exécution, et aucun rejeu PDO/MySQL de cette révision n’est revendiqué. | `docs/01`, `docs/02`, `docs/04`, `docs/19` |

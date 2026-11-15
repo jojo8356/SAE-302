@@ -14,7 +14,7 @@
 
 ## État courant vérifié — 15 novembre 2026
 
-Cette section décrit les contrôles consignés pour le checkout vérifié le 15/11/2026 ; elle ne transforme pas les constats historiques A→J en résultats actuels. Les sections A→J conservent la photographie antérieure au 23/10/2026. Les exécutions du 15/11 sont distinctes du run restreint du 23/10 et ne requalifient pas l’audit historique.
+Cette section décrit les contrôles consignés pour le checkout du commit `b8edfc9` (branche `arena/10afc76d-sae-302`), vérifié le 15/11/2026 ; elle ne transforme pas les constats historiques A→J en résultats actuels. Les sections A→J conservent la photographie antérieure au 23/10/2026. Les exécutions du 15/11 sont distinctes du run restreint du 23/10 et ne requalifient pas l’audit historique.
 
 | Domaine | État vérifié | Limite de preuve |
 |---|---|---|

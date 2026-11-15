@@ -250,7 +250,7 @@ annex_lines.append("d'historique ; les gardes RB-01/02/03/05/06/09/11/14/15/18 v
 annex_lines.append("rollback intégral du panier confirmé (stock inchangé, aucune commande créée) ; les 4 hashes du seed")
 annex_lines.append("reconnus comme sorties réelles de `password_hash()` (bcrypt) pour les mots de passe de démonstration.")
 annex_lines.append("")
-annex_lines.append("**État statique des sources vérifié le 15/11/2026 :** `sql/01` définit 9 tables (8 entités métier et une table technique d’audit du stock), 3 vues, 1 fonction, 18 procédures et 16 triggers. Le scan des repositories repère un point d’appel pour chacune des 18 procédures ; il ne prouve ni chargement de la base, ni exécution PDO/MySQL, ni parcours HTTP complet. SQL/MySQL via PDO est le pilote par défaut et JSON reste une option explicite (`STORAGE_DRIVER=json`). Aucun rejeu SQL de cette révision n’est revendiqué ici.")
+annex_lines.append("**État statique des sources du commit `b8edfc9`, vérifié le 15/11/2026 :** `sql/01` définit 9 tables (8 entités métier et une table technique d’audit du stock), 3 vues, 1 fonction, 18 procédures et 16 triggers. Le scan des repositories repère un point d’appel pour chacune des 18 procédures ; il ne prouve ni chargement de la base, ni exécution PDO/MySQL, ni parcours HTTP complet. SQL/MySQL via PDO est le pilote par défaut et JSON reste une option explicite (`STORAGE_DRIVER=json`). Aucun rejeu SQL de cette révision n’est revendiqué ici.")
 annex_lines.append("")
 annex_lines.append("**Corrections v1.1 apportées aux scripts** (blocantes au chargement direct, détectées par ce rejeu) :")
 annex_lines.append("(i) ajout des directives `DELIMITER $$ … DELIMITER ;` dans `sql/02` et `sql/03`, promises par l'en-tête")
