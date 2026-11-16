@@ -30,16 +30,19 @@ try {
         echo 'NOUVEAUTÉS : ' . $resultat['echecs'] . ' échec(s) sur ' . $resultat['tests'] . " vérifications ❌\n";
     }
 } finally {
-    $fichiers = glob($dossier . '/*');
-    if (!is_array($fichiers)) {
-        $fichiers = [];
-    }
-    foreach ($fichiers as $fichier) {
-        if (is_file($fichier)) {
-            unlink($fichier);
-        }
-    }
     if (is_dir($dossier)) {
+        $entrees = scandir($dossier);
+        if (is_array($entrees)) {
+            foreach ($entrees as $entree) {
+                if ($entree === '.' || $entree === '..') {
+                    continue;
+                }
+                $chemin = $dossier . '/' . $entree;
+                if (is_file($chemin) || is_link($chemin)) {
+                    unlink($chemin);
+                }
+            }
+        }
         rmdir($dossier);
     }
 }
