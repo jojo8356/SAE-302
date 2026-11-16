@@ -257,6 +257,54 @@ if ($sansSql) {
     }
 }
 
+// ------------------------------------------- parcours HTTP SQL (facultatif)
+// Même convention que l'intégration SQL : code 2 = NON JOUÉ (pas de serveur
+// MySQL), jamais un faux vert. Ces suites prouvent le chemin applicatif
+// complet sur le pilote SQL (serveur `php -S` réel + base dédiée).
+section('▸ Parcours HTTP SQL — tests/php/http_sql_e2e.php');
+$httpSqlEtat = 'NON JOUÉ ⏭ (serveur MySQL absent)';
+if ($sansSql) {
+    $httpSqlEtat = 'NON JOUÉ ⏭ (--sans-sql)';
+    echo "  ⏭ NON JOUÉ : option --sans-sql.\n";
+} elseif (!is_file('tests/php/http_sql_e2e.php')) {
+    echo "  ❌ fichier absent\n";
+    ++$echecs;
+    $httpSqlEtat = 'fichier absent ❌';
+} else {
+    ++$jouees;
+    $codeHttpSql = lancer('tests/php/http_sql_e2e.php');
+    if ($codeHttpSql === 0) {
+        $httpSqlEtat = 'joué ✅';
+    } elseif ($codeHttpSql === 2) {
+        --$jouees;
+    } else {
+        ++$echecs;
+        $httpSqlEtat = 'ÉCHEC ❌';
+    }
+}
+
+section('▸ Concurrence HTTP 20/12 — tests/php/concurrence_http.php');
+$concurrenceEtat = 'NON JOUÉ ⏭ (serveur MySQL absent)';
+if ($sansSql) {
+    $concurrenceEtat = 'NON JOUÉ ⏭ (--sans-sql)';
+    echo "  ⏭ NON JOUÉ : option --sans-sql.\n";
+} elseif (!is_file('tests/php/concurrence_http.php')) {
+    echo "  ❌ fichier absent\n";
+    ++$echecs;
+    $concurrenceEtat = 'fichier absent ❌';
+} else {
+    ++$jouees;
+    $codeConcurrence = lancer('tests/php/concurrence_http.php');
+    if ($codeConcurrence === 0) {
+        $concurrenceEtat = 'joué ✅';
+    } elseif ($codeConcurrence === 2) {
+        --$jouees;
+    } else {
+        ++$echecs;
+        $concurrenceEtat = 'ÉCHEC ❌';
+    }
+}
+
 // --------------------------------------------------------------- parcours E2E et DOM/JS
 $e2eJoue = false;
 $noeud = noeud();
@@ -309,11 +357,11 @@ if (!$e2eJoue) {
 }
 
 if ($echecs > 0) {
-    echo 'SUITES : ' . $echecs . ' étape(s) en échec ❌ — E2E : ' . $e2eEtat . "\n";
+    echo 'SUITES : ' . $echecs . ' étape(s) en échec ❌ — SQL : ' . $sqlEtat . ' — HTTP SQL : ' . $httpSqlEtat . ' — Concurrence : ' . $concurrenceEtat . ' — E2E : ' . $e2eEtat . "\n";
     exit(1);
 }
 
-echo 'SUITES : TOUT EST VERT ✅ (' . $jouees . " étapes) — SQL : " . $sqlEtat . ' — E2E : ' . $e2eEtat . "\n";
+echo 'SUITES : TOUT EST VERT ✅ (' . $jouees . " étapes) — SQL : " . $sqlEtat . ' — HTTP SQL : ' . $httpSqlEtat . ' — Concurrence : ' . $concurrenceEtat . ' — E2E : ' . $e2eEtat . "\n";
 if (!$e2eJoue) {
     echo "nb : SQL et E2E non joués ne sont pas validés.\n";
 }

@@ -287,7 +287,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 <tr>
 <td>9</td>
 <td><code>D5-L14-04</code></td>
-<td>Script de charge présent ; essai HTTP/SQL 20 demandes pour 12 unités à exécuter, 5 tests de concurrence native non joués</td>
+<td>Suite concurrence HTTP créée (tests/php/concurrence_http.php : 20 acteurs HTTP / 12 unités, version HTTP de reserver.sh) ; exécution sur VM à faire</td>
 <td>B</td>
 <td style="text-align: right;">3</td>
 <td>P1</td>
@@ -1071,7 +1071,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D4-L9-05</code></td>
-<td>UC-05 connexion : appel SQL statiquement raccordé, password_verify en PHP ; parcours PDO/MySQL à faire</td>
+<td>UC-05 connexion : suite HTTP SQL créée (tests/php/http_sql_e2e.php §6 : sp_get_credentials via PDO + password_verify, régénération de session, compte bloqué, messages identiques) ; exécution sur VM à faire</td>
 <td>C</td>
 <td style="text-align: right;">6</td>
 <td>🟡 <code>PARTIEL</code></td>
@@ -1080,7 +1080,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D4-L9-06</code></td>
-<td>Parcours visiteur automatisé vert sur JSON (E2E 338) et SQL (29/29, étapes 1-7) au run VM natif 16/11/2026 ; démo S7 humaine et parcours HTTP SQL de bout en bout non attestés</td>
+<td>Parcours visiteur automatisé vert sur JSON (E2E 338) et SQL (29/29, étapes 1-7) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§4), exécution à faire ; démo S7 humaine non attestée</td>
 <td>C</td>
 <td style="text-align: right;">0</td>
 <td>✅* <code>OK*</code></td>
@@ -1132,7 +1132,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D4-L10-04</code></td>
-<td>UC-07 commande : procédure et rollback intégral vérifiés en SQL (T-29, étape 6) au run VM natif 16/11/2026 ; parcours HTTP SQL de bout en bout non revendiqué</td>
+<td>UC-07 commande : procédure et rollback intégral vérifiés en SQL (T-29, étape 6) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§8), exécution à faire</td>
 <td>A</td>
 <td style="text-align: right;">0</td>
 <td>✅* <code>OK*</code></td>
@@ -1141,7 +1141,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D4-L10-05</code></td>
-<td>Écrans de commande présents ; procédures SQL vérifiées (T-16/T-18/T-28) au run VM natif 16/11/2026 ; parcours HTTP SQL de bout en bout non revendiqué</td>
+<td>Écrans de commande présents ; procédures SQL vérifiées (T-16/T-18/T-28) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§8), exécution à faire</td>
 <td>C</td>
 <td style="text-align: right;">0</td>
 <td>✅* <code>OK*</code></td>
@@ -1184,7 +1184,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D4-L11-02</code></td>
-<td>UC-10 produits : procédures vérifiées en SQL (T-15/T-20) au run VM natif 16/11/2026 ; parcours HTTP admin de bout en bout non revendiqué</td>
+<td>UC-10 produits : procédures vérifiées en SQL (T-15/T-20) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§9), exécution à faire</td>
 <td>A</td>
 <td style="text-align: right;">0</td>
 <td>✅* <code>OK*</code></td>
@@ -1220,7 +1220,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D4-L11-06</code></td>
-<td>Parcours admin automatisé vert (JSON + SQL, 58 étapes) au run VM natif 16/11/2026 ; démo S9 humaine non attestée</td>
+<td>Parcours admin automatisé vert (JSON + SQL, 58 étapes) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§9), exécution à faire ; démo S9 humaine non attestée</td>
 <td>C</td>
 <td style="text-align: right;">0</td>
 <td>✅* <code>OK*</code></td>
@@ -1386,7 +1386,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D5-L14-04</code></td>
-<td>Script de charge présent ; essai HTTP/SQL 20 demandes pour 12 unités à exécuter, 5 tests de concurrence native non joués</td>
+<td>Suite concurrence HTTP créée (tests/php/concurrence_http.php : 20 acteurs HTTP / 12 unités, version HTTP de reserver.sh) ; exécution sur VM à faire</td>
 <td>B</td>
 <td style="text-align: right;">3</td>
 <td>🟡 <code>PARTIEL</code> <code>ASYNC*</code></td>
@@ -1395,7 +1395,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D5-L14-05</code></td>
-<td>Matrice présente ; compléter le PV avec l'exécution réelle, anomalies, date, SHA et auteur</td>
+<td>Matrice présente ; générateur de PV créé (scripts/generer_pv.php) ; PV à générer après exécution réelle, signature humaine requise</td>
 <td>A</td>
 <td style="text-align: right;">3</td>
 <td>🟡 <code>PARTIEL</code></td>
