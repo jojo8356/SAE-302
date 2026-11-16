@@ -33,7 +33,7 @@ Les mêmes fichiers existent dans `dist/` (répertoire généré, hors Git, cf. 
 - **18-politique-conservation** — [HTML](html/18-politique-conservation.html) · [PDF](pdf/18-politique-conservation.pdf) · [Word](docx/18-politique-conservation.docx)
 - **19-audit-cahier-des-charges-todolist** — [HTML](html/19-audit-cahier-des-charges-todolist.html) · [PDF](pdf/19-audit-cahier-des-charges-todolist.pdf) · [Word](docx/19-audit-cahier-des-charges-todolist.docx)
 - **20-charte-gitlab-revues-croisees** — [HTML](html/20-charte-gitlab-revues-croisees.html) · [PDF](pdf/20-charte-gitlab-revues-croisees.pdf) · [Word](docx/20-charte-gitlab-revues-croisees.docx)
-- **21-compte-rendu-reunion-audit-2026-11-13** — [HTML](html/21-compte-rendu-reunion-audit-2026-11-13.html) · [PDF](pdf/21-compte-rendu-reunion-audit-2026-11-13.pdf) · [Word](docx/21-compte-rendu-reunion-audit-2026-11-13.docx)
+- **21-synthese-retours-audit** — [HTML](html/21-synthese-retours-audit.html) · [PDF](pdf/21-synthese-retours-audit.pdf) · [Word](docx/21-synthese-retours-audit.docx)
 - **DA** — [HTML](html/DA.html) · [PDF](pdf/DA.pdf) · [Word](docx/DA.docx)
 - **README** — [HTML](html/README.html) · [PDF](pdf/README.pdf) · [Word](docx/README.docx)
 - **annexe-cas-usage** — [HTML](html/annexe-cas-usage.html) · [PDF](pdf/annexe-cas-usage.pdf) · [Word](docx/annexe-cas-usage.docx)

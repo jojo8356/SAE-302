@@ -72,7 +72,7 @@ $expectBusiness = static function (string $code, callable $work) use (&$failures
 
 echo "== 1. pilote & énumération ==\n";
 $driver = StorageDriver::fromConfig('json');
-$check('StorageDriver::JSON actif par défaut', $driver === StorageDriver::JSON);
+$check('pilote JSON explicitement sélectionné pour la fumée', $driver === StorageDriver::JSON);
 $store = JsonStore::open($dataDir); // bac à sable isolé pour ce test
 $check('le pilote JSON est un JsonStore', $store instanceof JsonStore);
 $check('StorageDriver::SQL fournit un vrai pilote PDO', (static function (): bool {
@@ -254,7 +254,7 @@ $check('transactional : commit persisté', $store->exists('client', [['email', '
 
 echo "\n== 9. fichiers & journal ==\n";
 if (glob($store->dataPath() . '/*.json')) { $files = glob($store->dataPath() . '/*.json'); } else { $files = []; }
-$check('8 tables sur disque', count($files) === 8, count($files) . ' fichiers');
+$check('8 fichiers JSON créés par le seed de démonstration', count($files) === 8, count($files) . ' fichiers');
 $journal = $store->journalPath(); // hermétique : journal du bac à sable
 $check('journal d’audit alimenté (EF-GEN-04)', is_file($journal) && count(file($journal, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)) > 0);
 

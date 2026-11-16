@@ -63,7 +63,7 @@ a { color:var(--accent2); }
 </tr>
 <tr>
 <td><strong>Chiffres clés</strong></td>
-<td>8 tables + 3 vues · 1 fonction + <strong>17 procédures stockées</strong> (min. 5) · <strong>16 déclencheurs</strong> (min. 5) · 29 tests SQL conformes</td>
+<td>Inventaire statique : 9 tables SQL (8 entités métier + table technique d’audit du stock), 3 vues · 1 fonction + <strong>18 procédures stockées</strong> (min. 5) · <strong>16 déclencheurs</strong> (min. 5) · 29 scénarios SQL référencés</td>
 </tr>
 <tr>
 <td><strong>Documents liés</strong></td>
@@ -75,7 +75,7 @@ a { color:var(--accent2); }
 </tr>
 <tr>
 <td><strong>Version</strong></td>
-<td>1.1 — 23 septembre 2026 (scripts livrés en fichiers, plus de recopie verbatim)</td>
+<td>1.3 — 15 novembre 2026 (références CT/ENF et état du pilote synchronisés ; inventaire statique actualisé ; aucun rejeu SQL revendiqué)</td>
 </tr>
 </tbody>
 </table>
@@ -102,12 +102,12 @@ a { color:var(--accent2); }
 <td><code>docs/01</code> §8</td>
 </tr>
 <tr>
-<td><code>CT-01…CT-09</code></td>
+<td><code>CT-01…CT-12</code></td>
 <td>contraintes techniques</td>
 <td><code>docs/01</code> §7</td>
 </tr>
 <tr>
-<td><code>ENF-01…ENF-19</code></td>
+<td><code>ENF-01…ENF-22</code></td>
 <td>exigences non fonctionnelles</td>
 <td><code>docs/01</code> annexe 17.3 (<code>docs/annexes/annexe-enf.md</code>)</td>
 </tr>
@@ -168,7 +168,7 @@ a { color:var(--accent2); }
 </tr>
 <tr>
 <td>B) ≥ 5 procédures stockées (ex. <code>sp_create_order</code>, <code>sp_add_order_item</code>, <code>sp_update_order_status</code>)</td>
-<td>B.1 : <strong>17 livrées + 1 fonction</strong> ; correspondance nom à nom avec les exemples du sujet en B.3</td>
+<td>B.1 : <strong>18 livrées + 1 fonction</strong> ; correspondance nom à nom avec les exemples du sujet en B.3</td>
 <td>procédure manquante −1 (max −5)</td>
 </tr>
 <tr>
@@ -333,7 +333,7 @@ PARAMETRE(cle PK, valeur, description, maj_le)   -- 4 lignes livrées : frais_po
      -- les règles chiffrées vivent ICI, pas dans une constante PHP recopiée (RB-20)
 </code></pre>
 <p><strong>Trois vues</strong> complètent le modèle logique — elles factorisent une règle pour qu'elle ne soit jamais réécrite
-(en complément des 8 tables) :</p>
+(en complément des 8 tables métier et de la table technique d’audit du stock, soit 9 tables SQL) :</p>
 <table>
 <thead>
 <tr>
@@ -532,7 +532,8 @@ visibles dans l'application dès la première page du back-office.</p>
 </tr>
 </tbody>
 </table>
-<h4>12.3.4 Redondances identifiées (et ce qui en est fait)</h4>
+<h4>12.3.4 Redondances identifiées (et contrôles prévus)</h4>
+<p>Les références <code>T-*</code> ci-dessous désignent des scénarios/assertions à rejouer sur une base isolée ; elles ne valent pas un résultat courant. Les vérifications SQL de cette révision ne sont pas revendiquées.</p>
 <table>
 <thead>
 <tr>
@@ -587,7 +588,7 @@ visibles dans l'application dès la première page du back-office.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Anomalies vérifiées comme absentes :</strong> (i) anomalie d'insertion : aucune (toutes les FK NOT NULL ont un parent obligatoire et réel, test <code>T-17</code>) ; (ii) anomalie de suppression : les <code>RESTRICT</code> empêchent une suppression qui casserait un historique (<code>T-14</code>, <code>T-15</code>) ; (iii) anomalie de mise à jour : impossible sur les prix figés (<code>T-11</code>), sur les montants (<code>T-10</code>) et sur le stock négatif (<code>T-02</code>, <code>T-03</code>, <code>T-19</code>).</p>
+<p><strong>Anomalies ciblées par les scénarios de contrôle :</strong> (i) insertion avec parent manquant (<code>T-17</code>) ; (ii) suppression qui casserait un historique (<code>T-14</code>, <code>T-15</code>) ; (iii) mise à jour des prix figés (<code>T-11</code>), des montants (<code>T-10</code>) ou du stock négatif (<code>T-02</code>, <code>T-03</code>, <code>T-19</code>). Ces références décrivent des contrôles prévus ; elles ne constituent pas des résultats d’exécution dans cette révision. Les requêtes de preuve de la section A.3.5 restent à exécuter et à consigner sur un environnement isolé.</p>
 <h4>12.3.5 Requête de preuve (à exécuter en soutenance)</h4>
 <pre><code class="language-sql">-- aucune incohérence de redondance tolérée : ces 4 requêtes doivent renvoyer 0 ligne
 SELECT id_produit FROM produit WHERE prix_ttc &lt;&gt; ROUND(prix_ht * (1 + tva/100), 2);
@@ -602,23 +603,10 @@ SELECT c.id_commande FROM commande c
 SELECT id_produit FROM produit WHERE stock &lt; 0;
 </code></pre>
 <h3>A.4 Script SQL (DDL + données) — <code>sql/01_minishop_schema.sql</code></h3>
-<p><strong>Installation (la commande fait foi, exécutée sur MariaDB 11.8 dans notre environnement de développement) :</strong></p>
+<p><strong>Commande d'installation de référence — non exécutée dans cette révision :</strong></p>
 <pre><code class="language-bash">./scripts/load_db.sh
-# [1/4] DDL + données de reference     sql/01_minishop_schema.sql
-# [2/4] 16 declencheurs               sql/03_minishop_triggers.sql
-# [3/4] 1 fonction + 17 procedures    sql/02_minishop_procedures.sql
-# [4/4] commandes de demonstration    sql/04_minishop_demo.sql
-#
-# objet                nombre
-# tables               8     ← entités du MLD (A.2), dont `parametre`
-# vues                 3     ← v_etat_stock, v_catalogue, v_commandes_client
-# fonctions            1     ← fn_param : lecture typée des règles chiffrées
-# procedures stockees  17    ← CT-03 (minimum 5)
-# declencheurs         16    ← CT-04 (minimum 5)
-# produits             12   clients 3   commandes 4
-# lignes de commande   5     traces de statut 9
-# OK — base 'minishop' chargee (verifiez : procedures &gt;= 5, declencheurs &gt;= 5).
 </code></pre>
+<p>Le script source déclare 36 produits dans <code>sql/01_minishop_schema.sql</code> ; il s’agit d’un comptage statique des lignes versionnées, pas d’un chargement vérifié. La campagne historique du 23/09/2026 relatée dans <code>docs/04-conception-bd-et-sql.md</code> est distincte et n’a pas été rejouée sur le checkout examiné au 23/10. Les sorties d’installation doivent être consignées avec date, SHA et environnement avant d’être utilisées comme preuve.</p>
 <p>Extraits représentatifs du DDL (le fichier complet est dans le dépôt et dans le fichier <code>sql/01_minishop_schema.sql</code>, livré à la racine du dépôt) :</p>
 <pre><code class="language-sql">CREATE TABLE produit (
   id_produit   INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -660,8 +648,7 @@ CREATE TABLE ligne_commande (
   CONSTRAINT ck_ligne_prix      CHECK (prix_unitaire &gt; 0)
 ) ENGINE=InnoDB;
 </code></pre>
-<p>Le script contient aussi : la création de la base (<code>utf8mb4_unicode_ci</code>), les 8 tables dans l'ordre de dépendance
-(les 8 entités du MCD, dont <code>parametre</code>, qui porte les règles chiffrées — port, franchise, TVA, seuil d'alerte), l'index <code>FULLTEXT (nom, description)</code>, les index de filtrage, <strong>3 vues</strong> (<code>v_etat_stock</code> = formule unique de l'état de stock, <code>v_catalogue</code> = produits visibles enrichis catégorie + état, <code>v_commandes_client</code> = commandes + client + nombre de lignes) ; ces vues sont réellement créées par <code>sql/01</code> et comptées par <code>scripts/load_db.sh</code>, 4 catégories, 36 produits (dont trois en rupture <code>stock = 0</code> et un masqué <code>visible = 0</code> pour tester <code>RB-19</code>), 3 clients, 1 administrateur, et <strong>des hashes générés par <code>password_hash()</code></strong> (A.5). Le jeu de commandes de démonstration est volontairement créé <strong>par appels de procédures</strong> (<code>sql/04</code>) et non par <code>INSERT</code> directs : c'est ce qui fait vivre les triggers dans la base de démonstration.</p>
+<p>Le script contient aussi : la création de la base (<code>utf8mb4_unicode_ci</code>), 9 tables SQL dans l’ordre de dépendance (les 8 entités métier du MCD, dont <code>parametre</code>, plus <code>stock_movement_history</code>, table technique d’audit du stock), l’index <code>FULLTEXT (nom, description)</code>, les index de filtrage et <strong>3 vues</strong> (<code>v_etat_stock</code> = formule unique de l’état de stock, <code>v_catalogue</code> = produits visibles enrichis de leur catégorie et de l’état du stock, <code>v_commandes_client</code> = commandes + client + nombre de lignes). Les vues sont créées par <code>sql/01</code> et comptées par <code>scripts/load_db.sh</code>. Le jeu livré comprend 4 catégories, 36 produits (dont trois en rupture <code>stock = 0</code> et un masqué <code>visible = 0</code> pour tester <code>RB-19</code>), 3 clients, 1 administrateur et des hashes générés par <code>password_hash()</code> (A.5). Les commandes de démonstration sont créées par appels de procédures (<code>sql/04</code>), et non par <code>INSERT</code> directs.</p>
 <p>Contrôles de cohérence livrés avec le script (dans <code>load_db.sh</code>) : comptage des tables/procédures/triggers, nombre de lignes par table, et les 4 requêtes de preuve de la section A.3.5.</p>
 <h3>A.5 Données de démonstration et précautions</h3>
 <table>
@@ -686,7 +673,7 @@ CREATE TABLE ligne_commande (
 <tr>
 <td>3 clients</td>
 <td>alice / bruno / carla</td>
-<td><code>RB-01</code>, <code>SEC-08</code>, <code>T-18</code> (deux clients différents suffisent à prouver l'IDOR)</td>
+<td><code>RB-01</code>, <code>SEC-08</code>, <code>T-18</code> (scénario prévu pour vérifier l’isolation entre deux clients)</td>
 </tr>
 <tr>
 <td>1 administrateur</td>
@@ -703,8 +690,8 @@ CREATE TABLE ligne_commande (
 <p><strong>Comptes de démonstration</strong> : leurs valeurs d'authentification (mots de passe et hashes) ne sont pas reproduites dans la documentation. Les comptes du seed sont réservés aux environnements locaux isolés ; ne pas les publier ni les réutiliser sur LineServ. Pour une recette, utiliser uniquement un compte de test explicitement autorisé, transmis séparément par canal privé. Le projet ne fournit aucun script de rotation des comptes ni procédure automatisée de promotion/déploiement (SEC-10).</p>
 <hr>
 <h2>Partie B — Procédures stockées</h2>
-<h3>B.1 Procédures stockées (17 livrées + 1 fonction — minimum demandé : 5)</h3>
-<p><strong>Catalogue complet.</strong> « Usage » indique l'appelant (cas d'utilisation) ; « Test » la preuve d'exécution.</p>
+<h3>B.1 Procédures stockées (18 livrées + 1 fonction — minimum demandé : 5)</h3>
+<p><strong>Catalogue complet.</strong> « Usage » indique l'appelant (cas d'utilisation) ; « Test » l'identifiant du scénario associé, pas un résultat d'exécution.</p>
 <table>
 <thead>
 <tr>
@@ -853,6 +840,14 @@ CREATE TABLE ligne_commande (
 <td>UC-07/09</td>
 <td><code>T-28</code></td>
 </tr>
+<tr>
+<td>18</td>
+<td><code>sp_cancel_order_admin</code></td>
+<td><code>IN id_commande, id_auteur, rôle, commentaire, OUT unités rendues, montant remboursé, code</code></td>
+<td>annulation back-office transactionnelle ; restitue le stock avant expédition, sans restitution automatique pour une commande <code>EXPEDIEE</code>, et conserve le montant d’origine pour le remboursement</td>
+<td>UC-14 / <code>EF-ADM-07</code></td>
+<td><code>F-48</code>, <code>TC14-06/11/12</code></td>
+</tr>
 </tbody>
 </table>
 <p><strong>Une fonction, pas seulement des procédures</strong> : <code>fn_param(cle, type_attendu) RETURNS VARCHAR(255)</code> — un lecteur typé
@@ -876,12 +871,13 @@ ELSE
 END IF;
 </code></pre>
 <h3>B.2 Réponse à la question pédagogique : pourquoi une procédure stockée plutôt que tout faire en PHP ?</h3>
+<p>Le tableau décrit le <strong>raisonnement de conception pour la cible MySQL/PDO</strong> exigée par le sujet. Dans le checkout <code>b8edfc9</code> vérifié le 15/11/2026, SQL/MySQL via PDO est le pilote applicatif par défaut ; JSON reste une option explicite sélectionnée par <code>STORAGE_DRIVER=json</code>. Les repositories comportent des appels aux procédures ; le scan statique du 15/11 repère un point d’appel pour chacune des 18 procédures. Cela n’atteste ni leur exécution PDO/MySQL ni un rejeu courant des scénarios <code>T-*</code>, qui restent des références de test.</p>
 <table>
 <thead>
 <tr>
 <th>Aspect exigé par le sujet</th>
-<th>Ce que la procédure apporte <strong>ici</strong>, concrètement</th>
-<th>Ce qui se passe si on la remplace par du PHP</th>
+<th>Apport visé par la procédure dans la conception cible</th>
+<th>Ce qui se passerait si on la remplaçait par du PHP</th>
 </tr>
 </thead>
 <tbody>
@@ -907,8 +903,8 @@ END IF;
 </tr>
 <tr>
 <td><strong>Contrôle des accès</strong></td>
-<td><code>sp_confirm_order</code> vérifie <code>id_client</code> de la commande : la route <code>commande.php?id=25</code> ne peut pas fuiter même avec un contrôleur oublié (test <code>T-18</code>) ; <code>sp_delete_category</code> refuse la suppression d'une catégorie occupée (<code>T-14</code>)</td>
-<td>la sécurité repose entièrement sur la discipline de chaque développeur et sur des tests d'intégration</td>
+<td>La conception prévoit que <code>sp_confirm_order</code> vérifie <code>id_client</code> et que <code>sp_delete_category</code> refuse une catégorie occupée ; <code>T-18</code> et <code>T-14</code> sont les scénarios associés. Leur présence ne démontre ni le rejeu actuel ni l’intégration au parcours HTTP par défaut.</td>
+<td>sans contrôles centralisés, la sécurité dépendrait des vérifications des appelants ; les scénarios d’intégration restent à rejouer</td>
 </tr>
 <tr>
 <td><strong>Performance et volume réseau</strong></td>
@@ -966,7 +962,7 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 <tr>
 <td>« Trigger 2 — Historique » sur <code>ORDER_STATUS_HISTORY(id, order_id, old_status, new_status, changed_at)</code></td>
 <td><code>trg_history_statut</code> (<code>AFTER UPDATE</code>) <strong>et</strong> <code>trg_history_creation</code> (<code>AFTER INSERT</code>)</td>
-<td><strong>colonnes du sujet conservées à l'identique</strong>, plus <code>changed_by</code>, <code>changed_by_role</code>, <code>commentaire</code> (qui, sous quel rôle, pourquoi) ; écriture <strong>uniquement</strong> par trigger (<code>V7</code>, <code>T-22</code>)</td>
+<td>colonnes du sujet conservées à l'identique, plus <code>changed_by</code>, <code>changed_by_role</code>, <code>commentaire</code> ; dans la conception cible, l'écriture est confiée aux triggers. <code>T-22</code> est le scénario prévu pour contrôler l’absence de doublon, pas un résultat de rejeu</td>
 <td><code>T-22</code>, <code>T-23</code></td>
 </tr>
 <tr>
@@ -1124,8 +1120,7 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 </table>
 <h3>C.2 Couverture des deux triggers imposés par le sujet</h3>
 <p>L'exigence « Trigger 1 — Stock » est couverte par <code>TRG-A1</code>+<code>TRG-A2</code> (et <code>TRG-A3</code> pour l'annulation) ; l'exigence « Trigger 2 — Historique » par <code>TRG-D4</code> (+ <code>TRG-D5</code>), avec la table <code>order_status_history(id, order_id, old_status, new_status, changed_at, …)</code> <strong>exactement</strong> au format demandé par le sujet, complétée de l'auteur et du rôle pour la traçabilité.</p>
-<h3>C.3 Preuves par les tests SQL directs</h3>
-<p>Les tests <code>T-02</code>, <code>T-03</code>, <code>T-07</code>, <code>T-08</code>, <code>T-10</code>, <code>T-11</code>, <code>T-14</code>, <code>T-15</code>, <code>T-17</code> attaquent la base <strong>en SQL direct</strong>, hors application. Les règles tiennent quand même — c'est la démonstration attendue, et la raison pour laquelle la <code>PROCÉDURE</code> ne fait que compléter (message + transaction), elle ne remplace pas la contrainte.</p>
+<p><strong>Ce que les scénarios de triggers visent à vérifier :</strong> <code>T-02</code>, <code>T-03</code>, <code>T-07</code>, <code>T-08</code>, <code>T-10</code>, <code>T-11</code>, <code>T-14</code>, <code>T-15</code> et <code>T-17</code> décrivent des écritures SQL directes, hors application. Ils sont conçus pour vérifier les contraintes au niveau de la base ; aucun rejeu courant de ces scénarios n’est revendiqué, et les tests SQL sur base temporaire ne prouvent pas l’intégration au parcours HTTP.</p>
 <hr>
 <h2>Partie D — Variantes de conception documentées (arbitrages)</h2>
 <h3>12.8 Variantes de conception documentées (arbitrages)</h3>
@@ -1152,7 +1147,7 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 <td>Une ligne de commande = une ligne par unité ou quantité agrégée ?</td>
 <td><strong>quantité agrégée</strong> avec snapshot</td>
 <td>une ligne par unité (1..N inserts)</td>
-<td>1 ligne = 1 produit = 1 prix au moment de l'achat : plus simple à facturer, <code>T-23</code> vérifie le snapshot ; l'unité par unité serait possible mais multiplie les lignes mortes</td>
+<td>1 ligne = 1 produit = 1 prix au moment de l'achat : plus simple à facturer ; le scénario <code>T-23</code> vise le contrôle du snapshot, sans résultat d’exécution revendiqué ici. L'unité par unité serait possible mais multiplie les lignes mortes</td>
 </tr>
 <tr>
 <td>V3</td>
@@ -1185,9 +1180,9 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 <tr>
 <td>V7</td>
 <td>Historique des statuts : écrit par la procédure ou par trigger ?</td>
-<td><strong>uniquement par trigger</strong></td>
-<td>écrit dans <code>sp_update_order_status</code></td>
-<td>avec écriture en procédure, un <code>UPDATE</code> manuel ne serait pas tracé ; l'essai <code>T-22</code> vérifie <strong>l'absence de doublon</strong> (donc que la procédure n'écrit pas)</td>
+<td><strong>uniquement par trigger dans la conception cible</strong></td>
+<td>écriture dans <code>sp_update_order_status</code></td>
+<td>un <code>UPDATE</code> manuel doit aussi être tracé ; <code>T-22</code> est le scénario prévu pour contrôler l’absence de doublon. Aucun résultat de rejeu n’est revendiqué ici.</td>
 </tr>
 </tbody>
 </table>
@@ -1208,15 +1203,15 @@ Le tableau relie chaque fichier aux parties du présent document qui l'analysent
 <tbody>
 <tr>
 <td><a href="../sql/01_minishop_schema.sql"><code>sql/01_minishop_schema.sql</code></a></td>
-<td>DDL : 8 tables, 3 vues, index FULLTEXT + jeu de données de référence (4 catégories, 12 produits, 3 clients, 1 admin, hashes <code>password_hash()</code>, table <code>parametre</code>)</td>
+<td>DDL : 9 tables SQL (8 entités métier et <code>stock_movement_history</code>, table technique d’audit du stock), 3 vues, index FULLTEXT + jeu de données de référence (4 catégories, 36 produits, 3 clients, 1 admin, hashes <code>password_hash()</code>, table <code>parametre</code>)</td>
 <td>A.1 · A.2 · A.4 · A.5</td>
-<td style="text-align: right;">344</td>
+<td style="text-align: right;">371</td>
 </tr>
 <tr>
 <td><a href="../sql/02_minishop_procedures.sql"><code>sql/02_minishop_procedures.sql</code></a></td>
-<td>directive <code>DELIMITER</code> + 1 fonction (<code>fn_param</code>) + 17 procédures stockées</td>
+<td>directive <code>DELIMITER</code> + 1 fonction (<code>fn_param</code>) + 18 procédures stockées</td>
 <td>B.1 · B.2 · B.3</td>
-<td style="text-align: right;">867</td>
+<td style="text-align: right;">1037</td>
 </tr>
 <tr>
 <td><a href="../sql/03_minishop_triggers.sql"><code>sql/03_minishop_triggers.sql</code></a></td>
@@ -1234,11 +1229,11 @@ Le tableau relie chaque fichier aux parties du présent document qui l'analysent
 <td><a href="../tests/sql/fixture.sql"><code>tests/sql/fixture.sql</code></a></td>
 <td>jeu de données des tests (état de référence mémorisé dans <code>stock_initial</code>)</td>
 <td>C.3 · doc 02</td>
-<td style="text-align: right;">105</td>
+<td style="text-align: right;">108</td>
 </tr>
 <tr>
 <td><a href="../tests/sql/manifest.txt"><code>tests/sql/manifest.txt</code></a></td>
-<td>manifeste des 29 tests SQL (résultat attendu par test)</td>
+<td>manifeste des 29 scénarios SQL (résultat attendu par scénario ; pas une preuve de rejeu)</td>
 <td>C.3 · doc 02</td>
 <td style="text-align: right;">38</td>
 </tr>
@@ -1281,12 +1276,13 @@ mysql -u root -p minishop &lt; sql/02_minishop_procedures.sql
 mysql -u root -p minishop &lt; sql/03_minishop_triggers.sql
 mysql -u root -p minishop &lt; sql/04_minishop_demo.sql
 </code></pre>
-<p><strong>Validation exécutée (23/09/2026, MariaDB 11.8.6)</strong> — chaîne rejouée de zéro : 8 tables, 3 vues,
+<p><strong>Validation historique rapportée pour le 23/09/2026 (MariaDB 11.8.6 ; porte sur l’état antérieur des scripts et ne constitue pas un rejeu de la révision du 23/10)</strong> — chaîne décrite comme rejouée de zéro : 8 tables, 3 vues,
 1 fonction, <strong>17 procédures</strong> et <strong>16 déclencheurs</strong> chargés ; les 4 commandes de démonstration retrouvées
 avec leurs montants exacts (324,60 / 0,00 / 405,48 / 63,70 EUR dont 4,90 de port) et les 9 traces
 d'historique ; les gardes RB-01/02/03/05/06/09/11/14/15/18 vérifiés <strong>en SQL direct</strong> (rejets attendus) ;
 rollback intégral du panier confirmé (stock inchangé, aucune commande créée) ; les 4 hashes du seed
 reconnus comme sorties réelles de <code>password_hash()</code> (bcrypt) pour les mots de passe de démonstration.</p>
+<p><strong>État statique des sources du commit <code>b8edfc9</code>, vérifié le 15/11/2026 :</strong> <code>sql/01</code> définit 9 tables (8 entités métier et une table technique d’audit du stock), 3 vues, 1 fonction, 18 procédures et 16 triggers. Le scan des repositories repère un point d’appel pour chacune des 18 procédures ; il ne prouve ni chargement de la base, ni exécution PDO/MySQL, ni parcours HTTP complet. SQL/MySQL via PDO est le pilote par défaut et JSON reste une option explicite (<code>STORAGE_DRIVER=json</code>). Aucun rejeu SQL de cette révision n’est revendiqué ici.</p>
 <p><strong>Corrections v1.1 apportées aux scripts</strong> (blocantes au chargement direct, détectées par ce rejeu) :
 (i) ajout des directives <code>DELIMITER $$ … DELIMITER ;</code> dans <code>sql/02</code> et <code>sql/03</code>, promises par l'en-tête
 du 01 mais absentes — <code>mysql &lt; sql/02…</code> échouait sinon ; (ii) le déclencheur <code>trg_history_creation</code>

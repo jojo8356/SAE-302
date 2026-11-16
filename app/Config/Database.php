@@ -5,11 +5,11 @@ declare(strict_types=1);
 /**
  * MiniShop — point d'accès unique à la couche de données (annexe 17.7 §1).
  *
- * L'application ne parle PAS à un SGBD : Database::store() retourne le pilote
- * choisi par l'ÉNUMÉRATION App\Model\Data\StorageDriver :
+ * Database::store() retourne le pilote choisi par l'énumération
+ * App\Model\Data\StorageDriver :
  *
- *   'storage_driver' => 'json'  → JsonStore (moteur JSON natif, aucun service)
- *   'storage_driver' => 'sql'   → SqlStore  (MySQL/MariaDB via PDO)
+ *   'storage_driver' => 'sql'   → SqlStore  (pilote principal, MySQL/MariaDB via PDO)
+ *   'storage_driver' => 'json'  → JsonStore (option secondaire sans serveur)
  *
  * La configuration est lue dans cet ordre (le dernier gagne) :
  *
@@ -19,13 +19,13 @@ declare(strict_types=1);
  *      c'est le mode recommandé : copier, éditer, ne jamais committer ;
  *   4. variables d'environnement du processus (CI, conteneur, test ponctuel).
  *
- * Basculer en MySQL ne demande donc AUCUNE modification de code :
+ * Le pilote SQL est sélectionné par défaut ; configurer la base locale :
  *
  *   cp .env.example .env
- *   # .env : STORAGE_DRIVER="sql"  DB_NAME="minishop"  DB_USER="minishop"  DB_PASSWORD="…"
+ *   # .env : DB_NAME="minishop"  DB_USER="minishop"  DB_PASSWORD="…"
  *   #        DB_SOCKET="" (vide = TCP 127.0.0.1:3306, repli automatique sur la
  *   #        socket Unix si le compte n'accepte que ce mode — cas de root sur Debian)
- *   php scripts/db_init.php        # crée la base, les 8 tables, 17 procédures, 16 triggers
+ *   php scripts/db_init.php        # initialise le schéma, 18 procédures, 1 fonction et 16 triggers
  *
  * Les contrôleurs et les repositories ne connaissent QUE StoreInterface.
  */
@@ -43,7 +43,7 @@ final class Database
         'env' => 'dev',
         'APP_ENV' => 'dev',
         'debug' => true,
-        'storage_driver' => 'json',
+        'storage_driver' => 'sql',
         'data_path' => null,
         'db_host' => '127.0.0.1',
         'db_port' => 3306,
@@ -112,12 +112,16 @@ final class Database
         return self::$config ??= self::loadConfig();
     }
 
-    /** Pilote actif ('json' ou 'sql'), tel que configuré. */
+    /** Pilote actif normalisé ('json' ou 'sql') ; valeur inconnue → défaut SQL. */
     public static function driver(): string
     {
         $config = self::config();
+        $driver = null;
+        if (isset($config['storage_driver'])) {
+            $driver = (string) $config['storage_driver'];
+        }
 
-        return (string) ($config['storage_driver'] ?? 'json');
+        return StorageDriver::fromConfig($driver)->value;
     }
 
     /** Fichier `app/Config/env.php` réellement présent (sinon `null`). */

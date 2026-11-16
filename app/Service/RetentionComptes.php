@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Model\Data\Filter;
-use App\Model\Data\SqlStore;
+use App\Model\Data\RowLockingStore;
 use App\Model\Data\StoreInterface;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -34,7 +34,7 @@ final class RetentionComptes
         foreach ($this->store->select('client') as $candidat) {
             $id = (int) $candidat['id_client'];
             $resultat = $this->store->transactional(function () use ($id, $maintenant, $executer, $mois): string {
-                if ($this->store instanceof SqlStore) {
+                if ($this->store instanceof RowLockingStore) {
                     $client = $this->store->findForUpdate('client', $id);
                 } else {
                     $client = $this->store->find('client', $id);

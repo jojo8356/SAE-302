@@ -8,7 +8,7 @@ declare(strict_types=1);
  * La configuration de l'application vient de trois sources, dans cet ordre
  * de priorité (la dernière gagne) :
  *
- *   1. valeurs par défaut du code (pilote JSON, 127.0.0.1:3306, base minishop) ;
+ *   1. valeurs par défaut du code (pilote SQL, 127.0.0.1:3306, base minishop) ;
  *   2. `.env` à la racine — fichier LOCAL, jamais commité (`.env.example` est
  *      le modèle versionné) ;
  *   3. variables d'environnement réelles du processus (`DB_USER=… ./run.sh`),

@@ -5,12 +5,12 @@ declare(strict_types=1);
 /**
  * MiniShop — contrat commun des pilotes de gestion des données.
  *
- * Ce contrat est l'unique frontière entre le modèle (Repository) et le
- * stockage. Il est écrit pour être implémentable AU CHOIX par des opérations
- * JSON natives (JsonStore, pilote actif) ou par un SGBD relationnel
- * (SqlStore, migration finale) : chaque méthode correspond à une opération
- * relationnelle standard, mais AUCUNE méthode ne reçoit ni ne produit du
- * SQL — les filtres sont déclaratifs (tableaux associatifs sérialisables).
+ * Ce contrat définit la frontière commune des opérations de stockage entre
+ * les repositories et les pilotes SQL/JSON : chaque méthode correspond à une
+ * opération relationnelle standard, mais AUCUNE méthode ne reçoit ni ne produit
+ * du SQL — les filtres sont déclaratifs (tableaux sérialisables). Les capacités
+ * propres à certains pilotes (procédures stockées, verrous de lignes) sont des
+ * interfaces séparées : le pilote JSON n'a pas à les simuler.
  *
  * ---------------------------------------------------------------------------
  * Spécification déclarative des filtres (« where »)
@@ -29,8 +29,9 @@ declare(strict_types=1);
  * Des groupes explicites sont possibles :
  *   [['or', [[['nom','like','%clavier%'], [['reference','like','%CLAV%']]]]]
  *
- * Traduction future : cette spécification se convertit mécaniquement en
- * clause SQL (mêmes opérateurs, mêmes jokers) — c'est le but du pilote SQL.
+ * JsonStore évalue ces conditions en PHP ; SqlStore traduit les opérateurs
+ * génériques en clauses SQL préparées. Les parcours métier qui le nécessitent
+ * peuvent aussi appeler des procédures via les interfaces de capacité.
  *
  * ---------------------------------------------------------------------------
  * Spécification des tris (« order »)
@@ -40,11 +41,12 @@ declare(strict_types=1);
  * ---------------------------------------------------------------------------
  * Cycle de vie et intégrité
  * ---------------------------------------------------------------------------
- * insert()/update()/delete() appliquent : valeurs par défaut, coercition de
- * type, NOT NULL, ENUM, UNIQUE, CHECK (déclarés dans Schema) puis les
- * déclencheurs métier (Triggers) — l'équivalent exact des 16 triggers SQL.
- * Les écritures multi-tables passent par beginTransaction()/commit() avec
- * rollback automatique si une exception est levée (ENF-16).
+ * insert()/update()/delete() appliquent le schéma et les déclencheurs métier
+ * du pilote actif : validation PHP/Triggers pour JsonStore, contraintes et
+ * triggers SQL pour SqlStore. Les écritures applicatives multi-tables passent
+ * par beginTransaction()/commit() avec rollback automatique en cas d'exception
+ * (ENF-16) ; les procédures SQL qui possèdent leur transaction sont appelées
+ * sans transaction englobante.
  */
 
 namespace App\Model\Data;

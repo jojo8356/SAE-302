@@ -9,14 +9,12 @@ declare(strict_types=1);
  *   v_catalogue         : produits visibles + catégorie + état (RB-19)
  *   v_commandes_client  : commandes + client + nombre de lignes
  *
- * Une seule définition des formules partagées par le front-office, le
- * back-office et les procédures (évite la divergence de calcul, cf. RB-16 /
- * RB-19 / ENF-13). Le jour du basculement StorageDriver::SQL, ces méthodes
- * deviennent des CREATE VIEW identiques à sql/01 — les contrôleurs n'ont
- * aucune modification à faire.
+ * Ces opérations fournissent l'équivalent applicatif des vues SQL au pilote
+ * JSON. Les règles utiles (état de stock, visibilité et agrégats) restent
+ * alignées sur les définitions de sql/01_minishop_schema.sql.
  *
- * Techniquement : jointures par table de hachage (index pk du store), zéro
- * requête, zéro SQL — uniquement des opérations de tableaux natifs.
+ * Techniquement, pour le pilote JSON : jointures par table de hachage (index
+ * pk du store), zéro SQL — uniquement des opérations de tableaux natifs.
  */
 
 namespace App\Model\Data;

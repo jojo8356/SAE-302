@@ -428,7 +428,8 @@ echo "\nJ. UC-10 — gestion des produits (EF-ADM-01/02, RB-02/03/07/09/16/17/19
     $idSansTva = $repo->saveProduct(null, 'WEB-105', 'Sans TVA', null, null, 100.00, 0.0, 1, 1, 2, true, null);
     $check('TVA = 0 acceptée (produit non soumis)', (float) $store->find('produit', $idSansTva)['prix_ttc'] === 100.00);
 
-    $repo->saveProduct($id, 'WEB-100', 'Caméra Web 4K', null, 'Mise à jour', 79.00, 20.0, 10, 3, 2, false, null);
+    $repo->saveProduct($id, 'WEB-100', 'Caméra Web 4K', null, 'Mise à jour', 79.00, 20.0, 999, 3, 2, false, null);
+    $check('modification de fiche : le stock reste inchangé hors ajustement motivé', (int) $store->find('produit', $id)['stock'] === 10);
     $check('modification : slug suit le nom, prix recalculé, masqué', $store->find('produit', $id)['slug'] === 'camera-web-4k'
         && (float) $store->find('produit', $id)['prix_ttc'] === 94.80 && (int) $store->find('produit', $id)['visible'] === 0);
     $repo->saveProduct($id, 'WEB-100', 'Caméra Web 4K', 'camera-web-hd', null, 79.00, 20.0, 10, 3, 2, true, null);
@@ -468,10 +469,21 @@ echo "\nL. UC-12 — gestion des stocks (EF-ADM-04/05, RB-03)\n";
     $repo = new ProduitRepository($store);
     $id = pid($store, 'ENCH-006'); // stock 30, seuil 8
     $attendu('MOTIF_STOCK_REQUIS', fn () => $repo->adjustStock($id, 'DELTA', 5, ''));
+    $attendu('MODE_STOCK_INVALIDE', fn () => $repo->adjustStock($id, 'ADD', 5, 'réception'));
     $check('DELTA +15 avec motif', $repo->adjustStock($id, 'DELTA', 15, 'réception fournisseur') === 45);
     $check('SET 0 avec motif', $repo->adjustStock($id, 'SET', 0, 'inventaire') === 0);
     $attendu('RB03_STOCK_NE_PEUT_PAS_ETRE_NEGATIF', fn () => $repo->adjustStock($id, 'DELTA', -99999, 'casse'));
     $check('stock inchangé après refus', (int) $store->find('produit', $id)['stock'] === 0);
+    $mouvements = $store->select('stock_movement_history', [
+        'where' => [Filter::eq('id_produit', $id)],
+        'order' => [['id_mouvement', 'asc']],
+    ]);
+    $check('audit des deux mouvements réussis : stocks, motifs et acteur', count($mouvements) === 2
+        && (int) $mouvements[0]['stock_avant'] === 30 && (int) $mouvements[0]['stock_apres'] === 45
+        && $mouvements[0]['motif'] === 'réception fournisseur'
+        && $mouvements[1]['motif'] === 'inventaire'
+        && ($mouvements[0]['changed_by_role'] ?? '') === 'ADMIN'
+        && (int) ($mouvements[0]['changed_by'] ?? 0) === 1);
     $etats = array_column((new Views($store))->etatStocks(), 'etat', 'reference');
     $check('v_etat_stock : ENCH en RUPTURE, POWER en RUPTURE', $etats['ENCH-006'] === 'RUPTURE' && $etats['POWER-010'] === 'RUPTURE');
     $alertes = array_column($repo->alertesStock(), 'reference');

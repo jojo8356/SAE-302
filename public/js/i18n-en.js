@@ -117,6 +117,8 @@
         'Nouveautés': 'Newest',
         'Stock': 'Stock',
         'Stock *': 'Stock *',
+        'Stock initial *': 'Initial stock *',
+        'Stock actuel :': 'Current stock:',
         'Les produits en rupture sont affichés en dernier.': 'Out-of-stock products are listed last.',
         'Uniquement en stock': 'In stock only',
         'En stock uniquement': 'In stock only',
@@ -414,7 +416,7 @@
         '✘ masqué': '✘ hidden',
         '✘ bloqué': '✘ blocked',
         'Modifier': 'Edit',
-        'Fiche produit (référence et slug uniques, prix HT > 0, stock ≥ 0, prix TTC dérivé automatiquement)': 'Product sheet (unique reference and slug, price excl. VAT > 0, stock ≥ 0, price incl. VAT derived automatically)',
+        'Fiche produit (référence et slug uniques, prix HT > 0, stock initial ≥ 0 à la création, prix TTC dérivé automatiquement)': 'Product details (unique reference and slug, pre-tax price > 0, initial stock ≥ 0 at creation, tax-inclusive price derived automatically)',
         'Informations produit': 'Product information',
         'Image (URL)': 'Image (URL)',
         'Stock de ce produit': 'Product stock',
@@ -823,6 +825,7 @@
         'Un stock négatif a été détecté lors de la validation.': 'Negative stock was detected during checkout.',
         'Ce produit n’est plus disponible au catalogue.': 'This product is no longer available in the catalog.',
         'Toute écriture de stock doit porter un motif.': 'Every stock adjustment must include a reason.',
+        'Le mode d’ajustement du stock est invalide.': 'The stock adjustment mode is invalid.',
         'Cette référence produit existe déjà.': 'This product reference already exists.',
         'Ce slug produit existe déjà.': 'This product slug already exists.',
         'Ce nom de catégorie existe déjà.': 'This category name already exists.',
@@ -926,6 +929,9 @@
         [/^Bienvenue (.+) ! Votre compte est créé\.$/, 'Welcome $1! Your account has been created.'],
         [/^Bienvenue dans le back-office, (.+)\.$/, 'Welcome to the back-office, $1.'],
         [/^Statut mis à jour : ([A-Z_]+)\.$/, function (_, s) { return 'Status updated: ' + traduireChaine(s) + '.'; }],
+        [/^(\d+) unité\(s\)$/, function (_, n) {
+            return n + (n === '1' ? ' unit' : ' units');
+        }],
         [/^Stock mis à jour : (\d+) unité\(s\)\.$/, function (_, n) {
             return 'Stock updated: ' + n + (n === '1' ? ' unit.' : ' units.');
         }],

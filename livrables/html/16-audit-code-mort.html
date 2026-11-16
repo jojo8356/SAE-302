@@ -174,7 +174,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </table>
 <p>Le contrôle détecte les paramètres non cités et certaines variables locales <strong>écrites une seule fois</strong>, ainsi que les noms de fonctions/méthodes sans autre mention textuelle. Il ne prouve ni l’atteignabilité ni l’absence d’utilisation : références indirectes, portée, héritage, récursion, <code>include</code>, <code>compact</code>, variables dynamiques, réflexion, dépendances et appels externes limitent le résultat. Il ne détecte pas toutes les écritures répétées sans lecture, les variables au niveau fichier ou le code mort CSS/JS/SQL. Aucune suppression automatique.</p>
 <h2 id="inventaire-fichier-par-fichier">Inventaire fichier par fichier<a class="headerlink" href="#inventaire-fichier-par-fichier" title="Permanent link">#</a></h2>
-<p>Tailles en octets historiques mesurées lors du premier audit (<code>870dda5</code>) ; les fichiers ont pu être modifiés depuis. L’exception d’accès refusé a été ajoutée ensuite. <code>—</code> : fichier non PHP. Les références listées sont des exemples, pas une liste exhaustive.</p>
+<p>Tailles en octets historiques mesurées lors du premier audit (<code>870dda5</code>) ; les fichiers ont pu être modifiés depuis. Pour les fichiers ajoutés depuis, la taille est mesurée au relevé du 23/10/2026. L’exception d’accès refusé a été ajoutée ensuite. <code>—</code> : fichier non PHP. Les références listées sont des exemples, pas une liste exhaustive.</p>
 <table>
 <thead>
 <tr>
@@ -366,6 +366,12 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <td>Type d’exception de requête incorrecte ; classe vide héritant de RuntimeException. Références : <code>app/Model/Data/Errors.php</code>, <code>app/Model/Data/JsonStore.php</code>, <code>docs/07-note-cybersecurite.md</code>….</td>
 </tr>
 <tr>
+<td><code>app/Model/Data/RowLockingStore.php</code></td>
+<td style="text-align: right;">336</td>
+<td style="text-align: right;">0</td>
+<td>Capacité optionnelle de verrouillage de ligne ; utilisée par le pilote SQL, les dépôts et le service de rétention sans référence à <code>SqlStore</code>.</td>
+</tr>
+<tr>
 <td><code>app/Model/Data/Schema.php</code></td>
 <td style="text-align: right;">12118</td>
 <td style="text-align: right;">4</td>
@@ -387,19 +393,43 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <td><code>app/Model/Data/SqlStore.php</code></td>
 <td style="text-align: right;">25378</td>
 <td style="text-align: right;">35</td>
-<td>Implémentation du stockage SQL/PDO ; choix alternatif à JSON. Références : <code>app/Config/Database.php</code>, <code>app/Config/DbConnexion.php</code>, <code>app/Model/Data/Errors.php</code>….</td>
+<td>Implémentation du pilote SQL/PDO sélectionné par défaut ; JSON reste une option explicite secondaire. Les capacités SQL spécialisées sont exposées par interfaces. Références : <code>app/Config/Database.php</code>, <code>app/Config/DbConnexion.php</code>, <code>app/Model/Data/Errors.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Model/Data/StockMovementAuditor.php</code></td>
+<td style="text-align: right;">598</td>
+<td style="text-align: right;">1</td>
+<td>Capacité optionnelle de traçabilité des ajustements de stock, utilisée par <code>ProduitRepository</code> et implémentée par le store JSON.</td>
 </tr>
 <tr>
 <td><code>app/Model/Data/StorageDriver.php</code></td>
 <td style="text-align: right;">2064</td>
 <td style="text-align: right;">3</td>
-<td>Énumération et sélection des pilotes JSON et SQL. Références : <code>app/Config/Database.php</code>, <code>app/Config/env.example.php</code>, <code>app/Model/Data/BusinessError.php</code>….</td>
+<td>Énumération des pilotes ; SQL est le défaut et JSON un mode explicitement sélectionné en option. Références : <code>app/Config/Database.php</code>, <code>app/Config/env.example.php</code>, <code>app/Model/Data/BusinessError.php</code>….</td>
 </tr>
 <tr>
 <td><code>app/Model/Data/StoreInterface.php</code></td>
 <td style="text-align: right;">6374</td>
 <td style="text-align: right;">0</td>
 <td>Contrat de stockage : signatures abstraites sans corps, implémentées par les pilotes. Références : <code>app/Config/Database.php</code>, <code>app/Model/Data/Filter.php</code>, <code>app/Model/Data/JsonStore.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Model/Data/StoredFunctionExecutor.php</code></td>
+<td style="text-align: right;">281</td>
+<td style="text-align: right;">0</td>
+<td>Capacité optionnelle d’appel des fonctions SQL stockées ; utilisée par <code>ParametreRepository</code>, sans l’imposer au pilote JSON.</td>
+</tr>
+<tr>
+<td><code>app/Model/Data/StoredProcedureExecutor.php</code></td>
+<td style="text-align: right;">755</td>
+<td style="text-align: right;">0</td>
+<td>Capacité optionnelle d’exécution des procédures stockées ; implémentée par le pilote SQL, sans imposer d’API SQL au pilote JSON.</td>
+</tr>
+<tr>
+<td><code>app/Model/Data/StoredProcedureResultExecutor.php</code></td>
+<td style="text-align: right;">827</td>
+<td style="text-align: right;">0</td>
+<td>Extension permettant de récupérer les jeux de résultats et paramètres OUT des procédures ; utilisée par les repositories SQL.</td>
 </tr>
 <tr>
 <td><code>app/Model/Data/Text.php</code></td>
@@ -432,10 +462,22 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <td>Accès et règles métier des catégories. Références : <code>app/Controller/Admin/CategorieAdminController.php</code>, <code>app/Controller/Admin/ProduitAdminController.php</code>, <code>app/Controller/CatalogueController.php</code>….</td>
 </tr>
 <tr>
+<td><code>app/Repository/ClientAccountGateway.php</code></td>
+<td style="text-align: right;">799</td>
+<td style="text-align: right;">0</td>
+<td>Port métier des stratégies de création de compte et de lecture des identifiants. Implémentations : stratégies SQL et générique.</td>
+</tr>
+<tr>
+<td><code>app/Repository/ClientAccountGatewayFactory.php</code></td>
+<td style="text-align: right;">701</td>
+<td style="text-align: right;">1</td>
+<td>Sélectionne la stratégie de compte à partir de la capacité <code>StoredProcedureExecutor</code>, sans coupler le repository à <code>SqlStore</code>.</td>
+</tr>
+<tr>
 <td><code>app/Repository/ClientRepository.php</code></td>
 <td style="text-align: right;">5125</td>
 <td style="text-align: right;">8</td>
-<td>Comptes clients et identifiants. Références : <code>app/Controller/AuthController.php</code>, <code>app/Controller/CommandeController.php</code>, <code>app/Controller/CompteController.php</code>….</td>
+<td>Comptes clients et identifiants ; délègue la persistance à <code>ClientAccountGateway</code>. Références : <code>app/Controller/AuthController.php</code>, <code>app/Controller/CommandeController.php</code>, <code>app/Controller/CompteController.php</code>….</td>
 </tr>
 <tr>
 <td><code>app/Repository/CommandeRepository.php</code></td>
@@ -454,6 +496,18 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <td style="text-align: right;">11040</td>
 <td style="text-align: right;">11</td>
 <td>Recherche, produits et ajustements de stock. Références : <code>app/Controller/Admin/DashboardController.php</code>, <code>app/Controller/Admin/ProduitAdminController.php</code>, <code>app/Controller/Admin/StockAdminController.php</code>….</td>
+</tr>
+<tr>
+<td><code>app/Repository/SqlClientAccountGateway.php</code></td>
+<td style="text-align: right;">2432</td>
+<td style="text-align: right;">2</td>
+<td>Adaptateur SQL des procédures <code>sp_create_account</code> et <code>sp_get_credentials</code> vers le port métier <code>ClientAccountGateway</code>.</td>
+</tr>
+<tr>
+<td><code>app/Repository/StoreClientAccountGateway.php</code></td>
+<td style="text-align: right;">1476</td>
+<td style="text-align: right;">2</td>
+<td>Stratégie générique de persistance des comptes, utilisée par le pilote JSON et les stores sans capacité de procédure.</td>
 </tr>
 <tr>
 <td><code>app/Router.php</code></td>

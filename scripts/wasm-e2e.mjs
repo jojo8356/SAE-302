@@ -396,7 +396,7 @@ process.stdout.write(B('T6 · cloisonnement des accès (RB-13, SEC-05, SEC-08)')
   const jb = await bruno.csrf('/connexion');
   await bruno.post('/connexion', { _csrf: jb, email: 'bruno@example.com', mot_de_passe: 'Demo2026!' });
   const vol = await bruno.get('/mes-commandes/1');
-  check('commande d\'autrui → redirection + message', vol.httpStatusCode === 302, `status ${vol.httpStatusCode}`);
+  check('commande d\'autrui → 404 générique (SEC-08)', vol.httpStatusCode === 404, `status ${vol.httpStatusCode}`);
 
   // POST sans jeton CSRF → rejet (SEC-05)
   const pirate = new Navigateur('pirate');
@@ -825,9 +825,9 @@ process.stdout.write(B('T12 · sécurité offensive (S-01…S-10)'));
   let idorOk = true;
   for (const id of [1, 2, 3, 4]) {
     const r = await bruno.get(`/mes-commandes/${id}`);
-    if (r.httpStatusCode !== 302) idorOk = false;
+    if (r.httpStatusCode !== 404) idorOk = false;
   }
-  check('boucle IDOR 1..4 : toujours redirigé (SEC-08)', idorOk, 'une commande accessible');
+  check('boucle IDOR 1..4 : toujours 404 générique (SEC-08)', idorOk, 'une commande accessible');
 
   // S-04/S-05 : fixation de session — l'identifiant est régénéré à la connexion
   const pirate = new Navigateur('t12-pirate');
