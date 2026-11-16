@@ -6,12 +6,12 @@
 
 | Mode | Prérequis principaux | Ce qui n’est pas nécessaire |
 |---|---|---|
-| **Mode standard (JSON, par défaut)** | PHP **8.2+**, extensions `json` et `mbstring`, système de fichiers accessible en écriture pour les données et, si utilisé, le journal ; Bash pour `run.sh`. | Serveur SQL, PDO MySQL, Composer, Node.js, npm, Python et dépendances de génération documentaire. |
-| **Mode SQL (optionnel)** | Même base PHP, plus PDO avec l’extension `pdo_mysql`, serveur **MySQL 8.0.16+** ou **MariaDB 10.6+**, base préalablement préparée et accès SQL configuré. Sur Debian 13 / Ubuntu récent, la cible privilégiée du projet est `mariadb-server`. | Node.js et les bibliothèques JavaScript/Python de développement. |
+| **Mode standard (SQL, par défaut)** | PHP **8.2+**, extensions `json`, `mbstring` et `pdo_mysql`, serveur **MySQL 8.0.16+** ou **MariaDB 10.6+**, base et accès SQL configurés ; Bash pour `run.sh`. | Composer, Node.js, npm, Python et dépendances de génération documentaire. |
+| **Mode secondaire (JSON explicite)** | PHP **8.2+**, extensions `json` et `mbstring`, système de fichiers accessible en écriture pour les données et, si utilisé, le journal ; Bash pour `run.sh` ; `STORAGE_DRIVER=json`. | Serveur SQL et PDO MySQL pour ce mode uniquement ; Node.js et outils de développement. |
 | **Serveur Web de développement** | Le script `run.sh` démarre le serveur intégré de PHP et `scripts/dev-router.php`. Le script de lancement utilise Bash. | Apache n’est pas nécessaire pour ce démarrage local. Le serveur PHP intégré n’est pas une recommandation de production. |
 | **Hébergement Apache** | DocumentRoot pointant vers `public/`, Apache avec `mod_rewrite` et configuration autorisant les règles de `public/.htaccess`. | Le serveur PHP intégré n’est pas utilisé derrière Apache de cette manière. La configuration réelle d’un hébergement doit être vérifiée. |
 
-L’application peut se lancer sans installer les outils de qualité ou de test. Le pilote JSON est le choix initial ; les fichiers SQL ne créent pas un service de base de données à eux seuls.
+L’application peut se lancer sans installer les outils de qualité ou de test, mais le mode par défaut requiert un serveur MySQL/MariaDB opérationnel et un schéma initialisé. Les scripts SQL ne créent pas le service SGBD ; JSON reste un mode secondaire à activer explicitement.
 
 ## 2. Langages et technologies d’exécution
 
@@ -20,18 +20,18 @@ L’application peut se lancer sans installer les outils de qualité ou de test.
 | PHP | **8.2 minimum** (`composer.json`, `run.sh`) | Contrôleurs, règles serveur, repositories, vues PHP, sessions, accès aux données et outils CLI. Le code emploie notamment les enums et les types stricts. |
 | Extensions PHP `json`, `mbstring` | Nécessaires au mode applicatif standard selon `run.sh` | JSON pour la configuration/données et opérations de chaînes Unicode telles que `mb_substr`. |
 | Extension PHP `intl` | Optionnelle dans le code d’application | Services ICU (`Transliterator`, `Collator`) quand disponibles ; le code prévoit des replis si l’extension manque. Les environnements de test peuvent l’installer pour couvrir ces chemins. |
-| PDO et `pdo_mysql` | Uniquement pour le pilote SQL | Connexion MySQL/MariaDB et requêtes préparées. Pas de connexion SQL en mode JSON. |
+| PDO et `pdo_mysql` | Requis par le pilote SQL, utilisé par défaut | Connexion MySQL/MariaDB et requêtes préparées. Pas de connexion SQL si `STORAGE_DRIVER=json` est explicitement choisi. |
 | HTML | HTML5 | Templates serveur sous `app/View/` et ressources publiques. |
 | CSS | CSS natif | Design system, présentation responsive (`public/css/app.css`) et impression (`public/css/print.css`). Aucun compilateur CSS n’est requis par l’application. |
 | JavaScript | JavaScript natif du navigateur | Préférences, traductions, comportements transverses et amélioration progressive du panier. Aucun framework front-end ni bundle à construire. |
 | JSON | Format de données | Fichiers du pilote JSON et réponses de l’API interne du panier. |
-| SQL | MySQL/MariaDB | Schéma, contraintes, vues, procédures, fonction, déclencheurs, données de démonstration et scripts de migration dans `sql/`. |
+| SQL | MySQL/MariaDB | Schéma, contraintes, vues, procédures, fonction, déclencheurs, données de démonstration et scripts d’initialisation dans `sql/`. |
 | Shell Bash | Bash pour `run.sh` et plusieurs outils | Démarrage local, scripts de tests, contrôles et génération documentaire. |
 
 ### Extensions PHP : détail à connaître
 
-- `run.sh` vérifie `json` et `mbstring` pour l’application. La bibliothèque standard PHP fournit les autres fonctions PHP utilisées en mode JSON.
-- `pdo_mysql` est nécessaire seulement avec `STORAGE_DRIVER=sql`. `pdo` doit être disponible avec le pilote MySQL correspondant.
+- `run.sh` vérifie `json` et `mbstring` pour l’application ; avec le pilote SQL par défaut, il vérifie aussi `pdo_mysql` et l’état de la base configurée. La bibliothèque standard PHP fournit les autres fonctions utilisées.
+- `pdo_mysql` et `pdo` sont requis par défaut ; ils ne sont pas nécessaires si `STORAGE_DRIVER=json` est explicitement choisi.
 - `intl` n’est pas une condition générale de démarrage : `app/Model/Data/Text.php` vérifie la disponibilité des classes ICU et utilise des replis.
 - `composer.json` déclare également `ext-tokenizer` dans sa section `require`. Cette extension sert surtout aux scripts d’analyse du code utilisant le tokenizer PHP ; l’application HTTP peut être amorcée par son autoloader local sans `vendor/` ni Composer.
 - `mbstring` est un prérequis d’exécution vérifié par `run.sh`, mais ne figure pas dans la section `require` de Composer : il faut donc le traiter comme prérequis PHP même si Composer ne le signale pas.
@@ -44,8 +44,8 @@ L’application n’utilise pas de framework PHP ou de dépendance Packagist cha
 
 Le stockage sélectionné par `STORAGE_DRIVER` est :
 
-- **`json` — valeur par défaut :** moteur local de `app/Model/Data/JsonStore.php`. Les tables sont stockées en fichiers JSON sous `data/minishop/`, ou sous le chemin configuré dans `DATA_PATH`.
-- **`sql` — optionnel :** `app/Model/Data/SqlStore.php` avec PDO MySQL. La base doit exister et être initialisée avec le schéma SQL correspondant avant l’utilisation ; les scripts du dépôt fournissent également les vues, routines et déclencheurs du modèle relationnel. Les versions compatibles documentées par le projet sont MySQL **8.0.16+** et MariaDB **10.6+**.
+- **`sql` — valeur par défaut :** `app/Model/Data/SqlStore.php` via PDO MySQL/MariaDB. La base doit être créée et initialisée avant l’utilisation ; `scripts/db_init.php` fournit les outils d’installation. Les versions compatibles documentées par le projet sont MySQL **8.0.16+** et MariaDB **10.6+**.
+- **`json` — mode secondaire explicite :** moteur local de `app/Model/Data/JsonStore.php`. Les tables sont stockées en fichiers JSON sous `data/minishop/`, ou sous le chemin configuré dans `DATA_PATH`. Activer par `STORAGE_DRIVER=json`.
 
 La configuration passe par `.env.example` (modèle versionné), `.env` local ignoré par Git et variables d’environnement. Les clés comprennent `APP_ENV`, `APP_DEBUG`, `STORAGE_DRIVER`, `DATA_PATH`, `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` et `DB_SOCKET`. Une variable d’environnement réelle est prioritaire sur la valeur de `.env`. Ne jamais ajouter les secrets dans Git.
 
@@ -115,8 +115,8 @@ Aucun bundler front-end, CDN, framework JavaScript ou service de géolocalisatio
 
 ## 7. Synthèse des dépendances par contexte
 
-- **Pour lancer simplement :** PHP 8.2+, `json`, `mbstring`, Bash et le dépôt ; démarrer en mode JSON avec `./run.sh`.
-- **Pour SQL :** ajouter un serveur MySQL/MariaDB de version compatible et `pdo_mysql`, puis configurer `.env` et préparer une base dédiée.
+- **Pour le mode standard :** PHP 8.2+, `json`, `mbstring`, `pdo_mysql`, un serveur MySQL/MariaDB compatible et une base configurée/préparée ; démarrer avec `./run.sh`.
+- **Pour le mode secondaire JSON :** ajouter `STORAGE_DRIVER=json` à `.env` ; le serveur SQL et `pdo_mysql` ne sont alors pas utilisés.
 - **Pour les suites PHP natives :** PHP natif, Python 3 pour le runner global ; PHPUnit/Composer sont requis seulement pour les commandes qui utilisent le vrai PHPUnit. La suite SQL a ses prérequis distincts.
 - **Pour les tests JavaScript/navigateur :** Node 22 dans la CI, les paquets verrouillés par `package-lock.json` et Chromium pour Playwright. Ce contexte est facultatif.
 - **Pour régénérer les documents :** Python 3.10+ et les paquets listés dans `requirements-docs.txt`; Java 17 et PlantUML seulement pour recalculer les diagrammes.

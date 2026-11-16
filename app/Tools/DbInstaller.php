@@ -6,7 +6,7 @@ declare(strict_types=1);
  * MiniShop — installation locale de la base MySQL/MariaDB.
  *
  * Regroupe en une seule classe ce qu'un développeur doit faire à la main :
- * créer la base si elle manque, y charger `sql/01 → 04` (schéma, 17 procédures,
+ * créer la base si elle manque, y charger `sql/01 → 04` (schéma, 18 procédures,
  * 16 déclencheurs, jeu de démonstration), puis **vérifier** que les objets
  * attendus existent réellement. Utilisé par `scripts/db_init.php` et
  * `scripts/load_db.php` (qui reste l'enveloppe historique).
@@ -37,13 +37,13 @@ use RuntimeException;
 final class DbInstaller
 {
     /** Objets attendus après chargement de `sql/01 → 03` (CDC §16.2). */
-    public const TABLES_ATTENDUES = 8;
+    public const TABLES_ATTENDUES = 9;
     public const VUES_ATTENDUES = 3;
-    public const PROCEDURES_ATTENDUES = 17;
+    public const PROCEDURES_ATTENDUES = 18;
     public const FONCTIONS_ATTENDUES = 1;
 
-    /** Minimum de déclencheurs : le compte exact dépend des versions (16 attendus). */
-    public const TRIGGERS_ATTENDUS = 5;
+    /** Les 16 déclencheurs définis dans sql/03 doivent être installés. */
+    public const TRIGGERS_ATTENDUS = 16;
 
     /** Volumétrie du jeu de démonstration (`sql/04_minishop_demo.sql`). */
     public const PRODUITS_DEMO = 12;

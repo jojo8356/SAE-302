@@ -144,6 +144,33 @@ CREATE INDEX idx_produit_categorie ON produit (id_categorie);
 CREATE INDEX idx_produit_visible    ON produit (visible, stock);
 
 -- ---------------------------------------------------------------------
+-- Table STOCK_MOVEMENT_HISTORY
+-- Ajustements manuels validés par sp_adjust_stock. Pas de FK vers PRODUIT :
+-- le snapshot d'audit survit à la suppression d'un produit.
+-- ---------------------------------------------------------------------
+DROP TABLE IF EXISTS stock_movement_history;
+CREATE TABLE stock_movement_history (
+  id_mouvement       BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  id_produit         INT UNSIGNED NOT NULL,
+  reference_produit  VARCHAR(30)  NOT NULL,
+  nom_produit        VARCHAR(150) NOT NULL,
+  mode_mouvement     ENUM('SET','DELTA') NOT NULL,
+  quantite           INT          NOT NULL,
+  stock_avant        INT          NOT NULL,
+  stock_apres        INT          NOT NULL,
+  motif              VARCHAR(200) NOT NULL,
+  changed_by         INT UNSIGNED NULL COMMENT 'identifiant du compte selon changed_by_role',
+  changed_by_role    ENUM('CLIENT','ADMIN','SYSTEME') NOT NULL DEFAULT 'SYSTEME',
+  changed_at         DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT pk_stock_movement_history PRIMARY KEY (id_mouvement),
+  CONSTRAINT ck_stock_movement_stock_avant CHECK (stock_avant >= 0),
+  CONSTRAINT ck_stock_movement_stock_apres CHECK (stock_apres >= 0),
+  CONSTRAINT ck_stock_movement_motif CHECK (CHAR_LENGTH(TRIM(motif)) > 0),
+  INDEX idx_stock_movement_product (id_produit, changed_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  COMMENT='Audit transactionnel des ajustements manuels de stock (sp_adjust_stock)';
+
+-- ---------------------------------------------------------------------
 DROP TABLE IF EXISTS parametre;
 CREATE TABLE parametre (
   cle     VARCHAR(50)  NOT NULL,

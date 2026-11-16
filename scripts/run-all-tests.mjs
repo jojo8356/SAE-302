@@ -25,6 +25,9 @@ import { existsSync } from 'node:fs';
 // Le drapeau bloque la provision applicative (DbProvision::contexteDeTest()).
 // Attention : la suite SQL explicite peut créer et supprimer minishop_test.
 process.env.MINISHOP_TESTS = '1';
+// Les suites PHP fonctionnelles reposent explicitement sur le store JSON isolé ;
+// seule sql_integration ouvre un SqlStore sur sa base jetable dédiée.
+process.env.STORAGE_DRIVER = 'json';
 const options = process.argv.slice(2);
 if (options.some(option => !['--sans-sql', '--sans-e2e'].includes(option))) {
   console.error('Usage : node scripts/run-all-tests.mjs [--sans-sql] [--sans-e2e]');

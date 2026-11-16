@@ -121,6 +121,9 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <strong>Public</strong> : la personne en charge des requêtes SQL de l'application PHP
 <strong>Version</strong> : 1.0 — 23 septembre 2026
 <strong>Base</strong> : MariaDB 11.8, schéma <code>minishop</code>, charset <code>utf8mb4</code></p>
+<blockquote>
+<p><strong>Archive historique, non-todolist.</strong> Ce document décrit une photographie de conception du 23/09/2026 et ne doit pas être utilisé comme liste actuelle de SQL à écrire ni comme inventaire complet. Les sources <code>sql/</code> ont depuis évolué : l’état statique courant compte 9 tables SQL et 18 procédures ; un point d’appel repository est repéré pour chacune. SQL est le pilote applicatif par défaut, JSON reste une option explicite. Cela ne prouve pas l’exécution PDO/MySQL. Voir <code>docs/01</code>, <code>docs/04</code> et <code>docs/21</code> pour l’état actuel.</p>
+</blockquote>
 <hr />
 <h2 id="0-ce-qui-est-deja-fait-a-ne-pas-reecrire">0. Ce qui est DÉJÀ FAIT (à ne pas réécrire)<a class="headerlink" href="#0-ce-qui-est-deja-fait-a-ne-pas-reecrire" title="Permanent link">#</a></h2>
 <p>Les objets suivants existent dans <code>sql/</code> et <strong>ne doivent pas être recodés en PHP</strong> — l'application ne fait

@@ -16,8 +16,8 @@ declare(strict_types=1);
  *     en flash, redirection ; les erreurs techniques affichent une page 500
  *     générique (SEC-03), le détail n'est visible qu'en mode DEBUG.
  *
- * Moteur de données : JSON par défaut (StorageDriver), prêt pour la
- * migration SQL finale sans toucher aux contrôleurs.
+ * Moteur de données : SQL par défaut via StorageDriver ; le mode JSON reste
+ * une option explicite pour les démonstrations et tests isolés.
  */
 
 require_once dirname(__DIR__) . '/app/bootstrap.php';

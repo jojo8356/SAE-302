@@ -89,8 +89,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <body>
 <main id="contenu">
 <h1 id="annexe-173-exigences-non-fonctionnelles-enf">Annexe 17.3 — Exigences non fonctionnelles (ENF)<a class="headerlink" href="#annexe-173-exigences-non-fonctionnelles-enf" title="Permanent link">#</a></h1>
-<p>Chaque exigence est <strong>vérifiable</strong> : la colonne « moyen de vérification » donne la commande, la requête ou
-la manipulation qui prouve la conformité. Une exigence sans moyen de vérification a été supprimée du document.</p>
+<p>Chaque exigence est <strong>vérifiable en principe</strong> : la colonne « moyen de vérification » définit une commande, une requête ou une manipulation à exécuter. La présence d’un protocole ou d’un identifiant <code>T-*</code>/<code>F-*</code> ne prouve pas son exécution ni la conformité ; un résultat doit être rattaché à un run daté, au SHA testé, à l’environnement et aux sorties conservées.</p>
 <table>
 <thead>
 <tr>
@@ -106,10 +105,10 @@ la manipulation qui prouve la conformité. Une exigence sans moyen de vérificat
 <tr>
 <td><code>ENF-01</code></td>
 <td>Performance</td>
-<td>Pages de liste en &lt; 500 ms (p95) <strong>sur la volumétrie retenue avec le client : 200 produits et 1 000 commandes/an</strong> (jeu généré par <code>scripts/gen_volumes.sh</code>), mesuré sur le poste de soutenance et en base seule (<code>tests/perf/mesurer.sh --sql-only</code>)</td>
-<td>p95 &lt; 500 ms, moy &lt; 300 ms</td>
-<td><code>bash tests/perf/mesurer.sh</code> (200 requêtes HTTP, <code>curl -w '%{time_total}'</code>) <strong>et</strong> <code>DB=minishop_perf ./tests/perf/mesurer_sql.sh 50</code> (base seule, mesuré : 15–17 ms de moyenne sur 212 produits / 992 commandes) ; nombre de requêtes via <code>general_log</code> ≤ 5</td>
-<td>protocole livré, mesure à exécuter</td>
+<td>Pages de liste en &lt; 500 ms (p95) <strong>sur la volumétrie cible : 200 produits et 1 000 commandes/an</strong> (jeu prévu par <code>scripts/gen_volumes.sh</code>)</td>
+<td>p95 &lt; 500 ms, moyenne &lt; 300 ms</td>
+<td><code>bash tests/perf/mesurer.sh</code> (200 requêtes HTTP) et <code>DB=minishop_perf ./tests/perf/mesurer_sql.sh 50</code> ; consigner les mesures et le nombre de requêtes via <code>general_log</code></td>
+<td>protocole présent ; mesure cible non revendiquée dans cette révision. Une ancienne valeur 15–17 ms est une mention d’archive sans preuve rattachée au SHA examiné</td>
 </tr>
 <tr>
 <td><code>ENF-02</code></td>
@@ -132,32 +131,32 @@ la manipulation qui prouve la conformité. Une exigence sans moyen de vérificat
 <td>Ergonomie</td>
 <td>pagination 12 par défaut, borne haute 60, page demandée toujours honorée</td>
 <td>1 ≤ <code>par_page</code> ≤ 60</td>
-<td><code>CALL sp_search_products(…, 500, …)</code> renvoie 60 lignes maximum (test <code>T-25</code>)</td>
-<td>✅</td>
+<td>scénario <code>T-25</code> prévu pour contrôler <code>CALL sp_search_products(…, 500, …)</code></td>
+<td>à rejouer ; pas de résultat actuel revendiqué</td>
 </tr>
 <tr>
 <td><code>ENF-05</code></td>
 <td>Ergonomie</td>
 <td>état des filtres conservé dans l'URL (partageable, rechargeable, retournable)</td>
 <td>query string complet</td>
-<td>test F-03 (copier l'URL, l'ouvrir en navigation privée)</td>
-<td>✅ attendu</td>
+<td>scénario <code>F-03</code> prévu (copier l'URL, l'ouvrir en navigation privée)</td>
+<td>résultat attendu ; à rejouer</td>
 </tr>
 <tr>
 <td><code>ENF-06</code></td>
 <td>Ergonomie</td>
 <td>aucun formulaire ne perd la saisie en cas de refus serveur</td>
 <td>100 % des erreurs de règle re-rendent le formulaire</td>
-<td>tests F-07, F-10, F-22</td>
-<td>✅ attendu</td>
+<td>scénarios <code>F-07</code>, <code>F-10</code>, <code>F-22</code> prévus</td>
+<td>résultat attendu ; à rejouer</td>
 </tr>
 <tr>
 <td><code>ENF-07</code></td>
 <td>Robustesse / accessibilité</td>
 <td><strong>tout</strong> le parcours d'achat fonctionne JavaScript désactivé</td>
 <td>JS = confort uniquement</td>
-<td>test F-13 (JS désactivé dans devtools : panier + commande OK)</td>
-<td>✅ attendu</td>
+<td>scénario <code>F-13</code> prévu avec JavaScript désactivé</td>
+<td>résultat attendu ; à rejouer</td>
 </tr>
 <tr>
 <td><code>ENF-08</code></td>
@@ -178,66 +177,66 @@ la manipulation qui prouve la conformité. Une exigence sans moyen de vérificat
 <tr>
 <td><code>ENF-10</code></td>
 <td>Portabilité</td>
-<td>fonctionne sur MySQL 8.0.16+ <strong>et</strong> MariaDB 10.6+ ; fonctionne sous Apache avec <code>mod_rewrite</code></td>
-<td>double chargement réussi</td>
-<td><code>scripts/load_db.sh</code> joué sur les deux SGBD (fait : MariaDB 11.8.6)</td>
-<td>✅ MySQL à re-vérifier par l'équipe</td>
+<td>cible MySQL 8.0.16+ <strong>et</strong> MariaDB 10.6+ ; exécution sous Apache avec <code>mod_rewrite</code></td>
+<td>chargement et parcours à vérifier séparément sur chaque cible</td>
+<td>protocole <code>scripts/load_db.sh</code> ; une mention historique de MariaDB 11.8.6 n’est pas une preuve pour le SHA examiné</td>
+<td>à rejouer sur les deux SGBD ; aucun résultat courant revendiqué</td>
 </tr>
 <tr>
 <td><code>ENF-11</code></td>
 <td>Sécurité des données</td>
 <td>aucun mot de passe en clair, aucun jeton de session dans une URL</td>
-<td><code>SELECT COUNT(*) … WHERE CHAR_LENGTH(mot_de_passe_hash) &lt; 60</code> → 0</td>
-<td>requête + <code>grep -R "password" app/</code> revue</td>
-<td>✅ (test <code>T-05</code> côté écriture)</td>
+<td>requête de contrôle des hashes et revue ciblée des sources</td>
+<td>requête SQL + recherche de sources ; <code>T-05</code> est le scénario prévu côté écriture</td>
+<td>à rejouer ; pas de résultat SQL actuel revendiqué</td>
 </tr>
 <tr>
 <td><code>ENF-12</code></td>
 <td>Sécurité</td>
 <td>aucune information sur l'existence d'une ressource appartenant à autrui</td>
 <td>404 (et non 403) pour un <code>id</code> étranger</td>
-<td>test S-03</td>
-<td>✅ attendu</td>
+<td>scénario <code>S-03</code> prévu</td>
+<td>résultat attendu ; à rejouer</td>
 </tr>
 <tr>
 <td><code>ENF-13</code></td>
 <td>Exploitation</td>
 <td>alertes de stock calculées côté base (formule unique)</td>
 <td><code>RUPTURE</code> / <code>TRES_BAS</code> / <code>DISPONIBLE</code></td>
-<td>vue <code>v_etat_stock</code> + test <code>T-26</code></td>
-<td>✅</td>
+<td>vue <code>v_etat_stock</code> + scénario <code>T-26</code> prévu</td>
+<td>à rejouer ; pas de résultat SQL actuel revendiqué</td>
 </tr>
 <tr>
 <td><code>ENF-14</code></td>
 <td>Conformité commerciale</td>
 <td>prix affichés <strong>TTC</strong>, taux de TVA, <strong>frais de livraison</strong> et <strong>montant total (marchandises + port)</strong> indiqués <strong>avant</strong> la validation — directive 2011/83/UE art. 5 §1 e), code de la consommation art. L221-5 4° (sources : §8.9 du CDC)</td>
-<td>mention obligatoire présente sur le récapitulatif <strong>et</strong> valeur <code>commande.frais_port</code> soldée à la validation (<code>RB-20</code>)</td>
-<td>test F-16 (récapitulatif), <code>T-28</code> (port calculé puis figé, non saisissable)</td>
-<td>✅ <strong>obtenu</strong> côté base (T-28 conforme)</td>
+<td>mention obligatoire sur le récapitulatif <strong>et</strong> valeur <code>commande.frais_port</code> soldée à la validation (<code>RB-20</code>)</td>
+<td>scénarios <code>F-16</code> et <code>T-28</code> prévus pour contrôler le récapitulatif et le calcul/figement du port</td>
+<td>conception documentée ; résultat d’exécution à établir sur un run daté/SHA</td>
 </tr>
 <tr>
 <td><code>ENF-15</code></td>
 <td>Exploitation</td>
 <td>sauvegarde/restauration complète incluant procédures et triggers</td>
 <td><code>mysqldump --routines --triggers</code></td>
-<td>restauration sur base vide + <code>load_db.sh</code> non rejoué → tests SQL toujours 29/29</td>
-<td>à exécuter en S11</td>
+<td>protocole de restauration sur base vide puis chargement ; les scénarios SQL doivent être rejoués séparément</td>
+<td>à exécuter ; aucune sauvegarde/restauration ni campagne SQL n’est revendiquée</td>
 </tr>
 <tr>
 <td><code>ENF-16</code></td>
 <td>Cohérence</td>
-<td>aucune écriture multi-tables non transactionnelle ; un rejet ne laisse jamais d'état intermédiaire</td>
+<td>aucune écriture multi-tables non transactionnelle ; un rejet ne laisse pas d'état intermédiaire</td>
 <td><code>beginTransaction</code>/<code>commit</code>/<code>rollBack</code> systématiques</td>
-<td>revue des 3 repositories + tests <code>F-18</code>, <code>T-09</code></td>
-<td>✅ (prouvé au niveau base par <code>T-09</code>)</td>
+<td>revue des repositories + scénarios <code>F-18</code> et <code>T-09</code> prévus</td>
+<td>à vérifier par revue et rejeu daté ; aucun résultat actuel revendiqué</td>
 </tr>
 <tr>
 <td><code>ENF-17</code></td>
 <td>Observabilité</td>
 <td>chaque rejet de règle est journalisé avec code, acteur et route, sans donnée sensible</td>
 <td>JSON lines, 6 types d'évènements</td>
-<td>test S-08 (recherche de mot de passe dans les logs → 0 occurrence)</td>
-<td>✅ attendu</td>
+<td>scénario <code>S-08</code> prévu pour rechercher des données sensibles dans les logs</td>
+<td>résultat attendu ; à rejouer</td>
 </tr>
 <tr>
 <td><code>ENF-18</code></td>
@@ -261,8 +260,8 @@ la manipulation qui prouve la conformité. Une exigence sans moyen de vérificat
 <tbody>
 <tr>
 <td><code>ENF-19</code></td>
-<td>toute règle <code>RB-*</code> est appliquée au <strong>minimum</strong> à deux niveaux (PHP + base)</td>
-<td>défendu par le tableau §6.2 et prouvé par les tests de contournement</td>
+<td>toute règle <code>RB-*</code> doit être appliquée au <strong>minimum</strong> à deux niveaux (PHP + base)</td>
+<td>tableau §6.2 et scénarios de contournement prévus ; leur présence ne prouve pas l’intégration ni l’exécution</td>
 </tr>
 <tr>
 <td><code>ENF-20</code></td>

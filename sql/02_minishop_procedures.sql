@@ -1,5 +1,5 @@
 -- =====================================================================
--- MiniShop — 02 : procédures stockées (17 procédures + 1 fonction, minimum demandé : 5)
+-- MiniShop — 02 : procédures stockées (18 procédures + 1 fonction, minimum demandé : 5)
 -- ---------------------------------------------------------------------
 -- Conventions :
 --   * Toute erreur métier est remontée par  SIGNAL SQLSTATE '45000'
@@ -169,7 +169,7 @@ END $$
 -- ---------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS sp_search_products $$
 CREATE PROCEDURE sp_search_products (
-  IN p_mot_cle      VARCHAR(120),
+  IN p_mot_cle      VARCHAR(255),
   IN p_id_categorie INT UNSIGNED,
   IN p_prix_min     DECIMAL(10,2),
   IN p_prix_max     DECIMAL(10,2),
@@ -186,7 +186,7 @@ BEGIN
   -- portable (MySQL comme MariaDB n'acceptent que des ? en requete preparee).
   -- Les valeurs n'entrent JAMAIS dans le texte de la requete : elles passent
   -- par des marqueurs positionnels (?) prepares (SEC-01).
-  DECLARE v_kw   VARCHAR(120);
+  DECLARE v_kw   VARCHAR(255);
   DECLARE v_cat  INT UNSIGNED;
   DECLARE v_min  DECIMAL(10,2);
   DECLARE v_max  DECIMAL(12,2);
@@ -203,8 +203,10 @@ BEGIN
   SET v_off = (GREATEST(IFNULL(NULLIF(p_page, 0), 1), 1) - 1) * v_lim;
 
   SET @sql = CONCAT(
-    'SELECT p.id_produit, p.reference, p.slug, p.nom, p.prix_ttc, p.stock, p.visible,
-            c.nom AS categorie,
+    'SELECT p.id_produit, p.reference, p.slug, p.nom, p.description, p.prix_ht,
+            p.tva, p.prix_ttc, p.stock, p.stock_initial, p.seuil_alerte,
+            p.id_categorie, p.visible, p.image_url, p.date_creation, p.date_modification,
+            c.nom AS categorie, c.slug AS categorie_slug,
             CASE WHEN p.stock = 0 THEN "RUPTURE"
                  WHEN p.stock <= p.seuil_alerte THEN "TRES_BAS"
                  ELSE "DISPONIBLE" END AS etat_stock
@@ -217,13 +219,13 @@ BEGIN
         AND (? = 0 OR p.id_categorie = ?)
         AND p.prix_ttc >= ?
         AND p.prix_ttc <= ?
-        AND (? = 0 OR p.stock > 0)',
+        AND (? = 0 OR (? = 1 AND p.stock > 0) OR (? = 2 AND p.stock <= 0))',
     CASE
       WHEN p_trie_par = 'prix_asc'  THEN ' ORDER BY p.prix_ttc ASC, p.id_produit'
       WHEN p_trie_par = 'prix_desc' THEN ' ORDER BY p.prix_ttc DESC, p.id_produit'
       WHEN p_trie_par = 'nouveaute' THEN ' ORDER BY p.date_creation DESC, p.id_produit DESC'
       WHEN p_trie_par = 'stock'     THEN ' ORDER BY p.stock DESC, p.id_produit'
-      ELSE ' ORDER BY p.nom ASC'
+      ELSE ' ORDER BY p.nom ASC, p.id_produit'
     END,
     ' LIMIT ? OFFSET ?');
 
@@ -234,7 +236,7 @@ BEGIN
 
   SET @s = @sql;
   PREPARE stmt FROM @s;
-  EXECUTE stmt USING @f_visible, @f_kw, @f_kw, @f_kw, @f_kw, @f_cat, @f_cat, @f_min, @f_max, @f_ok, @f_lim, @f_off;
+  EXECUTE stmt USING @f_visible, @f_kw, @f_kw, @f_kw, @f_kw, @f_cat, @f_cat, @f_min, @f_max, @f_ok, @f_ok, @f_ok, @f_lim, @f_off;
   DEALLOCATE PREPARE stmt;
 
   -- second jeu de resultats : le nombre total de produits trouves (pagination)
@@ -247,15 +249,16 @@ BEGIN
                 AND (? = 0 OR p.id_categorie = ?)
                 AND p.prix_ttc >= ?
                 AND p.prix_ttc <= ?
-                AND (? = 0 OR p.stock > 0)';
+                AND (? = 0 OR (? = 1 AND p.stock > 0) OR (? = 2 AND p.stock <= 0))';
   PREPARE stmt FROM @s;
-  EXECUTE stmt USING @f_visible, @f_kw, @f_kw, @f_kw, @f_kw, @f_cat, @f_cat, @f_min, @f_max, @f_ok;
+  EXECUTE stmt USING @f_visible, @f_kw, @f_kw, @f_kw, @f_kw, @f_cat, @f_cat, @f_min, @f_max, @f_ok, @f_ok, @f_ok;
   DEALLOCATE PREPARE stmt;
 END $$
 
 -- ---------------------------------------------------------------------
--- 5. sp_save_product — création / modification côté Back-office
---    (EF-ADM-01, EF-ADM-02). p_id_produit NULL => création.
+-- 5. sp_save_product — création / modification de fiche côté Back-office
+--    (EF-ADM-01, EF-ADM-02). p_id_produit NULL => création ; le stock initial
+--    n'est utilisé qu'à la création, les ajustements passent par sp_adjust_stock.
 -- ---------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS sp_save_product $$
 CREATE PROCEDURE sp_save_product (
@@ -280,7 +283,7 @@ BEGIN
   IF p_prix_ht IS NULL OR p_prix_ht <= 0 THEN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'RB02_PRIX_DOIT_ETRE_STRICTEMENT_POSITIF';
   END IF;
-  IF p_stock IS NULL OR p_stock < 0 THEN
+  IF p_id_produit IS NULL AND (p_stock IS NULL OR p_stock < 0) THEN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'RB03_STOCK_NE_PEUT_PAS_ETRE_NEGATIF';
   END IF;
   IF p_nom IS NULL OR TRIM(p_nom) = '' THEN
@@ -312,10 +315,13 @@ BEGIN
       SET p_id_resultat  = LAST_INSERT_ID();
       SET p_code_retour  = 'OK';
     ELSE
+      IF NOT EXISTS (SELECT 1 FROM produit WHERE id_produit = p_id_produit) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'PRODUIT_INTROUVABLE';
+      END IF;
       UPDATE produit
          SET reference = p_reference, nom = p_nom, slug = p_slug,
              description = p_description, prix_ht = p_prix_ht,
-             tva = IFNULL(p_tva, tva), stock = p_stock,
+             tva = IFNULL(p_tva, tva),
              seuil_alerte = IFNULL(p_seuil_alerte, seuil_alerte),
              id_categorie = p_id_categorie, visible = IFNULL(p_visible, visible),
              image_url = p_image_url
@@ -347,8 +353,10 @@ BEGIN
 END $$
 
 -- ---------------------------------------------------------------------
--- 7. sp_adjust_stock — réappro / inventaire (EF-ADM-04, RB-03)
+-- 7. sp_adjust_stock — réappro / inventaire (EF-ADM-04, RB-03, audit)
 --    p_mode : 'SET' (valeur absolue) ou 'DELTA' (mouvement +/-)
+--    Le motif est obligatoire. La procédure possède sa transaction : ne pas
+--    l'envelopper dans une transaction PDO. Ajustement et audit sont atomiques.
 -- ---------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS sp_adjust_stock $$
 CREATE PROCEDURE sp_adjust_stock (
@@ -360,31 +368,78 @@ CREATE PROCEDURE sp_adjust_stock (
   OUT p_code_retour VARCHAR(40)
 )
 BEGIN
-  DECLARE v_new INT DEFAULT 0;
+  DECLARE v_stock_avant INT DEFAULT 0;
+  DECLARE v_stock_apres INT DEFAULT 0;
+  DECLARE v_reference VARCHAR(30) DEFAULT NULL;
+  DECLARE v_nom VARCHAR(150) DEFAULT NULL;
+  DECLARE v_mode VARCHAR(5) DEFAULT '';
+  DECLARE v_motif VARCHAR(200) DEFAULT '';
+  DECLARE v_acteur_id INT UNSIGNED DEFAULT NULL;
+  DECLARE v_acteur_role VARCHAR(20) DEFAULT 'SYSTEME';
+  DECLARE v_trouve TINYINT DEFAULT 1;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_trouve = 0;
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION
+  BEGIN
+    ROLLBACK;
+    RESIGNAL;
+  END;
 
+  SET v_mode = UPPER(TRIM(IFNULL(p_mode, '')));
+  SET v_motif = TRIM(IFNULL(p_motif, ''));
   IF p_quantite IS NULL THEN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'QUANTITE_REQUISE';
   END IF;
+  IF v_mode NOT IN ('SET', 'DELTA') THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'MODE_STOCK_INVALIDE';
+  END IF;
+  IF v_motif = '' THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'MOTIF_STOCK_REQUIS';
+  END IF;
 
-  SELECT stock INTO v_new FROM produit WHERE id_produit = p_id_produit FOR UPDATE;
-  IF v_new IS NULL THEN
+  SET v_acteur_id = @minishop_actor_id;
+  SET v_acteur_role = IFNULL(@minishop_actor_role, 'SYSTEME');
+  IF v_acteur_id IS NOT NULL AND v_acteur_id < 1 THEN
+    SET v_acteur_id = NULL;
+  END IF;
+  IF v_acteur_role NOT IN ('CLIENT', 'ADMIN', 'SYSTEME') THEN
+    SET v_acteur_role = 'SYSTEME';
+    SET v_acteur_id = NULL;
+  END IF;
+
+  START TRANSACTION;
+  SELECT stock, reference, nom
+    INTO v_stock_avant, v_reference, v_nom
+    FROM produit
+   WHERE id_produit = p_id_produit
+   FOR UPDATE;
+  IF v_trouve = 0 THEN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'PRODUIT_INTROUVABLE';
   END IF;
 
-  IF p_mode = 'DELTA' THEN
-    SET v_new = v_new + p_quantite;
+  IF v_mode = 'DELTA' THEN
+    SET v_stock_apres = v_stock_avant + p_quantite;
   ELSE
-    SET v_new = p_quantite;
+    SET v_stock_apres = p_quantite;
   END IF;
 
-  IF v_new < 0 THEN
-    -- la règle RB-03 est aussi garantie par trg_produit_stock_non_negatif :
-    -- cette vérification ne fait qu'offrir un message explicite à l'IHM
-    SET p_stock = NULL; SET p_code_retour = 'RB03_STOCK_NE_PEUT_PAS_ETRE_NEGATIF';
+  IF v_stock_apres < 0 THEN
+    -- Refus sans changement ni ligne d'audit.
+    SET p_stock = NULL;
+    SET p_code_retour = 'RB03_STOCK_NE_PEUT_PAS_ETRE_NEGATIF';
+    ROLLBACK;
   ELSE
-    UPDATE produit SET stock = v_new WHERE id_produit = p_id_produit;
-    SET p_stock = v_new;
+    IF v_stock_apres <> v_stock_avant THEN
+      UPDATE produit SET stock = v_stock_apres WHERE id_produit = p_id_produit;
+      INSERT INTO stock_movement_history
+        (id_produit, reference_produit, nom_produit, mode_mouvement, quantite,
+         stock_avant, stock_apres, motif, changed_by, changed_by_role)
+      VALUES
+        (p_id_produit, v_reference, v_nom, v_mode, p_quantite,
+         v_stock_avant, v_stock_apres, v_motif, v_acteur_id, v_acteur_role);
+    END IF;
+    SET p_stock = v_stock_apres;
     SET p_code_retour = 'OK';
+    COMMIT;
   END IF;
 END $$
 
@@ -401,6 +456,10 @@ CREATE PROCEDURE sp_save_category (
   OUT p_code_retour  VARCHAR(40)
 )
 BEGIN
+  DECLARE v_doublon INT DEFAULT 0;
+
+  SET p_id_resultat = NULL;
+  SET p_code_retour = 'OK';
   IF p_nom IS NULL OR TRIM(p_nom) = '' THEN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'NOM_REQUIS';
   END IF;
@@ -408,21 +467,34 @@ BEGIN
     SET p_slug = LOWER(REPLACE(TRIM(p_nom), ' ', '-'));
   END IF;
 
-  IF p_id_categorie IS NULL THEN
-    INSERT INTO categorie (nom, slug, description) VALUES (p_nom, p_slug, p_description)
-      ON DUPLICATE KEY UPDATE slug = VALUES(slug), description = VALUES(description);
-    IF EXISTS (SELECT 1 FROM categorie WHERE nom = p_nom AND slug <> p_slug) THEN
-      SET p_code_retour = 'NOM_DEJA_UTILISE';
-      SET p_id_resultat = NULL;
-    ELSE
-      SET p_id_resultat = LAST_INSERT_ID();
-      SET p_code_retour = 'OK';
-    END IF;
+  IF p_id_categorie IS NOT NULL
+     AND NOT EXISTS (SELECT 1 FROM categorie WHERE id_categorie = p_id_categorie) THEN
+    SET p_code_retour = 'CATEGORIE_INTROUVABLE';
   ELSE
-    UPDATE categorie SET nom = p_nom, slug = p_slug, description = p_description
-     WHERE id_categorie = p_id_categorie;
-    SET p_id_resultat = p_id_categorie;
-    SET p_code_retour = IF(ROW_COUNT() = 0, 'CATEGORIE_INTROUVABLE', 'OK');
+    SELECT COUNT(*) INTO v_doublon
+      FROM categorie
+     WHERE nom = p_nom AND id_categorie <> IFNULL(p_id_categorie, 0);
+    IF v_doublon > 0 THEN
+      SET p_code_retour = 'NOM_DEJA_UTILISE';
+    ELSE
+      SELECT COUNT(*) INTO v_doublon
+        FROM categorie
+       WHERE slug = p_slug AND id_categorie <> IFNULL(p_id_categorie, 0);
+      IF v_doublon > 0 THEN
+        SET p_code_retour = 'SLUG_CATEGORIE_DEJA_UTILISE';
+      ELSEIF p_id_categorie IS NULL THEN
+        INSERT INTO categorie (nom, slug, description) VALUES (p_nom, p_slug, p_description);
+        SET p_id_resultat = LAST_INSERT_ID();
+      ELSE
+        UPDATE categorie
+           SET nom = p_nom, slug = p_slug, description = p_description
+         WHERE id_categorie = p_id_categorie;
+        SET p_id_resultat = p_id_categorie;
+        IF ROW_COUNT() = 0 THEN
+          SET p_code_retour = 'AUCUNE_MODIFICATION';
+        END IF;
+      END IF;
+    END IF;
   END IF;
 END $$
 
@@ -608,6 +680,11 @@ BEGIN
         COLUMNS (id_produit INT UNSIGNED PATH '$.id_produit',
                  quantite   INT         PATH '$.quantite')) AS j;
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_done = 1;
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION
+  BEGIN
+    ROLLBACK;
+    RESIGNAL;
+  END;
 
   SET p_code_retour = 'OK';
 
@@ -835,6 +912,99 @@ BEGIN
      WHERE id_commande = p_id_commande;   -- trg_history_statut trace EN_PREPARATION -> ANNULEE
   COMMIT;
   SET p_code_retour = 'OK';
+END $$
+
+-- ---------------------------------------------------------------------
+-- 15 bis. sp_cancel_order_admin — annulation back-office (EF-ADM-07)
+--        Les statuts avant expédition restituent le stock ; après expédition,
+--        le stock ne revient qu'après retour physique vérifié. Le total d'origine
+--        est conservé et les montants facturés sont soldés (RB-20).
+-- ---------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS sp_cancel_order_admin $$
+CREATE PROCEDURE sp_cancel_order_admin (
+  IN  p_id_commande       INT UNSIGNED,
+  IN  p_id_auteur         INT UNSIGNED,
+  IN  p_role_auteur       VARCHAR(10),
+  IN  p_commentaire       VARCHAR(500),
+  OUT p_unites_rendues    INT UNSIGNED,
+  OUT p_montant_rembourse DECIMAL(10,2),
+  OUT p_code_retour       VARCHAR(40)
+)
+BEGIN
+  DECLARE v_done       TINYINT DEFAULT 0;
+  DECLARE v_id_produit INT UNSIGNED;
+  DECLARE v_quantite   INT;
+  DECLARE v_statut     VARCHAR(20) DEFAULT NULL;
+  DECLARE v_montant    DECIMAL(10,2) DEFAULT 0.00;
+  DECLARE v_commentaire VARCHAR(500);
+  DECLARE cur CURSOR FOR
+    SELECT id_produit, quantite
+      FROM ligne_commande
+     WHERE id_commande = p_id_commande
+     ORDER BY id_produit, id_ligne;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_done = 1;
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION
+  BEGIN
+    ROLLBACK;
+    RESIGNAL;
+  END;
+
+  SET p_unites_rendues = 0;
+  SET p_montant_rembourse = NULL;
+  SET p_code_retour = 'OK';
+  START TRANSACTION;
+
+  IF p_role_auteur IS NULL OR p_role_auteur NOT IN ('ADMIN', 'SYSTEME') THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'STATUT_NON_AUTORISE';
+  END IF;
+  SET @minishop_actor_id = p_id_auteur;
+  SET @minishop_actor_role = p_role_auteur;
+
+  SELECT statut, montant_total INTO v_statut, v_montant
+    FROM commande
+   WHERE id_commande = p_id_commande
+   FOR UPDATE;
+  IF v_statut IS NULL THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'COMMANDE_INTROUVABLE';
+  END IF;
+  IF v_statut NOT IN ('BROUILLON', 'EN_PREPARATION', 'PAYEE', 'EXPEDIEE') THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'COMMANDE_NON_ANNULABLE';
+  END IF;
+  IF v_statut = 'EXPEDIEE' AND p_role_auteur <> 'ADMIN' THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'COMMANDE_NON_ANNULABLE';
+  END IF;
+
+  SET p_montant_rembourse = v_montant;
+  IF v_statut <> 'EXPEDIEE' THEN
+    OPEN cur;
+    lp: LOOP
+      FETCH cur INTO v_id_produit, v_quantite;
+      IF v_done = 1 THEN
+        LEAVE lp;
+      END IF;
+      UPDATE produit
+         SET stock = stock + v_quantite
+       WHERE id_produit = v_id_produit;
+      SET p_unites_rendues = p_unites_rendues + v_quantite;
+    END LOOP;
+    CLOSE cur;
+  END IF;
+
+  IF p_commentaire IS NULL OR TRIM(p_commentaire) = '' THEN
+    SET v_commentaire = IF(p_role_auteur = 'ADMIN', 'Annulation par l’administration', 'Annulation système');
+  ELSE
+    SET v_commentaire = TRIM(p_commentaire);
+  END IF;
+
+  UPDATE commande
+     SET statut = 'ANNULEE',
+         montant_avant_annulation = v_montant,
+         frais_port = 0.00,
+         montant_total = 0.00,
+         commentaire = v_commentaire
+   WHERE id_commande = p_id_commande;
+
+  COMMIT;
 END $$
 
 -- ---------------------------------------------------------------------

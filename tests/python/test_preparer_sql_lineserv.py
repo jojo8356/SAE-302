@@ -41,7 +41,7 @@ class PreparationSqlTest(unittest.TestCase):
         self.assertEqual(1, len(copies))
         texte = copies[0].read_text(encoding='utf-8')
         self.assertNotRegex(texte, r'(?im)^\s*(DROP\s+(DATABASE|TABLE)|CREATE\s+DATABASE|USE\s+|SET\s+FOREIGN_KEY_CHECKS)')
-        self.assertEqual(8, len(re.findall(r'^CREATE TABLE\s+', texte, re.MULTILINE)))
+        self.assertEqual(9, len(re.findall(r'^CREATE TABLE\s+', texte, re.MULTILINE)))
         self.assertEqual(3, len(re.findall(r'^CREATE OR REPLACE VIEW\s+', texte, re.MULTILINE)))
         self.assertIn('INSERT INTO produit', texte)
         self.assertIn('INSERT INTO client', texte)

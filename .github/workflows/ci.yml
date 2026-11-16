@@ -384,7 +384,7 @@ jobs:
         run: |
           set -uo pipefail
           if [ -f tests/security/controles.sh ]; then
-            echo "→ tests/security/controles.sh présent — 10 contrôles du CDC §15.3"
+            echo "→ tests/security/controles.sh présent — 11 contrôles du CDC §15.3"
             bash tests/security/controles.sh
             exit $?
           fi

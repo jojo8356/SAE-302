@@ -1,9 +1,11 @@
 # Document de tests et de validation — MiniShop
 
 Deuxième document du rendu (barème iii : l'application **et** les deux documents ; pénalité « manque le document de test et de validation » : **-3 points**).
-Complément du §15 du cahier des charges et compagnon des **suites détaillées de recette manuelle par cas d'utilisation** ([`13-fiches-recette-uc.md`](13-fiches-recette-uc.md) et [`13-suivi-recette-uc.csv`](13-suivi-recette-uc.csv)) : dispositif, cas détaillés, exécution automatisée et protocole manuel, registre d'anomalies, PV de recette et traçabilité.
+Complément du §15 du cahier des charges et compagnon des **fiches de recette par cas d’utilisation** ([`13-fiches-recette-uc.md`](13-fiches-recette-uc.md) et [`13-suivi-recette-uc.csv`](13-suivi-recette-uc.csv)) : scénarios, attentes, protocoles, historique documentaire et traçabilité. Les identifiants et scripts décrivent une couverture prévue ; ils ne valent pas, seuls, preuves d’exécution.
 
-**Mise à jour du 23/10/2026** : le plan de recette et de validation ci-dessous est intégralement aligné sur l'application livrée :
+**Coupure documentaire : 23/10/2026.** Ce fichier ne certifie pas que toutes les fonctions ou suites ont été exécutées sur le commit courant. `docs/04-conception-bd-et-sql.md` rapporte une validation SQL historique datée du 23/09/2026 (MariaDB 11.8.6). Le fichier `tests/sql/rapport_tests_sql.md` porte une mention de rejeu datée du 27/10/2026, date future à cette coupure ; elle est conservée comme contenu versionné, mais n’est pas traitée comme un événement ou résultat acquis au 23/10.
+
+Le code, scripts, protocoles et références de tests listés ci-dessous sont des éléments présents dans le dépôt, non une validation intégrale de l’application :
 - messages humains en français et en anglais sans aucun code technique brut (`RB03_…`, `SQLSTATE`, `STOCK_INSUFFISANT`) ;
 - confirmations explicites en deux étapes fonctionnant **même sans JavaScript** avant toute action définitive (annulation client, suppression produit/catégorie, annulation administrateur avec retour de stock avant expédition et sans retour automatique sur commande `EXPEDIEE`, garde SQL `ANNULATION_VIA_PARCOURS_DEDIE`) et conservation de l'historique des lignes après annulation ;
 - mode d'ajustement de stock par défaut non destructif (`DELTA` « Ajouter / retirer ») et refus strict des doublons de catégories ;
@@ -11,72 +13,72 @@ Complément du §15 du cahier des charges et compagnon des **suites détaillées
 - compatibilité responsive à 320, 375, 768 et 1440 px avec tableaux administrateur et clients repliés en cartes mobiles étiquetées (`data-label`) et double implémentation décorative/informative des visuels produits ;
 - mentions légales de la maquette étudiante conformes à l'article 6, III, 2 de la LCEN (co-éditeurs **Johan Polsinelli** et **Chahd Gouiaa**, hébergeur pédagogique IUT Nice Côte d'Azur `linserv-info-01.campus.unice.fr`), transparence RGPD de la maquette scolaire et outils CLI de conservation/purge (`24 mois` comptes sans commande, `12 mois` contact, `6 mois` journaux, `30 jours` sauvegardes dédiées).
 
-Aucun résultat d'exécution humaine sur navigateur réel ou serveur LineServ n'est inventé : la colonne « Statut » distingue strictement ce qui est **exécuté automatiquement en CI** (15 jobs verts, y compris l'intégralité des contrôles responsive 320/375/1440 px sous Chromium) de ce qui **reste à dérouler manuellement** (`[!]`, et `NON JOUÉ` sur les 200 entrées de [`13-suivi-recette-uc.csv`](13-suivi-recette-uc.csv) — les campagnes responsive multi-largeurs ayant été volontairement retirées des suites manuelles car trop longues à jouer à la main). La campagne manuelle prévue se déroule sur la base réellement utilisée par l'application de production LineServ pendant une fenêtre pré-démo, puis cette même base doit être restaurée à l'état de démonstration avant la démo ; rien de cela n'a été effectué. `minishop_test` reste exclusivement une base temporaire des tests automatisés GitHub CI, pas une cible de recette manuelle.
+Les mentions « automatisé » dans les tableaux désignent des scripts ou tests associés ; elles ne signifient pas que tous les scénarios ont réussi sur la révision examinée. Deux runs distincts sont à distinguer : le run restreint du 23/10/2026 (`node scripts/run-all-tests.mjs --sans-sql --sans-e2e`), sans SQL ni E2E, et celui du 15/11/2026 (`node scripts/run-all-tests.mjs --sans-sql`), avec E2E HTTP isolé (338 vérifications) mais sans intégration SQL. Le compte rendu conservé du run d’octobre ne fixe pas de SHA et ne vaut donc pas preuve du checkout actuel ; le run du 15/11 est rattaché au commit testé dans l’addendum §8. Les limites de chaque périmètre y sont consignées. Les 200 entrées de [`13-suivi-recette-uc.csv`](13-suivi-recette-uc.csv) sont `NON JOUÉ`. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué. Les tests SQL automatisés doivent utiliser une base temporaire isolée, distincte de toute cible manuelle.
 
 ## 1. Dispositif
 
 | Élément | Valeur |
 |---|---|
-| Environnement automatisé CI | Linux (Debian 13 / Ubuntu), PHP 8.2 et 8.5, MariaDB 11.8 et MySQL 8.0, Apache 2.4 / routeur de développement, Playwright Chromium (320, 375 et 1440 px, FR et EN, avec et sans JS) |
-| Cible de la recette manuelle | Instance LineServ et base de production réellement configurée pour l'application (`DB_NAME` à confirmer dans la configuration privée) ; campagne pré-démo, puis restauration obligatoire de cette même base à l'état de démonstration |
+| Environnements visés par les scripts CI | Linux, versions PHP/MySQL/MariaDB et contrôles navigateur déclarés dans `.github/workflows/ci.yml` ; cette description de configuration ne constitue pas un résultat de run |
+| Recette manuelle | non jouée à la coupure ; aucune base LineServ ou de production n’a été utilisée ou validée dans cette révision |
 | Jeu de données automatisé | seed `sql/01` + commandes de démo `sql/04` : 4 catégories, 36 produits, 3 clients (`alice`, `bruno`, `carla`), 1 admin `SUPER`, 4 commandes ; base temporaire `minishop_test` créée/supprimée uniquement pour les tests SQL automatisés en CI |
-| Outillage automatisé | `scripts/run-all-tests.mjs` & `scripts/run-all-tests.php`, `scripts/strict_types_lint.php` (158 fichiers), `tests/security/controles.sh` (10 contrôles + auto-test), PHPUnit 11 (9 classes, 50 tests), 42 suites PHP, `scripts/run_sql_tests.sh` + `tests/php/sql_integration.php` (29 tests SQL + étape 6 PDO) + `tests/php/migration_mariadb_test.php`, `tests/node/preferences_test.mjs` (48 vues FR↔EN + AJAX), `scripts/wasm-e2e.mjs` (338 contrôles HTTP isolés), 23 parcours `scripts/ui-e2e-*.mjs`, `tests/node/responsive_navigateur.mjs`, `scripts/verifier_fiches_uc.py` |
+| Outillage et sources de tests | Scripts présents dans le dépôt, dont `scripts/run-all-tests.mjs`, `tests/php/sql_integration.php`, `tests/security/controles.sh` (11 contrôles statiques + auto-test) et `scripts/verifier_fiches_uc.py` ; les résultats exécutés localement et leurs limites sont consignés en §8 |
 | Suites de recette manuelle | [`docs/13-fiches-recette-uc.md`](13-fiches-recette-uc.md) (**164 scénarios** sur UC-01..UC-14 + §15 transversal et **36 couples** de transition `RB-11`, hors responsive multi-largeurs délégué à la CI) et journal vierge [`docs/13-suivi-recette-uc.csv`](13-suivi-recette-uc.csv) (**200 lignes `NON JOUÉ`**), complétés par [`docs/14-guide-lineserv.md`](14-guide-lineserv.md) |
-| Chaîne CI | GitHub Actions : `.github/workflows/ci.yml` (**15 jobs** lors du dernier run cité) ; aucune configuration GitLab CI dans le périmètre courant |
-| Entrée en recette | pré-conditions `PRÉ-1`…`PRÉ-6` du CDC §11.3 ; confirmation de la cible de production LineServ, accès limité et données synthétiques ; sauvegarde restaurable de l'état de démo avant les écritures ; préférences `/preferences` réinitialisées (`Français`, `Europe/Paris`) |
+| Chaîne CI | workflow GitHub Actions versionné : `.github/workflows/ci.yml` ; aucun nombre de jobs réussis n’est revendiqué à la coupure documentaire |
+| Pré-conditions de tests isolés | `PRÉ-1`…`PRÉ-6` du CDC §11.3 à vérifier avant un run local/CI ; les tests SQL restent sur des bases temporaires et aucun essai LineServ, déploiement ou restauration n’est annoncé |
 | Critère de recette | 0 anomalie bloquante (perte de données, stock faux, contournement de sécurité) **et** 0 anomalie majeure (fonctionnalité du sujet indisponible) ; les limites propres à la maquette scolaire sont explicitement documentées |
-| Rejouabilité | chaque test SQL journalise dans `tests/sql/out/<ID>.log` ; aucun test automatisé ne touche `data/minishop/*.json` ni la base applicative (magasins temporaires dédiés vérifiés par `scripts/e2e_isolation.mjs`) |
+| Rejouabilité visée | les scénarios SQL doivent journaliser dans `tests/sql/out/<ID>.log` et utiliser une base temporaire isolée ; vérifier ce comportement sur le run concerné avant d’en tirer une conclusion |
 
-## 2. Tests de règles de gestion (base de données) — **exécutés**
+## 2. Scénarios de règles de gestion (base de données) — résultats datés séparément
 
-Tests SQL **automatisés uniquement** : `./scripts/run_sql_tests.sh` ou `php tests/php/sql_integration.php` (base temporaire `minishop_test` créée puis supprimée par le harnais ; manifeste `tests/sql/manifest.txt`, fixture d'état avant chaque scénario). Ces commandes ne sont pas à lancer sur LineServ et ne désignent pas la base des tests manuels.
+Le manifeste `tests/sql/manifest.txt` référence 29 scénarios `T-01`…`T-29`. Les scripts `./scripts/run_sql_tests.sh` et `php tests/php/sql_integration.php`, lorsqu’ils sont lancés, doivent travailler sur une base temporaire isolée ; ils ne doivent pas viser LineServ ni une base applicative. La table ci-dessous décrit les assertions attendues, pas des résultats actuels.
 
-**Résultat vérifié en CI (MySQL 8.0 et MariaDB 11.8) : 29 tests / 29 conformes**, complétés par l'**étape 6 d'intégration PDO** (`sp_cancel_order` avec conservation des lignes et restitution unique du stock, garde `ANNULATION_VIA_PARCOURS_DEDIE` sur `sp_update_order_status`, annulation administrateur d'une commande `EXPEDIEE` sans retour de stock, session PDO forcée en UTC `+00:00`, filtrage UTC de `revenueReport` et `RetentionComptes` sur `SqlStore`) ainsi que par `tests/php/migration_mariadb_test.php` sur schémas antérieurs. 15 de ces tests contournent volontairement l'application (`INSERT`/`UPDATE`/`DELETE` directs) : la conformité prouve que les règles tiennent dans le SGBD lui-même.
+**Éléments datés à ne pas confondre :** `docs/04-conception-bd-et-sql.md` relate une validation historique du 23/09/2026 sur MariaDB 11.8.6. Le fichier `tests/sql/rapport_tests_sql.md` affirme un rejeu daté du 27/10/2026 et 29/29 ; cette date était future à la coupure du 23/10. Le texte du rapport n’établit pas un rejeu sur le checkout vérifié le 15/11. Aucun rejeu SQL n’était établi à la coupure, et le run local du 15/11 a lui-même explicitement exclu SQL (`--sans-sql`, voir §8).
 
-| Test | Règle | Vérification — attendu | Résultat |
+| Test | Règle | Vérification visée | État à la coupure du 23/10/2026 |
 |---|---|---|---|
-| T-01 | RB-02 | prix HT = 0 refusé par le `CHECK ck_produit_prix` — refus par la base attendu | **conforme** |
-| T-02 | RB-03 | stock négatif refusé (`CHECK`) en écriture directe — refus par la base attendu | **conforme** |
-| T-03 | RB-03 | stock négatif refusé par `trg_produit_regles` — refus par la base attendu | **conforme** |
-| T-04 | RB-01 | e-mail client dupliqué (contrainte `uk_client_email`) — refus par la base attendu | **conforme** |
-| T-05 | RB-12 | `sp_create_account` refuse un mot de passe non haché (60 car. bcrypt requis) — refus par la base attendu | **conforme** |
-| T-06 | RB-05 | quantité = 0 refusée par `sp_add_order_line` — refus par la base attendu | **conforme** |
-| T-07 | RB-05 | quantité = 0 refusée par le `CHECK ck_ligne_quantite` — refus par la base attendu | **conforme** |
-| T-08 | RB-18 | stock insuffisant : `trg_ligne_controle_insert` bloque — refus par la base attendu | **conforme** |
-| T-09 | RB-18 | stock insuffisant : code de retour `STOCK_INSUFFISANT` de la procédure — exécution contrôlée attendue | **conforme** |
-| T-10 | RB-15 | `montant_total` non saisissable (`trg_commande_montant`) — refus par la base attendu | **conforme** |
-| T-11 | RB-06 | `prix_unitaire` et quantité d'une ligne non modifiables (immutabilité) — refus par la base attendu | **conforme** |
-| T-12 | RB-11 | transition `EN_PREPARATION -> BROUILLON` interdite — refus par la base attendu | **conforme** |
-| T-13 | RB-11 | transition `EXPEDIEE -> BROUILLON` interdite — refus par la base attendu | **conforme** |
-| T-14 | RB-14 | suppression d'une catégorie non vide — refus par la base attendu | **conforme** |
-| T-15 | RB-14 | suppression physique d'un produit déjà commandé — refus par la base attendu | **conforme** |
-| T-16 | RB-04 | validation d'une commande sans ligne — refus par la base attendu | **conforme** |
-| T-17 | RB-10 | commande rattachée à un client inexistant (trigger + FK) — refus par la base attendu | **conforme** |
-| T-18 | SEC-08 | `sp_confirm_order` refuse l'accès à la commande d'un autre client (`ACCES_NON_AUTORISE`) — refus attendu | **conforme** |
-| T-19 | RB-03 | `sp_adjust_stock` refuse le passage en négatif (paramètre `OUT`) — exécution contrôlée attendue | **conforme** |
-| T-20 | RB-09 | produit déjà commandé : `sp_delete_product` bascule `visible = 0` sans suppression — exécution attendue | **conforme** |
-| T-21 | RB-18 | annulation avant expédition : stock restauré exactement une fois, lignes conservées — exécution attendue | **conforme** |
-| T-22 | RB-11 | historique des statuts écrit automatiquement par `trg_history_statut` sans doublon — exécution attendue | **conforme** |
-| T-23 | RB-06 | le prix unitaire figé de la ligne survit à une hausse tarifaire ultérieure — exécution attendue | **conforme** |
-| T-24 | RB-04 | suppression d'une commande `BROUILLON` vide autorisée — exécution attendue | **conforme** |
-| T-25 | EF-VIS-02 | recherche + filtres + exclusion des produits masqués (`sp_search_products`) — exécution attendue | **conforme** |
-| T-26 | EF-ADM-05 | alertes de stock (`RUPTURE` / `TRES_BAS`) calculées sans conflit de collation — exécution attendue | **conforme** |
-| T-27 | EF-VIS-01 | les 3 vues (`v_catalogue`, `v_etat_stock`, `v_commandes_client`) existent et sont cohérentes — exécution attendue | **conforme** |
-| T-28 | ENF-14 | frais de port calculés avant validation, figés à la validation et non saisissables manuellement — refus d'altération attendu | **conforme** |
-| T-29 | ENF-16 | erreur en cours de commande : rollback intégral, aucune commande ni décrémentation partielle — exécution attendue | **conforme** |
+| T-01 | RB-02 | prix HT = 0 refusé par le `CHECK ck_produit_prix` — refus par la base attendu | scénario documenté ; pas de résultat courant |
+| T-02 | RB-03 | stock négatif refusé (`CHECK`) en écriture directe — refus par la base attendu | scénario documenté ; pas de résultat courant |
+| T-03 | RB-03 | stock négatif refusé par `trg_produit_regles` — refus par la base attendu | scénario documenté ; pas de résultat courant |
+| T-04 | RB-01 | e-mail client dupliqué (contrainte `uk_client_email`) — refus par la base attendu | scénario documenté ; pas de résultat courant |
+| T-05 | RB-12 | `sp_create_account` refuse un mot de passe non haché (60 car. bcrypt requis) — refus par la base attendu | scénario documenté ; pas de résultat courant |
+| T-06 | RB-05 | quantité = 0 refusée par `sp_add_order_line` — refus par la base attendu | scénario documenté ; pas de résultat courant |
+| T-07 | RB-05 | quantité = 0 refusée par le `CHECK ck_ligne_quantite` — refus par la base attendu | scénario documenté ; pas de résultat courant |
+| T-08 | RB-18 | stock insuffisant : `trg_ligne_controle_insert` bloque — refus par la base attendu | scénario documenté ; pas de résultat courant |
+| T-09 | RB-18 | stock insuffisant : code de retour `STOCK_INSUFFISANT` de la procédure — exécution contrôlée attendue | scénario documenté ; pas de résultat courant |
+| T-10 | RB-15 | `montant_total` non saisissable (`trg_commande_montant`) — refus par la base attendu | scénario documenté ; pas de résultat courant |
+| T-11 | RB-06 | `prix_unitaire` et quantité d'une ligne non modifiables (immutabilité) — refus par la base attendu | scénario documenté ; pas de résultat courant |
+| T-12 | RB-11 | transition `EN_PREPARATION -> BROUILLON` interdite — refus par la base attendu | scénario documenté ; pas de résultat courant |
+| T-13 | RB-11 | transition `EXPEDIEE -> BROUILLON` interdite — refus par la base attendu | scénario documenté ; pas de résultat courant |
+| T-14 | RB-14 | suppression d'une catégorie non vide — refus par la base attendu | scénario documenté ; pas de résultat courant |
+| T-15 | RB-14 | suppression physique d'un produit déjà commandé — refus par la base attendu | scénario documenté ; pas de résultat courant |
+| T-16 | RB-04 | validation d'une commande sans ligne — refus par la base attendu | scénario documenté ; pas de résultat courant |
+| T-17 | RB-10 | commande rattachée à un client inexistant (trigger + FK) — refus par la base attendu | scénario documenté ; pas de résultat courant |
+| T-18 | SEC-08 | `sp_confirm_order` refuse l'accès à la commande d'un autre client (`ACCES_NON_AUTORISE`) — refus attendu | scénario documenté ; pas de résultat courant |
+| T-19 | RB-03 | `sp_adjust_stock` refuse le passage en négatif (paramètre `OUT`) — exécution contrôlée attendue | scénario documenté ; pas de résultat courant |
+| T-20 | RB-09 | produit déjà commandé : `sp_delete_product` bascule `visible = 0` sans suppression — exécution attendue | scénario documenté ; pas de résultat courant |
+| T-21 | RB-18 | annulation avant expédition : stock restauré exactement une fois, lignes conservées — exécution attendue | scénario documenté ; pas de résultat courant |
+| T-22 | RB-11 | historique des statuts écrit automatiquement par `trg_history_statut` sans doublon — exécution attendue | scénario documenté ; pas de résultat courant |
+| T-23 | RB-06 | le prix unitaire figé de la ligne survit à une hausse tarifaire ultérieure — exécution attendue | scénario documenté ; pas de résultat courant |
+| T-24 | RB-04 | suppression d'une commande `BROUILLON` vide autorisée — exécution attendue | scénario documenté ; pas de résultat courant |
+| T-25 | EF-VIS-02 | recherche + filtres + exclusion des produits masqués (`sp_search_products`) — exécution attendue | scénario documenté ; pas de résultat courant |
+| T-26 | EF-ADM-05 | alertes de stock (`RUPTURE` / `TRES_BAS`) calculées sans conflit de collation — exécution attendue | scénario documenté ; pas de résultat courant |
+| T-27 | EF-VIS-01 | les 3 vues (`v_catalogue`, `v_etat_stock`, `v_commandes_client`) existent et sont cohérentes — exécution attendue | scénario documenté ; pas de résultat courant |
+| T-28 | ENF-14 | frais de port calculés avant validation, figés à la validation et non saisissables manuellement — refus d'altération attendu | scénario documenté ; pas de résultat courant |
+| T-29 | ENF-16 | erreur en cours de commande : rollback intégral, aucune commande ni décrémentation partielle — exécution attendue | scénario documenté ; pas de résultat courant |
 
 ## 3. Tests fonctionnels (recette de l'application — `F-00` à `F-56`)
 
-Les gestes manuels `[!]` se font sur l'application LineServ reliée à sa base de production, pendant la fenêtre pré-démo autorisée et avec des données synthétiques. Après la campagne, restaurer cette même base à l'état de démonstration selon [`14-guide-lineserv.md`](14-guide-lineserv.md). La base `minishop_test` ne sert qu'aux tests automatisés en CI.
+Aucun scénario de cette section n’est présenté comme une recette manuelle déjà jouée. Les mentions `[!]` désignent des vérifications humaines à effectuer dans un environnement explicitement autorisé et isolé ; elles ne prescrivent pas de test sur LineServ ou une base de production. Les 200 entrées de `docs/13-suivi-recette-uc.csv` sont `NON JOUÉ`.
 
 Lecture de la colonne **Statut** :
-- **« automatisé (...) »** : assertions exécutées automatiquement par `scripts/run-all-tests.mjs` et les 15 jobs CI (les vérifications responsive 320/375/1440 px et cartes mobiles `data-label` sont couvertes uniquement en automatisé par `responsive_contract.php` et `responsive_navigateur.mjs`, hors suites manuelles) ;
-- **« automatisé (...) + test navigateur réel `[!]` »** : logique et DOM prouvés automatiquement en JSDOM/Chromium, comportement natif de l'interface navigateur (invite de permission de géolocalisation, stockage local, relecture linguistique) restant à constater humainement (`NON JOUÉ` dans [`13-suivi-recette-uc.csv`](13-suivi-recette-uc.csv)) ;
-- **« manuel à rejouer `[!]` »** : scénario d'installation ou d'exploitation humaine sur poste cible / LineServ.
+- **« automatisé (…) »** : le scénario est associé à un script/test automatisé dans le dépôt ; le libellé n’atteste pas qu’un run a réussi à la coupure ;
+- **« automatisé (…) + test navigateur réel `[!]` »** : le dépôt référence des contrôles automatisés et une vérification humaine restant à faire ;
+- **« manuel à rejouer `[!]` »** : le scénario requiert une exécution humaine, à organiser séparément sur un environnement de test autorisé.
 
 | ID | Titre | Préconditions | Étapes | Résultats attendus | Règles / ENF | Statut |
 |---|---|---|---|---|---|---|
-| F-00 | Installation de bout en bout | base vierge, dépôt cloné, `.env` configuré | copier `.env.example` vers `.env`, exécuter `./run.sh --db` (ou `php scripts/db_init.php --switch`) puis `./run.sh` | 8 tables, 3 vues, 1 fonction, 17 procédures, 16 triggers, 36 produits, 3 clients ; accueil en HTTP 200 ; durée à chronométrer (≤ 15 min) | ENF-13 | automatisé (`db_init` / CI SQL) + chronométrage manuel `[!]` |
+| F-00 | Installation de bout en bout | base vierge, dépôt cloné, `.env` configuré | copier `.env.example` vers `.env`, exécuter `./run.sh --db` (ou `php scripts/db_init.php --switch`) puis `./run.sh` | 9 tables, 3 vues, 1 fonction, 18 procédures, 16 triggers, 36 produits, 3 clients ; accueil en HTTP 200 ; durée à chronométrer (≤ 15 min) | ENF-13 | automatisé (`db_init` / CI SQL) + chronométrage manuel `[!]` |
 | F-01 | Liste des catégories | seed chargé | `GET /categories` | 4 catégories centrées avec icônes SVG propres et compteurs limités aux produits visibles | RB-08, RB-19 | automatisé (`wasm-e2e`, `css_contract`) |
 | F-02 | Recherche simple | seed chargé | `GET /recherche?q=casque` | résultats correspondants visibles uniquement ; mot-clé conservé dans l'URL ; aucune trace SQL | RB-19, SEC-01 | automatisé (`catalogue_stock_test`, `wasm-e2e`) |
 | F-03 | Filtres cumulés + tri | seed chargé | `GET /catalogue?cat=2&prix_max=160&stock=1&tri=prix_asc`, copier l'URL en session vierge | produits visibles filtrés et triés par prix TTC croissant ; l'URL collée reproduit exactement la même liste | RB-19, ENF-04/05 | automatisé (`catalogue_filtres_test`, `wasm-e2e`) |
@@ -134,6 +136,8 @@ Lecture de la colonne **Statut** :
 | F-55 | Rotation CLI (contacts `12 mois`, journaux `6 mois`, sauvegardes `30 j`) et archives chiffrées | copie jetable + dossier `.minishop-sauvegardes` | lancer `scripts/nettoyage_donnees.php` et `scripts/archive_restreinte.php` en simulation puis exécution | rotation atomique sous verrou (au moins 2 sauvegardes récentes gardées, refus hors dossier dédié) ; archive chiffrée `sodium` en permissions `0700` sans altérer la source | RGPD art. 5.1.e / 32 | automatisé (`ConservationEtFuseauTest`, `nettoyage_fichiers_test`, `test_nettoyage_cli.py`, `test_archive_restreinte.py`) |
 | F-56 | Minimisation des journaux d'audit et transparence `/confidentialite` & `/500` | copie jetable | créer/modifier client et admin, inspecter le journal JSONL, lire `/confidentialite` et `/500` | aucun nom, e-mail, adresse ni `mot_de_passe_hash` dans les nouvelles entrées `client`/`administrateur` ; page `/500` sans fausse garantie « aucune donnée modifiée » | RGPD art. 5.1.c / 13, SEC-12 | automatisé (`JournalEtTableTest`, `information_juridique_test`, `divers_test`) |
 
+**Check-list ENF-08 (`D4-L13-03`, WCAG 2.1 AA sur les parcours clés).** Les contrats automatisés couvrent : (1) **labels** — `<label for>` sur les quantités du panier (`app/View/panier/index.php`), les filtres du catalogue, l’authentification et les préférences, `aria-label` explicite « Voir la fiche de … » et `alt=""` décoratif sur les cartes (`cartes_accessibilite_test`) ; (2) **focus visible** — règles `:focus-visible` dans `public/css/app.css`, lien d’évitement, `prefers-reduced-motion`/`prefers-contrast`, cibles ≥ 44 px (`css_contract`) ; (3) **annonces `aria-live`** — zone `#zone-annonces` (`role="status"`, `aria-live="polite"`) dans `app/View/layout.php`, mise à jour en `textContent` seul par `public/js/panier.js` avec `role="alert"` en cas d’erreur et `aria-label` du badge panier synchronisé FR/EN (`preferences_test`, `css_contract`). Aucune validation humaine avec technologie d’assistance n’est attestée ; ce `OK` porte sur les contrats automatisés et cette check-list documentée, sans revendiquer un audit manuel.
+
 ### 3.1 Trois cas détaillés au format complet
 
 | Champ | F-16 — Validation complète d'une commande | F-18 — Stock insuffisant sur la 2ᵉ ligne | F-21 — Annulation client en 2 étapes et restitution |
@@ -146,9 +150,11 @@ Lecture de la colonne **Statut** :
 | Règles vérifiées | RB-04, RB-06, RB-11, RB-15, RB-18 | RB-04, RB-18, ENF-16 | RB-09, RB-11, RB-18 |
 | Statut | automatisé (`wasm-e2e`, `ui-e2e-valider`, `ui-e2e-mes-commandes`) | automatisé (`features_test`, `wasm-e2e`, `T-29`) | automatisé (`ui-e2e-annulation`, `ui-e2e-annulation-historique`, `annulation_historique_test`, `T-21`) |
 
-## 4. Tests de sécurité (offensifs)
+## 4. Scénarios de sécurité offensifs (définition, non exécutés ici)
 
-| ID | Cas d'attaque | Mode opératoire | Résultat attendu | Exigence |
+Les identifiants `S-01`…`S-10` décrivent dix scénarios offensifs ; leur présence ne signifie pas qu’ils ont été joués. Aucune attaque, recette manuelle LineServ ou action sur une base de production n’est revendiquée. Tout rejeu dynamique doit se faire sur un environnement isolé et autorisé.
+
+| ID | Cas d'attaque | Mode opératoire prévu | Résultat attendu | Exigence |
 |---|---|---|---|---|
 | S-01 | Injection SQL dans la recherche | Les tentatives SQL destructives ou d'extraction (`UNION` sur les tables de comptes, `DROP`, etc.) sont `BLOQUÉ` sur la production ; sur LineServ, utiliser seulement une recherche littérale non destructive via l'interface. | Réponse normale/validation sans erreur technique ni divulgation ; les payloads agressifs et vérifications par SQL direct restent aux tests automatisés isolés/CI. | SEC-01, SEC-02 |
 | S-02 | Script stocké puis affiché (XSS) | Avec un compte admin de test, créer un produit de test nommé `<script>console.log('test')</script>` puis ouvrir sa fiche et la liste admin avec un compte de test (FR et EN) | Texte affiché littéralement (`&lt;script&gt;`) ; aucune exécution ni requête externe ; CSP stricte (`script-src 'self'`, aucun inline). Supprimer le produit uniquement via l'interface avant la restauration finale si nécessaire. | SEC-03 |
@@ -161,20 +167,20 @@ Lecture de la colonne **Statut** :
 | S-09 | Force brute sur l'authentification | Aucune rafale ni script de force brute sur la production LineServ ; seuls quelques échecs manuels à faible cadence sur un compte de test sont permis selon `TC05-09`, sinon `BLOQUÉ` | message neutre constant ; **limite connue documentée** : pas de limiteur de débit applicatif intégré dans la maquette scolaire | SEC-04, SEC-06 |
 | S-10 | Élévation de privilège par formulaire | ajouter `role=SUPER` ou `est_admin=1` dans `POST /inscription` ou `POST /compte` | champs ignorés ; compte strictement client ; table `administrateur` jamais touchée | SEC-10, RB-13 |
 
-Les contrôles manuels navigateur/HTTP de `TCX-01`…`TCX-05` ne portent que sur des comptes et données de test synthétiques de LineServ, avec autorisation, sans SQL direct, extraction de comptes, rafale ni panne. Les scénarios exigeant une instance isolée, une mutation hors des données de test ou une attaque à charge élevée sont `BLOQUÉ` pour la campagne de production. Les tests automatisés sont couverts par `scripts/wasm-e2e.mjs` (T6, T12, T13), `tests/phpunit/SecurityContractTest.php` et `tests/php/contract_http.php`. Les **10 contrôles statiques** (+ auto-test sur fixtures fautives) sont bloquants en CI : `bash tests/security/controles.sh` ; aucun test automatisé ni SQL direct ne doit viser la base de production.
+Les scripts de test HTTP et `tests/phpunit/SecurityContractTest.php` référencent des contrôles automatisés ; aucun résultat général de ces suites n’est affirmé dans cette section. `tests/security/controles.sh` contient **11 contrôles statiques**, dont `S-11` rattaché à `SEC-14`. Le workflow CI appelle ce script, mais aucun statut de CI n’est déduit de sa seule présence. Un contrôle statique ne remplace pas les dix scénarios offensifs, ne lit pas les données runtime ou le trafic et ne certifie pas LineServ.
 
-## 5. Tests de performance, de concurrence, d'installation et de restauration
+## 5. Protocoles de performance, de concurrence, d'installation et de sauvegarde (non exécutés ici)
 
 | ID | Scénario | Commande | Critère et état |
 |---|---|---|---|
-| P-01 | Catalogue filtré, 200 produits | `bash tests/perf/mesurer.sh '/catalogue?cat=1&prix_max=500'` | p95 < 500 ms, ≤ 5 requêtes (`ENF-01`) — mesure LineServ uniquement avec autorisation explicite, faible cadence et fenêtre pré-démo ; sinon `BLOQUÉ` `[!]` |
-| P-02 | Recherche « casque » | `bash tests/perf/mesurer.sh '/recherche?q=casque'` | p95 < 500 ms ; `EXPLAIN` utilisant `idx_produit_visible` ou `FULLTEXT` (`ENF-02`) — aucun `EXPLAIN` ou accès SQL direct sur la base de production ; mesure HTTP LineServ seulement avec autorisation explicite et faible cadence, sinon `BLOQUÉ` `[!]` |
-| P-03 | Validation de commande | `bash tests/perf/mesurer.sh '/commande/valider'` (POST) | p95 < 900 ms avec verrous — uniquement sur panier/compte synthétique, avec autorisation explicite et une exécution contrôlée ; sinon `BLOQUÉ` `[!]` |
+| P-01 | Catalogue filtré, 200 produits | `bash tests/perf/mesurer.sh '/catalogue?cat=1&prix_max=500'` sur une application et base de test isolées | p95 < 500 ms, ≤ 5 requêtes (`ENF-01`) ; mesure non exécutée dans cette révision `[!]` |
+| P-02 | Recherche « casque » | `bash tests/perf/mesurer.sh '/recherche?q=casque'` sur un environnement de test isolé | p95 < 500 ms ; `EXPLAIN` sur la base de test (`ENF-02`) ; mesure non exécutée dans cette révision `[!]` |
+| P-03 | Validation de commande | `bash tests/perf/mesurer.sh '/commande/valider'` (POST) dans un environnement isolé avec compte synthétique | p95 < 900 ms ; mesure non exécutée dans cette révision `[!]` |
 | P-06 | Performances côté base sur jeu de volumétrie | `sudo bash scripts/capture_perf.sh` (jeu local dédié, hors LineServ) | Contrôle automatisé/local seulement ; ne pas créer de base secondaire ni lancer `EXPLAIN`/volumétrie sur la production LineServ dans la recette manuelle |
-| C-01 | Tentative de survente concurrente | `bash tests/charge/reserver.sh 20 12` (et `php tests/php/json_concurrency_stress.php`) | Le stress JSON est exécuté en CI. Ne pas lancer 20 requêtes concurrentes contre LineServ dans la recette ordinaire ; tir HTTP SQL uniquement après accord écrit de l'hébergeur, sur stock synthétique dédié, sinon `BLOQUÉ` `[!]` |
-| C-02 | Rejeu du POST de commande / double annulation | rejouer une fois le même `POST /commande/valider` ou `POST .../annulation` pour une commande de test LineServ | au plus une commande / une seule restitution de stock (`TC07-08`, `TC09-02`, `TC09-09`) ; arrêter après le contrôle et restaurer la base avant la démo |
-| I-01 | Durée d'installation sur poste vierge | suivi du `README.md` seul puis `./scripts/run_sql_tests.sh` | **29/29** tests SQL conformes ; chronométrage humain ≤ 15 min **à relever `[!]`** |
-| B-01 | Sauvegarde / restauration complète | sauvegarde SQL complète avec routines/triggers, puis restauration selon une procédure approuvée | Vérifier la procédure avant la campagne ; la restauration de la sauvegarde pré-campagne dans la même base LineServ est le retour obligatoire à l'état de démo. Ne pas exécuter une commande de restauration non validée ni restaurer sur un nom de base supposé `[!]` |
+| C-01 | Tentative de survente concurrente | `bash tests/charge/reserver.sh 20 12` sur un environnement isolé (et stress JSON sur données jetables) | résultats attendus : 12 réservations acceptées au plus, 8 refus ; aucune exécution sur LineServ n’est revendiquée `[!]` |
+| C-02 | Rejeu du POST de commande / double annulation | rejouer une fois un POST sur des données jetables dans un environnement isolé | au plus une commande / une seule restitution de stock ; scénario non exécuté ici, aucune restauration n’est revendiquée `[!]` |
+| I-01 | Durée d'installation sur poste vierge | suivre le `README.md` sur une machine de test vierge puis consigner le résultat du harnais SQL isolé | chronométrage humain ≤ 15 min **à relever `[!]`** ; aucun résultat SQL actuel n’est présumé |
+| B-01 | Sauvegarde / restauration complète | protocole à vérifier sur une base jetable et un environnement de test isolé | procédure et restauration non exécutées ni chronométrées dans cette révision `[!]` |
 
 ## 6. Tests unitaires PHPUnit (9 classes, 50 tests)
 
@@ -207,49 +213,61 @@ Commande : `vendor/bin/phpunit` (JUnit en CI) ou `php tests/phpunit/run-local.ph
 | A-09 | `CURRENT_TIMESTAMP` dépendait du fuseau du serveur SQL au lieu d'UTC | majeure | session PDO non forcée à `+00:00` | `SET time_zone = '+00:00'` imposé et vérifié sur `DbConnexion` / `SqlStore` | `ConservationEtFuseauTest`, `sql_integration` |
 | A-10 | annulation admin d'une commande `EXPEDIEE` recréditait ou ignorait le stock sans parcours dédié | majeure | passage direct par changement de statut simple | confirmation en 2 étapes, `cancelOrder` avec retour stock avant expédition et **sans** retour automatique sur `EXPEDIEE` | `F-48`, `TC14-06`, `TC14-11`, `TC14-12` |
 
-## 8. État de validation et procès-verbal de recette
+## 8. État de preuve à la coupure et trame de procès-verbal
 
- Vérification automatisée complète exécutée le **23/10/2026** sur la branche de livraison : `node scripts/run-all-tests.mjs` 100 % vert et pipeline GitHub Actions **15/15 jobs verts** (PHP 8.2 et 8.5, MySQL 8.0, MariaDB 11.8, concurrence JSON, JSDOM 48 vues FR↔EN, Playwright Chromium 320/375/1440 px FR+EN avec et sans JS).
+**Date de coupure documentaire : 23/10/2026.** Les lignes qui suivent décrivent uniquement les preuves disponibles à cette coupure ; les contrôles postérieurs du 15/11/2026 sont consignés dans un addendum séparé.
 
-| Zone | Vérifications du plan | Automatisées et vertes en CI | À jouer / compléter manuellement `[!]` | Bloquantes | Majeures | Preuve principale |
-|---|---|---|---|---|---|---|
-| Base de données (contraintes, procédures, triggers, vues, UTC, migration) | 29 (`T-01`…`T-29`) | **29** | 0 (tests SQL automatisés uniquement sur `minishop_test` en CI ; aucun rejeu manuel sur la base de production) | 0 | 0 | jobs CI MySQL 8.0 & MariaDB 11.8 (`sql_integration.php` + étape 6 + `migration_mariadb_test.php`) |
-| Installation / sauvegarde | 2 (`F-00`/`I-01`, `B-01`) | **1** (chargement auto `db_init`) | **2** (chronométrage humain `I-01` ≤ 15 min et restauration `B-01`) | 0 | 0 | jobs CI SQL ; protocole manuel §5 |
-| Parcours fonctionnels front, client, admin (`F-01`…`F-48`) | 48 | **48** | **0** (responsive multi-largeurs délégué à la CI Chromium, hors suites manuelles) | 0 | 0 | 42 suites PHP + `wasm-e2e` (338 contrôles) + 23 `ui-e2e-*` + Chromium CI |
-| Mentions LCEN, `/preferences`, FR↔EN, UTC, conservation & RGPD maquette (`F-49`…`F-56`) | 8 | **8** | **3** contrôles humains navigateur réel (`F-50`, `F-51`, `F-52`) | 0 | 0 | `preferences_test.mjs`, `ConservationEtFuseauTest`, `mentions_legales_test.php`, suites Python CLI |
-| Sécurité (cas offensifs + contrôles statiques) | 20 (`S-01`…`S-10` + 10 contrôles) | **20** | rejeu exploratoire sur hébergement cible (`TCX-01`…`TCX-10`) | 0 | 0 | `tests/security/controles.sh` (10/10) + `wasm-e2e` T6/T12/T13 + PHPUnit |
-| Performance et charge | 6 (`P-01`…`P-03`, `P-06`, `C-01`, `C-02`) | **2** (`C-01` JSON + `C-02` E2E) | **5** mesures HTTP/SQL sur machine de recette (`P-01`…`P-03`, `P-06`, `C-01` SQL) | 0 | 0 | `json_concurrency_stress.php`, `wasm-e2e` ; scripts `tests/perf/*` prêts |
-| **Sous-total du présent document** | **113 vérifications** (29 + 2 + 48 + 8 + 20 + 6) | **108 automatisées en CI** | **10 compléments humains `[!]`** | **0** | **0** | pipeline CI 15/15 vert |
-| **Campagne manuelle complète par UC (`docs/13-*`)** | **200 entrées** (164 scénarios `TC*` + 36 couples `TC14-09/*`) | structure vérifiée (`46/46` via `verifier_fiches_uc.py`) | **200 `NON JOUÉ`** à dérouler par l'équipe | — | — | [`docs/13-suivi-recette-uc.csv`](13-suivi-recette-uc.csv) |
+- `docs/04-conception-bd-et-sql.md` rapporte une validation SQL du **23/09/2026** sur MariaDB 11.8.6 ; il s’agit d’un résultat historique, non rejoué ici.
+- `tests/sql/rapport_tests_sql.md` contient une mention de rejeu au **27/10/2026**, date future à la coupure du 23/10 ; le fichier ne constitue donc pas une preuve d’exécution acquise à cette date.
+- Les scénarios manuels du registre `docs/13-suivi-recette-uc.csv` : **200 `NON JOUÉ`**. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.
+- `bash tests/security/controles.sh` : **11/11 contrôles statiques** rejoués localement dans cette révision le 23/10/2026. La portée est limitée aux sources inspectées par le script ; cela ne vaut ni test offensif `S-01…S-10`, ni recette applicative complète, ni preuve sur LineServ.
+- `node scripts/run-all-tests.mjs --sans-sql --sans-e2e` : compte rendu de code de sortie **0** daté du 23/10/2026 via PHP-WASM 8.2. Les suites activées hors SQL/E2E sont rapportées vertes, dont T-01…T-29 sur le moteur JSON (**29/29**), `unit_tests.php` (**297/297 vérifications**), PHPUnit local (**57 tests**) et le linter strict (**167 fichiers, 0 violation**). La trace conservée ne fixe pas le SHA testé ; elle est historique et n’atteste pas le checkout actuel. La commande excluait explicitement SQL et E2E ; l’analyse avec PHP CLI natif est NON JOUÉE.
+- À la coupure du 23/10, aucun résultat CI pour le working tree n’était revendiqué. Aucun rejeu PDO/MySQL, parcours HTTP complet sous SQL, test navigateur réel, test manuel LineServ, déploiement ou restauration de base n’était attesté à cette date ; les contrôles postérieurs sont séparés dans l’addendum ci-dessous.
 
-Signature de l'équipe, date : ………………… Validation du maître d'ouvrage pédagogique (soutenance), date : …………………
+| Domaine | Artefact / résultat daté | État et limite à la coupure |
+|---|---|---|
+| Règles métier PHP sur JSON | `tests/php/run_tests.php` exécuté via PHP-WASM 8.2 | 29/29 conformes sur le pilote JSON ; ne valide pas SQL |
+| Suites PHP restreintes (hors SQL/E2E) | `node scripts/run-all-tests.mjs --sans-sql --sans-e2e` | code 0 rapporté le 23/10 via PHP-WASM 8.2 ; SHA non consigné ; T-01…T-29 JSON 29/29, 297 vérifications, 57 tests PHPUnit, linter 167 fichiers/0 violation ; ni E2E, ni validation SQL, ni CI native |
+| Base de données | Scénarios `T-01`…`T-29` et scripts SQL présents ; validation historique relatée dans `docs/04` le 23/09 | pas de rejeu SQL de cette révision ; le rapport du 27/10 est postérieur à la coupure |
+| Application PHP/MySQL/PDO | À la coupure du 23/10, aucun rejeu SQL/PDO n’est établi ; l’état de configuration vérifié après la coupure est décrit dans l’addendum du 15/11 | Aucun parcours HTTP SQL n’est revendiqué. La sélection du pilote et le repérage statique d’appels aux procédures ne prouvent pas leur exécution. |
+| Sécurité statique | `bash tests/security/controles.sh` | 11/11 rejoués localement le 23/10 ; contrôle ciblé, non équivalent aux scénarios offensifs |
+| Sécurité offensive | Scénarios documentés `S-01`…`S-10` | aucun rejeu offensif/LineServ revendiqué dans cette révision |
+| Recette fonctionnelle humaine | Fiches UC et registre CSV | 200 entrées `NON JOUÉ` ; aucune validation par un testeur étudiant n’est inférée |
+| Performance, hébergement et sauvegarde | Scripts et protocoles référencés | aucune mesure sur cible, opération de déploiement, recette LineServ ou restauration attestée |
 
-## 9. Matrice de traçabilité exigence → modèle → base → application → tests
+### Addendum — exécutions postérieures à la coupure, 15/11/2026
 
-| Exigence / volet | Élément de modèle | Mécanisme de base / stockage | Point d'application PHP / JS / IHM | Tests automatisés & manuels |
-|---|---|---|---|---|
-| EF-VIS-01/03/05 | `Categorie`, `Produit` | `sp_search_products`, `idx_produit_visible`, `v_catalogue` | `CatalogueController`, visuels décoratifs en liste (`alt=""`) | F-01, F-03, F-04, F-34, F-35, T-25, UC-01 |
-| EF-VIS-02 | `Produit` | `sp_search_products` (marqueurs `?`) | recherche + liste blanche de tri | F-02, S-01, T-25, UC-02 |
-| EF-VIS-04 | `Produit` | `trg_produit_ttc` | fiche produit + visuel informatif indicatif | F-05, F-35, UC-03 |
-| EF-VIS-06/07 | `Client` | `sp_create_account`, `sp_get_credentials` | `AuthController`, `Auth`, `Hasher` | F-06…F-08, F-42, T-04, T-05, UC-04, UC-05 |
-| EF-CLI-01/02 | `Client` | `sp_update_client` | `CompteController` (adresse structurée) | F-10, F-11, F-39, UC-05 |
-| EF-CLI-03…06 | `PanierSession` | `sp_search_products` (plafond de stock) | `PanierController` + `ApiController` + `public/js/panier.js` (`script-src 'self'`, repli complet sans JS) | F-12…F-15, F-47, UC-06 |
-| EF-CLI-07 | `Commande`, `LigneCommande` | `sp_create_order_from_basket`, `sp_add_order_line`, triggers A1/A2/B2/D1/D4 | `CommandeController` + `CommandeRepository` | F-16…F-18, F-33, F-40, T-06…T-11, T-16, T-28, T-29, UC-07 |
-| EF-CLI-08/09 | `Commande` | `trg_history_statut`, `v_commandes_client` | `CommandeController` (filtre `id_client`, 404 sur autrui) | F-19, F-20, F-41, S-03, T-18, UC-08 |
-| EF-CLI-10 | `Commande` | `sp_cancel_order` + conservation lignes + `montant_avant_annulation` | confirmation GET sans effet + POST d'annulation | F-21, F-38, T-21, UC-09 |
-| EF-ADM-01/02 | `Produit` | `sp_save_product`, `sp_delete_product`, triggers B3–B6 | `ProduitAdminController` (confirmation suppression 2 étapes) | F-22, F-23, F-38, T-15, T-20, UC-10 |
-| EF-ADM-03 | `Categorie` | `sp_save_category`, `sp_delete_category`, `uk_categorie_nom/slug` | `CategorieAdminController` (refus doublon, confirmation 2 étapes) | F-25, F-43, T-14, UC-11 |
-| EF-ADM-04/05 | `Produit.stock` | `sp_adjust_stock`, `v_etat_stock` | `StockAdminController` (mode par défaut `DELTA`) | F-26, F-27, F-44, T-19, T-26, T-27, UC-12 |
-| EF-ADM-06/08/09 | `Commande` | `sp_revenue_report`, `v_commandes_client`, bornes UTC | `DashboardController`, `CommandeAdminController`, cartes `data-label` | F-28, F-30, F-31, F-46, F-53, UC-13 |
-| EF-ADM-07 | `Commande.statut` | `sp_update_order_status` (garde `ANNULATION_VIA_PARCOURS_DEDIE`), `sp_cancel_order` | confirmation 2 étapes d'annulation admin (avec/sans retour de stock selon `EXPEDIEE`) | F-29, F-48, T-12, T-13, UC-14 |
-| Préférences FR/EN & fuseau | `Heure` | sessions SQL en UTC `+00:00`, `localStorage` navigateur seul | `/preferences`, `preferences.js`, `tz-lookup.js` (CC0 local), `i18n-en.js` | F-50, F-51, F-52, F-53, TCX-19…TCX-23 |
-| Mentions LCEN & conservation | `RetentionComptes`, `Nettoyage*`, `Journal` | `conservation_compte = 24` mois, verrous atomiques, archives `sodium` | `/mentions-legales` (Point 20), `/confidentialite`, `scripts/{purger_comptes,nettoyage_donnees,archive_restreinte}.php` | F-24, F-36, F-49, F-54…F-56, TCX-17, TCX-18, TCX-24 |
-| SEC-01…SEC-13 | — | `CHECK` / `FK` / triggers / moindre privilège | PDO préparé, `e()`, `Auth`, CSRF, CSP stricte, journaux minimisés | S-01…S-10 + 10 contrôles CI + TCX-01…TCX-05 |
-| ENF-01/02/15/16 | — | index, `FULLTEXT`, transactions, `mysqldump --routines --triggers` | scripts `tests/perf/*`, `rollBack()` | P-01…P-06, B-01, F-18, T-09, T-29, TCX-14, TCX-15 |
+Cet addendum ne modifie pas les constats historiques du 23/10 ci-dessus. Dans le checkout du commit `b8edfc9` (branche `arena/10afc76d-sae-302`), vérifié le 15/11/2026, SQL/MySQL/PDO est le pilote applicatif par défaut ; JSON reste une option explicite (`STORAGE_DRIVER=json`). La présence de ce raccordement ne vaut pas validation SQL.
+
+- `node scripts/run-all-tests.mjs --sans-sql` : code de sortie **0** via PHP-WASM 8.2, rejoué le **15/11/2026** sur le commit `b8edfc9` de la branche `arena/10afc76d-sae-302`. Les suites non SQL activées ont réussi, notamment T-01…T-29 exécutés sur JSON (**29/29**), les tests unitaires (**297 vérifications**), PHPUnit local (**57 tests**), linter strict (**167 fichiers, 0 violation**) et l’E2E HTTP isolé (**338 vérifications**, fichiers témoins de l’hôte inchangés). Ce run inclut l’E2E exclu le 23/10, mais saute explicitement l’intégration SQL.
+- `node tests/node/preferences_test.mjs` : code de sortie **0** sur le même commit `b8edfc9` ; contrôles DOM bilingues FR↔EN sur **48 vues**, choix de langue/fuseau et **45 messages métier** vérifiés. Ce résultat est un test DOM, pas une recette dans un navigateur réel.
+- L’E2E passe par le front controller sous PHP-WASM, sur stockage JSON et système de fichiers isolé ; il ne prouve ni connexion ou parcours PDO/MySQL, ni exécution PHP CLI native, ni fonctionnement sur serveur web ou navigateur réel. Dans cette sandbox, l’analyse de compilation PHP CLI native reste **NON JOUÉE** ; les **5 tests de concurrence interprocessus** sont aussi restés non joués faute de PHP natif. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.
+
+Le procès-verbal de recette reste une **trame à compléter** après exécution réelle : date, commit/SHA, environnement isolé, commandes, résultats, anomalies et auteur. La présence de la matrice ci-dessous n’est pas une signature ni une approbation.
+
+---
+
+## 9. Matrice de traçabilité fonctionnalités, scénarios et annexes
+
+Les références `F-*`, `T-*` et `S-*` sont des identifiants de scénarios. Les détails des cas fonctionnels sont dans §3 et les fiches UC ; les scénarios SQL sont au §2 et dans `docs/annexes/annexe-sql.md` ; les scénarios offensifs sont au §4. L’annexe des 14 cas est `docs/annexes/annexe-cas-usage.md` (annexe 17.1 du CDC), et le suivi de recette manuelle est `docs/13-suivi-recette-uc.csv`. Une ligne ci-dessous établit la traçabilité documentaire, pas le résultat d’un test.
+
+| Domaine / exigences | Cas d’utilisation / éléments de modèle | Références de scénarios | Détail et annexe |
+|---|---|---|---|
+| Visiteur `EF-VIS-01…09` | UC-01…05 ; catalogue, recherche, fiche, compte et accès visiteur | `F-01…F-09`, `S-01`, références associées dans §4.1 du CDC | `docs/01` §4.1/§4.3 ; `docs/annexes/annexe-cas-usage.md` ; `docs/13-fiches-recette-uc.md` |
+| Client `EF-CLI-01…10` | UC-05…09 ; profil, panier, commande, historique et annulation | `F-10…F-21`, `T-*` correspondants | `docs/01` §4.1/§4.4 ; fiche UC dans l’annexe 17.1 et `docs/13-*` |
+| Administration `EF-ADM-01…10` | UC-10…14 ; produits, catégories, stock, commandes et statuts | `F-22…F-32`, `T-*` correspondants | `docs/01` §4.1/§4.5 ; fiche UC dans l’annexe 17.1 et `docs/13-*` |
+| Exigences transverses `EF-GEN-01…06` | journalisation, informations, installation et comportement commun | `F-*`, `S-*`, `T-*` référencés au §4.1 du CDC | `docs/01` §4.1/§4.5 ; `docs/02` §3 et §7 |
+| Règles `RB-01…20` | Contraintes métier et mécanismes prévus par le modèle | `T-01…T-29` ; certains liens fonctionnels `F-*` | `docs/01` §6.1 ; `docs/annexes/annexe-sql.md` ; `docs/02` §2 |
+| Sécurité `SEC-01…14` | Mesures, menaces, sessions, autorisations et données de paiement | 10 scénarios offensifs `S-01…S-10` ; 11 contrôles statiques du script, dont `S-11` → `SEC-14` | `docs/01` §8 ; `docs/annexes/annexe-php-patterns.md` ; `docs/02` §4 et §8 |
+| Évolutions `EV-01…05` | Informations légales, préférences, UTC, conservation et minimisation | `F-49…F-56` et références complémentaires listées au §3 | `docs/01` §4.1 ; `docs/02` §3 ; fiches de recette dans `docs/13-*` |
+| Exigences non fonctionnelles `ENF-01…22` | Performance, sécurité, accessibilité, exploitation et conservation | `P-*`, `C-*`, `B-*`, `F-*` selon le besoin | `docs/annexes/annexe-enf.md` (annexe 17.3), `docs/02` §5–§8 |
+
+**Limite d’intégration :** SQL est le pilote applicatif par défaut et les repositories contiennent des appels aux procédures stockées des parcours principaux ; les triggers s’appliquent lors des écritures SQL correspondantes. Ce constat statique ne certifie pas le comportement à l’exécution : aucun rejeu PDO/MySQL de cette révision ni parcours HTTP SQL complet n’est revendiqué. Les tests SQL sur base temporaire ne remplacent pas une preuve de bout en bout.
 
 ## 10. Conclusion
 
-- la **base de données** est verrouillée par 29 scénarios SQL + l'étape 6 d'intégration PDO et la migration MariaDB, rejoués automatiquement à chaque push sur MySQL 8.0 et MariaDB 11.8 ;
-- l'**application complète** (57 cas fonctionnels `F-00`…`F-56`, dont le bilinguisme intégral FR/EN, le fuseau horaire local sans tiers, les confirmations en 2 étapes, les tableaux mobiles `data-label`, les mentions légales LCEN et les outils de conservation) est couverte par les 15 jobs de CI ;
-- la **recette manuelle humaine** dispose de suites actualisées et allégées ([`docs/13-fiches-recette-uc.md`](13-fiches-recette-uc.md) et [`docs/13-suivi-recette-uc.csv`](13-suivi-recette-uc.csv), 164 scénarios + 36 couples = 200 lignes `NON JOUÉ` à dérouler sur navigateur réel et sur la base de production LineServ pendant une fenêtre pré-démo autorisée, avec restauration obligatoire de cette même base à l'état de démonstration avant la démo ; les tests responsive multi-largeurs et les tests SQL restent automatisés, `minishop_test` étant réservé à la CI) ;
-- les copies versionnées de ce document dans `livrables/{html,pdf,docx}/02-document-tests-validation.*` se régénèrent avec `python3 scripts/md_to_{html,pdf,docx}.py`.
+- Le dépôt contient des spécifications, scénarios et scripts de test avec des références croisées vers les UC et les annexes ; un identifiant ou une matrice ne vaut pas preuve d’exécution.
+- Le document de conception relate une validation SQL historique du 23/09/2026 ; le rapport versionné porte une date du 27/10/2026, future à la coupure du 23/10, et n’est pas repris comme résultat acquis à cette coupure.
+- Les 11 contrôles statiques de sécurité ont été rejoués localement le 23/10/2026 ; `S-11` est un contrôle statique ciblé relié à `SEC-14`, distinct des dix scénarios offensifs.
+- Les 200 entrées du registre manuel sont `NON JOUÉ`. Aucun test LineServ, déploiement, restauration de base, relecture croisée étudiante ou validation pédagogique n’est revendiqué.
+- Dans le checkout `b8edfc9` vérifié le 15/11/2026, SQL/MySQL/PDO est le pilote applicatif par défaut et JSON reste une option explicite. Le scan statique trouve un point d’appel repository pour les 18 procédures, sans prouver leur exécution. Le run du 15/11 utilisait `--sans-sql` : aucun rejeu PDO/MySQL ni parcours HTTP complet sous SQL n’est revendiqué.

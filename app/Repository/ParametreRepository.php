@@ -14,7 +14,10 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Model\Data\Filter;
+use App\Model\Data\StoredFunctionExecutor;
+use App\Model\Data\StoredProcedureExecutor;
 use App\Model\Data\StoreInterface;
+use UnexpectedValueException;
 
 final class ParametreRepository
 {
@@ -25,6 +28,15 @@ final class ParametreRepository
     /** fn_param(p_cle, p_defaut) : valeur lue dans la table, sinon défaut. */
     public function fnParam(string $cle, string $defaut): string
     {
+        if ($this->store instanceof StoredFunctionExecutor) {
+            $valeur = $this->store->callFunction('fn_param', [$cle, $defaut]);
+            if ($valeur !== null && (string) $valeur !== '') {
+                return (string) $valeur;
+            }
+
+            return $defaut;
+        }
+
         $row = $this->store->find('parametre', $cle);
 
         if (($row['valeur'] ?? '') !== '') {
@@ -43,6 +55,34 @@ final class ParametreRepository
      */
     public function computeShipping(float $marchandises): array
     {
+        if ($this->store instanceof StoredProcedureExecutor) {
+            $resultat = $this->store->callProcedure(
+                'sp_compute_shipping',
+                [round($marchandises, 2)],
+                ['p_frais_port', 'p_motif'],
+            );
+            $sorties = $resultat['out'] ?? [];
+            $port = $sorties['p_frais_port'] ?? null;
+            $motifSql = $sorties['p_motif'] ?? null;
+            if (!is_numeric($port) || !is_string($motifSql)) {
+                throw new UnexpectedValueException('sp_compute_shipping n’a pas retourné des sorties valides.');
+            }
+
+            if (str_starts_with($motifSql, 'PORT_OFFERT_A_PARTIR_DE_')) {
+                $franchise = round((float) $this->fnParam('franchise_port', '80.00'), 2);
+
+                return [
+                    'port' => round((float) $port, 2),
+                    'motif' => 'frais de port offerts dès ' . number_format($franchise, 2, ',', ' ') . ' € de marchandises',
+                ];
+            }
+
+            return [
+                'port' => round((float) $port, 2),
+                'motif' => 'livraison standard (' . number_format((float) $port, 2, ',', ' ') . ' €)',
+            ];
+        }
+
         $portStandard = round((float) $this->fnParam('frais_port', '4.90'), 2);
         $franchise = round((float) $this->fnParam('franchise_port', '80.00'), 2);
 

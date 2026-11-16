@@ -30,6 +30,9 @@ export const MUTABLE_DIRS = ['data', 'var'];
 /** Crée le runtime PHP-WASM prêt à servir l'application. */
 export async function createPhp(absoluteUrl = 'http://localhost:8080/', { inclureDonnees = true } = {}) {
   const php = await NodePHP.load('8.2', {
+    // PHP-WASM sert aux tests/démos sans serveur SQL : ne pas hériter du
+    // pilote SQL par défaut de l'application, ni des variables du processus.
+    emscriptenOptions: { ENV: { STORAGE_DRIVER: 'json' } },
     requestHandler: { documentRoot: `${WASM_ROOT}/public`, absoluteUrl },
   });
   for (const dir of UPLOAD_DIRS) {

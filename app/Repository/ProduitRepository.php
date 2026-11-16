@@ -15,9 +15,13 @@ namespace App\Repository;
 
 use App\Model\Data\BusinessError;
 use App\Model\Data\Filter;
+use App\Model\Data\StockMovementAuditor;
+use App\Model\Data\StoredProcedureExecutor;
+use App\Model\Data\StoredProcedureResultExecutor;
 use App\Model\Data\StoreInterface;
 use App\Model\Data\Text;
 use App\Model\Data\Views;
+use UnexpectedValueException;
 
 final class ProduitRepository
 {
@@ -73,6 +77,10 @@ final class ProduitRepository
      */
     public function searchProducts(array $criteres = []): array
     {
+        if ($this->store instanceof StoredProcedureResultExecutor) {
+            return $this->searchProductsSql($criteres);
+        }
+
         $where = [];
         $admin = (bool) ($criteres['admin'] ?? false);
 
@@ -159,11 +167,146 @@ final class ProduitRepository
         ];
     }
 
+    /** Exécution SQL de la recherche via sp_search_products. */
+    private function searchProductsSql(array $criteres): array
+    {
+        if (!$this->store instanceof StoredProcedureResultExecutor) {
+            throw new UnexpectedValueException('Le pilote SQL ne fournit pas les résultats de procédures.');
+        }
+
+        $motCle = trim((string) ($criteres['mot_cle'] ?? ''));
+        $idCategorie = null;
+        if (!empty($criteres['id_categorie'])) {
+            $idCategorie = (int) $criteres['id_categorie'];
+        }
+        $prixMin = max(0.0, (float) ($criteres['prix_min'] ?? 0));
+        $prixMax = (float) ($criteres['prix_max'] ?? 99999999.99);
+        $enStock = (int) !empty($criteres['en_stock']);
+        $admin = (bool) ($criteres['admin'] ?? false);
+        $tri = $criteres['tri'] ?? 'nom';
+        if (!in_array($tri, self::TRIS, true)) {
+            $tri = 'nom';
+        }
+        $parPage = min(max((int) ($criteres['par_page'] ?? 12), 1), 60);
+        $pageMax = min(2_147_483_647, intdiv(2_147_483_647, $parPage) + 1);
+        $page = min(max((int) ($criteres['page'] ?? 1), 1), $pageMax);
+        $offset = ($page - 1) * $parPage;
+        $rupturesFin = (bool) ($criteres['ruptures_fin'] ?? false);
+
+        [$lignesSql, $total] = $this->rechercheSqlPage(
+            $motCle, $idCategorie, $prixMin, $prixMax, $enStock, $tri, $page, $parPage, $admin,
+        );
+
+        if ($rupturesFin && $enStock === 0) {
+            [, $nombreDisponibles] = $this->rechercheSqlPage(
+                $motCle, $idCategorie, $prixMin, $prixMax, 1, $tri, 1, 1, $admin,
+            );
+            $lignesSql = [];
+            if ($offset < $nombreDisponibles) {
+                [$lignesDisponibles] = $this->rechercheSqlPage(
+                    $motCle, $idCategorie, $prixMin, $prixMax, 1, $tri, $page, $parPage, $admin,
+                );
+                $lignesSql = $lignesDisponibles;
+            }
+
+            $placesRestantes = $parPage - count($lignesSql);
+            $offsetRuptures = max(0, $offset + count($lignesSql) - $nombreDisponibles);
+            if ($placesRestantes > 0 && $offset + count($lignesSql) < $total) {
+                $tailleLot = 60;
+                $pageRuptures = intdiv($offsetRuptures, $tailleLot) + 1;
+                $decalageDansLot = $offsetRuptures % $tailleLot;
+                [$lotRuptures] = $this->rechercheSqlPage(
+                    $motCle, $idCategorie, $prixMin, $prixMax, 2, $tri, $pageRuptures, $tailleLot, $admin,
+                );
+                $lignesSql = array_merge($lignesSql, array_slice($lotRuptures, $decalageDansLot, $placesRestantes));
+            }
+        }
+
+        $lignes = [];
+        foreach ($lignesSql as $produit) {
+            $produit['id_produit'] = (int) $produit['id_produit'];
+            $produit['id_categorie'] = (int) $produit['id_categorie'];
+            $produit['stock'] = (int) $produit['stock'];
+            $produit['seuil_alerte'] = (int) $produit['seuil_alerte'];
+            $produit['visible'] = (bool) $produit['visible'];
+            $produit['prix_ht'] = (float) $produit['prix_ht'];
+            $produit['tva'] = (float) $produit['tva'];
+            $produit['prix_ttc'] = (float) $produit['prix_ttc'];
+            $produit['categorie'] = (string) ($produit['categorie'] ?? '—');
+            $produit['categorie_slug'] = $produit['categorie_slug'] ?? null;
+            $produit['etat_stock'] = Views::etatStock($produit);
+            $lignes[] = $produit;
+        }
+
+        return [
+            'lignes' => $lignes,
+            'total' => $total,
+            'page' => $page,
+            'par_page' => $parPage,
+            'pages' => max(1, (int) ceil($total / $parPage)),
+        ];
+    }
+
+    /**
+     * @return array{0:list<array<string,mixed>>,1:int}
+     */
+    private function rechercheSqlPage(
+        string $motCle,
+        ?int $idCategorie,
+        float $prixMin,
+        float $prixMax,
+        int $enStock,
+        string $tri,
+        int $page,
+        int $parPage,
+        bool $admin,
+    ): array {
+        if (!$this->store instanceof StoredProcedureResultExecutor) {
+            throw new UnexpectedValueException('Le pilote SQL ne fournit pas les résultats de procédures.');
+        }
+
+        $resultat = $this->store->transactional(function () use (
+            $motCle,
+            $idCategorie,
+            $prixMin,
+            $prixMax,
+            $enStock,
+            $tri,
+            $page,
+            $parPage,
+            $admin,
+        ): array {
+            if (!$this->store instanceof StoredProcedureResultExecutor) {
+                throw new UnexpectedValueException('Le pilote SQL ne fournit pas les résultats de procédures.');
+            }
+
+            return $this->store->callProcedureWithResults('sp_search_products', [
+                $motCle,
+                $idCategorie,
+                $prixMin,
+                $prixMax,
+                $enStock,
+                $tri,
+                $page,
+                $parPage,
+                (int) $admin,
+            ]);
+        });
+        $ensembles = $resultat['results'] ?? [];
+        if (count($ensembles) < 2 || !isset($ensembles[1][0]['total_trouves'])) {
+            throw new UnexpectedValueException('sp_search_products n’a pas retourné ses deux jeux de résultats.');
+        }
+
+        return [$ensembles[0], (int) $ensembles[1][0]['total_trouves']];
+    }
+
     /**
      * sp_save_product — création / modification (EF-ADM-01/02).
      * p_id_produit null => création. Le prix TTC est DÉRIVÉ par le
      * déclencheur trg_produit_ttc (RB-16), jamais saisi.
      *
+     * @param int $stock stock initial à la création ; ignoré à la modification,
+     *                    où adjustStock() exige un motif obligatoire
      * @return int id du produit
      */
     public function saveProduct(
@@ -189,7 +332,8 @@ final class ProduitRepository
         if (trim($nom) === '') {
             throw new BusinessError('NOM_REQUIS');
         }
-        if ($this->store->find('categorie', $idCategorie) === null) {
+        if (!$this->store instanceof StoredProcedureExecutor
+            && $this->store->find('categorie', $idCategorie) === null) {
             throw new BusinessError('CATEGORIE_INTROUVABLE');
         }
 
@@ -199,6 +343,28 @@ final class ProduitRepository
             $slug = Text::slug($nom);
         }
         $reference = trim($reference);
+
+        if ($this->store instanceof StoredProcedureExecutor) {
+            $visibleSql = $visible;
+            if ($idProduit === null && $visibleSql === null) {
+                $visibleSql = true;
+            }
+
+            return $this->saveProductSql(
+                $idProduit,
+                $reference,
+                trim($nom),
+                $slug,
+                $description,
+                $prixHt,
+                $tva ?? 20.00,
+                $stock,
+                $seuilAlerte ?? 3,
+                $idCategorie,
+                $visibleSql,
+                $imageUrl,
+            );
+        }
 
         $exclusion = $idProduit ?? 0;
         if ($this->store->exists('produit', [Filter::eq('reference', $reference), Filter::neq('id_produit', $exclusion)])) {
@@ -215,13 +381,15 @@ final class ProduitRepository
             'description' => $description,
             'prix_ht' => $prixHt,
             'tva' => $tva ?? 20.00,
-            'stock' => $stock,
             'seuil_alerte' => $seuilAlerte ?? 3,
             'id_categorie' => $idCategorie,
             'image_url' => $imageUrl,
         ];
 
         if ($idProduit === null) {
+            // Le stock initial est une propriété de création ; les ajustements
+            // ultérieurs passent exclusivement par adjustStock() avec motif.
+            $donnees['stock'] = $stock;
             $donnees['visible'] = $visible ?? true;
 
             return $this->store->insert('produit', $donnees);
@@ -235,6 +403,68 @@ final class ProduitRepository
         return $idProduit;
     }
 
+    private function saveProductSql(
+        ?int $idProduit,
+        string $reference,
+        string $nom,
+        string $slug,
+        ?string $description,
+        float $prixHt,
+        float $tva,
+        int $stock,
+        int $seuilAlerte,
+        int $idCategorie,
+        ?bool $visible,
+        ?string $imageUrl,
+    ): int {
+        if (!$this->store instanceof StoredProcedureExecutor) {
+            throw new UnexpectedValueException('Le pilote SQL ne fournit pas l’exécution de procédures.');
+        }
+
+        return $this->store->transactional(function () use (
+            $idProduit,
+            $reference,
+            $nom,
+            $slug,
+            $description,
+            $prixHt,
+            $tva,
+            $stock,
+            $seuilAlerte,
+            $idCategorie,
+            $visible,
+            $imageUrl,
+        ): int {
+            if (!$this->store instanceof StoredProcedureExecutor) {
+                throw new UnexpectedValueException('Le pilote SQL ne fournit pas l’exécution de procédures.');
+            }
+            if ($idProduit !== null && $this->store->find('produit', $idProduit) === null) {
+                throw new BusinessError('PRODUIT_INTROUVABLE');
+            }
+
+            $resultat = $this->store->callProcedure(
+                'sp_save_product',
+                [$idProduit, $reference, $nom, $slug, $description, $prixHt, $tva, $stock, $seuilAlerte, $idCategorie, $visible, $imageUrl],
+                ['p_id_resultat', 'p_code_retour'],
+            );
+            $sorties = $resultat['out'] ?? [];
+            $code = $sorties['p_code_retour'] ?? null;
+            if ($code !== 'OK' && $code !== 'AUCUNE_MODIFICATION') {
+                if (is_string($code) && preg_match('/^[A-Z][A-Z0-9_]+$/', $code) === 1) {
+                    throw new BusinessError($code);
+                }
+                throw new UnexpectedValueException('Réponse inattendue de sp_save_product.');
+            }
+
+            $idResultat = $sorties['p_id_resultat'] ?? null;
+            if (!is_numeric($idResultat) || (int) $idResultat < 1) {
+                throw new UnexpectedValueException('sp_save_product n’a pas retourné un identifiant produit valide.');
+            }
+
+            return (int) $idResultat;
+        });
+    }
+
     /**
      * sp_delete_product — suppression protégée (EF-ADM-02, RB-14/RB-17) :
      * un produit déjà commandé est MASQUÉ (visible=0) afin de conserver
@@ -242,6 +472,17 @@ final class ProduitRepository
      */
     public function deleteProduct(int $idProduit): void
     {
+        if ($this->store instanceof StoredProcedureExecutor) {
+            $this->store->transactional(function () use ($idProduit): void {
+                if (!$this->store instanceof StoredProcedureExecutor) {
+                    throw new UnexpectedValueException('Le pilote SQL ne fournit pas l’exécution de procédures.');
+                }
+                $this->store->callProcedure('sp_delete_product', [$idProduit]);
+            });
+
+            return;
+        }
+
         if ($this->store->find('produit', $idProduit) === null) {
             throw new BusinessError('PRODUIT_INTROUVABLE');
         }
@@ -260,25 +501,78 @@ final class ProduitRepository
      */
     public function adjustStock(int $idProduit, string $mode, int $quantite, string $motif): int
     {
-        if (trim($motif) === '') {
+        $mode = strtoupper(trim($mode));
+        $motif = trim($motif);
+        if ($motif === '') {
             throw new BusinessError('MOTIF_STOCK_REQUIS');
         }
-        $produit = $this->store->find('produit', $idProduit);
-        if ($produit === null) {
-            throw new BusinessError('PRODUIT_INTROUVABLE');
+        if (!in_array($mode, ['SET', 'DELTA'], true)) {
+            throw new BusinessError('MODE_STOCK_INVALIDE');
         }
 
-        $nouveau = $quantite;
-        if ($mode === 'DELTA') {
-            $nouveau = (int) $produit['stock'] + $quantite;
-        }
-        if ($nouveau < 0) {
-            throw new BusinessError('RB03_STOCK_NE_PEUT_PAS_ETRE_NEGATIF');
+        if ($this->store instanceof StoredProcedureExecutor) {
+            // sp_adjust_stock possède sa propre transaction : mise à jour et
+            // audit SQL sont validés/annulés ensemble, y compris en appel direct.
+            $resultat = $this->store->callProcedure(
+                'sp_adjust_stock',
+                [$idProduit, $mode, $quantite, $motif],
+                ['p_stock', 'p_code_retour'],
+            );
+            $sorties = $resultat['out'] ?? [];
+            $code = $sorties['p_code_retour'] ?? null;
+            if ($code !== 'OK') {
+                if (is_string($code) && preg_match('/^[A-Z][A-Z0-9_]+$/', $code) === 1) {
+                    throw new BusinessError($code);
+                }
+                throw new UnexpectedValueException('Réponse inattendue de sp_adjust_stock.');
+            }
+            $stock = $sorties['p_stock'] ?? null;
+            if (!is_numeric($stock)) {
+                throw new UnexpectedValueException('sp_adjust_stock n’a pas retourné un stock valide.');
+            }
+
+            return (int) $stock;
         }
 
-        $this->store->update('produit', [Filter::eq('id_produit', $idProduit)], ['stock' => $nouveau]);
+        $acteur = $this->store->actor();
+        [$stockAvant, $stockApres] = $this->store->transactional(function () use (
+            $idProduit,
+            $mode,
+            $quantite,
+            $motif,
+            $acteur,
+        ): array {
+            $produit = $this->store->find('produit', $idProduit);
+            if ($produit === null) {
+                throw new BusinessError('PRODUIT_INTROUVABLE');
+            }
+            $stockAvant = (int) $produit['stock'];
+            $nouveau = $quantite;
+            if ($mode === 'DELTA') {
+                $nouveau = $stockAvant + $quantite;
+            }
+            if ($nouveau < 0) {
+                throw new BusinessError('RB03_STOCK_NE_PEUT_PAS_ETRE_NEGATIF');
+            }
+            if ($nouveau !== $stockAvant) {
+                $this->store->update('produit', [Filter::eq('id_produit', $idProduit)], ['stock' => $nouveau]);
+                if ($this->store instanceof StockMovementAuditor) {
+                    $this->store->logStockMovement(
+                        $idProduit,
+                        $stockAvant,
+                        $nouveau,
+                        $mode,
+                        $quantite,
+                        $motif,
+                        $acteur,
+                    );
+                }
+            }
 
-        return $nouveau;
+            return [$stockAvant, $nouveau];
+        });
+
+        return $stockApres;
     }
 
     /** État des stocks enrichi (vue v_etat_stock) pour le back-office. */

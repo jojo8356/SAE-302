@@ -1,13 +1,14 @@
-# Annexe 17.4/17.5/17.6 — Scripts SQL livrés (générés depuis les fichiers du dépôt)
+# Annexe 17.4/17.5/17.6 — Extraits explicatifs des scripts SQL
 
-Fichiers sources : `sql/01_minishop_schema.sql` (DDL + données), `sql/02_minishop_procedures.sql`
-(17 procédures + 1 fonction), `sql/03_minishop_triggers.sql` (16 déclencheurs), `sql/04_minishop_demo.sql`
-(commandes de démonstration créées **par les procédures**, donc avec triggers actifs), `tests/perf/mesurer.sh`
-(protocole de mesure `ENF-01`) et `scripts/gen_volumes.sh` (jeu de mesure de volumétrie).
+Sources canoniques : `sql/01_minishop_schema.sql` (DDL + données), `sql/02_minishop_procedures.sql`
+(**18 procédures + 1 fonction** dans l’état statique du commit `b8edfc9`, vérifié le 15/11/2026), `sql/03_minishop_triggers.sql`
+(16 déclencheurs), `sql/04_minishop_demo.sql` (commandes de démonstration créées **par les procédures**),
+`tests/perf/mesurer.sh` (protocole `ENF-01`) et `scripts/gen_volumes.sh` (jeu de mesure de volumétrie).
 
-(A→F : scripts SQL, fixture et manifeste de tests ; G→H : mesures de performance et volumétrie ;
+(A→F : exemples SQL, fixture et manifeste de tests ; G→H : mesures de performance et volumétrie ;
 I : fichiers hors dépôt.)
-Les extraits ci-dessous reprennent la structure des scripts pour l’explication pédagogique. Les identifiants, hashes et coordonnées des comptes de démonstration sont expurgés ; les marqueurs rendent les lignes concernées non exécutables. Le dépôt reste la source de vérité, mais cette annexe n’est pas un export restaurable.
+
+> **Limite importante :** les blocs ci-dessous proviennent d’une photographie antérieure des scripts ; ils sont expurgés, abrégés, non exhaustifs et non exécutables. Certains comptages internes (notamment 8 tables et 17 procédures) décrivent cet extrait historique, pas les sources actuelles. Pour l’état courant, consulter `docs/04-conception-bd-et-sql.md` et exécuter/relire uniquement les fichiers canoniques de `sql/`. Les identifiants, hashes et coordonnées de démonstration sont expurgés ; l’annexe n’est pas un export restaurable.
 
 ## A. Script de création et de peuplement — `sql/01_minishop_schema.sql`
 

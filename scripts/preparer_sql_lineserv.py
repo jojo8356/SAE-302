@@ -21,6 +21,7 @@ try:
         r'^DROP DATABASE IF EXISTS minishop;[^\n]*$',
         r'^CREATE DATABASE IF NOT EXISTS minishop CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;[^\n]*$',
         r'^USE minishop;[^\n]*$',
+        r'^DROP TABLE IF EXISTS stock_movement_history;[^\n]*$',
         r'^DROP TABLE IF EXISTS parametre;[^\n]*$',
         r'^SET FOREIGN_KEY_CHECKS = 0;[^\n]*$',
         r'^SET FOREIGN_KEY_CHECKS = 1;[^\n]*$',
@@ -34,7 +35,7 @@ try:
     interdit = re.search(r'^\s*(?:DROP\s+(?:DATABASE|TABLE)|CREATE\s+DATABASE|USE\s+|SET\s+FOREIGN_KEY_CHECKS\s*=\s*0)\b', texte, re.IGNORECASE | re.MULTILINE)
     if interdit:
         raise ValueError('Une instruction de changement de base ou de suppression de table subsiste ; arrêt sans export.')
-    if len(re.findall(r'^CREATE TABLE\s+', texte, re.MULTILINE)) != 8:
+    if len(re.findall(r'^CREATE TABLE\s+', texte, re.MULTILINE)) != 9:
         raise ValueError('Le nombre de tables du schéma a changé ; vérifier le guide avant export.')
     dossier = Path(tempfile.mkdtemp(prefix='minishop-lineserv-'))
     sortie = dossier / '01_schema_pour_base_vide.sql'

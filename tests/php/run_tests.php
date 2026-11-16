@@ -321,9 +321,16 @@ jouer('T-20', ['regle' => 'RB-09', 'attendu' => 'OK', 'travail' => static functi
 
 jouer('T-21', ['regle' => 'RB-18', 'attendu' => 'OK', 'travail' => static function (StoreInterface $store): void {
     // annulation : restitution exacte, un seul crédit, soldes à zéro
+    $client = $store->findOne('client', [Filter::eq('email', 'carla@example.com')]);
+    if ($client === null) {
+        throw new RuntimeException('Client de fixture Carla introuvable.');
+    }
     $commande = commandeAvec($store, 'carla@example.com', ['TST-900' => 2]); // stock 5 → 3
     passe('stock décrémenté 5 → 3', (int) $store->find('produit', idTst($store))['stock'] === 3);
-    $resultat = (CommandeRepository::for($store))->cancelOrder((int) $commande['id_commande'], null);
+    $resultat = (CommandeRepository::for($store))->cancelOrder(
+        (int) $commande['id_commande'],
+        (int) $client['id_client'],
+    );
     passe('2 unités restituées', (int) $resultat['unites_rendues'] === 2);
     passe('stock restauré à 5 exactement', (int) $store->find('produit', idTst($store))['stock'] === 5);
     $apres = $store->find('commande', (int) $commande['id_commande']);

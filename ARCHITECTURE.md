@@ -17,12 +17,12 @@ Navigateur
                  └── Controllers
                       ├── Repositories + modèles/helpers métier
                       │    └── Database::store() : StoreInterface
-                      │         ├── JsonStore (pilote par défaut)
-                      │         │    ├── Schema / Triggers / Views
-                      │         │    ├── JsonTable -> fichiers JSON
-                      │         │    └── Journal -> var/journal/db.jsonl (si accessible en écriture)
-                      │         └── SqlStore (option SQL)
-                      │              └── PDO -> MySQL ou MariaDB
+                      │         ├── SqlStore (pilote par défaut)
+                      │         │    └── PDO -> MySQL ou MariaDB
+                      │         └── JsonStore (mode secondaire explicite)
+                      │              ├── Schema / Triggers / Views
+                      │              ├── JsonTable -> fichiers JSON
+                      │              └── Journal -> var/journal/db.jsonl (si accessible en écriture)
                       └── Views PHP -> HTML dans le layout commun
 ```
 
@@ -88,9 +88,9 @@ La vérification CSRF est fournie par `Controller::verifierCsrf()` / `Csrf` et a
 
 ### Contrat et sélection du pilote
 
-`app/Model/Data/StoreInterface.php` est la frontière entre les repositories et le stockage. Le contrat décrit des opérations déclaratives de sélection, insertion, mise à jour, suppression et transaction. `Database` met en cache un magasin par requête et choisit le pilote selon `STORAGE_DRIVER` : `json` par défaut ou `sql`. La configuration suit les valeurs par défaut, les fichiers historiques de configuration, `.env`, puis les variables d’environnement du processus ; l’environnement peut donc surcharger `.env`.
+`app/Model/Data/StoreInterface.php` est la frontière entre les repositories et le stockage. Le contrat décrit des opérations déclaratives de sélection, insertion, mise à jour, suppression et transaction. Les capacités SQL spécifiques sont exposées par des interfaces dédiées afin que le magasin JSON n'ait pas à simuler procédures, fonctions ou verrous de lignes. `Database` met en cache un magasin par requête et choisit SQL par défaut ; `STORAGE_DRIVER=json` permet de sélectionner explicitement le mode secondaire. La configuration suit les valeurs par défaut, les fichiers historiques, `.env`, puis les variables d’environnement du processus ; l’environnement peut donc surcharger `.env`.
 
-### Pilote JSON (par défaut)
+### Pilote JSON (mode secondaire explicite)
 
 `JsonStore` associe une table à un fichier dans `data/minishop/` (ou au chemin choisi par `DATA_PATH`). `JsonTable` charge les lignes à la demande, maintient un index de clé primaire, puis écrit une table modifiée via un fichier temporaire et un renommage. `Schema` applique les types, valeurs par défaut, champs requis, unicités, `CHECK` et clés étrangères. `Triggers` exécute les règles métier partagées ; `Views` fournit des ensembles dérivés tels que l’état de stock et le catalogue.
 
@@ -98,21 +98,21 @@ Les lectures de filtre parcourent les lignes en mémoire. Les écritures ouvrent
 
 Le moteur est donc adapté à la démonstration et aux petits volumes, pas à un stockage multi-hôte, à une forte concurrence ni à une charge de production.
 
-### Pilote SQL (optionnel)
+### Pilote SQL (principal et sélectionné par défaut)
 
-`SqlStore` implémente le même contrat sur MySQL/MariaDB via PDO. Il valide les noms de table/colonne sur la liste de `Schema`, utilise des marqueurs et des requêtes préparées natives pour les valeurs, et délègue les transactions à PDO. Les opérations de verrouillage SQL utilisent `SELECT … FOR UPDATE` dans une transaction. `DbConnexion` centralise l’ouverture de connexion, la collation de session et le fuseau SQL UTC.
+`SqlStore` implémente le contrat commun sur MySQL/MariaDB via PDO. Il valide les noms de table/colonne sur la liste de `Schema`, utilise des marqueurs et des requêtes préparées natives pour les valeurs, et délègue les transactions à PDO. Les opérations de verrouillage SQL utilisent `SELECT … FOR UPDATE` dans une transaction. `DbConnexion` centralise l’ouverture de connexion, la collation de session et le fuseau SQL UTC.
 
-Les scripts versionnés dans `sql/` décrivent 8 tables relationnelles, 3 vues, 1 fonction, 17 procédures stockées et 16 déclencheurs. Les tables et règles PHP doivent rester alignées avec ce schéma. **Précision importante sur l’exécution actuelle :** `SqlStore` expose des méthodes d’appel de procédures/fonctions, mais les repositories de l’application ne les appellent pas directement dans le code courant ; ils utilisent les opérations du contrat de magasin. En mode SQL, il ne faut donc pas déduire du seul inventaire SQL que chaque action applicative passe par une procédure stockée. Les contraintes et déclencheurs définis en base restent des garde-fous des écritures SQL.
+Les scripts versionnés dans `sql/` décrivent 9 tables relationnelles (dont `stock_movement_history`), 3 vues, 1 fonction, 18 procédures stockées et 16 déclencheurs. Les repositories détectent les capacités SQL dédiées et appellent des procédures pour les principaux parcours de comptes, catalogue, catégories, stock et commandes ; les lectures et opérations génériques continuent d’utiliser `StoreInterface`. Les procédures avec transaction interne (`sp_create_order_from_basket`, `sp_cancel_order`, `sp_cancel_order_admin`, `sp_adjust_stock`) sont appelées sans ouvrir de transaction PDO englobante. `sp_adjust_stock` enregistre le motif, l'acteur et les stocks avant/après dans la même transaction que l'ajustement. Ce raccordement est présent dans le code, mais aucun rejeu PDO/MySQL de cette révision n’est revendiqué ici : les tests configurés et les appels visibles ne prouvent pas à eux seuls le fonctionnement de bout en bout. Les contraintes et déclencheurs définis en base restent des garde-fous des écritures SQL.
 
-Le pilote SQL exige que la base ait déjà été préparée et que PHP dispose de `pdo_mysql`. La configuration ou l’installation du schéma n’est pas un service de base de données inclus dans l’application. Les scripts d’initialisation et d’essai sur base doivent être réservés à une base jetable/dédiée ; ils ne doivent pas être lancés contre une base à conserver.
+Le mode SQL exige PHP avec `pdo_mysql`, un serveur compatible et une base préparée. `scripts/db_init.php` et `./run.sh --db` installent le schéma et les données ; ces commandes peuvent supprimer une base existante et doivent être utilisées uniquement après avoir vérifié une cible locale dédiée. Les tests SQL utilisent une base de test distincte et ne doivent jamais viser la base de développement.
 
 ### Données et règles métier centrales
 
-Le schéma logique contient les tables `administrateur`, `client`, `categorie`, `produit`, `parametre`, `commande`, `ligne_commande` et `order_status_history`. Les règles principales comprennent :
+Le schéma logique contient les tables `administrateur`, `client`, `categorie`, `produit`, `stock_movement_history`, `parametre`, `commande`, `ligne_commande` et `order_status_history`. Les règles principales comprennent :
 
 - adresses e-mail, références et slugs uniques ; catégories protégées si des produits les référencent ; produits ayant un historique conservés/masqués plutôt que supprimés arbitrairement ;
 - prix TTC calculé à partir du prix HT et de la TVA ; prix et quantité figés sur chaque ligne de commande ; total contrôlé à partir des lignes et des frais de port ;
-- stock non négatif ; un produit masqué est refusé par le panier, les quantités sont plafonnées au stock serveur et le stock est recontrôlé à la création de commande ;
+- stock non négatif ; un produit masqué est refusé par le panier, les quantités sont plafonnées au stock serveur et le stock est recontrôlé à la création de commande ; les ajustements manuels passent par `sp_adjust_stock`, motif obligatoire et trace transactionnelle dans `stock_movement_history` ;
 - panier validé dans une transaction logique, avec contrôle des stocks ; transitions de commande contraintes par une matrice d’états et changements consignés dans l’historique ;
 - frais de port et seuil de gratuité lus depuis les paramètres de boutique, puis figés sur la commande ; valeurs de démonstration par défaut : 4,90 € et gratuité à partir de 80 € ;
 - annulation avec conservation de l’historique des lignes ; restitution du stock selon l’état et le parcours d’annulation prévu. Le cas d’une commande déjà expédiée ne provoque pas de restitution automatique du stock.
@@ -159,7 +159,7 @@ Le workflow automatisé déclaré se trouve dans [`.github/workflows/ci.yml`](.g
 ## 9. Limites des choix techniques
 
 1. **JSON n’est pas un SGBD.** Les filtres parcourent les données en mémoire, le verrou est coopératif et local, et l’atomicité multi-fichier n’est pas garantie en cas d’arrêt pendant le commit. Éviter le mode JSON pour de la concurrence élevée ou plusieurs hôtes.
-2. **Règles présentes à plusieurs endroits.** Les règles existent à la fois dans les repositories PHP, le schéma PHP, les callbacks JSON et les scripts SQL. Malgré les tests, ce parallélisme crée un risque de divergence. Le fait que les procédures SQL existent ne signifie pas que les repositories les invoquent.
+2. **Règles présentes à plusieurs endroits.** Les règles existent à la fois dans les repositories PHP, le schéma PHP, les callbacks JSON et les scripts SQL. Malgré les tests, ce parallélisme crée un risque de divergence. Les chemins SQL des repositories appellent des procédures pour les principaux parcours de comptes, catalogue, catégories, stock et commandes ; les lectures simples utilisent l’API générique. Ce raccordement statique n’est pas une preuve d’exécution PDO/MySQL.
 3. **Dépendance au processus PHP.** Sessions, rendus et API sont étroitement liés au cycle HTTP PHP. Il n’y a pas de service asynchrone, de file de messages, de cache distribué ou de déploiement multi-instance documenté.
 4. **Couverture du navigateur.** Le JavaScript est léger et améliore le rendu serveur ; le stockage des préférences dépend de `localStorage` et les dates personnalisées dépendent des capacités navigateur. Les tests automatisés ne remplacent pas les vérifications sur appareils et technologies d’assistance réels.
 5. **Déploiement non garanti.** Le mode développement est simple à lancer, mais la configuration Apache, les droits de fichiers, TLS, la sécurité des comptes de démonstration et le contexte LineServ doivent être contrôlés séparément. La maquette n’implémente pas de paiement réel ni de livraison réelle.

@@ -90,7 +90,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <main id="contenu">
 <nav class="toc" aria-label="Sommaire"><div class="toc">
 <ul>
-<li><a href="#0-synthese">0. Synthèse</a></li>
+<li><a href="#etat-courant-verifie-15-novembre-2026">État courant vérifié — 15 novembre 2026</a></li>
+<li><a href="#0-synthese-historique">0. Synthèse historique</a></li>
 <li><a href="#a-fichiers-references-mais-absents-bloquant">A. Fichiers référencés mais absents — 🔴 bloquant</a></li>
 <li><a href="#b-lapplication-ne-tourne-pas-sur-mysqlpdo-ecart-technique-majeur">B. L'application ne tourne pas sur MySQL/PDO — 🔴 écart technique majeur</a></li>
 <li><a href="#c-interface-ni-css-ni-javascript-ni-images-fort">C. Interface : ni CSS, ni JavaScript, ni images — 🟠 fort</a></li>
@@ -110,11 +111,55 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 todolist <code>06</code>, annexes, CI) à ce que le dépôt <strong>contient réellement</strong>. Chaque écart ci-dessous est
 vérifiable par la commande citée. Les points sont classés par impact sur le barème
 (i spécification 20 · ii base de données 20 · iii application 30 · iv soutenance 10 · v GitLab 10).</p>
-<p><strong>Méthode.</strong> Audit statique du dépôt + exécution réelle de <code>node scripts/run-all-tests.mjs</code>
-et <code>bash tests/security/controles.sh</code> le 23/10/2026.</p>
+<p><strong>Méthode de l’archive.</strong> Les constats et commandes des sections A→J ci-dessous décrivent une photographie antérieure du dépôt. Ils ne sont pas un relevé complet du checkout actuel ; les exécutions historiques ne sont pas réutilisées comme preuve de la révision présente. La photographie vérifiée pour le checkout courant est séparée ci-dessous.</p>
+<p><strong>Statut historique.</strong> Les constats ci-dessous décrivent une photographie antérieure et ne constituent pas un audit de l’état actuel du checkout. En particulier, les lignes du §B qui déclarent SQL non raccordé et JSON par défaut sont dépassées : SQL/MySQL/PDO est désormais le pilote par défaut, JSON est une option explicite et le scan statique repère un point d’appel repository pour chacune des 18 procédures. Cela ne prouve pas leur exécution PDO/MySQL ni un parcours HTTP complet. Les anciens nombres de tests et constats des autres sections ne doivent pas être repris comme résultats actuels ; consulter <code>docs/01</code>, <code>docs/02</code>, <code>docs/04</code> et <code>docs/21</code> pour l’état révisé.</p>
 <p><strong>Note de portée (révision du 23/10/2026).</strong> Les références à <code>.gitlab-ci.yml</code>, aux jobs GitLab et à une « cible notée » ci-dessous décrivent l’état antérieur examiné par cet audit. La configuration GitLab CI et son exigence ont depuis été retirées du CDC ; la CI GitHub Actions est distincte et ne prouve pas un pipeline GitLab.</p>
 </blockquote>
-<h2 id="0-synthese">0. Synthèse<a class="headerlink" href="#0-synthese" title="Permanent link">#</a></h2>
+<h2 id="etat-courant-verifie-15-novembre-2026">État courant vérifié — 15 novembre 2026<a class="headerlink" href="#etat-courant-verifie-15-novembre-2026" title="Permanent link">#</a></h2>
+<p>Cette section décrit les contrôles consignés pour le checkout du commit <code>b8edfc9</code> (branche <code>arena/10afc76d-sae-302</code>), vérifié le 15/11/2026 ; elle ne transforme pas les constats historiques A→J en résultats actuels. Les sections A→J conservent la photographie antérieure au 23/10/2026. Les exécutions du 15/11 sont distinctes du run restreint du 23/10 et ne requalifient pas l’audit historique.</p>
+<table>
+<thead>
+<tr>
+<th>Domaine</th>
+<th>État vérifié</th>
+<th>Limite de preuve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pilote applicatif</td>
+<td>SQL/MySQL/PDO est le pilote par défaut ; JSON reste une option explicite.</td>
+<td>La configuration ne prouve pas qu’une connexion MySQL a été ouverte.</td>
+</tr>
+<tr>
+<td>Sources SQL</td>
+<td>Inventaire statique : 9 tables, 3 vues, 18 procédures, 1 fonction et 16 triggers. Les repositories contiennent un point d’appel statiquement repéré pour chacune des 18 procédures.</td>
+<td>Les compteurs et références de code ne prouvent ni chargement, ni exécution PDO/MySQL, ni parcours HTTP SQL complet.</td>
+</tr>
+<tr>
+<td>Tests automatisés (15/11)</td>
+<td><code>node scripts/run-all-tests.mjs --sans-sql</code> : code 0 via PHP-WASM 8.2 ; T-01…T-29 sur JSON (29/29), 297 vérifications, 57 tests PHPUnit, linter strict 167 fichiers/0 violation et E2E HTTP isolé (338 vérifications). <code>node tests/node/preferences_test.mjs</code> : code 0, DOM FR/EN (48 vues, 45 messages métier).</td>
+<td>Le run du 15/11 exclut SQL ; aucun résultat PDO/MySQL n’en est déduit. L’E2E WASM/DOM n’est pas une recette navigateur réelle. PHP CLI natif est absent ; son analyse de compilation reste non jouée.</td>
+</tr>
+<tr>
+<td>Inventaire</td>
+<td><code>docs/17-inventaire-projet.csv</code> contient 542 chemins uniques, identiques aux 542 chemins suivis par Git dans le checkout.</td>
+<td>Le contrôle porte sur les chemins et la présence, pas sur la justesse fonctionnelle du contenu.</td>
+</tr>
+<tr>
+<td>WBS / todolist</td>
+<td><code>docs/05</code> : 84 tâches et 355 h estimées. <code>docs/06</code> : 164 h classées terminées, 191 h restantes et 12 tâches classées asynchrones.</td>
+<td>Les heures sont des estimations/classifications de planification, pas des pointages ni une mesure de travail humain.</td>
+</tr>
+<tr>
+<td>Environnement réel</td>
+<td>Aucun déploiement, essai manuel LineServ ou restauration de base n’est revendiqué. Les tests SQL de CI, lorsqu’ils sont exécutés, utilisent une base temporaire distincte de toute cible manuelle.</td>
+<td>Les limites ci-dessus restent à lever par un run SQL/PDO daté sur environnement isolé et par les parcours E2E correspondants.</td>
+</tr>
+</tbody>
+</table>
+<p>Les sections A→J qui suivent sont conservées comme <strong>audit historique</strong> : leurs diagnostics, nombres de tests et plans de correction décrivent l’état antérieur et ne doivent pas être lus comme le statut actuel.</p>
+<h2 id="0-synthese-historique">0. Synthèse historique<a class="headerlink" href="#0-synthese-historique" title="Permanent link">#</a></h2>
 <p><strong>Statut vérifié le 23/10/2026</strong> (les détails et les commandes de preuve sont dans <code>10-todo-corrections.md</code>).</p>
 <table>
 <thead>

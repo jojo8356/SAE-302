@@ -25,10 +25,13 @@ namespace App\Repository;
 
 use App\Model\Data\BusinessError;
 use App\Model\Data\Filter;
+use App\Model\Data\RowLockingStore;
+use App\Model\Data\StoredProcedureExecutor;
+use App\Model\Data\StoredProcedureResultExecutor;
 use App\Model\Data\StoreInterface;
-use App\Model\Data\SqlStore;
 use App\Model\Data\Triggers;
 use App\Tools\Heure;
+use UnexpectedValueException;
 
 final class CommandeRepository
 {
@@ -125,6 +128,27 @@ final class CommandeRepository
             throw new BusinessError('ADRESSE_LIVRAISON_REQUISE');
         }
 
+        if ($this->store instanceof StoredProcedureExecutor) {
+            return $this->store->transactional(function () use ($idClient, $adresse): array {
+                if (!$this->store instanceof StoredProcedureExecutor) {
+                    throw new UnexpectedValueException('Le pilote SQL ne fournit pas l’exécution de procédures.');
+                }
+                $resultat = $this->store->callProcedure(
+                    'sp_create_order',
+                    [$idClient, $adresse],
+                    ['p_id_commande', 'p_numero'],
+                );
+                $sorties = $resultat['out'] ?? [];
+                $idCommande = $sorties['p_id_commande'] ?? null;
+                $numero = $sorties['p_numero'] ?? null;
+                if (!is_numeric($idCommande) || (int) $idCommande < 1 || !is_string($numero) || $numero === '') {
+                    throw new UnexpectedValueException('sp_create_order n’a pas retourné une commande valide.');
+                }
+
+                return ['id_commande' => (int) $idCommande, 'numero' => $numero];
+            });
+        }
+
         // numéro lisible CMD2026-000123 : la valeur d'auto-incrément est lue
         // AVANT l'insertion (le store ne consomme pas le compteur)
         $id = $this->store->nextId('commande');
@@ -148,6 +172,34 @@ final class CommandeRepository
     {
         if ($quantite <= 0) {
             throw new BusinessError('RB05_QUANTITE_DOIT_ETRE_SUPERIEURE_A_ZERO'); // (1)
+        }
+
+        if ($this->store instanceof StoredProcedureExecutor) {
+            return $this->store->transactional(function () use ($idCommande, $idProduit, $quantite): array {
+                if (!$this->store instanceof StoredProcedureExecutor) {
+                    throw new UnexpectedValueException('Le pilote SQL ne fournit pas l’exécution de procédures.');
+                }
+                $resultat = $this->store->callProcedure(
+                    'sp_add_order_line',
+                    [$idCommande, $idProduit, $quantite],
+                    ['p_id_ligne', 'p_total', 'p_code_retour'],
+                );
+                $sorties = $resultat['out'] ?? [];
+                $code = $sorties['p_code_retour'] ?? null;
+                if ($code !== 'OK') {
+                    if (is_string($code) && preg_match('/^[A-Z][A-Z0-9_]+$/', $code) === 1) {
+                        throw new BusinessError($code);
+                    }
+                    throw new UnexpectedValueException('Réponse inattendue de sp_add_order_line.');
+                }
+                $idLigne = $sorties['p_id_ligne'] ?? null;
+                $total = $sorties['p_total'] ?? null;
+                if (!is_numeric($idLigne) || (int) $idLigne < 1 || !is_numeric($total)) {
+                    throw new UnexpectedValueException('sp_add_order_line n’a pas retourné une ligne valide.');
+                }
+
+                return ['id_ligne' => (int) $idLigne, 'total' => (float) $total];
+            });
         }
 
         $commande = $this->store->find('commande', $idCommande);
@@ -213,6 +265,39 @@ final class CommandeRepository
             throw new BusinessError('RB19_PANIER_VIDE');
         }
 
+        if ($this->store instanceof StoredProcedureExecutor) {
+            $panierNormalise = array_map(static fn (array $article): array => [
+                'id_produit' => (int) $article['id_produit'],
+                'quantite' => (int) $article['quantite'],
+            ], array_values($panier));
+            $panierJson = json_encode($panierNormalise, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+            $resultat = $this->store->callProcedure(
+                'sp_create_order_from_basket',
+                [$idClient, $adresse, $panierJson, (int) $payee],
+                ['p_id_commande', 'p_numero', 'p_montant', 'p_code_retour'],
+            );
+            $sorties = $resultat['out'] ?? [];
+            $code = $sorties['p_code_retour'] ?? null;
+            if ($code !== 'OK') {
+                if (is_string($code) && preg_match('/^[A-Z][A-Z0-9_]+$/', $code) === 1) {
+                    throw new BusinessError($code);
+                }
+                throw new UnexpectedValueException('Réponse inattendue de sp_create_order_from_basket.');
+            }
+            $idCommande = $sorties['p_id_commande'] ?? null;
+            $numero = $sorties['p_numero'] ?? null;
+            $montant = $sorties['p_montant'] ?? null;
+            if (!is_numeric($idCommande) || (int) $idCommande < 1 || !is_string($numero) || $numero === '' || !is_numeric($montant)) {
+                throw new UnexpectedValueException('sp_create_order_from_basket n’a pas retourné une commande valide.');
+            }
+
+            return [
+                'id_commande' => (int) $idCommande,
+                'numero' => $numero,
+                'montant' => (float) $montant,
+            ];
+        }
+
         return $this->store->transactional(function () use ($idClient, $adresse, $panier, $payee): array {
             $creation = $this->createOrder($idClient, $adresse);
             foreach ($panier as $article) {
@@ -247,6 +332,33 @@ final class CommandeRepository
      */
     public function confirmOrder(int $idCommande, ?int $idClient, bool $payee = false): float
     {
+        if ($this->store instanceof StoredProcedureExecutor) {
+            return $this->store->transactional(function () use ($idCommande, $idClient, $payee): float {
+                if (!$this->store instanceof StoredProcedureExecutor) {
+                    throw new UnexpectedValueException('Le pilote SQL ne fournit pas l’exécution de procédures.');
+                }
+                $resultat = $this->store->callProcedure(
+                    'sp_confirm_order',
+                    [$idCommande, $idClient, (int) $payee],
+                    ['p_montant', 'p_code_retour'],
+                );
+                $sorties = $resultat['out'] ?? [];
+                $code = $sorties['p_code_retour'] ?? null;
+                if ($code !== 'OK') {
+                    if (is_string($code) && preg_match('/^[A-Z][A-Z0-9_]+$/', $code) === 1) {
+                        throw new BusinessError($code);
+                    }
+                    throw new UnexpectedValueException('Réponse inattendue de sp_confirm_order.');
+                }
+                $montant = $sorties['p_montant'] ?? null;
+                if (!is_numeric($montant)) {
+                    throw new UnexpectedValueException('sp_confirm_order n’a pas retourné un montant valide.');
+                }
+
+                return (float) $montant;
+            });
+        }
+
         $commande = $this->store->find('commande', $idCommande);
         if ($commande === null) {
             throw new BusinessError('COMMANDE_INTROUVABLE');
@@ -308,6 +420,38 @@ final class CommandeRepository
             return 'OK';
         }
 
+        if ($this->store instanceof StoredProcedureExecutor) {
+            return $this->store->transactional(function () use (
+                $idCommande,
+                $nouveauStatut,
+                $commentaire,
+                $idAuteur,
+                $roleAuteur,
+            ): string {
+                if (!$this->store instanceof StoredProcedureExecutor) {
+                    throw new UnexpectedValueException('Le pilote SQL ne fournit pas l’exécution de procédures.');
+                }
+                $this->store->setActor(['id' => $idAuteur, 'role' => $roleAuteur]);
+                try {
+                    $resultat = $this->store->callProcedure(
+                        'sp_update_order_status',
+                        [$idCommande, $nouveauStatut, $commentaire, $idAuteur, $roleAuteur],
+                        ['p_code_retour'],
+                    );
+                    $code = $resultat['out']['p_code_retour'] ?? null;
+                    if (in_array($code, ['OK', 'STATUT_DEJA_A_JOUR'], true)) {
+                        return $code;
+                    }
+                    if (is_string($code) && preg_match('/^[A-Z][A-Z0-9_]+$/', $code) === 1) {
+                        throw new BusinessError($code);
+                    }
+                    throw new UnexpectedValueException('Réponse inattendue de sp_update_order_status.');
+                } finally {
+                    $this->store->setActor(['id' => null, 'role' => 'SYSTEME']);
+                }
+            });
+        }
+
         return $this->store->transactional(function () use ($idCommande, $nouveauStatut, $commentaire, $idAuteur, $roleAuteur): string {
             $commande = $this->trouverVerrouille('commande', $idCommande);
             if ($commande === null) {
@@ -337,7 +481,7 @@ final class CommandeRepository
     /** @return array<string,mixed>|null */
     private function trouverVerrouille(string $table, int $id): ?array
     {
-        if ($this->store instanceof SqlStore) {
+        if ($this->store instanceof RowLockingStore) {
             return $this->store->findForUpdate($table, $id);
         }
 
@@ -357,6 +501,13 @@ final class CommandeRepository
      */
     private function annuler(int $idCommande, ?int $idAuteur, string $roleAuteur, ?string $commentaire, bool $messageTardive): array
     {
+        if ($roleAuteur === 'CLIENT' && $idAuteur === null) {
+            throw new BusinessError('ACCES_NON_AUTORISE');
+        }
+        if ($this->store instanceof StoredProcedureExecutor) {
+            return $this->annulerSql($idCommande, $idAuteur, $roleAuteur, $commentaire, $messageTardive);
+        }
+
         return $this->store->transactional(function () use ($idCommande, $idAuteur, $roleAuteur, $commentaire, $messageTardive): array {
             $commande = $this->trouverVerrouille('commande', $idCommande);
             if ($commande === null) {
@@ -416,6 +567,87 @@ final class CommandeRepository
         });
     }
 
+    /** SQL : annulation transactionnelle et retour des montants/quantités. */
+    private function annulerSql(
+        int $idCommande,
+        ?int $idAuteur,
+        string $roleAuteur,
+        ?string $commentaire,
+        bool $messageTardive,
+    ): array {
+        if (!$this->store instanceof StoredProcedureExecutor) {
+            throw new UnexpectedValueException('Le pilote SQL ne fournit pas l’exécution de procédures.');
+        }
+        if (!in_array($roleAuteur, ['CLIENT', 'ADMIN', 'SYSTEME'], true)) {
+            throw new BusinessError('STATUT_NON_AUTORISE');
+        }
+        $commandeAvant = $this->store->find('commande', $idCommande);
+        if ($commandeAvant === null) {
+            throw new BusinessError('COMMANDE_INTROUVABLE');
+        }
+        $montantAvant = (float) $commandeAvant['montant_total'];
+
+        $this->store->setActor(['id' => $idAuteur, 'role' => $roleAuteur]);
+        try {
+            if ($roleAuteur === 'CLIENT') {
+                $resultat = $this->store->callProcedure(
+                    'sp_cancel_order',
+                    [$idCommande, $idAuteur],
+                    ['p_code_retour'],
+                );
+            } elseif (in_array($roleAuteur, ['ADMIN', 'SYSTEME'], true)) {
+                $resultat = $this->store->callProcedure(
+                    'sp_cancel_order_admin',
+                    [$idCommande, $idAuteur, $roleAuteur, $commentaire],
+                    ['p_unites_rendues', 'p_montant_rembourse', 'p_code_retour'],
+                );
+            } else {
+                throw new BusinessError('STATUT_NON_AUTORISE');
+            }
+        } catch (BusinessError $erreur) {
+            if ($messageTardive && $roleAuteur === 'CLIENT' && $commandeAvant['statut'] === 'EXPEDIEE'
+                && $erreur->businessCode === 'COMMANDE_NON_ANNULABLE') {
+                throw new BusinessError('ANNULATION_TROP_TARDIVE');
+            }
+            throw $erreur;
+        } finally {
+            $this->store->setActor(['id' => null, 'role' => 'SYSTEME']);
+        }
+
+        $sorties = $resultat['out'] ?? [];
+        $code = $sorties['p_code_retour'] ?? null;
+        if ($code !== 'OK') {
+            if (is_string($code) && preg_match('/^[A-Z][A-Z0-9_]+$/', $code) === 1) {
+                throw new BusinessError($code);
+            }
+            throw new UnexpectedValueException('Réponse inattendue de la procédure d’annulation.');
+        }
+
+        if ($roleAuteur === 'CLIENT') {
+            $commandeApres = $this->store->find('commande', $idCommande);
+            if ($commandeApres === null || $commandeApres['statut'] !== 'ANNULEE') {
+                throw new UnexpectedValueException('sp_cancel_order n’a pas annulé la commande.');
+            }
+            $unitesRendues = 0;
+            foreach ($this->store->select('ligne_commande', [
+                'where' => [Filter::eq('id_commande', $idCommande)],
+            ]) as $ligne) {
+                $unitesRendues += (int) $ligne['quantite'];
+            }
+            $montantRembourse = $commandeApres['montant_avant_annulation'] ?? $montantAvant;
+
+            return ['unites_rendues' => $unitesRendues, 'montant_rembourse' => (float) $montantRembourse];
+        }
+
+        $unitesRendues = $sorties['p_unites_rendues'] ?? null;
+        $montantRembourse = $sorties['p_montant_rembourse'] ?? null;
+        if (!is_numeric($unitesRendues) || !is_numeric($montantRembourse)) {
+            throw new UnexpectedValueException('sp_cancel_order_admin n’a pas retourné les montants attendus.');
+        }
+
+        return ['unites_rendues' => (int) $unitesRendues, 'montant_rembourse' => (float) $montantRembourse];
+    }
+
     /**
      * sp_revenue_report — tableau de bord back-office (EF-ADM-07) :
      * ventes par statut + top 5 produits (commandes non annulées).
@@ -424,6 +656,41 @@ final class CommandeRepository
      */
     public function revenueReport(?string $dateDebut = null, ?string $dateFin = null): array
     {
+        if ($this->store instanceof StoredProcedureResultExecutor) {
+            $resultat = $this->store->transactional(function () use ($dateDebut, $dateFin): array {
+                if (!$this->store instanceof StoredProcedureResultExecutor) {
+                    throw new UnexpectedValueException('Le pilote SQL ne fournit pas les résultats de procédures.');
+                }
+
+                return $this->store->callProcedureWithResults('sp_revenue_report', [$dateDebut, $dateFin]);
+            });
+            $ensembles = $resultat['results'] ?? [];
+            if (count($ensembles) < 2) {
+                throw new UnexpectedValueException('sp_revenue_report n’a pas retourné ses deux jeux de résultats.');
+            }
+
+            $parStatut = [];
+            foreach ($ensembles[0] as $ligne) {
+                $parStatut[] = [
+                    'statut' => (string) $ligne['statut'],
+                    'nb_commandes' => (int) $ligne['nb_commandes'],
+                    'montant_total' => (float) ($ligne['montant_ht_eq_ttc'] ?? $ligne['montant_total'] ?? 0),
+                    'montant_moyen' => (float) ($ligne['montant_moyen'] ?? 0),
+                ];
+            }
+            $topProduits = [];
+            foreach ($ensembles[1] as $ligne) {
+                $topProduits[] = [
+                    'reference' => (string) $ligne['reference'],
+                    'nom' => (string) $ligne['nom'],
+                    'unites' => (int) $ligne['unites'],
+                    'ca' => (float) $ligne['ca'],
+                ];
+            }
+
+            return ['par_statut' => $parStatut, 'top_produits' => $topProduits];
+        }
+
         $where = [];
         if ($dateDebut !== null) {
             $where[] = Filter::gte('date_commande', $dateDebut);
