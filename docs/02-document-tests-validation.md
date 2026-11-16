@@ -22,7 +22,7 @@ Les mentions « automatisé » dans les tableaux désignent des scripts ou tests
 | Environnements visés par les scripts CI | Linux, versions PHP/MySQL/MariaDB et contrôles navigateur déclarés dans `.github/workflows/ci.yml` ; cette description de configuration ne constitue pas un résultat de run |
 | Recette manuelle | non jouée à la coupure ; aucune base LineServ ou de production n’a été utilisée ou validée dans cette révision |
 | Jeu de données automatisé | seed `sql/01` + commandes de démo `sql/04` : 4 catégories, 36 produits, 3 clients (`alice`, `bruno`, `carla`), 1 admin `SUPER`, 4 commandes ; base temporaire `minishop_test` créée/supprimée uniquement pour les tests SQL automatisés en CI |
-| Outillage et sources de tests | Scripts présents dans le dépôt, dont `scripts/run-all-tests.mjs`, `tests/php/sql_integration.php`, `tests/security/controles.sh` (11 contrôles statiques + auto-test) et `scripts/verifier_fiches_uc.py` ; les résultats exécutés localement et leurs limites sont consignés en §8 |
+| Outillage et sources de tests | Scripts présents dans le dépôt, dont `scripts/run-all-tests.mjs`, `tests/php/sql_integration.php`, `tests/php/http_sql_e2e.php` (parcours HTTP SQL de bout en bout sur serveur `php -S` réel), `tests/php/concurrence_http.php` (20 demandes / 12 unités en HTTP), `scripts/generer_pv.php` (génère le PV de recette §8), `tests/security/controles.sh` (11 contrôles statiques + auto-test) et `scripts/verifier_fiches_uc.py` ; les résultats exécutés localement et leurs limites sont consignés en §8 |
 | Suites de recette manuelle | [`docs/13-fiches-recette-uc.md`](13-fiches-recette-uc.md) (**164 scénarios** sur UC-01..UC-14 + §15 transversal et **36 couples** de transition `RB-11`, hors responsive multi-largeurs délégué à la CI) et journal vierge [`docs/13-suivi-recette-uc.csv`](13-suivi-recette-uc.csv) (**200 lignes `NON JOUÉ`**), complétés par [`docs/14-guide-lineserv.md`](14-guide-lineserv.md) |
 | Chaîne CI | workflow GitHub Actions versionné : `.github/workflows/ci.yml` ; aucun nombre de jobs réussis n’est revendiqué à la coupure documentaire |
 | Pré-conditions de tests isolés | `PRÉ-1`…`PRÉ-6` du CDC §11.3 à vérifier avant un run local/CI ; les tests SQL restent sur des bases temporaires et aucun essai LineServ, déploiement ou restauration n’est annoncé |
@@ -177,7 +177,7 @@ Les scripts de test HTTP et `tests/phpunit/SecurityContractTest.php` référence
 | P-02 | Recherche « casque » | `bash tests/perf/mesurer.sh '/recherche?q=casque'` sur un environnement de test isolé | p95 < 500 ms ; `EXPLAIN` sur la base de test (`ENF-02`) ; mesure non exécutée dans cette révision `[!]` |
 | P-03 | Validation de commande | `bash tests/perf/mesurer.sh '/commande/valider'` (POST) dans un environnement isolé avec compte synthétique | p95 < 900 ms ; mesure non exécutée dans cette révision `[!]` |
 | P-06 | Performances côté base sur jeu de volumétrie | `sudo bash scripts/capture_perf.sh` (jeu local dédié, hors LineServ) | Contrôle automatisé/local seulement ; ne pas créer de base secondaire ni lancer `EXPLAIN`/volumétrie sur la production LineServ dans la recette manuelle |
-| C-01 | Tentative de survente concurrente | `bash tests/charge/reserver.sh 20 12` sur un environnement isolé (et stress JSON sur données jetables) | résultats attendus : 12 réservations acceptées au plus, 8 refus ; aucune exécution sur LineServ n’est revendiquée `[!]` |
+| C-01 | Tentative de survente concurrente | `bash tests/charge/reserver.sh 20 12` (procédure directe) et `php tests/php/concurrence_http.php` (20 acteurs HTTP complets : inscription, panier, commande) sur un environnement isolé | résultats attendus : 12 réservations acceptées au plus, 8 refus, stock final 0, jamais négatif ; aucune exécution sur LineServ n’est revendiquée `[!]` |
 | C-02 | Rejeu du POST de commande / double annulation | rejouer une fois un POST sur des données jetables dans un environnement isolé | au plus une commande / une seule restitution de stock ; scénario non exécuté ici, aucune restauration n’est revendiquée `[!]` |
 | I-01 | Durée d'installation sur poste vierge | suivre le `README.md` sur une machine de test vierge puis consigner le résultat du harnais SQL isolé | chronométrage humain ≤ 15 min **à relever `[!]`** ; aucun résultat SQL actuel n’est présumé |
 | B-01 | Sauvegarde / restauration complète | protocole à vérifier sur une base jetable et un environnement de test isolé | procédure et restauration non exécutées ni chronométrées dans cette révision `[!]` |
@@ -197,6 +197,17 @@ Commande : `vendor/bin/phpunit` (JUnit en CI) ou `php tests/phpunit/run-local.ph
 | `AlternativeImageTest` | double implémentation `image_produit()` : mode décoratif (`alt=""`) vs mode informatif (`alt="Visuel indicatif : …"`), échappement HTML, rejet d'une description informative vide ou d'une URL distante | conformité stricte au choix explicite de chaque vue (carte liste décorative vs fiche produit informative) |
 | `JournalEtTableTest` | écriture/lecture des journaux et minimisation des données dans `Journal.php` | aucune donnée nominative ni `mot_de_passe_hash` dans les nouvelles traces `client`/`administrateur` |
 | `ConservationEtFuseauTest` | `Heure` (UTC, `Europe/Paris`, DST 23 h / 25 h, `borneTransmise`), `RetentionComptes` (24 mois, simulation, exclusion commandes/dates futures, purge), `NettoyageJournaux` & `NettoyageSauvegardes` | stockage UTC strict, conversions locales exactes et purges conservatrices sûres |
+
+### 6.1 Parcours HTTP SQL de bout en bout et concurrence
+
+Deux suites PHP natives (sans dépendance, client HTTP en `fsockopen` sur le patron de `tests/php/dev_router_test.php`) prouvent le chemin applicatif complet sur le pilote SQL — ce que les scénarios `T-*` (§2) prouvent au niveau des procédures et l’E2E WASM au niveau JSON :
+
+| Suite | Commande | Couverture | Critère |
+|---|---|---|---|
+| `tests/php/http_sql_e2e.php` | `php tests/php/http_sql_e2e.php` | visiteur (catalogue, recherche, fiche, 404), inscription (validation, doublon, CGV, CSRF), connexion (`sp_get_credentials` via PDO + `password_verify`, régénération de session, compte bloqué, messages identiques), panier (plafond au stock, masqué), commande (numéro `CMD`, historique, annulation, IDOR 404), back-office (produits, catégories, stocks motivés, statuts, garde `SUPER`) | serveur `php -S` réel + base dédiée `minishop_test_http` ; chaque 302 est une assertion explicite ; code 2 = NON JOUÉ (jamais un faux vert) |
+| `tests/php/concurrence_http.php` | `php tests/php/concurrence_http.php` | 20 acteurs HTTP parallèles (inscription, panier, commande) pour 12 unités (`C-01`) | exactement 12 commandes, 8 refus, stock final 0, jamais négatif, numéros distincts ; contre-vérification en base |
+
+Support partagé : `tests/php/http_support.php` (client HTTP avec bocal de cookies, cycle de vie du serveur, compteur de vérifications). Les deux suites sont câblées dans `scripts/run-all-tests.php` (étapes « Parcours HTTP SQL » et « Concurrence HTTP », code 2 = NON JOUÉ comme l’intégration SQL). `scripts/generer_pv.php` produit le PV de recette (§8) à partir d’une campagne réelle.
 
 ## 7. Registre des anomalies (issues réelles résolues et verrouillées)
 
@@ -243,7 +254,7 @@ Cet addendum ne modifie pas les constats historiques du 23/10 ci-dessus. Dans le
 - `node tests/node/preferences_test.mjs` : code de sortie **0** sur le même commit `b8edfc9` ; contrôles DOM bilingues FR↔EN sur **48 vues**, choix de langue/fuseau et **45 messages métier** vérifiés. Ce résultat est un test DOM, pas une recette dans un navigateur réel.
 - L’E2E passe par le front controller sous PHP-WASM, sur stockage JSON et système de fichiers isolé ; il ne prouve ni connexion ou parcours PDO/MySQL, ni exécution PHP CLI native, ni fonctionnement sur serveur web ou navigateur réel. Dans cette sandbox, l’analyse de compilation PHP CLI native reste **NON JOUÉE** ; les **5 tests de concurrence interprocessus** sont aussi restés non joués faute de PHP natif. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.
 
-Le procès-verbal de recette reste une **trame à compléter** après exécution réelle : date, commit/SHA, environnement isolé, commandes, résultats, anomalies et auteur. La présence de la matrice ci-dessous n’est pas une signature ni une approbation.
+Le procès-verbal de recette reste une **trame à compléter** après exécution réelle : date, commit/SHA, environnement isolé, commandes, résultats, anomalies et auteur. La présence de la matrice ci-dessous n’est pas une signature ni une approbation. `scripts/generer_pv.php` génère l’instance datée (`docs/pv-recette.md` + log `logs/pv-*.log`) à partir d’une campagne réelle ; les champs auteur et signature restent à compléter par un humain après relecture.
 
 ---
 

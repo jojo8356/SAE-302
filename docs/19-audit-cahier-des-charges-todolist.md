@@ -144,20 +144,20 @@ Les 200 scénarios du registre de recette restent `NON JOUÉ`. La campagne respo
 | `D4-L9-02` | `OK` | Recherche/filtres/tri SQL avec validation serveur, liste blanche de tri et page bornée ; tests SQL ajoutés dans `tests/php/sql_integration.php`. |
 | `D4-L9-03` | `OK` | Fiche produit SQL par slug visible, état de stock et produit masqué/absent en `null` (404 côté contrôleur) ; tests SQL ajoutés dans `tests/php/sql_integration.php`. |
 | `D4-L9-04` | `OK` | Doublon e-mail refusé et hash vérifiés en SQL (T-04/T-05) au run VM natif 16/11/2026 (SHA 1a79d16, PHP 8.4, MariaDB, 29/29) ; parcours HTTP SQL de bout en bout non revendiqué. |
-| `D4-L9-05` | `PARTIEL` | La stratégie SQL appelle `sp_get_credentials` ; `password_verify()` reste en PHP. SQL est le défaut, mais l’appel PDO réel et le parcours ne sont pas validés par exécution ici. |
-| `D4-L9-06` | `OK*` | Parcours visiteur automatisé vert sur JSON (E2E 338) et SQL (29/29, étapes 1-7) au run VM natif 16/11/2026 ; démo S7 humaine et parcours HTTP SQL de bout en bout non attestés. |
+| `D4-L9-05` | `PARTIEL` | Suite HTTP SQL créée (`tests/php/http_sql_e2e.php` §6 : `sp_get_credentials` via PDO + `password_verify`, régénération de session, compte bloqué, messages identiques) ; exécution sur VM à faire. |
+| `D4-L9-06` | `OK*` | Parcours visiteur automatisé vert sur JSON (E2E 338) et SQL (29/29, étapes 1-7) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§4), exécution à faire ; démo S7 humaine non attestée. |
 | `D4-L10-01` | `OK` | Panier de session sur `SqlStore` : ajout, quantités, retrait, plafond au stock et total recalculé serveur ; tests SQL ajoutés dans `tests/php/sql_integration.php`. |
 | `D4-L10-02` | `OK` | Contrôle serveur de disponibilité avant ajout (`disponible()`) et plafond au stock ; SQL est le pilote par défaut, JSON reste un bonus de test isolé. |
 | `D4-L10-03` | `OK*` | Vues panier/récapitulatif/badge présents et couverts par les tests UI/HTTP. |
-| `D4-L10-04` | `OK*` | Procédure `sp_create_order_from_basket` et rollback intégral vérifiés en SQL (T-29, étape 6) au run VM natif 16/11/2026 ; parcours HTTP SQL de bout en bout non revendiqué. |
-| `D4-L10-05` | `OK*` | Écrans de commande présents ; procédures SQL vérifiées (T-16/T-18/T-28) au run VM natif 16/11/2026 ; parcours HTTP SQL de bout en bout non revendiqué. |
+| `D4-L10-04` | `OK*` | Procédure `sp_create_order_from_basket` et rollback intégral vérifiés en SQL (T-29, étape 6) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§8), exécution à faire. |
+| `D4-L10-05` | `OK*` | Écrans de commande présents ; procédures SQL vérifiées (T-16/T-18/T-28) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§8), exécution à faire. |
 | `D4-L10-06` | `OK` | Annulation impossible après EXPEDIEE vérifiée en SQL (T-12/T-13, étape 6) au run VM natif 16/11/2026 ; recette humaine non revendiquée. |
 | `D4-L11-01` | `OK*` | Authentification et rôles administratifs présents, avec contrôles d’accès. |
-| `D4-L11-02` | `OK*` | Procédures produits vérifiées en SQL (T-15/T-20) au run VM natif 16/11/2026 ; parcours HTTP admin de bout en bout non revendiqué. |
+| `D4-L11-02` | `OK*` | Procédures produits vérifiées en SQL (T-15/T-20) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§9), exécution à faire. |
 | `D4-L11-03` | `OK` | Suppression refusée si occupée (T-14) et stock (T-19) vérifiés en SQL au run VM natif 16/11/2026 ; parcours HTTP admin non revendiqué. |
 | `D4-L11-04` | `OK` | Transition interdite refusée et tracée (T-12/T-13/T-22) vérifiées en SQL au run VM natif 16/11/2026 ; parcours HTTP admin non revendiqué. |
 | `D4-L11-05` | `OK*` | Vues back-office et tests de tableaux/formulaires présents. |
-| `D4-L11-06` | `OK*` | Parcours admin automatisé vert (JSON + SQL, 58 étapes) au run VM natif 16/11/2026 ; démo S9 humaine non attestée. |
+| `D4-L11-06` | `OK*` | Parcours admin automatisé vert (JSON + SQL, 58 étapes) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§9), exécution à faire ; démo S9 humaine non attestée. |
 | `D4-L12-01` | `OK` | CSRF vérifié sur chaque méthode mutative (jeton constant, formulaires POST) ; contrôles sécurité et tests HTTP verts, périmètre projet scolaire. |
 | `D4-L12-02` | `OK` | Contrôle d’appartenance/IDOR corrigé : commande absente ou d’autrui en 404 générique côté contrôleur ; audit sécurité 11/11 et E2E isolé verts. |
 | `D4-L12-03` | `OK` | Échappement systématique des vues contrôlé par le scanner statique et les tests ; contrôle XSS vert. |
@@ -175,8 +175,8 @@ Les 200 scénarios du registre de recette restent `NON JOUÉ`. La campagne respo
 | `D5-L14-01` | `OK*` | `docs/02` distingue stratégie, scénarios, rapports historiques, preuve locale de sécurité et recette humaine ; le CSV reste explicitement `NON JOUÉ`. |
 | `D5-L14-02` | `OK` | 29 tests SQL rejoués sur base temporaire isolée `minishop_test` au run VM natif 16/11/2026 (SHA 1a79d16, PHP 8.4, MariaDB, 29/29, rapport versionné) ; distincte de toute cible manuelle. |
 | `D5-L14-03` | `OK*` | Automatisations exécutées au run VM natif 16/11/2026 (58 étapes, SQL + E2E joués) ; les 200 entrées de recette manuelle restent `NON JOUÉ`. |
-| `D5-L14-04` | `PARTIEL` | `tests/charge/reserver.sh` existe et le stress JSON est couvert ; l’essai HTTP/SQL 20 demandes sur 12 unités reste à exécuter sur une base isolée/cible. |
-| `D5-L14-05` | `PARTIEL` | Matrice de traçabilité présente ; PV non signé et campagne manuelle non renseignée. |
+| `D5-L14-04` | `PARTIEL` | Suite concurrence HTTP créée (`tests/php/concurrence_http.php` : 20 acteurs HTTP / 12 unités, version HTTP de `reserver.sh`) ; exécution sur VM à faire. |
+| `D5-L14-05` | `PARTIEL` | Matrice de traçabilité présente ; générateur de PV créé (`scripts/generer_pv.php`) ; PV à générer après exécution réelle, signature humaine requise. |
 | `D5-L14-06` | `[!]` | Les scripts de mesure sont présents, mais p95 HTTP/SQL sur la volumétrie et la machine cible n’est pas prouvé ici. Ne pas reprendre les chiffres historiques du CDC comme mesure actuelle sans rapport rejouable. |
 
 ### D6 — Soutenance
