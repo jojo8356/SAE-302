@@ -32,7 +32,7 @@ CREATE TEMPORARY TABLE IF NOT EXISTS tmp_cmd_test    (id_commande INT UNSIGNED P
 TRUNCATE tmp_lignes_test; TRUNCATE tmp_cmd_test;
 
 INSERT IGNORE INTO tmp_cmd_test
-  SELECT id_commande FROM commande WHERE numero LIKE 'TMP' OR numero LIKE 'CMD-TST%';
+  SELECT id_commande FROM commande WHERE numero LIKE 'TMP%' OR numero LIKE 'CMD-TST%';
 INSERT IGNORE INTO tmp_lignes_test
   SELECT l.id_ligne FROM ligne_commande l
     JOIN produit p ON p.id_produit = l.id_produit AND p.reference LIKE 'TST-%'

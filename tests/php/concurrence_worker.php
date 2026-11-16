@@ -47,24 +47,42 @@ try {
     if ($inscription->statut !== 302 || $inscription->location() !== '/compte') {
         $resultat['detail'] = 'inscription refusée (statut ' . $inscription->statut . ')';
     } else {
-        $ajout = $client->postFormulaire('/panier', '/panier/ajouter', [
+        // /compte porte toujours un formulaire CSRF (même si le stock vient
+        // de tomber à 0), alors que /panier vide n'a aucun formulaire.
+        $ajout = $client->postFormulaire('/compte', '/panier/ajouter', [
             'id_produit' => (string) $idProduit, 'quantite' => '1',
         ]);
-        if ($ajout->statut !== 302) {
-            $resultat['detail'] = 'ajout au panier refusé (statut ' . $ajout->statut . ')';
+        if ($ajout->statut !== 302 || $ajout->location() !== '/panier') {
+            $resultat['detail'] = 'ajout au panier refusé (statut ' . $ajout->statut . ', cible « ' . ($ajout->location() ?? '') . ' »)';
         } else {
-            $commande = $client->postFormulaire('/commande/valider', '/commande/valider', [
-                'adresse' => '1 rue de la Charge, 06000 Nice', 'paiement_simule' => '1',
-            ]);
-            $cible = $commande->location() ?? '';
-            if ($commande->statut === 302 && str_starts_with($cible, '/mes-commandes/')) {
-                $resultat['statut'] = 'commande';
-                $resultat['detail'] = 'commande créée (' . $cible . ')';
-            } elseif ($commande->statut === 302 && $cible === '/panier') {
+            $pageValider = $client->get('/commande/valider');
+            if ($pageValider->statut === 302 && $pageValider->location() === '/catalogue') {
+                // Si le stock était déjà à 0 à l'ajout au panier, le plafond
+                // serveur (RB-18) a laissé le panier vide → refus stock.
                 $resultat['statut'] = 'refuse';
-                $resultat['detail'] = 'stock insuffisant au moment de la validation';
+                $resultat['detail'] = 'stock épuisé avant validation (plafond panier)';
+            } elseif ($pageValider->statut !== 200) {
+                $resultat['detail'] = 'accès /commande/valider inattendu (statut ' . $pageValider->statut . ', cible « ' . ($pageValider->location() ?? '') . ' »)';
             } else {
-                $resultat['detail'] = 'validation inattendue (statut ' . $commande->statut . ', cible « ' . $cible . ' »)';
+                $champsCommande = [
+                    'adresse' => '1 rue de la Charge, 06000 Nice',
+                    'paiement_simule' => '1',
+                ];
+                $jeton = $client->csrf($pageValider->corps);
+                if ($jeton !== null) {
+                    $champsCommande['_csrf'] = $jeton;
+                }
+                $commande = $client->post('/commande/valider', $champsCommande);
+                $cible = $commande->location() ?? '';
+                if ($commande->statut === 302 && str_starts_with($cible, '/mes-commandes/')) {
+                    $resultat['statut'] = 'commande';
+                    $resultat['detail'] = 'commande créée (' . $cible . ')';
+                } elseif ($commande->statut === 302 && $cible === '/panier') {
+                    $resultat['statut'] = 'refuse';
+                    $resultat['detail'] = 'stock insuffisant au moment de la validation';
+                } else {
+                    $resultat['detail'] = 'validation inattendue (statut ' . $commande->statut . ', cible « ' . $cible . ' »)';
+                }
             }
         }
     }

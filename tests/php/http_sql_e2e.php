@@ -305,7 +305,9 @@ try {
     $panierVide = $client->get('/panier');
     $verif->egal(200, $panierVide->statut, 'GET /panier → 200');
 
-    $ajout = $client->postFormulaire('/panier', '/panier/ajouter', [
+    // Le formulaire d'ajout (avec jeton CSRF) vit sur la fiche produit ;
+    // /panier vide ne contient aucun formulaire.
+    $ajout = $client->postFormulaire('/produit/casque-sans-fil-aura', '/panier/ajouter', [
         'id_produit' => (string) $idCasque, 'quantite' => '2',
     ]);
     $verif->egal(302, $ajout->statut, 'POST /panier/ajouter → 302');
@@ -321,7 +323,7 @@ try {
     $panierPlafonne = $client->get('/panier');
     $verif->contient($panierPlafonne->corps, 'value="' . $stockCasqueInitial . '"', 'panier : quantité plafonnée au stock serveur (' . $stockCasqueInitial . ')');
 
-    $ajoutMasque = $client->postFormulaire('/panier', '/panier/ajouter', [
+    $ajoutMasque = $client->postFormulaire('/produit/casque-sans-fil-aura', '/panier/ajouter', [
         'id_produit' => (string) $idBracelet, 'quantite' => '1',
     ]);
     $verif->egal(302, $ajoutMasque->statut, 'POST /panier/ajouter (masqué) → 302');
@@ -377,7 +379,8 @@ try {
     $verif->egal(404, $absente->statut, 'commande inexistante → 404');
 
     // Seconde commande (conservée) pour les transitions de statut admin (§9).
-    $client->postFormulaire('/panier', '/panier/ajouter', [
+    // Le panier a été vidé par la première validation : on repasse par la fiche produit.
+    $client->postFormulaire('/produit/casque-sans-fil-aura', '/panier/ajouter', [
         'id_produit' => (string) $idCasque, 'quantite' => '1',
     ]);
     $commande2 = $client->postFormulaire('/commande/valider', '/commande/valider', [
@@ -451,7 +454,11 @@ try {
     $verif->ok($idCategorieTest > 0, 'catégorie rayon-test-http créée en base');
 
     // Suppression d'une catégorie non vide : refusée, catégorie conservée.
-    $suppressionCategorie = $admin->postFormulaire('/admin/categories', '/admin/categories/' . $idCategorie . '/suppression', []);
+    $suppressionCategorie = $admin->postFormulaire(
+        '/admin/categories/' . $idCategorie . '/suppression/confirmation',
+        '/admin/categories/' . $idCategorie . '/suppression',
+        []
+    );
     $verif->egal(302, $suppressionCategorie->statut, 'POST suppression catégorie non vide → 302');
     $verif->egal(1, $requeteId('SELECT COUNT(*) FROM categorie WHERE id_categorie = ' . $idCategorie), 'catégorie non vide conservée');
 
@@ -470,22 +477,34 @@ try {
     $detailAdmin = $admin->get('/admin/commandes/' . $idCommande2);
     $verif->egal(200, $detailAdmin->statut, 'GET /admin/commandes/{id} → 200');
 
-    $statutValide = $admin->postFormulaire('/admin/commandes/' . $idCommande2 . '/statut', '/admin/commandes/' . $idCommande2 . '/statut', [
-        'statut' => 'EN_PREPARATION', 'commentaire' => 'Préparation test HTTP',
-    ]);
-    $verif->egal(302, $statutValide->statut, 'POST statut EN_PREPARATION → 302');
+    // La seconde commande a été validée avec paiement simulé (statut PAYEE) :
+    // d'après la matrice RB-11, la transition autorisée est PAYEE → EXPEDIEE
+    // et le formulaire (avec CSRF) vit sur GET /admin/commandes/{id}.
+    $statutValide = $admin->postFormulaire(
+        '/admin/commandes/' . $idCommande2,
+        '/admin/commandes/' . $idCommande2 . '/statut',
+        ['statut' => 'EXPEDIEE', 'commentaire' => 'Expédition test HTTP']
+    );
+    $verif->egal(302, $statutValide->statut, 'POST statut EXPEDIEE → 302');
     $statutApres = (string) $pdo->query('SELECT statut FROM commande WHERE id_commande = ' . $idCommande2)->fetchColumn();
-    $verif->egal('EN_PREPARATION', $statutApres, 'statut passé à EN_PREPARATION');
+    $verif->egal('EXPEDIEE', $statutApres, 'statut passé à EXPEDIEE');
 
-    $statutInterdit = $admin->postFormulaire('/admin/commandes/' . $idCommande2 . '/statut', '/admin/commandes/' . $idCommande2 . '/statut', [
-        'statut' => 'BROUILLON', 'commentaire' => 'Retour interdit test HTTP',
-    ]);
+    $statutInterdit = $admin->postFormulaire(
+        '/admin/commandes/' . $idCommande2,
+        '/admin/commandes/' . $idCommande2 . '/statut',
+        ['statut' => 'BROUILLON', 'commentaire' => 'Retour interdit test HTTP']
+    );
     $verif->egal(302, $statutInterdit->statut, 'POST statut interdit → 302 (refus)');
     $statutFinal = (string) $pdo->query('SELECT statut FROM commande WHERE id_commande = ' . $idCommande2)->fetchColumn();
-    $verif->egal('EN_PREPARATION', $statutFinal, 'transition interdite refusée (RB-11)');
+    $verif->egal('EXPEDIEE', $statutFinal, 'transition interdite refusée (RB-11)');
 
     // Suppression d'un produit déjà commandé : bascule visible = 0, ligne conservée.
-    $suppressionProduit = $admin->postFormulaire('/admin/produits', '/admin/produits/' . $idCasque . '/suppression', []);
+    // Le formulaire POST (avec CSRF) vit sur la page de confirmation dédiée.
+    $suppressionProduit = $admin->postFormulaire(
+        '/admin/produits/' . $idCasque . '/suppression/confirmation',
+        '/admin/produits/' . $idCasque . '/suppression',
+        []
+    );
     $verif->egal(302, $suppressionProduit->statut, 'POST suppression produit commandé → 302');
     $verif->egal(1, $requeteId('SELECT COUNT(*) FROM produit WHERE id_produit = ' . $idCasque), 'produit commandé conservé (pas de suppression physique)');
     $verif->egal(0, $requeteId('SELECT visible FROM produit WHERE id_produit = ' . $idCasque), 'produit commandé masqué (visible = 0)');
