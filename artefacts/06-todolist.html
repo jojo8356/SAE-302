@@ -45,11 +45,11 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 <tbody>
 <tr>
 <td><strong>Répartition des statuts d'audit</strong></td>
-<td><strong>22 <code>OK</code> + 42 <code>OK*</code></strong>, 16 <code>PARTIEL</code>, 4 <code>[!]</code> non vérifiables (84 tâches) ; <strong>20 tâches ouvertes ou à confirmer</strong></td>
+<td><strong>27 <code>OK</code> + 48 <code>OK*</code></strong>, 5 <code>PARTIEL</code>, 4 <code>[!]</code> non vérifiables (84 tâches) ; <strong>9 tâches ouvertes ou à confirmer</strong></td>
 </tr>
 <tr>
 <td><strong>Estimation WBS historique affectée aux tâches ouvertes</strong></td>
-<td><strong>82 h</strong> (dont 50 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée</td>
+<td><strong>35 h</strong> (dont 10 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée</td>
 </tr>
 <tr>
 <td><strong>Temps réellement passé</strong></td>
@@ -119,20 +119,20 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 <tr>
 <td><strong>D4 — Application Web PHP / MySQL / PDO</strong></td>
 <td style="text-align: right;">146 h</td>
-<td style="text-align: right;">15</td>
-<td style="text-align: right;">6</td>
+<td style="text-align: right;">19</td>
 <td style="text-align: right;">11</td>
+<td style="text-align: right;">2</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">50 h</td>
+<td style="text-align: right;">10 h</td>
 </tr>
 <tr>
 <td><strong>D5 — Tests &amp; validation</strong></td>
 <td style="text-align: right;">24 h</td>
-<td style="text-align: right;">0</td>
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">18 h</td>
+<td style="text-align: right;">11 h</td>
 </tr>
 <tr>
 <td><strong>D6 — Soutenance</strong></td>
@@ -146,11 +146,11 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 <tr>
 <td><strong>Total</strong></td>
 <td style="text-align: right;"><strong>355 h</strong></td>
-<td style="text-align: right;"><strong>22</strong></td>
-<td style="text-align: right;"><strong>42</strong></td>
-<td style="text-align: right;"><strong>16</strong></td>
+<td style="text-align: right;"><strong>27</strong></td>
+<td style="text-align: right;"><strong>48</strong></td>
+<td style="text-align: right;"><strong>5</strong></td>
 <td style="text-align: right;"><strong>4</strong></td>
-<td style="text-align: right;"><strong>82 h</strong></td>
+<td style="text-align: right;"><strong>35 h</strong></td>
 </tr>
 </tbody>
 </table>
@@ -168,25 +168,25 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 <tr>
 <td><strong>A</strong></td>
 <td style="text-align: right;">117 h</td>
-<td style="text-align: right;">38 h</td>
+<td style="text-align: right;">21 h</td>
 <td>rôle de planification du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée</td>
 </tr>
 <tr>
 <td><strong>B</strong></td>
 <td style="text-align: right;">117 h</td>
-<td style="text-align: right;">10 h</td>
+<td style="text-align: right;">3 h</td>
 <td>rôle de planification base de données/tests ; disponibilité actuelle non vérifiée</td>
 </tr>
 <tr>
 <td><strong>C</strong></td>
 <td style="text-align: right;">121 h</td>
-<td style="text-align: right;">34 h</td>
+<td style="text-align: right;">11 h</td>
 <td>rôle de planification front-office/sécurité/JS ; disponibilité et attribution nominative non établies</td>
 </tr>
 </tbody>
 </table>
 <blockquote>
-<p>Les <strong>82 h</strong> sont la somme des estimations WBS initiales des 16 tâches <code>PARTIEL</code> et 4 tâches <code>[!]</code>. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
+<p>Les <strong>35 h</strong> sont la somme des estimations WBS initiales des 5 tâches <code>PARTIEL</code> et 4 tâches <code>[!]</code>. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
 Les nombres de statut ne décrivent que les critères précis de la revue. Un <code>OK*</code> ne signifie ni que tout le produit est validé, ni que les tests associés ont été exécutés. Le registre manuel de recette reste <code>NON JOUÉ</code> pour ses 200 entrées.
 Le dernier run non-SQL est vert, mais reste une validation de code/tests sur le chemin JSON isolé : il ne prouve ni l'exécution PDO/MySQL, ni les 200 cas manuels, ni une recette humaine ou des mesures sur cible.</p>
 </blockquote>
@@ -957,7 +957,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h3>D4 — Application Web PHP / MySQL / PDO (15 <code>OK</code>, 6 <code>OK*</code>, 11 <code>PARTIEL</code>, 0 <code>[!]</code> ; 50 h d'estimations WBS initiales à revalider sur 146 h de référence)</h3>
+<h3>D4 — Application Web PHP / MySQL / PDO (19 <code>OK</code>, 11 <code>OK*</code>, 2 <code>PARTIEL</code>, 0 <code>[!]</code> ; 10 h d'estimations WBS initiales à revalider sur 146 h de référence)</h3>
 <h4>🟡 Lot L8 — Socle applicatif MVC (charge WBS initiale 22 h ; estimation affectée aux tâches ouvertes 4 h)</h4>
 <table>
 <thead>
@@ -1019,7 +1019,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h4>🟡 Lot L9 — Front-office (charge WBS initiale 32 h ; estimation affectée aux tâches ouvertes 15 h)</h4>
+<h4>🟡 Lot L9 — Front-office (charge WBS initiale 32 h ; estimation affectée aux tâches ouvertes 6 h)</h4>
 <table>
 <thead>
 <tr>
@@ -1062,10 +1062,10 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D4-L9-04</code></td>
-<td>UC-04 création de compte : appel SQL statiquement raccordé ; validation d'exécution PDO/MySQL à faire</td>
+<td>UC-04 création de compte : doublon e-mail refusé et hash vérifiés en SQL (T-04/T-05) sur run VM natif 16/11/2026 (SHA 1a79d16, PHP 8.4, MariaDB, 29/29) ; parcours HTTP SQL de bout en bout non revendiqué</td>
 <td>C</td>
-<td style="text-align: right;">6</td>
-<td>🟡 <code>PARTIEL</code></td>
+<td style="text-align: right;">0</td>
+<td>✅ <code>OK</code></td>
 <td>D4-L8-04</td>
 <td>P1</td>
 </tr>
@@ -1080,16 +1080,16 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D4-L9-06</code></td>
-<td>E2E HTTP isolé réussi via le store JSON (338 vérifications) ; recette humaine complète et chemin PDO/MySQL non attestés</td>
+<td>Parcours visiteur automatisé vert sur JSON (E2E 338) et SQL (29/29, étapes 1-7) au run VM natif 16/11/2026 ; démo S7 humaine et parcours HTTP SQL de bout en bout non attestés</td>
 <td>C</td>
-<td style="text-align: right;">3</td>
-<td>🟡 <code>PARTIEL</code></td>
+<td style="text-align: right;">0</td>
+<td>✅* <code>OK*</code></td>
 <td>D4-L9-01..05</td>
 <td>P2</td>
 </tr>
 </tbody>
 </table>
-<h4>🟡 Lot L10 — Panier &amp; commande (charge WBS initiale 28 h ; estimation affectée aux tâches ouvertes 13 h)</h4>
+<h4>✅* Lot L10 — Panier &amp; commande (charge WBS initiale 28 h ; estimation affectée aux tâches ouvertes 0 h)</h4>
 <table>
 <thead>
 <tr>
@@ -1132,34 +1132,34 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D4-L10-04</code></td>
-<td>UC-07 commande : appel à la procédure présent ; exécution PDO/MySQL et parcours HTTP à valider</td>
+<td>UC-07 commande : procédure et rollback intégral vérifiés en SQL (T-29, étape 6) au run VM natif 16/11/2026 ; parcours HTTP SQL de bout en bout non revendiqué</td>
 <td>A</td>
-<td style="text-align: right;">3</td>
-<td>🟡 <code>PARTIEL</code></td>
+<td style="text-align: right;">0</td>
+<td>✅* <code>OK*</code></td>
 <td>D4-L10-02</td>
 <td>P1</td>
 </tr>
 <tr>
 <td><code>D4-L10-05</code></td>
-<td>Écrans de commande présents ; parcours PDO/MySQL de bout en bout à valider</td>
+<td>Écrans de commande présents ; procédures SQL vérifiées (T-16/T-18/T-28) au run VM natif 16/11/2026 ; parcours HTTP SQL de bout en bout non revendiqué</td>
 <td>C</td>
-<td style="text-align: right;">6</td>
-<td>🟡 <code>PARTIEL</code></td>
+<td style="text-align: right;">0</td>
+<td>✅* <code>OK*</code></td>
 <td>D4-L10-04</td>
 <td>P1</td>
 </tr>
 <tr>
 <td><code>D4-L10-06</code></td>
-<td>Historique/annulation présents ; parcours PDO/MySQL et recette humaine à consigner</td>
+<td>Annulation impossible après EXPEDIEE vérifiée en SQL (T-12/T-13, étape 6) au run VM natif 16/11/2026 ; recette humaine non revendiquée</td>
 <td>C</td>
-<td style="text-align: right;">4</td>
-<td>🟡 <code>PARTIEL</code></td>
+<td style="text-align: right;">0</td>
+<td>✅ <code>OK</code></td>
 <td>D4-L10-05</td>
 <td>P1</td>
 </tr>
 </tbody>
 </table>
-<h4>🟡 Lot L11 — Back-office (charge WBS initiale 30 h ; estimation affectée aux tâches ouvertes 18 h)</h4>
+<h4>✅* Lot L11 — Back-office (charge WBS initiale 30 h ; estimation affectée aux tâches ouvertes 0 h)</h4>
 <table>
 <thead>
 <tr>
@@ -1184,28 +1184,28 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D4-L11-02</code></td>
-<td>UC-10 produits : appels de procédures présents ; exécution PDO/MySQL à valider</td>
+<td>UC-10 produits : procédures vérifiées en SQL (T-15/T-20) au run VM natif 16/11/2026 ; parcours HTTP admin de bout en bout non revendiqué</td>
 <td>A</td>
-<td style="text-align: right;">5</td>
-<td>🟡 <code>PARTIEL</code></td>
+<td style="text-align: right;">0</td>
+<td>✅* <code>OK*</code></td>
 <td>D4-L11-01</td>
 <td>P1</td>
 </tr>
 <tr>
 <td><code>D4-L11-03</code></td>
-<td>UC-11/12 catégories et stock : appels de procédures présents ; exécution PDO/MySQL à valider</td>
+<td>UC-11/12 catégories et stock : suppression refusée si occupée (T-14) et stock (T-19) vérifiés en SQL au run VM natif 16/11/2026 ; parcours HTTP admin non revendiqué</td>
 <td>A</td>
-<td style="text-align: right;">5</td>
-<td>🟡 <code>PARTIEL</code></td>
+<td style="text-align: right;">0</td>
+<td>✅ <code>OK</code></td>
 <td>D4-L11-01</td>
 <td>P1</td>
 </tr>
 <tr>
 <td><code>D4-L11-04</code></td>
-<td>UC-13/14 commandes et statuts : appels présents ; exécution SQL et parcours HTTP à valider</td>
+<td>UC-13/14 commandes et statuts : transition interdite refusée et tracée (T-12/T-13/T-22) vérifiées en SQL au run VM natif 16/11/2026 ; parcours HTTP admin non revendiqué</td>
 <td>A</td>
-<td style="text-align: right;">4</td>
-<td>🟡 <code>PARTIEL</code></td>
+<td style="text-align: right;">0</td>
+<td>✅ <code>OK</code></td>
 <td>D4-L11-01</td>
 <td>P1</td>
 </tr>
@@ -1220,10 +1220,10 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D4-L11-06</code></td>
-<td>Parcours administrateur et tests automatisés présents ; aucune démonstration/recette humaine complète n'est attestée</td>
+<td>Parcours admin automatisé vert (JSON + SQL, 58 étapes) au run VM natif 16/11/2026 ; démo S9 humaine non attestée</td>
 <td>C</td>
-<td style="text-align: right;">4</td>
-<td>🟡 <code>PARTIEL</code></td>
+<td style="text-align: right;">0</td>
+<td>✅* <code>OK*</code></td>
 <td>D4-L11-05</td>
 <td>P2</td>
 </tr>
@@ -1342,8 +1342,8 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h3>D5 — Tests &amp; validation (0 <code>OK</code>, 1 <code>OK*</code>, 4 <code>PARTIEL</code>, 1 <code>[!]</code> ; 18 h d'estimations WBS initiales à revalider sur 24 h de référence)</h3>
-<h4>⚠️ Lot L14 — Tests &amp; validation (charge WBS initiale 24 h ; estimation affectée aux tâches ouvertes 18 h)</h4>
+<h3>D5 — Tests &amp; validation (1 <code>OK</code>, 2 <code>OK*</code>, 2 <code>PARTIEL</code>, 1 <code>[!]</code> ; 11 h d'estimations WBS initiales à revalider sur 24 h de référence)</h3>
+<h4>⚠️ Lot L14 — Tests &amp; validation (charge WBS initiale 24 h ; estimation affectée aux tâches ouvertes 11 h)</h4>
 <table>
 <thead>
 <tr>
@@ -1368,19 +1368,19 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D5-L14-02</code></td>
-<td>Rejouer les 29 tests SQL via le harnais sur une base temporaire isolée, distincte de la cible manuelle, puis consigner run/SHA</td>
+<td>29 tests SQL rejoués sur base temporaire isolée minishop_test au run VM natif 16/11/2026 (SHA 1a79d16, PHP 8.4, MariaDB, 29/29, rapport versionné) ; distincte de toute cible manuelle</td>
 <td>B</td>
-<td style="text-align: right;">4</td>
-<td>🟡 <code>PARTIEL</code></td>
+<td style="text-align: right;">0</td>
+<td>✅ <code>OK</code></td>
 <td>D3-L6-06;D3-L6-07;D3-L7-05</td>
 <td>P1</td>
 </tr>
 <tr>
 <td><code>D5-L14-03</code></td>
-<td>Automatisations non-SQL exécutées avec succès ; compléter les preuves fonctionnelles, les 200 entrées de recette manuelle restent NON JOUÉ</td>
+<td>Automatisations exécutées au run VM natif 16/11/2026 (58 étapes, SQL + E2E joués) ; les 200 entrées de recette manuelle restent NON JOUÉ</td>
 <td>B</td>
-<td style="text-align: right;">3</td>
-<td>🟡 <code>PARTIEL</code></td>
+<td style="text-align: right;">0</td>
+<td>✅* <code>OK*</code></td>
 <td>L9;L10;L11</td>
 <td>P1</td>
 </tr>

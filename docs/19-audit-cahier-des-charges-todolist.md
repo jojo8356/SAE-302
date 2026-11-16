@@ -14,9 +14,9 @@
 
 | Statut d’audit | Nombre sur 84 | Sens |
 |---|---:|---|
-| `OK` | 22 | Critère de fin documentaire attesté selon la définition révisée de la WBS, sans élargir la portée de la preuve. `D1-L1-01` s’appuie sur l’attestation et la capture fournies ; `D1-L1-02` sur la liste Git des chemins ; `D1-L1-03` sur le README présent et conforme au critère documentaire ; `D4-L13-03` sur les contrats automatisés labels/focus/aria-live et la check-list ENF-08 documentée ; `D4-L13-04` sur la checklist F-13 documentée ; `D4-L8-01`/`D4-L8-03`/`D4-L12-04` sur les contrôles disponibles sans réserve d’environnement ; `D4-L12-03` sur le scanner et les tests d’échappement ; `D4-L12-02` sur l’audit sécurité et la correction IDOR 404 ; `D4-L12-01` sur les contrôles CSRF (projet scolaire) ; `D4-L10-02`/`D4-L8-04` avec SQL par défaut et JSON en bonus ; `D4-L9-01`/`D4-L9-02`/`D4-L9-03`/`D4-L10-01` sur les tests SQL ajoutés ; `D4-L8-02` sur la configuration PDO centralisée ; `D1-L15-02` sur une relecture documentaire par l’assistant. Les limites sont précisées ci-dessous. |
-| `OK*` | 42 | Livrable documentaire ou contrôle ciblé présent ; les limites et attestations déclaratives sont précisées ci-dessous. **Ce n’est pas une certification absolue ni une validation pédagogique.** |
-| `PARTIEL` | 16 | Le code ou le livrable est présent, mais l’exécution PDO/MySQL, un critère, une preuve ou une validation humaine reste à établir. |
+| `OK` | 27 | Critère de fin documentaire attesté selon la définition révisée de la WBS, sans élargir la portée de la preuve. `D1-L1-01` s’appuie sur l’attestation et la capture fournies ; `D1-L1-02` sur la liste Git des chemins ; `D1-L1-03` sur le README présent et conforme au critère documentaire ; `D4-L13-03` sur les contrats automatisés labels/focus/aria-live et la check-list ENF-08 documentée ; `D4-L13-04` sur la checklist F-13 documentée ; `D4-L8-01`/`D4-L8-03`/`D4-L12-04` sur les contrôles disponibles sans réserve d’environnement ; `D4-L12-03` sur le scanner et les tests d’échappement ; `D4-L12-02` sur l’audit sécurité et la correction IDOR 404 ; `D4-L12-01` sur les contrôles CSRF (projet scolaire) ; `D4-L10-02`/`D4-L8-04` avec SQL par défaut et JSON en bonus ; `D4-L9-01`/`D4-L9-02`/`D4-L9-03`/`D4-L10-01` sur les tests SQL ajoutés ; `D4-L8-02` sur la configuration PDO centralisée ; `D1-L15-02` sur une relecture documentaire par l’assistant ; `D4-L9-04`/`D4-L10-06`/`D4-L11-03`/`D4-L11-04`/`D5-L14-02` sur le run VM natif 16/11/2026 (SQL 29/29, SHA 1a79d16). Les limites sont précisées ci-dessous. |
+| `OK*` | 48 | Livrable documentaire ou contrôle ciblé présent ; les limites et attestations déclaratives sont précisées ci-dessous. **Ce n’est pas une certification absolue ni une validation pédagogique.** |
+| `PARTIEL` | 5 | Le code ou le livrable est présent, mais un critère, une preuve ou une validation humaine reste à établir. |
 | `ÉCART` | 0 | Aucun écart statique de raccordement de procédure n’est retenu après le scan repository ; les validations d’exécution restent ouvertes. |
 | `[!]` | 4 | Tâche humaine, externe ou mesure cible impossible à vérifier depuis ce checkout. |
 | **Total** | **84** | Les tâches `PARTIEL`, `ÉCART` et `[!]` restent ouvertes ; les réserves des `OK*` sont précisées dans les constats. |
@@ -143,21 +143,21 @@ Les 200 scénarios du registre de recette restent `NON JOUÉ`. La campagne respo
 | `D4-L9-01` | `OK` | Catalogue SQL via `v_catalogue`/`sp_search_products`, pagination 12 par défaut et borne 60 ; tests SQL ajoutés dans `tests/php/sql_integration.php`. |
 | `D4-L9-02` | `OK` | Recherche/filtres/tri SQL avec validation serveur, liste blanche de tri et page bornée ; tests SQL ajoutés dans `tests/php/sql_integration.php`. |
 | `D4-L9-03` | `OK` | Fiche produit SQL par slug visible, état de stock et produit masqué/absent en `null` (404 côté contrôleur) ; tests SQL ajoutés dans `tests/php/sql_integration.php`. |
-| `D4-L9-04` | `PARTIEL` | `ClientRepository` délègue à `ClientAccountGateway` ; la stratégie SQL appelle `sp_create_account` via `StoredProcedureExecutor`. SQL est le défaut ; le test d’intégration SQL et l’appel PDO réel restent à rejouer dans cet environnement. |
+| `D4-L9-04` | `OK` | Doublon e-mail refusé et hash vérifiés en SQL (T-04/T-05) au run VM natif 16/11/2026 (SHA 1a79d16, PHP 8.4, MariaDB, 29/29) ; parcours HTTP SQL de bout en bout non revendiqué. |
 | `D4-L9-05` | `PARTIEL` | La stratégie SQL appelle `sp_get_credentials` ; `password_verify()` reste en PHP. SQL est le défaut, mais l’appel PDO réel et le parcours ne sont pas validés par exécution ici. |
-| `D4-L9-06` | `PARTIEL` | Parcours et tests automatisés présents, mais aucune recette humaine complète n’est consignée et le parcours HTTP SQL n’a pas été rejoué. Les tests configurés en JSON restent une voie de test isolée, pas le pilote applicatif par défaut. |
+| `D4-L9-06` | `OK*` | Parcours visiteur automatisé vert sur JSON (E2E 338) et SQL (29/29, étapes 1-7) au run VM natif 16/11/2026 ; démo S7 humaine et parcours HTTP SQL de bout en bout non attestés. |
 | `D4-L10-01` | `OK` | Panier de session sur `SqlStore` : ajout, quantités, retrait, plafond au stock et total recalculé serveur ; tests SQL ajoutés dans `tests/php/sql_integration.php`. |
 | `D4-L10-02` | `OK` | Contrôle serveur de disponibilité avant ajout (`disponible()`) et plafond au stock ; SQL est le pilote par défaut, JSON reste un bonus de test isolé. |
 | `D4-L10-03` | `OK*` | Vues panier/récapitulatif/badge présents et couverts par les tests UI/HTTP. |
-| `D4-L10-04` | `PARTIEL` | `CommandeRepository` appelle statiquement `sp_create_order_from_basket` sur le pilote SQL. L’appel n’a pas été rejoué sous PDO/MySQL et aucun parcours HTTP SQL complet n’est revendiqué. |
-| `D4-L10-05` | `PARTIEL` | Écrans, tests et appels repository aux procédures de commande sont présents statiquement ; le chemin PDO/MySQL n’est pas démontré de bout en bout. |
-| `D4-L10-06` | `PARTIEL` | Historique/annulation et appels repository aux procédures client/admin sont présents ; les scénarios humains restent non joués et l’exécution PDO/MySQL n’est pas validée. |
+| `D4-L10-04` | `OK*` | Procédure `sp_create_order_from_basket` et rollback intégral vérifiés en SQL (T-29, étape 6) au run VM natif 16/11/2026 ; parcours HTTP SQL de bout en bout non revendiqué. |
+| `D4-L10-05` | `OK*` | Écrans de commande présents ; procédures SQL vérifiées (T-16/T-18/T-28) au run VM natif 16/11/2026 ; parcours HTTP SQL de bout en bout non revendiqué. |
+| `D4-L10-06` | `OK` | Annulation impossible après EXPEDIEE vérifiée en SQL (T-12/T-13, étape 6) au run VM natif 16/11/2026 ; recette humaine non revendiquée. |
 | `D4-L11-01` | `OK*` | Authentification et rôles administratifs présents, avec contrôles d’accès. |
-| `D4-L11-02` | `PARTIEL` | `ProduitRepository` contient des appels statiques aux procédures d’enregistrement et de suppression ; leur exécution PDO/MySQL n’a pas été validée. |
-| `D4-L11-03` | `PARTIEL` | `CategorieRepository` et `ProduitRepository` appellent statiquement les procédures catégorie/stock ; leur exécution PDO/MySQL reste à vérifier. |
-| `D4-L11-04` | `PARTIEL` | `CommandeRepository` contient l’appel statique à `sp_update_order_status` ; l’exécution SQL et le parcours HTTP restent à valider. |
+| `D4-L11-02` | `OK*` | Procédures produits vérifiées en SQL (T-15/T-20) au run VM natif 16/11/2026 ; parcours HTTP admin de bout en bout non revendiqué. |
+| `D4-L11-03` | `OK` | Suppression refusée si occupée (T-14) et stock (T-19) vérifiés en SQL au run VM natif 16/11/2026 ; parcours HTTP admin non revendiqué. |
+| `D4-L11-04` | `OK` | Transition interdite refusée et tracée (T-12/T-13/T-22) vérifiées en SQL au run VM natif 16/11/2026 ; parcours HTTP admin non revendiqué. |
 | `D4-L11-05` | `OK*` | Vues back-office et tests de tableaux/formulaires présents. |
-| `D4-L11-06` | `PARTIEL` | Parcours admin automatisé et interfaces présents ; aucune preuve de démonstration/recette humaine complète n’est inscrite au suivi. |
+| `D4-L11-06` | `OK*` | Parcours admin automatisé vert (JSON + SQL, 58 étapes) au run VM natif 16/11/2026 ; démo S9 humaine non attestée. |
 | `D4-L12-01` | `OK` | CSRF vérifié sur chaque méthode mutative (jeton constant, formulaires POST) ; contrôles sécurité et tests HTTP verts, périmètre projet scolaire. |
 | `D4-L12-02` | `OK` | Contrôle d’appartenance/IDOR corrigé : commande absente ou d’autrui en 404 générique côté contrôleur ; audit sécurité 11/11 et E2E isolé verts. |
 | `D4-L12-03` | `OK` | Échappement systématique des vues contrôlé par le scanner statique et les tests ; contrôle XSS vert. |
@@ -173,8 +173,8 @@ Les 200 scénarios du registre de recette restent `NON JOUÉ`. La campagne respo
 | ID | État audité | Constat et preuve |
 |---|---|---|
 | `D5-L14-01` | `OK*` | `docs/02` distingue stratégie, scénarios, rapports historiques, preuve locale de sécurité et recette humaine ; le CSV reste explicitement `NON JOUÉ`. |
-| `D5-L14-02` | `PARTIEL` | Les 29 scénarios et leur harnais sont présents, mais aucun rejeu SQL/PDO du checkout vérifié le 15/11 n’a eu lieu : le run local utilisait `--sans-sql`. Dans `docs/06-todolist.md`, la tâche reste `⬜` avec 4 h estimées à faire. Le rapport du 27/10 est une affirmation d’archive non rattachée à ce checkout et ne remplace pas le rejeu requis. |
-| `D5-L14-03` | `PARTIEL` | Couverture automatisée élargie au-delà de F-01…F-31 ; cependant les 200 scénarios manuels restent `NON JOUÉ`, donc « exécution + preuves » n’est pas intégralement achevé. |
+| `D5-L14-02` | `OK` | 29 tests SQL rejoués sur base temporaire isolée `minishop_test` au run VM natif 16/11/2026 (SHA 1a79d16, PHP 8.4, MariaDB, 29/29, rapport versionné) ; distincte de toute cible manuelle. |
+| `D5-L14-03` | `OK*` | Automatisations exécutées au run VM natif 16/11/2026 (58 étapes, SQL + E2E joués) ; les 200 entrées de recette manuelle restent `NON JOUÉ`. |
 | `D5-L14-04` | `PARTIEL` | `tests/charge/reserver.sh` existe et le stress JSON est couvert ; l’essai HTTP/SQL 20 demandes sur 12 unités reste à exécuter sur une base isolée/cible. |
 | `D5-L14-05` | `PARTIEL` | Matrice de traçabilité présente ; PV non signé et campagne manuelle non renseignée. |
 | `D5-L14-06` | `[!]` | Les scripts de mesure sont présents, mais p95 HTTP/SQL sur la volumétrie et la machine cible n’est pas prouvé ici. Ne pas reprendre les chiffres historiques du CDC comme mesure actuelle sans rapport rejouable. |
@@ -191,9 +191,9 @@ Les 200 scénarios du registre de recette restent `NON JOUÉ`. La campagne respo
 
 L’état actuel n’est plus celui de l’audit initial : SQL/MySQL/PDO est le pilote par défaut et JSON reste une option explicite (`STORAGE_DRIVER=json`). Les sources SQL définissent 18 procédures ; le scan statique des repositories repère un point d’appel pour chacune, dont `sp_cancel_order_admin`. Les capacités SQL spécialisées restent séparées par interfaces, notamment pour l’exécution de procédures et les résultats multiples.
 
-Ce constat est **statique**. Aucun rejeu PDO/MySQL de cette révision ni parcours HTTP complet sur SQL n’est revendiqué. Les tests SQL sont configurés sur des bases temporaires, distinctes d’une cible manuelle ; l’absence de client MySQL/MariaDB dans cette sandbox empêche le rejeu local. Les tests JSON restent explicitement isolés et ne démontrent pas l’exécution SQL.
+Ce constat est **statique**. Aucun parcours HTTP complet sur SQL n’est revendiqué. Les tests SQL sont configurés sur des bases temporaires, distinctes d’une cible manuelle ; l’absence de client MySQL/MariaDB dans cette sandbox empêche le rejeu local. Les tests JSON restent explicitement isolés et ne démontrent pas l’exécution SQL.
 
-En conséquence, D4-L9-04/05, D4-L10-04/05/06 et D4-L11-02/03/04 sont classées `PARTIEL` : les appels repository sont repérés, mais leur exécution réelle et la validation de bout en bout restent à établir. Aucun écart statique de raccordement n’est retenu à ce scan ; les tests SQL directs seuls ne suffisent pas à prouver le parcours HTTP.
+En conséquence, D4-L9-05 reste `PARTIEL` ; D4-L9-04/06, D4-L10-04/05/06 et D4-L11-02/03/04/06 sont promues `OK`/`OK*` sur le run VM natif 16/11/2026 (SQL 29/29, étapes 1-7, 58 étapes). Aucun écart statique de raccordement n’est retenu à ce scan ; les tests SQL directs seuls ne suffisent pas à prouver le parcours HTTP.
 
 ## 5. Constats réconciliés au 23/10/2026
 

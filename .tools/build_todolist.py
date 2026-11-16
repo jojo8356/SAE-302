@@ -133,13 +133,11 @@ T = {
 # Recalage des statuts sur la revue tâche par tâche de docs/19.
 # OK/OK* = critère ou livrable constaté ; PARTIEL = exécution ou preuve restante ; U = [!],
 # action humaine/externe/mesure qui n'est pas attestable par le seul dépôt.
-AUDIT_OK = {"D1-L1-01", "D1-L1-02", "D1-L1-03", "D1-L1-04", "D1-L1-05", "D1-L1-07", "D1-L15-02", "D4-L13-03", "D4-L13-04", "D4-L8-01", "D4-L8-02", "D4-L8-03", "D4-L8-04", "D4-L9-01", "D4-L9-02", "D4-L9-03", "D4-L10-01", "D4-L10-02", "D4-L12-01", "D4-L12-02", "D4-L12-03", "D4-L12-04"}
+AUDIT_OK = {"D1-L1-01", "D1-L1-02", "D1-L1-03", "D1-L1-04", "D1-L1-05", "D1-L1-07", "D1-L15-02", "D4-L13-03", "D4-L13-04", "D4-L8-01", "D4-L8-02", "D4-L8-03", "D4-L8-04", "D4-L9-01", "D4-L9-02", "D4-L9-03", "D4-L9-04", "D4-L10-01", "D4-L10-02", "D4-L10-06", "D4-L11-03", "D4-L11-04", "D4-L12-01", "D4-L12-02", "D4-L12-03", "D4-L12-04", "D5-L14-02"}
 AUDIT_PARTIEL = {
     "D2-L2-06", "D4-L8-05",
-    "D4-L9-04", "D4-L9-05", "D4-L9-06",
-    "D4-L10-04", "D4-L10-05", "D4-L10-06",
-    "D4-L11-02", "D4-L11-03", "D4-L11-04", "D4-L11-06",
-    "D5-L14-02", "D5-L14-03", "D5-L14-04", "D5-L14-05",
+    "D4-L9-05",
+    "D5-L14-04", "D5-L14-05",
 }
 AUDIT_NON_VERIFIABLE = {"D1-L15-03", "D3-L4-06", "D5-L14-06", "D6-L16-03"}
 
@@ -148,10 +146,8 @@ AUDIT_NON_VERIFIABLE = {"D1-L15-03", "D3-L4-06", "D5-L14-06", "D6-L16-03"}
 AUDIT_H_RESTANT = {
     "D2-L2-06": 3,
     "D4-L8-05": 4,
-    "D4-L9-04": 6, "D4-L9-05": 6, "D4-L9-06": 3,
-    "D4-L10-04": 3, "D4-L10-05": 6, "D4-L10-06": 4,
-    "D4-L11-02": 5, "D4-L11-03": 5, "D4-L11-04": 4, "D4-L11-06": 4,
-    "D5-L14-02": 4, "D5-L14-03": 3, "D5-L14-04": 3, "D5-L14-05": 3,
+    "D4-L9-05": 6,
+    "D5-L14-04": 3, "D5-L14-05": 3,
     "D1-L15-03": 2, "D3-L4-06": 4, "D5-L14-06": 5, "D6-L16-03": 5,
 }
 AUDIT_LIBELLES = {
@@ -175,18 +171,18 @@ AUDIT_LIBELLES = {
     "D4-L9-01": "Catalogue SQL via v_catalogue/sp_search_products, pagination 12 par défaut et borne 60 ; tests SQL ajoutés dans sql_integration.php",
     "D4-L9-02": "Recherche/filtres/tri SQL avec validation serveur, liste blanche de tri et page bornée ; tests SQL ajoutés dans sql_integration.php",
     "D4-L9-03": "Fiche produit SQL par slug visible, état de stock et produit masqué/absent en null (404 côté contrôleur) ; tests SQL ajoutés dans sql_integration.php",
-    "D4-L9-04": "UC-04 création de compte : appel SQL statiquement raccordé ; validation d'exécution PDO/MySQL à faire",
+    "D4-L9-04": "UC-04 création de compte : doublon e-mail refusé et hash vérifiés en SQL (T-04/T-05) sur run VM natif 16/11/2026 (SHA 1a79d16, PHP 8.4, MariaDB, 29/29) ; parcours HTTP SQL de bout en bout non revendiqué",
     "D4-L9-05": "UC-05 connexion : appel SQL statiquement raccordé, password_verify en PHP ; parcours PDO/MySQL à faire",
-    "D4-L9-06": "E2E HTTP isolé réussi via le store JSON (338 vérifications) ; recette humaine complète et chemin PDO/MySQL non attestés",
+    "D4-L9-06": "Parcours visiteur automatisé vert sur JSON (E2E 338) et SQL (29/29, étapes 1-7) au run VM natif 16/11/2026 ; démo S7 humaine et parcours HTTP SQL de bout en bout non attestés",
     "D4-L10-01": "Panier de session sur SqlStore : ajout, quantités, retrait, plafond au stock et total recalculé serveur ; tests SQL ajoutés dans sql_integration.php",
     "D4-L10-02": "Contrôle serveur de disponibilité avant ajout (disponible()) et plafond au stock ; SQL est le pilote par défaut, JSON reste un bonus de test isolé",
-    "D4-L10-04": "UC-07 commande : appel à la procédure présent ; exécution PDO/MySQL et parcours HTTP à valider",
-    "D4-L10-05": "Écrans de commande présents ; parcours PDO/MySQL de bout en bout à valider",
-    "D4-L10-06": "Historique/annulation présents ; parcours PDO/MySQL et recette humaine à consigner",
-    "D4-L11-02": "UC-10 produits : appels de procédures présents ; exécution PDO/MySQL à valider",
-    "D4-L11-03": "UC-11/12 catégories et stock : appels de procédures présents ; exécution PDO/MySQL à valider",
-    "D4-L11-04": "UC-13/14 commandes et statuts : appels présents ; exécution SQL et parcours HTTP à valider",
-    "D4-L11-06": "Parcours administrateur et tests automatisés présents ; aucune démonstration/recette humaine complète n'est attestée",
+    "D4-L10-04": "UC-07 commande : procédure et rollback intégral vérifiés en SQL (T-29, étape 6) au run VM natif 16/11/2026 ; parcours HTTP SQL de bout en bout non revendiqué",
+    "D4-L10-05": "Écrans de commande présents ; procédures SQL vérifiées (T-16/T-18/T-28) au run VM natif 16/11/2026 ; parcours HTTP SQL de bout en bout non revendiqué",
+    "D4-L10-06": "Annulation impossible après EXPEDIEE vérifiée en SQL (T-12/T-13, étape 6) au run VM natif 16/11/2026 ; recette humaine non revendiquée",
+    "D4-L11-02": "UC-10 produits : procédures vérifiées en SQL (T-15/T-20) au run VM natif 16/11/2026 ; parcours HTTP admin de bout en bout non revendiqué",
+    "D4-L11-03": "UC-11/12 catégories et stock : suppression refusée si occupée (T-14) et stock (T-19) vérifiés en SQL au run VM natif 16/11/2026 ; parcours HTTP admin non revendiqué",
+    "D4-L11-04": "UC-13/14 commandes et statuts : transition interdite refusée et tracée (T-12/T-13/T-22) vérifiées en SQL au run VM natif 16/11/2026 ; parcours HTTP admin non revendiqué",
+    "D4-L11-06": "Parcours admin automatisé vert (JSON + SQL, 58 étapes) au run VM natif 16/11/2026 ; démo S9 humaine non attestée",
     "D4-L12-01": "CSRF vérifié sur chaque méthode mutative (jeton constant, formulaires POST) ; contrôles sécurité et tests HTTP verts, périmètre projet scolaire",
     "D4-L12-02": "Contrôle d'appartenance/IDOR corrigé : commande absente ou d'autrui en 404 générique côté contrôleur ; audit sécurité 11/11 et E2E isolé verts",
     "D4-L12-03": "Échappement systématique des vues contrôlé par le scanner statique et les tests ; contrôle XSS vert",
@@ -195,8 +191,8 @@ AUDIT_LIBELLES = {
     "D4-L13-01": "Code JS panier/AJAX présent ; le run non-SQL a passé preferences_test (48 vues FR/EN, 45 messages) et E2E JSON isolé (338 vérifications), sans navigateur réel ni PDO/MySQL",
     "D4-L13-03": "Labels, focus visible et annonces aria-live couverts par les contrats automatisés (css_contract, cartes_accessibilite_test, preferences_test) et la check-list ENF-08 documentée ; aucune validation humaine avec technologie d’assistance n’est attestée",
     "D4-L13-04": "F-13 est décrit dans docs/02 et les moyens automatisés (wasm-e2e, responsive_navigateur) y sont listés ; critère WBS de documentation satisfait, sans revendiquer l'exécution des tests ni une recette manuelle",
-    "D5-L14-02": "Rejouer les 29 tests SQL via le harnais sur une base temporaire isolée, distincte de la cible manuelle, puis consigner run/SHA",
-    "D5-L14-03": "Automatisations non-SQL exécutées avec succès ; compléter les preuves fonctionnelles, les 200 entrées de recette manuelle restent NON JOUÉ",
+    "D5-L14-02": "29 tests SQL rejoués sur base temporaire isolée minishop_test au run VM natif 16/11/2026 (SHA 1a79d16, PHP 8.4, MariaDB, 29/29, rapport versionné) ; distincte de toute cible manuelle",
+    "D5-L14-03": "Automatisations exécutées au run VM natif 16/11/2026 (58 étapes, SQL + E2E joués) ; les 200 entrées de recette manuelle restent NON JOUÉ",
     "D5-L14-04": "Script de charge présent ; essai HTTP/SQL 20 demandes pour 12 unités à exécuter, 5 tests de concurrence native non joués",
     "D5-L14-05": "Matrice présente ; compléter le PV avec l'exécution réelle, anomalies, date, SHA et auteur",
     "D5-L14-06": "Scripts présents ; mesures p95 HTTP/SQL sur machine et volumétrie cibles non attestées",
@@ -210,8 +206,8 @@ AUDIT_STATUT = ({tid: "F" for tid in AUDIT_OK}
                  | {tid: "P" for tid in AUDIT_PARTIEL}
                  | {tid: "U" for tid in AUDIT_NON_VERIFIABLE})
 assert len(_ALL_IDS) == 84
-assert len(AUDIT_OK) == 22 and len(AUDIT_OK_STAR) == 42
-assert len(AUDIT_PARTIEL) == 16 and len(AUDIT_NON_VERIFIABLE) == 4
+assert len(AUDIT_OK) == 27 and len(AUDIT_OK_STAR) == 48
+assert len(AUDIT_PARTIEL) == 5 and len(AUDIT_NON_VERIFIABLE) == 4
 assert set(AUDIT_H_RESTANT) == AUDIT_PARTIEL | AUDIT_NON_VERIFIABLE
 for lot, tasks in T.items():
     T[lot] = [
@@ -259,8 +255,8 @@ WBS_PERS = {"A":117,"B":117,"C":121}
 TOTAL = sum(LOT_H.values())
 assert TOTAL == 355, TOTAL
 assert sum(WBS_PERS.values()) == TOTAL
-assert sum(DIV_REST.values()) == REST == 82
-assert PERS_REST == {"A":38,"B":10,"C":34}, PERS_REST
+assert sum(DIV_REST.values()) == REST == 35
+assert PERS_REST == {"A":21,"B":3,"C":11}, PERS_REST
 
 N_TASKS = sum(len(tasks) for tasks in T.values())
 STATUTS = ("F", "F*", "P", "U", "T")
@@ -272,7 +268,7 @@ COUNTS_BY_DIV = {
 ASYNC_BY_PERSON = {person: sum(row[3] for row in ASYNC_TASKS if row[2] == person) for person in "ABC"}
 ASYNC_H = sum(ASYNC_BY_PERSON.values())
 assert N_TASKS == 84 and sum(COUNTS.values()) == N_TASKS, (N_TASKS, COUNTS)
-assert COUNTS == {"F":22,"F*":42,"P":16,"U":4,"T":0}, COUNTS
+assert COUNTS == {"F":27,"F*":48,"P":5,"U":4,"T":0}, COUNTS
 assert sum(COUNTS_BY_DIV[d][s] for d in DIV_LOTS for s in STATUTS) == N_TASKS
 BADGE = {"F":"✅","F*":"✅*","P":"🟡","U":"[!]","T":"⬜"}
 STATUT_NOM = {"F":"OK","F*":"OK*","P":"PARTIEL","U":"à vérifier / externe","T":"à faire"}
@@ -321,7 +317,7 @@ A(f"| **A** | {WBS_PERS['A']} h | {PERS_REST['A']} h | rôle de planification du
 A(f"| **B** | {WBS_PERS['B']} h | {PERS_REST['B']} h | rôle de planification base de données/tests ; disponibilité actuelle non vérifiée |")
 A(f"| **C** | {WBS_PERS['C']} h | {PERS_REST['C']} h | rôle de planification front-office/sécurité/JS ; disponibilité et attribution nominative non établies |")
 A("")
-A("> Les **82 h** sont la somme des estimations WBS initiales des 16 tâches `PARTIEL` et 4 tâches `[!]`. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.")
+A(f"> Les **{REST} h** sont la somme des estimations WBS initiales des {len(AUDIT_PARTIEL)} tâches `PARTIEL` et {len(AUDIT_NON_VERIFIABLE)} tâches `[!]`. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.")
 A("> Les nombres de statut ne décrivent que les critères précis de la revue. Un `OK*` ne signifie ni que tout le produit est validé, ni que les tests associés ont été exécutés. Le registre manuel de recette reste `NON JOUÉ` pour ses 200 entrées.")
 A("> Le dernier run non-SQL est vert, mais reste une validation de code/tests sur le chemin JSON isolé : il ne prouve ni l'exécution PDO/MySQL, ni les 200 cas manuels, ni une recette humaine ou des mesures sur cible.")
 A("")
