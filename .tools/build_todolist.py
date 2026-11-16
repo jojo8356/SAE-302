@@ -9,8 +9,8 @@ OUT_MD = DOCS / "06-todolist.md"
 OUT_HTML = ROOT / "artefacts" / "06-todolist.html"
 SCOPE_DATE = "23 octobre 2026"
 
-# (id, libellé, rôle de planification, h_rest, statut, deps, prio, note_async)
-# statut : "F" fait · "P" partiel · "T" à faire  |  async = classification du graphe de référence, pas disponibilité actuelle
+# (id, libellé, rôle de planification, h_rest, statut initial, deps, prio, note_async)
+# Les statuts/heures initiaux sont remplacés ci-dessous par la cartographie de docs/19 ; ASYNC décrit le graphe de référence, pas la disponibilité actuelle.
 T = {
  "L1": [
   ("D1-L1-01","Partager l’URL et l’accès GitLab requis, communiquer la composition ; visibilité privée et protection de branche non exigées par le sujet","A",0,"F","—","—","ASYNC"),
@@ -130,6 +130,80 @@ T = {
  ],
 }
 
+# Recalage des statuts sur la revue tâche par tâche de docs/19.
+# OK/OK* = critère ou livrable constaté ; PARTIEL = exécution ou preuve restante ; U = [!],
+# action humaine/externe/mesure qui n'est pas attestable par le seul dépôt.
+AUDIT_OK = {"D1-L1-04", "D1-L1-05", "D1-L1-07"}
+AUDIT_PARTIEL = {
+    "D2-L2-06", "D4-L8-05",
+    "D4-L9-04", "D4-L9-05", "D4-L9-06",
+    "D4-L10-04", "D4-L10-05", "D4-L10-06",
+    "D4-L11-02", "D4-L11-03", "D4-L11-04", "D4-L11-06",
+    "D5-L14-02", "D5-L14-03", "D5-L14-04", "D5-L14-05",
+}
+AUDIT_NON_VERIFIABLE = {"D1-L15-03", "D3-L4-06", "D5-L14-06", "D6-L16-03"}
+
+# Ces h sont les estimations initiales WBS affectées aux tâches ouvertes, pas un relevé
+# de temps passé ni une estimation actualisée du travail restant. Cela vaut aussi pour [!].
+AUDIT_H_RESTANT = {
+    "D2-L2-06": 3,
+    "D4-L8-05": 4,
+    "D4-L9-04": 6, "D4-L9-05": 6, "D4-L9-06": 3,
+    "D4-L10-04": 3, "D4-L10-05": 6, "D4-L10-06": 4,
+    "D4-L11-02": 5, "D4-L11-03": 5, "D4-L11-04": 4, "D4-L11-06": 4,
+    "D5-L14-02": 4, "D5-L14-03": 3, "D5-L14-04": 3, "D5-L14-05": 3,
+    "D1-L15-03": 2, "D3-L4-06": 4, "D5-L14-06": 5, "D6-L16-03": 5,
+}
+AUDIT_LIBELLES = {
+    "D1-L1-02": "Arborescence app/ et public/ présente et peuplée ; l'ancien critère de squelette vide est dépassé",
+    "D1-L1-03": "README avec composition et permissions GitLab présent ; leur lecture effective par chaque membre n'est pas vérifiée. Les permissions GitLab restent distinctes du RACI et des rôles A/B/C, sans correspondance nominative",
+    "D1-L1-05": "Charte GitLab et modèles de MR présents ; aucun usage réel de MR ou revue croisée étudiante n'est attesté",
+    "D1-L15-02": "README final, wrapper build-docs et comptes présents ; lecture effective par un tiers non vérifiée",
+    "D1-L15-03": "Nettoyage et tag v1.0-rendu à vérifier sur le dépôt cible ; aucun tag n'est attesté dans les références examinées",
+    "D2-L2-06": "Relecture croisée étudiante §1→§8 : aucune trace datée d'un auteur et d'un relecteur distincts",
+    "D2-L3-06": "Sources .puml, docs/diagrams/render.sh et job PlantUML présents",
+    "D3-L4-06": "Relecture croisée du document de conception (docs/04) : non démontrable par le dépôt seul",
+    "D3-L5-05": "scripts/load_db.sh présent et appelé par le workflow SQL ; le run SQL reste à effectuer séparément",
+    "D3-L6-06": "Fichiers SQL T-01…T-12 présents ; l'exécution est suivie séparément par D5-L14-02",
+    "D3-L6-07": "Harnais et fichiers SQL T-25…T-29 présents ; l'exécution est suivie séparément par D5-L14-02",
+    "D3-L7-05": "Tests directs T-13…T-24 présents ; aucun rejeu SQL du checkout courant n'est prouvé",
+    "D4-L8-05": "Configuration CI et d'environnement présente, mais le critère `public/install.php` manque (installation portée par `scripts/db_init.php`/`run.sh`) ; le run non-SQL local ne valide pas ce critère, PDO/MySQL ni une CI distante",
+    "D4-L9-04": "UC-04 création de compte : appel SQL statiquement raccordé ; validation d'exécution PDO/MySQL à faire",
+    "D4-L9-05": "UC-05 connexion : appel SQL statiquement raccordé, password_verify en PHP ; parcours PDO/MySQL à faire",
+    "D4-L9-06": "E2E HTTP isolé réussi via le store JSON (338 vérifications) ; recette humaine complète et chemin PDO/MySQL non attestés",
+    "D4-L10-04": "UC-07 commande : appel à la procédure présent ; exécution PDO/MySQL et parcours HTTP à valider",
+    "D4-L10-05": "Écrans de commande présents ; parcours PDO/MySQL de bout en bout à valider",
+    "D4-L10-06": "Historique/annulation présents ; parcours PDO/MySQL et recette humaine à consigner",
+    "D4-L11-02": "UC-10 produits : appels de procédures présents ; exécution PDO/MySQL à valider",
+    "D4-L11-03": "UC-11/12 catégories et stock : appels de procédures présents ; exécution PDO/MySQL à valider",
+    "D4-L11-04": "UC-13/14 commandes et statuts : appels présents ; exécution SQL et parcours HTTP à valider",
+    "D4-L11-06": "Parcours administrateur et tests automatisés présents ; aucune démonstration/recette humaine complète n'est attestée",
+    "D4-L12-05": "`docs/19` rapporte 11 contrôles statiques rejoués localement le 23/10 ; S-11/SEC-14 ciblé, sans portée de recette applicative ou LineServ",
+    "D4-L13-01": "Code JS panier/AJAX présent ; le run non-SQL a passé preferences_test (48 vues FR/EN, 45 messages) et E2E JSON isolé (338 vérifications), sans navigateur réel ni PDO/MySQL",
+    "D5-L14-02": "Rejouer les 29 tests SQL via le harnais sur une base temporaire isolée, distincte de la cible manuelle, puis consigner run/SHA",
+    "D5-L14-03": "Automatisations non-SQL exécutées avec succès ; compléter les preuves fonctionnelles, les 200 entrées de recette manuelle restent NON JOUÉ",
+    "D5-L14-04": "Script de charge présent ; essai HTTP/SQL 20 demandes pour 12 unités à exécuter, 5 tests de concurrence native non joués",
+    "D5-L14-05": "Matrice présente ; compléter le PV avec l'exécution réelle, anomalies, date, SHA et auteur",
+    "D5-L14-06": "Scripts présents ; mesures p95 HTTP/SQL sur machine et volumétrie cibles non attestées",
+    "D6-L16-01": "Support de soutenance docs/12 et livrables PPTX/PDF/DOCX présents ; répétition à distinguer",
+    "D6-L16-03": "Deux répétitions chronométrées avec la démo réelle : aucune trace attestée",
+}
+_ALL_IDS = {task[0] for tasks in T.values() for task in tasks}
+AUDIT_OK_STAR = _ALL_IDS - AUDIT_OK - AUDIT_PARTIEL - AUDIT_NON_VERIFIABLE
+AUDIT_STATUT = ({tid: "F" for tid in AUDIT_OK}
+                 | {tid: "F*" for tid in AUDIT_OK_STAR}
+                 | {tid: "P" for tid in AUDIT_PARTIEL}
+                 | {tid: "U" for tid in AUDIT_NON_VERIFIABLE})
+assert len(_ALL_IDS) == 84
+assert len(AUDIT_OK) == 3 and len(AUDIT_OK_STAR) == 61
+assert len(AUDIT_PARTIEL) == 16 and len(AUDIT_NON_VERIFIABLE) == 4
+assert set(AUDIT_H_RESTANT) == AUDIT_PARTIEL | AUDIT_NON_VERIFIABLE
+for lot, tasks in T.items():
+    T[lot] = [
+        (tid, AUDIT_LIBELLES.get(tid, label), role, AUDIT_H_RESTANT.get(tid, 0), AUDIT_STATUT[tid], deps, prio, async_)
+        for (tid, label, role, _h_old, _status_old, deps, prio, async_) in tasks
+    ]
+
 LOT_NOM = {
  "L1":"Pilotage & dépôt","L2":"CDC : spécification","L3":"Diagrammes UML & règles","L4":"MCD/MLD/normalisation",
  "L5":"Script SQL & seed","L6":"18 procédures + tests","L7":"16 déclencheurs + tests","L8":"Socle applicatif MVC",
@@ -145,60 +219,48 @@ COULEURS = {"D1":"#64748b","D2":"#7c2d12","D3":"#b45309","D4":"#15803d","D5":"#b
 LOT_H = {"L1":14,"L2":26,"L3":28,"L4":28,"L5":20,"L6":30,"L7":20,"L8":22,"L9":32,"L10":28,"L11":30,"L12":20,"L13":14,"L14":24,"L15":5,"L16":14}
 
 # ---------- calculs + assertions ----------
-REST = 0 ; FAIT = 0
-PERS_REST = {"A":0,"B":0,"C":0} ; PERS_FAIT = {"A":0,"B":0,"C":0}
-DIV_REST = {d:0 for d in DIV_NOM} ; DIV_FAIT = {d:0 for d in DIV_NOM}
+REST = 0
+PERS_REST = {"A":0,"B":0,"C":0}
+DIV_REST = {d:0 for d in DIV_NOM}
 ASYNC_TASKS = []
 for lot, tasks in T.items():
-    for (tid, lbl, r, h, st, dep, prio, async_) in tasks:
-        if st == "F": assert h == 0, f"{tid} : FAIT doit avoir 0 h restante"
-        REST += h ; FAIT += (LOT_H[lot] - sum(t[3] for t in tasks)) if False else 0
-        PERS_REST[r] += h
-        if async_.startswith("ASYNC"): ASYNC_TASKS.append((tid, lbl, r, h, prio, async_))
+    for (tid, lbl, role, h, status, dep, prio, async_) in tasks:
+        assert status in {"F", "F*", "P", "U", "T"}, (tid, status)
+        if status in {"F", "F*"}:
+            assert h == 0, f"{tid} : OK/OK* ne porte pas de charge ouverte"
+        if status in {"P", "U"}:
+            assert h > 0, f"{tid} : tâche ouverte sans estimation à revalider"
+        REST += h
+        PERS_REST[role] += h
+        if async_.startswith("ASYNC"):
+            ASYNC_TASKS.append((tid, lbl, role, h, prio, async_))
+
 for lot, tasks in T.items():
-    for (tid, lbl, r, h, st, dep, prio, async_) in tasks:
-        h_fait = None
-    # répartition faite/reste par lot
-for lot, tasks in T.items():
-    reste = sum(t[3] for t in tasks)
-    DIV_REST[next(d for d, ls in DIV_LOTS.items() if lot in ls)] += reste
-for d, ls in DIV_LOTS.items():
-    DIV_FAIT[d] = sum(LOT_H[l] for l in ls) - DIV_REST[d]
-for lot, tasks in T.items():
-    reste = sum(t[3] for t in tasks)
-    for (tid, lbl, r, h, st, dep, prio, async_) in tasks:
-        part = (h if h else 0)
-        if h: continue
-for r in "ABC":
-    pass
-# charge faite par rôle = charge WBS de référence - charge résiduelle ; A/B/C restent non nominatifs (WBS §6.2)
+    div = next(d for d, lots in DIV_LOTS.items() if lot in lots)
+    DIV_REST[div] += sum(task[3] for task in tasks)
+
+# Totaux issus de la WBS de référence : ils ne sont pas des relevés d'heures réelles.
 WBS_PERS = {"A":117,"B":117,"C":121}
-for lot, tasks in T.items():
-    for (tid, lbl, r, h, st, dep, prio, async_) in tasks:
-        pass
-# totalisation des charges estimées par rôle dans la WBS ; les h classées terminées ne sont pas un relevé de temps réel :
-for lot, tasks in T.items():
-    reste_lot = sum(t[3] for t in tasks)
-    for (tid, lbl, r, h, st, dep, prio, async_) in tasks:
-        pass
-# charge de référence par rôle issue de build_wbs.py ; aucune attribution nominative →
-# simplification exacte : faites = WBS_PERS[r] - PERS_REST[r]
-for r in "ABC": PERS_FAIT[r] = WBS_PERS[r] - PERS_REST[r]
-FAIT = sum(PERS_FAIT.values())
-TOTAL = FAIT + REST
+TOTAL = sum(LOT_H.values())
 assert TOTAL == 355, TOTAL
-assert (PERS_REST["A"], PERS_REST["B"], PERS_REST["C"]) == (81, 17, 93), (PERS_REST["A"], PERS_REST["B"], PERS_REST["C"])
-assert sum(DIV_REST.values()) == REST == 191
-assert sum(DIV_FAIT.values()) == FAIT == 164
-assert PERS_FAIT == {"A":36,"B":100,"C":28}, PERS_FAIT
+assert sum(WBS_PERS.values()) == TOTAL
+assert sum(DIV_REST.values()) == REST == 82
+assert PERS_REST == {"A":38,"B":10,"C":34}, PERS_REST
 
 N_TASKS = sum(len(tasks) for tasks in T.values())
-COUNTS = {status: sum(1 for tasks in T.values() for task in tasks if task[4] == status) for status in ("F", "P", "T")}
+STATUTS = ("F", "F*", "P", "U", "T")
+COUNTS = {status: sum(1 for tasks in T.values() for task in tasks if task[4] == status) for status in STATUTS}
+COUNTS_BY_DIV = {
+    div: {status: sum(1 for lot in lots for task in T[lot] if task[4] == status) for status in STATUTS}
+    for div, lots in DIV_LOTS.items()
+}
 ASYNC_BY_PERSON = {person: sum(row[3] for row in ASYNC_TASKS if row[2] == person) for person in "ABC"}
 ASYNC_H = sum(ASYNC_BY_PERSON.values())
 assert N_TASKS == 84 and sum(COUNTS.values()) == N_TASKS, (N_TASKS, COUNTS)
-BADGE = {"F":"✅","P":"🟡","T":"⬜"}
-STATUT_NOM = {"F":"fait","P":"partiel","T":"à faire"}
+assert COUNTS == {"F":3,"F*":61,"P":16,"U":4,"T":0}, COUNTS
+assert sum(COUNTS_BY_DIV[d][s] for d in DIV_LOTS for s in STATUTS) == N_TASKS
+BADGE = {"F":"✅","F*":"✅*","P":"🟡","U":"[!]","T":"⬜"}
+STATUT_NOM = {"F":"OK","F*":"OK*","P":"PARTIEL","U":"à vérifier / externe","T":"à faire"}
 
 # =====================================================================
 # MARKDOWN
@@ -206,48 +268,52 @@ STATUT_NOM = {"F":"fait","P":"partiel","T":"à faire"}
 md = [] ; A = md.append
 A("# MiniShop — Todolist projet : suivi de base et planification historique")
 A("")
-A(f"**Périmètre :** révision du {SCOPE_DATE} ; la mise en ligne de démonstration et les contrôles staging associés sont retirés sans remplacement ; la WBS compte {N_TASKS} tâches. **D1-L1-01** est `OK*` sur attestation utilisateur de l'envoi du courriel (boîte d'envoi non vérifiée). **D1-L1-07** est clos par la synthèse écrite des retours continus dans `docs/21-synthese-retours-audit.md`, sur attestation utilisateur ; aucune réunion complète n’est revendiquée." )
-A("Le statut **D1-L1-04** porte sur l'issue contenant les cinq livrables et pénalités ; l'épinglage n'est pas attesté et n'est pas requis par ce critère. **D1-L1-05** est terminé sur le livrable documentaire uniquement : l'usage réel de MR/revues croisées n'est pas démontré.")
-A("Les états non révisés restent ceux de la photographie du 23/09/2026 ; les statuts D1-L1-01/04/05/07 sont actualisés uniquement selon les attestations ou preuves décrites ici et dans l’audit docs/19. Pour D1-L1-07, la clôture porte sur la synthèse asynchrone des retours continus, pas sur la tenue d’une réunion. Les dates postérieures à la coupure et les rapports qui les portent ne sont pas traités comme des événements ou résultats acquis. D2-L2-01…05 et D2-L3-04/05 sont clos au seul niveau documentaire ; cela ne vaut ni revue étudiante ni validation pédagogique. Les catégories dépendantes/asynchrones, le graphe et les plans S6 décrivent le planning de base, pas l’exécution ni une priorité actuelle. Revalider les dépendances, statuts et disponibilités avant toute action. La todolist comprend les tâches de la WBS révisée, classées en")
-A("**tâches dépendantes** (ordre prévu dans le graphe) et **tâches asynchrones** (aucune dépendance restante identifiée dans la photographie de référence ; cela ne signifie pas qu'elles sont disponibles aujourd'hui).")
+A(f"**Périmètre :** {N_TASKS} tâches de la WBS, dont la charge totale historique est estimée à {TOTAL} h. La répartition `OK`/`OK*`/`PARTIEL`/`[!]` reprend la revue tâche par tâche de `docs/19` ; elle ne constitue pas un nouvel audit exhaustif du working tree actuel.")
+A(f"**Avertissement temporel :** `docs/19` contient un addendum daté du 15/11/2026, postérieur à la date du présent rendu ({SCOPE_DATE}). Les statuts sont repris comme cartographie demandée, mais aucun run ou événement daté après le 23/10 n'est crédité ici comme réalisé. La présence de code ou de harnais n'est pas assimilée à son exécution ; seuls les replays explicitement rapportés sont distingués, sans en déduire une validation humaine.")
+A("SQL/MySQL/PDO reste le pilote par défaut ; JSON est une option explicite pour les tests isolés. **D1-L1-01** est `OK*` sur attestation utilisateur de l'envoi du courriel (boîte d'envoi non vérifiée). **D1-L1-07** est `OK` pour la synthèse asynchrone des retours continus dans `docs/21-synthese-retours-audit.md` ; aucune réunion complète, approbation collective ou validation pédagogique n’est revendiquée.")
+A("La mise en ligne de démonstration et le staging ont été retirés du périmètre sans remplacement. Le graphe, les dépendances et le plan S6 restent la photographie du 23/09/2026, pas un ordre de priorité actuel.")
+A("**Dernier contrôle non-SQL (23/10/2026, working tree basé sur `5d282f4`) :** `node scripts/run-all-tests.mjs --sans-sql` a terminé avec le code 0 via PHP-WASM 8.2 ; PHPUnit passe (57 tests) et l'E2E isolé passe (338 vérifications). SQL est exclu, PHP CLI natif absent ; le détail des suites et limites est en §8.")
 A("")
 A("| | |")
 A("|---|---|")
-A(f"| **Avancement du suivi de référence** | **{FAIT} h classées terminées / {TOTAL} h estimées ({FAIT/TOTAL:.0%})** — {COUNTS['F']} tâches terminées, {COUNTS['P']} partielles, {COUNTS['T']} à faire ({N_TASKS} tâches) |")
-A(f"| **Reste à faire** | **{REST} h estimées**, dont {DIV_REST['D4']} h pour l'application Web ; les autres postes restent issus de la photographie historique |")
-A(f"| **Backlog asynchrone du plan de base** | **{ASYNC_H} h** classées sans dépendance restante dans la photographie du 23/09 ; statuts et disponibilité à revérifier |")
-A("| **Chaîne planifiée** | L8 → L9 → L10 → L11 → L12 → L14 → L15 → L16 ; jalons du planning de base à revalider |")
-A("| **Documents liés** | `docs/05-wbs-projet.md` (WBS) · `docs/20-charte-gitlab-revues-croisees.md` · `docs/21-synthese-retours-audit.md` |")
-A("| **Version** | 1.4 — révision documentaire du 23 octobre 2026 ; D1-L1-07 clos en mode asynchrone sur attestation utilisateur, sans réunion complète revendiquée |")
+A(f"| **Répartition des statuts d'audit** | **{COUNTS['F']} `OK` + {COUNTS['F*']} `OK*`**, {COUNTS['P']} `PARTIEL`, {COUNTS['U']} `[!]` non vérifiables ({N_TASKS} tâches) ; **{COUNTS['P'] + COUNTS['U']} tâches ouvertes ou à confirmer** |")
+A(f"| **Estimation WBS historique affectée aux tâches ouvertes** | **{REST} h** (dont {DIV_REST['D4']} h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée |")
+A("| **Temps réellement passé** | Non mesuré ; aucun nombre d'heures accomplies n'est déduit des statuts |")
+A(f"| **Backlog asynchrone de la photographie** | **{ASYNC_H} h estimées** dans le graphe du 23/09 ; ni une disponibilité actuelle ni une mesure d'effort |")
+A("| **Dernier contrôle non-SQL** | `node scripts/run-all-tests.mjs --sans-sql` : code 0 ; SQL/PDO et PHP CLI natif non joués (détails §8) |")
+A("| **Documents liés** | `docs/05-wbs-projet.md` (WBS) · `docs/19-audit-cahier-des-charges-todolist.md` (constats) · `docs/21-synthese-retours-audit.md` |")
+A("| **Version** | 1.7 — statuts de docs/19 repris ; exécution non-SQL du 23/10 distinguée des validations SQL et humaines |")
 A("")
 A("---")
 A("")
-A("## 1. État du suivi de référence (statuts de tâches ; heures réelles non mesurées)")
+A("## 1. Statuts de l'audit tâche par tâche et estimations historiques WBS")
 A("")
-A("### 1.1 Par division")
+A("### 1.1 Répartition par division")
 A("")
-A("| Division | Charge estimée | Classée terminée | Reste estimé | Avancement du suivi |")
-A("|---|---:|---:|---:|---|")
+A("| Division | Charge WBS initiale (estim.) | `OK` | `OK*` | `PARTIEL` | `[!]` | Estimation initiale associée aux tâches ouvertes |")
+A("|---|---:|---:|---:|---:|---:|---:|")
 for d in ["D1","D2","D3","D4","D5","D6"]:
     tot = sum(LOT_H[l] for l in DIV_LOTS[d])
-    A(f"| **{d} — {DIV_NOM[d]}** | {tot} h | {DIV_FAIT[d]} h | {DIV_REST[d]} h | {'█'*round(DIV_FAIT[d]/tot*20)}{'░'*(20-round(DIV_FAIT[d]/tot*20))} {DIV_FAIT[d]/tot:.0%} |")
-A(f"| **Total** | **{TOTAL} h** | **{FAIT} h** | **{REST} h** | **{FAIT/TOTAL:.0%}** |")
+    cd = COUNTS_BY_DIV[d]
+    A(f"| **{d} — {DIV_NOM[d]}** | {tot} h | {cd['F']} | {cd['F*']} | {cd['P']} | {cd['U']} | {DIV_REST[d]} h |")
+A(f"| **Total** | **{TOTAL} h** | **{COUNTS['F']}** | **{COUNTS['F*']}** | **{COUNTS['P']}** | **{COUNTS['U']}** | **{REST} h** |")
 A("")
-A("### 1.2 Répartition estimée par rôle de planification (A/B/C ; aucune correspondance nominative établie)")
+A("### 1.2 Estimations WBS par rôle de planification (A/B/C ; aucune correspondance nominative établie)")
 A("")
-A("| Rôle de planification | Charge WBS estimée | Reste du suivi de référence | Classée terminée | Remarque (photographie du 23/09) |")
-A("|---|---:|---:|---:|---|")
-A(f"| **A** | 117 h | {PERS_REST['A']} h | {PERS_FAIT['A']} h | rôle de planification chargé du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |")
-A(f"| **B** | 117 h | {PERS_REST['B']} h | {PERS_FAIT['B']} h | rôle de planification base de données/tests ; états et disponibilité après la photographie non revérifiés |")
-A(f"| **C** | 121 h | {PERS_REST['C']} h | {PERS_FAIT['C']} h | rôle de planification front-office/sécurité/JS ; disponibilité et attribution nominative non établies |")
+A("| Rôle de planification | Charge WBS initiale (estim.) | Estimation initiale affectée aux tâches ouvertes | Remarque |")
+A("|---|---:|---:|---|")
+A(f"| **A** | {WBS_PERS['A']} h | {PERS_REST['A']} h | rôle de planification du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |")
+A(f"| **B** | {WBS_PERS['B']} h | {PERS_REST['B']} h | rôle de planification base de données/tests ; disponibilité actuelle non vérifiée |")
+A(f"| **C** | {WBS_PERS['C']} h | {PERS_REST['C']} h | rôle de planification front-office/sécurité/JS ; disponibilité et attribution nominative non établies |")
 A("")
-A("> **Lecture de la photographie** : le reste estimé du plan était concentré sur D4 (146 h) et une chaîne L8→L16. Les heures classées « terminées » découlent des statuts de référence, pas d'un relevé du temps réellement passé.")
-A("> Cette vue du 23/09 ne décrit pas l'avancement actuel ; les priorités et le plan S6→S12 doivent être réévalués avant utilisation.")
+A("> Les **82 h** sont la somme des estimations WBS initiales des 16 tâches `PARTIEL` et 4 tâches `[!]`. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.")
+A("> Les nombres de statut ne décrivent que les critères précis de la revue. Un `OK*` ne signifie ni que tout le produit est validé, ni que les tests associés ont été exécutés. Le registre manuel de recette reste `NON JOUÉ` pour ses 200 entrées.")
+A("> Le dernier run non-SQL est vert, mais reste une validation de code/tests sur le chemin JSON isolé : il ne prouve ni l'exécution PDO/MySQL, ni les 200 cas manuels, ni une recette humaine ou des mesures sur cible.")
 A("")
-A("**Légende des statuts utilisés partout ci-dessous :** ✅ fait (0 h restante) · 🟡 partiel (reste chiffré) · ⬜ à faire ·")
-A("**`ASYNC`** = aucune dépendance restante identifiée dans le graphe de référence · **`ASYNC*`** = la *préparation* était classée")
-A("indépendante, tandis que l'exécution utile attend un lot de la chaîne. Ces étiquettes ne prouvent pas une disponibilité actuelle.")
-A("**`✅*` pour D1-L1-01 :** statut `OK*` selon l'attestation utilisateur d'envoi du courriel ; aucune vérification indépendante de la boîte d'envoi n'est revendiquée (voir `docs/19`).")
+A("**Légende des statuts d'audit :** ✅ `OK` · ✅* `OK*` (livrable/contrôle ciblé, avec réserves) · 🟡 `PARTIEL` · `[!]` action humaine/externe/mesure non attestable ici · ⬜ à faire.")
+A("Les tâches `OK*` ne sont ni une certification générale ni une validation pédagogique. Les 200 lignes du registre manuel restent `NON JOUÉ`.")
+A("**`ASYNC`** et **`ASYNC*`** décrivent uniquement les dépendances du graphe de référence du 23/09 ; elles ne prouvent pas une disponibilité actuelle.")
+A("**D1-L1-01 (`OK*`) :** l'envoi du courriel est attesté par l'utilisateur ; la boîte d'envoi n'a pas été vérifiée indépendamment (voir `docs/19`).")
 A("")
 A("---")
 A("")
@@ -256,7 +322,7 @@ A("")
 A("Dans le graphe de dépendances de la photographie du 23/09, ces tâches ne dépendent d'aucune tâche restante : elles pouvaient être préparées en parallèle.")
 A("Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évoluer. Vérifier chaque tâche et ses prérequis dans le dépôt avant de la reprendre.")
 A("")
-A("| # | ID | Tâche | Rôle | h | Priorité | Motif de la classification dans la photographie |")
+A("| # | ID | Tâche | Rôle de planification | h estimées WBS initiales | Priorité | Motif de la classification dans la photographie |")
 A("|---|---|---|---|---:|---|---|")
 async_sorted = sorted(ASYNC_TASKS, key=lambda t: ({"A":0,"B":1,"C":2}[t[2]], -t[3]))
 for i, (tid, lbl, r, h, prio, mark) in enumerate(async_sorted, 1):
@@ -278,7 +344,7 @@ for i, (tid, lbl, r, h, prio, mark) in enumerate(async_sorted, 1):
     }.get(tid, "dépendances déjà satisfaites")
     A(f"| {i} | `{tid}` | {lbl} | {r} | {h} | {prio} | {pourquoi} |")
 A("")
-A(f"**Total backlog asynchrone du plan de référence : {ASYNC_H} h** (rôles A {ASYNC_BY_PERSON['A']} h, B {ASYNC_BY_PERSON['B']} h, C {ASYNC_BY_PERSON['C']} h, préparations `ASYNC*` incluses).")
+A(f"**Estimation WBS initiale associée aux tâches classées `ASYNC`/`ASYNC*` : {ASYNC_H} h** (rôles de planification A {ASYNC_BY_PERSON['A']} h, B {ASYNC_BY_PERSON['B']} h, C {ASYNC_BY_PERSON['C']} h). Ce total n'est ni une mesure du travail à venir ni une disponibilité actuelle.")
 A("")
 A("**Pistes de parallélisation du plan de référence** (aucune disponibilité actuelle ni contribution effective n'est affirmée) :")
 A("")
@@ -288,13 +354,13 @@ A("3. **Le rôle A peut prendre en charge les slides** dans le scénario de base
 A("")
 A("---")
 A("")
-A("## 3. ⛓️ TÂCHES DÉPENDANTES — la chaîne de l'application (l'ordre est imposé)")
+A("## 3. Tâches dépendantes — séquence de référence du plan historique (à revalider)")
 A("")
 A("Dans le graphe de référence, les tâches de cette section attendent leurs dépendances ; la chaîne critique prévue est :")
 A("")
 A("> **L8 (socle) → L9 (front-office) → L10 (panier/commande) → L11 (back-office) → L12 (sécurité) → L14 (tests) → L15 (rendu) → L16 (répétition)**")
 A("")
-A("| Ordre | Lot | h | Ne peut démarrer qu'après | Débloque | Jalon à l'arrivée |")
+A("| Ordre du plan | Lot | h WBS initiales | Dépendances prévues | Débloque dans le plan | Jalon historique |")
 A("|---|---|---:|---|---|---|")
 A("| 1 | **L8** socle applicatif (routeur, PDO, vues, auth/CSRF, CI GitHub Actions) | 22 | — dans le plan de base | L9, L10, L11, L12 | page d'accueil servie (jalon S6 prévu) |")
 A("| 2 | **L9** front-office (catalogue, recherche, fiche, compte, connexion) | 32 | L8 ; 04/05 après L8-04 | L10 (partiellement), L12 | **J3** parcours visiteur (S7) |")
@@ -335,22 +401,24 @@ A("```")
 A("")
 A("---")
 A("")
-A("## 5. Détail complet — les 84 tâches de la WBS et leur statut de suivi")
+A("## 5. Détail tâche par tâche — 84 tâches WBS, statuts de l'audit et actions restantes")
 A("")
 for d in ["D1","D2","D3","D4","D5","D6"]:
     tot = sum(LOT_H[l] for l in DIV_LOTS[d])
-    A(f"### {d} — {DIV_NOM[d]} ({DIV_FAIT[d]} h estimées classées terminées sur {tot} h, reste estimé {DIV_REST[d]} h)")
+    cd = COUNTS_BY_DIV[d]
+    A(f"### {d} — {DIV_NOM[d]} ({cd['F']} `OK`, {cd['F*']} `OK*`, {cd['P']} `PARTIEL`, {cd['U']} `[!]` ; {DIV_REST[d]} h d'estimations WBS initiales à revalider sur {tot} h de référence)")
     A("")
     for lot in DIV_LOTS[d]:
         tasks = T[lot]
         reste = sum(t[3] for t in tasks)
-        icone = "✅" if reste == 0 else ("🟡" if any(t[4]=="P" for t in tasks) else "⬜")
-        A(f"#### {icone} Lot {lot} — {LOT_NOM[lot]} ({LOT_H[lot]-reste}/{LOT_H[lot]} h · reste {reste} h)")
+        statuses = {t[4] for t in tasks}
+        icone = "⚠️" if "U" in statuses else ("🟡" if "P" in statuses else ("✅" if statuses == {"F"} else "✅*"))
+        A(f"#### {icone} Lot {lot} — {LOT_NOM[lot]} (charge WBS initiale {LOT_H[lot]} h ; estimation affectée aux tâches ouvertes {reste} h)")
         A("")
-        A("| ID | Tâche | Rôle | h restantes (estim.) | Statut | Dépend de | Prio |")
+        A("| ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |")
         A("|---|---|---|---:|---|---|---|")
         for (tid, lbl, r, h, st, dep, prio, mark) in tasks:
-            badge = BADGE[st] + ("*" if tid == "D1-L1-01" else "") + (" `ASYNC`" if mark.startswith("ASYNC") else "")
+            badge = f"{BADGE[st]} `{STATUT_NOM[st]}`" + (f" `{mark}`" if mark.startswith("ASYNC") else "")
             A(f"| `{tid}` | {lbl} | {r} | {h} | {badge} | {dep} | {prio} |")
         A("")
     A("")
@@ -379,7 +447,7 @@ A("| Jour | A | B | C |")
 A("|---|---|---|---|")
 A("| **J1** | `D1-L1-01` GitLab + push de ce qui existe (2 h) | `D3-L5-05` load_db.sh (3 h) | revue du doc 04 + prépa L9 (catalogue) |")
 A("| **J2** | `D4-L8-01` routeur (5 h) | `D2-L3-06` puml + render.sh (4 h) | revue MR routeur + stubs vues |")
-A("| **J3** | `D4-L8-02` Database PDO (3 h) | `D3-L6-06/07` + `D3-L7-05` tNN (8 h estimées restantes) | `D4-L12-05` controles.sh (4 h) |")
+A("| **J3** | `D4-L8-02` Database PDO (3 h du plan) | `D3-L6-06/07` + `D3-L7-05` tNN (8 h prévues au plan initial) | `D4-L12-05` controles.sh (4 h du plan) |")
 A("| **J4** | `D4-L8-03` vues + échappement (4 h) | `D5-L14-06` mesure perf base seule + rapport | revue MR + prépa L9-01 |")
 A("| **J5** | `D4-L8-04` auth/CSRF (6 h, déborde S7 si besoin) | aide sur les stubs CommandeRepository (rôle B du plan) | vérifier les preuves de recette ; synthèse asynchrone D1-L1-07 consignée dans docs/21-synthese-retours-audit.md, sans réunion complète revendiquée |")
 A("")
@@ -388,10 +456,23 @@ A("Dans le scénario historique, L8 devait débloquer la chaîne jusqu'au jalon 
 A("")
 A("---")
 A("")
-A("*Todolist MiniShop v1.4 — états hérités hors D1-L1-01/04/05/07, D2-L2-01…05 et D2-L3-04/05 de la photographie du 23/09/2026 ; coupure documentaire au 23/10/2026 ; déploiement/staging retirés sans remplacement. D1-L1-01 : envoi du courriel attesté par l’utilisateur (boîte d’envoi non vérifiée) ; D1-L1-04 : issue documentée ; D1-L1-05 : charte/modèles présents, usage réel des MR non prouvé ; D1-L1-07 : synthèse écrite des retours continus, clôture asynchrone sur attestation utilisateur, aucune réunion complète revendiquée ; D2-L2-06 reste ouvert. Les charges A/B/C sont des estimations de rôles, sans correspondance nominative, capacité ni relevé d’heures.*")
+A("## 8. Vérifications exécutées et limites du run non-SQL")
+A("")
+A("Le 23/10/2026, sur le working tree basé sur `5d282f4` (avec les sorties documentaires de cette révision), `node scripts/run-all-tests.mjs --sans-sql` s'est terminé avec le code 0. L'environnement n'avait pas de PHP CLI natif : les suites PHP ont tourné via PHP-WASM 8.2.")
+A("- Suites automatisées activées : toutes vertes ; PHPUnit local **57 tests**.")
+A("- `tests/node/preferences_test.mjs` : **48 vues FR/EN** et **45 messages métier** vérifiés.")
+A("- `tests/node/e2e_isolation.mjs` : **338 vérifications** E2E HTTP internes réussies sur une copie temporaire ; les fichiers témoins du dépôt hôte sont restés inchangés.")
+A("- Le lanceur configure explicitement `STORAGE_DRIVER=json` pour ces suites fonctionnelles isolées. Cela ne change pas le pilote applicatif par défaut (SQL/MySQL/PDO) et ne constitue pas une validation du chemin SQL.")
+A("")
+A("**Hors portée / non joué :** `--sans-sql` saute `tests/php/sql_integration.php` ; aucun test PDO/MySQL ni création de base de test n'a eu lieu pendant ce run. L'analyse de compilation avec PHP CLI natif est `NON JOUÉE` et les **5 tests de concurrence interprocessus** ont été ignorés faute de PHP natif. L'E2E passe par HTTP interne/WASM, pas par un navigateur réel. Les 200 scénarios de recette manuelle restent `NON JOUÉ` ; aucun test manuel LineServ, déploiement, restauration de base, revue croisée étudiante, approbation pédagogique, répétition de soutenance ou mesure de performance sur cible n'est revendiqué.")
+A("Le prochain contrôle SQL doit être rapporté séparément, avec le SHA et l'identifiant du run : sa base temporaire isolée est distincte de la cible manuelle LineServ.")
+A("")
+A("---")
+A("")
+A("*Todolist MiniShop v1.7 — mise à jour du 23/10/2026 ; répartition des statuts reprise de la revue tâche par tâche de `docs/19`, sans nouvel audit exhaustif du working tree. `docs/19` contient un addendum daté du 15/11/2026, postérieur à cette date : aucun événement ou résultat portant une date future n'est crédité comme réalisé. Le run non-SQL du 23/10 est vert via WASM/JSON isolé ; SQL/PDO, PHP CLI natif et validations humaines restent hors preuve. WBS : 84 tâches et 355 h estimées historiquement ; les 82 h affectées aux tâches ouvertes sont des estimations initiales à revalider, pas du temps réel ni une prévision actuelle. D1-L1-01 repose sur l'attestation utilisateur d'envoi ; D1-L1-07 sur la synthèse asynchrone des feedbacks, sans réunion complète revendiquée. Le registre de recette reste 200 lignes NON JOUÉ ; aucun déploiement, test manuel LineServ, restauration, revue croisée, approbation pédagogique, mesure sur cible ou répétition de soutenance n'est inféré. Les charges A/B/C sont des estimations non nominatives.*")
 
 OUT_MD.write_text("\n".join(md), encoding="utf-8")
-print(f"OK MD : {OUT_MD} ({len(md)} lignes) — restant {REST} h, fait {FAIT} h, async {len(ASYNC_TASKS)} tâches")
+print(f"OK MD : {OUT_MD} ({len(md)} lignes) — {N_TASKS} tâches, {REST} h d'estimations WBS initiales affectées aux tâches ouvertes, async {len(ASYNC_TASKS)} tâches")
 
 # =====================================================================
 # HTML
@@ -406,7 +487,7 @@ HTML_CSS = (ROOT / ".tools" / "build_doc04_html.py").read_text(encoding="utf-8")
 css = re.search(r'CSS = """(.*?)"""', HTML_CSS, re.S).group(1) + EXTRA
 page = f"""<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MiniShop — Todolist : dépendantes & asynchrones</title><style>{css}</style></head>
+<title>MiniShop — Todolist : statuts et estimations WBS</title><style>{css}</style></head>
 <body>
 {html}
 </body></html>"""

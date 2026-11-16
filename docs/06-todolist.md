@@ -1,50 +1,53 @@
 # MiniShop — Todolist projet : suivi de base et planification historique
 
-**Périmètre :** révision du 23 octobre 2026 ; la mise en ligne de démonstration et les contrôles staging associés sont retirés sans remplacement ; la WBS compte 84 tâches. **D1-L1-01** est `OK*` sur attestation utilisateur de l'envoi du courriel (boîte d'envoi non vérifiée). **D1-L1-07** est clos par la synthèse écrite des retours continus dans `docs/21-synthese-retours-audit.md`, sur attestation utilisateur ; aucune réunion complète n’est revendiquée.
-Le statut **D1-L1-04** porte sur l'issue contenant les cinq livrables et pénalités ; l'épinglage n'est pas attesté et n'est pas requis par ce critère. **D1-L1-05** est terminé sur le livrable documentaire uniquement : l'usage réel de MR/revues croisées n'est pas démontré.
-Les états non révisés restent ceux de la photographie du 23/09/2026 ; les statuts D1-L1-01/04/05/07 sont actualisés uniquement selon les attestations ou preuves décrites ici et dans l’audit docs/19. Pour D1-L1-07, la clôture porte sur la synthèse asynchrone des retours continus, pas sur la tenue d’une réunion. Les dates postérieures à la coupure et les rapports qui les portent ne sont pas traités comme des événements ou résultats acquis. D2-L2-01…05 et D2-L3-04/05 sont clos au seul niveau documentaire ; cela ne vaut ni revue étudiante ni validation pédagogique. Les catégories dépendantes/asynchrones, le graphe et les plans S6 décrivent le planning de base, pas l’exécution ni une priorité actuelle. Revalider les dépendances, statuts et disponibilités avant toute action. La todolist comprend les tâches de la WBS révisée, classées en
-**tâches dépendantes** (ordre prévu dans le graphe) et **tâches asynchrones** (aucune dépendance restante identifiée dans la photographie de référence ; cela ne signifie pas qu'elles sont disponibles aujourd'hui).
+**Périmètre :** 84 tâches de la WBS, dont la charge totale historique est estimée à 355 h. La répartition `OK`/`OK*`/`PARTIEL`/`[!]` reprend la revue tâche par tâche de `docs/19` ; elle ne constitue pas un nouvel audit exhaustif du working tree actuel.
+**Avertissement temporel :** `docs/19` contient un addendum daté du 15/11/2026, postérieur à la date du présent rendu (23 octobre 2026). Les statuts sont repris comme cartographie demandée, mais aucun run ou événement daté après le 23/10 n'est crédité ici comme réalisé. La présence de code ou de harnais n'est pas assimilée à son exécution ; seuls les replays explicitement rapportés sont distingués, sans en déduire une validation humaine.
+SQL/MySQL/PDO reste le pilote par défaut ; JSON est une option explicite pour les tests isolés. **D1-L1-01** est `OK*` sur attestation utilisateur de l'envoi du courriel (boîte d'envoi non vérifiée). **D1-L1-07** est `OK` pour la synthèse asynchrone des retours continus dans `docs/21-synthese-retours-audit.md` ; aucune réunion complète, approbation collective ou validation pédagogique n’est revendiquée.
+La mise en ligne de démonstration et le staging ont été retirés du périmètre sans remplacement. Le graphe, les dépendances et le plan S6 restent la photographie du 23/09/2026, pas un ordre de priorité actuel.
+**Dernier contrôle non-SQL (23/10/2026, working tree basé sur `5d282f4`) :** `node scripts/run-all-tests.mjs --sans-sql` a terminé avec le code 0 via PHP-WASM 8.2 ; PHPUnit passe (57 tests) et l'E2E isolé passe (338 vérifications). SQL est exclu, PHP CLI natif absent ; le détail des suites et limites est en §8.
 
 | | |
 |---|---|
-| **Avancement du suivi de référence** | **164 h classées terminées / 355 h estimées (46%)** — 37 tâches terminées, 8 partielles, 39 à faire (84 tâches) |
-| **Reste à faire** | **191 h estimées**, dont 142 h pour l'application Web ; les autres postes restent issus de la photographie historique |
-| **Backlog asynchrone du plan de base** | **33 h** classées sans dépendance restante dans la photographie du 23/09 ; statuts et disponibilité à revérifier |
-| **Chaîne planifiée** | L8 → L9 → L10 → L11 → L12 → L14 → L15 → L16 ; jalons du planning de base à revalider |
-| **Documents liés** | `docs/05-wbs-projet.md` (WBS) · `docs/20-charte-gitlab-revues-croisees.md` · `docs/21-synthese-retours-audit.md` |
-| **Version** | 1.4 — révision documentaire du 23 octobre 2026 ; D1-L1-07 clos en mode asynchrone sur attestation utilisateur, sans réunion complète revendiquée |
+| **Répartition des statuts d'audit** | **3 `OK` + 61 `OK*`**, 16 `PARTIEL`, 4 `[!]` non vérifiables (84 tâches) ; **20 tâches ouvertes ou à confirmer** |
+| **Estimation WBS historique affectée aux tâches ouvertes** | **82 h** (dont 50 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée |
+| **Temps réellement passé** | Non mesuré ; aucun nombre d'heures accomplies n'est déduit des statuts |
+| **Backlog asynchrone de la photographie** | **8 h estimées** dans le graphe du 23/09 ; ni une disponibilité actuelle ni une mesure d'effort |
+| **Dernier contrôle non-SQL** | `node scripts/run-all-tests.mjs --sans-sql` : code 0 ; SQL/PDO et PHP CLI natif non joués (détails §8) |
+| **Documents liés** | `docs/05-wbs-projet.md` (WBS) · `docs/19-audit-cahier-des-charges-todolist.md` (constats) · `docs/21-synthese-retours-audit.md` |
+| **Version** | 1.7 — statuts de docs/19 repris ; exécution non-SQL du 23/10 distinguée des validations SQL et humaines |
 
 ---
 
-## 1. État du suivi de référence (statuts de tâches ; heures réelles non mesurées)
+## 1. Statuts de l'audit tâche par tâche et estimations historiques WBS
 
-### 1.1 Par division
+### 1.1 Répartition par division
 
-| Division | Charge estimée | Classée terminée | Reste estimé | Avancement du suivi |
-|---|---:|---:|---:|---|
-| **D1 — Pilotage, dépôt GitLab & collaboration** | 19 h | 15 h | 4 h | ████████████████░░░░ 79% |
-| **D2 — Document de spécification du système** | 54 h | 47 h | 7 h | █████████████████░░░ 87% |
-| **D3 — Conception de la base de données & SQL** | 98 h | 87 h | 11 h | ██████████████████░░ 89% |
-| **D4 — Application Web PHP / MySQL / PDO** | 146 h | 4 h | 142 h | █░░░░░░░░░░░░░░░░░░░ 3% |
-| **D5 — Tests & validation** | 24 h | 6 h | 18 h | █████░░░░░░░░░░░░░░░ 25% |
-| **D6 — Soutenance** | 14 h | 5 h | 9 h | ███████░░░░░░░░░░░░░ 36% |
-| **Total** | **355 h** | **164 h** | **191 h** | **46%** |
+| Division | Charge WBS initiale (estim.) | `OK` | `OK*` | `PARTIEL` | `[!]` | Estimation initiale associée aux tâches ouvertes |
+|---|---:|---:|---:|---:|---:|---:|
+| **D1 — Pilotage, dépôt GitLab & collaboration** | 19 h | 3 | 4 | 0 | 1 | 2 h |
+| **D2 — Document de spécification du système** | 54 h | 0 | 11 | 1 | 0 | 3 h |
+| **D3 — Conception de la base de données & SQL** | 98 h | 0 | 22 | 0 | 1 | 4 h |
+| **D4 — Application Web PHP / MySQL / PDO** | 146 h | 0 | 21 | 11 | 0 | 50 h |
+| **D5 — Tests & validation** | 24 h | 0 | 1 | 4 | 1 | 18 h |
+| **D6 — Soutenance** | 14 h | 0 | 2 | 0 | 1 | 5 h |
+| **Total** | **355 h** | **3** | **61** | **16** | **4** | **82 h** |
 
-### 1.2 Répartition estimée par rôle de planification (A/B/C ; aucune correspondance nominative établie)
+### 1.2 Estimations WBS par rôle de planification (A/B/C ; aucune correspondance nominative établie)
 
-| Rôle de planification | Charge WBS estimée | Reste du suivi de référence | Classée terminée | Remarque (photographie du 23/09) |
-|---|---:|---:|---:|---|
-| **A** | 117 h | 81 h | 36 h | rôle de planification chargé du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |
-| **B** | 117 h | 17 h | 100 h | rôle de planification base de données/tests ; états et disponibilité après la photographie non revérifiés |
-| **C** | 121 h | 93 h | 28 h | rôle de planification front-office/sécurité/JS ; disponibilité et attribution nominative non établies |
+| Rôle de planification | Charge WBS initiale (estim.) | Estimation initiale affectée aux tâches ouvertes | Remarque |
+|---|---:|---:|---|
+| **A** | 117 h | 38 h | rôle de planification du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |
+| **B** | 117 h | 10 h | rôle de planification base de données/tests ; disponibilité actuelle non vérifiée |
+| **C** | 121 h | 34 h | rôle de planification front-office/sécurité/JS ; disponibilité et attribution nominative non établies |
 
-> **Lecture de la photographie** : le reste estimé du plan était concentré sur D4 (146 h) et une chaîne L8→L16. Les heures classées « terminées » découlent des statuts de référence, pas d'un relevé du temps réellement passé.
-> Cette vue du 23/09 ne décrit pas l'avancement actuel ; les priorités et le plan S6→S12 doivent être réévalués avant utilisation.
+> Les **82 h** sont la somme des estimations WBS initiales des 16 tâches `PARTIEL` et 4 tâches `[!]`. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
+> Les nombres de statut ne décrivent que les critères précis de la revue. Un `OK*` ne signifie ni que tout le produit est validé, ni que les tests associés ont été exécutés. Le registre manuel de recette reste `NON JOUÉ` pour ses 200 entrées.
+> Le dernier run non-SQL est vert, mais reste une validation de code/tests sur le chemin JSON isolé : il ne prouve ni l'exécution PDO/MySQL, ni les 200 cas manuels, ni une recette humaine ou des mesures sur cible.
 
-**Légende des statuts utilisés partout ci-dessous :** ✅ fait (0 h restante) · 🟡 partiel (reste chiffré) · ⬜ à faire ·
-**`ASYNC`** = aucune dépendance restante identifiée dans le graphe de référence · **`ASYNC*`** = la *préparation* était classée
-indépendante, tandis que l'exécution utile attend un lot de la chaîne. Ces étiquettes ne prouvent pas une disponibilité actuelle.
-**`✅*` pour D1-L1-01 :** statut `OK*` selon l'attestation utilisateur d'envoi du courriel ; aucune vérification indépendante de la boîte d'envoi n'est revendiquée (voir `docs/19`).
+**Légende des statuts d'audit :** ✅ `OK` · ✅* `OK*` (livrable/contrôle ciblé, avec réserves) · 🟡 `PARTIEL` · `[!]` action humaine/externe/mesure non attestable ici · ⬜ à faire.
+Les tâches `OK*` ne sont ni une certification générale ni une validation pédagogique. Les 200 lignes du registre manuel restent `NON JOUÉ`.
+**`ASYNC`** et **`ASYNC*`** décrivent uniquement les dépendances du graphe de référence du 23/09 ; elles ne prouvent pas une disponibilité actuelle.
+**D1-L1-01 (`OK*`) :** l'envoi du courriel est attesté par l'utilisateur ; la boîte d'envoi n'a pas été vérifiée indépendamment (voir `docs/19`).
 
 ---
 
@@ -53,22 +56,22 @@ indépendante, tandis que l'exécution utile attend un lot de la chaîne. Ces é
 Dans le graphe de dépendances de la photographie du 23/09, ces tâches ne dépendent d'aucune tâche restante : elles pouvaient être préparées en parallèle.
 Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évoluer. Vérifier chaque tâche et ses prérequis dans le dépôt avant de la reprendre.
 
-| # | ID | Tâche | Rôle | h | Priorité | Motif de la classification dans la photographie |
+| # | ID | Tâche | Rôle de planification | h estimées WBS initiales | Priorité | Motif de la classification dans la photographie |
 |---|---|---|---|---:|---|---|
-| 1 | `D4-L8-01` | Front controller + routeur (listes blanches de routes et de tri) | A | 5 | P1 | les dépendances étaient marquées faites dans la photographie ; leur état n'a pas été revérifié dans cette liste |
-| 2 | `D5-L14-06` | Performance p95 < 500 ms : mesure SQL via mesurer_sql.sh ; mesure HTTP après L9 | A | 5 | P2 | la mesure SQL seule était séparée de la mesure HTTP dans le plan ; ni la base ni les mesures n'ont été rejouées ici |
-| 3 | `D3-L7-05` | Formaliser en tNN rejouables T-02…T-24 ; validation du 23/09 historique, fichier rapport portant une date future 27/10 non recevable comme preuve à la coupure | A | 4 | P1 | la validation du 23/09 est historique ; le fichier rapport porte une date future 27/10 et ne prouve pas de rejeu à la coupure 23/10 |
-| 4 | `D6-L16-01` | Slides de la soutenance (le déroulé docs/03 existe ; les diapositives restent à produire) | A | 4 | P2 | docs/03 était déjà présent dans la photographie ; le statut des diapositives est à vérifier dans la todolist |
-| 5 | `D3-L6-06` | Écrire les fichiers tNN_*.sql pour T-01…T-12 (le manifeste existe) | A | 2 | P1 | le manifeste et la fixture étaient signalés présents dans la photographie |
-| 6 | `D3-L6-07` | Écrire tests/sql/run_tests.sh + tNN T-25…T-29 (fixture déjà livrée) | A | 2 | P1 | le manifeste et la fixture étaient signalés présents dans la photographie |
-| 7 | `D1-L1-02` | Compléter le squelette : arborescence app/ + public/ vides (.gitkeep) — le reste (docs/sql/tests/scripts) est en place | A | 1 | P2 | les dossiers docs/, sql/, tests/ et scripts/ étaient indiqués comme déjà présents dans la photographie |
-| 8 | `D1-L1-01` | Partager l’URL et l’accès GitLab requis, communiquer la composition ; visibilité privée et protection de branche non exigées par le sujet | A | 0 | — | le plan de base l'identifiait comme préalable aux tâches de dépôt ; la preuve utilisateur de l'envoi est distinguée dans l'audit docs/19 |
-| 9 | `D2-L3-06` | Versionner les sources .puml + docs/diagrams/render.sh (le README les annonce : à livrer) | B | 4 | P1 | constat du 23/09 : les PNG existaient ; les sources et le script de rendu étaient alors signalés manquants (voir les corrections ultérieures de l'audit) |
-| 10 | `D3-L5-05` | Écrire scripts/load_db.sh (encapsule DELIMITER, chargement 01→04, comptages de contrôle) | B | 3 | P1 | le rapport de la campagne du 23/09 indiquait les quatre fichiers SQL corrigés ; cela ne remplace pas un contrôle actuel |
-| 11 | `D5-L14-04` | Concurrence : préparer reserver.sh ; exécuter 20/12 après L10 | B | 3 | P1 | le scénario de charge était défini dans la planification ; vérifier l'état actuel du harnais |
-| 12 | `D4-L12-05` | 11 contrôles statiques sécurité rejoués localement ; S-11/SEC-14 ciblé, sans portée de recette applicative | C | 0 | — | 11 contrôles statiques rejoués localement le 23/10/2026 ; preuve limitée aux sources contrôlées, pas une recette applicative ou LineServ |
+| 1 | `D5-L14-06` | Scripts présents ; mesures p95 HTTP/SQL sur machine et volumétrie cibles non attestées | A | 5 | P2 | la mesure SQL seule était séparée de la mesure HTTP dans le plan ; ni la base ni les mesures n'ont été rejouées ici |
+| 2 | `D1-L1-01` | Partager l’URL et l’accès GitLab requis, communiquer la composition ; visibilité privée et protection de branche non exigées par le sujet | A | 0 | — | le plan de base l'identifiait comme préalable aux tâches de dépôt ; la preuve utilisateur de l'envoi est distinguée dans l'audit docs/19 |
+| 3 | `D1-L1-02` | Arborescence app/ et public/ présente et peuplée ; l'ancien critère de squelette vide est dépassé | A | 0 | P2 | les dossiers docs/, sql/, tests/ et scripts/ étaient indiqués comme déjà présents dans la photographie |
+| 4 | `D3-L6-06` | Fichiers SQL T-01…T-12 présents ; l'exécution est suivie séparément par D5-L14-02 | A | 0 | P1 | le manifeste et la fixture étaient signalés présents dans la photographie |
+| 5 | `D3-L6-07` | Harnais et fichiers SQL T-25…T-29 présents ; l'exécution est suivie séparément par D5-L14-02 | A | 0 | P1 | le manifeste et la fixture étaient signalés présents dans la photographie |
+| 6 | `D3-L7-05` | Tests directs T-13…T-24 présents ; aucun rejeu SQL du checkout courant n'est prouvé | A | 0 | P1 | la validation du 23/09 est historique ; le fichier rapport porte une date future 27/10 et ne prouve pas de rejeu à la coupure 23/10 |
+| 7 | `D4-L8-01` | Front controller + routeur (listes blanches de routes et de tri) | A | 0 | P1 | les dépendances étaient marquées faites dans la photographie ; leur état n'a pas été revérifié dans cette liste |
+| 8 | `D6-L16-01` | Support de soutenance docs/12 et livrables PPTX/PDF/DOCX présents ; répétition à distinguer | A | 0 | P2 | docs/03 était déjà présent dans la photographie ; le statut des diapositives est à vérifier dans la todolist |
+| 9 | `D5-L14-04` | Script de charge présent ; essai HTTP/SQL 20 demandes pour 12 unités à exécuter, 5 tests de concurrence native non joués | B | 3 | P1 | le scénario de charge était défini dans la planification ; vérifier l'état actuel du harnais |
+| 10 | `D2-L3-06` | Sources .puml, docs/diagrams/render.sh et job PlantUML présents | B | 0 | P1 | constat du 23/09 : les PNG existaient ; les sources et le script de rendu étaient alors signalés manquants (voir les corrections ultérieures de l'audit) |
+| 11 | `D3-L5-05` | scripts/load_db.sh présent et appelé par le workflow SQL ; le run SQL reste à effectuer séparément | B | 0 | P1 | le rapport de la campagne du 23/09 indiquait les quatre fichiers SQL corrigés ; cela ne remplace pas un contrôle actuel |
+| 12 | `D4-L12-05` | `docs/19` rapporte 11 contrôles statiques rejoués localement le 23/10 ; S-11/SEC-14 ciblé, sans portée de recette applicative ou LineServ | C | 0 | — | 11 contrôles statiques rejoués localement le 23/10/2026 ; preuve limitée aux sources contrôlées, pas une recette applicative ou LineServ |
 
-**Total backlog asynchrone du plan de référence : 33 h** (rôles A 23 h, B 10 h, C 0 h, préparations `ASYNC*` incluses).
+**Estimation WBS initiale associée aux tâches classées `ASYNC`/`ASYNC*` : 8 h** (rôles de planification A 5 h, B 3 h, C 0 h). Ce total n'est ni une mesure du travail à venir ni une disponibilité actuelle.
 
 **Pistes de parallélisation du plan de référence** (aucune disponibilité actuelle ni contribution effective n'est affirmée) :
 
@@ -78,13 +81,13 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 
 ---
 
-## 3. ⛓️ TÂCHES DÉPENDANTES — la chaîne de l'application (l'ordre est imposé)
+## 3. Tâches dépendantes — séquence de référence du plan historique (à revalider)
 
 Dans le graphe de référence, les tâches de cette section attendent leurs dépendances ; la chaîne critique prévue est :
 
 > **L8 (socle) → L9 (front-office) → L10 (panier/commande) → L11 (back-office) → L12 (sécurité) → L14 (tests) → L15 (rendu) → L16 (répétition)**
 
-| Ordre | Lot | h | Ne peut démarrer qu'après | Débloque | Jalon à l'arrivée |
+| Ordre du plan | Lot | h WBS initiales | Dépendances prévues | Débloque dans le plan | Jalon historique |
 |---|---|---:|---|---|---|
 | 1 | **L8** socle applicatif (routeur, PDO, vues, auth/CSRF, CI GitHub Actions) | 22 | — dans le plan de base | L9, L10, L11, L12 | page d'accueil servie (jalon S6 prévu) |
 | 2 | **L9** front-office (catalogue, recherche, fiche, compte, connexion) | 32 | L8 ; 04/05 après L8-04 | L10 (partiellement), L12 | **J3** parcours visiteur (S7) |
@@ -125,188 +128,188 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 
 ---
 
-## 5. Détail complet — les 84 tâches de la WBS et leur statut de suivi
+## 5. Détail tâche par tâche — 84 tâches WBS, statuts de l'audit et actions restantes
 
-### D1 — Pilotage, dépôt GitLab & collaboration (15 h estimées classées terminées sur 19 h, reste estimé 4 h)
+### D1 — Pilotage, dépôt GitLab & collaboration (3 `OK`, 4 `OK*`, 0 `PARTIEL`, 1 `[!]` ; 2 h d'estimations WBS initiales à revalider sur 19 h de référence)
 
-#### 🟡 Lot L1 — Pilotage & dépôt (13/14 h · reste 1 h)
+#### ✅* Lot L1 — Pilotage & dépôt (charge WBS initiale 14 h ; estimation affectée aux tâches ouvertes 0 h)
 
-| ID | Tâche | Rôle | h restantes (estim.) | Statut | Dépend de | Prio |
+| ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
-| `D1-L1-01` | Partager l’URL et l’accès GitLab requis, communiquer la composition ; visibilité privée et protection de branche non exigées par le sujet | A | 0 | ✅* `ASYNC` | — | — |
-| `D1-L1-02` | Compléter le squelette : arborescence app/ + public/ vides (.gitkeep) — le reste (docs/sql/tests/scripts) est en place | A | 1 | 🟡 `ASYNC` | D1-L1-01 | P2 |
-| `D1-L1-03` | README v0 (prérequis, installation cible, membres et rôles) | A | 0 | ✅ | — | — |
-| `D1-L1-04` | Issue GitLab de conformité renseignée : cinq livrables et pénalités du barème (CDC §16) | A | 0 | ✅ | D1-L1-01 | — |
-| `D1-L1-05` | Charte GitLab : branches, MR croisées, commits conventionnels, 1 issue par UC/EF (docs/20) | A | 0 | ✅ | — | — |
-| `D1-L1-07` | Synthèse des retours continus sur l’audit (mode asynchrone ; aucune réunion complète revendiquée ; docs/21-synthese-retours-audit.md) | A | 0 | ✅ | — | — |
+| `D1-L1-01` | Partager l’URL et l’accès GitLab requis, communiquer la composition ; visibilité privée et protection de branche non exigées par le sujet | A | 0 | ✅* `OK*` `ASYNC` | — | — |
+| `D1-L1-02` | Arborescence app/ et public/ présente et peuplée ; l'ancien critère de squelette vide est dépassé | A | 0 | ✅* `OK*` `ASYNC` | D1-L1-01 | P2 |
+| `D1-L1-03` | README avec composition et permissions GitLab présent ; leur lecture effective par chaque membre n'est pas vérifiée. Les permissions GitLab restent distinctes du RACI et des rôles A/B/C, sans correspondance nominative | A | 0 | ✅* `OK*` | — | — |
+| `D1-L1-04` | Issue GitLab de conformité renseignée : cinq livrables et pénalités du barème (CDC §16) | A | 0 | ✅ `OK` | D1-L1-01 | — |
+| `D1-L1-05` | Charte GitLab et modèles de MR présents ; aucun usage réel de MR ou revue croisée étudiante n'est attesté | A | 0 | ✅ `OK` | — | — |
+| `D1-L1-07` | Synthèse des retours continus sur l’audit (mode asynchrone ; aucune réunion complète revendiquée ; docs/21-synthese-retours-audit.md) | A | 0 | ✅ `OK` | — | — |
 
-#### 🟡 Lot L15 — README final & rendu (2/5 h · reste 3 h)
+#### ⚠️ Lot L15 — README final & rendu (charge WBS initiale 5 h ; estimation affectée aux tâches ouvertes 2 h)
 
-| ID | Tâche | Rôle | h restantes (estim.) | Statut | Dépend de | Prio |
+| ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
-| `D1-L15-02` | README final : statut réel de l'application, wrapper build-docs.sh (ou pointer .tools), comptes | A | 1 | 🟡 | D5-L14-05 | P2 |
-| `D1-L15-03` | Nettoyage de l'arborescence + tag v1.0-rendu | A | 2 | ⬜ | D1-L15-02 | P1 |
+| `D1-L15-02` | README final, wrapper build-docs et comptes présents ; lecture effective par un tiers non vérifiée | A | 0 | ✅* `OK*` | D5-L14-05 | P2 |
+| `D1-L15-03` | Nettoyage et tag v1.0-rendu à vérifier sur le dépôt cible ; aucun tag n'est attesté dans les références examinées | A | 2 | [!] `à vérifier / externe` | D1-L15-02 | P1 |
 
 
-### D2 — Document de spécification du système (47 h estimées classées terminées sur 54 h, reste estimé 7 h)
+### D2 — Document de spécification du système (0 `OK`, 11 `OK*`, 1 `PARTIEL`, 0 `[!]` ; 3 h d'estimations WBS initiales à revalider sur 54 h de référence)
 
-#### ⬜ Lot L2 — CDC : spécification (23/26 h · reste 3 h)
+#### 🟡 Lot L2 — CDC : spécification (charge WBS initiale 26 h ; estimation affectée aux tâches ouvertes 3 h)
 
-| ID | Tâche | Rôle | h restantes (estim.) | Statut | Dépend de | Prio |
+| ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
-| `D2-L2-01` | Rédiger §1-§2 avec dates et niveaux de preuve cohérents | A | 0 | ✅ | — | — |
-| `D2-L2-02` | Rédiger §3 et RACI par rôles A/B/C, sans affectation nominative | A | 0 | ✅ | — | — |
-| `D2-L2-03` | Traçabilité EF/EV ↔ UC ↔ écran ↔ test ↔ annexe | C | 0 | ✅ | — | — |
-| `D2-L2-04` | Distinguer l'exigence MySQL/PDO de l'état actuel : SQL par défaut, JSON explicitement optionnel | A | 0 | ✅ | — | — |
-| `D2-L2-05` | SEC-01…SEC-14 ; 10 scénarios offensifs S-01…S-10 ; 11 contrôles statiques dont S-11/SEC-14 | C | 0 | ✅ | — | — |
-| `D2-L2-06` | Pointage documentaire fait ; relecture croisée étudiante §1→§8 à effectuer | A | 3 | ⬜ | — | P1 |
+| `D2-L2-01` | Rédiger §1-§2 avec dates et niveaux de preuve cohérents | A | 0 | ✅* `OK*` | — | — |
+| `D2-L2-02` | Rédiger §3 et RACI par rôles A/B/C, sans affectation nominative | A | 0 | ✅* `OK*` | — | — |
+| `D2-L2-03` | Traçabilité EF/EV ↔ UC ↔ écran ↔ test ↔ annexe | C | 0 | ✅* `OK*` | — | — |
+| `D2-L2-04` | Distinguer l'exigence MySQL/PDO de l'état actuel : SQL par défaut, JSON explicitement optionnel | A | 0 | ✅* `OK*` | — | — |
+| `D2-L2-05` | SEC-01…SEC-14 ; 10 scénarios offensifs S-01…S-10 ; 11 contrôles statiques dont S-11/SEC-14 | C | 0 | ✅* `OK*` | — | — |
+| `D2-L2-06` | Relecture croisée étudiante §1→§8 : aucune trace datée d'un auteur et d'un relecteur distincts | A | 3 | 🟡 `PARTIEL` | — | P1 |
 
-#### 🟡 Lot L3 — Diagrammes UML & règles (24/28 h · reste 4 h)
+#### ✅* Lot L3 — Diagrammes UML & règles (charge WBS initiale 28 h ; estimation affectée aux tâches ouvertes 0 h)
 
-| ID | Tâche | Rôle | h restantes (estim.) | Statut | Dépend de | Prio |
+| ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
-| `D2-L3-01` | Diagrammes de cas d'utilisation (vue globale + 2 zooms) | B | 0 | ✅ | — | — |
-| `D2-L3-02` | Descriptions textuelles des 3 UC imposés + fiches des 11 autres | B | 0 | ✅ | — | — |
-| `D2-L3-03` | Diagramme de classes + justifications | B | 0 | ✅ | — | — |
-| `D2-L3-04` | 20 identifiants : 11 classés comme issus du sujet + 9 compléments ; PDF source non versionné | C | 0 | ✅ | — | — |
-| `D2-L3-05` | 5 séquences présentes : 4 imposées + 1 bonus ; pas de sixième | C | 0 | ✅ | — | — |
-| `D2-L3-06` | Versionner les sources .puml + docs/diagrams/render.sh (le README les annonce : à livrer) | B | 4 | 🟡 `ASYNC` | — | P1 |
+| `D2-L3-01` | Diagrammes de cas d'utilisation (vue globale + 2 zooms) | B | 0 | ✅* `OK*` | — | — |
+| `D2-L3-02` | Descriptions textuelles des 3 UC imposés + fiches des 11 autres | B | 0 | ✅* `OK*` | — | — |
+| `D2-L3-03` | Diagramme de classes + justifications | B | 0 | ✅* `OK*` | — | — |
+| `D2-L3-04` | 20 identifiants : 11 classés comme issus du sujet + 9 compléments ; PDF source non versionné | C | 0 | ✅* `OK*` | — | — |
+| `D2-L3-05` | 5 séquences présentes : 4 imposées + 1 bonus ; pas de sixième | C | 0 | ✅* `OK*` | — | — |
+| `D2-L3-06` | Sources .puml, docs/diagrams/render.sh et job PlantUML présents | B | 0 | ✅* `OK*` `ASYNC` | — | P1 |
 
 
-### D3 — Conception de la base de données & SQL (87 h estimées classées terminées sur 98 h, reste estimé 11 h)
+### D3 — Conception de la base de données & SQL (0 `OK`, 22 `OK*`, 0 `PARTIEL`, 1 `[!]` ; 4 h d'estimations WBS initiales à revalider sur 98 h de référence)
 
-#### ✅ Lot L4 — MCD/MLD/normalisation (28/28 h · reste 0 h)
+#### ⚠️ Lot L4 — MCD/MLD/normalisation (charge WBS initiale 28 h ; estimation affectée aux tâches ouvertes 4 h)
 
-| ID | Tâche | Rôle | h restantes (estim.) | Statut | Dépend de | Prio |
+| ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
-| `D3-L4-01` | MCD (entités + associations) | B | 0 | ✅ | — | — |
-| `D3-L4-02` | Cardinalités justifiées ligne à ligne | B | 0 | ✅ | — | — |
-| `D3-L4-03` | MLD : 8 relations + 3 vues | B | 0 | ✅ | — | — |
-| `D3-L4-04` | DF + démonstration 1FN/2FN/3FN | B | 0 | ✅ | — | — |
-| `D3-L4-05` | Clés justifiées + redondances + requêtes de preuve | B | 0 | ✅ | — | — |
-| `D3-L4-06` | Relecture croisée du document de conception (docs/04) | A | 0 | ✅ | — | — |
+| `D3-L4-01` | MCD (entités + associations) | B | 0 | ✅* `OK*` | — | — |
+| `D3-L4-02` | Cardinalités justifiées ligne à ligne | B | 0 | ✅* `OK*` | — | — |
+| `D3-L4-03` | MLD : 8 relations + 3 vues | B | 0 | ✅* `OK*` | — | — |
+| `D3-L4-04` | DF + démonstration 1FN/2FN/3FN | B | 0 | ✅* `OK*` | — | — |
+| `D3-L4-05` | Clés justifiées + redondances + requêtes de preuve | B | 0 | ✅* `OK*` | — | — |
+| `D3-L4-06` | Relecture croisée du document de conception (docs/04) : non démontrable par le dépôt seul | A | 4 | [!] `à vérifier / externe` | — | — |
 
-#### ⬜ Lot L5 — Script SQL & seed (17/20 h · reste 3 h)
+#### ✅* Lot L5 — Script SQL & seed (charge WBS initiale 20 h ; estimation affectée aux tâches ouvertes 0 h)
 
-| ID | Tâche | Rôle | h restantes (estim.) | Statut | Dépend de | Prio |
+| ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
-| `D3-L5-01` | DDL : 9 tables SQL (8 entités métier + table technique d’audit du stock), CHECK, InnoDB utf8mb4 | B | 0 | ✅ | — | — |
-| `D3-L5-02` | FK (CASCADE/RESTRICT) + index (FULLTEXT, filtres) | B | 0 | ✅ | — | — |
-| `D3-L5-03` | 3 vues (v_etat_stock, v_catalogue, v_commandes_client) | B | 0 | ✅ | — | — |
-| `D3-L5-04` | Seed : 4 catégories, 36 produits, 3 clients, 1 admin (hashes vérifiés bcrypt) | B | 0 | ✅ | — | — |
-| `D3-L5-05` | Écrire scripts/load_db.sh (encapsule DELIMITER, chargement 01→04, comptages de contrôle) | B | 3 | ⬜ `ASYNC` | — | P1 |
+| `D3-L5-01` | DDL : 9 tables SQL (8 entités métier + table technique d’audit du stock), CHECK, InnoDB utf8mb4 | B | 0 | ✅* `OK*` | — | — |
+| `D3-L5-02` | FK (CASCADE/RESTRICT) + index (FULLTEXT, filtres) | B | 0 | ✅* `OK*` | — | — |
+| `D3-L5-03` | 3 vues (v_etat_stock, v_catalogue, v_commandes_client) | B | 0 | ✅* `OK*` | — | — |
+| `D3-L5-04` | Seed : 4 catégories, 36 produits, 3 clients, 1 admin (hashes vérifiés bcrypt) | B | 0 | ✅* `OK*` | — | — |
+| `D3-L5-05` | scripts/load_db.sh présent et appelé par le workflow SQL ; le run SQL reste à effectuer séparément | B | 0 | ✅* `OK*` `ASYNC` | — | P1 |
 
-#### 🟡 Lot L6 — 18 procédures + tests (26/30 h · reste 4 h)
+#### ✅* Lot L6 — 18 procédures + tests (charge WBS initiale 30 h ; estimation affectée aux tâches ouvertes 0 h)
 
-| ID | Tâche | Rôle | h restantes (estim.) | Statut | Dépend de | Prio |
+| ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
-| `D3-L6-01` | fn_param + comptes (create_account, get_credentials, update_client) | B | 0 | ✅ | — | — |
-| `D3-L6-02` | sp_search_products (filtres, tri liste blanche, pagination) | B | 0 | ✅ | — | — |
-| `D3-L6-03` | sp_save/delete_product, sp_save/delete_category, sp_adjust_stock | B | 0 | ✅ | — | — |
-| `D3-L6-04` | sp_create_order, sp_add_order_line, sp_create_order_from_basket, sp_confirm_order | B | 0 | ✅ | — | — |
-| `D3-L6-05` | sp_update_order_status, sp_cancel_order, sp_cancel_order_admin, sp_revenue_report, sp_compute_shipping | B | 0 | ✅ | — | — |
-| `D3-L6-06` | Écrire les fichiers tNN_*.sql pour T-01…T-12 (le manifeste existe) | A | 2 | 🟡 `ASYNC` | — | P1 |
-| `D3-L6-07` | Écrire tests/sql/run_tests.sh + tNN T-25…T-29 (fixture déjà livrée) | A | 2 | 🟡 `ASYNC` | D3-L6-06 | P1 |
+| `D3-L6-01` | fn_param + comptes (create_account, get_credentials, update_client) | B | 0 | ✅* `OK*` | — | — |
+| `D3-L6-02` | sp_search_products (filtres, tri liste blanche, pagination) | B | 0 | ✅* `OK*` | — | — |
+| `D3-L6-03` | sp_save/delete_product, sp_save/delete_category, sp_adjust_stock | B | 0 | ✅* `OK*` | — | — |
+| `D3-L6-04` | sp_create_order, sp_add_order_line, sp_create_order_from_basket, sp_confirm_order | B | 0 | ✅* `OK*` | — | — |
+| `D3-L6-05` | sp_update_order_status, sp_cancel_order, sp_cancel_order_admin, sp_revenue_report, sp_compute_shipping | B | 0 | ✅* `OK*` | — | — |
+| `D3-L6-06` | Fichiers SQL T-01…T-12 présents ; l'exécution est suivie séparément par D5-L14-02 | A | 0 | ✅* `OK*` `ASYNC` | — | P1 |
+| `D3-L6-07` | Harnais et fichiers SQL T-25…T-29 présents ; l'exécution est suivie séparément par D5-L14-02 | A | 0 | ✅* `OK*` `ASYNC` | D3-L6-06 | P1 |
 
-#### 🟡 Lot L7 — 16 déclencheurs + tests (16/20 h · reste 4 h)
+#### ✅* Lot L7 — 16 déclencheurs + tests (charge WBS initiale 20 h ; estimation affectée aux tâches ouvertes 0 h)
 
-| ID | Tâche | Rôle | h restantes (estim.) | Statut | Dépend de | Prio |
+| ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
-| `D3-L7-01` | Triggers ligne_commande (TRG-A1/A2/A3, B1/B2) | B | 0 | ✅ | — | — |
-| `D3-L7-02` | Triggers produit/catégorie (TRG-B3…B6, C1, C2) | B | 0 | ✅ | — | — |
-| `D3-L7-03` | Triggers commande (TRG-D1…D5, historique automatique) | B | 0 | ✅ | — | — |
-| `D3-L7-04` | Documentation des 16 déclencheurs (doc 04, partie C) | B | 0 | ✅ | — | — |
-| `D3-L7-05` | Formaliser en tNN rejouables T-02…T-24 ; validation du 23/09 historique, fichier rapport portant une date future 27/10 non recevable comme preuve à la coupure | A | 4 | 🟡 `ASYNC` | — | P1 |
+| `D3-L7-01` | Triggers ligne_commande (TRG-A1/A2/A3, B1/B2) | B | 0 | ✅* `OK*` | — | — |
+| `D3-L7-02` | Triggers produit/catégorie (TRG-B3…B6, C1, C2) | B | 0 | ✅* `OK*` | — | — |
+| `D3-L7-03` | Triggers commande (TRG-D1…D5, historique automatique) | B | 0 | ✅* `OK*` | — | — |
+| `D3-L7-04` | Documentation des 16 déclencheurs (doc 04, partie C) | B | 0 | ✅* `OK*` | — | — |
+| `D3-L7-05` | Tests directs T-13…T-24 présents ; aucun rejeu SQL du checkout courant n'est prouvé | A | 0 | ✅* `OK*` `ASYNC` | — | P1 |
 
 
-### D4 — Application Web PHP / MySQL / PDO (4 h estimées classées terminées sur 146 h, reste estimé 142 h)
+### D4 — Application Web PHP / MySQL / PDO (0 `OK`, 21 `OK*`, 11 `PARTIEL`, 0 `[!]` ; 50 h d'estimations WBS initiales à revalider sur 146 h de référence)
 
-#### ⬜ Lot L8 — Socle applicatif MVC (0/22 h · reste 22 h)
+#### 🟡 Lot L8 — Socle applicatif MVC (charge WBS initiale 22 h ; estimation affectée aux tâches ouvertes 4 h)
 
-| ID | Tâche | Rôle | h restantes (estim.) | Statut | Dépend de | Prio |
+| ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
-| `D4-L8-01` | Front controller + routeur (listes blanches de routes et de tri) | A | 5 | ⬜ `ASYNC` | — | P1 |
-| `D4-L8-02` | app/Config/Database.php : PDO, EXCEPTION, EMULATE_PREPARES = false | A | 3 | ⬜ | D4-L8-01 | P1 |
-| `D4-L8-03` | Gabarit de vues + layout + helper d'échappement systématique | A | 4 | ⬜ | D4-L8-01 | P1 |
-| `D4-L8-04` | app/Security : AuthMiddleware, sessions durcies, jetons CSRF | A | 6 | ⬜ | D4-L8-02 | P1 |
-| `D4-L8-05` | CI GitHub Actions complète + app/Config/env.example.php + public/install.php (annoncés par sql/01 et le README) | A | 4 | ⬜ | D4-L8-04 | P1 |
+| `D4-L8-01` | Front controller + routeur (listes blanches de routes et de tri) | A | 0 | ✅* `OK*` `ASYNC` | — | P1 |
+| `D4-L8-02` | app/Config/Database.php : PDO, EXCEPTION, EMULATE_PREPARES = false | A | 0 | ✅* `OK*` | D4-L8-01 | P1 |
+| `D4-L8-03` | Gabarit de vues + layout + helper d'échappement systématique | A | 0 | ✅* `OK*` | D4-L8-01 | P1 |
+| `D4-L8-04` | app/Security : AuthMiddleware, sessions durcies, jetons CSRF | A | 0 | ✅* `OK*` | D4-L8-02 | P1 |
+| `D4-L8-05` | Configuration CI et d'environnement présente, mais le critère `public/install.php` manque (installation portée par `scripts/db_init.php`/`run.sh`) ; le run non-SQL local ne valide pas ce critère, PDO/MySQL ni une CI distante | A | 4 | 🟡 `PARTIEL` | D4-L8-04 | P1 |
 
-#### ⬜ Lot L9 — Front-office (0/32 h · reste 32 h)
+#### 🟡 Lot L9 — Front-office (charge WBS initiale 32 h ; estimation affectée aux tâches ouvertes 15 h)
 
-| ID | Tâche | Rôle | h restantes (estim.) | Statut | Dépend de | Prio |
+| ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
-| `D4-L9-01` | UC-01 Catalogue : v_catalogue + pagination (12 par défaut, borne 60) | C | 6 | ⬜ | L8 | P1 |
-| `D4-L9-02` | UC-02 Recherche/filtres : SearchRequest (validation serveur, tri liste blanche) | C | 6 | ⬜ | D4-L9-01 | P1 |
-| `D4-L9-03` | UC-03 Fiche produit : état du stock, MAX = stock, 404 si masquée | C | 5 | ⬜ | D4-L9-01 | P1 |
-| `D4-L9-04` | UC-04 Création de compte : validation, sp_create_account, hash | C | 6 | ⬜ | D4-L8-04 | P1 |
-| `D4-L9-05` | UC-05 Connexion/déconnexion : sp_get_credentials + password_verify + session régénérée | C | 6 | ⬜ | D4-L8-04 | P1 |
-| `D4-L9-06` | Parcours visiteur complet démontré (JS désactivé inclus) — jalon J3 | C | 3 | ⬜ | D4-L9-01..05 | P2 |
+| `D4-L9-01` | UC-01 Catalogue : v_catalogue + pagination (12 par défaut, borne 60) | C | 0 | ✅* `OK*` | L8 | P1 |
+| `D4-L9-02` | UC-02 Recherche/filtres : SearchRequest (validation serveur, tri liste blanche) | C | 0 | ✅* `OK*` | D4-L9-01 | P1 |
+| `D4-L9-03` | UC-03 Fiche produit : état du stock, MAX = stock, 404 si masquée | C | 0 | ✅* `OK*` | D4-L9-01 | P1 |
+| `D4-L9-04` | UC-04 création de compte : appel SQL statiquement raccordé ; validation d'exécution PDO/MySQL à faire | C | 6 | 🟡 `PARTIEL` | D4-L8-04 | P1 |
+| `D4-L9-05` | UC-05 connexion : appel SQL statiquement raccordé, password_verify en PHP ; parcours PDO/MySQL à faire | C | 6 | 🟡 `PARTIEL` | D4-L8-04 | P1 |
+| `D4-L9-06` | E2E HTTP isolé réussi via le store JSON (338 vérifications) ; recette humaine complète et chemin PDO/MySQL non attestés | C | 3 | 🟡 `PARTIEL` | D4-L9-01..05 | P2 |
 
-#### ⬜ Lot L10 — Panier & commande (0/28 h · reste 28 h)
+#### 🟡 Lot L10 — Panier & commande (charge WBS initiale 28 h ; estimation affectée aux tâches ouvertes 13 h)
 
-| ID | Tâche | Rôle | h restantes (estim.) | Statut | Dépend de | Prio |
+| ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
-| `D4-L10-01` | PanierSession : ajout, quantités, retrait, plafond au stock, total serveur | A | 6 | ⬜ | L8 | P1 |
-| `D4-L10-02` | UC-06 PanierController : contrôle serveur disponible() avant tout ajout | A | 5 | ⬜ | D4-L10-01 | P1 |
-| `D4-L10-03` | Vues panier + récapitulatif serveur + badge d'articles | C | 4 | ⬜ | D4-L10-02 | P1 |
-| `D4-L10-04` | UC-07 CommandeController : adresse, confirmation, sp_create_order_from_basket | A | 3 | ⬜ | D4-L10-02 | P1 |
-| `D4-L10-05` | Écrans commande : adresse, numéro CMD2026-0000NN, confirmation | C | 6 | ⬜ | D4-L10-04 | P1 |
-| `D4-L10-06` | UC-08 historique + détail + UC-09 annulation (vues client) | C | 4 | ⬜ | D4-L10-05 | P1 |
+| `D4-L10-01` | PanierSession : ajout, quantités, retrait, plafond au stock, total serveur | A | 0 | ✅* `OK*` | L8 | P1 |
+| `D4-L10-02` | UC-06 PanierController : contrôle serveur disponible() avant tout ajout | A | 0 | ✅* `OK*` | D4-L10-01 | P1 |
+| `D4-L10-03` | Vues panier + récapitulatif serveur + badge d'articles | C | 0 | ✅* `OK*` | D4-L10-02 | P1 |
+| `D4-L10-04` | UC-07 commande : appel à la procédure présent ; exécution PDO/MySQL et parcours HTTP à valider | A | 3 | 🟡 `PARTIEL` | D4-L10-02 | P1 |
+| `D4-L10-05` | Écrans de commande présents ; parcours PDO/MySQL de bout en bout à valider | C | 6 | 🟡 `PARTIEL` | D4-L10-04 | P1 |
+| `D4-L10-06` | Historique/annulation présents ; parcours PDO/MySQL et recette humaine à consigner | C | 4 | 🟡 `PARTIEL` | D4-L10-05 | P1 |
 
-#### ⬜ Lot L11 — Back-office (0/30 h · reste 30 h)
+#### 🟡 Lot L11 — Back-office (charge WBS initiale 30 h ; estimation affectée aux tâches ouvertes 18 h)
 
-| ID | Tâche | Rôle | h restantes (estim.) | Statut | Dépend de | Prio |
+| ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
-| `D4-L11-01` | AdminController + authentification admin (rôles SUPER/GESTIONNAIRE) | A | 4 | ⬜ | D4-L8-04 | P1 |
-| `D4-L11-02` | UC-10 Produits : sp_save_product / sp_delete_product | A | 5 | ⬜ | D4-L11-01 | P1 |
-| `D4-L11-03` | UC-11 Catégories + UC-12 Stocks (SET/DELTA, motif) | A | 5 | ⬜ | D4-L11-01 | P1 |
-| `D4-L11-04` | UC-13 Commandes + UC-14 statut (matrice RB-11) + indicateurs | A | 4 | ⬜ | D4-L11-01 | P1 |
-| `D4-L11-05` | Vues back-office : listes filtrables, formulaires, alertes (v_etat_stock) | C | 8 | ⬜ | D4-L11-02..04 | P1 |
-| `D4-L11-06` | Parcours admin complet démontré — jalon J4 | C | 4 | ⬜ | D4-L11-05 | P2 |
+| `D4-L11-01` | AdminController + authentification admin (rôles SUPER/GESTIONNAIRE) | A | 0 | ✅* `OK*` | D4-L8-04 | P1 |
+| `D4-L11-02` | UC-10 produits : appels de procédures présents ; exécution PDO/MySQL à valider | A | 5 | 🟡 `PARTIEL` | D4-L11-01 | P1 |
+| `D4-L11-03` | UC-11/12 catégories et stock : appels de procédures présents ; exécution PDO/MySQL à valider | A | 5 | 🟡 `PARTIEL` | D4-L11-01 | P1 |
+| `D4-L11-04` | UC-13/14 commandes et statuts : appels présents ; exécution SQL et parcours HTTP à valider | A | 4 | 🟡 `PARTIEL` | D4-L11-01 | P1 |
+| `D4-L11-05` | Vues back-office : listes filtrables, formulaires, alertes (v_etat_stock) | C | 0 | ✅* `OK*` | D4-L11-02..04 | P1 |
+| `D4-L11-06` | Parcours administrateur et tests automatisés présents ; aucune démonstration/recette humaine complète n'est attestée | C | 4 | 🟡 `PARTIEL` | D4-L11-05 | P2 |
 
-#### ⬜ Lot L12 — Durcissement sécurité (4/20 h · reste 16 h)
+#### ✅* Lot L12 — Durcissement sécurité (charge WBS initiale 20 h ; estimation affectée aux tâches ouvertes 0 h)
 
-| ID | Tâche | Rôle | h restantes (estim.) | Statut | Dépend de | Prio |
+| ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
-| `D4-L12-01` | CSRF vérifié sur chaque méthode mutative | C | 4 | ⬜ | L9;L10;L11 | P1 |
-| `D4-L12-02` | Autorisation : contrôle d'appartenance, 404 sur id étranger (IDOR) | C | 5 | ⬜ | L9;L10 | P1 |
-| `D4-L12-03` | Échappement systématique : revue des vues | C | 4 | ⬜ | L9;L10;L11 | P1 |
-| `D4-L12-04` | En-têtes durcis, cookie HttpOnly/SameSite, erreurs génériques | C | 3 | ⬜ | L9 | P2 |
-| `D4-L12-05` | 11 contrôles statiques sécurité rejoués localement ; S-11/SEC-14 ciblé, sans portée de recette applicative | C | 0 | ✅ `ASYNC` | — | — |
+| `D4-L12-01` | CSRF vérifié sur chaque méthode mutative | C | 0 | ✅* `OK*` | L9;L10;L11 | P1 |
+| `D4-L12-02` | Autorisation : contrôle d'appartenance, 404 sur id étranger (IDOR) | C | 0 | ✅* `OK*` | L9;L10 | P1 |
+| `D4-L12-03` | Échappement systématique : revue des vues | C | 0 | ✅* `OK*` | L9;L10;L11 | P1 |
+| `D4-L12-04` | En-têtes durcis, cookie HttpOnly/SameSite, erreurs génériques | C | 0 | ✅* `OK*` | L9 | P2 |
+| `D4-L12-05` | `docs/19` rapporte 11 contrôles statiques rejoués localement le 23/10 ; S-11/SEC-14 ciblé, sans portée de recette applicative ou LineServ | C | 0 | ✅* `OK*` `ASYNC*` | — | — |
 
-#### ⬜ Lot L13 — JavaScript client (0/14 h · reste 14 h)
+#### ✅* Lot L13 — JavaScript client (charge WBS initiale 14 h ; estimation affectée aux tâches ouvertes 0 h)
 
-| ID | Tâche | Rôle | h restantes (estim.) | Statut | Dépend de | Prio |
+| ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
-| `D4-L13-01` | JS panier : badge, MAJ AJAX, repli sans JS | C | 5 | ⬜ | D4-L10-03 | P2 |
-| `D4-L13-02` | Validation live des formulaires + écoute clavier des quantités | C | 4 | ⬜ | D4-L13-01 | P2 |
-| `D4-L13-03` | Accessibilité : labels, focus visible, aria-live | C | 3 | ⬜ | D4-L13-01 | P2 |
-| `D4-L13-04` | Check-list « JS = confort seulement » (test F-13) | C | 2 | ⬜ | D4-L13-03 | P3 |
+| `D4-L13-01` | Code JS panier/AJAX présent ; le run non-SQL a passé preferences_test (48 vues FR/EN, 45 messages) et E2E JSON isolé (338 vérifications), sans navigateur réel ni PDO/MySQL | C | 0 | ✅* `OK*` | D4-L10-03 | P2 |
+| `D4-L13-02` | Validation live des formulaires + écoute clavier des quantités | C | 0 | ✅* `OK*` | D4-L13-01 | P2 |
+| `D4-L13-03` | Accessibilité : labels, focus visible, aria-live | C | 0 | ✅* `OK*` | D4-L13-01 | P2 |
+| `D4-L13-04` | Check-list « JS = confort seulement » (test F-13) | C | 0 | ✅* `OK*` | D4-L13-03 | P3 |
 
 
-### D5 — Tests & validation (6 h estimées classées terminées sur 24 h, reste estimé 18 h)
+### D5 — Tests & validation (0 `OK`, 1 `OK*`, 4 `PARTIEL`, 1 `[!]` ; 18 h d'estimations WBS initiales à revalider sur 24 h de référence)
 
-#### 🟡 Lot L14 — Tests & validation (6/24 h · reste 18 h)
+#### ⚠️ Lot L14 — Tests & validation (charge WBS initiale 24 h ; estimation affectée aux tâches ouvertes 18 h)
 
-| ID | Tâche | Rôle | h restantes (estim.) | Statut | Dépend de | Prio |
+| ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
-| `D5-L14-01` | Doc de tests : dispositif, stratégie, niveaux (doc 02 §1–§2) | B | 0 | ✅ | — | — |
-| `D5-L14-02` | Rejouer les 29 tests SQL via le harnais + rapport final | B | 4 | ⬜ | D3-L6-06;D3-L6-07;D3-L7-05 | P1 |
-| `D5-L14-03` | Cas fonctionnels F-01…F-31 : exécution + preuves | B | 3 | ⬜ | L9;L10;L11 | P1 |
-| `D5-L14-04` | Concurrence : préparer reserver.sh ; exécuter 20/12 après L10 | B | 3 | ⬜ `ASYNC` | D4-L10-04 | P1 |
-| `D5-L14-05` | Matrice de traçabilité exigence → test + PV de recette à jour | A | 3 | 🟡 | D5-L14-02;D5-L14-03 | P1 |
-| `D5-L14-06` | Performance p95 < 500 ms : mesure SQL via mesurer_sql.sh ; mesure HTTP après L9 | A | 5 | ⬜ `ASYNC` | L9;L10;L11 | P2 |
+| `D5-L14-01` | Doc de tests : dispositif, stratégie, niveaux (doc 02 §1–§2) | B | 0 | ✅* `OK*` | — | — |
+| `D5-L14-02` | Rejouer les 29 tests SQL via le harnais sur une base temporaire isolée, distincte de la cible manuelle, puis consigner run/SHA | B | 4 | 🟡 `PARTIEL` | D3-L6-06;D3-L6-07;D3-L7-05 | P1 |
+| `D5-L14-03` | Automatisations non-SQL exécutées avec succès ; compléter les preuves fonctionnelles, les 200 entrées de recette manuelle restent NON JOUÉ | B | 3 | 🟡 `PARTIEL` | L9;L10;L11 | P1 |
+| `D5-L14-04` | Script de charge présent ; essai HTTP/SQL 20 demandes pour 12 unités à exécuter, 5 tests de concurrence native non joués | B | 3 | 🟡 `PARTIEL` `ASYNC*` | D4-L10-04 | P1 |
+| `D5-L14-05` | Matrice présente ; compléter le PV avec l'exécution réelle, anomalies, date, SHA et auteur | A | 3 | 🟡 `PARTIEL` | D5-L14-02;D5-L14-03 | P1 |
+| `D5-L14-06` | Scripts présents ; mesures p95 HTTP/SQL sur machine et volumétrie cibles non attestées | A | 5 | [!] `à vérifier / externe` `ASYNC*` | L9;L10;L11 | P2 |
 
 
-### D6 — Soutenance (5 h estimées classées terminées sur 14 h, reste estimé 9 h)
+### D6 — Soutenance (0 `OK`, 2 `OK*`, 0 `PARTIEL`, 1 `[!]` ; 5 h d'estimations WBS initiales à revalider sur 14 h de référence)
 
-#### 🟡 Lot L16 — Soutenance (5/14 h · reste 9 h)
+#### ⚠️ Lot L16 — Soutenance (charge WBS initiale 14 h ; estimation affectée aux tâches ouvertes 5 h)
 
-| ID | Tâche | Rôle | h restantes (estim.) | Statut | Dépend de | Prio |
+| ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
-| `D6-L16-01` | Slides de la soutenance (le déroulé docs/03 existe ; les diapositives restent à produire) | A | 4 | 🟡 `ASYNC` | — | P2 |
-| `D6-L16-02` | Questions anticipées + réponses courtes (docs/03 §3) | B | 0 | ✅ | — | — |
-| `D6-L16-03` | Deux répétitions chronométrées avec la démo réelle + check-list | C | 5 | ⬜ | D6-L16-01;L11 | P2 |
+| `D6-L16-01` | Support de soutenance docs/12 et livrables PPTX/PDF/DOCX présents ; répétition à distinguer | A | 0 | ✅* `OK*` `ASYNC` | — | P2 |
+| `D6-L16-02` | Questions anticipées + réponses courtes (docs/03 §3) | B | 0 | ✅* `OK*` | — | — |
+| `D6-L16-03` | Deux répétitions chronométrées avec la démo réelle : aucune trace attestée | C | 5 | [!] `à vérifier / externe` | D6-L16-01;L11 | P2 |
 
 
 ---
@@ -334,7 +337,7 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 |---|---|---|---|
 | **J1** | `D1-L1-01` GitLab + push de ce qui existe (2 h) | `D3-L5-05` load_db.sh (3 h) | revue du doc 04 + prépa L9 (catalogue) |
 | **J2** | `D4-L8-01` routeur (5 h) | `D2-L3-06` puml + render.sh (4 h) | revue MR routeur + stubs vues |
-| **J3** | `D4-L8-02` Database PDO (3 h) | `D3-L6-06/07` + `D3-L7-05` tNN (8 h estimées restantes) | `D4-L12-05` controles.sh (4 h) |
+| **J3** | `D4-L8-02` Database PDO (3 h du plan) | `D3-L6-06/07` + `D3-L7-05` tNN (8 h prévues au plan initial) | `D4-L12-05` controles.sh (4 h du plan) |
 | **J4** | `D4-L8-03` vues + échappement (4 h) | `D5-L14-06` mesure perf base seule + rapport | revue MR + prépa L9-01 |
 | **J5** | `D4-L8-04` auth/CSRF (6 h, déborde S7 si besoin) | aide sur les stubs CommandeRepository (rôle B du plan) | vérifier les preuves de recette ; synthèse asynchrone D1-L1-07 consignée dans docs/21-synthese-retours-audit.md, sans réunion complète revendiquée |
 
@@ -343,4 +346,17 @@ Dans le scénario historique, L8 devait débloquer la chaîne jusqu'au jalon J6 
 
 ---
 
-*Todolist MiniShop v1.4 — états hérités hors D1-L1-01/04/05/07, D2-L2-01…05 et D2-L3-04/05 de la photographie du 23/09/2026 ; coupure documentaire au 23/10/2026 ; déploiement/staging retirés sans remplacement. D1-L1-01 : envoi du courriel attesté par l’utilisateur (boîte d’envoi non vérifiée) ; D1-L1-04 : issue documentée ; D1-L1-05 : charte/modèles présents, usage réel des MR non prouvé ; D1-L1-07 : synthèse écrite des retours continus, clôture asynchrone sur attestation utilisateur, aucune réunion complète revendiquée ; D2-L2-06 reste ouvert. Les charges A/B/C sont des estimations de rôles, sans correspondance nominative, capacité ni relevé d’heures.*
+## 8. Vérifications exécutées et limites du run non-SQL
+
+Le 23/10/2026, sur le working tree basé sur `5d282f4` (avec les sorties documentaires de cette révision), `node scripts/run-all-tests.mjs --sans-sql` s'est terminé avec le code 0. L'environnement n'avait pas de PHP CLI natif : les suites PHP ont tourné via PHP-WASM 8.2.
+- Suites automatisées activées : toutes vertes ; PHPUnit local **57 tests**.
+- `tests/node/preferences_test.mjs` : **48 vues FR/EN** et **45 messages métier** vérifiés.
+- `tests/node/e2e_isolation.mjs` : **338 vérifications** E2E HTTP internes réussies sur une copie temporaire ; les fichiers témoins du dépôt hôte sont restés inchangés.
+- Le lanceur configure explicitement `STORAGE_DRIVER=json` pour ces suites fonctionnelles isolées. Cela ne change pas le pilote applicatif par défaut (SQL/MySQL/PDO) et ne constitue pas une validation du chemin SQL.
+
+**Hors portée / non joué :** `--sans-sql` saute `tests/php/sql_integration.php` ; aucun test PDO/MySQL ni création de base de test n'a eu lieu pendant ce run. L'analyse de compilation avec PHP CLI natif est `NON JOUÉE` et les **5 tests de concurrence interprocessus** ont été ignorés faute de PHP natif. L'E2E passe par HTTP interne/WASM, pas par un navigateur réel. Les 200 scénarios de recette manuelle restent `NON JOUÉ` ; aucun test manuel LineServ, déploiement, restauration de base, revue croisée étudiante, approbation pédagogique, répétition de soutenance ou mesure de performance sur cible n'est revendiqué.
+Le prochain contrôle SQL doit être rapporté séparément, avec le SHA et l'identifiant du run : sa base temporaire isolée est distincte de la cible manuelle LineServ.
+
+---
+
+*Todolist MiniShop v1.7 — mise à jour du 23/10/2026 ; répartition des statuts reprise de la revue tâche par tâche de `docs/19`, sans nouvel audit exhaustif du working tree. `docs/19` contient un addendum daté du 15/11/2026, postérieur à cette date : aucun événement ou résultat portant une date future n'est crédité comme réalisé. Le run non-SQL du 23/10 est vert via WASM/JSON isolé ; SQL/PDO, PHP CLI natif et validations humaines restent hors preuve. WBS : 84 tâches et 355 h estimées historiquement ; les 82 h affectées aux tâches ouvertes sont des estimations initiales à revalider, pas du temps réel ni une prévision actuelle. D1-L1-01 repose sur l'attestation utilisateur d'envoi ; D1-L1-07 sur la synthèse asynchrone des feedbacks, sans réunion complète revendiquée. Le registre de recette reste 200 lignes NON JOUÉ ; aucun déploiement, test manuel LineServ, restauration, revue croisée, approbation pédagogique, mesure sur cible ou répétition de soutenance n'est inféré. Les charges A/B/C sont des estimations non nominatives.*
