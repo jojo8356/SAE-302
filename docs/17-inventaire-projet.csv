@@ -15,6 +15,7 @@ chemin,categorie,controle_structurel
 ARCHITECTURE.md,Documentation,Présence et non-vide uniquement
 README.md,Configuration et fichiers racine,Présence et non-vide uniquement
 STACK.md,Documentation,Présence et non-vide uniquement
+NOTE-VM-DEBIAN.md,Documentation,Présence et non-vide uniquement
 app/Config/Database.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Config/DbConnexion.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Config/Env.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
@@ -42,21 +43,30 @@ app/Model/Data/Journal.php,Application PHP,"Présence, non-vide ; syntaxe PHP pa
 app/Model/Data/JsonStore.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Model/Data/JsonTable.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Model/Data/QueryError.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Model/Data/RowLockingStore.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Model/Data/Schema.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Model/Data/SchemaError.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Model/Data/Seed.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Model/Data/SqlStore.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Model/Data/StockMovementAuditor.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Model/Data/StorageDriver.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Model/Data/StoreInterface.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Model/Data/StoredFunctionExecutor.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Model/Data/StoredProcedureExecutor.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Model/Data/StoredProcedureResultExecutor.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Model/Data/Text.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Model/Data/Triggers.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Model/Data/Views.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Model/PanierSession.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Repository/CategorieRepository.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Repository/ClientAccountGateway.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Repository/ClientAccountGatewayFactory.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Repository/ClientRepository.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Repository/CommandeRepository.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Repository/ParametreRepository.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Repository/ProduitRepository.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Repository/SqlClientAccountGateway.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+app/Repository/StoreClientAccountGateway.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Router.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Security/AccesRefuse.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 app/Security/Auth.php,Application PHP,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
@@ -157,7 +167,7 @@ docs/17-inventaire-projet.csv,Documentation,Présence et non-vide uniquement
 docs/18-politique-conservation.md,Documentation,Présence et non-vide uniquement
 docs/19-audit-cahier-des-charges-todolist.md,Documentation,Présence et non-vide uniquement
 docs/20-charte-gitlab-revues-croisees.md,Documentation,Présence et non-vide uniquement
-docs/21-compte-rendu-reunion-audit-2026-11-13.md,Documentation,Présence et non-vide uniquement
+docs/21-synthese-retours-audit.md,Documentation,Présence et non-vide uniquement
 docs/DA.md,Documentation,Présence et non-vide uniquement
 docs/annexes/annexe-cas-usage.md,Documentation,Présence et non-vide uniquement
 docs/annexes/annexe-enf.md,Documentation,Présence et non-vide uniquement
@@ -218,7 +228,7 @@ livrables/docx/17-audit-global-projet.docx,Livrables,Présence et non-vide uniqu
 livrables/docx/18-politique-conservation.docx,Livrables,Présence et non-vide uniquement
 livrables/docx/19-audit-cahier-des-charges-todolist.docx,Livrables,Présence et non-vide uniquement
 livrables/docx/20-charte-gitlab-revues-croisees.docx,Livrables,Présence et non-vide uniquement
-livrables/docx/21-compte-rendu-reunion-audit-2026-11-13.docx,Livrables,Présence et non-vide uniquement
+livrables/docx/21-synthese-retours-audit.docx,Livrables,Présence et non-vide uniquement
 livrables/docx/DA.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/README.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/annexe-cas-usage.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
@@ -248,7 +258,7 @@ livrables/html/17-audit-global-projet.html,Livrables,Présence et non-vide uniqu
 livrables/html/18-politique-conservation.html,Livrables,Présence et non-vide uniquement
 livrables/html/19-audit-cahier-des-charges-todolist.html,Livrables,Présence et non-vide uniquement
 livrables/html/20-charte-gitlab-revues-croisees.html,Livrables,Présence et non-vide uniquement
-livrables/html/21-compte-rendu-reunion-audit-2026-11-13.html,Livrables,Présence et non-vide uniquement
+livrables/html/21-synthese-retours-audit.html,Livrables,Présence et non-vide uniquement
 livrables/html/DA.html,Livrables,Présence et non-vide uniquement
 livrables/html/README.html,Livrables,Présence et non-vide uniquement
 livrables/html/annexe-cas-usage.html,Livrables,Présence et non-vide uniquement
@@ -279,7 +289,7 @@ livrables/pdf/17-audit-global-projet.pdf,Livrables,Présence et non-vide uniquem
 livrables/pdf/18-politique-conservation.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/19-audit-cahier-des-charges-todolist.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/20-charte-gitlab-revues-croisees.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/21-compte-rendu-reunion-audit-2026-11-13.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/21-synthese-retours-audit.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/DA.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/README.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/annexe-cas-usage.pdf,Livrables,Présence et non-vide uniquement
@@ -461,6 +471,7 @@ tests/php/stocks_defaut_test.php,Tests et validation,"Présence, non-vide ; synt
 tests/php/unit_tests.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/php/valider_recap_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/phpunit/AlternativeImageTest.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+tests/phpunit/ClientAccountGatewayTest.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/phpunit/ConservationEtFuseauTest.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/phpunit/FilterTest.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 tests/phpunit/JournalEtTableTest.php,Tests et fixtures,"Présence, non-vide ; syntaxe PHP par contrôle séparé"

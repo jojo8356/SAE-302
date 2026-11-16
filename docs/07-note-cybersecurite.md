@@ -1,14 +1,16 @@
 # MiniShop — Note de cybersécurité
 
-> **Objet** : failles testées, corrections apportées et code correspondant.
-> **Périmètre** : application MiniShop livrée (PHP 8.2, moteur de données JSON, zéro dépendance runtime), d'après le plan d'attaques S-01…S-10 du document de tests (`docs/02`, §5) et les exigences SEC-01…SEC-13 du cahier des charges (`docs/01`, §8).
-> **Date** : 28/09/2026 · **Rejouable** : `npm run test:all` (toutes les attaques ci-dessous sont rejouées en continu par la suite E2E — aucune n'est vérifiée « à la main »).
+> **Objet** : scénarios d’attaque, mesures prévues et références de contrôle.
+> **Périmètre documentaire** : application MiniShop et exigences SEC-01…SEC-13 ; les références S-01…S-10 sont des scénarios offensifs décrits dans `docs/02`, pas des résultats de cette révision.
+> **Date inscrite dans l’archive** : 28/09/2026. Aucun SHA ni journal d’exécution n’est rattaché à cette date ; les mentions de tests, sorties et volumes qui suivent ne prouvent pas leur rejeu sur le working tree examiné. La commande `npm run test:all` est un protocole proposé, pas une preuve qu’il a été lancé.
+>
+> **Portée de sécurité à la coupure 23/10/2026 :** seul le script statique `tests/security/controles.sh` a été rejoué localement dans cette révision (11/11 contrôles, dont S-11/SEC-14). Les scénarios offensifs S-01…S-10, l’E2E, LineServ et les essais manuels n’ont pas été rejoués ; aucun avis général de sécurité n’est revendiqué.
 
 ---
 
 ## 1. Stratégie : défense en profondeur, preuve par l'attaque
 
-La sécurité de MiniShop repose sur **quatre lignes de défense indépendantes**, et chaque ligne est *attaquée* par la suite E2E (`scripts/wasm-e2e.mjs`, batteries T6, T12, T13 — 155 vérifications) :
+La conception décrit **quatre lignes de défense indépendantes** que les scénarios E2E (`scripts/wasm-e2e.mjs`, batteries T6, T12, T13) visent à contrôler. Les 155 vérifications mentionnées dans cette archive ne sont pas des résultats rattachés au SHA examiné :
 
 | Ligne | Rôle | Où dans le code |
 |---|---|---|
@@ -17,7 +19,7 @@ La sécurité de MiniShop repose sur **quatre lignes de défense indépendantes*
 | 3. Authentification & autorisation | sessions durcies, jetons CSRF, gardes de rôle par route, contrôle d'appartenance | `app/Security/Auth.php`, `Csrf.php`, `app/Router.php`, contrôleurs |
 | 4. Durcissement HTTP & erreurs | en-têtes défensifs, routeur à liste blanche, erreurs génériques, journal d'audit | `public/index.php`, `app/Model/Data/Journal.php` |
 
-**Principe directeur** : la sécurité n'est pas *documentée*, elle est **exécutée**. Chaque faille ci-dessous est accompagnée du test qui la rejoue — une régression est donc détectée par `npm run test:all`, pas par une relecture.
+**Principe directeur** : les mesures de sécurité doivent être éprouvées par des tests et des revues dont les résultats sont conservés. Cette note associe des mesures à des scénarios ; elle ne prouve pas que ceux-ci ont été rejoués sur le working tree examiné.
 
 ---
 
@@ -62,7 +64,7 @@ if (!array_is_list($condition)) {
 
 3. **Contraintes de schéma en profondeur** : même une donnée malveillante qui franchit les contrôleurs est confrontée au moteur (NOT NULL, types, ENUM de statuts, CHECK `prix_ht > 0` / `stock >= 0`, UNIQUE référence/email/slug, FK RESTRICT/CASCADE) — cf. `tests/php/engine_smoke.php`, vert.
 
-**Preuves (E2E T12)** : `q=' OR 1=1 --` → 200, « 0 produit trouvé », la table `client` intacte ; `q=%'; DROP TABLE produit;--` → 200, aucune donnée perdue. **Tests fonctionnels** : tri inconnu (`?tri=prix_desc;DROP TABLE produit`) → repli sur la liste blanche `TRIS = ['nom','prix_asc','prix_desc','nouveaute','stock']` sans erreur.
+**Résultats rapportés dans l’archive (non revalidés, E2E T12)** : `q=' OR 1=1 --` → 200, « 0 produit trouvé », la table `client` intacte ; `q=%'; DROP TABLE produit;--` → 200, aucune donnée perdue. **Tests fonctionnels** : tri inconnu (`?tri=prix_desc;DROP TABLE produit`) → repli sur la liste blanche `TRIS = ['nom','prix_asc','prix_desc','nouveaute','stock']` sans erreur.
 
 ---
 
@@ -73,16 +75,16 @@ if (!array_is_list($condition)) {
 | | |
 |---|---|
 | **Risque** (OWASP A03:2021) | un payload dans un paramètre modifie la sémantique d'une requête pour lire/écrire la base |
-| **Attaque testée** | E2E T12 : `GET /recherche?q=' OR 1=1 --` et `GET /recherche?q=%'; DROP TABLE produit;--` ; catalogue : `?tri=prix_desc;DROP TABLE produit` |
+| **Scénario d’attaque décrit** | E2E T12 : `GET /recherche?q=' OR 1=1 --` et `GET /recherche?q=%'; DROP TABLE produit;--` ; catalogue : `?tri=prix_desc;DROP TABLE produit` |
 | **Défense** | §2 ci-dessus : moteur JSON sans interpréteur, opérateurs en liste blanche, contraintes de schéma ; en aval, `filter_var(FILTER_VALIDATE_EMAIL)` sur les emails, `max`/`step` HTML complétés par les bornes serveur (`str('email', 190)`, etc.) |
-| **Preuve** | E2E T12 (2 vérifications) + `features_test.php` « tri inconnu → repli liste blanche » + `run_tests.php` T-25 |
+| **Référence rapportée dans l’archive** | E2E T12 (2 vérifications) + `features_test.php` « tri inconnu → repli liste blanche » + `run_tests.php` T-25 |
 
 ### S-02 — XSS stocké — ✅ échappement systématique + CSP
 
 | | |
 |---|---|
 | **Risque** (OWASP A03) | un script injecté en base est exécuté dans le navigateur d'autres utilisateurs (vol de cookie/session) |
-| **Attaque testée** | E2E T12 : l'admin crée un produit nommé `<script>alert("xss")</script> Bombe`, puis un visiteur ouvre `GET /recherche?q=Bombe` |
+| **Scénario d’attaque décrit** | E2E T12 : l'admin crée un produit nommé `<script>alert("xss")</script> Bombe`, puis un visiteur ouvre `GET /recherche?q=Bombe` |
 | **Défense** | échappement **à la sortie** uniquement (jamais à l'entrée — on conserve la donnée originale), via un unique point de passage : |
 
 ```php
@@ -97,14 +99,14 @@ En profondeur : `Content-Security-Policy: default-src 'none'; frame-ancestors 'n
 
 | | |
 |---|---|
-| **Preuve** | E2E T12 : la page contient `&lt;script&gt;` (littéral) et **aucune** occurrence de `<script>alert` |
+| **Référence rapportée dans l’archive** | E2E T12 : la page contient `&lt;script&gt;` (littéral) et **aucune** occurrence de `<script>alert` |
 
 ### S-03 — IDOR (accès aux ressources d'autrui) — ✅ contrôle d'appartenance systématique
 
 | | |
 |---|---|
 | **Risque** (OWASP A01) | `GET /mes-commandes/42` d'un autre client livre ses données |
-| **Attaque testée** | E2E T12 : le client *bruno* boucle sur `/mes-commandes/1..4` ; E2E T6 : accès direct à une commande d'autrui ; fonctionnels : `cancelOrder` sur la commande d'un autre |
+| **Scénario d’attaque décrit** | E2E T12 : le client *bruno* boucle sur `/mes-commandes/1..4` ; E2E T6 : accès direct à une commande d'autrui ; fonctionnels : `cancelOrder` sur la commande d'un autre |
 | **Défense** | l'identifiant de la requête n'est **jamais** suffisant : il est confronté à la session côté repository |
 
 ```php
@@ -116,14 +118,14 @@ if ($idClient !== null && (int) $commande['id_client'] !== $idClient) {
 
 | | |
 |---|---|
-| **Preuve** | E2E T12 « boucle IDOR 1..4 : toujours redirigé » + T6 + `features_test.php` (refus `ACCES_NON_AUTORISE` sur annulation/validation d'autrui) |
+| **Référence rapportée dans l’archive** | E2E T12 « boucle IDOR 1..4 : toujours redirigé » + T6 + `features_test.php` (refus `ACCES_NON_AUTORISE` sur annulation/validation d'autrui) |
 
 ### S-04 — Falsification du prix depuis le navigateur — ✅ le serveur fait foi
 
 | | |
 |---|---|
 | **Risque** | ajouter `prix_unitaire: 0.01` au POST du panier pour acheter à 1 centime |
-| **Attaque testée** | E2E T9 : `POST /panier/ajouter { id_produit: 5, quantite: 1, prix_unitaire: '0.01' }` |
+| **Scénario d’attaque décrit** | E2E T9 : `POST /panier/ajouter { id_produit: 5, quantite: 1, prix_unitaire: '0.01' }` |
 | **Défense** | le panier ne stocke que `id_produit → quantité` ; **tout montant est recalculé en relisant le produit** côté serveur, et figé à l'achat par le déclencheur (RB-06) : |
 
 ```php
@@ -134,14 +136,14 @@ $prixTtc = round((float) $produit['prix_ht'] * (1 + (float) $produit['tva'] / 10
 
 | | |
 |---|---|
-| **Preuve** | E2E T9 : « prix serveur 154,80, pas 0,01 » ; `run_tests.php` (prix TTC figé, RB-06) |
+| **Référence rapportée dans l’archive** | E2E T9 : « prix serveur 154,80, pas 0,01 » ; `run_tests.php` (prix TTC figé, RB-06) |
 
 ### S-05 — Vol / fixation de session — ✅ régénération à chaque élévation de privilège
 
 | | |
 |---|---|
 | **Risque** | imposer un identifiant de session connu avant la connexion (fixation), ou rejouer un cookie volé |
-| **Attaque testée** | E2E T12 : un « pirate » impose son cookie `MINISHOPSESS=sid-pirate-fixe-123` puis se connecte en Alice |
+| **Scénario d’attaque décrit** | E2E T12 : un « pirate » impose son cookie `MINISHOPSESS=sid-pirate-fixe-123` puis se connecte en Alice |
 | **Défense** | cookie durci + identifiant **régénéré** à la connexion (l'ancien est détruit) + mode strict :
 
 ```php
@@ -165,14 +167,14 @@ En WASM (bac à sable uniquement), `regenererId()` détruit le fichier du pool e
 
 | | |
 |---|---|
-| **Preuve** | E2E T12 : « session régénérée (anti-fixation) » (le sid final ≠ sid imposé) et « le panier volé est vide » (nouvelle session) |
+| **Référence rapportée dans l’archive** | E2E T12 : « session régénérée (anti-fixation) » (le sid final ≠ sid imposé) et « le panier volé est vide » (nouvelle session) |
 
 ### S-06 — CSRF sur une action mutative — ✅ jeton obligatoire, comparaison constante
 
 | | |
 |---|---|
 | **Risque** | un site tiers fait poster un formulaire authentifié à l'insu du client (ajout au panier, validation de commande…) |
-| **Attaque testée** | E2E T6 : `POST /connexion` sans jeton `_csrf` |
+| **Scénario d’attaque décrit** | E2E T6 : `POST /connexion` sans jeton `_csrf` |
 | **Défense** | **aucune** route POST n'échappe à `verifierCsrf()` (contrôleur de base) ; jeton par session de 64 hex (`random_bytes(32)`), comparé en temps constant :
 
 ```php
@@ -193,7 +195,7 @@ L'atténuation est doublée par `SameSite=Lax` sur le cookie (S-05) — un POST 
 
 | | |
 |---|---|
-| **Preuve** | E2E T6 « POST sans CSRF rejeté » ; la totalité des ~30 formulaires de l'app exige un jeton (chaque test E2E le extrait d'abord) ; `unit_tests.php` (section Csrf) |
+| **Référence rapportée dans l’archive** | E2E T6 « POST sans CSRF rejeté » ; la totalité des ~30 formulaires de l'app exige un jeton (chaque test E2E le extrait d'abord) ; `unit_tests.php` (section Csrf) |
 | **Divergence assumée** | le document de tests annonçait un refus **419** (code Laravel) ; nous renvoyons **403 Forbidden**, le code standard HTTP pour une autorisation refusée |
 
 ### S-07 — Énumération et exposition de surface — ✅ liste blanche, racine unique, en-têtes durcis
@@ -201,7 +203,7 @@ L'atténuation est doublée par `SameSite=Lax` sur le cookie (S-05) — un POST 
 | | |
 |---|---|
 | **Risque** | atteindre des fichiers hors périmètre (`.git`, sources SQL, config, logs), être encadré (clickjacking), ou lire des en-têtes bavards |
-| **Attaques testées** | E2E T12 : `/../etc/passwd`, `/produit/../../etc/passwd`, `/%2e%2e/%2e%2e/etc/passwd`, `/.git/config`, `/sql/01_minishop_schema.sql`, `/app/Config/env.php`, `/var/log/application.log`, `/phpinfo.php` → **tous 404** ; vérification des 4 en-têtes défensifs |
+| **Scénarios d’attaque décrits** | E2E T12 : `/../etc/passwd`, `/produit/../../etc/passwd`, `/%2e%2e/%2e%2e/etc/passwd`, `/.git/config`, `/sql/01_minishop_schema.sql`, `/app/Config/env.php`, `/var/log/application.log`, `/phpinfo.php` → **tous 404** ; vérification des 4 en-têtes défensifs |
 | **Défense** | |
 
 ```php
@@ -236,7 +238,7 @@ Deux **outils de développement** assumés vivent aussi dans `public/` (`gen_vol
 | | |
 |---|---|
 | **Risque** | une erreur verbeuse révèle schéma, chemins, requêtes ou existence de comptes (aide à l'attaque) |
-| **Attaques testées** | E2E T2/T8 : mauvais mot de passe, email inconnu, compte bloqué, ancien mot de passe incorrect ; erreurs métier (RB-02 prix invalide, STOCK_INSUFFISANT, transitions interdites) affichées sur toutes les batteries |
+| **Scénarios d’attaque décrits** | E2E T2/T8 : mauvais mot de passe, email inconnu, compte bloqué, ancien mot de passe incorrect ; erreurs métier (RB-02 prix invalide, STOCK_INSUFFISANT, transitions interdites) affichées sur toutes les batteries |
 | **Défense** | deux niveaux : les erreurs **métier** ne portent qu'un code + un libellé humain ; les erreurs **techniques** n'affichent rien du tout : |
 
 ```php
@@ -260,7 +262,7 @@ $erreur = $identifiants['statut'] === 'COMPTE_BLOQUE'
 
 | | |
 |---|---|
-| **Preuve** | E2E T2/T8 (« message générique », « ancien mot de passe désormais refusé ») ; les 5 suites exécutent des dizaines de refus métier sans jamais voir un détail interne. Le journal d'audit ne contient ni mot de passe ni hash (EF-GEN-04, vérifié T11) |
+| **Référence rapportée dans l’archive** | E2E T2/T8 (« message générique », « ancien mot de passe désormais refusé ») ; les 5 suites exécutent des dizaines de refus métier sans jamais voir un détail interne. Le journal d'audit ne contient ni mot de passe ni hash (EF-GEN-04, vérifié T11) |
 
 ### S-09 — Force brute sur la connexion — ⚠️ écart assumé, correctif proposé
 
@@ -286,7 +288,7 @@ $erreur = $identifiants['statut'] === 'COMPTE_BLOQUE'
 | | |
 |---|---|
 | **Risque** | `POST /inscription` avec `role=ADMIN` (ou `role=SUPER`) crée un administrateur |
-| **Attaque testée** | E2E T12 : inscription d'« Ida » avec `role: 'SUPER'` glissé dans le POST ; T13 : un GESTIONNAIRE tente `POST /admin/equipe` pour créer un SUPER |
+| **Scénario d’attaque décrit** | E2E T12 : inscription d'« Ida » avec `role: 'SUPER'` glissé dans le POST ; T13 : un GESTIONNAIRE tente `POST /admin/equipe` pour créer un SUPER |
 | **Défense** | le contrôleur ne lit **que** les clés attendues (`nom`, `prenom`, `email`, `mot_de_passe`, `confirmation`, `cgv`) — tout champ additionnel est ignoré ; le rôle d'un admin ne vient **jamais** de la requête mais de la table `administrateur`, et les gardes de routes s'appliquent **avant** le contrôleur : |
 
 ```php
@@ -317,16 +319,16 @@ public static function exigeSuper(): array
 
 | | |
 |---|---|
-| **Preuve** | E2E T12 (« champ role=ADMIN ignoré », « le faux admin reste un simple client », table `administrateur` inchangée) + T13 (GESTIONNAIRE : back-office OK, `/admin/equipe` refusé, création d'admin impossible, SUPER peut désactiver un compte) |
+| **Référence rapportée dans l’archive** | E2E T12 (« champ role=ADMIN ignoré », « le faux admin reste un simple client », table `administrateur` inchangée) + T13 (GESTIONNAIRE : back-office OK, `/admin/equipe` refusé, création d'admin impossible, SUPER peut désactiver un compte) |
 
 ---
 
 ## 4. Mesures structurelles transverses
 
 ### 4.1 Mots de passe (RB-12, SEC-04)
-- Jamais stockés en clair : `password_hash($mdp, PASSWORD_BCRYPT)` (vérifié en E2E : le hash persisté commence par `$2y$` et fait 60 caractères).
+- Le code de référence utilise `password_hash($mdp, PASSWORD_BCRYPT)` ; une vérification E2E du hash est décrite dans l’archive, sans résultat rattaché au SHA de cette révision.
 - Comparaison uniquement par `password_verify()` (temps constant) ; le repository **refuse** un hash qui n'est pas une sortie de `password_hash()` (`HASH_MOT_DE_PASSE_INVALIDE`).
-- Changement de mot de passe : ancien exigé et vérifié, confirmation requise (E2E T8 couvre : mauvais ancien refusé, ancien mot de passe révoqué après changement).
+- Changement de mot de passe : scénario E2E T8 décrit le refus d’un ancien mot de passe erroné et la révocation après changement ; résultat non revalidé ici.
 - Politique : 8 caractères minimum côté serveur (le `minlength` HTML n'est que du confort).
 
 ### 4.2 Sessions et espaces séparés (SEC-05, RB-13)
@@ -342,7 +344,7 @@ public static function exigeSuper(): array
 
 ### 4.4 Validation des entrées en profondeur (SEC-02)
 - Accesseurs typés bornés dans le contrôleur de base : `$this->int('quantite')`, `$this->str('nom', 100)`, `$this->float('prix_min')`, `$this->bool('cgv')` — troncature et transtypage explicites **avant** tout usage.
-- Puis contraintes du moteur (schéma) : types, NOT NULL, ENUM (`statut`), CHECK (`prix_ht > 0`, `stock >= 0`, `montant_total >= 0`), UNIQUE (`reference`, `slug`, `email`, `numero`), FK (RESTRICT/CASCADE) — testées par `engine_smoke.php` et `run_tests.php`.
+- Puis contraintes du moteur (schéma) : types, NOT NULL, ENUM (`statut`), CHECK (`prix_ht > 0`, `stock >= 0`, `montant_total >= 0`), UNIQUE (`reference`, `slug`, `email`, `numero`), FK (RESTRICT/CASCADE) — contrôles visés par `engine_smoke.php` et `run_tests.php`, sans résultat de rejeu revendiqué ici.
 - Les montants traversent `round(..., 2)` et les comparaisons d'égalité monétaire des tests tolèrent `0.001`.
 
 ### 4.5 Hygiène du code
@@ -355,7 +357,7 @@ public static function exigeSuper(): array
 
 ## 5. Traçabilité exigence → code → test
 
-| Exigence | Contre-mesure (code) | Preuve exécutée |
+| Exigence | Contre-mesure (code) | Référence de contrôle (archive, non revalidée) |
 |---|---|---|
 | S-01 / SEC-01/02 | moteur JSON sans interpréteur, `Filter`, `matchesOne` (liste blanche), schéma à contraintes | E2E T12 (2), `features_test` (tri), `run_tests` T-25 |
 | S-02 / SEC-03 | `e()` = `htmlspecialchars(ENT_QUOTES, UTF-8)` + CSP | E2E T12 (2) |
@@ -391,8 +393,8 @@ public static function exigeSuper(): array
 ## 7. Annexe — rejouer les attaques
 
 ```bash
-npm run test:all          # 5 suites : moteur, règles 29/29, unitaires 98/98,
-                          # fonctionnalités 108/108, E2E 155/155
+npm run test:all          # exécuter les suites configurées ; consigner date, SHA,
+                          # environnement, sorties et statut des tests non joués
                           # (T6+T12+T13 = 45 vérifications de sécurité)
 ```
 

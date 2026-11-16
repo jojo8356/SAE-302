@@ -7,8 +7,9 @@ declare(strict_types=1);
  * (UC-07/08/09, EF-CLI-07…10, RB-04/06/08/10/11/15/18/20, SEC-08).
  *
  * Le contrôle d'appartenance est systématique côté serveur (SEC-08) : une
- * requête portant l'identifiant de la commande d'un AUTRE client répond
- * ACCES_NON_AUTORISE (test S-04 du document de tests).
+ * requête portant l'identifiant d'une commande absente ou d'un AUTRE client
+ * répond 404 générique (COMMANDE_INTROUVABLE), sans révéler l'existence de
+ * la ressource (test S-04 du document de tests).
  */
 
 namespace App\Controller;
@@ -104,6 +105,9 @@ final class CommandeController extends Controller
         try {
             $commande = $this->commandeDuClient($repo, (int) $id, $client['id']);
         } catch (BusinessError $e) {
+            if (in_array($e->businessCode, ['COMMANDE_INTROUVABLE', 'ACCES_NON_AUTORISE'], true)) {
+                $this->pageIntrouvable();
+            }
             $this->flashErreur($e->messageHumain());
             $this->rediriger('/mes-commandes');
         }
@@ -130,6 +134,9 @@ final class CommandeController extends Controller
         try {
             $commande = $this->commandeDuClient($repo, (int) $id, $client['id']);
         } catch (BusinessError $e) {
+            if (in_array($e->businessCode, ['COMMANDE_INTROUVABLE', 'ACCES_NON_AUTORISE'], true)) {
+                $this->pageIntrouvable();
+            }
             $this->flashErreur($e->messageHumain());
             $this->rediriger('/mes-commandes');
         }
@@ -156,6 +163,9 @@ final class CommandeController extends Controller
             $resultat = $repo->cancelOrder((int) $commande['id_commande'], $client['id']);
             $this->flashSucces('Commande annulée : ' . $resultat['unites_rendues'] . ' unité(s) rendue(s) au stock.');
         } catch (BusinessError $e) {
+            if (in_array($e->businessCode, ['COMMANDE_INTROUVABLE', 'ACCES_NON_AUTORISE'], true)) {
+                $this->pageIntrouvable();
+            }
             $this->flashErreur($e->messageHumain());
         }
         $this->rediriger('/mes-commandes');
@@ -165,13 +175,19 @@ final class CommandeController extends Controller
     private function commandeDuClient(CommandeRepository $repo, int $idCommande, int $idClient): array
     {
         $commande = $repo->find($idCommande);
-        if ($commande === null) {
+        if ($commande === null || (int) $commande['id_client'] !== $idClient) {
+            // 404 générique : ne pas distinguer « absent » et « appartient à autrui ».
             throw new BusinessError('COMMANDE_INTROUVABLE');
-        }
-        if ((int) $commande['id_client'] !== $idClient) {
-            throw new BusinessError('ACCES_NON_AUTORISE');
         }
 
         return $commande;
+    }
+
+    /** Page 404 générique (routeur liste blanche / ressource absente). */
+    private function pageIntrouvable(): never
+    {
+        http_response_code(404);
+        (new HomeController())->page404();
+        exit;
     }
 }

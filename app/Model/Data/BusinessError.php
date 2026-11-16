@@ -7,13 +7,12 @@ declare(strict_types=1);
  *
  * Levée par les « procédures » (Repository) et les « déclencheurs »
  * (Triggers) du moteur — équivalent exact du
- * SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = '<CODE>' du SQL d'origine
- * (sql/02_minishop_procedures.sql et sql/03_minishop_triggers.sql).
+ * SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = '<CODE>' des procédures et
+ * déclencheurs SQL (sql/02_minishop_procedures.sql et sql/03_minishop_triggers.sql).
  *
  * Le code (ex. EMAIL_DEJA_UTILISE) est TOUJOURS un identifiant SNAKE_UPPER
  * identique à celui du SQL : les vues et les tests n'ont donc pas besoin de
- * connaître la couche de stockage, et la migration finale vers
- * StorageDriver::SQL fera remonter les mêmes codes depuis la base.
+ * connaître la couche de stockage, quel que soit le pilote actif.
  */
 
 namespace App\Model\Data;
@@ -69,6 +68,7 @@ final class BusinessError extends \RuntimeException
         'STOCK_NEGATIF_DETECTE'                        => 'Un stock négatif a été détecté lors de la validation.',
         'PRODUIT_SUPPRIME_DU_CATALOGUE'                => 'Ce produit n’est plus disponible au catalogue.',
         'MOTIF_STOCK_REQUIS'                           => 'Toute écriture de stock doit porter un motif.',
+        'MODE_STOCK_INVALIDE'                          => 'Le mode d’ajustement du stock est invalide.',
         'REFERENCE_DEJA_UTILISEE'                      => 'Cette référence produit existe déjà.',
         'SLUG_DEJA_UTILISE'                            => 'Ce slug produit existe déjà.',
         'NOM_DEJA_UTILISE'                             => 'Ce nom de catégorie existe déjà.',

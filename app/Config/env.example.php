@@ -14,8 +14,8 @@ declare(strict_types=1);
  * ce fichier (copié vers env.php) → `.env` → variables d'environnement.
  *
  * Hors dépôt : app/Config/env.php est ignoré par .gitignore (règle §14.1).
- * Sans aucun fichier, l'application démarre en pilote JSON et lit
- * data/minishop.
+ * Sans configuration explicite, l'application sélectionne le pilote SQL.
+ * Pour le mode secondaire sans serveur, choisir explicitement 'json'.
  */
 
 return [
@@ -25,16 +25,16 @@ return [
     'debug'   => true,
 
     // ---- Pilote de gestion des données (énumération App\Model\Data\StorageDriver)
-    // 'json' : moteur JSON natif (data/minishop/*.json) — pilote actif.
-    // 'sql'  : MySQL/PDO — réservé à la migration finale (lots L14+), les
-    //          scripts sql/01→04 sont déjà prêts dans le dépôt.
-    'storage_driver' => 'json',
+    // 'sql'  : MySQL/PDO — pilote applicatif par défaut ; base installée par
+    //          scripts/db_init.php (schéma, données, procédures et triggers).
+    // 'json' : moteur secondaire sans serveur (data/minishop/*.json), à choisir explicitement.
+    'storage_driver' => 'sql',
 
     // Dossier des fichiers de données (défaut : <projet>/data/minishop).
     // Utile pour les tests (bac à sable) ou la volumétrie (jeu 200 produits).
     'data_path' => null,
 
-    // ---- Réservé à la migration SQL finale (aucun usage en pilote JSON) ----
+    // ---- Connexion MySQL/MariaDB du pilote principal SQL ----
     'db_host' => '127.0.0.1',
     'db_port' => 3306,
     'db_name' => 'minishop',

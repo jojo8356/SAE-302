@@ -10,14 +10,14 @@ declare(strict_types=1);
  *   php scripts/db_init.php --no-demo       # schéma + routines, sans jeu de démo
  *   php scripts/db_init.php --keep          # ne touche à rien si tout est déjà là
  *   php scripts/db_init.php --check         # diagnostic seul (n'écrit rien)
- *   php scripts/db_init.php --switch        # écrit STORAGE_DRIVER="sql" dans .env
+ *   php scripts/db_init.php --switch        # réaffirme STORAGE_DRIVER="sql" dans .env
  *   php scripts/db_init.php --compte        # crée le compte applicatif (sudo mariadb)
  *   php scripts/db_init.php --nettoyage ... # maintenance séparée, simulation par défaut
  *
  * La cible vient du fichier `.env` (modèle `.env.example`, jamais commité) :
  *
  *   DB_HOST="127.0.0.1"  DB_PORT="3306"  DB_NAME="minishop"
- *   DB_USER="root"       DB_PASSWORD=""  STORAGE_DRIVER="json"
+ *   DB_USER="root"       DB_PASSWORD=""  STORAGE_DRIVER="sql"
  *
  * Cas de root sous Debian/Ubuntu : le compte n'accepte que l'authentification
  * par socket Unix. Rien à faire de particulier — la connexion bascule
@@ -256,7 +256,7 @@ if ($options['testdb']) {
     echo "  Puis : php tests/php/sql_integration.php\n";
     exit(1);
 }
-echo '   pilote app    : ' . (string) ($config['storage_driver'] ?? 'json') . "  (STORAGE_DRIVER)\n";
+echo '   pilote app    : ' . Database::driver() . "  (STORAGE_DRIVER)\n";
 
 // Empreinte du code : un message d'erreur d'une révision antérieure (fichiers
 // récupérés un par un) ressemble sinon à un bug de la révision courante.
@@ -497,8 +497,7 @@ if (!$toutBon) {
 }
 
 echo "✓ base prête : " . $installateur->cible() . "\n";
-echo "   comptes : alice@example.com / Demo2026!   ·   admin@minishop.fr / Admin2026!\n";
-if (!(bool) $options['switch'] && (string) ($config['storage_driver'] ?? 'json') !== 'sql') {
+if (!(bool) $options['switch'] && Database::driver() !== 'sql') {
     echo "   ⚠ l'application utilise encore le pilote JSON :\n";
     echo "     php scripts/db_init.php --switch   (ou STORAGE_DRIVER=\"sql\" dans .env)\n";
 }

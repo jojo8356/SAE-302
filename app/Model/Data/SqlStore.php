@@ -5,14 +5,16 @@ declare(strict_types=1);
 /**
  * MiniShop — pilote SQL (MySQL / MariaDB via PDO).
  *
- * Implémente EXACTEMENT le contrat StoreInterface : les contrôleurs, les
- * dépôts, les vues et les tests fonctionnels sont inchangés. Le pilote est
- * choisi par la configuration (`storage_driver = 'sql'`, cf. StorageDriver) :
+ * Implémente le contrat commun StoreInterface et expose séparément les
+ * capacités SQL spécialisées (procédures stockées et verrouillage de lignes).
+ * Les contrôleurs et repositories consomment ces capacités via des interfaces,
+ * sans dépendre de cette classe concrète. Le pilote est choisi par la configuration
+ * (`storage_driver = 'sql'`, cf. StorageDriver) :
  *
- *   « JSON » → JsonStore  : moteur natif, règles appliquées en PHP
- *   « SQL »  → SqlStore   : MySQL, règles appliquées par la base
+ *   « SQL »  → SqlStore   : MySQL/MariaDB, règles appliquées par la base
  *                           (CHECK, clés étrangères, 16 déclencheurs,
- *                           1 fonction + 17 procédures de sql/01→03)
+ *                           1 fonction + 18 procédures de sql/01→03)
+ *   « JSON » → JsonStore  : moteur secondaire, règles appliquées en PHP
  *
  * Principes de sécurité (SEC-01) :
  *   - AUCUNE valeur n'est concaténée dans le SQL : tout passe par des
@@ -35,7 +37,7 @@ use PDO;
 use PDOException;
 use RuntimeException;
 
-final class SqlStore implements StoreInterface
+final class SqlStore implements StoreInterface, StoredProcedureResultExecutor, StoredFunctionExecutor, RowLockingStore
 {
     /** Correspondance opérateur déclaratif → fragment SQL (liste fermée). */
     private const OPERATEURS = [
@@ -404,12 +406,21 @@ final class SqlStore implements StoreInterface
      */
     public function appeler(string $procedure, array $entrees = [], array $sorties = []): array
     {
+        return $this->callProcedureWithResults($procedure, $entrees, $sorties)['out'];
+    }
+
+    /**
+     * @param list<mixed> $entrees
+     * @param list<string> $sorties noms des paramètres OUT à récupérer
+     * @return array{results: list<list<array<string,mixed>>>, out: array<string,mixed>}
+     */
+    public function callProcedureWithResults(string $procedure, array $entrees = [], array $sorties = []): array
+    {
         if (preg_match('/^sp_[a-z0-9_]+$/', $procedure) !== 1) {
             throw new RuntimeException('nom de procédure invalide : ' . $procedure);
         }
 
         $marqueurs = array_fill(0, count($entrees), '?');
-        $variables = [];
         $select = [];
         foreach ($sorties as $indice => $nom) {
             if (preg_match('/^p_[a-z0-9_]+$/', $nom) !== 1) {
@@ -417,25 +428,34 @@ final class SqlStore implements StoreInterface
             }
             $variable = 'out' . $indice;
             $marqueurs[] = '@' . $variable;
-            $variables[$nom] = '@' . $variable;
             $select[] = '@' . $variable . ' AS ' . $this->identifiant($nom);
         }
 
         $sql = 'CALL ' . $procedure . '(' . implode(', ', $marqueurs) . ')';
-        $this->executer($sql, $entrees);
+        $statement = $this->executer($sql, $entrees);
+        $resultats = [];
+        do {
+            if ($statement->columnCount() > 0) {
+                $lignes = $statement->fetchAll(PDO::FETCH_ASSOC);
+                if (is_array($lignes)) {
+                    $resultats[] = $lignes;
+                }
+            }
+        } while ($statement->nextRowset());
+        $statement->closeCursor();
 
-        if ($select === []) {
-            return [];
+        $valeursSortie = [];
+        if ($select !== []) {
+            $requeteSorties = 'SELECT ' . implode(', ', $select);
+            $statementSorties = $this->pdo()->query($requeteSorties);
+            $ligne = $statementSorties->fetch(PDO::FETCH_ASSOC);
+            $statementSorties->closeCursor();
+            if (is_array($ligne)) {
+                $valeursSortie = $ligne;
+            }
         }
 
-        $requeteSorties = 'SELECT ' . implode(', ', $select);
-        $ligne = $this->pdo()->query($requeteSorties)->fetch();
-
-        if (is_array($ligne)) {
-            return $ligne;
-        }
-
-        return [];
+        return ['results' => $resultats, 'out' => $valeursSortie];
     }
 
     // ------------------------------------------------- compatibilité dépôts
@@ -478,6 +498,7 @@ final class SqlStore implements StoreInterface
         $sql = 'SELECT ' . $fonction . '(' . implode(', ', $marqueurs) . ')';
         $statement = $this->executer($sql, $entrees);
         $valeur = $statement->fetchColumn();
+        $statement->closeCursor();
 
         return $valeur;
     }
@@ -711,14 +732,20 @@ final class SqlStore implements StoreInterface
         $message = (string) $erreur->getMessage();
 
         // 45000 = SIGNAL déclenché par une procédure ou un déclencheur.
+        // PDO expose généralement MESSAGE_TEXT dans errorInfo[2] (et non dans
+        // getMessage()) : lire d'abord le détail du pilote, puis ne retenir
+        // qu'un code métier final stable.
         if ($sqlState === '45000') {
-            $codeMetier = trim($message);
-            if (str_contains($message, 'MESSAGE_TEXT')) {
-                $morceaux = explode('MESSAGE_TEXT', $message, 2);
-                $codeMetier = trim($morceaux[1], " ='\"");
+            $detail = trim((string) ($erreur->errorInfo[2] ?? ''));
+            if ($detail === '') {
+                $detail = trim($message);
             }
-            if (preg_match('/^[A-Z][A-Z0-9_]+$/', $codeMetier) === 1) {
-                return new BusinessError($codeMetier);
+            if (str_contains($detail, 'MESSAGE_TEXT')) {
+                $morceaux = explode('MESSAGE_TEXT', $detail, 2);
+                $detail = trim($morceaux[1] ?? '', " ='\"");
+            }
+            if (preg_match('/(?:^|[^A-Z0-9_])([A-Z][A-Z0-9_]+)\s*$/', $detail, $trouve) === 1) {
+                return new BusinessError($trouve[1]);
             }
 
             return new BusinessError('ERREUR_METIER');

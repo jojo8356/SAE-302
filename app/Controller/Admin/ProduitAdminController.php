@@ -96,6 +96,13 @@ final class ProduitAdminController extends Controller
             $imageUrl = null;
         }
 
+        $stockInitial = 0;
+        if ($idProduit === null) {
+            $stockInitial = $this->int('stock') ?? 0;
+        } else {
+            $stockInitial = (int) ($produitInitial['stock'] ?? 0);
+        }
+
         try {
             (new ProduitRepository($store))->saveProduct(
                 $idProduit,
@@ -105,7 +112,7 @@ final class ProduitAdminController extends Controller
                 $description,
                 $this->float('prix_ht') ?? 0.0,
                 $this->float('tva') ?? 20.0,
-                $this->int('stock') ?? 0,
+                $stockInitial,
                 $this->int('seuil_alerte') ?? 3,
                 $this->int('id_categorie') ?? 0,
                 $this->bool('visible'),
@@ -124,7 +131,7 @@ final class ProduitAdminController extends Controller
                 $erreurs,
                 ['nom' => $nom, 'slug' => $slug, 'reference' => $reference,
                  'description' => $this->str('description'), 'prix_ht' => $this->float('prix_ht'),
-                 'tva' => $this->float('tva'), 'stock' => $this->int('stock'),
+                 'tva' => $this->float('tva'), 'stock' => $stockInitial,
                  'seuil_alerte' => $this->int('seuil_alerte'), 'id_categorie' => $this->int('id_categorie'),
                  'visible' => $this->bool('visible'), 'image_url' => $this->str('image_url', 255)],
             );

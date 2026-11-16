@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * MiniShop — moteur de données JSON (pilote StorageDriver::JSON).
+ * MiniShop — pilote JSON secondaire (StorageDriver::JSON, choisi explicitement).
  *
  * « Moteur intelligent » : ce pilote reproduit, en opérations JSON natives,
  * tout ce que le schéma MySQL du projet attend d'un SGBD — sans UNE SEULE
@@ -26,9 +26,9 @@ declare(strict_types=1);
  *
  * Les lectures (select/findOne/count/sum/exists) évaluent les conditions
  * déclaratives ligne à ligne : le volume cible (200 produits, 1 000 commandes,
- * cf. ENF-01/02) tient en mémoire et l'opération reste en O(n) natif —
- * le jour du basculement StorageDriver::SQL, les mêmes spécifications
- * deviennent des clauses WHERE indexées et ce fichier disparaît.
+ * cf. ENF-01/02) tient en mémoire et l'opération reste en O(n) natif. Le pilote
+ * SQL est le défaut applicatif ; ce moteur reste disponible pour les tests
+ * portables et les démonstrations sans serveur.
  *
  * Hors transaction, chaque écriture utilise une transaction implicite. Les
  * processus qui modifient les fichiers sans ce store ne respectent pas ce
@@ -40,7 +40,7 @@ namespace App\Model\Data;
 
 use App\Tools\Heure;
 
-final class JsonStore implements StoreInterface
+final class JsonStore implements StoreInterface, StockMovementAuditor
 {
     /** @var array<string, JsonTable> tables chargées (paresseusement) */
     private array $tables = [];
@@ -422,6 +422,40 @@ final class JsonStore implements StoreInterface
         foreach ($this->tables as $table) {
             $table->flush();
         }
+    }
+
+    public function logStockMovement(
+        int $idProduit,
+        int $stockAvant,
+        int $stockApres,
+        string $mode,
+        int $quantite,
+        string $motif,
+        array $actor,
+    ): void {
+        $produit = $this->find('produit', $idProduit);
+        if ($produit === null) {
+            throw new QueryError('Produit introuvable lors de la journalisation du mouvement de stock.');
+        }
+
+        $changedBy = null;
+        if (isset($actor['id'])) {
+            $changedBy = (int) $actor['id'];
+        }
+
+        $this->insert('stock_movement_history', [
+            'id_produit' => $idProduit,
+            'reference_produit' => (string) $produit['reference'],
+            'nom_produit' => (string) $produit['nom'],
+            'mode_mouvement' => $mode,
+            'quantite' => $quantite,
+            'stock_avant' => $stockAvant,
+            'stock_apres' => $stockApres,
+            'motif' => trim($motif),
+            'changed_by' => $changedBy,
+            'changed_by_role' => (string) ($actor['role'] ?? 'SYSTEME'),
+            'changed_at' => Heure::maintenantUtc()->format('Y-m-d H:i:s'),
+        ]);
     }
 
     public function setActor(array $actor): void

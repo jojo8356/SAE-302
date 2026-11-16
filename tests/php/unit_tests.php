@@ -431,7 +431,7 @@ echo "\n13. Configuration .env (App\\Config\\Env, EnvFile, Database)\n";
     $check('Database lit le .env', ($config['db_name'] ?? null) === 'minishop locale');
     $check('db_port converti en entier', ($config['db_port'] ?? null) === 3307);
     $check('debug converti en booléen', ($config['debug'] ?? null) === true);
-    $check('pilote lu (« json »)', ($config['storage_driver'] ?? null) === 'json');
+    $check('pilote JSON lu depuis une configuration explicite', ($config['storage_driver'] ?? null) === 'json');
 
     // EnvFile : écriture sans perdre les commentaires
     $modifie = EnvFile::definir('STORAGE_DRIVER', 'sql');
@@ -474,14 +474,15 @@ echo "\n13. Configuration .env (App\\Config\\Env, EnvFile, Database)\n";
         @unlink($reste);
     }
     @rmdir($dossier);
-    // On isole AVANT de conclure : sur un poste dont le `.env` porte
-    // STORAGE_DRIVER=sql (cas réel après `./run.sh --db`), lire « config par
-    // défaut » en relisant le vrai fichier donnait « sql » et faisait échouer
-    // la vérification — le test dépendait de la configuration de la machine.
+    // On isole AVANT de conclure : le test ne doit dépendre ni d'un `.env`
+    // local ni des identifiants SQL de la machine qui l'exécute.
     putenv('MINISHOP_ENV_FILE=' . sys_get_temp_dir() . '/minishop-inexistant-' . getmypid() . '.env');
     Env::reinitialiser();
     Database::reset();
-    $check('environnement rendu (config par défaut)', Database::driver() === 'json');
+    $check('pilote par défaut : SQL', Database::driver() === 'sql');
+    $check('StorageDriver::DEFAULT et fromConfig(null) : SQL',
+        \App\Model\Data\StorageDriver::DEFAULT === \App\Model\Data\StorageDriver::SQL
+        && \App\Model\Data\StorageDriver::fromConfig(null) === \App\Model\Data\StorageDriver::SQL);
     putenv(Env::VARIABLE_FICHIER);
     Env::reinitialiser();
     Database::reset();
@@ -651,7 +652,7 @@ echo "\n15. DSN et repli socket Unix (App\\Config\\DbConnexion)\n";
     $check('identifiants reportés dans .env', $modifiees === ['DB_USER', 'DB_PASSWORD'], implode(',', $modifiees));
     $check('configuration rechargée : utilisateur applicatif', ($apres['db_user'] ?? '') === 'minishop');
     $check('configuration rechargée : mot de passe généré', ($apres['db_pass'] ?? '') === $motDePasseCompte);
-    $check('rechargement sans redémarrage (caches vidés)', ($apres['storage_driver'] ?? '') === 'json');
+    $check('rechargement sans redémarrage (JSON explicitement conservé)', ($apres['storage_driver'] ?? '') === 'json');
     $check('le mot de passe n’est pas cité dans l’en-tête du fichier',
         !str_contains((string) file_get_contents($envCompte), 'root\n'));
     $relecture = (string) file_get_contents($envCompte);
@@ -830,8 +831,8 @@ echo "\n18. Découpage des scripts SQL (App\\Tools\\SqlLoader::decouper)\n";
     // Fichiers réels du projet : c'est là que le bug se manifestait.
     $racine = dirname(__DIR__, 2);
     $attentes = [
-        'sql/01_minishop_schema.sql' => ['CREATE TABLE' => 8, 'CREATE OR REPLACE VIEW' => 3, 'cards' => 28, 'cards_max' => 32],
-        'sql/02_minishop_procedures.sql' => ['CREATE PROCEDURE' => 17, 'CREATE FUNCTION' => 1],
+        'sql/01_minishop_schema.sql' => ['CREATE TABLE' => 9, 'CREATE OR REPLACE VIEW' => 3, 'cards' => 28, 'cards_max' => 32],
+        'sql/02_minishop_procedures.sql' => ['CREATE PROCEDURE' => 18, 'CREATE FUNCTION' => 1],
         'sql/03_minishop_triggers.sql' => ['CREATE TRIGGER' => 16],
         'sql/04_minishop_demo.sql' => [],
     ];

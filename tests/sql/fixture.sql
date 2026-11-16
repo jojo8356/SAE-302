@@ -24,6 +24,9 @@ INSERT IGNORE INTO produit (reference, nom, slug, description, prix_ht, prix_ttc
          ('TST-902','Produit test 902','tst-902','Prix HT 60.00 / TTC 72.00 : sert aux tests de frais de port (T-28).',
           60.00, 72.00, 50, 5, (SELECT id_categorie FROM categorie WHERE slug='cat-test-t01'), 1);
 
+-- Les ajustements de test precedents ne doivent pas contaminer l'audit de la fixture.
+DELETE FROM stock_movement_history WHERE reference_produit LIKE 'TST-%';
+
 CREATE TEMPORARY TABLE IF NOT EXISTS tmp_lignes_test (id_ligne BIGINT UNSIGNED PRIMARY KEY);
 CREATE TEMPORARY TABLE IF NOT EXISTS tmp_cmd_test    (id_commande INT UNSIGNED PRIMARY KEY);
 TRUNCATE tmp_lignes_test; TRUNCATE tmp_cmd_test;
