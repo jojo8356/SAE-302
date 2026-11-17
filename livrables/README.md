@@ -34,6 +34,7 @@ Les mêmes fichiers existent dans `dist/` (répertoire généré, hors Git, cf. 
 - **19-audit-cahier-des-charges-todolist** — [HTML](html/19-audit-cahier-des-charges-todolist.html) · [PDF](pdf/19-audit-cahier-des-charges-todolist.pdf) · [Word](docx/19-audit-cahier-des-charges-todolist.docx)
 - **20-charte-gitlab-revues-croisees** — [HTML](html/20-charte-gitlab-revues-croisees.html) · [PDF](pdf/20-charte-gitlab-revues-croisees.pdf) · [Word](docx/20-charte-gitlab-revues-croisees.docx)
 - **21-synthese-retours-audit** — [HTML](html/21-synthese-retours-audit.html) · [PDF](pdf/21-synthese-retours-audit.pdf) · [Word](docx/21-synthese-retours-audit.docx)
+- **22-audit-coherence-fichiers** — [HTML](html/22-audit-coherence-fichiers.html) · [PDF](pdf/22-audit-coherence-fichiers.pdf) · [Word](docx/22-audit-coherence-fichiers.docx)
 - **DA** — [HTML](html/DA.html) · [PDF](pdf/DA.pdf) · [Word](docx/DA.docx)
 - **README** — [HTML](html/README.html) · [PDF](pdf/README.pdf) · [Word](docx/README.docx)
 - **annexe-cas-usage** — [HTML](html/annexe-cas-usage.html) · [PDF](pdf/annexe-cas-usage.pdf) · [Word](docx/annexe-cas-usage.docx)
