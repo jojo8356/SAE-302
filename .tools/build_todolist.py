@@ -121,7 +121,6 @@ T = {
  ],
  "L15": [
   ("D1-L15-02","README final : statut réel de l'application, wrapper build-docs.sh (ou pointer .tools), comptes","A",1,"P","D5-L14-05","P2",""),
-  ("D1-L15-03","Nettoyage de l'arborescence + tag v1.0-rendu","A",2,"T","D1-L15-02","P1",""),
  ],
  "L16": [
   ("D6-L16-01","Slides de la soutenance (le déroulé docs/03 existe ; les diapositives restent à produire)","A",4,"P","—","P2","ASYNC"),
@@ -134,19 +133,18 @@ T = {
 # action humaine/externe/mesure qui n'est pas attestable par le seul dépôt.
 AUDIT_OK = {"D1-L1-01", "D1-L1-02", "D1-L1-03", "D1-L1-04", "D1-L1-05", "D1-L1-07", "D1-L15-02", "D2-L2-06", "D4-L13-03", "D4-L13-04", "D4-L8-01", "D4-L8-02", "D4-L8-03", "D4-L8-04", "D4-L8-05", "D4-L9-01", "D4-L9-02", "D4-L9-03", "D4-L9-04", "D4-L9-05", "D4-L10-01", "D4-L10-02", "D4-L10-06", "D4-L11-03", "D4-L11-04", "D4-L12-01", "D4-L12-02", "D4-L12-03", "D4-L12-04", "D5-L14-02", "D5-L14-04", "D5-L14-05", "D5-L14-06"}
 AUDIT_PARTIEL = set()
-AUDIT_NON_VERIFIABLE = {"D1-L15-03", "D3-L4-06"}
+AUDIT_NON_VERIFIABLE = {"D3-L4-06"}
 
 # Ces h sont les estimations initiales WBS affectées aux tâches ouvertes, pas un relevé
 # de temps passé ni une estimation actualisée du travail restant. Cela vaut aussi pour [!].
 AUDIT_H_RESTANT = {
-    "D1-L15-03": 2, "D3-L4-06": 4,
+    "D3-L4-06": 4,
 }
 AUDIT_LIBELLES = {
     "D1-L1-02": "Inventaire Git fourni (542 chemins) identique à l'arbre du commit 82a1279fff756531489b470c7a6d946e3510085f : des chemins sont suivis sous chacun des dossiers app/, public/, sql/, tests/, docs/, scripts/ et le fichier .gitignore ; structure vérifiée, pas le fonctionnement du code",
     "D1-L1-03": "README présent avec composition, permissions GitLab et distinction explicite avec le RACI/A-B-C ; aucune correspondance nominative A/B/C ni lecture effective par les membres n'est revendiquée ; `OK` porte sur le critère documentaire de la WBS",
     "D1-L1-05": "Charte GitLab et modèles de MR présents ; aucun usage réel de MR ou revue croisée étudiante n'est attesté",
     "D1-L15-02": "README, wrapper build-docs et aide comptes relus indépendamment par l’assistant le 23/10/2026 (tiers documentaire) ; aide limitée au seed JSON ; aucune installation chronométrée ni revue humaine n’est revendiquée",
-    "D1-L15-03": "Nettoyage et tag v1.0-rendu à vérifier sur le dépôt cible ; aucun tag n'est attesté dans les références examinées",
     "D2-L2-06": "Pointage documentaire des pénalités (§16.2), pré-inspection §1→§8 et relecture croisée continue attestée entre Johan Polsinelli et Chahd Gouiaa (mode asynchrone continu, docs/21) ; sans procès-verbal formel de séance",
     "D2-L3-06": "Sources .puml, docs/diagrams/render.sh et job PlantUML présents",
     "D3-L4-06": "Relecture croisée du document de conception (docs/04) : non démontrable par le dépôt seul",
@@ -195,9 +193,9 @@ AUDIT_STATUT = ({tid: "F" for tid in AUDIT_OK}
                  | {tid: "F*" for tid in AUDIT_OK_STAR}
                  | {tid: "P" for tid in AUDIT_PARTIEL}
                  | {tid: "U" for tid in AUDIT_NON_VERIFIABLE})
-assert len(_ALL_IDS) == 83
+assert len(_ALL_IDS) == 82
 assert len(AUDIT_OK) == 33 and len(AUDIT_OK_STAR) == 48
-assert len(AUDIT_PARTIEL) == 0 and len(AUDIT_NON_VERIFIABLE) == 2
+assert len(AUDIT_PARTIEL) == 0 and len(AUDIT_NON_VERIFIABLE) == 1
 assert set(AUDIT_H_RESTANT) == AUDIT_PARTIEL | AUDIT_NON_VERIFIABLE
 for lot, tasks in T.items():
     T[lot] = [
@@ -217,7 +215,7 @@ DIV_NOM = {"D1":"Pilotage, dépôt GitLab & collaboration","D2":"Document de sp�
            "D5":"Tests & validation","D6":"Soutenance"}
 COULEURS = {"D1":"#64748b","D2":"#7c2d12","D3":"#b45309","D4":"#15803d","D5":"#b91c1c","D6":"#6d28d9"}
 
-LOT_H = {"L1":14,"L2":26,"L3":28,"L4":28,"L5":20,"L6":30,"L7":20,"L8":22,"L9":32,"L10":28,"L11":30,"L12":20,"L13":14,"L14":24,"L15":5,"L16":9}
+LOT_H = {"L1":14,"L2":26,"L3":28,"L4":28,"L5":20,"L6":30,"L7":20,"L8":22,"L9":32,"L10":28,"L11":30,"L12":20,"L13":14,"L14":24,"L15":3,"L16":9}
 
 # ---------- calculs + assertions ----------
 REST = 0
@@ -241,12 +239,12 @@ for lot, tasks in T.items():
     DIV_REST[div] += sum(task[3] for task in tasks)
 
 # Totaux issus de la WBS de référence : ils ne sont pas des relevés d'heures réelles.
-WBS_PERS = {"A":117,"B":117,"C":116}
+WBS_PERS = {"A":115,"B":117,"C":116}
 TOTAL = sum(LOT_H.values())
-assert TOTAL == 350, TOTAL
+assert TOTAL == 348, TOTAL
 assert sum(WBS_PERS.values()) == TOTAL
-assert sum(DIV_REST.values()) == REST == 6
-assert PERS_REST == {"A":6,"B":0,"C":0}, PERS_REST
+assert sum(DIV_REST.values()) == REST == 4
+assert PERS_REST == {"A":4,"B":0,"C":0}, PERS_REST
 
 N_TASKS = sum(len(tasks) for tasks in T.values())
 STATUTS = ("F", "F*", "P", "U", "T")
@@ -257,8 +255,8 @@ COUNTS_BY_DIV = {
 }
 ASYNC_BY_PERSON = {person: sum(row[3] for row in ASYNC_TASKS if row[2] == person) for person in "ABC"}
 ASYNC_H = sum(ASYNC_BY_PERSON.values())
-assert N_TASKS == 83 and sum(COUNTS.values()) == N_TASKS, (N_TASKS, COUNTS)
-assert COUNTS == {"F":33,"F*":48,"P":0,"U":2,"T":0}, COUNTS
+assert N_TASKS == 82 and sum(COUNTS.values()) == N_TASKS, (N_TASKS, COUNTS)
+assert COUNTS == {"F":33,"F*":48,"P":0,"U":1,"T":0}, COUNTS
 assert sum(COUNTS_BY_DIV[d][s] for d in DIV_LOTS for s in STATUTS) == N_TASKS
 BADGE = {"F":"✅","F*":"✅*","P":"🟡","U":"[!]","T":"⬜"}
 STATUT_NOM = {"F":"OK","F*":"OK*","P":"PARTIEL","U":"à vérifier / externe","T":"à faire"}
@@ -370,7 +368,7 @@ A("| 3 | **L10** panier + commande (session, UC-06/07/08/09) | 28 | L8 ; écrans
 A("| 4 | **L11** back-office (produits, catégories, stocks, commandes, statuts) | 30 | L8-04 (auth admin) ; vues après L11-02..04 | L12, L14-03 | **J4** parcours admin (S9) |")
 A("| 5 | **L12** durcissement sécurité (CSRF, IDOR, échappement, en-têtes) | 20 | L9 + L10 + L11 (à l'exception du script, §2) | L14-03 | S-01…S-08 au vert (S9-S10) |")
 A("| 6 | **L14** tests & validation (sauf parties déjà async) | 15 | L12 ; 02 dès que le harnais est prêt | L15 | **J5** recette exécutée (S10) |")
-A("| 7 | **L15** README final, arborescence et tag de rendu | 3 | L11 + L14 | L16 | documentation et tag final préparés (S11) |")
+A("| 7 | **L15** README final et préparation du rendu | 3 | L11 + L14 | L16 | documentation finale préparée (S11) |")
 A("| 8 | **L16** soutenance (support et questions anticipées) | 9 | L14 + L15 | — | **J6** soutenance (S12) |")
 A("")
 A("### Sous-dépendances internes à respecter (les pièges classiques)")
@@ -403,7 +401,7 @@ A("```")
 A("")
 A("---")
 A("")
-A("## 5. Détail tâche par tâche — 83 tâches WBS, statuts de l'audit et actions restantes")
+A("## 5. Détail tâche par tâche — 82 tâches WBS, statuts de l'audit et actions restantes")
 A("")
 for d in ["D1","D2","D3","D4","D5","D6"]:
     tot = sum(LOT_H[l] for l in DIV_LOTS[d])
@@ -439,7 +437,7 @@ A("| **L10-04** CommandeController OK | L10-05/06 (écrans), L13 (JS panier), L1
 A("| **L11 complet** (J4 prévu) | L12 en mode validation, L14-03 (F-tests) |")
 A("| **L12 complet** (S-01…S-08 vert) | L14-03/05 (recette finale) |")
 A("| **L14 complet** (J5 prévu) | D1-L15-02 (README final et statut réel des tests) |")
-A("| **L15-03** tag `v1.0-rendu` | soutenance figée (L16) |")
+A("| **L15 complet** (S11 prévu) | soutenance figée (L16) |")
 A("")
 A("---")
 A("")
@@ -471,7 +469,7 @@ A("Le prochain contrôle SQL doit être rapporté séparément, avec le SHA et l
 A("")
 A("---")
 A("")
-A("*Todolist MiniShop v1.7 — mise à jour du 23/10/2026 ; répartition des statuts reprise de la revue tâche par tâche de `docs/19`, sans nouvel audit exhaustif du working tree. `docs/19` contient un addendum daté du 15/11/2026, postérieur à cette date : aucun événement ou résultat portant une date future n'est crédité comme réalisé. Le run non-SQL du 23/10 est vert via WASM/JSON isolé ; SQL/PDO, PHP CLI natif et validations humaines restent hors preuve. WBS : 83 tâches et 350 h estimées historiquement ; les heures affectées aux tâches ouvertes sont des estimations initiales à revalider, pas du temps réel ni une prévision actuelle. D1-L1-01 repose sur l'attestation utilisateur et la capture fournie (date/dossier Envoyés non visibles, pas de vérification directe) ; D1-L1-02 repose sur l'inventaire de 542 chemins, identique à l'arbre Git du commit `82a1279fff756531489b470c7a6d946e3510085f`, sans vérification fonctionnelle ni assimilation au checkout local `e0c554f` ; D1-L1-07 sur la synthèse asynchrone des feedbacks, sans réunion complète revendiquée. Le registre de recette reste 200 lignes NON JOUÉ ; aucun déploiement, test manuel LineServ, restauration, approbation pédagogique ou mesure sur cible n'est inféré. Les charges A/B/C sont des estimations non nominatives.*")
+A("*Todolist MiniShop v1.7 — mise à jour du 23/10/2026 ; répartition des statuts reprise de la revue tâche par tâche de `docs/19`, sans nouvel audit exhaustif du working tree. `docs/19` contient un addendum daté du 15/11/2026, postérieur à cette date : aucun événement ou résultat portant une date future n'est crédité comme réalisé. Le run non-SQL du 23/10 est vert via WASM/JSON isolé ; SQL/PDO, PHP CLI natif et validations humaines restent hors preuve. WBS : 82 tâches et 348 h estimées historiquement ; les heures affectées aux tâches ouvertes sont des estimations initiales à revalider, pas du temps réel ni une prévision actuelle. D1-L1-01 repose sur l'attestation utilisateur et la capture fournie (date/dossier Envoyés non visibles, pas de vérification directe) ; D1-L1-02 repose sur l'inventaire de 542 chemins, identique à l'arbre Git du commit `82a1279fff756531489b470c7a6d946e3510085f`, sans vérification fonctionnelle ni assimilation au checkout local `e0c554f` ; D1-L1-07 sur la synthèse asynchrone des feedbacks, sans réunion complète revendiquée. Le registre de recette reste 200 lignes NON JOUÉ ; aucun déploiement, test manuel LineServ, restauration, approbation pédagogique ou mesure sur cible n'est inféré. Les charges A/B/C sont des estimations non nominatives.*")
 
 OUT_MD.write_text("\n".join(md), encoding="utf-8")
 print(f"OK MD : {OUT_MD} ({len(md)} lignes) — {N_TASKS} tâches, {REST} h d'estimations WBS initiales affectées aux tâches ouvertes, async {len(ASYNC_TASKS)} tâches")

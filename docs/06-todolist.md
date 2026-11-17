@@ -1,6 +1,6 @@
 # MiniShop — Todolist projet : suivi de base et planification historique
 
-**Périmètre :** 83 tâches de la WBS, dont la charge totale historique est estimée à 350 h. La répartition `OK`/`OK*`/`PARTIEL`/`[!]` reprend la revue tâche par tâche de `docs/19` ; elle ne constitue pas un nouvel audit exhaustif du working tree actuel.
+**Périmètre :** 82 tâches de la WBS, dont la charge totale historique est estimée à 348 h. La répartition `OK`/`OK*`/`PARTIEL`/`[!]` reprend la revue tâche par tâche de `docs/19` ; elle ne constitue pas un nouvel audit exhaustif du working tree actuel.
 **Avertissement temporel :** `docs/19` contient un addendum daté du 15/11/2026, postérieur à la date du présent rendu (23 octobre 2026). Les statuts sont repris comme cartographie demandée, mais aucun run ou événement daté après le 23/10 n'est crédité ici comme réalisé. La présence de code ou de harnais n'est pas assimilée à son exécution ; seuls les replays explicitement rapportés sont distingués, sans en déduire une validation humaine.
 SQL/MySQL/PDO reste le pilote par défaut ; JSON est une option explicite pour les tests isolés. **D1-L1-01** est `OK` sur attestation utilisateur et capture fournie du courriel ; la capture montre l’objet, le destinataire affiché, la composition et l’URL GitLab, mais ni la date ni le dossier Envoyés. Aucune vérification directe de la boîte ni confirmation de remise n’est revendiquée. **D1-L1-02** est `OK` pour l’arborescence : l’inventaire `arbre-arena.txt` (542 chemins) correspond exactement aux chemins Git du commit `82a1279fff756531489b470c7a6d946e3510085f` ; chacun des six dossiers racine exigés contient des chemins suivis et `.gitignore` est suivi comme fichier. Cela ne valide pas le fonctionnement du code et ne décrit pas le checkout local sur `e0c554f`. **D1-L1-07** est `OK` pour la synthèse asynchrone des retours continus dans `docs/21-synthese-retours-audit.md` ; aucune réunion complète, approbation collective ou validation pédagogique n’est revendiquée.
 La mise en ligne de démonstration et le staging ont été retirés du périmètre sans remplacement. Le graphe, les dépendances et le plan S6 restent la photographie du 23/09/2026, pas un ordre de priorité actuel.
@@ -8,8 +8,8 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 
 | | |
 |---|---|
-| **Répartition des statuts d'audit** | **33 `OK` + 48 `OK*`**, 0 `PARTIEL`, 2 `[!]` non vérifiables (83 tâches) ; **2 tâches ouvertes ou à confirmer** |
-| **Estimation WBS historique affectée aux tâches ouvertes** | **6 h** (dont 0 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée |
+| **Répartition des statuts d'audit** | **33 `OK` + 48 `OK*`**, 0 `PARTIEL`, 1 `[!]` non vérifiables (82 tâches) ; **1 tâches ouvertes ou à confirmer** |
+| **Estimation WBS historique affectée aux tâches ouvertes** | **4 h** (dont 0 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée |
 | **Temps réellement passé** | Non mesuré ; aucun nombre d'heures accomplies n'est déduit des statuts |
 | **Backlog asynchrone de la photographie** | **0 h estimées** dans le graphe du 23/09 ; ni une disponibilité actuelle ni une mesure d'effort |
 | **Dernier contrôle non-SQL** | `node scripts/run-all-tests.mjs --sans-sql` : code 0 ; SQL/PDO et PHP CLI natif non joués (détails §8) |
@@ -24,23 +24,23 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 
 | Division | Charge WBS initiale (estim.) | `OK` | `OK*` | `PARTIEL` | `[!]` | Estimation initiale associée aux tâches ouvertes |
 |---|---:|---:|---:|---:|---:|---:|
-| **D1 — Pilotage, dépôt GitLab & collaboration** | 19 h | 7 | 0 | 0 | 1 | 2 h |
+| **D1 — Pilotage, dépôt GitLab & collaboration** | 17 h | 7 | 0 | 0 | 0 | 0 h |
 | **D2 — Document de spécification du système** | 54 h | 1 | 11 | 0 | 0 | 0 h |
 | **D3 — Conception de la base de données & SQL** | 98 h | 0 | 22 | 0 | 1 | 4 h |
 | **D4 — Application Web PHP / MySQL / PDO** | 146 h | 21 | 11 | 0 | 0 | 0 h |
 | **D5 — Tests & validation** | 24 h | 4 | 2 | 0 | 0 | 0 h |
 | **D6 — Soutenance** | 9 h | 0 | 2 | 0 | 0 | 0 h |
-| **Total** | **350 h** | **33** | **48** | **0** | **2** | **6 h** |
+| **Total** | **348 h** | **33** | **48** | **0** | **1** | **4 h** |
 
 ### 1.2 Estimations WBS par rôle de planification (A/B/C ; aucune correspondance nominative établie)
 
 | Rôle de planification | Charge WBS initiale (estim.) | Estimation initiale affectée aux tâches ouvertes | Remarque |
 |---|---:|---:|---|
-| **A** | 117 h | 6 h | rôle de planification du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |
+| **A** | 115 h | 4 h | rôle de planification du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |
 | **B** | 117 h | 0 h | rôle de planification base de données/tests ; disponibilité actuelle non vérifiée |
 | **C** | 116 h | 0 h | rôle de planification front-office/sécurité/JS ; disponibilité et attribution nominative non établies |
 
-> Les **6 h** sont la somme des estimations WBS initiales des 0 tâches `PARTIEL` et 2 tâches `[!]`. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
+> Les **4 h** sont la somme des estimations WBS initiales des 0 tâches `PARTIEL` et 1 tâches `[!]`. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
 > Les nombres de statut ne décrivent que les critères précis de la revue. Un `OK*` ne signifie ni que tout le produit est validé, ni que les tests associés ont été exécutés. Le registre manuel de recette reste `NON JOUÉ` pour ses 200 entrées.
 > Le dernier run non-SQL est vert, mais reste une validation de code/tests sur le chemin JSON isolé : il ne prouve ni l'exécution PDO/MySQL, ni les 200 cas manuels, ni une recette humaine ou des mesures sur cible.
 
@@ -96,7 +96,7 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | 4 | **L11** back-office (produits, catégories, stocks, commandes, statuts) | 30 | L8-04 (auth admin) ; vues après L11-02..04 | L12, L14-03 | **J4** parcours admin (S9) |
 | 5 | **L12** durcissement sécurité (CSRF, IDOR, échappement, en-têtes) | 20 | L9 + L10 + L11 (à l'exception du script, §2) | L14-03 | S-01…S-08 au vert (S9-S10) |
 | 6 | **L14** tests & validation (sauf parties déjà async) | 15 | L12 ; 02 dès que le harnais est prêt | L15 | **J5** recette exécutée (S10) |
-| 7 | **L15** README final, arborescence et tag de rendu | 3 | L11 + L14 | L16 | documentation et tag final préparés (S11) |
+| 7 | **L15** README final et préparation du rendu | 3 | L11 + L14 | L16 | documentation finale préparée (S11) |
 | 8 | **L16** soutenance (support et questions anticipées) | 9 | L14 + L15 | — | **J6** soutenance (S12) |
 
 ### Sous-dépendances internes à respecter (les pièges classiques)
@@ -129,9 +129,9 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 
 ---
 
-## 5. Détail tâche par tâche — 83 tâches WBS, statuts de l'audit et actions restantes
+## 5. Détail tâche par tâche — 82 tâches WBS, statuts de l'audit et actions restantes
 
-### D1 — Pilotage, dépôt GitLab & collaboration (7 `OK`, 0 `OK*`, 0 `PARTIEL`, 1 `[!]` ; 2 h d'estimations WBS initiales à revalider sur 19 h de référence)
+### D1 — Pilotage, dépôt GitLab & collaboration (7 `OK`, 0 `OK*`, 0 `PARTIEL`, 0 `[!]` ; 0 h d'estimations WBS initiales à revalider sur 17 h de référence)
 
 #### ✅ Lot L1 — Pilotage & dépôt (charge WBS initiale 14 h ; estimation affectée aux tâches ouvertes 0 h)
 
@@ -144,12 +144,11 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | `D1-L1-05` | Charte GitLab et modèles de MR présents ; aucun usage réel de MR ou revue croisée étudiante n'est attesté | A | 0 | ✅ `OK` | — | — |
 | `D1-L1-07` | Synthèse des retours continus sur l’audit (mode asynchrone ; aucune réunion complète revendiquée ; docs/21-synthese-retours-audit.md) | A | 0 | ✅ `OK` | — | — |
 
-#### ⚠️ Lot L15 — README final & rendu (charge WBS initiale 5 h ; estimation affectée aux tâches ouvertes 2 h)
+#### ✅ Lot L15 — README final & rendu (charge WBS initiale 3 h ; estimation affectée aux tâches ouvertes 0 h)
 
 | ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
 | `D1-L15-02` | README, wrapper build-docs et aide comptes relus indépendamment par l’assistant le 23/10/2026 (tiers documentaire) ; aide limitée au seed JSON ; aucune installation chronométrée ni revue humaine n’est revendiquée | A | 0 | ✅ `OK` | D5-L14-05 | P2 |
-| `D1-L15-03` | Nettoyage et tag v1.0-rendu à vérifier sur le dépôt cible ; aucun tag n'est attesté dans les références examinées | A | 2 | [!] `à vérifier / externe` | D1-L15-02 | P1 |
 
 
 ### D2 — Document de spécification du système (1 `OK`, 11 `OK*`, 0 `PARTIEL`, 0 `[!]` ; 0 h d'estimations WBS initiales à revalider sur 54 h de référence)
@@ -327,7 +326,7 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | **L11 complet** (J4 prévu) | L12 en mode validation, L14-03 (F-tests) |
 | **L12 complet** (S-01…S-08 vert) | L14-03/05 (recette finale) |
 | **L14 complet** (J5 prévu) | D1-L15-02 (README final et statut réel des tests) |
-| **L15-03** tag `v1.0-rendu` | soutenance figée (L16) |
+| **L15 complet** (S11 prévu) | soutenance figée (L16) |
 
 ---
 
@@ -359,4 +358,4 @@ Le prochain contrôle SQL doit être rapporté séparément, avec le SHA et l'id
 
 ---
 
-*Todolist MiniShop v1.7 — mise à jour du 23/10/2026 ; répartition des statuts reprise de la revue tâche par tâche de `docs/19`, sans nouvel audit exhaustif du working tree. `docs/19` contient un addendum daté du 15/11/2026, postérieur à cette date : aucun événement ou résultat portant une date future n'est crédité comme réalisé. Le run non-SQL du 23/10 est vert via WASM/JSON isolé ; SQL/PDO, PHP CLI natif et validations humaines restent hors preuve. WBS : 83 tâches et 350 h estimées historiquement ; les heures affectées aux tâches ouvertes sont des estimations initiales à revalider, pas du temps réel ni une prévision actuelle. D1-L1-01 repose sur l'attestation utilisateur et la capture fournie (date/dossier Envoyés non visibles, pas de vérification directe) ; D1-L1-02 repose sur l'inventaire de 542 chemins, identique à l'arbre Git du commit `82a1279fff756531489b470c7a6d946e3510085f`, sans vérification fonctionnelle ni assimilation au checkout local `e0c554f` ; D1-L1-07 sur la synthèse asynchrone des feedbacks, sans réunion complète revendiquée. Le registre de recette reste 200 lignes NON JOUÉ ; aucun déploiement, test manuel LineServ, restauration, approbation pédagogique ou mesure sur cible n'est inféré. Les charges A/B/C sont des estimations non nominatives.*
+*Todolist MiniShop v1.7 — mise à jour du 23/10/2026 ; répartition des statuts reprise de la revue tâche par tâche de `docs/19`, sans nouvel audit exhaustif du working tree. `docs/19` contient un addendum daté du 15/11/2026, postérieur à cette date : aucun événement ou résultat portant une date future n'est crédité comme réalisé. Le run non-SQL du 23/10 est vert via WASM/JSON isolé ; SQL/PDO, PHP CLI natif et validations humaines restent hors preuve. WBS : 82 tâches et 348 h estimées historiquement ; les heures affectées aux tâches ouvertes sont des estimations initiales à revalider, pas du temps réel ni une prévision actuelle. D1-L1-01 repose sur l'attestation utilisateur et la capture fournie (date/dossier Envoyés non visibles, pas de vérification directe) ; D1-L1-02 repose sur l'inventaire de 542 chemins, identique à l'arbre Git du commit `82a1279fff756531489b470c7a6d946e3510085f`, sans vérification fonctionnelle ni assimilation au checkout local `e0c554f` ; D1-L1-07 sur la synthèse asynchrone des feedbacks, sans réunion complète revendiquée. Le registre de recette reste 200 lignes NON JOUÉ ; aucun déploiement, test manuel LineServ, restauration, approbation pédagogique ou mesure sur cible n'est inféré. Les charges A/B/C sont des estimations non nominatives.*

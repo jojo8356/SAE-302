@@ -101,8 +101,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </ul>
 </li>
 <li><a href="#4-graphe-de-dependances-vue-synthetique">4. Graphe de dépendances (vue synthétique)</a></li>
-<li><a href="#5-detail-tache-par-tache-83-taches-wbs-statuts-de-laudit-et-actions-restantes">5. Détail tâche par tâche — 83 tâches WBS, statuts de l'audit et actions restantes</a><ul>
-<li><a href="#d1-pilotage-depot-gitlab-collaboration-7-ok-0-ok-0-partiel-1-2-h-destimations-wbs-initiales-a-revalider-sur-19-h-de-reference">D1 — Pilotage, dépôt GitLab &amp; collaboration (7 OK, 0 OK*, 0 PARTIEL, 1 [!] ; 2 h d'estimations WBS initiales à revalider sur 19 h de référence)</a></li>
+<li><a href="#5-detail-tache-par-tache-82-taches-wbs-statuts-de-laudit-et-actions-restantes">5. Détail tâche par tâche — 82 tâches WBS, statuts de l'audit et actions restantes</a><ul>
+<li><a href="#d1-pilotage-depot-gitlab-collaboration-7-ok-0-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-17-h-de-reference">D1 — Pilotage, dépôt GitLab &amp; collaboration (7 OK, 0 OK*, 0 PARTIEL, 0 [!] ; 0 h d'estimations WBS initiales à revalider sur 17 h de référence)</a></li>
 <li><a href="#d2-document-de-specification-du-systeme-1-ok-11-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-54-h-de-reference">D2 — Document de spécification du système (1 OK, 11 OK*, 0 PARTIEL, 0 [!] ; 0 h d'estimations WBS initiales à revalider sur 54 h de référence)</a></li>
 <li><a href="#d3-conception-de-la-base-de-donnees-sql-0-ok-22-ok-0-partiel-1-4-h-destimations-wbs-initiales-a-revalider-sur-98-h-de-reference">D3 — Conception de la base de données &amp; SQL (0 OK, 22 OK*, 0 PARTIEL, 1 [!] ; 4 h d'estimations WBS initiales à revalider sur 98 h de référence)</a></li>
 <li><a href="#d4-application-web-php-mysql-pdo-21-ok-11-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-146-h-de-reference">D4 — Application Web PHP / MySQL / PDO (21 OK, 11 OK*, 0 PARTIEL, 0 [!] ; 0 h d'estimations WBS initiales à revalider sur 146 h de référence)</a></li>
@@ -117,7 +117,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </div>
 </nav>
 <h1 id="minishop-todolist-projet-suivi-de-base-et-planification-historique">MiniShop — Todolist projet : suivi de base et planification historique<a class="headerlink" href="#minishop-todolist-projet-suivi-de-base-et-planification-historique" title="Permanent link">#</a></h1>
-<p><strong>Périmètre :</strong> 83 tâches de la WBS, dont la charge totale historique est estimée à 350 h. La répartition <code>OK</code>/<code>OK*</code>/<code>PARTIEL</code>/<code>[!]</code> reprend la revue tâche par tâche de <code>docs/19</code> ; elle ne constitue pas un nouvel audit exhaustif du working tree actuel.
+<p><strong>Périmètre :</strong> 82 tâches de la WBS, dont la charge totale historique est estimée à 348 h. La répartition <code>OK</code>/<code>OK*</code>/<code>PARTIEL</code>/<code>[!]</code> reprend la revue tâche par tâche de <code>docs/19</code> ; elle ne constitue pas un nouvel audit exhaustif du working tree actuel.
 <strong>Avertissement temporel :</strong> <code>docs/19</code> contient un addendum daté du 15/11/2026, postérieur à la date du présent rendu (23 octobre 2026). Les statuts sont repris comme cartographie demandée, mais aucun run ou événement daté après le 23/10 n'est crédité ici comme réalisé. La présence de code ou de harnais n'est pas assimilée à son exécution ; seuls les replays explicitement rapportés sont distingués, sans en déduire une validation humaine.
 SQL/MySQL/PDO reste le pilote par défaut ; JSON est une option explicite pour les tests isolés. <strong>D1-L1-01</strong> est <code>OK</code> sur attestation utilisateur et capture fournie du courriel ; la capture montre l’objet, le destinataire affiché, la composition et l’URL GitLab, mais ni la date ni le dossier Envoyés. Aucune vérification directe de la boîte ni confirmation de remise n’est revendiquée. <strong>D1-L1-02</strong> est <code>OK</code> pour l’arborescence : l’inventaire <code>arbre-arena.txt</code> (542 chemins) correspond exactement aux chemins Git du commit <code>82a1279fff756531489b470c7a6d946e3510085f</code> ; chacun des six dossiers racine exigés contient des chemins suivis et <code>.gitignore</code> est suivi comme fichier. Cela ne valide pas le fonctionnement du code et ne décrit pas le checkout local sur <code>e0c554f</code>. <strong>D1-L1-07</strong> est <code>OK</code> pour la synthèse asynchrone des retours continus dans <code>docs/21-synthese-retours-audit.md</code> ; aucune réunion complète, approbation collective ou validation pédagogique n’est revendiquée.
 La mise en ligne de démonstration et le staging ont été retirés du périmètre sans remplacement. Le graphe, les dépendances et le plan S6 restent la photographie du 23/09/2026, pas un ordre de priorité actuel.
@@ -132,11 +132,11 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 <tbody>
 <tr>
 <td><strong>Répartition des statuts d'audit</strong></td>
-<td><strong>33 <code>OK</code> + 48 <code>OK*</code></strong>, 0 <code>PARTIEL</code>, 2 <code>[!]</code> non vérifiables (83 tâches) ; <strong>2 tâches ouvertes ou à confirmer</strong></td>
+<td><strong>33 <code>OK</code> + 48 <code>OK*</code></strong>, 0 <code>PARTIEL</code>, 1 <code>[!]</code> non vérifiables (82 tâches) ; <strong>1 tâches ouvertes ou à confirmer</strong></td>
 </tr>
 <tr>
 <td><strong>Estimation WBS historique affectée aux tâches ouvertes</strong></td>
-<td><strong>6 h</strong> (dont 0 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée</td>
+<td><strong>4 h</strong> (dont 0 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée</td>
 </tr>
 <tr>
 <td><strong>Temps réellement passé</strong></td>
@@ -178,12 +178,12 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 <tbody>
 <tr>
 <td><strong>D1 — Pilotage, dépôt GitLab &amp; collaboration</strong></td>
-<td style="text-align: right;">19 h</td>
+<td style="text-align: right;">17 h</td>
 <td style="text-align: right;">7</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">2 h</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0 h</td>
 </tr>
 <tr>
 <td><strong>D2 — Document de spécification du système</strong></td>
@@ -232,12 +232,12 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 </tr>
 <tr>
 <td><strong>Total</strong></td>
-<td style="text-align: right;"><strong>350 h</strong></td>
+<td style="text-align: right;"><strong>348 h</strong></td>
 <td style="text-align: right;"><strong>33</strong></td>
 <td style="text-align: right;"><strong>48</strong></td>
 <td style="text-align: right;"><strong>0</strong></td>
-<td style="text-align: right;"><strong>2</strong></td>
-<td style="text-align: right;"><strong>6 h</strong></td>
+<td style="text-align: right;"><strong>1</strong></td>
+<td style="text-align: right;"><strong>4 h</strong></td>
 </tr>
 </tbody>
 </table>
@@ -254,8 +254,8 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 <tbody>
 <tr>
 <td><strong>A</strong></td>
-<td style="text-align: right;">117 h</td>
-<td style="text-align: right;">6 h</td>
+<td style="text-align: right;">115 h</td>
+<td style="text-align: right;">4 h</td>
 <td>rôle de planification du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée</td>
 </tr>
 <tr>
@@ -273,7 +273,7 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 </tbody>
 </table>
 <blockquote>
-<p>Les <strong>6 h</strong> sont la somme des estimations WBS initiales des 0 tâches <code>PARTIEL</code> et 2 tâches <code>[!]</code>. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
+<p>Les <strong>4 h</strong> sont la somme des estimations WBS initiales des 0 tâches <code>PARTIEL</code> et 1 tâches <code>[!]</code>. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
 Les nombres de statut ne décrivent que les critères précis de la revue. Un <code>OK*</code> ne signifie ni que tout le produit est validé, ni que les tests associés ont été exécutés. Le registre manuel de recette reste <code>NON JOUÉ</code> pour ses 200 entrées.
 Le dernier run non-SQL est vert, mais reste une validation de code/tests sur le chemin JSON isolé : il ne prouve ni l'exécution PDO/MySQL, ni les 200 cas manuels, ni une recette humaine ou des mesures sur cible.</p>
 </blockquote>
@@ -484,11 +484,11 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td>7</td>
-<td><strong>L15</strong> README final, arborescence et tag de rendu</td>
+<td><strong>L15</strong> README final et préparation du rendu</td>
 <td style="text-align: right;">3</td>
 <td>L11 + L14</td>
 <td>L16</td>
-<td>documentation et tag final préparés (S11)</td>
+<td>documentation finale préparée (S11)</td>
 </tr>
 <tr>
 <td>8</td>
@@ -525,8 +525,8 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
  D4-L12-05* / L14-04* / L14-06* (préparations)
 </code></pre>
 <hr />
-<h2 id="5-detail-tache-par-tache-83-taches-wbs-statuts-de-laudit-et-actions-restantes">5. Détail tâche par tâche — 83 tâches WBS, statuts de l'audit et actions restantes<a class="headerlink" href="#5-detail-tache-par-tache-83-taches-wbs-statuts-de-laudit-et-actions-restantes" title="Permanent link">#</a></h2>
-<h3 id="d1-pilotage-depot-gitlab-collaboration-7-ok-0-ok-0-partiel-1-2-h-destimations-wbs-initiales-a-revalider-sur-19-h-de-reference">D1 — Pilotage, dépôt GitLab &amp; collaboration (7 <code>OK</code>, 0 <code>OK*</code>, 0 <code>PARTIEL</code>, 1 <code>[!]</code> ; 2 h d'estimations WBS initiales à revalider sur 19 h de référence)<a class="headerlink" href="#d1-pilotage-depot-gitlab-collaboration-7-ok-0-ok-0-partiel-1-2-h-destimations-wbs-initiales-a-revalider-sur-19-h-de-reference" title="Permanent link">#</a></h3>
+<h2 id="5-detail-tache-par-tache-82-taches-wbs-statuts-de-laudit-et-actions-restantes">5. Détail tâche par tâche — 82 tâches WBS, statuts de l'audit et actions restantes<a class="headerlink" href="#5-detail-tache-par-tache-82-taches-wbs-statuts-de-laudit-et-actions-restantes" title="Permanent link">#</a></h2>
+<h3 id="d1-pilotage-depot-gitlab-collaboration-7-ok-0-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-17-h-de-reference">D1 — Pilotage, dépôt GitLab &amp; collaboration (7 <code>OK</code>, 0 <code>OK*</code>, 0 <code>PARTIEL</code>, 0 <code>[!]</code> ; 0 h d'estimations WBS initiales à revalider sur 17 h de référence)<a class="headerlink" href="#d1-pilotage-depot-gitlab-collaboration-7-ok-0-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-17-h-de-reference" title="Permanent link">#</a></h3>
 <h4 id="lot-l1-pilotage-depot-charge-wbs-initiale-14-h-estimation-affectee-aux-taches-ouvertes-0-h">✅ Lot L1 — Pilotage &amp; dépôt (charge WBS initiale 14 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l1-pilotage-depot-charge-wbs-initiale-14-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link">#</a></h4>
 <table>
 <thead>
@@ -597,7 +597,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h4 id="lot-l15-readme-final-rendu-charge-wbs-initiale-5-h-estimation-affectee-aux-taches-ouvertes-2-h">⚠️ Lot L15 — README final &amp; rendu (charge WBS initiale 5 h ; estimation affectée aux tâches ouvertes 2 h)<a class="headerlink" href="#lot-l15-readme-final-rendu-charge-wbs-initiale-5-h-estimation-affectee-aux-taches-ouvertes-2-h" title="Permanent link">#</a></h4>
+<h4 id="lot-l15-readme-final-rendu-charge-wbs-initiale-3-h-estimation-affectee-aux-taches-ouvertes-0-h">✅ Lot L15 — README final &amp; rendu (charge WBS initiale 3 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l15-readme-final-rendu-charge-wbs-initiale-3-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link">#</a></h4>
 <table>
 <thead>
 <tr>
@@ -619,15 +619,6 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 <td>✅ <code>OK</code></td>
 <td>D5-L14-05</td>
 <td>P2</td>
-</tr>
-<tr>
-<td><code>D1-L15-03</code></td>
-<td>Nettoyage et tag v1.0-rendu à vérifier sur le dépôt cible ; aucun tag n'est attesté dans les références examinées</td>
-<td>A</td>
-<td style="text-align: right;">2</td>
-<td>[!] <code>à vérifier / externe</code></td>
-<td>D1-L15-02</td>
-<td>P1</td>
 </tr>
 </tbody>
 </table>
@@ -1582,7 +1573,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 <td>D1-L15-02 (README final et statut réel des tests)</td>
 </tr>
 <tr>
-<td><strong>L15-03</strong> tag <code>v1.0-rendu</code></td>
+<td><strong>L15 complet</strong> (S11 prévu)</td>
 <td>soutenance figée (L16)</td>
 </tr>
 </tbody>
@@ -1643,7 +1634,7 @@ Dans le scénario historique, L8 devait débloquer la chaîne jusqu'au jalon J6 
 <p><strong>Hors portée / non joué :</strong> <code>--sans-sql</code> saute <code>tests/php/sql_integration.php</code> ; aucun test PDO/MySQL ni création de base de test n'a eu lieu pendant ce run. L'analyse de compilation avec PHP CLI natif est <code>NON JOUÉE</code> et les <strong>5 tests de concurrence interprocessus</strong> ont été ignorés faute de PHP natif. L'E2E passe par HTTP interne/WASM, pas par un navigateur réel. Les 200 scénarios de recette manuelle restent <code>NON JOUÉ</code> ; aucun test manuel LineServ, déploiement, restauration de base, revue croisée étudiante, approbation pédagogique, répétition de soutenance ou mesure de performance sur cible n'est revendiqué.
 Le prochain contrôle SQL doit être rapporté séparément, avec le SHA et l'identifiant du run : sa base temporaire isolée est distincte de la cible manuelle LineServ.</p>
 <hr />
-<p><em>Todolist MiniShop v1.7 — mise à jour du 23/10/2026 ; répartition des statuts reprise de la revue tâche par tâche de <code>docs/19</code>, sans nouvel audit exhaustif du working tree. <code>docs/19</code> contient un addendum daté du 15/11/2026, postérieur à cette date : aucun événement ou résultat portant une date future n'est crédité comme réalisé. Le run non-SQL du 23/10 est vert via WASM/JSON isolé ; SQL/PDO, PHP CLI natif et validations humaines restent hors preuve. WBS : 83 tâches et 350 h estimées historiquement ; les heures affectées aux tâches ouvertes sont des estimations initiales à revalider, pas du temps réel ni une prévision actuelle. D1-L1-01 repose sur l'attestation utilisateur et la capture fournie (date/dossier Envoyés non visibles, pas de vérification directe) ; D1-L1-02 repose sur l'inventaire de 542 chemins, identique à l'arbre Git du commit <code>82a1279fff756531489b470c7a6d946e3510085f</code>, sans vérification fonctionnelle ni assimilation au checkout local <code>e0c554f</code> ; D1-L1-07 sur la synthèse asynchrone des feedbacks, sans réunion complète revendiquée. Le registre de recette reste 200 lignes NON JOUÉ ; aucun déploiement, test manuel LineServ, restauration, approbation pédagogique ou mesure sur cible n'est inféré. Les charges A/B/C sont des estimations non nominatives.</em></p>
+<p><em>Todolist MiniShop v1.7 — mise à jour du 23/10/2026 ; répartition des statuts reprise de la revue tâche par tâche de <code>docs/19</code>, sans nouvel audit exhaustif du working tree. <code>docs/19</code> contient un addendum daté du 15/11/2026, postérieur à cette date : aucun événement ou résultat portant une date future n'est crédité comme réalisé. Le run non-SQL du 23/10 est vert via WASM/JSON isolé ; SQL/PDO, PHP CLI natif et validations humaines restent hors preuve. WBS : 82 tâches et 348 h estimées historiquement ; les heures affectées aux tâches ouvertes sont des estimations initiales à revalider, pas du temps réel ni une prévision actuelle. D1-L1-01 repose sur l'attestation utilisateur et la capture fournie (date/dossier Envoyés non visibles, pas de vérification directe) ; D1-L1-02 repose sur l'inventaire de 542 chemins, identique à l'arbre Git du commit <code>82a1279fff756531489b470c7a6d946e3510085f</code>, sans vérification fonctionnelle ni assimilation au checkout local <code>e0c554f</code> ; D1-L1-07 sur la synthèse asynchrone des feedbacks, sans réunion complète revendiquée. Le registre de recette reste 200 lignes NON JOUÉ ; aucun déploiement, test manuel LineServ, restauration, approbation pédagogique ou mesure sur cible n'est inféré. Les charges A/B/C sont des estimations non nominatives.</em></p>
 <footer class="doc">
   <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/06-todolist.md</code>
   par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>

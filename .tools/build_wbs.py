@@ -135,10 +135,9 @@ LOTS = {
    ("D5-L14-05","Matrice de traçabilité exigence → test + PV de recette","A",5,"traçabilité §9 du document 02 complète","02–04"),
    ("D5-L14-06","Performance : mesurer.sh p95 < 500 ms + correctifs","A",5,"ENF-01 mesuré et consigné","L9–L11"),
  ]),
- "L15": dict(nom="README final, arborescence propre, préparation du rendu",
+ "L15": dict(nom="README final et préparation du rendu",
              resp="A", semaines=["S11"], tasks=[
    ("D1-L15-02","README final : installation 5 commandes, comptes, tests, sauvegarde","A",3,"un tiers installe et lance en ≤ 15 min (ENF-13)","D5-L14-05"),
-   ("D1-L15-03","Nettoyage de l'arborescence + tag v1.0-rendu","A",2,"shortlog équilibré, tag posé, MR mergées","02"),
  ]),
  "L16": dict(nom="Soutenance : support, trame et questions anticipées",
              resp="A + B", semaines=["S12"], tasks=[
@@ -160,18 +159,18 @@ LOT_H = {k: sum(t[3] for t in v["tasks"]) for k, v in LOTS.items()}
 COULEURS = {"D1":"#64748b","D2":"#7c2d12","D3":"#b45309","D4":"#15803d","D5":"#b91c1c","D6":"#6d28d9"}
 
 # ---------- assertions de cohérence (bottom-up) ----------
-TOTALS = {"L1":14,"L2":26,"L3":28,"L4":28,"L5":20,"L6":30,"L7":20,"L8":22,"L9":32,"L10":28,"L11":30,"L12":20,"L13":14,"L14":24,"L15":5,"L16":9}
+TOTALS = {"L1":14,"L2":26,"L3":28,"L4":28,"L5":20,"L6":30,"L7":20,"L8":22,"L9":32,"L10":28,"L11":30,"L12":20,"L13":14,"L14":24,"L15":3,"L16":9}
 for lot, tot in TOTALS.items():
     assert LOT_H[lot] == tot, f"{lot} : {LOT_H[lot]} ≠ {tot}"
-GRAND = sum(LOT_H.values()); assert GRAND == 350, GRAND
+GRAND = sum(LOT_H.values()); assert GRAND == 348, GRAND
 PERS = {"A":0,"B":0,"C":0}
 for lot in LOTS.values():
     for t in lot["tasks"]:
         PERS[t[2]] += t[3]
-assert PERS == {"A":117,"B":117,"C":116}, PERS
+assert PERS == {"A":115,"B":117,"C":116}, PERS
 N_TASKS = sum(len(v["tasks"]) for v in LOTS.values())
 DIV_H = {d[0]: sum(LOT_H[l] for l in d[4]) for d in DIVISIONS}
-assert sum(DIV_H.values()) == 350
+assert sum(DIV_H.values()) == 348
 
 # ---------- plan de charge hebdomadaire (répartition égale sur les semaines du lot) ----------
 SEMAINES = [f"S{i}" for i in range(1, 13)]
@@ -199,10 +198,10 @@ A("| | |")
 A("|---|---|")
 A("| **Projet** | MiniShop — site e-commerce avec back-office (SAE — BUT Informatique / L3, Université Côte d'Azur) |")
 A("| **Rôles de planification** | **A** pilotage/back-office · **B** modèle/base de données · **C** présentation/sécurité/tests ; deux membres sont nommés dans le README, sans correspondance nominative A/B/C |")
-A("| **Effort total** | **350 h estimées** sur les 83 tâches de niveau 4, réparties par rôle de planification · calendrier de référence **S1 → S12** ; aucune capacité ou heure réalisée n'est établie |")
+A("| **Effort total** | **348 h estimées** sur les 82 tâches de niveau 4, réparties par rôle de planification · calendrier de référence **S1 → S12** ; aucune capacité ou heure réalisée n'est établie |")
 A("| **Divisions (niveau 2)** | 6 — alignées une à une sur les 5 lignes du barème + la gestion de projet |")
 A("| **Lots (niveau 3)** | 16 (L1→L16, identiques au CDC §13.3, charges réconciliées) |")
-A("| **Tâches (niveau 4)** | **83 tâches** avec rôle de planification, estimation et critère de fin ; l'affectation individuelle reste à confirmer |")
+A("| **Tâches (niveau 4)** | **82 tâches** avec rôle de planification, estimation et critère de fin ; l'affectation individuelle reste à confirmer |")
 A("| **Documents liés** | `docs/01-cahier-des-charges-MiniShop.md` (§13.3/§13.4) · `docs/02-document-tests-validation.md` · `docs/03-support-soutenance.md` · `docs/04-conception-bd-et-sql.md` · `README.md` |")
 A("| **Version** | 1.2 — 23 octobre 2026 (révision de périmètre) |")
 A("")
@@ -217,7 +216,7 @@ A("|---|---|---|")
 A("| **1** | le projet (produit final) | MiniShop : boutique + back-office + dossier de conception et de validation |")
 A("| **2** | les **divisions** = livrables majeurs | 6 divisions D1→D6, une par ligne du barème (+ pilotage) |")
 A("| **3** | les **lots** = sous-livrables | 16 lots L1→L16 (reprend le CDC §13.3) |")
-A("| **4** | les tâches de travail | **83 tâches**, estimées en heures et réparties entre les rôles A/B/C, sans affectation nominative |")
+A("| **4** | les tâches de travail | **82 tâches**, estimées en heures et réparties entre les rôles A/B/C, sans affectation nominative |")
 A("")
 A("**Règle d'arrêt** (jusqu'où descendre) : le niveau 4 rend chaque tâche estimable et vérifiable ; l'affectation nominative relève d'une décision d'équipe distincte —")
 A("1. **rattachée** à un ou plusieurs codes de rôle de planification (colonne *Rôle(s)*),")
@@ -231,7 +230,7 @@ A("**Identification** : `D<n>-L<lot>-<nn>` (ex. `D3-L6-04`). Chaque tâche devie
 A("(cf. §10), ce qui relie la WBS au barème ; la trace de contribution réelle reste distincte des rôles A/B/C.")
 A("")
 A("**Note de version** — le livrable GitLab CI (2 h) avait déjà été retiré du périmètre. La présente révision retire aussi, sans remplacement, le déploiement de démonstration et sa validation staging (3 h) ;")
-A("les 350 h sont une estimation de planification pour 83 tâches, sans capacité d'équipe, affectation nominative ou heures réalisées établies. Aucun déploiement réel n'est revendiqué.")
+A("les 348 h sont une estimation de planification pour 82 tâches, sans capacité d'équipe, affectation nominative ou heures réalisées établies. Aucun déploiement réel n'est revendiqué.")
 A("")
 A("---")
 A("")
@@ -429,7 +428,7 @@ A("Le critère documentaire de `D1-L1-05` porte uniquement sur la charte version
 A("La CI automatisée du dépôt est GitHub Actions (`.github/workflows/ci.yml`) ; elle ne constitue pas une preuve de pipeline GitLab IUT.")
 A("La documentation liée (CDC, conception, tests, README) est mise à jour avec le livrable concerné.")
 A("")
-A("**Replanification de l'équipe** — le README nomme deux membres alors que la WBS répartit 350 h entre trois rôles A/B/C. Aucun rôle n'est attribué à une personne sans confirmation. Le nombre de membres ne déclenche aucun retrait automatique d'exigences ; une répartition révisée exige une décision explicite de l'équipe.")
+A("**Replanification de l'équipe** — le README nomme deux membres alors que la WBS répartit 348 h entre trois rôles A/B/C. Aucun rôle n'est attribué à une personne sans confirmation. Le nombre de membres ne déclenche aucun retrait automatique d'exigences ; une répartition révisée exige une décision explicite de l'équipe.")
 A("")
 A("---")
 A("")

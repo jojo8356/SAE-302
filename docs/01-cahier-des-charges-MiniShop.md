@@ -55,7 +55,7 @@ Ce projet est double : il est à la fois un CDC « client » (MiniShop doit fonc
 | Qualité d'un bon CDC | Comment elle est garantie ici |
 |---|---|
 | Nécessaire | §4 recouvre **les 14 cas d'utilisation minimum** et les 3×n fonctionnalités du sujet, sans en retirer aucune |
-| Réalisable | §13 : 350 h d’effort estimé bottom-up ; capacité individuelle non établie, faute de correspondance nominative entre les rôles de planification et les membres nommés |
+| Réalisable | §13 : 348 h d’effort estimé bottom-up ; capacité individuelle non établie, faute de correspondance nominative entre les rôles de planification et les membres nommés |
 | Clair | identifiants d'exigence, vocabulaire unique (§0.3), règles métier numérotées avec leur traduction SQL |
 | Vérifiable | §15 + annexe 17.8 : 29 scénarios SQL et contrôles fonctionnels/sécurité référencés ; leur présence n’est pas une affirmation d’exécution récente |
 | Cohérent | matrice de traçabilité exigence → modèle → stockage → application → test (`docs/02-document-tests-validation.md` §9), avec les évolutions postérieures à la WBS distinguées du sujet |
@@ -1480,7 +1480,7 @@ L'exigence « Trigger 1 — Stock » est couverte par `TRG-A1`+`TRG-A2` (et `TRG
 
 **Contraintes de départ (rappel contractuel) :** le sujet est figé ; la note est amputée par pénalités listées au §16.2 ; le dépôt GitLab doit recevoir **les documents et le code** de façon régulière, avec un `README.md` d'installation ; la restitution comprend une soutenance de 15 min et une réponse aux questions.
 
-**Hypothèses de planification :** un poste de développement et un accès GitLab sont disponibles ; la WBS estime 350 h de travail sur un calendrier de référence de 12 semaines. Cette estimation n'établit ni capacité réelle, ni disponibilité hebdomadaire, ni heures effectuées. Le README nomme deux membres ; aucune correspondance nominative A/B/C n'est confirmée. Les données utilisées par la maquette sont synthétiques.
+**Hypothèses de planification :** un poste de développement et un accès GitLab sont disponibles ; la WBS estime 348 h de travail sur un calendrier de référence de 12 semaines. Cette estimation n'établit ni capacité réelle, ni disponibilité hebdomadaire, ni heures effectuées. Le README nomme deux membres ; aucune correspondance nominative A/B/C n'est confirmée. Les données utilisées par la maquette sont synthétiques.
 
 ### 13.2 Ressources et codes de planification
 
@@ -1488,13 +1488,13 @@ Les lettres A/B/C sont des **rôles de planification** utilisés dans la WBS, pa
 
 | Code de rôle | Responsabilités prévues | Charge estimée dans la WBS | Livrables associés (cibles) |
 |---|---|---:|---|
-| A | pilotage, intégration et back-office | 117 h | §13/§14, `AdminController`, `CommandeController`, CI |
+| A | pilotage, intégration et back-office | 115 h | §13/§14, `AdminController`, `CommandeController`, CI |
 | B | modèle et base de données | 117 h | §12, `sql/**`, `app/Repository/**`, `tests/sql/**` |
 | C | présentation, sécurité, tests | 116 h | §8/§15, `app/View/**`, `public/js/**`, `docs/02-*` |
 | Enseignante référente (maîtrise d'ouvrage pédagogique) | encadrement et avis pédagogiques éventuels | selon le calendrier du cours | aucun jalon n’est réputé validé sans preuve |
 | Environnement | poste personnel, PHP 8.2, MySQL 8 (ou MariaDB 11), Apache, GitLab, VS Code, PlantUML | 0 € | — |
 
-Total estimé : **350 h** sur les 83 tâches de la WBS. Ce total est un effort de planification, pas une mesure d’heures réalisées ni une capacité confirmée. Le README identifie deux membres ; faute de répartition nominative confirmée, aucun plafond individuel ni scénario « 2 personnes = 319 h » n’est présenté comme validé.
+Total estimé : **348 h** sur les 82 tâches de la WBS. Ce total est un effort de planification, pas une mesure d’heures réalisées ni une capacité confirmée. Le README identifie deux membres ; faute de répartition nominative confirmée, aucun plafond individuel ni scénario « 2 personnes = 319 h » n’est présenté comme validé.
 
 ### 13.3 Répartition estimée par lot et rôle (sans mesure de capacité individuelle)
 
@@ -1514,11 +1514,11 @@ Total estimé : **350 h** sur les 83 tâches de la WBS. Ce total est un effort d
 | L12 | durcissement sécurité (CSRF, échappement, autorisation, en-têtes, journaux) | 20 | C | S9-S10 |
 | L13 | JavaScript client (panier, filtres, validation live, accessibilité) | 14 | C | S10 |
 | L14 | tests & validation : harnais, 29 tests SQL, cas fonctionnels, plan de recette, doc | 24 | B + A | S10-S11 |
-| L15 | README final, arborescence propre et préparation du rendu | 5 | A | S11 |
+| L15 | README final et préparation du rendu | 3 | A | S11 |
 | L16 | soutenance : support, trame et questions anticipées | 9 | A + B | S12 |
-| | **Total** | **350** | | |
+| | **Total** | **348** | | |
 
-**Totaux de planification** (`docs/05-wbs-projet.md`) : **350 h** au total, réparties par codes A 117 h, B 117 h et C 116 h. Ces montants sont des estimations de charge par rôle, pas des heures réelles attribuées à des personnes. Les échéances et pics hebdomadaires restent un calendrier de référence à replanifier ; aucune disponibilité actuelle n’est affirmée.
+**Totaux de planification** (`docs/05-wbs-projet.md`) : **348 h** au total, réparties par codes A 115 h, B 117 h et C 116 h. Ces montants sont des estimations de charge par rôle, pas des heures réelles attribuées à des personnes. Les échéances et pics hebdomadaires restent un calendrier de référence à replanifier ; aucune disponibilité actuelle n’est affirmée.
 
 **Réduction éventuelle de périmètre :** la table historique de repli du WBS n’est pas une décision appliquée à l’équipe actuelle. Aucune exigence pénalisante n’est supprimée et aucune estimation de capacité à deux n’est validée sans accord et plan de charge révisé.
 
@@ -1547,7 +1547,7 @@ Ces dates sont une base de planification, pas des échéances pédagogiques conf
 
 | Poste | Base de calcul | Montant | Commentaire |
 |---|---|---:|---|
-| Ressources humaines internes (hypothèse de valorisation) | 350 h estimées × 60 €/h (indice pédagogique, non nominatif) | **21 000 €** théoriques | aucun paiement n’est effectué ; ce calcul ne décrit ni la composition réelle de l’équipe ni les heures effectivement travaillées |
+| Ressources humaines internes (hypothèse de valorisation) | 348 h estimées × 60 €/h (indice pédagogique, non nominatif) | **20 880 €** théoriques | aucun paiement n’est effectué ; ce calcul ne décrit ni la composition réelle de l’équipe ni les heures effectivement travaillées |
 | Licences logicielles | PHP, MySQL/MariaDB, Apache, GitLab Community, PlantUML, VS Code | **0 €** | tous en open source ou gratuits pour l'usage pédagogique |
 | Hébergement / infrastructure | postes étudiants + serveur de l'IUT pour la démo | **0 €** | aucun abonnement |
 | Prestataires | aucune | **0 €** | pas d'externalité prévue, et aucune souhaitable : le référentiel doit rester 100 % interne |
@@ -1556,7 +1556,7 @@ Ces dates sont une base de planification, pas des échéances pédagogiques conf
 | Coûts de maintenance future (après le rendu) | correction d'anomalies estimée à 1 h/semaine/groupe pendant 4 semaines | 480 € théoriques | non engagé : le projet se termine à la soutenance ; ligne conservée pour la cohérence de la méthode |
 | **Budget externe réel** | | **0 €** | |
 
-Suivi budgétaire prévu : le temps réel pourrait être comparé à l'estimation de la table §13.3 dans un support partagé si l'équipe choisit de le faire. Aucun relevé d'heures ni pointage hebdomadaire n'est attesté dans ce checkout ; les 350 h restent une estimation, non une charge réalisée ou une capacité disponible.
+Suivi budgétaire prévu : le temps réel pourrait être comparé à l'estimation de la table §13.3 dans un support partagé si l'équipe choisit de le faire. Aucun relevé d'heures ni pointage hebdomadaire n'est attesté dans ce checkout ; les 348 h restent une estimation, non une charge réalisée ou une capacité disponible.
 
 ---
 
@@ -1712,7 +1712,7 @@ Toute demande nouvelle (fonctionnalité, règle, écran) est traitée en 4 quest
 2. Les identifiants de tests, les fichiers de tests et les comptes rendus historiques ne sont pas interchangeables avec un run. Le rapport `tests/sql/rapport_tests_sql.md` mentionne une campagne datée du 27/10/2026, postérieure à la coupure ; son résultat n’est donc pas présenté ici comme acquis au 23/10. Les campagnes antérieures de septembre restent historiques et ne prouvent pas un rejeu de cette révision.
 3. Les **200 scénarios manuels** du suivi `docs/13-suivi-recette-uc.csv` sont `NON JOUÉ`. Aucune recette LineServ, opération de déploiement, restauration de base ou validation pédagogique n’est revendiquée.
 4. Le pointage de §16 est documentaire ; `D2-L2-06` est clôturée sur l’attestation utilisateur d’une vérification croisée continue entre les membres (`docs/21`), sans attribuer de note ni présumer d’une approbation pédagogique.
-5. Les rôles A/B/C et leurs 350 h sont des estimations de planification. Les noms et permissions GitLab mentionnés dans le README ne leur sont pas associés ; aucune charge réelle, capacité individuelle ou disponibilité n’est déduite.
+5. Les rôles A/B/C et leurs 348 h sont des estimations de planification. Les noms et permissions GitLab mentionnés dans le README ne leur sont pas associés ; aucune charge réelle, capacité individuelle ou disponibilité n’est déduite.
 
 ---
 
