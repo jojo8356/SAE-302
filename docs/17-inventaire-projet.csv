@@ -425,6 +425,7 @@ tests/js/deprecations_wasm.mjs,Tests et fixtures,"Présence, non-vide, syntaxe N
 tests/node/e2e_isolation.mjs,Tests et fixtures,"Présence, non-vide, syntaxe Node si disponible"
 tests/node/preferences_test.mjs,Tests et fixtures,Présence et non-vide ; contrôles dédiés selon le composant
 tests/node/responsive_navigateur.mjs,Tests,"Présence, non-vide, syntaxe Node si disponible"
+tests/perf/dernieres_mesures.txt,Tests et fixtures,"Présence, non-vide ; rapport de mesures SQL (100 it.) et HTTP (200 it.) sur minishop_perf"
 tests/perf/mesurer.sh,Tests et fixtures,"Présence, non-vide, syntaxe Bash si disponible"
 tests/perf/mesurer_sql.sh,Tests et fixtures,"Présence, non-vide, syntaxe Bash si disponible"
 tests/php/actions_destructrices_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"

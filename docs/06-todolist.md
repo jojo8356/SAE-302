@@ -8,10 +8,10 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 
 | | |
 |---|---|
-| **Répartition des statuts d'audit** | **32 `OK` + 48 `OK*`**, 0 `PARTIEL`, 3 `[!]` non vérifiables (83 tâches) ; **3 tâches ouvertes ou à confirmer** |
-| **Estimation WBS historique affectée aux tâches ouvertes** | **11 h** (dont 0 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée |
+| **Répartition des statuts d'audit** | **33 `OK` + 48 `OK*`**, 0 `PARTIEL`, 2 `[!]` non vérifiables (83 tâches) ; **2 tâches ouvertes ou à confirmer** |
+| **Estimation WBS historique affectée aux tâches ouvertes** | **6 h** (dont 0 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée |
 | **Temps réellement passé** | Non mesuré ; aucun nombre d'heures accomplies n'est déduit des statuts |
-| **Backlog asynchrone de la photographie** | **5 h estimées** dans le graphe du 23/09 ; ni une disponibilité actuelle ni une mesure d'effort |
+| **Backlog asynchrone de la photographie** | **0 h estimées** dans le graphe du 23/09 ; ni une disponibilité actuelle ni une mesure d'effort |
 | **Dernier contrôle non-SQL** | `node scripts/run-all-tests.mjs --sans-sql` : code 0 ; SQL/PDO et PHP CLI natif non joués (détails §8) |
 | **Documents liés** | `docs/05-wbs-projet.md` (WBS) · `docs/19-audit-cahier-des-charges-todolist.md` (constats) · `docs/21-synthese-retours-audit.md` |
 | **Version** | 1.7 — statuts de docs/19 repris ; exécution non-SQL du 23/10 distinguée des validations SQL et humaines |
@@ -28,19 +28,19 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 | **D2 — Document de spécification du système** | 54 h | 1 | 11 | 0 | 0 | 0 h |
 | **D3 — Conception de la base de données & SQL** | 98 h | 0 | 22 | 0 | 1 | 4 h |
 | **D4 — Application Web PHP / MySQL / PDO** | 146 h | 21 | 11 | 0 | 0 | 0 h |
-| **D5 — Tests & validation** | 24 h | 3 | 2 | 0 | 1 | 5 h |
+| **D5 — Tests & validation** | 24 h | 4 | 2 | 0 | 0 | 0 h |
 | **D6 — Soutenance** | 9 h | 0 | 2 | 0 | 0 | 0 h |
-| **Total** | **350 h** | **32** | **48** | **0** | **3** | **11 h** |
+| **Total** | **350 h** | **33** | **48** | **0** | **2** | **6 h** |
 
 ### 1.2 Estimations WBS par rôle de planification (A/B/C ; aucune correspondance nominative établie)
 
 | Rôle de planification | Charge WBS initiale (estim.) | Estimation initiale affectée aux tâches ouvertes | Remarque |
 |---|---:|---:|---|
-| **A** | 117 h | 11 h | rôle de planification du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |
+| **A** | 117 h | 6 h | rôle de planification du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |
 | **B** | 117 h | 0 h | rôle de planification base de données/tests ; disponibilité actuelle non vérifiée |
 | **C** | 116 h | 0 h | rôle de planification front-office/sécurité/JS ; disponibilité et attribution nominative non établies |
 
-> Les **11 h** sont la somme des estimations WBS initiales des 0 tâches `PARTIEL` et 3 tâches `[!]`. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
+> Les **6 h** sont la somme des estimations WBS initiales des 0 tâches `PARTIEL` et 2 tâches `[!]`. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
 > Les nombres de statut ne décrivent que les critères précis de la revue. Un `OK*` ne signifie ni que tout le produit est validé, ni que les tests associés ont été exécutés. Le registre manuel de recette reste `NON JOUÉ` pour ses 200 entrées.
 > Le dernier run non-SQL est vert, mais reste une validation de code/tests sur le chemin JSON isolé : il ne prouve ni l'exécution PDO/MySQL, ni les 200 cas manuels, ni une recette humaine ou des mesures sur cible.
 
@@ -59,20 +59,20 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 
 | # | ID | Tâche | Rôle de planification | h estimées WBS initiales | Priorité | Motif de la classification dans la photographie |
 |---|---|---|---|---:|---|---|
-| 1 | `D5-L14-06` | Scripts présents ; mesures p95 HTTP/SQL sur machine et volumétrie cibles non attestées | A | 5 | P2 | la mesure SQL seule était séparée de la mesure HTTP dans le plan ; ni la base ni les mesures n'ont été rejouées ici |
-| 2 | `D1-L1-01` | Partager l’URL et l’accès GitLab requis, communiquer la composition ; visibilité privée et protection de branche non exigées par le sujet | A | 0 | — | le plan de base l'identifiait comme préalable aux tâches de dépôt ; la preuve utilisateur de l'envoi est distinguée dans l'audit docs/19 |
-| 3 | `D1-L1-02` | Inventaire Git fourni (542 chemins) identique à l'arbre du commit 82a1279fff756531489b470c7a6d946e3510085f : des chemins sont suivis sous chacun des dossiers app/, public/, sql/, tests/, docs/, scripts/ et le fichier .gitignore ; structure vérifiée, pas le fonctionnement du code | A | 0 | P2 | les dossiers docs/, sql/, tests/ et scripts/ étaient indiqués comme déjà présents dans la photographie |
-| 4 | `D3-L6-06` | Fichiers SQL T-01…T-12 présents ; l'exécution est suivie séparément par D5-L14-02 | A | 0 | P1 | le manifeste et la fixture étaient signalés présents dans la photographie |
-| 5 | `D3-L6-07` | Harnais et fichiers SQL T-25…T-29 présents ; l'exécution est suivie séparément par D5-L14-02 | A | 0 | P1 | le manifeste et la fixture étaient signalés présents dans la photographie |
-| 6 | `D3-L7-05` | Tests directs T-13…T-24 présents ; aucun rejeu SQL du checkout courant n'est prouvé | A | 0 | P1 | la validation du 23/09 est historique ; le fichier rapport porte une date future 27/10 et ne prouve pas de rejeu à la coupure 23/10 |
-| 7 | `D4-L8-01` | Front controller unique et routeur à liste blanche présents ; routes inconnues en 404 et tests de routes disponibles | A | 0 | P1 | les dépendances étaient marquées faites dans la photographie ; leur état n'a pas été revérifié dans cette liste |
+| 1 | `D1-L1-01` | Partager l’URL et l’accès GitLab requis, communiquer la composition ; visibilité privée et protection de branche non exigées par le sujet | A | 0 | — | le plan de base l'identifiait comme préalable aux tâches de dépôt ; la preuve utilisateur de l'envoi est distinguée dans l'audit docs/19 |
+| 2 | `D1-L1-02` | Inventaire Git fourni (542 chemins) identique à l'arbre du commit 82a1279fff756531489b470c7a6d946e3510085f : des chemins sont suivis sous chacun des dossiers app/, public/, sql/, tests/, docs/, scripts/ et le fichier .gitignore ; structure vérifiée, pas le fonctionnement du code | A | 0 | P2 | les dossiers docs/, sql/, tests/ et scripts/ étaient indiqués comme déjà présents dans la photographie |
+| 3 | `D3-L6-06` | Fichiers SQL T-01…T-12 présents ; l'exécution est suivie séparément par D5-L14-02 | A | 0 | P1 | le manifeste et la fixture étaient signalés présents dans la photographie |
+| 4 | `D3-L6-07` | Harnais et fichiers SQL T-25…T-29 présents ; l'exécution est suivie séparément par D5-L14-02 | A | 0 | P1 | le manifeste et la fixture étaient signalés présents dans la photographie |
+| 5 | `D3-L7-05` | Tests directs T-13…T-24 présents ; aucun rejeu SQL du checkout courant n'est prouvé | A | 0 | P1 | la validation du 23/09 est historique ; le fichier rapport porte une date future 27/10 et ne prouve pas de rejeu à la coupure 23/10 |
+| 6 | `D4-L8-01` | Front controller unique et routeur à liste blanche présents ; routes inconnues en 404 et tests de routes disponibles | A | 0 | P1 | les dépendances étaient marquées faites dans la photographie ; leur état n'a pas été revérifié dans cette liste |
+| 7 | `D5-L14-06` | Campagne SQL (100 it., p95 <= 20,6 ms, 236 prod. / 1 004 cmd.) + HTTP (200 it./URL, 6 parcours, p95 global = 6 ms, 0 erreur) exécutée sur VM Debian 13 (cb0f814, 17/11/2026) via scripts/run_perf_vm.sh (tests/perf/dernieres_mesures.txt) | A | 0 | P2 | campagne SQL (100 it.) + HTTP (200 it./URL) exécutée sur VM Debian 13 (cb0f814, 17/11/2026) via scripts/run_perf_vm.sh (tests/perf/dernieres_mesures.txt) |
 | 8 | `D6-L16-01` | Support de soutenance docs/12 et livrables PPTX/PDF/DOCX présents | A | 0 | P2 | docs/03 était déjà présent dans la photographie ; le statut des diapositives est à vérifier dans la todolist |
 | 9 | `D2-L3-06` | Sources .puml, docs/diagrams/render.sh et job PlantUML présents | B | 0 | P1 | constat du 23/09 : les PNG existaient ; les sources et le script de rendu étaient alors signalés manquants (voir les corrections ultérieures de l'audit) |
 | 10 | `D3-L5-05` | scripts/load_db.sh présent et appelé par le workflow SQL ; le run SQL reste à effectuer séparément | B | 0 | P1 | le rapport de la campagne du 23/09 indiquait les quatre fichiers SQL corrigés ; cela ne remplace pas un contrôle actuel |
 | 11 | `D5-L14-04` | Concurrence HTTP 20/12 exécutée sur VM native le 17/11/2026 (f9b614f, concurrence_http.php, 8/8 : 20 acteurs / 12 unités, 12 commandes, 8 refus, stock final 0 ; docs/pv-recette.md) | B | 0 | P1 | le scénario de charge était défini dans la planification ; vérifier l'état actuel du harnais |
 | 12 | `D4-L12-05` | `docs/19` rapporte 11 contrôles statiques rejoués localement le 23/10 ; S-11/SEC-14 ciblé, sans portée de recette applicative ou LineServ | C | 0 | — | 11 contrôles statiques rejoués localement le 23/10/2026 ; preuve limitée aux sources contrôlées, pas une recette applicative ou LineServ |
 
-**Estimation WBS initiale associée aux tâches classées `ASYNC`/`ASYNC*` : 5 h** (rôles de planification A 5 h, B 0 h, C 0 h). Ce total n'est ni une mesure du travail à venir ni une disponibilité actuelle.
+**Estimation WBS initiale associée aux tâches classées `ASYNC`/`ASYNC*` : 0 h** (rôles de planification A 0 h, B 0 h, C 0 h). Ce total n'est ni une mesure du travail à venir ni une disponibilité actuelle.
 
 **Pistes de parallélisation du plan de référence** (aucune disponibilité actuelle ni contribution effective n'est affirmée) :
 
@@ -288,9 +288,9 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | `D4-L13-04` | F-13 est décrit dans docs/02 et les moyens automatisés (wasm-e2e, responsive_navigateur) y sont listés ; critère WBS de documentation satisfait, sans revendiquer l'exécution des tests ni une recette manuelle | C | 0 | ✅ `OK` | D4-L13-03 | P3 |
 
 
-### D5 — Tests & validation (3 `OK`, 2 `OK*`, 0 `PARTIEL`, 1 `[!]` ; 5 h d'estimations WBS initiales à revalider sur 24 h de référence)
+### D5 — Tests & validation (4 `OK`, 2 `OK*`, 0 `PARTIEL`, 0 `[!]` ; 0 h d'estimations WBS initiales à revalider sur 24 h de référence)
 
-#### ⚠️ Lot L14 — Tests & validation (charge WBS initiale 24 h ; estimation affectée aux tâches ouvertes 5 h)
+#### ✅* Lot L14 — Tests & validation (charge WBS initiale 24 h ; estimation affectée aux tâches ouvertes 0 h)
 
 | ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
@@ -299,7 +299,7 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | `D5-L14-03` | Automatisations exécutées au run VM natif 17/11/2026 (60 étapes, SQL + HTTP SQL 105/105 + Concurrence + E2E joués, 0 warning) ; les 200 entrées de recette manuelle restent NON JOUÉ | B | 0 | ✅* `OK*` | L9;L10;L11 | P1 |
 | `D5-L14-04` | Concurrence HTTP 20/12 exécutée sur VM native le 17/11/2026 (f9b614f, concurrence_http.php, 8/8 : 20 acteurs / 12 unités, 12 commandes, 8 refus, stock final 0 ; docs/pv-recette.md) | B | 0 | ✅ `OK` `ASYNC*` | D4-L10-04 | P1 |
 | `D5-L14-05` | Matrice §9 complète ; PV de recette généré sur VM réelle (docs/pv-recette.md, 60/60 étapes sur f9b614f, 17/11/2026) avec décision et visas nominatifs de Johan Polsinelli et Chahd Gouiaa ; les 200 entrées manuelles de docs/13-suivi-recette-uc.csv restent NON JOUÉ | A | 0 | ✅ `OK` | D5-L14-02;D5-L14-03 | P1 |
-| `D5-L14-06` | Scripts présents ; mesures p95 HTTP/SQL sur machine et volumétrie cibles non attestées | A | 5 | [!] `à vérifier / externe` `ASYNC*` | L9;L10;L11 | P2 |
+| `D5-L14-06` | Campagne SQL (100 it., p95 <= 20,6 ms, 236 prod. / 1 004 cmd.) + HTTP (200 it./URL, 6 parcours, p95 global = 6 ms, 0 erreur) exécutée sur VM Debian 13 (cb0f814, 17/11/2026) via scripts/run_perf_vm.sh (tests/perf/dernieres_mesures.txt) | A | 0 | ✅ `OK` `ASYNC*` | L9;L10;L11 | P2 |
 
 
 ### D6 — Soutenance (0 `OK`, 2 `OK*`, 0 `PARTIEL`, 0 `[!]` ; 0 h d'estimations WBS initiales à revalider sur 9 h de référence)

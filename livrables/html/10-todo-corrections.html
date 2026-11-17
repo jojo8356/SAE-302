@@ -641,7 +641,7 @@ Cette version remplace la précédente, qui cochait des livrables <strong>absent
 <li>[!] <strong>Dépôt GitLab réel</strong> + courriel « Composition SAE » à la référente ; badge et URLs à remplacer.</li>
 <li>[!] <strong>Rejeu des 32 commits</strong> par les 3 personnes (<code>docs/08</code> + <code>scripts/rejeu_gitlab.py</code>) : l'historique doit être individuel et daté, il ne peut pas être fabriqué ici (le dépôt n'a qu'un commit).</li>
 <li>[!] <strong>Couverture PHPUnit chiffrée</strong> : nécessite Xdebug sur une machine réelle.</li>
-<li>[!] <strong>Mesures ENF-01/ENF-08/ENF-15</strong> : nécessitent un serveur HTTP et MySQL réels. L'outil est livré (<code>scripts/capture_perf.sh</code>) ; le fichier de sortie <code>tests/perf/dernieres_mesures.txt</code> est <strong>volontairement non versionné et non simulé</strong> — des temps machine ne se fabriquent pas dans une sandbox sans serveur.</li>
+<li>✅ <strong>Mesures ENF-01 / ENF-02 (<code>D5-L14-06</code>)</strong> : exécutées le 17/11/2026 sur VM Debian 13 (<code>cb0f814</code>, PHP 8.4.27, MariaDB 11.8.6) via <code>bash scripts/run_perf_vm.sh</code> sur la base isolée <code>minishop_perf</code> (236 produits, 1 004 commandes) : SQL p95 ≤ 20,6 ms (100 it.), HTTP p95 global = 6 ms sur 6 parcours × 200 req., 0 erreur ; rapport consigné dans <code>tests/perf/dernieres_mesures.txt</code>. (Les mesures manuelles <code>ENF-08</code> avec technologie d’assistance et <code>ENF-15</code> sur cible LineServ restent hors périmètre automatisé.)</li>
 <li>[!] <strong>Vidéo de secours</strong> de la démo.</li>
 </ul>
 <hr />

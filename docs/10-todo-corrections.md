@@ -366,7 +366,7 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [!] **Dépôt GitLab réel** + courriel « Composition SAE » à la référente ; badge et URLs à remplacer.
 - [!] **Rejeu des 32 commits** par les 3 personnes (`docs/08` + `scripts/rejeu_gitlab.py`) : l'historique doit être individuel et daté, il ne peut pas être fabriqué ici (le dépôt n'a qu'un commit).
 - [!] **Couverture PHPUnit chiffrée** : nécessite Xdebug sur une machine réelle.
-- [!] **Mesures ENF-01/ENF-08/ENF-15** : nécessitent un serveur HTTP et MySQL réels. L'outil est livré (`scripts/capture_perf.sh`) ; le fichier de sortie `tests/perf/dernieres_mesures.txt` est **volontairement non versionné et non simulé** — des temps machine ne se fabriquent pas dans une sandbox sans serveur.
+- [x] **Mesures ENF-01 / ENF-02 (`D5-L14-06`)** : exécutées le 17/11/2026 sur VM Debian 13 (`cb0f814`, PHP 8.4.27, MariaDB 11.8.6) via `bash scripts/run_perf_vm.sh` sur la base isolée `minishop_perf` (236 produits, 1 004 commandes) : SQL p95 ≤ 20,6 ms (100 it.), HTTP p95 global = 6 ms sur 6 parcours × 200 req., 0 erreur ; rapport consigné dans `tests/perf/dernieres_mesures.txt`. (Les mesures manuelles `ENF-08` avec technologie d’assistance et `ENF-15` sur cible LineServ restent hors périmètre automatisé.)
 - [!] **Vidéo de secours** de la démo.
 
 ---
