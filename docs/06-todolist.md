@@ -8,10 +8,10 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 
 | | |
 |---|---|
-| **Répartition des statuts d'audit** | **27 `OK` + 48 `OK*`**, 5 `PARTIEL`, 4 `[!]` non vérifiables (84 tâches) ; **9 tâches ouvertes ou à confirmer** |
-| **Estimation WBS historique affectée aux tâches ouvertes** | **35 h** (dont 10 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée |
+| **Répartition des statuts d'audit** | **29 `OK` + 48 `OK*`**, 3 `PARTIEL`, 4 `[!]` non vérifiables (84 tâches) ; **7 tâches ouvertes ou à confirmer** |
+| **Estimation WBS historique affectée aux tâches ouvertes** | **26 h** (dont 4 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée |
 | **Temps réellement passé** | Non mesuré ; aucun nombre d'heures accomplies n'est déduit des statuts |
-| **Backlog asynchrone de la photographie** | **8 h estimées** dans le graphe du 23/09 ; ni une disponibilité actuelle ni une mesure d'effort |
+| **Backlog asynchrone de la photographie** | **5 h estimées** dans le graphe du 23/09 ; ni une disponibilité actuelle ni une mesure d'effort |
 | **Dernier contrôle non-SQL** | `node scripts/run-all-tests.mjs --sans-sql` : code 0 ; SQL/PDO et PHP CLI natif non joués (détails §8) |
 | **Documents liés** | `docs/05-wbs-projet.md` (WBS) · `docs/19-audit-cahier-des-charges-todolist.md` (constats) · `docs/21-synthese-retours-audit.md` |
 | **Version** | 1.7 — statuts de docs/19 repris ; exécution non-SQL du 23/10 distinguée des validations SQL et humaines |
@@ -27,20 +27,20 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 | **D1 — Pilotage, dépôt GitLab & collaboration** | 19 h | 7 | 0 | 0 | 1 | 2 h |
 | **D2 — Document de spécification du système** | 54 h | 0 | 11 | 1 | 0 | 3 h |
 | **D3 — Conception de la base de données & SQL** | 98 h | 0 | 22 | 0 | 1 | 4 h |
-| **D4 — Application Web PHP / MySQL / PDO** | 146 h | 19 | 11 | 2 | 0 | 10 h |
-| **D5 — Tests & validation** | 24 h | 1 | 2 | 2 | 1 | 11 h |
+| **D4 — Application Web PHP / MySQL / PDO** | 146 h | 20 | 11 | 1 | 0 | 4 h |
+| **D5 — Tests & validation** | 24 h | 2 | 2 | 1 | 1 | 8 h |
 | **D6 — Soutenance** | 14 h | 0 | 2 | 0 | 1 | 5 h |
-| **Total** | **355 h** | **27** | **48** | **5** | **4** | **35 h** |
+| **Total** | **355 h** | **29** | **48** | **3** | **4** | **26 h** |
 
 ### 1.2 Estimations WBS par rôle de planification (A/B/C ; aucune correspondance nominative établie)
 
 | Rôle de planification | Charge WBS initiale (estim.) | Estimation initiale affectée aux tâches ouvertes | Remarque |
 |---|---:|---:|---|
 | **A** | 117 h | 21 h | rôle de planification du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |
-| **B** | 117 h | 3 h | rôle de planification base de données/tests ; disponibilité actuelle non vérifiée |
-| **C** | 121 h | 11 h | rôle de planification front-office/sécurité/JS ; disponibilité et attribution nominative non établies |
+| **B** | 117 h | 0 h | rôle de planification base de données/tests ; disponibilité actuelle non vérifiée |
+| **C** | 121 h | 5 h | rôle de planification front-office/sécurité/JS ; disponibilité et attribution nominative non établies |
 
-> Les **35 h** sont la somme des estimations WBS initiales des 5 tâches `PARTIEL` et 4 tâches `[!]`. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
+> Les **26 h** sont la somme des estimations WBS initiales des 3 tâches `PARTIEL` et 4 tâches `[!]`. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
 > Les nombres de statut ne décrivent que les critères précis de la revue. Un `OK*` ne signifie ni que tout le produit est validé, ni que les tests associés ont été exécutés. Le registre manuel de recette reste `NON JOUÉ` pour ses 200 entrées.
 > Le dernier run non-SQL est vert, mais reste une validation de code/tests sur le chemin JSON isolé : il ne prouve ni l'exécution PDO/MySQL, ni les 200 cas manuels, ni une recette humaine ou des mesures sur cible.
 
@@ -67,12 +67,12 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 | 6 | `D3-L7-05` | Tests directs T-13…T-24 présents ; aucun rejeu SQL du checkout courant n'est prouvé | A | 0 | P1 | la validation du 23/09 est historique ; le fichier rapport porte une date future 27/10 et ne prouve pas de rejeu à la coupure 23/10 |
 | 7 | `D4-L8-01` | Front controller unique et routeur à liste blanche présents ; routes inconnues en 404 et tests de routes disponibles | A | 0 | P1 | les dépendances étaient marquées faites dans la photographie ; leur état n'a pas été revérifié dans cette liste |
 | 8 | `D6-L16-01` | Support de soutenance docs/12 et livrables PPTX/PDF/DOCX présents ; répétition à distinguer | A | 0 | P2 | docs/03 était déjà présent dans la photographie ; le statut des diapositives est à vérifier dans la todolist |
-| 9 | `D5-L14-04` | Suite concurrence HTTP créée (tests/php/concurrence_http.php : 20 acteurs HTTP / 12 unités, version HTTP de reserver.sh) ; exécution sur VM à faire | B | 3 | P1 | le scénario de charge était défini dans la planification ; vérifier l'état actuel du harnais |
-| 10 | `D2-L3-06` | Sources .puml, docs/diagrams/render.sh et job PlantUML présents | B | 0 | P1 | constat du 23/09 : les PNG existaient ; les sources et le script de rendu étaient alors signalés manquants (voir les corrections ultérieures de l'audit) |
-| 11 | `D3-L5-05` | scripts/load_db.sh présent et appelé par le workflow SQL ; le run SQL reste à effectuer séparément | B | 0 | P1 | le rapport de la campagne du 23/09 indiquait les quatre fichiers SQL corrigés ; cela ne remplace pas un contrôle actuel |
+| 9 | `D2-L3-06` | Sources .puml, docs/diagrams/render.sh et job PlantUML présents | B | 0 | P1 | constat du 23/09 : les PNG existaient ; les sources et le script de rendu étaient alors signalés manquants (voir les corrections ultérieures de l'audit) |
+| 10 | `D3-L5-05` | scripts/load_db.sh présent et appelé par le workflow SQL ; le run SQL reste à effectuer séparément | B | 0 | P1 | le rapport de la campagne du 23/09 indiquait les quatre fichiers SQL corrigés ; cela ne remplace pas un contrôle actuel |
+| 11 | `D5-L14-04` | Concurrence HTTP 20/12 exécutée sur VM native le 17/11/2026 (f9b614f, concurrence_http.php, 8/8 : 20 acteurs / 12 unités, 12 commandes, 8 refus, stock final 0 ; docs/pv-recette.md) | B | 0 | P1 | le scénario de charge était défini dans la planification ; vérifier l'état actuel du harnais |
 | 12 | `D4-L12-05` | `docs/19` rapporte 11 contrôles statiques rejoués localement le 23/10 ; S-11/SEC-14 ciblé, sans portée de recette applicative ou LineServ | C | 0 | — | 11 contrôles statiques rejoués localement le 23/10/2026 ; preuve limitée aux sources contrôlées, pas une recette applicative ou LineServ |
 
-**Estimation WBS initiale associée aux tâches classées `ASYNC`/`ASYNC*` : 8 h** (rôles de planification A 5 h, B 3 h, C 0 h). Ce total n'est ni une mesure du travail à venir ni une disponibilité actuelle.
+**Estimation WBS initiale associée aux tâches classées `ASYNC`/`ASYNC*` : 5 h** (rôles de planification A 5 h, B 0 h, C 0 h). Ce total n'est ni une mesure du travail à venir ni une disponibilité actuelle.
 
 **Pistes de parallélisation du plan de référence** (aucune disponibilité actuelle ni contribution effective n'est affirmée) :
 
@@ -223,7 +223,7 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | `D3-L7-05` | Tests directs T-13…T-24 présents ; aucun rejeu SQL du checkout courant n'est prouvé | A | 0 | ✅* `OK*` `ASYNC` | — | P1 |
 
 
-### D4 — Application Web PHP / MySQL / PDO (19 `OK`, 11 `OK*`, 2 `PARTIEL`, 0 `[!]` ; 10 h d'estimations WBS initiales à revalider sur 146 h de référence)
+### D4 — Application Web PHP / MySQL / PDO (20 `OK`, 11 `OK*`, 1 `PARTIEL`, 0 `[!]` ; 4 h d'estimations WBS initiales à revalider sur 146 h de référence)
 
 #### 🟡 Lot L8 — Socle applicatif MVC (charge WBS initiale 22 h ; estimation affectée aux tâches ouvertes 4 h)
 
@@ -235,16 +235,16 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | `D4-L8-04` | Authentification, sessions durcies et CSRF présents ; contrôles sécurité automatisés verts (projet scolaire, sans certification générale) | A | 0 | ✅ `OK` | D4-L8-02 | P1 |
 | `D4-L8-05` | Configuration CI et d'environnement présente, mais le critère `public/install.php` manque (installation portée par `scripts/db_init.php`/`run.sh`) ; le run non-SQL local ne valide pas ce critère, PDO/MySQL ni une CI distante | A | 4 | 🟡 `PARTIEL` | D4-L8-04 | P1 |
 
-#### 🟡 Lot L9 — Front-office (charge WBS initiale 32 h ; estimation affectée aux tâches ouvertes 6 h)
+#### ✅* Lot L9 — Front-office (charge WBS initiale 32 h ; estimation affectée aux tâches ouvertes 0 h)
 
 | ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
 | `D4-L9-01` | Catalogue SQL via v_catalogue/sp_search_products, pagination 12 par défaut et borne 60 ; tests SQL ajoutés dans sql_integration.php | C | 0 | ✅ `OK` | L8 | P1 |
 | `D4-L9-02` | Recherche/filtres/tri SQL avec validation serveur, liste blanche de tri et page bornée ; tests SQL ajoutés dans sql_integration.php | C | 0 | ✅ `OK` | D4-L9-01 | P1 |
 | `D4-L9-03` | Fiche produit SQL par slug visible, état de stock et produit masqué/absent en null (404 côté contrôleur) ; tests SQL ajoutés dans sql_integration.php | C | 0 | ✅ `OK` | D4-L9-01 | P1 |
-| `D4-L9-04` | UC-04 création de compte : doublon e-mail refusé et hash vérifiés en SQL (T-04/T-05) sur run VM natif 16/11/2026 (SHA 1a79d16, PHP 8.4, MariaDB, 29/29) ; parcours HTTP SQL de bout en bout non revendiqué | C | 0 | ✅ `OK` | D4-L8-04 | P1 |
-| `D4-L9-05` | UC-05 connexion : suite HTTP SQL créée (tests/php/http_sql_e2e.php §6 : sp_get_credentials via PDO + password_verify, régénération de session, compte bloqué, messages identiques) ; exécution sur VM à faire | C | 6 | 🟡 `PARTIEL` | D4-L8-04 | P1 |
-| `D4-L9-06` | Parcours visiteur automatisé vert sur JSON (E2E 338) et SQL (29/29, étapes 1-7) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§4), exécution à faire ; démo S7 humaine non attestée | C | 0 | ✅* `OK*` | D4-L9-01..05 | P2 |
+| `D4-L9-04` | UC-04 création de compte : doublon e-mail refusé et hash vérifiés en SQL (T-04/T-05) et en HTTP SQL (105/105) sur VM native 17/11/2026 (f9b614f, PHP 8.4, MariaDB) | C | 0 | ✅ `OK` | D4-L8-04 | P1 |
+| `D4-L9-05` | UC-05 connexion : suite HTTP SQL exécutée sur VM native le 17/11/2026 (f9b614f, http_sql_e2e.php §6, 105/105 : sp_get_credentials via PDO + password_verify, régénération de session, compte bloqué, messages identiques ; docs/pv-recette.md) | C | 0 | ✅ `OK` | D4-L8-04 | P1 |
+| `D4-L9-06` | Parcours visiteur automatisé vert sur JSON (E2E 338), SQL (29/29) et HTTP SQL (http_sql_e2e.php §4, 105/105) au run VM natif 17/11/2026 (f9b614f) ; démo S7 humaine non attestée | C | 0 | ✅* `OK*` | D4-L9-01..05 | P2 |
 
 #### ✅* Lot L10 — Panier & commande (charge WBS initiale 28 h ; estimation affectée aux tâches ouvertes 0 h)
 
@@ -253,8 +253,8 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | `D4-L10-01` | Panier de session sur SqlStore : ajout, quantités, retrait, plafond au stock et total recalculé serveur ; tests SQL ajoutés dans sql_integration.php | A | 0 | ✅ `OK` | L8 | P1 |
 | `D4-L10-02` | Contrôle serveur de disponibilité avant ajout (disponible()) et plafond au stock ; SQL est le pilote par défaut, JSON reste un bonus de test isolé | A | 0 | ✅ `OK` | D4-L10-01 | P1 |
 | `D4-L10-03` | Vues panier + récapitulatif serveur + badge d'articles | C | 0 | ✅* `OK*` | D4-L10-02 | P1 |
-| `D4-L10-04` | UC-07 commande : procédure et rollback intégral vérifiés en SQL (T-29, étape 6) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§8), exécution à faire | A | 0 | ✅* `OK*` | D4-L10-02 | P1 |
-| `D4-L10-05` | Écrans de commande présents ; procédures SQL vérifiées (T-16/T-18/T-28) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§8), exécution à faire | C | 0 | ✅* `OK*` | D4-L10-04 | P1 |
+| `D4-L10-04` | UC-07 commande : procédure, rollback intégral (T-29) et parcours HTTP SQL (§8, 105/105) verts au run VM natif 17/11/2026 (f9b614f) | A | 0 | ✅* `OK*` | D4-L10-02 | P1 |
+| `D4-L10-05` | Écrans de commande présents ; procédures SQL (T-16/T-18/T-28) et parcours HTTP SQL (§8, 105/105) verts au run VM natif 17/11/2026 (f9b614f) | C | 0 | ✅* `OK*` | D4-L10-04 | P1 |
 | `D4-L10-06` | Annulation impossible après EXPEDIEE vérifiée en SQL (T-12/T-13, étape 6) au run VM natif 16/11/2026 ; recette humaine non revendiquée | C | 0 | ✅ `OK` | D4-L10-05 | P1 |
 
 #### ✅* Lot L11 — Back-office (charge WBS initiale 30 h ; estimation affectée aux tâches ouvertes 0 h)
@@ -262,11 +262,11 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
 | `D4-L11-01` | AdminController + authentification admin (rôles SUPER/GESTIONNAIRE) | A | 0 | ✅* `OK*` | D4-L8-04 | P1 |
-| `D4-L11-02` | UC-10 produits : procédures vérifiées en SQL (T-15/T-20) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§9), exécution à faire | A | 0 | ✅* `OK*` | D4-L11-01 | P1 |
-| `D4-L11-03` | UC-11/12 catégories et stock : suppression refusée si occupée (T-14) et stock (T-19) vérifiés en SQL au run VM natif 16/11/2026 ; parcours HTTP admin non revendiqué | A | 0 | ✅ `OK` | D4-L11-01 | P1 |
-| `D4-L11-04` | UC-13/14 commandes et statuts : transition interdite refusée et tracée (T-12/T-13/T-22) vérifiées en SQL au run VM natif 16/11/2026 ; parcours HTTP admin non revendiqué | A | 0 | ✅ `OK` | D4-L11-01 | P1 |
+| `D4-L11-02` | UC-10 produits : procédures (T-15/T-20) et parcours HTTP SQL admin (§9, 105/105) verts au run VM natif 17/11/2026 (f9b614f) | A | 0 | ✅* `OK*` | D4-L11-01 | P1 |
+| `D4-L11-03` | UC-11/12 catégories et stock : suppression refusée si occupée (T-14), stock (T-19) et HTTP SQL admin (§9, 105/105) verts au run VM natif 17/11/2026 (f9b614f) | A | 0 | ✅ `OK` | D4-L11-01 | P1 |
+| `D4-L11-04` | UC-13/14 commandes et statuts : transition interdite refusée et tracée (T-12/T-13/T-22) et HTTP SQL admin (§9, 105/105) verts au run VM natif 17/11/2026 (f9b614f) | A | 0 | ✅ `OK` | D4-L11-01 | P1 |
 | `D4-L11-05` | Vues back-office : listes filtrables, formulaires, alertes (v_etat_stock) | C | 0 | ✅* `OK*` | D4-L11-02..04 | P1 |
-| `D4-L11-06` | Parcours admin automatisé vert (JSON + SQL, 58 étapes) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§9), exécution à faire ; démo S9 humaine non attestée | C | 0 | ✅* `OK*` | D4-L11-05 | P2 |
+| `D4-L11-06` | Parcours admin automatisé vert (JSON + SQL + HTTP SQL 105/105, 60 étapes) au run VM natif 17/11/2026 (f9b614f) ; démo S9 humaine non attestée | C | 0 | ✅* `OK*` | D4-L11-05 | P2 |
 
 #### ✅* Lot L12 — Durcissement sécurité (charge WBS initiale 20 h ; estimation affectée aux tâches ouvertes 0 h)
 
@@ -288,17 +288,17 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | `D4-L13-04` | F-13 est décrit dans docs/02 et les moyens automatisés (wasm-e2e, responsive_navigateur) y sont listés ; critère WBS de documentation satisfait, sans revendiquer l'exécution des tests ni une recette manuelle | C | 0 | ✅ `OK` | D4-L13-03 | P3 |
 
 
-### D5 — Tests & validation (1 `OK`, 2 `OK*`, 2 `PARTIEL`, 1 `[!]` ; 11 h d'estimations WBS initiales à revalider sur 24 h de référence)
+### D5 — Tests & validation (2 `OK`, 2 `OK*`, 1 `PARTIEL`, 1 `[!]` ; 8 h d'estimations WBS initiales à revalider sur 24 h de référence)
 
-#### ⚠️ Lot L14 — Tests & validation (charge WBS initiale 24 h ; estimation affectée aux tâches ouvertes 11 h)
+#### ⚠️ Lot L14 — Tests & validation (charge WBS initiale 24 h ; estimation affectée aux tâches ouvertes 8 h)
 
 | ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
 | `D5-L14-01` | Doc de tests : dispositif, stratégie, niveaux (doc 02 §1–§2) | B | 0 | ✅* `OK*` | — | — |
 | `D5-L14-02` | 29 tests SQL rejoués sur base temporaire isolée minishop_test au run VM natif 16/11/2026 (SHA 1a79d16, PHP 8.4, MariaDB, 29/29, rapport versionné) ; distincte de toute cible manuelle | B | 0 | ✅ `OK` | D3-L6-06;D3-L6-07;D3-L7-05 | P1 |
-| `D5-L14-03` | Automatisations exécutées au run VM natif 16/11/2026 (58 étapes, SQL + E2E joués) ; les 200 entrées de recette manuelle restent NON JOUÉ | B | 0 | ✅* `OK*` | L9;L10;L11 | P1 |
-| `D5-L14-04` | Suite concurrence HTTP créée (tests/php/concurrence_http.php : 20 acteurs HTTP / 12 unités, version HTTP de reserver.sh) ; exécution sur VM à faire | B | 3 | 🟡 `PARTIEL` `ASYNC*` | D4-L10-04 | P1 |
-| `D5-L14-05` | Matrice présente ; générateur de PV créé (scripts/generer_pv.php) ; PV à générer après exécution réelle, signature humaine requise | A | 3 | 🟡 `PARTIEL` | D5-L14-02;D5-L14-03 | P1 |
+| `D5-L14-03` | Automatisations exécutées au run VM natif 17/11/2026 (60 étapes, SQL + HTTP SQL 105/105 + Concurrence + E2E joués, 0 warning) ; les 200 entrées de recette manuelle restent NON JOUÉ | B | 0 | ✅* `OK*` | L9;L10;L11 | P1 |
+| `D5-L14-04` | Concurrence HTTP 20/12 exécutée sur VM native le 17/11/2026 (f9b614f, concurrence_http.php, 8/8 : 20 acteurs / 12 unités, 12 commandes, 8 refus, stock final 0 ; docs/pv-recette.md) | B | 0 | ✅ `OK` `ASYNC*` | D4-L10-04 | P1 |
+| `D5-L14-05` | Matrice présente ; PV de recette généré sur VM réelle (docs/pv-recette.md, 60/60 étapes sur f9b614f, 17/11/2026) ; relecture, décision et signature humaines restant à compléter | A | 3 | 🟡 `PARTIEL` | D5-L14-02;D5-L14-03 | P1 |
 | `D5-L14-06` | Scripts présents ; mesures p95 HTTP/SQL sur machine et volumétrie cibles non attestées | A | 5 | [!] `à vérifier / externe` `ASYNC*` | L9;L10;L11 | P2 |
 
 

@@ -121,7 +121,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <p><strong>Révision examinée :</strong> date de coupure documentaire retenue pour l’audit historique : 23/10/2026. La branche active <code>arena/10afc76d-sae-302</code> est issue du commit <code>e0c554f</code> ; ses métadonnées Git indiquent le 13/11/2026, postérieure à la coupure. Le checkout n’est donc pas présenté comme un instantané qui aurait existé au 23/10 : cette date qualifie uniquement les constats historiques et le run restreint consigné en §2. Un addendum séparé décrit les contrôles non-SQL du 15/11/2026 sur l’état ultérieur du checkout. Aucun accès au dépôt IUT ni au clone personnel inaccessible n’a été effectué.</p>
 <blockquote>
 <p><strong>Addendum du 15/11/2026 — état postérieur à la coupure.</strong> Dans le checkout du commit <code>b8edfc9</code> (branche <code>arena/10afc76d-sae-302</code>), SQL/MySQL/PDO est le pilote par défaut et JSON reste une option explicite. <code>node scripts/run-all-tests.mjs --sans-sql</code> a terminé avec le code 0 via PHP-WASM 8.2 ; il inclut l’E2E HTTP isolé (338 vérifications) et exclut l’intégration SQL. Le test distinct <code>node tests/node/preferences_test.mjs</code> a aussi terminé avec le code 0 (48 vues FR/EN, 45 messages métier). Ces résultats ne valident ni PDO/MySQL, ni PHP CLI natif, ni un navigateur réel ; l’analyse de compilation native reste NON JOUÉE. Les détails et les autres contrôles postérieurs figurent dans la section « Addendum » ci-dessous.</p>
-<p><strong>Conclusion courte : non, la todolist n’est ni à jour ni suffisamment complète pour affirmer que toutes ses tâches sont achevées à 100 %.</strong> Dans le checkout <code>b8edfc9</code> vérifié le 15/11/2026, SQL/MySQL/PDO est le pilote par défaut, JSON une option explicite, et le scan statique repère un point d’appel repository pour chacune des 18 procédures. Ce raccordement n’a pas été rejoué sous PDO/MySQL et ne prouve pas un parcours HTTP complet. Les tests humains, mesures de cible et actions externes restent distincts ; les mentions futures ne sont pas des preuves à la coupure historique du 23/10. Les heures et statuts de la todolist demeurent une photographie de planification, pas un relevé d’exécution.</p>
+<p><strong>Addendum du 17/11/2026 — campagne complète sur VM Debian 13 (<code>f9b614f</code>).</strong> Sur la VM Debian 13 (PHP 8.4.27 cli, MariaDB 11.8.6) au commit <code>f9b614fc241fb5fbbbc94bc18eb094a95aea33d6</code> (<code>arena/b5a4074b-sae-302</code>), <code>php scripts/generer_pv.php</code> a terminé avec le code <strong>0</strong>, <strong>60/60 étapes vertes</strong> et <strong>0 warning PHP</strong> (<code>docs/pv-recette.md</code>, log <code>logs/pv-2026-11-17-114957.log</code>), incluant <code>sql_integration.php</code> (<strong>29/29</strong>), <code>http_sql_e2e.php</code> (<strong>105/105</strong>) et <code>concurrence_http.php</code> (<strong>8/8</strong>, 20 acteurs / 12 unités). <code>D4-L9-05</code> et <code>D5-L14-04</code> passent ainsi <code>OK</code> ; les 200 entrées manuelles restent <code>NON JOUÉ</code> et la signature humaine du PV reste à apposer (<code>D5-L14-05</code> reste <code>PARTIEL</code>).</p>
+<p><strong>Conclusion courte : non, la todolist n’est ni à jour ni suffisamment complète pour affirmer que toutes ses tâches sont achevées à 100 %.</strong> Dans le checkout <code>f9b614f</code> vérifié le 17/11/2026 sur VM native, SQL/MySQL/PDO, les parcours HTTP SQL (<code>105/105</code>) et la concurrence HTTP 20/12 (<code>8/8</code>) sont désormais validés automatiquement (<code>60/60</code> étapes, <code>docs/pv-recette.md</code>). Les tests humains (<code>200 NON JOUÉ</code>), la signature humaine du PV (<code>D5-L14-05</code>), la relecture croisée (<code>D2-L2-06</code>), <code>public/install.php</code> (<code>D4-L8-05</code>) et les tâches externes <code>[!]</code> restent distincts ; les mentions futures ne sont pas des preuves à la coupure historique du 23/10. Les heures et statuts de la todolist demeurent une photographie de planification, pas un relevé d’exécution.</p>
 <p>Ce rapport audite les fichiers versionnés et le working tree de ce checkout, sans consulter directement le dépôt IUT. Les éléments externes rapportés sont distingués selon leur provenance ; ils ne présument pas l’état du clone local de l’utilisateur et ne transforment pas une tâche externe ou humaine en tâche accomplie sans preuve.</p>
 </blockquote>
 <h2 id="1-perimetre-et-verdict-global">1. Périmètre et verdict global<a class="headerlink" href="#1-perimetre-et-verdict-global" title="Permanent link">#</a></h2>
@@ -137,23 +138,23 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tbody>
 <tr>
 <td><code>OK</code></td>
-<td style="text-align: right;">22</td>
-<td>Critère de fin documentaire attesté selon la définition révisée de la WBS, sans élargir la portée de la preuve. <code>D1-L1-01</code> s’appuie sur l’attestation et la capture fournies ; <code>D1-L1-02</code> sur la liste Git des chemins ; <code>D1-L1-03</code> sur le README présent et conforme au critère documentaire ; <code>D4-L13-03</code> sur les contrats automatisés labels/focus/aria-live et la check-list ENF-08 documentée ; <code>D4-L13-04</code> sur la checklist F-13 documentée ; <code>D4-L8-01</code>/<code>D4-L8-03</code>/<code>D4-L12-04</code> sur les contrôles disponibles sans réserve d’environnement ; <code>D4-L12-03</code> sur le scanner et les tests d’échappement ; <code>D4-L12-02</code> sur l’audit sécurité et la correction IDOR 404 ; <code>D4-L12-01</code> sur les contrôles CSRF (projet scolaire) ; <code>D4-L10-02</code>/<code>D4-L8-04</code> avec SQL par défaut et JSON en bonus ; <code>D4-L9-01</code>/<code>D4-L9-02</code>/<code>D4-L9-03</code>/<code>D4-L10-01</code> sur les tests SQL ajoutés ; <code>D4-L8-02</code> sur la configuration PDO centralisée ; <code>D1-L15-02</code> sur une relecture documentaire par l’assistant. Les limites sont précisées ci-dessous.</td>
+<td style="text-align: right;">29</td>
+<td>Critère de fin documentaire ou automatisé attesté selon la définition révisée de la WBS, sans élargir la portée de la preuve. <code>D1-L1-01</code> s’appuie sur l’attestation et la capture fournies ; <code>D1-L1-02</code> sur la liste Git des chemins ; <code>D1-L1-03</code> sur le README présent et conforme au critère documentaire ; <code>D4-L13-03</code> sur les contrats automatisés labels/focus/aria-live et la check-list ENF-08 documentée ; <code>D4-L13-04</code> sur la checklist F-13 documentée ; <code>D4-L8-01</code>/<code>D4-L8-03</code>/<code>D4-L12-04</code> sur les contrôles disponibles sans réserve d’environnement ; <code>D4-L12-03</code> sur le scanner et les tests d’échappement ; <code>D4-L12-02</code> sur l’audit sécurité et la correction IDOR 404 ; <code>D4-L12-01</code> sur les contrôles CSRF (projet scolaire) ; <code>D4-L10-02</code>/<code>D4-L8-04</code> avec SQL par défaut et JSON en bonus ; <code>D4-L9-01</code>/<code>D4-L9-02</code>/<code>D4-L9-03</code>/<code>D4-L10-01</code> sur les tests SQL ajoutés ; <code>D4-L8-02</code> sur la configuration PDO centralisée ; <code>D1-L15-02</code> sur une relecture documentaire par l’assistant ; <code>D4-L9-04</code>/<code>D4-L10-06</code>/<code>D4-L11-03</code>/<code>D4-L11-04</code>/<code>D5-L14-02</code> sur le run VM natif 16/11/2026 (SQL 29/29, SHA 1a79d16) ; <code>D4-L9-05</code> et <code>D5-L14-04</code> promues sur la campagne VM native complète du 17/11/2026 (<code>f9b614f</code>, <code>http_sql_e2e</code> 105/105, <code>concurrence_http</code> 8/8, <code>60/60</code>, <code>docs/pv-recette.md</code>). Les limites sont précisées ci-dessous.</td>
 </tr>
 <tr>
 <td><code>OK*</code></td>
-<td style="text-align: right;">42</td>
+<td style="text-align: right;">48</td>
 <td>Livrable documentaire ou contrôle ciblé présent ; les limites et attestations déclaratives sont précisées ci-dessous. <strong>Ce n’est pas une certification absolue ni une validation pédagogique.</strong></td>
 </tr>
 <tr>
 <td><code>PARTIEL</code></td>
-<td style="text-align: right;">16</td>
-<td>Le code ou le livrable est présent, mais l’exécution PDO/MySQL, un critère, une preuve ou une validation humaine reste à établir.</td>
+<td style="text-align: right;">3</td>
+<td>Le code ou le livrable est présent, mais un critère, une preuve ou une validation humaine reste à établir (<code>D2-L2-06</code>, <code>D4-L8-05</code>, <code>D5-L14-05</code>).</td>
 </tr>
 <tr>
 <td><code>ÉCART</code></td>
 <td style="text-align: right;">0</td>
-<td>Aucun écart statique de raccordement de procédure n’est retenu après le scan repository ; les validations d’exécution restent ouvertes.</td>
+<td>Aucun écart statique de raccordement de procédure n’est retenu après le scan repository.</td>
 </tr>
 <tr>
 <td><code>[!]</code></td>
@@ -504,18 +505,18 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 <tr>
 <td><code>D4-L9-04</code></td>
-<td><code>PARTIEL</code></td>
-<td><code>ClientRepository</code> délègue à <code>ClientAccountGateway</code> ; la stratégie SQL appelle <code>sp_create_account</code> via <code>StoredProcedureExecutor</code>. SQL est le défaut ; le test d’intégration SQL et l’appel PDO réel restent à rejouer dans cet environnement.</td>
+<td><code>OK</code></td>
+<td>Doublon e-mail refusé et hash vérifiés en SQL (T-04/T-05) et en HTTP SQL de bout en bout (<code>http_sql_e2e.php</code> §5, 105/105) sur VM native 17/11/2026 (<code>f9b614f</code>, PHP 8.4.27, MariaDB 11.8.6).</td>
 </tr>
 <tr>
 <td><code>D4-L9-05</code></td>
-<td><code>PARTIEL</code></td>
-<td>La stratégie SQL appelle <code>sp_get_credentials</code> ; <code>password_verify()</code> reste en PHP. SQL est le défaut, mais l’appel PDO réel et le parcours ne sont pas validés par exécution ici.</td>
+<td><code>OK</code></td>
+<td>UC-05 connexion : suite HTTP SQL exécutée sur VM native le 17/11/2026 (<code>f9b614f</code>, <code>http_sql_e2e.php</code> §6, 105/105 : <code>sp_get_credentials</code> via PDO + <code>password_verify</code>, régénération de session, compte bloqué, messages identiques ; <code>docs/pv-recette.md</code>).</td>
 </tr>
 <tr>
 <td><code>D4-L9-06</code></td>
-<td><code>PARTIEL</code></td>
-<td>Parcours et tests automatisés présents, mais aucune recette humaine complète n’est consignée et le parcours HTTP SQL n’a pas été rejoué. Les tests configurés en JSON restent une voie de test isolée, pas le pilote applicatif par défaut.</td>
+<td><code>OK*</code></td>
+<td>Parcours visiteur automatisé vert sur JSON (E2E 338), SQL (29/29) et HTTP SQL (<code>http_sql_e2e.php</code> §4, 105/105) au run VM natif 17/11/2026 (<code>f9b614f</code>) ; démo S7 humaine non attestée.</td>
 </tr>
 <tr>
 <td><code>D4-L10-01</code></td>
@@ -534,18 +535,18 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 <tr>
 <td><code>D4-L10-04</code></td>
-<td><code>PARTIEL</code></td>
-<td><code>CommandeRepository</code> appelle statiquement <code>sp_create_order_from_basket</code> sur le pilote SQL. L’appel n’a pas été rejoué sous PDO/MySQL et aucun parcours HTTP SQL complet n’est revendiqué.</td>
+<td><code>OK*</code></td>
+<td>Procédure <code>sp_create_order_from_basket</code>, rollback intégral (T-29) et parcours HTTP SQL (§8, 105/105) verts au run VM natif 17/11/2026 (<code>f9b614f</code>) ; recette manuelle distincte.</td>
 </tr>
 <tr>
 <td><code>D4-L10-05</code></td>
-<td><code>PARTIEL</code></td>
-<td>Écrans, tests et appels repository aux procédures de commande sont présents statiquement ; le chemin PDO/MySQL n’est pas démontré de bout en bout.</td>
+<td><code>OK*</code></td>
+<td>Écrans de commande présents ; procédures SQL (T-16/T-18/T-28) et parcours HTTP SQL (§8, 105/105) verts au run VM natif 17/11/2026 (<code>f9b614f</code>).</td>
 </tr>
 <tr>
 <td><code>D4-L10-06</code></td>
-<td><code>PARTIEL</code></td>
-<td>Historique/annulation et appels repository aux procédures client/admin sont présents ; les scénarios humains restent non joués et l’exécution PDO/MySQL n’est pas validée.</td>
+<td><code>OK</code></td>
+<td>Annulation impossible après EXPEDIEE vérifiée en SQL (T-12/T-13, étape 6) au run VM natif 16/11/2026 ; recette humaine non revendiquée.</td>
 </tr>
 <tr>
 <td><code>D4-L11-01</code></td>
@@ -554,18 +555,18 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 <tr>
 <td><code>D4-L11-02</code></td>
-<td><code>PARTIEL</code></td>
-<td><code>ProduitRepository</code> contient des appels statiques aux procédures d’enregistrement et de suppression ; leur exécution PDO/MySQL n’a pas été validée.</td>
+<td><code>OK*</code></td>
+<td>Procédures produits (T-15/T-20) et parcours HTTP SQL admin (§9, 105/105) verts au run VM natif 17/11/2026 (<code>f9b614f</code>).</td>
 </tr>
 <tr>
 <td><code>D4-L11-03</code></td>
-<td><code>PARTIEL</code></td>
-<td><code>CategorieRepository</code> et <code>ProduitRepository</code> appellent statiquement les procédures catégorie/stock ; leur exécution PDO/MySQL reste à vérifier.</td>
+<td><code>OK</code></td>
+<td>Suppression refusée si occupée (T-14) et stock (T-19) vérifiés en SQL et en HTTP SQL admin (§9, 105/105) au run VM natif 17/11/2026 (<code>f9b614f</code>).</td>
 </tr>
 <tr>
 <td><code>D4-L11-04</code></td>
-<td><code>PARTIEL</code></td>
-<td><code>CommandeRepository</code> contient l’appel statique à <code>sp_update_order_status</code> ; l’exécution SQL et le parcours HTTP restent à valider.</td>
+<td><code>OK</code></td>
+<td>Transition interdite refusée et tracée (T-12/T-13/T-22) vérifiées en SQL et en HTTP SQL admin (§9, 105/105) au run VM natif 17/11/2026 (<code>f9b614f</code>).</td>
 </tr>
 <tr>
 <td><code>D4-L11-05</code></td>
@@ -574,8 +575,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 <tr>
 <td><code>D4-L11-06</code></td>
-<td><code>PARTIEL</code></td>
-<td>Parcours admin automatisé et interfaces présents ; aucune preuve de démonstration/recette humaine complète n’est inscrite au suivi.</td>
+<td><code>OK*</code></td>
+<td>Parcours admin automatisé vert (JSON + SQL + HTTP SQL 105/105, 60 étapes) au run VM natif 17/11/2026 (<code>f9b614f</code>) ; démo S9 humaine non attestée.</td>
 </tr>
 <tr>
 <td><code>D4-L12-01</code></td>
@@ -641,23 +642,23 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 <tr>
 <td><code>D5-L14-02</code></td>
-<td><code>PARTIEL</code></td>
-<td>Les 29 scénarios et leur harnais sont présents, mais aucun rejeu SQL/PDO du checkout vérifié le 15/11 n’a eu lieu : le run local utilisait <code>--sans-sql</code>. Dans <code>docs/06-todolist.md</code>, la tâche reste <code>⬜</code> avec 4 h estimées à faire. Le rapport du 27/10 est une affirmation d’archive non rattachée à ce checkout et ne remplace pas le rejeu requis.</td>
+<td><code>OK</code></td>
+<td>29 tests SQL rejoués sur base temporaire isolée <code>minishop_test</code> au run VM natif 16/11/2026 (SHA 1a79d16, PHP 8.4, MariaDB, 29/29, rapport versionné) ; distincte de toute cible manuelle.</td>
 </tr>
 <tr>
 <td><code>D5-L14-03</code></td>
-<td><code>PARTIEL</code></td>
-<td>Couverture automatisée élargie au-delà de F-01…F-31 ; cependant les 200 scénarios manuels restent <code>NON JOUÉ</code>, donc « exécution + preuves » n’est pas intégralement achevé.</td>
+<td><code>OK*</code></td>
+<td>Automatisations exécutées au run VM natif 17/11/2026 (60 étapes, SQL + HTTP SQL 105/105 + Concurrence + E2E joués, 0 warning) ; les 200 entrées de recette manuelle restent <code>NON JOUÉ</code>.</td>
 </tr>
 <tr>
 <td><code>D5-L14-04</code></td>
-<td><code>PARTIEL</code></td>
-<td><code>tests/charge/reserver.sh</code> existe et le stress JSON est couvert ; l’essai HTTP/SQL 20 demandes sur 12 unités reste à exécuter sur une base isolée/cible.</td>
+<td><code>OK</code></td>
+<td>Concurrence HTTP 20/12 exécutée sur VM native le 17/11/2026 (<code>f9b614f</code>, <code>tests/php/concurrence_http.php</code>, 8/8 : 20 acteurs pour 12 unités, 12 commandes créées, 8 refus, stock final 0, 0 erreur ; <code>docs/pv-recette.md</code>).</td>
 </tr>
 <tr>
 <td><code>D5-L14-05</code></td>
 <td><code>PARTIEL</code></td>
-<td>Matrice de traçabilité présente ; PV non signé et campagne manuelle non renseignée.</td>
+<td>Matrice de traçabilité présente ; PV de recette généré sur campagne réelle (<code>docs/pv-recette.md</code>, 60/60 étapes sur <code>f9b614f</code>, 17/11/2026) ; relecture, décision et signature humaines restant à compléter.</td>
 </tr>
 <tr>
 <td><code>D5-L14-06</code></td>
@@ -695,8 +696,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </table>
 <h2 id="4-integration-sql-et-limites-de-validation">4. Intégration SQL et limites de validation<a class="headerlink" href="#4-integration-sql-et-limites-de-validation" title="Permanent link">#</a></h2>
 <p>L’état actuel n’est plus celui de l’audit initial : SQL/MySQL/PDO est le pilote par défaut et JSON reste une option explicite (<code>STORAGE_DRIVER=json</code>). Les sources SQL définissent 18 procédures ; le scan statique des repositories repère un point d’appel pour chacune, dont <code>sp_cancel_order_admin</code>. Les capacités SQL spécialisées restent séparées par interfaces, notamment pour l’exécution de procédures et les résultats multiples.</p>
-<p>Ce constat est <strong>statique</strong>. Aucun rejeu PDO/MySQL de cette révision ni parcours HTTP complet sur SQL n’est revendiqué. Les tests SQL sont configurés sur des bases temporaires, distinctes d’une cible manuelle ; l’absence de client MySQL/MariaDB dans cette sandbox empêche le rejeu local. Les tests JSON restent explicitement isolés et ne démontrent pas l’exécution SQL.</p>
-<p>En conséquence, D4-L9-04/05, D4-L10-04/05/06 et D4-L11-02/03/04 sont classées <code>PARTIEL</code> : les appels repository sont repérés, mais leur exécution réelle et la validation de bout en bout restent à établir. Aucun écart statique de raccordement n’est retenu à ce scan ; les tests SQL directs seuls ne suffisent pas à prouver le parcours HTTP.</p>
+<p>Lors de la campagne sur VM Debian 13 native du 17/11/2026 (<code>f9b614f</code>, PHP 8.4.27, MariaDB 11.8.6), l’intégration SQL (<code>29/29</code>), les parcours HTTP SQL de bout en bout (<code>http_sql_e2e.php</code>, <code>105/105</code>) et la concurrence HTTP 20/12 (<code>concurrence_http.php</code>, <code>8/8</code>) ont tous été exécutés avec succès (<code>60/60</code> étapes, 0 warning PHP, <code>docs/pv-recette.md</code>). Les bases dédiées de test restent distinctes d’une recette humaine sur LineServ (<code>200 NON JOUÉ</code>).</p>
+<p>En conséquence, <code>D4-L9-05</code> et <code>D5-L14-04</code> sont promues <code>OK</code> ; <code>D4-L9-04/06</code>, <code>D4-L10-04/05/06</code> et <code>D4-L11-02/03/04/06</code> reflètent la validation complète sur VM native, tandis que <code>D5-L14-05</code> reste <code>PARTIEL</code> jusqu’à la décision et signature humaines du PV.</p>
 <h2 id="5-constats-reconcilies-au-23102026">5. Constats réconciliés au 23/10/2026<a class="headerlink" href="#5-constats-reconcilies-au-23102026" title="Permanent link">#</a></h2>
 <ol>
 <li><strong>Tâches et périmètre :</strong> 84 tâches de niveau 4 ; le déploiement/staging est retiré sans remplacement. Après clôture de D1-L1-07 comme synthèse asynchrone sur attestation utilisateur, le suivi généré compte 37 terminées, 8 partielles et 39 à faire.</li>

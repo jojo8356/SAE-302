@@ -256,6 +256,18 @@ Cet addendum ne modifie pas les constats historiques du 23/10 ci-dessus. Dans le
 
 Le procès-verbal de recette reste une **trame à compléter** après exécution réelle : date, commit/SHA, environnement isolé, commandes, résultats, anomalies et auteur. La présence de la matrice ci-dessous n’est pas une signature ni une approbation. `scripts/generer_pv.php` génère l’instance datée (`docs/pv-recette.md` + log `logs/pv-*.log`) à partir d’une campagne réelle ; les champs auteur et signature restent à compléter par un humain après relecture.
 
+### Addendum — campagne complète sur VM Debian 13 native, 17/11/2026 (`f9b614f`)
+
+Cet addendum complète l’addendum du 15/11 sans modifier le constat historique à la coupure du 23/10. Exécutée sur la VM Debian 13 (`Linux 6.12.117+deb13-amd64`, **PHP 8.4.27 cli**, **MariaDB 11.8.6**) au commit **`f9b614fc241fb5fbbbc94bc18eb094a95aea33d6`** de la branche `arena/b5a4074b-sae-302`, la campagne complète `php scripts/generer_pv.php` a terminé avec le code de sortie **0**, **0 anomalie** et **0 warning PHP** (`logs/pv-2026-11-17-114957.log`, procès-verbal consigné dans `docs/pv-recette.md`) :
+
+- **Campagne globale (`run-all-tests.php`) :** **60 / 60 étapes vertes** (`SQL : joué ✅ — HTTP SQL : joué ✅ — Concurrence : joué ✅ — E2E : joué ✅`).
+- **Intégration SQL (`tests/php/sql_integration.php` / `tests/sql/run_tests.sh`) :** **29 / 29 scénarios SQL** (`T-01`…`T-29`), **17 vérifications dépôt SQL**, **2 550 scénarios** catalogue SQL et contrôles UTC/rétention sur base isolée `minishop_test`.
+- **Parcours HTTP SQL de bout en bout (`tests/php/http_sql_e2e.php`) :** **105 / 105 vérifications vertes** sur serveur `php -S` réel et base dédiée `minishop_test_http` (visiteur, inscription, connexion `sp_get_credentials` + régénération de session, panier plafonné au stock, commande `CMD`, annulation, IDOR 404 et back-office).
+- **Concurrence HTTP 20/12 (`tests/php/concurrence_http.php`) :** **8 / 8 vérifications vertes** sur `minishop_test_concurrence` (20 acteurs parallèles pour 12 unités : 12 commandes créées, 8 refus pour stock insuffisant, stock final 0, 12 numéros distincts, 0 erreur technique).
+- **Suites complémentaires rejouées :** `e2e_isolation.mjs` (**338 / 338**), `preferences_test.mjs` (**48 vues FR↔EN**, **45 erreurs métier**), `unit_tests.php` (**299 / 299**), `features_test.php` (**135 / 135**), `catalogue_stock_test.php` (**7 656 scénarios**), `nouveautes_test.php` (**18 vérifications**), PHPUnit local (**57 / 57**), linter strict (**171 fichiers, 0 violation**), sécurité statique (`tests/security/controles.sh`, **11 / 11**) et autotests Python natifs.
+
+**Limites maintenues :** les **200 entrées** de recette manuelle (`docs/13-suivi-recette-uc.csv`) restent `NON JOUÉ` ; les champs **décision, auteur et signature** de `docs/pv-recette.md` restent à compléter par un humain après relecture ; aucun déploiement LineServ, restauration de base, mesure de latence p95 sur volumétrie cible ni validation pédagogique n’est revendiqué.
+
 ---
 
 ## 9. Matrice de traçabilité fonctionnalités, scénarios et annexes
@@ -273,12 +285,12 @@ Les références `F-*`, `T-*` et `S-*` sont des identifiants de scénarios. Les 
 | Évolutions `EV-01…05` | Informations légales, préférences, UTC, conservation et minimisation | `F-49…F-56` et références complémentaires listées au §3 | `docs/01` §4.1 ; `docs/02` §3 ; fiches de recette dans `docs/13-*` |
 | Exigences non fonctionnelles `ENF-01…22` | Performance, sécurité, accessibilité, exploitation et conservation | `P-*`, `C-*`, `B-*`, `F-*` selon le besoin | `docs/annexes/annexe-enf.md` (annexe 17.3), `docs/02` §5–§8 |
 
-**Limite d’intégration :** SQL est le pilote applicatif par défaut et les repositories contiennent des appels aux procédures stockées des parcours principaux ; les triggers s’appliquent lors des écritures SQL correspondantes. Ce constat statique ne certifie pas le comportement à l’exécution : aucun rejeu PDO/MySQL de cette révision ni parcours HTTP SQL complet n’est revendiqué. Les tests SQL sur base temporaire ne remplacent pas une preuve de bout en bout.
+**Limite d’intégration :** les parcours principaux et la concurrence HTTP sous SQL/MySQL/PDO ont désormais été exécutés de bout en bout sur la VM Debian 13 (addendum du 17/11/2026, `f9b614f`, `http_sql_e2e.php` 105/105 et `concurrence_http.php` 8/8 sur bases temporaires dédiées). Les tests sur bases isolées restent toutefois distincts d’une recette humaine sur la cible LineServ (les 200 entrées de `docs/13-suivi-recette-uc.csv` demeurent `NON JOUÉ`).
 
 ## 10. Conclusion
 
 - Le dépôt contient des spécifications, scénarios et scripts de test avec des références croisées vers les UC et les annexes ; un identifiant ou une matrice ne vaut pas preuve d’exécution.
 - Le document de conception relate une validation SQL historique du 23/09/2026 ; le rapport versionné porte une date du 27/10/2026, future à la coupure du 23/10, et n’est pas repris comme résultat acquis à cette coupure.
-- Les 11 contrôles statiques de sécurité ont été rejoués localement le 23/10/2026 ; `S-11` est un contrôle statique ciblé relié à `SEC-14`, distinct des dix scénarios offensifs.
+- Les 11 contrôles statiques de sécurité ont été rejoués localement le 23/10/2026 (puis dans la campagne VM du 17/11/2026) ; `S-11` est un contrôle statique ciblé relié à `SEC-14`, distinct des dix scénarios offensifs.
 - Les 200 entrées du registre manuel sont `NON JOUÉ`. Aucun test LineServ, déploiement, restauration de base, relecture croisée étudiante ou validation pédagogique n’est revendiqué.
-- Dans le checkout `b8edfc9` vérifié le 15/11/2026, SQL/MySQL/PDO est le pilote applicatif par défaut et JSON reste une option explicite. Le scan statique trouve un point d’appel repository pour les 18 procédures, sans prouver leur exécution. Le run du 15/11 utilisait `--sans-sql` : aucun rejeu PDO/MySQL ni parcours HTTP complet sous SQL n’est revendiqué.
+- La campagne complète sur VM Debian 13 native du 17/11/2026 (`f9b614f`, PHP 8.4.27, MariaDB 11.8.6) valide désormais les 60 étapes automatisées (`docs/pv-recette.md`), y compris l’intégration SQL (`29/29`), le parcours HTTP SQL de bout en bout (`105/105`) et la concurrence HTTP 20/12 (`8/8`) ; la signature humaine du PV reste à apposer.

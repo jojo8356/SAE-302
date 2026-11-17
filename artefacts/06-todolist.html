@@ -45,11 +45,11 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 <tbody>
 <tr>
 <td><strong>Répartition des statuts d'audit</strong></td>
-<td><strong>27 <code>OK</code> + 48 <code>OK*</code></strong>, 5 <code>PARTIEL</code>, 4 <code>[!]</code> non vérifiables (84 tâches) ; <strong>9 tâches ouvertes ou à confirmer</strong></td>
+<td><strong>29 <code>OK</code> + 48 <code>OK*</code></strong>, 3 <code>PARTIEL</code>, 4 <code>[!]</code> non vérifiables (84 tâches) ; <strong>7 tâches ouvertes ou à confirmer</strong></td>
 </tr>
 <tr>
 <td><strong>Estimation WBS historique affectée aux tâches ouvertes</strong></td>
-<td><strong>35 h</strong> (dont 10 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée</td>
+<td><strong>26 h</strong> (dont 4 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée</td>
 </tr>
 <tr>
 <td><strong>Temps réellement passé</strong></td>
@@ -57,7 +57,7 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 </tr>
 <tr>
 <td><strong>Backlog asynchrone de la photographie</strong></td>
-<td><strong>8 h estimées</strong> dans le graphe du 23/09 ; ni une disponibilité actuelle ni une mesure d'effort</td>
+<td><strong>5 h estimées</strong> dans le graphe du 23/09 ; ni une disponibilité actuelle ni une mesure d'effort</td>
 </tr>
 <tr>
 <td><strong>Dernier contrôle non-SQL</strong></td>
@@ -119,20 +119,20 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 <tr>
 <td><strong>D4 — Application Web PHP / MySQL / PDO</strong></td>
 <td style="text-align: right;">146 h</td>
-<td style="text-align: right;">19</td>
+<td style="text-align: right;">20</td>
 <td style="text-align: right;">11</td>
-<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">10 h</td>
+<td style="text-align: right;">4 h</td>
 </tr>
 <tr>
 <td><strong>D5 — Tests &amp; validation</strong></td>
 <td style="text-align: right;">24 h</td>
-<td style="text-align: right;">1</td>
 <td style="text-align: right;">2</td>
 <td style="text-align: right;">2</td>
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">11 h</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">8 h</td>
 </tr>
 <tr>
 <td><strong>D6 — Soutenance</strong></td>
@@ -146,11 +146,11 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 <tr>
 <td><strong>Total</strong></td>
 <td style="text-align: right;"><strong>355 h</strong></td>
-<td style="text-align: right;"><strong>27</strong></td>
+<td style="text-align: right;"><strong>29</strong></td>
 <td style="text-align: right;"><strong>48</strong></td>
-<td style="text-align: right;"><strong>5</strong></td>
+<td style="text-align: right;"><strong>3</strong></td>
 <td style="text-align: right;"><strong>4</strong></td>
-<td style="text-align: right;"><strong>35 h</strong></td>
+<td style="text-align: right;"><strong>26 h</strong></td>
 </tr>
 </tbody>
 </table>
@@ -174,19 +174,19 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 <tr>
 <td><strong>B</strong></td>
 <td style="text-align: right;">117 h</td>
-<td style="text-align: right;">3 h</td>
+<td style="text-align: right;">0 h</td>
 <td>rôle de planification base de données/tests ; disponibilité actuelle non vérifiée</td>
 </tr>
 <tr>
 <td><strong>C</strong></td>
 <td style="text-align: right;">121 h</td>
-<td style="text-align: right;">11 h</td>
+<td style="text-align: right;">5 h</td>
 <td>rôle de planification front-office/sécurité/JS ; disponibilité et attribution nominative non établies</td>
 </tr>
 </tbody>
 </table>
 <blockquote>
-<p>Les <strong>35 h</strong> sont la somme des estimations WBS initiales des 5 tâches <code>PARTIEL</code> et 4 tâches <code>[!]</code>. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
+<p>Les <strong>26 h</strong> sont la somme des estimations WBS initiales des 3 tâches <code>PARTIEL</code> et 4 tâches <code>[!]</code>. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
 Les nombres de statut ne décrivent que les critères précis de la revue. Un <code>OK*</code> ne signifie ni que tout le produit est validé, ni que les tests associés ont été exécutés. Le registre manuel de recette reste <code>NON JOUÉ</code> pour ses 200 entrées.
 Le dernier run non-SQL est vert, mais reste une validation de code/tests sur le chemin JSON isolé : il ne prouve ni l'exécution PDO/MySQL, ni les 200 cas manuels, ni une recette humaine ou des mesures sur cible.</p>
 </blockquote>
@@ -286,15 +286,6 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td>9</td>
-<td><code>D5-L14-04</code></td>
-<td>Suite concurrence HTTP créée (tests/php/concurrence_http.php : 20 acteurs HTTP / 12 unités, version HTTP de reserver.sh) ; exécution sur VM à faire</td>
-<td>B</td>
-<td style="text-align: right;">3</td>
-<td>P1</td>
-<td>le scénario de charge était défini dans la planification ; vérifier l'état actuel du harnais</td>
-</tr>
-<tr>
-<td>10</td>
 <td><code>D2-L3-06</code></td>
 <td>Sources .puml, docs/diagrams/render.sh et job PlantUML présents</td>
 <td>B</td>
@@ -303,13 +294,22 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 <td>constat du 23/09 : les PNG existaient ; les sources et le script de rendu étaient alors signalés manquants (voir les corrections ultérieures de l'audit)</td>
 </tr>
 <tr>
-<td>11</td>
+<td>10</td>
 <td><code>D3-L5-05</code></td>
 <td>scripts/load_db.sh présent et appelé par le workflow SQL ; le run SQL reste à effectuer séparément</td>
 <td>B</td>
 <td style="text-align: right;">0</td>
 <td>P1</td>
 <td>le rapport de la campagne du 23/09 indiquait les quatre fichiers SQL corrigés ; cela ne remplace pas un contrôle actuel</td>
+</tr>
+<tr>
+<td>11</td>
+<td><code>D5-L14-04</code></td>
+<td>Concurrence HTTP 20/12 exécutée sur VM native le 17/11/2026 (f9b614f, concurrence_http.php, 8/8 : 20 acteurs / 12 unités, 12 commandes, 8 refus, stock final 0 ; docs/pv-recette.md)</td>
+<td>B</td>
+<td style="text-align: right;">0</td>
+<td>P1</td>
+<td>le scénario de charge était défini dans la planification ; vérifier l'état actuel du harnais</td>
 </tr>
 <tr>
 <td>12</td>
@@ -322,7 +322,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<p><strong>Estimation WBS initiale associée aux tâches classées <code>ASYNC</code>/<code>ASYNC*</code> : 8 h</strong> (rôles de planification A 5 h, B 3 h, C 0 h). Ce total n'est ni une mesure du travail à venir ni une disponibilité actuelle.</p>
+<p><strong>Estimation WBS initiale associée aux tâches classées <code>ASYNC</code>/<code>ASYNC*</code> : 5 h</strong> (rôles de planification A 5 h, B 0 h, C 0 h). Ce total n'est ni une mesure du travail à venir ni une disponibilité actuelle.</p>
 <p><strong>Pistes de parallélisation du plan de référence</strong> (aucune disponibilité actuelle ni contribution effective n'est affirmée) :</p>
 <ol>
 <li><strong>B peut contribuer au socle L8</strong> selon les rôles de planification ; les lettres ne sont pas rattachées à des personnes nommées ici.</li>
@@ -957,7 +957,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h3>D4 — Application Web PHP / MySQL / PDO (19 <code>OK</code>, 11 <code>OK*</code>, 2 <code>PARTIEL</code>, 0 <code>[!]</code> ; 10 h d'estimations WBS initiales à revalider sur 146 h de référence)</h3>
+<h3>D4 — Application Web PHP / MySQL / PDO (20 <code>OK</code>, 11 <code>OK*</code>, 1 <code>PARTIEL</code>, 0 <code>[!]</code> ; 4 h d'estimations WBS initiales à revalider sur 146 h de référence)</h3>
 <h4>🟡 Lot L8 — Socle applicatif MVC (charge WBS initiale 22 h ; estimation affectée aux tâches ouvertes 4 h)</h4>
 <table>
 <thead>
@@ -1019,7 +1019,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h4>🟡 Lot L9 — Front-office (charge WBS initiale 32 h ; estimation affectée aux tâches ouvertes 6 h)</h4>
+<h4>✅* Lot L9 — Front-office (charge WBS initiale 32 h ; estimation affectée aux tâches ouvertes 0 h)</h4>
 <table>
 <thead>
 <tr>
@@ -1062,7 +1062,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D4-L9-04</code></td>
-<td>UC-04 création de compte : doublon e-mail refusé et hash vérifiés en SQL (T-04/T-05) sur run VM natif 16/11/2026 (SHA 1a79d16, PHP 8.4, MariaDB, 29/29) ; parcours HTTP SQL de bout en bout non revendiqué</td>
+<td>UC-04 création de compte : doublon e-mail refusé et hash vérifiés en SQL (T-04/T-05) et en HTTP SQL (105/105) sur VM native 17/11/2026 (f9b614f, PHP 8.4, MariaDB)</td>
 <td>C</td>
 <td style="text-align: right;">0</td>
 <td>✅ <code>OK</code></td>
@@ -1071,16 +1071,16 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D4-L9-05</code></td>
-<td>UC-05 connexion : suite HTTP SQL créée (tests/php/http_sql_e2e.php §6 : sp_get_credentials via PDO + password_verify, régénération de session, compte bloqué, messages identiques) ; exécution sur VM à faire</td>
+<td>UC-05 connexion : suite HTTP SQL exécutée sur VM native le 17/11/2026 (f9b614f, http_sql_e2e.php §6, 105/105 : sp_get_credentials via PDO + password_verify, régénération de session, compte bloqué, messages identiques ; docs/pv-recette.md)</td>
 <td>C</td>
-<td style="text-align: right;">6</td>
-<td>🟡 <code>PARTIEL</code></td>
+<td style="text-align: right;">0</td>
+<td>✅ <code>OK</code></td>
 <td>D4-L8-04</td>
 <td>P1</td>
 </tr>
 <tr>
 <td><code>D4-L9-06</code></td>
-<td>Parcours visiteur automatisé vert sur JSON (E2E 338) et SQL (29/29, étapes 1-7) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§4), exécution à faire ; démo S7 humaine non attestée</td>
+<td>Parcours visiteur automatisé vert sur JSON (E2E 338), SQL (29/29) et HTTP SQL (http_sql_e2e.php §4, 105/105) au run VM natif 17/11/2026 (f9b614f) ; démo S7 humaine non attestée</td>
 <td>C</td>
 <td style="text-align: right;">0</td>
 <td>✅* <code>OK*</code></td>
@@ -1132,7 +1132,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D4-L10-04</code></td>
-<td>UC-07 commande : procédure et rollback intégral vérifiés en SQL (T-29, étape 6) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§8), exécution à faire</td>
+<td>UC-07 commande : procédure, rollback intégral (T-29) et parcours HTTP SQL (§8, 105/105) verts au run VM natif 17/11/2026 (f9b614f)</td>
 <td>A</td>
 <td style="text-align: right;">0</td>
 <td>✅* <code>OK*</code></td>
@@ -1141,7 +1141,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D4-L10-05</code></td>
-<td>Écrans de commande présents ; procédures SQL vérifiées (T-16/T-18/T-28) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§8), exécution à faire</td>
+<td>Écrans de commande présents ; procédures SQL (T-16/T-18/T-28) et parcours HTTP SQL (§8, 105/105) verts au run VM natif 17/11/2026 (f9b614f)</td>
 <td>C</td>
 <td style="text-align: right;">0</td>
 <td>✅* <code>OK*</code></td>
@@ -1184,7 +1184,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D4-L11-02</code></td>
-<td>UC-10 produits : procédures vérifiées en SQL (T-15/T-20) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§9), exécution à faire</td>
+<td>UC-10 produits : procédures (T-15/T-20) et parcours HTTP SQL admin (§9, 105/105) verts au run VM natif 17/11/2026 (f9b614f)</td>
 <td>A</td>
 <td style="text-align: right;">0</td>
 <td>✅* <code>OK*</code></td>
@@ -1193,7 +1193,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D4-L11-03</code></td>
-<td>UC-11/12 catégories et stock : suppression refusée si occupée (T-14) et stock (T-19) vérifiés en SQL au run VM natif 16/11/2026 ; parcours HTTP admin non revendiqué</td>
+<td>UC-11/12 catégories et stock : suppression refusée si occupée (T-14), stock (T-19) et HTTP SQL admin (§9, 105/105) verts au run VM natif 17/11/2026 (f9b614f)</td>
 <td>A</td>
 <td style="text-align: right;">0</td>
 <td>✅ <code>OK</code></td>
@@ -1202,7 +1202,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D4-L11-04</code></td>
-<td>UC-13/14 commandes et statuts : transition interdite refusée et tracée (T-12/T-13/T-22) vérifiées en SQL au run VM natif 16/11/2026 ; parcours HTTP admin non revendiqué</td>
+<td>UC-13/14 commandes et statuts : transition interdite refusée et tracée (T-12/T-13/T-22) et HTTP SQL admin (§9, 105/105) verts au run VM natif 17/11/2026 (f9b614f)</td>
 <td>A</td>
 <td style="text-align: right;">0</td>
 <td>✅ <code>OK</code></td>
@@ -1220,7 +1220,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D4-L11-06</code></td>
-<td>Parcours admin automatisé vert (JSON + SQL, 58 étapes) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§9), exécution à faire ; démo S9 humaine non attestée</td>
+<td>Parcours admin automatisé vert (JSON + SQL + HTTP SQL 105/105, 60 étapes) au run VM natif 17/11/2026 (f9b614f) ; démo S9 humaine non attestée</td>
 <td>C</td>
 <td style="text-align: right;">0</td>
 <td>✅* <code>OK*</code></td>
@@ -1342,8 +1342,8 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h3>D5 — Tests &amp; validation (1 <code>OK</code>, 2 <code>OK*</code>, 2 <code>PARTIEL</code>, 1 <code>[!]</code> ; 11 h d'estimations WBS initiales à revalider sur 24 h de référence)</h3>
-<h4>⚠️ Lot L14 — Tests &amp; validation (charge WBS initiale 24 h ; estimation affectée aux tâches ouvertes 11 h)</h4>
+<h3>D5 — Tests &amp; validation (2 <code>OK</code>, 2 <code>OK*</code>, 1 <code>PARTIEL</code>, 1 <code>[!]</code> ; 8 h d'estimations WBS initiales à revalider sur 24 h de référence)</h3>
+<h4>⚠️ Lot L14 — Tests &amp; validation (charge WBS initiale 24 h ; estimation affectée aux tâches ouvertes 8 h)</h4>
 <table>
 <thead>
 <tr>
@@ -1377,7 +1377,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D5-L14-03</code></td>
-<td>Automatisations exécutées au run VM natif 16/11/2026 (58 étapes, SQL + E2E joués) ; les 200 entrées de recette manuelle restent NON JOUÉ</td>
+<td>Automatisations exécutées au run VM natif 17/11/2026 (60 étapes, SQL + HTTP SQL 105/105 + Concurrence + E2E joués, 0 warning) ; les 200 entrées de recette manuelle restent NON JOUÉ</td>
 <td>B</td>
 <td style="text-align: right;">0</td>
 <td>✅* <code>OK*</code></td>
@@ -1386,16 +1386,16 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D5-L14-04</code></td>
-<td>Suite concurrence HTTP créée (tests/php/concurrence_http.php : 20 acteurs HTTP / 12 unités, version HTTP de reserver.sh) ; exécution sur VM à faire</td>
+<td>Concurrence HTTP 20/12 exécutée sur VM native le 17/11/2026 (f9b614f, concurrence_http.php, 8/8 : 20 acteurs / 12 unités, 12 commandes, 8 refus, stock final 0 ; docs/pv-recette.md)</td>
 <td>B</td>
-<td style="text-align: right;">3</td>
-<td>🟡 <code>PARTIEL</code> <code>ASYNC*</code></td>
+<td style="text-align: right;">0</td>
+<td>✅ <code>OK</code> <code>ASYNC*</code></td>
 <td>D4-L10-04</td>
 <td>P1</td>
 </tr>
 <tr>
 <td><code>D5-L14-05</code></td>
-<td>Matrice présente ; générateur de PV créé (scripts/generer_pv.php) ; PV à générer après exécution réelle, signature humaine requise</td>
+<td>Matrice présente ; PV de recette généré sur VM réelle (docs/pv-recette.md, 60/60 étapes sur f9b614f, 17/11/2026) ; relecture, décision et signature humaines restant à compléter</td>
 <td>A</td>
 <td style="text-align: right;">3</td>
 <td>🟡 <code>PARTIEL</code></td>
