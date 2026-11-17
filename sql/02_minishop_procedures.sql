@@ -33,16 +33,20 @@
 -- la version du serveur) provoque ensuite l'erreur 1267 « Illegal mix of
 -- collations » quand l'application appelle sp_search_products.
 SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
+SET collation_connection = 'utf8mb4_unicode_ci';
 
 DELIMITER $$
 
 DROP FUNCTION IF EXISTS fn_param $$
-CREATE FUNCTION fn_param (p_cle VARCHAR(50), p_defaut VARCHAR(100))
-RETURNS VARCHAR(100)
+CREATE FUNCTION fn_param (
+  p_cle    VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  p_defaut VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+)
+RETURNS VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 DETERMINISTIC
 READS SQL DATA
 BEGIN
-  DECLARE v VARCHAR(100);
+  DECLARE v VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
   SELECT valeur INTO v FROM parametre WHERE cle = p_cle LIMIT 1;
   RETURN IFNULL(v, p_defaut);
 END $$
@@ -57,7 +61,7 @@ DROP PROCEDURE IF EXISTS sp_compute_shipping $$
 CREATE PROCEDURE sp_compute_shipping (
   IN  p_marchandises DECIMAL(10,2),
   OUT p_frais_port   DECIMAL(10,2),
-  OUT p_motif        VARCHAR(60)
+  OUT p_motif        VARCHAR(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 )
 BEGIN
   DECLARE v_port    DECIMAL(10,2);
@@ -75,12 +79,12 @@ END $$
 
 DROP PROCEDURE IF EXISTS sp_create_account $$
 CREATE PROCEDURE sp_create_account (
-  IN  p_nom         VARCHAR(100),
-  IN  p_prenom      VARCHAR(100),
-  IN  p_email       VARCHAR(190),
-  IN  p_hash        CHAR(60),
+  IN  p_nom         VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  IN  p_prenom      VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  IN  p_email       VARCHAR(190) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  IN  p_hash        CHAR(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   OUT p_id_client   INT UNSIGNED,
-  OUT p_code_retour VARCHAR(40)
+  OUT p_code_retour VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 )
 BEGIN
   IF p_nom IS NULL OR p_prenom IS NULL OR TRIM(p_nom) = '' OR TRIM(p_prenom) = '' THEN
@@ -110,10 +114,10 @@ END $$
 -- ---------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS sp_get_credentials $$
 CREATE PROCEDURE sp_get_credentials (
-  IN  p_email     VARCHAR(190),
+  IN  p_email     VARCHAR(190) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   OUT p_id_client INT UNSIGNED,
-  OUT p_hash      CHAR(60),
-  OUT p_statut    VARCHAR(20)
+  OUT p_hash      CHAR(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  OUT p_statut    VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 )
 BEGIN
   SELECT id_client, mot_de_passe_hash, IF(actif = 1, 'OK', 'COMPTE_BLOQUE')
@@ -135,14 +139,14 @@ END $$
 DROP PROCEDURE IF EXISTS sp_update_client $$
 CREATE PROCEDURE sp_update_client (
   IN  p_id_client   INT UNSIGNED,
-  IN  p_nom         VARCHAR(100),
-  IN  p_prenom      VARCHAR(100),
-  IN  p_email       VARCHAR(190),
-  IN  p_telephone   VARCHAR(20),
-  IN  p_adresse     VARCHAR(255),
-  IN  p_code_postal VARCHAR(10),
-  IN  p_ville       VARCHAR(100),
-  OUT p_code_retour VARCHAR(40)
+  IN  p_nom         VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  IN  p_prenom      VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  IN  p_email       VARCHAR(190) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  IN  p_telephone   VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  IN  p_adresse     VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  IN  p_code_postal VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  IN  p_ville       VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  OUT p_code_retour VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 )
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM client WHERE id_client = p_id_client) THEN
@@ -169,12 +173,12 @@ END $$
 -- ---------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS sp_search_products $$
 CREATE PROCEDURE sp_search_products (
-  IN p_mot_cle      VARCHAR(255),
+  IN p_mot_cle      VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   IN p_id_categorie INT UNSIGNED,
   IN p_prix_min     DECIMAL(10,2),
   IN p_prix_max     DECIMAL(10,2),
   IN p_en_stock     TINYINT,
-  IN p_trie_par     VARCHAR(20),
+  IN p_trie_par     VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   IN p_page         INT,
   IN p_par_page     INT,
   IN p_admin        TINYINT
@@ -186,7 +190,7 @@ BEGIN
   -- portable (MySQL comme MariaDB n'acceptent que des ? en requete preparee).
   -- Les valeurs n'entrent JAMAIS dans le texte de la requete : elles passent
   -- par des marqueurs positionnels (?) prepares (SEC-01).
-  DECLARE v_kw   VARCHAR(255);
+  DECLARE v_kw   VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
   DECLARE v_cat  INT UNSIGNED;
   DECLARE v_min  DECIMAL(10,2);
   DECLARE v_max  DECIMAL(12,2);
@@ -263,19 +267,19 @@ END $$
 DROP PROCEDURE IF EXISTS sp_save_product $$
 CREATE PROCEDURE sp_save_product (
   IN  p_id_produit   INT UNSIGNED,
-  IN  p_reference    VARCHAR(30),
-  IN  p_nom          VARCHAR(150),
-  IN  p_slug         VARCHAR(180),
-  IN  p_description  TEXT,
+  IN  p_reference    VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  IN  p_nom          VARCHAR(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  IN  p_slug         VARCHAR(180) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  IN  p_description  TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   IN  p_prix_ht      DECIMAL(10,2),
   IN  p_tva          DECIMAL(5,2),
   IN  p_stock        INT,
   IN  p_seuil_alerte INT,
   IN  p_id_categorie INT UNSIGNED,
   IN  p_visible      TINYINT,
-  IN  p_image_url    VARCHAR(255),
+  IN  p_image_url    VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   OUT p_id_resultat  INT UNSIGNED,
-  OUT p_code_retour  VARCHAR(40)
+  OUT p_code_retour  VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 )
 BEGIN
   DECLARE v_dup INT DEFAULT 0;
@@ -361,21 +365,21 @@ END $$
 DROP PROCEDURE IF EXISTS sp_adjust_stock $$
 CREATE PROCEDURE sp_adjust_stock (
   IN  p_id_produit  INT UNSIGNED,
-  IN  p_mode        VARCHAR(5),
+  IN  p_mode        VARCHAR(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   IN  p_quantite    INT,
-  IN  p_motif       VARCHAR(200),
+  IN  p_motif       VARCHAR(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   OUT p_stock       INT,
-  OUT p_code_retour VARCHAR(40)
+  OUT p_code_retour VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 )
 BEGIN
   DECLARE v_stock_avant INT DEFAULT 0;
   DECLARE v_stock_apres INT DEFAULT 0;
-  DECLARE v_reference VARCHAR(30) DEFAULT NULL;
-  DECLARE v_nom VARCHAR(150) DEFAULT NULL;
-  DECLARE v_mode VARCHAR(5) DEFAULT '';
-  DECLARE v_motif VARCHAR(200) DEFAULT '';
+  DECLARE v_reference VARCHAR(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL;
+  DECLARE v_nom VARCHAR(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL;
+  DECLARE v_mode VARCHAR(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '';
+  DECLARE v_motif VARCHAR(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '';
   DECLARE v_acteur_id INT UNSIGNED DEFAULT NULL;
-  DECLARE v_acteur_role VARCHAR(20) DEFAULT 'SYSTEME';
+  DECLARE v_acteur_role VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'SYSTEME';
   DECLARE v_trouve TINYINT DEFAULT 1;
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_trouve = 0;
   DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -449,11 +453,11 @@ END $$
 DROP PROCEDURE IF EXISTS sp_save_category $$
 CREATE PROCEDURE sp_save_category (
   IN  p_id_categorie INT UNSIGNED,
-  IN  p_nom          VARCHAR(100),
-  IN  p_slug         VARCHAR(120),
-  IN  p_description  VARCHAR(500),
+  IN  p_nom          VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  IN  p_slug         VARCHAR(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  IN  p_description  VARCHAR(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   OUT p_id_resultat  INT UNSIGNED,
-  OUT p_code_retour  VARCHAR(40)
+  OUT p_code_retour  VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 )
 BEGIN
   DECLARE v_doublon INT DEFAULT 0;
@@ -524,9 +528,9 @@ END $$
 DROP PROCEDURE IF EXISTS sp_create_order $$
 CREATE PROCEDURE sp_create_order (
   IN  p_id_client  INT UNSIGNED,
-  IN  p_adresse    VARCHAR(255),
+  IN  p_adresse    VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   OUT p_id_commande INT UNSIGNED,
-  OUT p_numero      VARCHAR(20)
+  OUT p_numero      VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 )
 BEGIN
   DECLARE v_seq INT DEFAULT 0;
@@ -566,12 +570,12 @@ CREATE PROCEDURE sp_add_order_line (
   IN  p_quantite    INT,
   OUT p_id_ligne    BIGINT UNSIGNED,
   OUT p_total       DECIMAL(10,2),
-  OUT p_code_retour VARCHAR(40)
+  OUT p_code_retour VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 )
 BEGIN
-  DECLARE v_statut_cmd VARCHAR(20);
+  DECLARE v_statut_cmd VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
   DECLARE v_port_cmd     DECIMAL(10,2);
-  DECLARE v_statut        VARCHAR(20);
+  DECLARE v_statut        VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
   DECLARE v_prix          DECIMAL(10,2);
   DECLARE v_stock         INT;
   DECLARE v_deja          INT DEFAULT 0;
@@ -664,20 +668,20 @@ END $$
 DROP PROCEDURE IF EXISTS sp_create_order_from_basket $$
 CREATE PROCEDURE sp_create_order_from_basket (
   IN  p_id_client   INT UNSIGNED,
-  IN  p_adresse     VARCHAR(255),
+  IN  p_adresse     VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   IN  p_panier_json JSON,
   IN  p_payee       TINYINT,
   OUT p_id_commande INT UNSIGNED,
-  OUT p_numero      VARCHAR(20),
+  OUT p_numero      VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   OUT p_montant     DECIMAL(10,2),
-  OUT p_code_retour VARCHAR(40)
+  OUT p_code_retour VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 )
 BEGIN
   DECLARE v_id_produit INT UNSIGNED;
   DECLARE v_quantite   INT;
   DECLARE v_done       TINYINT DEFAULT 0;
   DECLARE v_lignes     INT DEFAULT 0;
-  DECLARE v_code       VARCHAR(40);
+  DECLARE v_code       VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
   DECLARE cur CURSOR FOR
       SELECT j.id_produit, j.quantite FROM JSON_TABLE(p_panier_json, '$[*]'
         COLUMNS (id_produit INT UNSIGNED PATH '$.id_produit',
@@ -738,11 +742,11 @@ CREATE PROCEDURE sp_confirm_order (
   IN  p_id_client   INT UNSIGNED,
   IN  p_payee       TINYINT,
   OUT p_montant     DECIMAL(10,2),
-  OUT p_code_retour VARCHAR(40)
+  OUT p_code_retour VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 )
 BEGIN
   DECLARE v_id_client  INT UNSIGNED;
-  DECLARE v_statut     VARCHAR(20);
+  DECLARE v_statut     VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
   DECLARE v_nb         INT DEFAULT 0;
   DECLARE v_montant    DECIMAL(10,2);
   DECLARE v_manquant   INT DEFAULT 0;
@@ -803,14 +807,14 @@ END $$
 DROP PROCEDURE IF EXISTS sp_update_order_status $$
 CREATE PROCEDURE sp_update_order_status (
   IN  p_id_commande   INT UNSIGNED,
-  IN  p_nouveau_statut VARCHAR(20),
-  IN  p_commentaire   VARCHAR(500),
+  IN  p_nouveau_statut VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  IN  p_commentaire   VARCHAR(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   IN  p_id_auteur     INT UNSIGNED,
-  IN  p_role_auteur   VARCHAR(10),
-  OUT p_code_retour   VARCHAR(40)
+  IN  p_role_auteur   VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  OUT p_code_retour   VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 )
 BEGIN
-  DECLARE v_statut VARCHAR(20);
+  DECLARE v_statut VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
   IF p_id_commande IS NULL OR p_nouveau_statut IS NULL
      OR p_nouveau_statut NOT IN ('BROUILLON','EN_PREPARATION','PAYEE','EXPEDIEE','LIVREE','ANNULEE') THEN
@@ -858,13 +862,13 @@ DROP PROCEDURE IF EXISTS sp_cancel_order $$
 CREATE PROCEDURE sp_cancel_order (
   IN  p_id_commande INT UNSIGNED,
   IN  p_id_client   INT UNSIGNED,
-  OUT p_code_retour VARCHAR(40)
+  OUT p_code_retour VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 )
 BEGIN
   DECLARE v_id_produit INT UNSIGNED;
   DECLARE v_quantite   INT;
   DECLARE v_done       TINYINT DEFAULT 0;
-  DECLARE v_statut     VARCHAR(20);
+  DECLARE v_statut     VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
   DECLARE v_id_client  INT UNSIGNED;
   DECLARE cur CURSOR FOR
       SELECT id_produit, quantite FROM ligne_commande WHERE id_commande = p_id_commande;
@@ -927,19 +931,19 @@ DROP PROCEDURE IF EXISTS sp_cancel_order_admin $$
 CREATE PROCEDURE sp_cancel_order_admin (
   IN  p_id_commande       INT UNSIGNED,
   IN  p_id_auteur         INT UNSIGNED,
-  IN  p_role_auteur       VARCHAR(10),
-  IN  p_commentaire       VARCHAR(500),
+  IN  p_role_auteur       VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  IN  p_commentaire       VARCHAR(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   OUT p_unites_rendues    INT UNSIGNED,
   OUT p_montant_rembourse DECIMAL(10,2),
-  OUT p_code_retour       VARCHAR(40)
+  OUT p_code_retour       VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 )
 BEGIN
   DECLARE v_done       TINYINT DEFAULT 0;
   DECLARE v_id_produit INT UNSIGNED;
   DECLARE v_quantite   INT;
-  DECLARE v_statut     VARCHAR(20) DEFAULT NULL;
+  DECLARE v_statut     VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL;
   DECLARE v_montant    DECIMAL(10,2) DEFAULT 0.00;
-  DECLARE v_commentaire VARCHAR(500);
+  DECLARE v_commentaire VARCHAR(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
   DECLARE cur CURSOR FOR
     SELECT id_produit, quantite
       FROM ligne_commande
