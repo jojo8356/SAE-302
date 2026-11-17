@@ -142,7 +142,7 @@ if ($options['load']) {
             sprintf('mysql:host=%s;port=%s;charset=utf8mb4', $host, $port),
             $user,
             $pass,
-            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION],
+            DbConnexion::options(),
         );
         DbConnexion::imposerFuseauUtc($pdoChargement);
         $pdoChargement->exec('DROP DATABASE IF EXISTS `' . $dbName . '`');
@@ -177,11 +177,7 @@ try {
         sprintf('mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4', $host, $port, $dbName),
         $user,
         $pass,
-        [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES => false,
-        ],
+        DbConnexion::options(),
     );
     DbConnexion::imposerFuseauUtc($pdo);
 } catch (PDOException $e) {
