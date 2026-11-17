@@ -252,9 +252,11 @@ final class SqlLoader
 
         foreach ($requetes as $nom => $requete) {
             $stmt = $this->pdo->query($requete);
-            $compteurs[$nom] = $stmt !== false ? (int) $stmt->fetchColumn() : 0;
             if ($stmt !== false) {
+                $compteurs[$nom] = (int) $stmt->fetchColumn();
                 $stmt->closeCursor();
+            } else {
+                $compteurs[$nom] = 0;
             }
         }
 
