@@ -136,7 +136,7 @@ DROP TRIGGER IF EXISTS trg_produit_ttc_update $$
 CREATE TRIGGER trg_produit_ttc_update
 BEFORE UPDATE ON produit
 FOR EACH ROW
-  SET NEW.prix_ttc = ROUND(NEW.prix_ht * (1 + NEW.tva / 100), 2);
+  SET NEW.prix_ttc = ROUND(NEW.prix_ht * (1 + NEW.tva / 100), 2) $$
 
 -- TRG-B5 — garde-fou sur le stock modifié (RB-03). Le CHECK
 --          ck_produit_stock bloque déjà la valeur ; ce trigger fournit un
