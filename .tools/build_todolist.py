@@ -72,7 +72,7 @@ T = {
   ("D4-L8-02","app/Config/Database.php : PDO, EXCEPTION, EMULATE_PREPARES = false","A",3,"T","D4-L8-01","P1",""),
   ("D4-L8-03","Gabarit de vues + layout + helper d'échappement systématique","A",4,"T","D4-L8-01","P1",""),
   ("D4-L8-04","app/Security : AuthMiddleware, sessions durcies, jetons CSRF","A",6,"T","D4-L8-02","P1",""),
-  ("D4-L8-05","CI GitHub Actions complète + app/Config/env.example.php + public/install.php (annoncés par sql/01 et le README)","A",4,"T","D4-L8-04","P1",""),
+  ("D4-L8-05","CI GitHub Actions complète + .env.example / app/Config/env.example.php + installation CLI sécurisée (scripts/db_init.php et run.sh, sans script public/install.php exposé)","A",4,"T","D4-L8-04","P1",""),
  ],
  "L9": [
   ("D4-L9-01","UC-01 Catalogue : v_catalogue + pagination (12 par défaut, borne 60)","C",6,"T","L8","P1",""),
@@ -133,9 +133,9 @@ T = {
 # Recalage des statuts sur la revue tâche par tâche de docs/19.
 # OK/OK* = critère ou livrable constaté ; PARTIEL = exécution ou preuve restante ; U = [!],
 # action humaine/externe/mesure qui n'est pas attestable par le seul dépôt.
-AUDIT_OK = {"D1-L1-01", "D1-L1-02", "D1-L1-03", "D1-L1-04", "D1-L1-05", "D1-L1-07", "D1-L15-02", "D4-L13-03", "D4-L13-04", "D4-L8-01", "D4-L8-02", "D4-L8-03", "D4-L8-04", "D4-L9-01", "D4-L9-02", "D4-L9-03", "D4-L9-04", "D4-L9-05", "D4-L10-01", "D4-L10-02", "D4-L10-06", "D4-L11-03", "D4-L11-04", "D4-L12-01", "D4-L12-02", "D4-L12-03", "D4-L12-04", "D5-L14-02", "D5-L14-04"}
+AUDIT_OK = {"D1-L1-01", "D1-L1-02", "D1-L1-03", "D1-L1-04", "D1-L1-05", "D1-L1-07", "D1-L15-02", "D4-L13-03", "D4-L13-04", "D4-L8-01", "D4-L8-02", "D4-L8-03", "D4-L8-04", "D4-L8-05", "D4-L9-01", "D4-L9-02", "D4-L9-03", "D4-L9-04", "D4-L9-05", "D4-L10-01", "D4-L10-02", "D4-L10-06", "D4-L11-03", "D4-L11-04", "D4-L12-01", "D4-L12-02", "D4-L12-03", "D4-L12-04", "D5-L14-02", "D5-L14-04"}
 AUDIT_PARTIEL = {
-    "D2-L2-06", "D4-L8-05",
+    "D2-L2-06",
     "D5-L14-05",
 }
 AUDIT_NON_VERIFIABLE = {"D1-L15-03", "D3-L4-06", "D5-L14-06", "D6-L16-03"}
@@ -144,7 +144,6 @@ AUDIT_NON_VERIFIABLE = {"D1-L15-03", "D3-L4-06", "D5-L14-06", "D6-L16-03"}
 # de temps passé ni une estimation actualisée du travail restant. Cela vaut aussi pour [!].
 AUDIT_H_RESTANT = {
     "D2-L2-06": 3,
-    "D4-L8-05": 4,
     "D5-L14-05": 3,
     "D1-L15-03": 2, "D3-L4-06": 4, "D5-L14-06": 5, "D6-L16-03": 5,
 }
@@ -165,7 +164,7 @@ AUDIT_LIBELLES = {
     "D4-L8-02": "Configuration PDO centralisée (ERRMODE_EXCEPTION, EMULATE_PREPARES=false) ; connexion MySQL réelle à rejouer via les commandes de test fournies",
     "D4-L8-03": "Layout, vues et helper d'échappement systématique présents ; contrôle statique XSS vert",
     "D4-L8-04": "Authentification, sessions durcies et CSRF présents ; contrôles sécurité automatisés verts (projet scolaire, sans certification générale)",
-    "D4-L8-05": "Configuration CI et d'environnement présente, mais le critère `public/install.php` manque (installation portée par `scripts/db_init.php`/`run.sh`) ; le run non-SQL local ne valide pas ce critère, PDO/MySQL ni une CI distante",
+    "D4-L8-05": "CI GitHub Actions complète, modèles .env.example / env.example.php et installation CLI sécurisée (scripts/db_init.php et run.sh, sans script public/install.php exposé) ; initialisation et schéma MariaDB validés sur VM native (60/60, f9b614f)",
     "D4-L9-01": "Catalogue SQL via v_catalogue/sp_search_products, pagination 12 par défaut et borne 60 ; tests SQL ajoutés dans sql_integration.php",
     "D4-L9-02": "Recherche/filtres/tri SQL avec validation serveur, liste blanche de tri et page bornée ; tests SQL ajoutés dans sql_integration.php",
     "D4-L9-03": "Fiche produit SQL par slug visible, état de stock et produit masqué/absent en null (404 côté contrôleur) ; tests SQL ajoutés dans sql_integration.php",
@@ -204,8 +203,8 @@ AUDIT_STATUT = ({tid: "F" for tid in AUDIT_OK}
                  | {tid: "P" for tid in AUDIT_PARTIEL}
                  | {tid: "U" for tid in AUDIT_NON_VERIFIABLE})
 assert len(_ALL_IDS) == 84
-assert len(AUDIT_OK) == 29 and len(AUDIT_OK_STAR) == 48
-assert len(AUDIT_PARTIEL) == 3 and len(AUDIT_NON_VERIFIABLE) == 4
+assert len(AUDIT_OK) == 30 and len(AUDIT_OK_STAR) == 48
+assert len(AUDIT_PARTIEL) == 2 and len(AUDIT_NON_VERIFIABLE) == 4
 assert set(AUDIT_H_RESTANT) == AUDIT_PARTIEL | AUDIT_NON_VERIFIABLE
 for lot, tasks in T.items():
     T[lot] = [
@@ -253,8 +252,8 @@ WBS_PERS = {"A":117,"B":117,"C":121}
 TOTAL = sum(LOT_H.values())
 assert TOTAL == 355, TOTAL
 assert sum(WBS_PERS.values()) == TOTAL
-assert sum(DIV_REST.values()) == REST == 26
-assert PERS_REST == {"A":21,"B":0,"C":5}, PERS_REST
+assert sum(DIV_REST.values()) == REST == 22
+assert PERS_REST == {"A":17,"B":0,"C":5}, PERS_REST
 
 N_TASKS = sum(len(tasks) for tasks in T.values())
 STATUTS = ("F", "F*", "P", "U", "T")
@@ -266,7 +265,7 @@ COUNTS_BY_DIV = {
 ASYNC_BY_PERSON = {person: sum(row[3] for row in ASYNC_TASKS if row[2] == person) for person in "ABC"}
 ASYNC_H = sum(ASYNC_BY_PERSON.values())
 assert N_TASKS == 84 and sum(COUNTS.values()) == N_TASKS, (N_TASKS, COUNTS)
-assert COUNTS == {"F":29,"F*":48,"P":3,"U":4,"T":0}, COUNTS
+assert COUNTS == {"F":30,"F*":48,"P":2,"U":4,"T":0}, COUNTS
 assert sum(COUNTS_BY_DIV[d][s] for d in DIV_LOTS for s in STATUTS) == N_TASKS
 BADGE = {"F":"✅","F*":"✅*","P":"🟡","U":"[!]","T":"⬜"}
 STATUT_NOM = {"F":"OK","F*":"OK*","P":"PARTIEL","U":"à vérifier / externe","T":"à faire"}

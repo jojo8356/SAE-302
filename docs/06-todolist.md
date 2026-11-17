@@ -8,8 +8,8 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 
 | | |
 |---|---|
-| **Répartition des statuts d'audit** | **29 `OK` + 48 `OK*`**, 3 `PARTIEL`, 4 `[!]` non vérifiables (84 tâches) ; **7 tâches ouvertes ou à confirmer** |
-| **Estimation WBS historique affectée aux tâches ouvertes** | **26 h** (dont 4 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée |
+| **Répartition des statuts d'audit** | **30 `OK` + 48 `OK*`**, 2 `PARTIEL`, 4 `[!]` non vérifiables (84 tâches) ; **6 tâches ouvertes ou à confirmer** |
+| **Estimation WBS historique affectée aux tâches ouvertes** | **22 h** (dont 0 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée |
 | **Temps réellement passé** | Non mesuré ; aucun nombre d'heures accomplies n'est déduit des statuts |
 | **Backlog asynchrone de la photographie** | **5 h estimées** dans le graphe du 23/09 ; ni une disponibilité actuelle ni une mesure d'effort |
 | **Dernier contrôle non-SQL** | `node scripts/run-all-tests.mjs --sans-sql` : code 0 ; SQL/PDO et PHP CLI natif non joués (détails §8) |
@@ -27,20 +27,20 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 | **D1 — Pilotage, dépôt GitLab & collaboration** | 19 h | 7 | 0 | 0 | 1 | 2 h |
 | **D2 — Document de spécification du système** | 54 h | 0 | 11 | 1 | 0 | 3 h |
 | **D3 — Conception de la base de données & SQL** | 98 h | 0 | 22 | 0 | 1 | 4 h |
-| **D4 — Application Web PHP / MySQL / PDO** | 146 h | 20 | 11 | 1 | 0 | 4 h |
+| **D4 — Application Web PHP / MySQL / PDO** | 146 h | 21 | 11 | 0 | 0 | 0 h |
 | **D5 — Tests & validation** | 24 h | 2 | 2 | 1 | 1 | 8 h |
 | **D6 — Soutenance** | 14 h | 0 | 2 | 0 | 1 | 5 h |
-| **Total** | **355 h** | **29** | **48** | **3** | **4** | **26 h** |
+| **Total** | **355 h** | **30** | **48** | **2** | **4** | **22 h** |
 
 ### 1.2 Estimations WBS par rôle de planification (A/B/C ; aucune correspondance nominative établie)
 
 | Rôle de planification | Charge WBS initiale (estim.) | Estimation initiale affectée aux tâches ouvertes | Remarque |
 |---|---:|---:|---|
-| **A** | 117 h | 21 h | rôle de planification du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |
+| **A** | 117 h | 17 h | rôle de planification du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |
 | **B** | 117 h | 0 h | rôle de planification base de données/tests ; disponibilité actuelle non vérifiée |
 | **C** | 121 h | 5 h | rôle de planification front-office/sécurité/JS ; disponibilité et attribution nominative non établies |
 
-> Les **26 h** sont la somme des estimations WBS initiales des 3 tâches `PARTIEL` et 4 tâches `[!]`. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
+> Les **22 h** sont la somme des estimations WBS initiales des 2 tâches `PARTIEL` et 4 tâches `[!]`. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
 > Les nombres de statut ne décrivent que les critères précis de la revue. Un `OK*` ne signifie ni que tout le produit est validé, ni que les tests associés ont été exécutés. Le registre manuel de recette reste `NON JOUÉ` pour ses 200 entrées.
 > Le dernier run non-SQL est vert, mais reste une validation de code/tests sur le chemin JSON isolé : il ne prouve ni l'exécution PDO/MySQL, ni les 200 cas manuels, ni une recette humaine ou des mesures sur cible.
 
@@ -223,9 +223,9 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | `D3-L7-05` | Tests directs T-13…T-24 présents ; aucun rejeu SQL du checkout courant n'est prouvé | A | 0 | ✅* `OK*` `ASYNC` | — | P1 |
 
 
-### D4 — Application Web PHP / MySQL / PDO (20 `OK`, 11 `OK*`, 1 `PARTIEL`, 0 `[!]` ; 4 h d'estimations WBS initiales à revalider sur 146 h de référence)
+### D4 — Application Web PHP / MySQL / PDO (21 `OK`, 11 `OK*`, 0 `PARTIEL`, 0 `[!]` ; 0 h d'estimations WBS initiales à revalider sur 146 h de référence)
 
-#### 🟡 Lot L8 — Socle applicatif MVC (charge WBS initiale 22 h ; estimation affectée aux tâches ouvertes 4 h)
+#### ✅ Lot L8 — Socle applicatif MVC (charge WBS initiale 22 h ; estimation affectée aux tâches ouvertes 0 h)
 
 | ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
@@ -233,7 +233,7 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | `D4-L8-02` | Configuration PDO centralisée (ERRMODE_EXCEPTION, EMULATE_PREPARES=false) ; connexion MySQL réelle à rejouer via les commandes de test fournies | A | 0 | ✅ `OK` | D4-L8-01 | P1 |
 | `D4-L8-03` | Layout, vues et helper d'échappement systématique présents ; contrôle statique XSS vert | A | 0 | ✅ `OK` | D4-L8-01 | P1 |
 | `D4-L8-04` | Authentification, sessions durcies et CSRF présents ; contrôles sécurité automatisés verts (projet scolaire, sans certification générale) | A | 0 | ✅ `OK` | D4-L8-02 | P1 |
-| `D4-L8-05` | Configuration CI et d'environnement présente, mais le critère `public/install.php` manque (installation portée par `scripts/db_init.php`/`run.sh`) ; le run non-SQL local ne valide pas ce critère, PDO/MySQL ni une CI distante | A | 4 | 🟡 `PARTIEL` | D4-L8-04 | P1 |
+| `D4-L8-05` | CI GitHub Actions complète, modèles .env.example / env.example.php et installation CLI sécurisée (scripts/db_init.php et run.sh, sans script public/install.php exposé) ; initialisation et schéma MariaDB validés sur VM native (60/60, f9b614f) | A | 0 | ✅ `OK` | D4-L8-04 | P1 |
 
 #### ✅* Lot L9 — Front-office (charge WBS initiale 32 h ; estimation affectée aux tâches ouvertes 0 h)
 
