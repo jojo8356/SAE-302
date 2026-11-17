@@ -15,6 +15,7 @@
 # (ou `node scripts/wasm-serve.mjs` en sandbox sans PHP natif).
 # =====================================================================
 set -uo pipefail
+export LC_ALL=C
 
 if [ "${1:-}" = "--sql-only" ]; then
     shift
@@ -32,6 +33,7 @@ URLS=(
     "/catalogue"
     "/catalogue?cat=1&prix_max=500&stock=1&tri=prix_asc"
     "/recherche?q=clavier"
+    "/produit/casque-sans-fil-aura"
     "/panier"
 )
 
@@ -46,12 +48,12 @@ ERREURS=0
 
 for url in "${URLS[@]}"; do
     : > "$TMP/times"
-    codes=""
+    : > "$TMP/codes"
     for _ in $(seq 1 "$N"); do
         # shellcheck disable=SC2086
         read -r t code < <(curl -s -o /dev/null -w '%{time_total} %{http_code}\n' "${APP_URL}${url}")
         echo "$t" >> "$TMP/times"
-        codes="$codes $code"
+        echo "$code" >> "$TMP/codes"
     done
     stats=$(sort -n "$TMP/times" | awk -v n="$N" '
         { v[NR] = $1; s += $1 }
@@ -64,9 +66,10 @@ for url in "${URLS[@]}"; do
     read -r moy med p95 <<< "$stats"
     p95i=${p95%.*}
     [ "$p95i" -gt "$GLOBAL_P95" ] && GLOBAL_P95="$p95i"
-    bad=$(echo "$codes" | tr ' ' '\n' | grep -vcE '^(200|302|404)$' || true)
+    bad=$(grep -vcE '^(200|302)$' "$TMP/codes" || true)
     ERREURS=$((ERREURS + bad))
-    printf '   %-52s %8s %8s %8s %6s\n' "$url" "$moy" "$med" "$p95" "$(echo "$codes" | tr ' ' '\n' | sort -u | tr '\n' ',' | sed 's/,$//')"
+    codes_uniques=$(sort -u "$TMP/codes" | paste -sd ',' -)
+    printf '   %-52s %8s %8s %8s %6s\n' "$url" "$moy" "$med" "$p95" "${codes_uniques:-—}"
 done
 
 echo

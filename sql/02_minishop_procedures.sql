@@ -538,8 +538,11 @@ BEGIN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'ADRESSE_LIVRAISON_REQUISE';
   END IF;
 
+  -- Numéro temporaire unique par appel (max 17 car. <= VARCHAR(20)) pour
+  -- éviter toute collision ou interblocage InnoDB sur uk_commande_numero
+  -- lors de créations concurrentes (scénario C-01).
   INSERT INTO commande (numero, id_client, adresse_livraison, statut)
-    VALUES ('TMP', p_id_client, TRIM(p_adresse), 'BROUILLON');
+    VALUES (CONCAT('TMP-', CONV(UUID_SHORT(), 10, 36)), p_id_client, TRIM(p_adresse), 'BROUILLON');
   SET v_seq = LAST_INSERT_ID();
   SET p_id_commande = v_seq;
   SET p_numero = CONCAT('CMD', DATE_FORMAT(NOW(), '%Y'), '-', LPAD(v_seq, 6, '0'));

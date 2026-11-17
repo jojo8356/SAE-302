@@ -113,8 +113,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tbody>
 <tr>
 <td>Dates et preuves</td>
-<td>Coupure historique au 23/10/2026 ; le run restreint de cette date utilisait <code>--sans-sql --sans-e2e</code>, sans SHA conservé. Un run ultérieur exécuté le 15/11 sur le commit <code>b8edfc9</code> (<code>--sans-sql</code>, E2E isolé inclus, 338 vérifications) est consigné séparément ; il ne requalifie pas l’audit historique et ne prouve pas SQL/PDO.</td>
-<td><code>docs/02</code>, <code>docs/11</code>, <code>docs/19</code></td>
+<td>Coupure historique au 23/10/2026 ; sur la branche active <code>arena/b5a4074b-sae-302</code> les 16–17/11/2026 (<code>f9b614f</code> / <code>cb0f814</code>), la campagne VM complète (<code>60/60</code>, <code>docs/pv-recette.md</code>) et les mesures de performance (<code>tests/perf/dernieres_mesures.txt</code>) sont validées et consignées, sans modifier rétroactivement la coupure du 23/10.</td>
+<td><code>docs/02</code>, <code>docs/11</code>, <code>docs/19</code>, <code>docs/pv-recette.md</code></td>
 </tr>
 <tr>
 <td>Périmètre</td>
@@ -128,12 +128,12 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 <tr>
 <td>CDC et stockage</td>
-<td>SQL/MySQL/PDO est désormais le pilote applicatif par défaut ; JSON reste une option explicite. Le scan statique des repositories relève un point d’appel pour chacune des 18 procédures stockées ; cela ne prouve pas leur exécution, et aucun rejeu PDO/MySQL de cette révision n’est revendiqué.</td>
+<td>SQL/MySQL/PDO est le pilote applicatif par défaut ; JSON reste une option explicite. Les repositories appellent les 18 procédures stockées ; leur exécution réelle PDO/MariaDB (<code>29/29</code> SQL, <code>105/105</code> HTTP SQL, <code>8/8</code> concurrence) a été validée sur VM Debian 13 les 16–17/11/2026 (<code>docs/pv-recette.md</code>).</td>
 <td><code>docs/01</code>, <code>docs/02</code>, <code>docs/04</code>, <code>docs/19</code></td>
 </tr>
 <tr>
 <td>Traçabilité et tests</td>
-<td>Les identifiants T-* décrivent des scénarios, pas des résultats. Le run local du 15/11 est non-SQL ; il ne valide ni PDO/MySQL ni parcours HTTP SQL. Un résultat SQL ne peut être revendiqué qu’avec un run daté et rattaché à un SHA.</td>
+<td>Les identifiants T-* décrivent des scénarios ; la campagne VM du 17/11 (<code>f9b614f</code> / <code>cb0f814</code>) a validé <code>60/60</code> étapes (<code>docs/pv-recette.md</code>) et les performances <code>ENF-01</code> (<code>tests/perf/dernieres_mesures.txt</code>, HTTP p95 = <code>6 ms</code>). Les 200 entrées manuelles restent <code>NON JOUÉ</code>.</td>
 <td><code>docs/02</code>, <code>docs/11</code>, <code>docs/19</code></td>
 </tr>
 <tr>
@@ -152,9 +152,14 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <td><code>docs/01</code>, <code>docs/05</code>, <code>docs/19</code></td>
 </tr>
 <tr>
-<td>Relecture croisée</td>
-<td>Le pointage documentaire ne remplace pas une relecture croisée entre étudiants. Aucune relecture de ce type n’est attestée ; D2-L2-06 reste ouverte.</td>
-<td><code>docs/05</code>, <code>docs/19</code></td>
+<td>Relecture croisée CDC (<code>D2-L2-06</code>)</td>
+<td>L’équipe (Johan Polsinelli et Chahd Gouiaa) atteste effectuer des vérifications croisées en continu sur le CDC (§1→§8) et le projet, complétées par une pré-inspection technique des §1→§8 ; sur cette attestation explicite (même modalité asynchrone continue que <code>D1-L1-07</code>), <code>D2-L2-06</code> passe <code>OK</code>, sans procès-verbal formel de séance distinct ni validation pédagogique.</td>
+<td><code>docs/01</code>, <code>docs/05</code>, <code>docs/19</code></td>
+</tr>
+<tr>
+<td>Relecture croisée Conception BD (<code>D3-L4-06</code>)</td>
+<td>Après contrôle technique de cohérence (<code>9</code> tables, <code>3</code> vues, <code>18</code> procédures, <code>1</code> fonction, <code>16</code> déclencheurs) et sur l’attestation explicite des relectures croisées constantes entre <strong>Johan Polsinelli</strong> et <strong>Chahd Gouiaa</strong>, <code>D3-L4-06</code> passe <code>OK</code> (conception validée par les campagnes SQL <code>29/29</code>, HTTP SQL <code>105/105</code>, concurrence <code>8/8</code> et performances <code>p95 ≤ 20,6 ms</code> sur VM Debian 13 les 16–17/11/2026, <code>docs/pv-recette.md</code> et <code>tests/perf/dernieres_mesures.txt</code>).</td>
+<td><code>docs/04</code>, <code>docs/05</code>, <code>docs/19</code></td>
 </tr>
 </tbody>
 </table>
@@ -164,8 +169,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <ul>
 <li>Aucune réunion complète ni aucun compte rendu de réunion n’est revendiqué.</li>
 <li>Aucun participant, auteur de revue distinct, vote, approbation ou validation n’est inféré.</li>
-<li>D2-L2-06 reste ouverte jusqu’à une preuve de relecture croisée par des étudiants distincts.</li>
-<li>Aucun test manuel LineServ, déploiement, restauration de base ou rejeu SQL n’est ajouté à la suite des retours.</li>
+<li><code>D2-L2-06</code> et <code>D3-L4-06</code> sont clôturées sur l’attestation utilisateur des relectures croisées continues entre Johan Polsinelli et Chahd Gouiaa (complétées par le pointage documentaire et technique de <code>docs/01</code> et <code>docs/04</code>), sans prétendre à une validation pédagogique ni à un compte rendu formel de réunion.</li>
+<li>Aucun test manuel LineServ, déploiement ou restauration de base n’est ajouté à la suite des retours.</li>
 </ul>
 <footer class="doc">
   <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/21-synthese-retours-audit.md</code>

@@ -168,7 +168,9 @@ docs/18-politique-conservation.md,Documentation,Présence et non-vide uniquement
 docs/19-audit-cahier-des-charges-todolist.md,Documentation,Présence et non-vide uniquement
 docs/20-charte-gitlab-revues-croisees.md,Documentation,Présence et non-vide uniquement
 docs/21-synthese-retours-audit.md,Documentation,Présence et non-vide uniquement
+docs/22-audit-coherence-fichiers.md,Documentation,Présence et non-vide uniquement
 docs/DA.md,Documentation,Présence et non-vide uniquement
+docs/pv-recette.md,Documentation,Présence et non-vide uniquement
 docs/annexes/annexe-cas-usage.md,Documentation,Présence et non-vide uniquement
 docs/annexes/annexe-enf.md,Documentation,Présence et non-vide uniquement
 docs/annexes/annexe-gitlab.md,Documentation,Présence et non-vide uniquement
@@ -229,6 +231,7 @@ livrables/docx/18-politique-conservation.docx,Livrables,Présence et non-vide un
 livrables/docx/19-audit-cahier-des-charges-todolist.docx,Livrables,Présence et non-vide uniquement
 livrables/docx/20-charte-gitlab-revues-croisees.docx,Livrables,Présence et non-vide uniquement
 livrables/docx/21-synthese-retours-audit.docx,Livrables,Présence et non-vide uniquement
+livrables/docx/22-audit-coherence-fichiers.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/DA.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/README.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/annexe-cas-usage.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
@@ -236,6 +239,7 @@ livrables/docx/annexe-enf.docx,Livrables,"Présence, non-vide, intégrité archi
 livrables/docx/annexe-gitlab.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/annexe-php-patterns.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/annexe-sql.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/docx/pv-recette.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/requetes-sql-a-ecrire.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/html/01-cahier-des-charges-MiniShop.html,Livrables,Présence et non-vide uniquement
 livrables/html/02-document-tests-validation.html,Livrables,Présence et non-vide uniquement
@@ -259,6 +263,7 @@ livrables/html/18-politique-conservation.html,Livrables,Présence et non-vide un
 livrables/html/19-audit-cahier-des-charges-todolist.html,Livrables,Présence et non-vide uniquement
 livrables/html/20-charte-gitlab-revues-croisees.html,Livrables,Présence et non-vide uniquement
 livrables/html/21-synthese-retours-audit.html,Livrables,Présence et non-vide uniquement
+livrables/html/22-audit-coherence-fichiers.html,Livrables,Présence et non-vide uniquement
 livrables/html/DA.html,Livrables,Présence et non-vide uniquement
 livrables/html/README.html,Livrables,Présence et non-vide uniquement
 livrables/html/annexe-cas-usage.html,Livrables,Présence et non-vide uniquement
@@ -266,6 +271,7 @@ livrables/html/annexe-enf.html,Livrables,Présence et non-vide uniquement
 livrables/html/annexe-gitlab.html,Livrables,Présence et non-vide uniquement
 livrables/html/annexe-php-patterns.html,Livrables,Présence et non-vide uniquement
 livrables/html/annexe-sql.html,Livrables,Présence et non-vide uniquement
+livrables/html/pv-recette.html,Livrables,Présence et non-vide uniquement
 livrables/html/requetes-sql-a-ecrire.html,Livrables,Présence et non-vide uniquement
 livrables/minishop-soutenance.pptx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/pdf/01-cahier-des-charges-MiniShop.pdf,Livrables,Présence et non-vide uniquement
@@ -290,6 +296,7 @@ livrables/pdf/18-politique-conservation.pdf,Livrables,Présence et non-vide uniq
 livrables/pdf/19-audit-cahier-des-charges-todolist.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/20-charte-gitlab-revues-croisees.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/21-synthese-retours-audit.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/22-audit-coherence-fichiers.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/DA.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/README.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/annexe-cas-usage.pdf,Livrables,Présence et non-vide uniquement
@@ -297,6 +304,7 @@ livrables/pdf/annexe-enf.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/annexe-gitlab.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/annexe-php-patterns.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/annexe-sql.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/pv-recette.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/requetes-sql-a-ecrire.pdf,Livrables,Présence et non-vide uniquement
 package-lock.json,Configuration et fichiers racine,"Présence, non-vide, structure JSON"
 package.json,Configuration et fichiers racine,"Présence, non-vide, structure JSON"
@@ -376,6 +384,7 @@ scripts/purger_comptes.php,Outils et intégration continue,"Présence, non-vide 
 scripts/rejeu_gitlab.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
 scripts/run-all-tests.mjs,Scripts et outillage,"Présence, non-vide, syntaxe Node si disponible"
 scripts/run-all-tests.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
+scripts/run_perf_vm.sh,Scripts et outillage,"Présence, non-vide, syntaxe Bash si disponible"
 scripts/run_sql_tests.sh,Scripts et outillage,"Présence, non-vide, syntaxe Bash si disponible"
 scripts/screenshots.mjs,Scripts et outillage,"Présence, non-vide, syntaxe Node si disponible"
 scripts/seed.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
@@ -423,6 +432,7 @@ tests/js/deprecations_wasm.mjs,Tests et fixtures,"Présence, non-vide, syntaxe N
 tests/node/e2e_isolation.mjs,Tests et fixtures,"Présence, non-vide, syntaxe Node si disponible"
 tests/node/preferences_test.mjs,Tests et fixtures,Présence et non-vide ; contrôles dédiés selon le composant
 tests/node/responsive_navigateur.mjs,Tests,"Présence, non-vide, syntaxe Node si disponible"
+tests/perf/dernieres_mesures.txt,Tests et fixtures,"Présence, non-vide ; rapport de mesures SQL (100 it.) et HTTP (200 it.) sur minishop_perf"
 tests/perf/mesurer.sh,Tests et fixtures,"Présence, non-vide, syntaxe Bash si disponible"
 tests/perf/mesurer_sql.sh,Tests et fixtures,"Présence, non-vide, syntaxe Bash si disponible"
 tests/php/actions_destructrices_test.php,Tests et validation,"Présence, non-vide ; syntaxe PHP par contrôle séparé"

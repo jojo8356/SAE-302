@@ -235,6 +235,7 @@ cp .env.example .env
 </code></pre>
 <p>L’intégration SQL nécessite un serveur de test isolé : elle crée puis supprime une base dédiée nommée <code>minishop_test</code> par défaut, distincte de <code>DB_NAME</code>. Vérifier la configuration avant le lancement ; ne jamais utiliser une base de développement ou de production. L’E2E PHP-WASM et certains tests JavaScript ne sont exécutés que si leurs outils optionnels sont présents. Vérifier le résumé final du runner pour distinguer les tests <strong>joués</strong>, <strong>non joués</strong> et <strong>en échec</strong>.</p>
 <p>Le workflow automatisé du dépôt est défini dans <a href=".github/workflows/ci.yml"><code>ci.yml</code></a>. Il couvre notamment la syntaxe PHP, les suites de tests, des contrôles de sécurité, SQL sur bases jetables et des vérifications responsive en navigateur. Cette CI GitHub ne constitue pas une preuve de pipeline GitLab IUT.</p>
+<p>Les campagnes automatisées sur VM Debian 13 (PHP 8.4 / MariaDB 11.8.6) et les mesures de performance isolées sont consignées dans <a href="docs/pv-recette.html"><code>docs/pv-recette.md</code></a> (<code>scripts/generer_pv.php</code>, <code>60/60</code> étapes) et <a href="tests/perf/dernieres_mesures.txt"><code>tests/perf/dernieres_mesures.txt</code></a> (<code>scripts/run_perf_vm.sh</code>).</p>
 <h3 id="recette-manuelle">Recette manuelle<a class="headerlink" href="#recette-manuelle" title="Permanent link">#</a></h3>
 <ul>
 <li><a href="docs/13-fiches-recette-uc.html"><code>docs/13-fiches-recette-uc.md</code></a> décrit les scénarios et leur déroulement.</li>
@@ -258,6 +259,14 @@ cp .env.example .env
 <tr>
 <td><a href="docs/02-document-tests-validation.html">Tests et validation</a></td>
 <td>Stratégie, résultats et protocole de recette</td>
+</tr>
+<tr>
+<td><a href="docs/pv-recette.html">Procès-verbal de recette</a></td>
+<td>Campagne automatisée complète (<code>60/60</code>), décision et visas nominatifs</td>
+</tr>
+<tr>
+<td><a href="tests/perf/dernieres_mesures.txt">Mesures de performances</a></td>
+<td>Campagne VM <code>ENF-01</code> (<code>run_perf_vm.sh</code>) : SQL et HTTP sur <code>minishop_perf</code></td>
 </tr>
 <tr>
 <td><a href="ARCHITECTURE.html">Architecture logicielle</a></td>

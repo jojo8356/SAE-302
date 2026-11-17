@@ -30,7 +30,7 @@ LOTS = {
    ("D2-L2-03","Rédiger §4 et la traçabilité exigence/évolution ↔ UC ↔ écran ↔ test ↔ annexe","C",6,"EF-* et EV-* renvoient aux tests et annexes ; identifiant de test distingué d'une exécution","02"),
    ("D2-L2-04","Rédiger §7 en distinguant l'exigence MySQL/PDO du choix actuel : SQL par défaut, JSON explicitement optionnel","A",4,"CT-02/CT-03 reflètent le pilote SQL par défaut ; les appels statiques ne sont pas présentés comme une validation PDO/MySQL","01"),
    ("D2-L2-05","Rédiger §8 : SEC-01…SEC-14, scénarios offensifs S-01…S-10 et contrôles statiques (11 au total, dont S-11/SEC-14)","C",6,"SEC-14 reliée à S-11 ; les 10 scénarios offensifs sont distincts des 11 contrôles statiques et leurs limites sont précisées","01"),
-   ("D2-L2-06","Relecture croisée étudiante §1→§8 et pointage documentaire des pénalités","A",3,"pointage sourcé ; la revue reste ouverte jusqu'à une trace datée d'un auteur et d'un relecteur distincts","01–05"),
+   ("D2-L2-06","Relecture croisée continue §1→§8 et pointage documentaire des pénalités","A",3,"pointage sourcé et vérification croisée continue attestée entre les membres (Johan Polsinelli et Chahd Gouiaa)","01–05"),
  ]),
  "L3": dict(nom="Diagrammes UML (cas, classes, séquences) + règles métier formalisées",
             resp="B + C", semaines=["S2","S3"], tasks=[
@@ -52,7 +52,7 @@ LOTS = {
  ]),
  "L5": dict(nom="Script SQL complet (DDL, vues, index, seed)",
             resp="B", semaines=["S4"], tasks=[
-   ("D3-L5-01","DDL : 9 tables SQL (8 entités métier + table technique d’audit du stock), types, CHECK, InnoDB utf8mb4","B",6,"schéma vérifié statiquement ; aucun rejeu MySQL/MariaDB de cette révision n’est revendiqué","L4"),
+   ("D3-L5-01","DDL : 9 tables SQL (8 entités métier + table technique d’audit du stock), types, CHECK, InnoDB utf8mb4","B",6,"schéma vérifié statiquement et chargé lors de la campagne VM SQL 29/29 (`f9b614f`, `docs/pv-recette.md`)","L4"),
    ("D3-L5-02","Clés étrangères (CASCADE/RESTRICT au bon endroit) + index (FULLTEXT, filtres)","B",4,"plans d'exécution justifiant chaque index","01"),
    ("D3-L5-03","3 vues : v_etat_stock, v_catalogue, v_commandes_client","B",4,"vues créées et comptées par load_db.sh","01"),
    ("D3-L5-04","Seed : 4 catégories, 36 produits (3 pages de 12), 3 clients (password_hash), 1 admin","B",3,"comptage aligné sur sql/01 et app/Model/Data/Seed.php ; jeu de démonstration documenté","01"),
@@ -82,7 +82,7 @@ LOTS = {
    ("D4-L8-02","app/Config/Database.php : PDO, ERRMODE_EXCEPTION, EMULATE_PREPARES = false","A",3,"connexion centralisée, aucune requête hors repository","01"),
    ("D4-L8-03","Gabarit de vues + layout + helper d'échappement systématique","A",4,"toute variable passe par htmlspecialchars($v, ENT_QUOTES…)","01"),
    ("D4-L8-04","app/Security : AuthMiddleware, sessions durcies, jetons CSRF","A",6,"pages privées inaccessibles sans session, CSRF vérifié","02"),
-   ("D4-L8-05","CI GitHub Actions + app/Config/env.example.php (jamais de secret versionné)","A",4,"contrôles GitHub Actions verts sur le commit vérifié","01"),
+   ("D4-L8-05","CI GitHub Actions + .env.example / app/Config/env.example.php + installation CLI sécurisée (scripts/db_init.php et run.sh --db)","A",4,"contrôles GitHub Actions verts et initialisation CLI vérifiée sur VM native (60/60, f9b614f)","01"),
  ]),
  "L9": dict(nom="Front-office : catalogue, recherche, fiche, inscription, connexion",
             resp="C", semaines=["S7"], tasks=[
@@ -129,22 +129,20 @@ LOTS = {
  "L14": dict(nom="Tests & validation : harnais, 29 tests SQL, cas fonctionnels, plan de recette, doc",
              resp="B + A", semaines=["S10","S11"], tasks=[
    ("D5-L14-01","Doc de tests : dispositif, stratégie, niveaux, environnement","B",4,"structure §1–§2 du document 02","L6"),
-   ("D5-L14-02","Rejouer les 29 scénarios SQL sur une base temporaire isolée et versionner le rapport","B",4,"rapport lié à un run daté et un SHA ; le fichier versionné porte une date future (27/10/2026) par rapport à la coupure 23/10 et ne prouve aucun rejeu à cette coupure","L5–L7"),
+   ("D5-L14-02","Rejouer les 29 scénarios SQL sur une base temporaire isolée et versionner le rapport","B",4,"29/29 validés sur base temporaire isolée `minishop_test` (VM Debian 13, 16–17/11/2026, `docs/pv-recette.md`)","L5–L7"),
    ("D5-L14-03","Cas fonctionnels F-01…F-31 : exécution et preuves (captures)","B",3,"chaque EF-* a au moins un test exécuté","L9–L11"),
    ("D5-L14-04","Concurrence : reserver.sh (20 demandes / 12 exemplaires → 12 OK, 8 refus)","B",3,"pas de survente prouvée","L10"),
    ("D5-L14-05","Matrice de traçabilité exigence → test + PV de recette","A",5,"traçabilité §9 du document 02 complète","02–04"),
    ("D5-L14-06","Performance : mesurer.sh p95 < 500 ms + correctifs","A",5,"ENF-01 mesuré et consigné","L9–L11"),
  ]),
- "L15": dict(nom="README final, arborescence propre, préparation du rendu",
+ "L15": dict(nom="README final et préparation du rendu",
              resp="A", semaines=["S11"], tasks=[
    ("D1-L15-02","README final : installation 5 commandes, comptes, tests, sauvegarde","A",3,"un tiers installe et lance en ≤ 15 min (ENF-13)","D5-L14-05"),
-   ("D1-L15-03","Nettoyage de l'arborescence + tag v1.0-rendu","A",2,"shortlog équilibré, tag posé, MR mergées","02"),
  ]),
- "L16": dict(nom="Soutenance : support, trame, répétitions chronométrées, questions anticipées",
-             resp="A + B + C", semaines=["S12"], tasks=[
+ "L16": dict(nom="Soutenance : support, trame et questions anticipées",
+             resp="A + B", semaines=["S12"], tasks=[
    ("D6-L16-01","Support de soutenance : déroulé minute par minute, choix des démos","A",4,"docs/03 : 15 min couvrant barème et démos","L15"),
    ("D6-L16-02","Questions anticipées : sécurité, règles métier, choix de conception, réponses courtes","B",5,"§3 du docs/03 connu par cœur","L14"),
-   ("D6-L16-03","Deux répétitions chronométrées + check-list de la dernière demi-heure","C",5,"15 min ± 30 s tenues deux fois","01–02"),
  ]),
 }
 
@@ -154,25 +152,25 @@ DIVISIONS = [
  ("D3","Conception de la base de données & SQL","barème ii — 20 points","B",["L4","L5","L6","L7"]),
  ("D4","Application Web PHP / MySQL / PDO","barème iii — 30 points (avec D5)","A + C",["L8","L9","L10","L11","L12","L13"]),
  ("D5","Tests & validation (document de tests)","barème iii — −3 pts si le document manque","B + A",["L14"]),
- ("D6","Soutenance (15 min + questions)","barème iv — 10 points","A + B + C",["L16"]),
+ ("D6","Soutenance (15 min + questions)","barème iv — 10 points","A + B",["L16"]),
 ]
 
 LOT_H = {k: sum(t[3] for t in v["tasks"]) for k, v in LOTS.items()}
 COULEURS = {"D1":"#64748b","D2":"#7c2d12","D3":"#b45309","D4":"#15803d","D5":"#b91c1c","D6":"#6d28d9"}
 
 # ---------- assertions de cohérence (bottom-up) ----------
-TOTALS = {"L1":14,"L2":26,"L3":28,"L4":28,"L5":20,"L6":30,"L7":20,"L8":22,"L9":32,"L10":28,"L11":30,"L12":20,"L13":14,"L14":24,"L15":5,"L16":14}
+TOTALS = {"L1":14,"L2":26,"L3":28,"L4":28,"L5":20,"L6":30,"L7":20,"L8":22,"L9":32,"L10":28,"L11":30,"L12":20,"L13":14,"L14":24,"L15":3,"L16":9}
 for lot, tot in TOTALS.items():
     assert LOT_H[lot] == tot, f"{lot} : {LOT_H[lot]} ≠ {tot}"
-GRAND = sum(LOT_H.values()); assert GRAND == 355, GRAND
+GRAND = sum(LOT_H.values()); assert GRAND == 348, GRAND
 PERS = {"A":0,"B":0,"C":0}
 for lot in LOTS.values():
     for t in lot["tasks"]:
         PERS[t[2]] += t[3]
-assert PERS == {"A":117,"B":117,"C":121}, PERS
+assert PERS == {"A":115,"B":117,"C":116}, PERS
 N_TASKS = sum(len(v["tasks"]) for v in LOTS.values())
 DIV_H = {d[0]: sum(LOT_H[l] for l in d[4]) for d in DIVISIONS}
-assert sum(DIV_H.values()) == 355
+assert sum(DIV_H.values()) == 348
 
 # ---------- plan de charge hebdomadaire (répartition égale sur les semaines du lot) ----------
 SEMAINES = [f"S{i}" for i in range(1, 13)]
@@ -200,10 +198,10 @@ A("| | |")
 A("|---|---|")
 A("| **Projet** | MiniShop — site e-commerce avec back-office (SAE — BUT Informatique / L3, Université Côte d'Azur) |")
 A("| **Rôles de planification** | **A** pilotage/back-office · **B** modèle/base de données · **C** présentation/sécurité/tests ; deux membres sont nommés dans le README, sans correspondance nominative A/B/C |")
-A("| **Effort total** | **355 h estimées** sur les 84 tâches de niveau 4, réparties par rôle de planification · calendrier de référence **S1 → S12** ; aucune capacité ou heure réalisée n'est établie |")
+A("| **Effort total** | **348 h estimées** sur les 82 tâches de niveau 4, réparties par rôle de planification · calendrier de référence **S1 → S12** ; aucune capacité ou heure réalisée n'est établie |")
 A("| **Divisions (niveau 2)** | 6 — alignées une à une sur les 5 lignes du barème + la gestion de projet |")
 A("| **Lots (niveau 3)** | 16 (L1→L16, identiques au CDC §13.3, charges réconciliées) |")
-A("| **Tâches (niveau 4)** | **84 tâches** avec rôle de planification, estimation et critère de fin ; l'affectation individuelle reste à confirmer |")
+A("| **Tâches (niveau 4)** | **82 tâches** avec rôle de planification, estimation et critère de fin ; l'affectation individuelle reste à confirmer |")
 A("| **Documents liés** | `docs/01-cahier-des-charges-MiniShop.md` (§13.3/§13.4) · `docs/02-document-tests-validation.md` · `docs/03-support-soutenance.md` · `docs/04-conception-bd-et-sql.md` · `README.md` |")
 A("| **Version** | 1.2 — 23 octobre 2026 (révision de périmètre) |")
 A("")
@@ -218,7 +216,7 @@ A("|---|---|---|")
 A("| **1** | le projet (produit final) | MiniShop : boutique + back-office + dossier de conception et de validation |")
 A("| **2** | les **divisions** = livrables majeurs | 6 divisions D1→D6, une par ligne du barème (+ pilotage) |")
 A("| **3** | les **lots** = sous-livrables | 16 lots L1→L16 (reprend le CDC §13.3) |")
-A("| **4** | les tâches de travail | **84 tâches**, estimées en heures et réparties entre les rôles A/B/C, sans affectation nominative |")
+A("| **4** | les tâches de travail | **82 tâches**, estimées en heures et réparties entre les rôles A/B/C, sans affectation nominative |")
 A("")
 A("**Règle d'arrêt** (jusqu'où descendre) : le niveau 4 rend chaque tâche estimable et vérifiable ; l'affectation nominative relève d'une décision d'équipe distincte —")
 A("1. **rattachée** à un ou plusieurs codes de rôle de planification (colonne *Rôle(s)*),")
@@ -232,7 +230,7 @@ A("**Identification** : `D<n>-L<lot>-<nn>` (ex. `D3-L6-04`). Chaque tâche devie
 A("(cf. §10), ce qui relie la WBS au barème ; la trace de contribution réelle reste distincte des rôles A/B/C.")
 A("")
 A("**Note de version** — le livrable GitLab CI (2 h) avait déjà été retiré du périmètre. La présente révision retire aussi, sans remplacement, le déploiement de démonstration et sa validation staging (3 h) ;")
-A("les 355 h sont une estimation de planification pour 84 tâches, sans capacité d'équipe, affectation nominative ou heures réalisées établies. Aucun déploiement réel n'est revendiqué.")
+A("les 348 h sont une estimation de planification pour 82 tâches, sans capacité d'équipe, affectation nominative ou heures réalisées établies. Aucun déploiement réel n'est revendiqué.")
 A("")
 A("---")
 A("")
@@ -430,7 +428,7 @@ A("Le critère documentaire de `D1-L1-05` porte uniquement sur la charte version
 A("La CI automatisée du dépôt est GitHub Actions (`.github/workflows/ci.yml`) ; elle ne constitue pas une preuve de pipeline GitLab IUT.")
 A("La documentation liée (CDC, conception, tests, README) est mise à jour avec le livrable concerné.")
 A("")
-A("**Replanification de l'équipe** — le README nomme deux membres alors que la WBS répartit 355 h entre trois rôles A/B/C. Aucun rôle n'est attribué à une personne sans confirmation. Le nombre de membres ne déclenche aucun retrait automatique d'exigences ; une répartition révisée exige une décision explicite de l'équipe.")
+A("**Replanification de l'équipe** — le README nomme deux membres alors que la WBS répartit 348 h entre trois rôles A/B/C. Aucun rôle n'est attribué à une personne sans confirmation. Le nombre de membres ne déclenche aucun retrait automatique d'exigences ; une répartition révisée exige une décision explicite de l'équipe.")
 A("")
 A("---")
 A("")

@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="SAÉ 302 — MiniShop : Procès-verbal de recette — MiniShop#">
+<title>Procès-verbal de recette — MiniShop# — MiniShop</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --papier: #fbfaf7;
+  --carte: #ffffff;
+  --trait: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-clair: #dbeafe;
+  --code: #f1f5f9;
+  --mesure: 72ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
+    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
+    --accent-clair: #1e3a8a; --code: #16223a;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  max-width: calc(var(--mesure) + 6rem);
+  background: var(--papier);
+  color: var(--encre);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
+h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
+p, li { max-width: var(--mesure); }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+}
+pre {
+  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
+  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.35rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+thead th { background: var(--accent-clair); }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
+img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li input[type="checkbox"] { margin-right: 0.4rem; }
+.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
+.toc > ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1rem; }
+footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+@media print {
+  :root { --papier: #fff; --carte: #fff; }
+  @page { size: A4; margin: 18mm 16mm; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#identification">Identification</a></li>
+<li><a href="#resume-de-la-campagne">Résumé de la campagne</a></li>
+<li><a href="#anomalies-relevees-dans-le-log">Anomalies relevées dans le log</a></li>
+<li><a href="#decision-de-recette">Décision de recette</a></li>
+<li><a href="#auteurs-et-signatures">Auteurs et signatures</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="proces-verbal-de-recette-minishop">Procès-verbal de recette — MiniShop<a class="headerlink" href="#proces-verbal-de-recette-minishop" title="Permanent link">#</a></h1>
+<p>Document généré automatiquement par <code>scripts/generer_pv.php</code> à partir d'une campagne
+réelle, puis complété par les auteurs avec la décision et les visas nominatifs après
+relecture. Trame : <code>docs/02-document-tests-validation.md</code> §8.</p>
+<h2 id="identification">Identification<a class="headerlink" href="#identification" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Élément</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Date de la campagne</td>
+<td>2026-11-17 11:49:57</td>
+</tr>
+<tr>
+<td>Commit / SHA</td>
+<td><code>f9b614fc241fb5fbbbc94bc18eb094a95aea33d6</code></td>
+</tr>
+<tr>
+<td>Branche</td>
+<td><code>arena/b5a4074b-sae-302</code></td>
+</tr>
+<tr>
+<td>PHP</td>
+<td>8.4.27 (cli)</td>
+</tr>
+<tr>
+<td>Système</td>
+<td>Linux — Linux debian 6.12.117+deb13-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.117-1 (2026-11-12) x86_64 GNU/Linux</td>
+</tr>
+<tr>
+<td>Base de données</td>
+<td>11.8.6-MariaDB-0+deb13u1 from Debian</td>
+</tr>
+<tr>
+<td>Log complet</td>
+<td><code>logs/pv-2026-11-17-114957.log</code></td>
+</tr>
+<tr>
+<td>Code de sortie de la campagne</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<h2 id="resume-de-la-campagne">Résumé de la campagne<a class="headerlink" href="#resume-de-la-campagne" title="Permanent link">#</a></h2>
+<p>SUITES : TOUT EST VERT ✅ (60 étapes) — SQL : joué ✅ — HTTP SQL : joué ✅ — Concurrence : joué ✅ — E2E : joué ✅</p>
+<h2 id="anomalies-relevees-dans-le-log">Anomalies relevées dans le log<a class="headerlink" href="#anomalies-relevees-dans-le-log" title="Permanent link">#</a></h2>
+<ul>
+<li>Aucune ligne d’échec détectée dans le log de la campagne.</li>
+</ul>
+<h2 id="decision-de-recette">Décision de recette<a class="headerlink" href="#decision-de-recette" title="Permanent link">#</a></h2>
+<ul>
+<li>Critère : 0 anomalie bloquante et 0 anomalie majeure (cf. <code>docs/02</code> §1).</li>
+<li>Décision : <strong>Recette automatisée favorable (0 anomalie bloquante, 0 anomalie majeure sur les 60 étapes — campagne VM du 2026-11-17 ; les 200 scénarios manuels de <code>docs/13-suivi-recette-uc.csv</code> restent <code>NON JOUÉ</code>).</strong></li>
+</ul>
+<h2 id="auteurs-et-signatures">Auteurs et signatures<a class="headerlink" href="#auteurs-et-signatures" title="Permanent link">#</a></h2>
+<ul>
+<li>Auteurs de la campagne : Johan Polsinelli et Chahd Gouiaa</li>
+<li>Visas / signatures nominatives (après relecture croisée le 2026-11-17) :</li>
+<li><strong>Johan Polsinelli</strong> — vérifié et approuvé le 2026-11-17 (<em>visa nominatif consigné sur instruction des auteurs ; aucune signature manuscrite ni électronique qualifiée</em>)</li>
+<li><strong>Chahd Gouiaa</strong> — vérifié et approuvé le 2026-11-17 (<em>visa nominatif consigné sur instruction des auteurs ; aucune signature manuscrite ni électronique qualifiée</em>)</li>
+</ul>
+<footer class="doc">
+  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/pv-recette.md</code>
+  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+</footer>
+</main>
+</body>
+</html>

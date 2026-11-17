@@ -1995,7 +1995,7 @@ VALUES (:nom, :prenom, :email, :hash, :role, 1);
 </table>
 <hr />
 <h3 id="29-installateur-ci-scripts">2.9 Installateur / CI / scripts<a class="headerlink" href="#29-installateur-ci-scripts" title="Permanent link">#</a></h3>
-<h4 id="q-inst-01-verifier-que-la-base-est-bien-initialisee-installphp">Q-INST-01 — Vérifier que la base est bien initialisée (install.php)<a class="headerlink" href="#q-inst-01-verifier-que-la-base-est-bien-initialisee-installphp" title="Permanent link">#</a></h4>
+<h4 id="q-inst-01-verifier-que-la-base-est-bien-initialisee-scriptsdb_initphp">Q-INST-01 — Vérifier que la base est bien initialisée (scripts/db_init.php)<a class="headerlink" href="#q-inst-01-verifier-que-la-base-est-bien-initialisee-scriptsdb_initphp" title="Permanent link">#</a></h4>
 <table>
 <thead>
 <tr>
@@ -2010,7 +2010,7 @@ VALUES (:nom, :prenom, :email, :hash, :role, 1);
 </tr>
 <tr>
 <td><strong>Écran</strong></td>
-<td><code>public/install.php</code></td>
+<td>CLI <code>scripts/db_init.php</code> / <code>./run.sh --db</code></td>
 </tr>
 <tr>
 <td><strong>Question</strong></td>
@@ -2368,10 +2368,10 @@ VALUES (:nom, :prenom, :email, :hash, :role, 1);
 </tr>
 <tr>
 <td>Q-INST-01</td>
-<td><code>install.php</code></td>
+<td><code>scripts/db_init.php</code></td>
 <td>—</td>
 <td><code>SHOW TABLES</code> / comptages</td>
-<td>[ ]</td>
+<td>[x]</td>
 </tr>
 <tr>
 <td>Q-INST-02</td>

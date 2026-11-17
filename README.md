@@ -129,6 +129,8 @@ L’intégration SQL nécessite un serveur de test isolé : elle crée puis supp
 
 Le workflow automatisé du dépôt est défini dans [`ci.yml`](.github/workflows/ci.yml). Il couvre notamment la syntaxe PHP, les suites de tests, des contrôles de sécurité, SQL sur bases jetables et des vérifications responsive en navigateur. Cette CI GitHub ne constitue pas une preuve de pipeline GitLab IUT.
 
+Les campagnes automatisées sur VM Debian 13 (PHP 8.4 / MariaDB 11.8.6) et les mesures de performance isolées sont consignées dans [`docs/pv-recette.md`](docs/pv-recette.md) (`scripts/generer_pv.php`, `60/60` étapes) et [`tests/perf/dernieres_mesures.txt`](tests/perf/dernieres_mesures.txt) (`scripts/run_perf_vm.sh`).
+
 ### Recette manuelle
 
 - [`docs/13-fiches-recette-uc.md`](docs/13-fiches-recette-uc.md) décrit les scénarios et leur déroulement.
@@ -143,6 +145,8 @@ Un scénario ne doit être marqué comme joué qu’après son exécution réell
 |---|---|
 | [Cahier des charges](docs/01-cahier-des-charges-MiniShop.md) | Besoin, exigences fonctionnelles et règles métier |
 | [Tests et validation](docs/02-document-tests-validation.md) | Stratégie, résultats et protocole de recette |
+| [Procès-verbal de recette](docs/pv-recette.md) | Campagne automatisée complète (`60/60`), décision et visas nominatifs |
+| [Mesures de performances](tests/perf/dernieres_mesures.txt) | Campagne VM `ENF-01` (`run_perf_vm.sh`) : SQL et HTTP sur `minishop_perf` |
 | [Architecture logicielle](ARCHITECTURE.md) | Couches, parcours HTTP, règles métier, persistance, sécurité, tests et limites |
 | [Stack technique](STACK.md) | Langages, prérequis, bibliothèques et outils par contexte d’utilisation |
 | [Conception de la base](docs/04-conception-bd-et-sql.md) | Modèle de données et choix SQL |

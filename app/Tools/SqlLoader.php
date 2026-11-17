@@ -66,7 +66,19 @@ final class SqlLoader
                 continue;
             }
             try {
-                $this->pdo->exec($instruction);
+                if (preg_match('/^(SELECT|SHOW|CALL|EXPLAIN|DESCRIBE|WITH)\b/i', $instruction) === 1) {
+                    $stmt = $this->pdo->query($instruction);
+                    if ($stmt !== false) {
+                        do {
+                            if ($stmt->columnCount() > 0) {
+                                $stmt->fetchAll();
+                            }
+                        } while ($stmt->nextRowset());
+                        $stmt->closeCursor();
+                    }
+                } else {
+                    $this->pdo->exec($instruction);
+                }
             } catch (PDOException $erreur) {
                 // Sans ce contexte, l'utilisateur reçoit un « SQLSTATE[42000] »
                 // anonyme alors que le fichier SQL peut contenir 300 instructions.
@@ -239,7 +251,13 @@ final class SqlLoader
         ];
 
         foreach ($requetes as $nom => $requete) {
-            $compteurs[$nom] = (int) $this->pdo->query($requete)->fetchColumn();
+            $stmt = $this->pdo->query($requete);
+            if ($stmt !== false) {
+                $compteurs[$nom] = (int) $stmt->fetchColumn();
+                $stmt->closeCursor();
+            } else {
+                $compteurs[$nom] = 0;
+            }
         }
 
         return [

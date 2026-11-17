@@ -91,7 +91,7 @@ sudo apt install -y php8.2-cli php8.2-mbstring php8.2-mysql php8.2-intl php8.2-x
 
 git clone https://github.com/jojo8356/SAE-302.git
 cd SAE-302
-git checkout arena/10afc76d-sae-302
+git checkout arena/b5a4074b-sae-302
 composer install
 npm install
 pip install -r requirements-docs.txt

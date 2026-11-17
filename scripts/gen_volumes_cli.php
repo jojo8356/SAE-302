@@ -21,6 +21,7 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/app/bootstrap.php';
 
+use App\Config\Database;
 use App\Config\DbConnexion;
 use App\Tools\SqlLoader;
 use App\Tools\VolumetryGenerator;
@@ -57,13 +58,82 @@ foreach (array_slice($argv, 1) as $arg) {
     }
 }
 
-$host = (string) (getenv('DB_HOST') ?: '127.0.0.1');
-$port = (string) (getenv('DB_PORT') ?: '3306');
-$user = (string) (getenv('DB_USER') ?: 'root');
-$pass = (string) (getenv('DB_PASS') ?: '');
-$dbName = (string) (getenv('DB_NAME') ?: 'minishop_perf');
+/** Lit le nom de base applicative persisté (.env puis app/Config/env.php), hors variables d'env du processus. */
+function baseApplicativePersistee(string $racine): string
+{
+    $appDb = 'minishop';
+    $envPhp = $racine . '/app/Config/env.php';
+    if (is_file($envPhp)) {
+        $donnees = require $envPhp;
+        if (is_array($donnees) && !empty($donnees['db_name'])) {
+            $appDb = (string) $donnees['db_name'];
+        }
+    }
+    $dotEnv = $racine . '/.env';
+    if (is_file($dotEnv)) {
+        $lignes = @file($dotEnv, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        if (is_array($lignes)) {
+            foreach ($lignes as $ligne) {
+                $ligne = trim($ligne);
+                if ($ligne === '' || str_starts_with($ligne, '#')) {
+                    continue;
+                }
+                if (preg_match('/^(?:export\s+)?DB_NAME\s*=\s*(.+)$/', $ligne, $m) === 1) {
+                    $val = trim($m[1]);
+                    if ((str_starts_with($val, '"') && str_ends_with($val, '"'))
+                        || (str_starts_with($val, "'") && str_ends_with($val, "'"))) {
+                        $val = substr($val, 1, -1);
+                    }
+                    if ($val !== '') {
+                        $appDb = $val;
+                    }
+                }
+            }
+        }
+    }
+    return $appDb;
+}
+
+$config = Database::config();
+$host = getenv('DB_HOST');
+if ($host === false || $host === '') {
+    $host = (string) ($config['db_host'] ?? '127.0.0.1');
+}
+$port = getenv('DB_PORT');
+if ($port === false || $port === '') {
+    $port = (string) ($config['db_port'] ?? '3306');
+}
+$user = getenv('DB_USER');
+if ($user === false || $user === '') {
+    $user = (string) ($config['db_user'] ?? 'root');
+}
+$pass = getenv('DB_PASS');
+if ($pass === false) {
+    $pass = getenv('DB_PASSWORD');
+}
+if ($pass === false) {
+    $pass = (string) ($config['db_pass'] ?? '');
+}
+$dbName = getenv('DB_NAME');
+if ($dbName === false || $dbName === '') {
+    $dbName = getenv('DB');
+}
+if ($dbName === false || $dbName === '') {
+    $dbName = 'minishop_perf';
+}
+
+if (preg_match('/^[A-Za-z0-9_]{1,64}$/', $dbName) !== 1) {
+    fwrite(STDERR, "✘ nom de base invalide : $dbName\n");
+    exit(2);
+}
+
+$appDb = baseApplicativePersistee(dirname(__DIR__));
 
 if ($options['load']) {
+    if ($dbName === $appDb) {
+        fwrite(STDERR, "✘ refus de réinitialiser la base applicative active ($appDb) avec --load ; utiliser une base dédiée (ex. minishop_perf).\n");
+        exit(2);
+    }
     // Chargement sans shell : SQL exécuté par PDO via App\Tools\SqlLoader
     // (aucun binaire `mysql`, aucune fonction d'exécution — contrôle 9).
     echo "→ chargement de la base $dbName (sql/01→04) via PDO\n";
@@ -72,16 +142,20 @@ if ($options['load']) {
             sprintf('mysql:host=%s;port=%s;charset=utf8mb4', $host, $port),
             $user,
             $pass,
-            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION],
+            DbConnexion::options(),
         );
         DbConnexion::imposerFuseauUtc($pdoChargement);
-        $pdoChargement->exec('CREATE DATABASE IF NOT EXISTS `' . str_replace('`', '', $dbName)
+        $pdoChargement->exec('DROP DATABASE IF EXISTS `' . $dbName . '`');
+        $pdoChargement->exec('CREATE DATABASE `' . $dbName
             . '` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci');
-        $pdoChargement->exec('USE `' . str_replace('`', '', $dbName) . '`');
+        $pdoChargement->exec('USE `' . $dbName . '`');
         $chargeur = new SqlLoader($pdoChargement);
         $fichiers = glob(dirname(__DIR__) . '/sql/*.sql');
+        if ($fichiers === false) {
+            $fichiers = [];
+        }
         sort($fichiers);
-        $instructions = $chargeur->chargerFichiers($fichiers ?: [], true);
+        $instructions = $chargeur->chargerFichiers($fichiers, true);
         $objets = $chargeur->compteObjets();
         printf(
             "   %d instructions — %d tables, %d procédures, %d fonction(s), %d déclencheurs, %d vues\n",
@@ -103,11 +177,7 @@ try {
         sprintf('mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4', $host, $port, $dbName),
         $user,
         $pass,
-        [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES => false,
-        ],
+        DbConnexion::options(),
     );
     DbConnexion::imposerFuseauUtc($pdo);
 } catch (PDOException $e) {

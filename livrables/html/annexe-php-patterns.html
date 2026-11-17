@@ -103,10 +103,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </div>
 </nav>
 <h1 id="annexe-177-patterns-php-pdo-securite-de-reference">Annexe 17.7 — Patterns PHP / PDO / sécurité de référence<a class="headerlink" href="#annexe-177-patterns-php-pdo-securite-de-reference" title="Permanent link">#</a></h1>
-<p>Ces extraits sont les <strong>modèles à reproduire</strong> dans l'application (lot L8→L12 du planning) ; ils ont été
-écrits en cohérence avec le DDL, les procédures et les triggers réellement testés (<code>sql/01…04</code>, 26/26 tests
-conformes). Ils ne sont pas encore exécutés ici : <code>php -l</code> et les tests PHPUnit sont à courir par l'équipe
-sur son environnement PHP 8.2.</p>
+<p>Ces extraits sont les <strong>modèles de référence historiques</strong> rédigés en amont du lot L8→L12, en cohérence avec le DDL, les procédures et les triggers (<code>sql/01…04</code>, validés depuis à <code>29/29</code> en intégration SQL et <code>57/57</code> en PHPUnit sur VM Debian 13, <code>docs/pv-recette.md</code>). Ils servent de guide d’architecture et ne remplacent pas les classes implémentées dans <code>app/</code>.</p>
 <h2 id="1-connexion-pdo-centralisee-appconfigdatabasephp">1. Connexion PDO centralisée (<code>app/Config/Database.php</code>)<a class="headerlink" href="#1-connexion-pdo-centralisee-appconfigdatabasephp" title="Permanent link">#</a></h2>
 <pre><code class="language-php">&lt;?php
 declare(strict_types=1);

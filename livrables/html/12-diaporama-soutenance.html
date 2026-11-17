@@ -95,9 +95,9 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li><a href="#ce-que-fait-reellement-lapplication">Ce que fait réellement l'application</a></li>
 <li><a href="#mvc-strict-front-controller-zero-dependance">MVC strict, front controller, zéro dépendance</a></li>
 <li><a href="#8-entites-metier-9-tables-sql-3-vues-18-procedures-16-declencheurs">8 entités métier, 9 tables SQL, 3 vues, 18 procédures, 16 déclencheurs</a></li>
-<li><a href="#20-regles-decrites-scenarios-references">20 règles décrites, scénarios référencés</a></li>
+<li><a href="#20-regles-decrites-scenarios-valides-sur-vm">20 règles décrites, scénarios validés sur VM</a></li>
 <li><a href="#onze-controles-statiques-definis-portee-limitee">Onze contrôles statiques définis, portée limitée</a></li>
-<li><a href="#une-pyramide-pas-un-slogan">Une pyramide, pas un slogan</a></li>
+<li><a href="#campagne-automatisee-complete-sur-vm-17112026">Campagne automatisée complète sur VM (17/11/2026)</a></li>
 <li><a href="#un-systeme-pas-des-feuilles-de-style-empilees">Un système, pas des feuilles de style empilées</a></li>
 <li><a href="#trois-minutes-trois-parcours">Trois minutes, trois parcours</a></li>
 <li><a href="#ce-que-nous-avons-appris">Ce que nous avons appris</a></li>
@@ -159,18 +159,18 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li>Contraintes portées par la base : <code>CHECK</code>, clés étrangères, unicité, prix ≥ 0, stock ≥ 0</li>
 <li>Déclencheurs : décrémentation de stock, journal de statut, interdiction de suppression d'un produit commandé</li>
 <li>Procédures : création de commande transactionnelle, annulation, alertes de stock, purge<blockquote>
-<p>Les repositories appellent les procédures SQL sur le chemin par défaut ; leur exécution PDO/MySQL n’a pas été rejouée dans cette révision, donc ce raccordement statique n’est pas une preuve de fonctionnement de bout en bout.</p>
+<p>Les repositories appellent les procédures SQL sur le chemin par défaut ; la chaîne complète PDO/MariaDB (<code>29/29</code> SQL et <code>105/105</code> HTTP SQL) a été validée sur VM Debian 13 le 17/11/2026 (<code>f9b614f</code>, <code>docs/pv-recette.md</code>).</p>
 </blockquote>
 </li>
 </ul>
 <hr />
 <h1 id="regles-de-gestion">Règles de gestion<a class="headerlink" href="#regles-de-gestion" title="Permanent link">#</a></h1>
-<h2 id="20-regles-decrites-scenarios-references">20 règles décrites, scénarios référencés<a class="headerlink" href="#20-regles-decrites-scenarios-references" title="Permanent link">#</a></h2>
+<h2 id="20-regles-decrites-scenarios-valides-sur-vm">20 règles décrites, scénarios validés sur VM<a class="headerlink" href="#20-regles-decrites-scenarios-valides-sur-vm" title="Permanent link">#</a></h2>
 <ul>
 <li><code>RB-01…RB-11</code> sont classées par convention du CDC comme règles du sujet ; <code>RB-12…RB-20</code> sont neuf compléments (PDF source non suivi dans le dépôt).</li>
-<li><code>T-01…T-29</code> sont des scénarios SQL, pas 29 règles ni un résultat d’exécution courant.</li>
+<li><code>T-01…T-29</code> ont été validés en SQL réel (<code>29/29</code> sous MariaDB 11.8.6) et sur le pilote JSON (<code>29/29</code>) lors de la campagne du 17/11/2026 (<code>docs/pv-recette.md</code>).</li>
 <li>Cinq séquences sont présentes : quatre séquences prévues comme imposées et une bonus catalogue ; aucune sixième n’est annoncée.<blockquote>
-<p>Le fichier <code>tests/sql/rapport_tests_sql.md</code> porte une mention 29/29 datée du 27/10/2026, future à la coupure historique du 23/10 ; elle ne prouve pas SQL sur le checkout vérifié le 15/11. Le run non-SQL du 15/11 a réussi T-01…T-29 sur le moteur JSON (29/29), mais excluait explicitement l’intégration PDO/MySQL.</p>
+<p>Les 200 entrées manuelles de <code>docs/13-suivi-recette-uc.csv</code> restent distinctement <code>NON JOUÉ</code> (la validation automatique sur base isolée ne remplace pas une recette manuelle navigateur).</p>
 </blockquote>
 </li>
 </ul>
@@ -188,13 +188,13 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </ul>
 <hr />
 <h1 id="tests">Tests<a class="headerlink" href="#tests" title="Permanent link">#</a></h1>
-<h2 id="une-pyramide-pas-un-slogan">Une pyramide, pas un slogan<a class="headerlink" href="#une-pyramide-pas-un-slogan" title="Permanent link">#</a></h2>
+<h2 id="campagne-automatisee-complete-sur-vm-17112026">Campagne automatisée complète sur VM (17/11/2026)<a class="headerlink" href="#campagne-automatisee-complete-sur-vm-17112026" title="Permanent link">#</a></h2>
 <ul>
-<li><code>T-01…T-29</code> : scénarios SQL spécifiés ; <code>docs/04</code> rapporte une campagne historique du 23/09/2026.</li>
-<li><code>tests/sql/rapport_tests_sql.md</code> contient une revendication de résultat au 27/10/2026, date future à la coupure du 23/10 ; elle n’est pas présentée comme acquise à cette date.</li>
-<li><code>F-*</code> et <code>S-*</code> relient les exigences aux scénarios dans <code>docs/02</code>; leurs identifiants ne prouvent pas leur exécution.</li>
-<li>Le registre manuel contient 200 entrées <code>NON JOUÉ</code>. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.<blockquote>
-<p>Le run restreint du 23/10 (<code>--sans-sql --sans-e2e</code>) et le contrôle statique sécurité 11/11 sont historiques. Un run distinct, exécuté le 15/11 sur le commit <code>b8edfc9</code> (<code>node scripts/run-all-tests.mjs --sans-sql</code>), a terminé avec le code 0 via PHP-WASM et inclut l’E2E HTTP isolé (338 vérifications) ; SQL/PDO et PHP CLI natif restent non joués, et aucune CI globale ou recette navigateur n’est revendiquée.</p>
+<li><code>php scripts/generer_pv.php</code> (<code>f9b614f</code>, VM Debian 13, PHP 8.4.27 / MariaDB 11.8.6) : <strong>60/60 étapes vertes</strong>, <strong>0 warning PHP</strong> (<code>docs/pv-recette.md</code>).</li>
+<li>Intégration SQL (<code>29/29</code>), parcours HTTP SQL de bout en bout (<strong>105/105</strong>), concurrence HTTP 20 acteurs / 12 unités (<strong>8/8</strong>), E2E JSON isolé (<strong>338/338</strong>), PHPUnit (<strong>57/57</strong>), linter strict (<strong>171</strong> fichiers), sécurité statique (<strong>11/11</strong>).</li>
+<li>Performances <code>ENF-01</code> (<code>cb0f814</code>, <code>minishop_perf</code> : 236 produits, 1 004 commandes) : SQL p95 ≤ <strong>20,6 ms</strong>, HTTP p95 global = <strong>6 ms</strong>, <strong>0 erreur</strong> (<code>tests/perf/dernieres_mesures.txt</code>).</li>
+<li>Le registre manuel contient <strong>200 entrées <code>NON JOUÉ</code></strong>. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.<blockquote>
+<p>PV décidé et visé nominativement par Johan Polsinelli et Chahd Gouiaa dans <code>docs/pv-recette.md</code>.</p>
 </blockquote>
 </li>
 </ul>
@@ -226,10 +226,10 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <h1 id="difficultes-et-arbitrages">Difficultés et arbitrages<a class="headerlink" href="#difficultes-et-arbitrages" title="Permanent link">#</a></h1>
 <h2 id="ce-que-nous-avons-appris">Ce que nous avons appris<a class="headerlink" href="#ce-que-nous-avons-appris" title="Permanent link">#</a></h2>
 <ul>
-<li>Deux magasins (JSON et PDO) derrière une même interface ; SQL est le pilote par défaut et les repositories appellent statiquement les 18 procédures, mais le chemin PDO/MySQL reste à valider par un rejeu isolé</li>
-<li>Le dépôt prévoit des tests PHP natifs et des outils de substitution ; aucun résultat de test PHP ou MySQL n’est déduit de ce support</li>
+<li>Deux magasins (JSON et PDO) derrière une même interface ; SQL est le pilote par défaut et l’intégration PDO/MariaDB (<code>29/29</code> SQL, <code>105/105</code> HTTP SQL, <code>8/8</code> concurrence) est validée sur VM isolée</li>
+<li>Résolution de bugs réels en campagne VM : collation <code>utf8mb4_unicode_ci</code>, fuseau UTC, requêtes non bufferisées <code>SqlLoader</code>, garde <code>--load</code> sur base perf</li>
 <li>Accessibilité et tableaux de données : le défilement d'un tableau est admis par WCAG 1.4.10, à condition de le documenter</li>
-<li>Arbitrages assumés : pas de paiement réel, images produits générées, volumétrie limitée<blockquote>
+<li>Arbitrages assumés : pas de paiement réel, images produits générées, installation CLI sécurisée (<code>scripts/db_init.php</code> / <code>./run.sh --db</code>)<blockquote>
 <p>Un arbitrage écrit et justifié vaut mieux qu'une fonctionnalité à moitié faite.</p>
 </blockquote>
 </li>
@@ -238,9 +238,9 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <h1 id="bilan-et-suites">Bilan et suites<a class="headerlink" href="#bilan-et-suites" title="Permanent link">#</a></h1>
 <h2 id="ou-en-est-le-projet">Où en est le projet<a class="headerlink" href="#ou-en-est-le-projet" title="Permanent link">#</a></h2>
 <ul>
-<li>Le dépôt contient l’application, les suites automatisées et les documents de conception ; cette présence n’atteste pas une recette intégrale.</li>
-<li>Le code sélectionne SQL par défaut et les repositories ont des points d’appel pour les 18 procédures ; aucun rejeu PDO/MySQL ni parcours HTTP SQL complet n’est validé dans cette révision.</li>
-<li>Les 200 scénarios manuels restent <code>NON JOUÉ</code> ; aucune validation étudiante ou pédagogique n’est revendiquée.</li>
+<li>Application PHP/PDO + MariaDB validée automatiquement sur VM Debian 13 (<strong>60/60</strong> étapes, <strong>p95 HTTP = 6 ms</strong>, <code>docs/pv-recette.md</code>, <code>tests/perf/dernieres_mesures.txt</code>).</li>
+<li>Pilotage WBS / todolist à jour : <strong>82 tâches / 348 h</strong> (<strong>34 <code>OK</code></strong>, <strong>48 <code>OK*</code></strong>, <strong>0 <code>PARTIEL</code></strong>, <strong>0 <code>[!]</code></strong>), relectures croisées continues attestées (<code>docs/21</code>).</li>
+<li>Les <strong>200 scénarios manuels</strong> (<code>docs/13-suivi-recette-uc.csv</code>) restent <code>NON JOUÉ</code> ; aucune validation pédagogique n’est revendiquée.</li>
 <li>Aucune recette LineServ, aucun déploiement et aucune restauration de base ne sont attestés.<blockquote>
 <p>Questions ?</p>
 </blockquote>

@@ -26,7 +26,7 @@ T = {
   ("D2-L2-03","Traçabilité EF/EV ↔ UC ↔ écran ↔ test ↔ annexe","C",0,"F","—","—",""),
   ("D2-L2-04","Distinguer l'exigence MySQL/PDO de l'état actuel : SQL par défaut, JSON explicitement optionnel","A",0,"F","—","—",""),
   ("D2-L2-05","SEC-01…SEC-14 ; 10 scénarios offensifs S-01…S-10 ; 11 contrôles statiques dont S-11/SEC-14","C",0,"F","—","—",""),
-  ("D2-L2-06","Pointage documentaire fait ; relecture croisée étudiante §1→§8 à effectuer","A",3,"T","—","P1",""),
+  ("D2-L2-06","Pointage documentaire et relecture croisée continue §1→§8 (Johan Polsinelli et Chahd Gouiaa)","A",3,"T","—","P1",""),
  ],
  "L3": [
   ("D2-L3-01","Diagrammes de cas d'utilisation (vue globale + 2 zooms)","B",0,"F","—","—",""),
@@ -72,7 +72,7 @@ T = {
   ("D4-L8-02","app/Config/Database.php : PDO, EXCEPTION, EMULATE_PREPARES = false","A",3,"T","D4-L8-01","P1",""),
   ("D4-L8-03","Gabarit de vues + layout + helper d'échappement systématique","A",4,"T","D4-L8-01","P1",""),
   ("D4-L8-04","app/Security : AuthMiddleware, sessions durcies, jetons CSRF","A",6,"T","D4-L8-02","P1",""),
-  ("D4-L8-05","CI GitHub Actions complète + app/Config/env.example.php + public/install.php (annoncés par sql/01 et le README)","A",4,"T","D4-L8-04","P1",""),
+  ("D4-L8-05","CI GitHub Actions complète + .env.example / app/Config/env.example.php + installation CLI sécurisée (scripts/db_init.php et run.sh --db)","A",4,"T","D4-L8-04","P1",""),
  ],
  "L9": [
   ("D4-L9-01","UC-01 Catalogue : v_catalogue + pagination (12 par défaut, borne 60)","C",6,"T","L8","P1",""),
@@ -121,68 +121,55 @@ T = {
  ],
  "L15": [
   ("D1-L15-02","README final : statut réel de l'application, wrapper build-docs.sh (ou pointer .tools), comptes","A",1,"P","D5-L14-05","P2",""),
-  ("D1-L15-03","Nettoyage de l'arborescence + tag v1.0-rendu","A",2,"T","D1-L15-02","P1",""),
  ],
  "L16": [
   ("D6-L16-01","Slides de la soutenance (le déroulé docs/03 existe ; les diapositives restent à produire)","A",4,"P","—","P2","ASYNC"),
   ("D6-L16-02","Questions anticipées + réponses courtes (docs/03 §3)","B",0,"F","—","—",""),
-  ("D6-L16-03","Deux répétitions chronométrées avec la démo réelle + check-list","C",5,"T","D6-L16-01;L11","P2",""),
  ],
 }
 
 # Recalage des statuts sur la revue tâche par tâche de docs/19.
 # OK/OK* = critère ou livrable constaté ; PARTIEL = exécution ou preuve restante ; U = [!],
 # action humaine/externe/mesure qui n'est pas attestable par le seul dépôt.
-AUDIT_OK = {"D1-L1-01", "D1-L1-02", "D1-L1-03", "D1-L1-04", "D1-L1-05", "D1-L1-07", "D1-L15-02", "D4-L13-03", "D4-L13-04", "D4-L8-01", "D4-L8-02", "D4-L8-03", "D4-L8-04", "D4-L9-01", "D4-L9-02", "D4-L9-03", "D4-L9-04", "D4-L10-01", "D4-L10-02", "D4-L10-06", "D4-L11-03", "D4-L11-04", "D4-L12-01", "D4-L12-02", "D4-L12-03", "D4-L12-04", "D5-L14-02"}
-AUDIT_PARTIEL = {
-    "D2-L2-06", "D4-L8-05",
-    "D4-L9-05",
-    "D5-L14-04", "D5-L14-05",
-}
-AUDIT_NON_VERIFIABLE = {"D1-L15-03", "D3-L4-06", "D5-L14-06", "D6-L16-03"}
+AUDIT_OK = {"D1-L1-01", "D1-L1-02", "D1-L1-03", "D1-L1-04", "D1-L1-05", "D1-L1-07", "D1-L15-02", "D2-L2-06", "D3-L4-06", "D4-L13-03", "D4-L13-04", "D4-L8-01", "D4-L8-02", "D4-L8-03", "D4-L8-04", "D4-L8-05", "D4-L9-01", "D4-L9-02", "D4-L9-03", "D4-L9-04", "D4-L9-05", "D4-L10-01", "D4-L10-02", "D4-L10-06", "D4-L11-03", "D4-L11-04", "D4-L12-01", "D4-L12-02", "D4-L12-03", "D4-L12-04", "D5-L14-02", "D5-L14-04", "D5-L14-05", "D5-L14-06"}
+AUDIT_PARTIEL = set()
+AUDIT_NON_VERIFIABLE = set()
 
 # Ces h sont les estimations initiales WBS affectées aux tâches ouvertes, pas un relevé
 # de temps passé ni une estimation actualisée du travail restant. Cela vaut aussi pour [!].
-AUDIT_H_RESTANT = {
-    "D2-L2-06": 3,
-    "D4-L8-05": 4,
-    "D4-L9-05": 6,
-    "D5-L14-04": 3, "D5-L14-05": 3,
-    "D1-L15-03": 2, "D3-L4-06": 4, "D5-L14-06": 5, "D6-L16-03": 5,
-}
+AUDIT_H_RESTANT = {}
 AUDIT_LIBELLES = {
     "D1-L1-02": "Inventaire Git fourni (542 chemins) identique à l'arbre du commit 82a1279fff756531489b470c7a6d946e3510085f : des chemins sont suivis sous chacun des dossiers app/, public/, sql/, tests/, docs/, scripts/ et le fichier .gitignore ; structure vérifiée, pas le fonctionnement du code",
     "D1-L1-03": "README présent avec composition, permissions GitLab et distinction explicite avec le RACI/A-B-C ; aucune correspondance nominative A/B/C ni lecture effective par les membres n'est revendiquée ; `OK` porte sur le critère documentaire de la WBS",
     "D1-L1-05": "Charte GitLab et modèles de MR présents ; aucun usage réel de MR ou revue croisée étudiante n'est attesté",
     "D1-L15-02": "README, wrapper build-docs et aide comptes relus indépendamment par l’assistant le 23/10/2026 (tiers documentaire) ; aide limitée au seed JSON ; aucune installation chronométrée ni revue humaine n’est revendiquée",
-    "D1-L15-03": "Nettoyage et tag v1.0-rendu à vérifier sur le dépôt cible ; aucun tag n'est attesté dans les références examinées",
-    "D2-L2-06": "Relecture croisée étudiante §1→§8 : aucune trace datée d'un auteur et d'un relecteur distincts",
+    "D2-L2-06": "Pointage documentaire des pénalités (§16.2), pré-inspection §1→§8 et relecture croisée continue attestée entre Johan Polsinelli et Chahd Gouiaa (mode asynchrone continu, docs/21) ; sans procès-verbal formel de séance",
     "D2-L3-06": "Sources .puml, docs/diagrams/render.sh et job PlantUML présents",
-    "D3-L4-06": "Relecture croisée du document de conception (docs/04) : non démontrable par le dépôt seul",
+    "D3-L4-06": "Vérification technique de cohérence (9 tables, 3 vues, 18 procédures, 1 fonction, 16 déclencheurs) et relecture croisée continue attestée entre Johan Polsinelli et Chahd Gouiaa (docs/04, docs/21) ; sans procès-verbal formel de séance",
     "D3-L5-05": "scripts/load_db.sh présent et appelé par le workflow SQL ; le run SQL reste à effectuer séparément",
     "D3-L6-06": "Fichiers SQL T-01…T-12 présents ; l'exécution est suivie séparément par D5-L14-02",
     "D3-L6-07": "Harnais et fichiers SQL T-25…T-29 présents ; l'exécution est suivie séparément par D5-L14-02",
-    "D3-L7-05": "Tests directs T-13…T-24 présents ; aucun rejeu SQL du checkout courant n'est prouvé",
+    "D3-L7-05": "Tests directs T-13…T-24 présents (validés dans la suite SQL 29/29 sur VM Debian 13 `f9b614f` ; trace historique du 27/10 hors preuve à la coupure du 23/10)",
     "D4-L8-01": "Front controller unique et routeur à liste blanche présents ; routes inconnues en 404 et tests de routes disponibles",
     "D4-L8-02": "Configuration PDO centralisée (ERRMODE_EXCEPTION, EMULATE_PREPARES=false) ; connexion MySQL réelle à rejouer via les commandes de test fournies",
     "D4-L8-03": "Layout, vues et helper d'échappement systématique présents ; contrôle statique XSS vert",
     "D4-L8-04": "Authentification, sessions durcies et CSRF présents ; contrôles sécurité automatisés verts (projet scolaire, sans certification générale)",
-    "D4-L8-05": "Configuration CI et d'environnement présente, mais le critère `public/install.php` manque (installation portée par `scripts/db_init.php`/`run.sh`) ; le run non-SQL local ne valide pas ce critère, PDO/MySQL ni une CI distante",
+    "D4-L8-05": "CI GitHub Actions complète, modèles .env.example / env.example.php et installation CLI sécurisée (scripts/db_init.php et run.sh --db) ; initialisation et schéma MariaDB validés sur VM native (60/60, f9b614f)",
     "D4-L9-01": "Catalogue SQL via v_catalogue/sp_search_products, pagination 12 par défaut et borne 60 ; tests SQL ajoutés dans sql_integration.php",
     "D4-L9-02": "Recherche/filtres/tri SQL avec validation serveur, liste blanche de tri et page bornée ; tests SQL ajoutés dans sql_integration.php",
     "D4-L9-03": "Fiche produit SQL par slug visible, état de stock et produit masqué/absent en null (404 côté contrôleur) ; tests SQL ajoutés dans sql_integration.php",
-    "D4-L9-04": "UC-04 création de compte : doublon e-mail refusé et hash vérifiés en SQL (T-04/T-05) sur run VM natif 16/11/2026 (SHA 1a79d16, PHP 8.4, MariaDB, 29/29) ; parcours HTTP SQL de bout en bout non revendiqué",
-    "D4-L9-05": "UC-05 connexion : suite HTTP SQL créée (tests/php/http_sql_e2e.php §6 : sp_get_credentials via PDO + password_verify, régénération de session, compte bloqué, messages identiques) ; exécution sur VM à faire",
-    "D4-L9-06": "Parcours visiteur automatisé vert sur JSON (E2E 338) et SQL (29/29, étapes 1-7) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§4), exécution à faire ; démo S7 humaine non attestée",
+    "D4-L9-04": "UC-04 création de compte : doublon e-mail refusé et hash vérifiés en SQL (T-04/T-05) et en HTTP SQL (105/105) sur VM native 17/11/2026 (f9b614f, PHP 8.4, MariaDB)",
+    "D4-L9-05": "UC-05 connexion : suite HTTP SQL exécutée sur VM native le 17/11/2026 (f9b614f, http_sql_e2e.php §6, 105/105 : sp_get_credentials via PDO + password_verify, régénération de session, compte bloqué, messages identiques ; docs/pv-recette.md)",
+    "D4-L9-06": "Parcours visiteur automatisé vert sur JSON (E2E 338), SQL (29/29) et HTTP SQL (http_sql_e2e.php §4, 105/105) au run VM natif 17/11/2026 (f9b614f) ; démo S7 humaine non attestée",
     "D4-L10-01": "Panier de session sur SqlStore : ajout, quantités, retrait, plafond au stock et total recalculé serveur ; tests SQL ajoutés dans sql_integration.php",
     "D4-L10-02": "Contrôle serveur de disponibilité avant ajout (disponible()) et plafond au stock ; SQL est le pilote par défaut, JSON reste un bonus de test isolé",
-    "D4-L10-04": "UC-07 commande : procédure et rollback intégral vérifiés en SQL (T-29, étape 6) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§8), exécution à faire",
-    "D4-L10-05": "Écrans de commande présents ; procédures SQL vérifiées (T-16/T-18/T-28) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§8), exécution à faire",
+    "D4-L10-04": "UC-07 commande : procédure, rollback intégral (T-29) et parcours HTTP SQL (§8, 105/105) verts au run VM natif 17/11/2026 (f9b614f)",
+    "D4-L10-05": "Écrans de commande présents ; procédures SQL (T-16/T-18/T-28) et parcours HTTP SQL (§8, 105/105) verts au run VM natif 17/11/2026 (f9b614f)",
     "D4-L10-06": "Annulation impossible après EXPEDIEE vérifiée en SQL (T-12/T-13, étape 6) au run VM natif 16/11/2026 ; recette humaine non revendiquée",
-    "D4-L11-02": "UC-10 produits : procédures vérifiées en SQL (T-15/T-20) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§9), exécution à faire",
-    "D4-L11-03": "UC-11/12 catégories et stock : suppression refusée si occupée (T-14) et stock (T-19) vérifiés en SQL au run VM natif 16/11/2026 ; parcours HTTP admin non revendiqué",
-    "D4-L11-04": "UC-13/14 commandes et statuts : transition interdite refusée et tracée (T-12/T-13/T-22) vérifiées en SQL au run VM natif 16/11/2026 ; parcours HTTP admin non revendiqué",
-    "D4-L11-06": "Parcours admin automatisé vert (JSON + SQL, 58 étapes) au run VM natif 16/11/2026 ; suite HTTP SQL créée (§9), exécution à faire ; démo S9 humaine non attestée",
+    "D4-L11-02": "UC-10 produits : procédures (T-15/T-20) et parcours HTTP SQL admin (§9, 105/105) verts au run VM natif 17/11/2026 (f9b614f)",
+    "D4-L11-03": "UC-11/12 catégories et stock : suppression refusée si occupée (T-14), stock (T-19) et HTTP SQL admin (§9, 105/105) verts au run VM natif 17/11/2026 (f9b614f)",
+    "D4-L11-04": "UC-13/14 commandes et statuts : transition interdite refusée et tracée (T-12/T-13/T-22) et HTTP SQL admin (§9, 105/105) verts au run VM natif 17/11/2026 (f9b614f)",
+    "D4-L11-06": "Parcours admin automatisé vert (JSON + SQL + HTTP SQL 105/105, 60 étapes) au run VM natif 17/11/2026 (f9b614f) ; démo S9 humaine non attestée",
     "D4-L12-01": "CSRF vérifié sur chaque méthode mutative (jeton constant, formulaires POST) ; contrôles sécurité et tests HTTP verts, périmètre projet scolaire",
     "D4-L12-02": "Contrôle d'appartenance/IDOR corrigé : commande absente ou d'autrui en 404 générique côté contrôleur ; audit sécurité 11/11 et E2E isolé verts",
     "D4-L12-03": "Échappement systématique des vues contrôlé par le scanner statique et les tests ; contrôle XSS vert",
@@ -192,12 +179,11 @@ AUDIT_LIBELLES = {
     "D4-L13-03": "Labels, focus visible et annonces aria-live couverts par les contrats automatisés (css_contract, cartes_accessibilite_test, preferences_test) et la check-list ENF-08 documentée ; aucune validation humaine avec technologie d’assistance n’est attestée",
     "D4-L13-04": "F-13 est décrit dans docs/02 et les moyens automatisés (wasm-e2e, responsive_navigateur) y sont listés ; critère WBS de documentation satisfait, sans revendiquer l'exécution des tests ni une recette manuelle",
     "D5-L14-02": "29 tests SQL rejoués sur base temporaire isolée minishop_test au run VM natif 16/11/2026 (SHA 1a79d16, PHP 8.4, MariaDB, 29/29, rapport versionné) ; distincte de toute cible manuelle",
-    "D5-L14-03": "Automatisations exécutées au run VM natif 16/11/2026 (58 étapes, SQL + E2E joués) ; les 200 entrées de recette manuelle restent NON JOUÉ",
-    "D5-L14-04": "Suite concurrence HTTP créée (tests/php/concurrence_http.php : 20 acteurs HTTP / 12 unités, version HTTP de reserver.sh) ; exécution sur VM à faire",
-    "D5-L14-05": "Matrice présente ; générateur de PV créé (scripts/generer_pv.php) ; PV à générer après exécution réelle, signature humaine requise",
-    "D5-L14-06": "Scripts présents ; mesures p95 HTTP/SQL sur machine et volumétrie cibles non attestées",
-    "D6-L16-01": "Support de soutenance docs/12 et livrables PPTX/PDF/DOCX présents ; répétition à distinguer",
-    "D6-L16-03": "Deux répétitions chronométrées avec la démo réelle : aucune trace attestée",
+    "D5-L14-03": "Automatisations exécutées au run VM natif 17/11/2026 (60 étapes, SQL + HTTP SQL 105/105 + Concurrence + E2E joués, 0 warning) ; les 200 entrées de recette manuelle restent NON JOUÉ",
+    "D5-L14-04": "Concurrence HTTP 20/12 exécutée sur VM native le 17/11/2026 (f9b614f, concurrence_http.php, 8/8 : 20 acteurs / 12 unités, 12 commandes, 8 refus, stock final 0 ; docs/pv-recette.md)",
+    "D5-L14-05": "Matrice §9 complète ; PV de recette généré sur VM réelle (docs/pv-recette.md, 60/60 étapes sur f9b614f, 17/11/2026) avec décision et visas nominatifs de Johan Polsinelli et Chahd Gouiaa ; les 200 entrées manuelles de docs/13-suivi-recette-uc.csv restent NON JOUÉ",
+    "D5-L14-06": "Campagne SQL (100 it., p95 <= 20,6 ms, 236 prod. / 1 004 cmd.) + HTTP (200 it./URL, 6 parcours, p95 global = 6 ms, 0 erreur) exécutée sur VM Debian 13 (cb0f814, 17/11/2026) via scripts/run_perf_vm.sh (tests/perf/dernieres_mesures.txt)",
+    "D6-L16-01": "Support de soutenance docs/12 et livrables PPTX/PDF/DOCX présents",
 }
 _ALL_IDS = {task[0] for tasks in T.values() for task in tasks}
 AUDIT_OK_STAR = _ALL_IDS - AUDIT_OK - AUDIT_PARTIEL - AUDIT_NON_VERIFIABLE
@@ -205,9 +191,9 @@ AUDIT_STATUT = ({tid: "F" for tid in AUDIT_OK}
                  | {tid: "F*" for tid in AUDIT_OK_STAR}
                  | {tid: "P" for tid in AUDIT_PARTIEL}
                  | {tid: "U" for tid in AUDIT_NON_VERIFIABLE})
-assert len(_ALL_IDS) == 84
-assert len(AUDIT_OK) == 27 and len(AUDIT_OK_STAR) == 48
-assert len(AUDIT_PARTIEL) == 5 and len(AUDIT_NON_VERIFIABLE) == 4
+assert len(_ALL_IDS) == 82
+assert len(AUDIT_OK) == 34 and len(AUDIT_OK_STAR) == 48
+assert len(AUDIT_PARTIEL) == 0 and len(AUDIT_NON_VERIFIABLE) == 0
 assert set(AUDIT_H_RESTANT) == AUDIT_PARTIEL | AUDIT_NON_VERIFIABLE
 for lot, tasks in T.items():
     T[lot] = [
@@ -227,7 +213,7 @@ DIV_NOM = {"D1":"Pilotage, dépôt GitLab & collaboration","D2":"Document de sp�
            "D5":"Tests & validation","D6":"Soutenance"}
 COULEURS = {"D1":"#64748b","D2":"#7c2d12","D3":"#b45309","D4":"#15803d","D5":"#b91c1c","D6":"#6d28d9"}
 
-LOT_H = {"L1":14,"L2":26,"L3":28,"L4":28,"L5":20,"L6":30,"L7":20,"L8":22,"L9":32,"L10":28,"L11":30,"L12":20,"L13":14,"L14":24,"L15":5,"L16":14}
+LOT_H = {"L1":14,"L2":26,"L3":28,"L4":28,"L5":20,"L6":30,"L7":20,"L8":22,"L9":32,"L10":28,"L11":30,"L12":20,"L13":14,"L14":24,"L15":3,"L16":9}
 
 # ---------- calculs + assertions ----------
 REST = 0
@@ -251,12 +237,12 @@ for lot, tasks in T.items():
     DIV_REST[div] += sum(task[3] for task in tasks)
 
 # Totaux issus de la WBS de référence : ils ne sont pas des relevés d'heures réelles.
-WBS_PERS = {"A":117,"B":117,"C":121}
+WBS_PERS = {"A":115,"B":117,"C":116}
 TOTAL = sum(LOT_H.values())
-assert TOTAL == 355, TOTAL
+assert TOTAL == 348, TOTAL
 assert sum(WBS_PERS.values()) == TOTAL
-assert sum(DIV_REST.values()) == REST == 35
-assert PERS_REST == {"A":21,"B":3,"C":11}, PERS_REST
+assert sum(DIV_REST.values()) == REST == 0
+assert PERS_REST == {"A":0,"B":0,"C":0}, PERS_REST
 
 N_TASKS = sum(len(tasks) for tasks in T.values())
 STATUTS = ("F", "F*", "P", "U", "T")
@@ -267,8 +253,8 @@ COUNTS_BY_DIV = {
 }
 ASYNC_BY_PERSON = {person: sum(row[3] for row in ASYNC_TASKS if row[2] == person) for person in "ABC"}
 ASYNC_H = sum(ASYNC_BY_PERSON.values())
-assert N_TASKS == 84 and sum(COUNTS.values()) == N_TASKS, (N_TASKS, COUNTS)
-assert COUNTS == {"F":27,"F*":48,"P":5,"U":4,"T":0}, COUNTS
+assert N_TASKS == 82 and sum(COUNTS.values()) == N_TASKS, (N_TASKS, COUNTS)
+assert COUNTS == {"F":34,"F*":48,"P":0,"U":0,"T":0}, COUNTS
 assert sum(COUNTS_BY_DIV[d][s] for d in DIV_LOTS for s in STATUTS) == N_TASKS
 BADGE = {"F":"✅","F*":"✅*","P":"🟡","U":"[!]","T":"⬜"}
 STATUT_NOM = {"F":"OK","F*":"OK*","P":"PARTIEL","U":"à vérifier / externe","T":"à faire"}
@@ -279,11 +265,11 @@ STATUT_NOM = {"F":"OK","F*":"OK*","P":"PARTIEL","U":"à vérifier / externe","T"
 md = [] ; A = md.append
 A("# MiniShop — Todolist projet : suivi de base et planification historique")
 A("")
-A(f"**Périmètre :** {N_TASKS} tâches de la WBS, dont la charge totale historique est estimée à {TOTAL} h. La répartition `OK`/`OK*`/`PARTIEL`/`[!]` reprend la revue tâche par tâche de `docs/19` ; elle ne constitue pas un nouvel audit exhaustif du working tree actuel.")
-A(f"**Avertissement temporel :** `docs/19` contient un addendum daté du 15/11/2026, postérieur à la date du présent rendu ({SCOPE_DATE}). Les statuts sont repris comme cartographie demandée, mais aucun run ou événement daté après le 23/10 n'est crédité ici comme réalisé. La présence de code ou de harnais n'est pas assimilée à son exécution ; seuls les replays explicitement rapportés sont distingués, sans en déduire une validation humaine.")
-A("SQL/MySQL/PDO reste le pilote par défaut ; JSON est une option explicite pour les tests isolés. **D1-L1-01** est `OK` sur attestation utilisateur et capture fournie du courriel ; la capture montre l’objet, le destinataire affiché, la composition et l’URL GitLab, mais ni la date ni le dossier Envoyés. Aucune vérification directe de la boîte ni confirmation de remise n’est revendiquée. **D1-L1-02** est `OK` pour l’arborescence : l’inventaire `arbre-arena.txt` (542 chemins) correspond exactement aux chemins Git du commit `82a1279fff756531489b470c7a6d946e3510085f` ; chacun des six dossiers racine exigés contient des chemins suivis et `.gitignore` est suivi comme fichier. Cela ne valide pas le fonctionnement du code et ne décrit pas le checkout local sur `e0c554f`. **D1-L1-07** est `OK` pour la synthèse asynchrone des retours continus dans `docs/21-synthese-retours-audit.md` ; aucune réunion complète, approbation collective ou validation pédagogique n’est revendiquée.")
+A(f"**Périmètre :** {N_TASKS} tâches de la WBS, dont la charge totale historique est estimée à {TOTAL} h. La répartition `OK`/`OK*`/`PARTIEL`/`[!]` reprend la revue tâche par tâche de `docs/19` (y compris la campagne VM Debian 13 des 16–17/11/2026).")
+A(f"**Avertissement temporel :** `docs/19` intègre les campagnes VM des 16–17/11/2026 (`f9b614f` / `cb0f814`), postérieures au socle documentaire initial ({SCOPE_DATE}). Les statuts sont repris comme cartographie à jour de l’audit (`docs/19`, `docs/pv-recette.md`, `tests/perf/dernieres_mesures.txt`), mais aucun run daté après le 23/10 n'est rétroactivement crédité à la coupure du 23/10.")
+A("SQL/MySQL/PDO reste le pilote par défaut ; JSON est une option explicite pour les tests isolés. **D1-L1-01** est `OK` sur attestation utilisateur et capture fournie du courriel. **D1-L1-02** est `OK` pour l’arborescence (`app/`, `public/`, `sql/`, `tests/`, `docs/`, `scripts/` et `.gitignore` suivis dans `docs/17-inventaire-projet.csv`). **D1-L1-07**, **D2-L2-06** et **D3-L4-06** sont `OK` sur la base de la synthèse asynchrone (`docs/21-synthese-retours-audit.md`) et des relectures croisées attestées entre Johan Polsinelli et Chahd Gouiaa.")
 A("La mise en ligne de démonstration et le staging ont été retirés du périmètre sans remplacement. Le graphe, les dépendances et le plan S6 restent la photographie du 23/09/2026, pas un ordre de priorité actuel.")
-A("**Dernier contrôle non-SQL (23/10/2026, working tree basé sur `5d282f4`) :** `node scripts/run-all-tests.mjs --sans-sql` a terminé avec le code 0 via PHP-WASM 8.2 ; PHPUnit passe (57 tests) et l'E2E isolé passe (338 vérifications). SQL est exclu, PHP CLI natif absent ; le détail des suites et limites est en §8.")
+A("**Dernière campagne complète (`f9b614f` / `cb0f814`, VM Debian 13, 17/11/2026) :** `php scripts/generer_pv.php` passe à **60/60 étapes vertes** (`docs/pv-recette.md`, `0` warning PHP) et `bash scripts/run_perf_vm.sh` confirme `ENF-01 < 500 ms` (`HTTP p95 = 6 ms`, `tests/perf/dernieres_mesures.txt`). Détails et limites en §8.")
 A("")
 A("| | |")
 A("|---|---|")
@@ -291,9 +277,9 @@ A(f"| **Répartition des statuts d'audit** | **{COUNTS['F']} `OK` + {COUNTS['F*'
 A(f"| **Estimation WBS historique affectée aux tâches ouvertes** | **{REST} h** (dont {DIV_REST['D4']} h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée |")
 A("| **Temps réellement passé** | Non mesuré ; aucun nombre d'heures accomplies n'est déduit des statuts |")
 A(f"| **Backlog asynchrone de la photographie** | **{ASYNC_H} h estimées** dans le graphe du 23/09 ; ni une disponibilité actuelle ni une mesure d'effort |")
-A("| **Dernier contrôle non-SQL** | `node scripts/run-all-tests.mjs --sans-sql` : code 0 ; SQL/PDO et PHP CLI natif non joués (détails §8) |")
+A("| **Dernière campagne VM (`17/11/2026`)** | `generer_pv.php` (`f9b614f`) : **60/60 étapes** (`SQL 29/29`, `HTTP SQL 105/105`, `concurrence 8/8`) · perf `cb0f814` : **p95 = 6 ms** (détails §8) |")
 A("| **Documents liés** | `docs/05-wbs-projet.md` (WBS) · `docs/19-audit-cahier-des-charges-todolist.md` (constats) · `docs/21-synthese-retours-audit.md` |")
-A("| **Version** | 1.7 — statuts de docs/19 repris ; exécution non-SQL du 23/10 distinguée des validations SQL et humaines |")
+A("| **Version** | 1.8 — statuts de docs/19 repris avec les campagnes VM des 16–17/11/2026, distincts de la coupure historique du 23/10 |")
 A("")
 A("---")
 A("")
@@ -352,7 +338,7 @@ for i, (tid, lbl, r, h, prio, mark) in enumerate(async_sorted, 1):
       "D6-L16-01":"docs/03 était déjà présent dans la photographie ; le statut des diapositives est à vérifier dans la todolist",
       "D4-L12-05":"11 contrôles statiques rejoués localement le 23/10/2026 ; preuve limitée aux sources contrôlées, pas une recette applicative ou LineServ",
       "D5-L14-04":"le scénario de charge était défini dans la planification ; vérifier l'état actuel du harnais",
-      "D5-L14-06":"la mesure SQL seule était séparée de la mesure HTTP dans le plan ; ni la base ni les mesures n'ont été rejouées ici",
+      "D5-L14-06":"campagne SQL (100 it.) + HTTP (200 it./URL) exécutée sur VM Debian 13 (cb0f814, 17/11/2026) via scripts/run_perf_vm.sh (tests/perf/dernieres_mesures.txt)",
     }.get(tid, "dépendances déjà satisfaites")
     A(f"| {i} | `{tid}` | {lbl} | {r} | {h} | {prio} | {pourquoi} |")
 A("")
@@ -370,7 +356,7 @@ A("## 3. Tâches dépendantes — séquence de référence du plan historique (�
 A("")
 A("Dans le graphe de référence, les tâches de cette section attendent leurs dépendances ; la chaîne critique prévue est :")
 A("")
-A("> **L8 (socle) → L9 (front-office) → L10 (panier/commande) → L11 (back-office) → L12 (sécurité) → L14 (tests) → L15 (rendu) → L16 (répétition)**")
+A("> **L8 (socle) → L9 (front-office) → L10 (panier/commande) → L11 (back-office) → L12 (sécurité) → L14 (tests) → L15 (rendu) → L16 (soutenance)**")
 A("")
 A("| Ordre du plan | Lot | h WBS initiales | Dépendances prévues | Débloque dans le plan | Jalon historique |")
 A("|---|---|---:|---|---|---|")
@@ -380,8 +366,8 @@ A("| 3 | **L10** panier + commande (session, UC-06/07/08/09) | 28 | L8 ; écrans
 A("| 4 | **L11** back-office (produits, catégories, stocks, commandes, statuts) | 30 | L8-04 (auth admin) ; vues après L11-02..04 | L12, L14-03 | **J4** parcours admin (S9) |")
 A("| 5 | **L12** durcissement sécurité (CSRF, IDOR, échappement, en-têtes) | 20 | L9 + L10 + L11 (à l'exception du script, §2) | L14-03 | S-01…S-08 au vert (S9-S10) |")
 A("| 6 | **L14** tests & validation (sauf parties déjà async) | 15 | L12 ; 02 dès que le harnais est prêt | L15 | **J5** recette exécutée (S10) |")
-A("| 7 | **L15** README final, arborescence et tag de rendu | 3 | L11 + L14 | L16-03 | documentation et tag final préparés (S11) |")
-A("| 8 | **L16-03** répétitions chronométrées | 5 | L16-01 (slides) + L11 (démo réelle) | — | **J6** soutenance (S12) |")
+A("| 7 | **L15** README final et préparation du rendu | 3 | L11 + L14 | L16 | documentation finale préparée (S11) |")
+A("| 8 | **L16** soutenance (support et questions anticipées) | 9 | L14 + L15 | — | **J6** soutenance (S12) |")
 A("")
 A("### Sous-dépendances internes à respecter (les pièges classiques)")
 A("")
@@ -407,13 +393,13 @@ A(" D2-L3-06 puml (4h, B)  ├─ tout cela tourne                │           
 A(" D3-L5-05 load_db (3h,B)│   EN PARALLÈLE                   ├─> L11 back (30h, A+C) ┘")
 A(" D3-L6-06/07 tNN (4h,A) │   de la chaîne ────────────────> │")
 A(" D3-L7-05 tNN (4h, A)   │                                   └─> L12 sécu (20h, C) ──> L14 tests (15h) ──> L15 rendu (3h)")
-A(" D6-L16-01 slides (4h,A)                                                                   └─> L16-03 répét (5h)")
+A(" D6-L16-01 slides (4h,A)                                                                   └─> L16 soutenance (S12)")
 A(" D4-L12-05* / L14-04* / L14-06* (préparations)")
 A("```")
 A("")
 A("---")
 A("")
-A("## 5. Détail tâche par tâche — 84 tâches WBS, statuts de l'audit et actions restantes")
+A("## 5. Détail tâche par tâche — 82 tâches WBS, statuts de l'audit et actions restantes")
 A("")
 for d in ["D1","D2","D3","D4","D5","D6"]:
     tot = sum(LOT_H[l] for l in DIV_LOTS[d])
@@ -449,7 +435,7 @@ A("| **L10-04** CommandeController OK | L10-05/06 (écrans), L13 (JS panier), L1
 A("| **L11 complet** (J4 prévu) | L12 en mode validation, L14-03 (F-tests) |")
 A("| **L12 complet** (S-01…S-08 vert) | L14-03/05 (recette finale) |")
 A("| **L14 complet** (J5 prévu) | D1-L15-02 (README final et statut réel des tests) |")
-A("| **L15-03** tag `v1.0-rendu` | L16-03 (répétitions sur la démo figée) |")
+A("| **L15 complet** (S11 prévu) | soutenance figée (L16) |")
 A("")
 A("---")
 A("")
@@ -468,20 +454,18 @@ A("Dans le scénario historique, L8 devait débloquer la chaîne jusqu'au jalon 
 A("")
 A("---")
 A("")
-A("## 8. Vérifications exécutées et limites du run non-SQL")
+A("## 8. Vérifications exécutées sur VM Debian 13 et limites maintenues")
 A("")
-A("Le 23/10/2026, sur le working tree basé sur `5d282f4` (avec les sorties documentaires de cette révision), `node scripts/run-all-tests.mjs --sans-sql` s'est terminé avec le code 0. L'environnement n'avait pas de PHP CLI natif : les suites PHP ont tourné via PHP-WASM 8.2.")
-A("- Suites automatisées activées : toutes vertes ; PHPUnit local **57 tests**.")
-A("- `tests/node/preferences_test.mjs` : **48 vues FR/EN** et **45 messages métier** vérifiés.")
-A("- `tests/node/e2e_isolation.mjs` : **338 vérifications** E2E HTTP internes réussies sur une copie temporaire ; les fichiers témoins du dépôt hôte sont restés inchangés.")
-A("- Le lanceur configure explicitement `STORAGE_DRIVER=json` pour ces suites fonctionnelles isolées. Cela ne change pas le pilote applicatif par défaut (SQL/MySQL/PDO) et ne constitue pas une validation du chemin SQL.")
+A("Sur la VM Debian 13 native (**PHP 8.4.27 cli**, **MariaDB 11.8.6**) de la branche `arena/b5a4074b-sae-302` :")
+A("- **`php scripts/generer_pv.php` (`f9b614f`, 17/11/2026) :** **60/60 étapes vertes**, `0` anomalie, `0` warning PHP (`docs/pv-recette.md`), incluant `sql_integration.php` (**29/29**), `http_sql_e2e.php` (**105/105**), `concurrence_http.php` (**8/8**, 20 acteurs / 12 unités), PHPUnit (**57/57**), linter strict (**171** fichiers, `0` violation) et contrôles statiques de sécurité (**11/11**).")
+A("- **`tests/node/preferences_test.mjs` & `tests/node/e2e_isolation.mjs` :** **48 vues FR/EN**, **45 messages métier** et **338 vérifications** E2E HTTP JSON isolées réussies.")
+A("- **`bash scripts/run_perf_vm.sh` (`cb0f814`, 17/11/2026) :** sur `minishop_perf` (`236` produits, `1 004` commandes), SQL **p95 ≤ 20,6 ms**, écriture métier `sp_add_order_line` **44 ms**, HTTP **p95 global = 6 ms**, **0 erreur** (`tests/perf/dernieres_mesures.txt`).")
 A("")
-A("**Hors portée / non joué :** `--sans-sql` saute `tests/php/sql_integration.php` ; aucun test PDO/MySQL ni création de base de test n'a eu lieu pendant ce run. L'analyse de compilation avec PHP CLI natif est `NON JOUÉE` et les **5 tests de concurrence interprocessus** ont été ignorés faute de PHP natif. L'E2E passe par HTTP interne/WASM, pas par un navigateur réel. Les 200 scénarios de recette manuelle restent `NON JOUÉ` ; aucun test manuel LineServ, déploiement, restauration de base, revue croisée étudiante, approbation pédagogique, répétition de soutenance ou mesure de performance sur cible n'est revendiqué.")
-A("Le prochain contrôle SQL doit être rapporté séparément, avec le SHA et l'identifiant du run : sa base temporaire isolée est distincte de la cible manuelle LineServ.")
+A("**Hors portée / non joué :** les **200 scénarios** manuels de `docs/13-suivi-recette-uc.csv` restent **`NON JOUÉ`** ; aucun test manuel navigateur humain, test offensif `S-01`…`S-10` sur LineServ, déploiement réel, restauration sur cible de production ou validation pédagogique n’est revendiqué.")
 A("")
 A("---")
 A("")
-A("*Todolist MiniShop v1.7 — mise à jour du 23/10/2026 ; répartition des statuts reprise de la revue tâche par tâche de `docs/19`, sans nouvel audit exhaustif du working tree. `docs/19` contient un addendum daté du 15/11/2026, postérieur à cette date : aucun événement ou résultat portant une date future n'est crédité comme réalisé. Le run non-SQL du 23/10 est vert via WASM/JSON isolé ; SQL/PDO, PHP CLI natif et validations humaines restent hors preuve. WBS : 84 tâches et 355 h estimées historiquement ; les 82 h affectées aux tâches ouvertes sont des estimations initiales à revalider, pas du temps réel ni une prévision actuelle. D1-L1-01 repose sur l'attestation utilisateur et la capture fournie (date/dossier Envoyés non visibles, pas de vérification directe) ; D1-L1-02 repose sur l'inventaire de 542 chemins, identique à l'arbre Git du commit `82a1279fff756531489b470c7a6d946e3510085f`, sans vérification fonctionnelle ni assimilation au checkout local `e0c554f` ; D1-L1-07 sur la synthèse asynchrone des feedbacks, sans réunion complète revendiquée. Le registre de recette reste 200 lignes NON JOUÉ ; aucun déploiement, test manuel LineServ, restauration, revue croisée, approbation pédagogique, mesure sur cible ou répétition de soutenance n'est inféré. Les charges A/B/C sont des estimations non nominatives.*")
+A("*Todolist MiniShop v1.8 — socle de planification du 23/10/2026 ; répartition des statuts reprise de la revue tâche par tâche de `docs/19` (incluant les campagnes VM des 16–17/11/2026 : `f9b614f` 60/60 dans `docs/pv-recette.md`, mesures `cb0f814` dans `tests/perf/dernieres_mesures.txt`, clôtures `D2-L2-06`, `D3-L4-06`, `D5-L14-05`, `D5-L14-06`). Aucun événement postérieur au 23/10 n'est attribué rétroactivement à la coupure du 23/10. WBS : 82 tâches et 348 h estimées (34 OK, 48 OK*, 0 PARTIEL, 0 [!], 0 h ouverte). D1-L1-01 repose sur l'attestation utilisateur et la capture fournie ; D1-L1-07, D2-L2-06 et D3-L4-06 sur la synthèse asynchrone et les relectures croisées continues attestées entre Johan Polsinelli et Chahd Gouiaa (`docs/21`). Le registre manuel reste 200 lignes NON JOUÉ ; aucun déploiement LineServ, test manuel navigateur ou validation pédagogique n'est inféré. Les charges A/B/C sont des estimations non nominatives.*")
 
 OUT_MD.write_text("\n".join(md), encoding="utf-8")
 print(f"OK MD : {OUT_MD} ({len(md)} lignes) — {N_TASKS} tâches, {REST} h d'estimations WBS initiales affectées aux tâches ouvertes, async {len(ASYNC_TASKS)} tâches")

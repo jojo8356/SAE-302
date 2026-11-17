@@ -1,10 +1,8 @@
 # MiniShop — Note de cybersécurité
 
 > **Objet** : scénarios d’attaque, mesures prévues et références de contrôle.
-> **Périmètre documentaire** : application MiniShop et exigences SEC-01…SEC-13 ; les références S-01…S-10 sont des scénarios offensifs décrits dans `docs/02`, pas des résultats de cette révision.
-> **Date inscrite dans l’archive** : 28/09/2026. Aucun SHA ni journal d’exécution n’est rattaché à cette date ; les mentions de tests, sorties et volumes qui suivent ne prouvent pas leur rejeu sur le working tree examiné. La commande `npm run test:all` est un protocole proposé, pas une preuve qu’il a été lancé.
->
-> **Portée de sécurité à la coupure 23/10/2026 :** seul le script statique `tests/security/controles.sh` a été rejoué localement dans cette révision (11/11 contrôles, dont S-11/SEC-14). Les scénarios offensifs S-01…S-10, l’E2E, LineServ et les essais manuels n’ont pas été rejoués ; aucun avis général de sécurité n’est revendiqué.
+> **Périmètre documentaire** : application MiniShop et exigences SEC-01…SEC-14 ; les références S-01…S-10 sont les scénarios offensifs documentés dans `docs/02`, tandis que `tests/security/controles.sh` exécute **11/11 contrôles statiques** (dont `S-11`/`SEC-14`).
+> **État actualisé (17/11/2026, branche `arena/b5a4074b-sae-302`) :** la note d’origine du `28/09/2026` a été complétée par la campagne sur VM Debian 13 (`f9b614f`, `docs/pv-recette.md`, `60/60` étapes vertes dont `11/11` contrôles statiques de sécurité, `105/105` HTTP SQL et `338/338` E2E JSON isolé). Les scénarios offensifs manuels sur LineServ et une recette humaine restent non joués.
 
 ---
 
@@ -227,7 +225,7 @@ http_response_code(404); // rien n'a matché → 404, et c'est le SEUL comportem
 
 Le contrôleur frontal vit seul dans `public/` (DocumentRoot) ; `public/.htaccess` ajoute en défense en profondeur `Require all denied` sur `.env*` et `*.log|*.sql|*.md` si jamais des fichiers sensibles étaient copiés là par erreur. Aucun `phpinfo()` dans le code (grep = 0). Pas d'upload de fichiers : les images sont des URL stockées en base (la validation du type/taille d'upload du CDC §SEC-11 n'a donc pas de surface à défendre ici).
 
-Deux **outils de développement** assumés vivent aussi dans `public/` (`gen_volumes.php`, `mesurer.php` — ENF-01/02, conçus ainsi par le CDC §.htaccess) : servis en environnement de développement, ils **se bloquent eux-mêmes en production** (détection `APP_ENV`/env.php → 404 volontaire, « pas 403, pour ne pas révéler l'existence de l'outil »). Ils n'ont accès à aucune table du moteur applicatif : le générateur cible la base SQL de référence (harness de volumétrie), jamais `data/minishop`.
+Les scripts de volumétrie et de mesure (`public/gen_volumes.php`, `public/mesurer.php` initialement prévus) ont été **retirés du webroot `public/`** au profit d’outils CLI dédiés hors exposition HTTP (`scripts/gen_volumes_cli.php`, `scripts/run_perf_vm.sh`, `tests/perf/mesurer*.sh`), validés sur VM isolée (`cb0f814`, `tests/perf/dernieres_mesures.txt`). Aucun script d’installation (`public/install.php`) ni utilitaire de benchmark n’est donc exposé sous `public/`.
 
 | | |
 |---|---|
@@ -386,16 +384,15 @@ public static function exigeSuper(): array
 | 6 | Clé CSRF par session (pas par formulaire) | standard et suffisant avec `SameSite=Lax` ; une rotation par formulaire renforcerait contre la fixation de jeton |
 | 7 | Expiration/rotation automatique des sessions | déléguée au moteur PHP ; à borner explicitement (`session.gc_maxlifetime`) en production |
 | 8 | Images = URL externes | pas d'upload (pas de surface) ; si un upload est ajouté un jour : type MIME + extension + taille + stockage hors `DocumentRoot` (SEC-11) |
-| 9 | Outils de volumétrie/mesure (`public/gen_volumes.php`, `mesurer.php`) | hérités de la phase SQL : ils visent la base MySQL de référence, pas le moteur JSON ; verrou = `APP_ENV` (404 en prod). À re-brancher sur le moteur JSON ou à retirer de `public/` au lot ENF-01 |
+| 9 | Outils de volumétrie/mesure | `public/gen_volumes.php` et `public/mesurer.php` ont été retirés de `public/` et déplacés vers l’outillage CLI (`scripts/gen_volumes_cli.php`, `scripts/run_perf_vm.sh`, `tests/perf/`) |
 
 ---
 
 ## 7. Annexe — rejouer les attaques
 
 ```bash
-npm run test:all          # exécuter les suites configurées ; consigner date, SHA,
-                          # environnement, sorties et statut des tests non joués
-                          # (T6+T12+T13 = 45 vérifications de sécurité)
+php scripts/run-all-tests.php   # suite complète sur machine avec PHP CLI + MariaDB (`f9b614f` : 60/60)
+bash tests/security/controles.sh  # 11/11 contrôles statiques (S-11 / SEC-14 inclus)
 ```
 
 Attaques rejouables individuellement (extraits de `scripts/wasm-e2e.mjs`) :
@@ -411,4 +408,4 @@ Attaques rejouables individuellement (extraits de `scripts/wasm-e2e.mjs`) :
 // S-10  inscription avec role=SUPER              → client simple, table admin intacte
 ```
 
-*Note rédigée le 28/09/2026 — toutes les affirmations ci-dessus sont vérifiables dans le dépôt : les extraits de code sont cités fidèlement, les tests sont exécutables par `npm run test:all`.*
+*Note d’origine rédigée le 28/09/2026 et actualisée au 17/11/2026 (`f9b614f` / `cb0f814`) — les extraits et contrôles statiques sont vérifiables dans le dépôt (`bash tests/security/controles.sh` et `php scripts/run-all-tests.php`).*

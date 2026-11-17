@@ -122,9 +122,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <h1 id="minishop-note-de-cybersecurite">MiniShop — Note de cybersécurité<a class="headerlink" href="#minishop-note-de-cybersecurite" title="Permanent link">#</a></h1>
 <blockquote>
 <p><strong>Objet</strong> : scénarios d’attaque, mesures prévues et références de contrôle.
-<strong>Périmètre documentaire</strong> : application MiniShop et exigences SEC-01…SEC-13 ; les références S-01…S-10 sont des scénarios offensifs décrits dans <code>docs/02</code>, pas des résultats de cette révision.
-<strong>Date inscrite dans l’archive</strong> : 28/09/2026. Aucun SHA ni journal d’exécution n’est rattaché à cette date ; les mentions de tests, sorties et volumes qui suivent ne prouvent pas leur rejeu sur le working tree examiné. La commande <code>npm run test:all</code> est un protocole proposé, pas une preuve qu’il a été lancé.</p>
-<p><strong>Portée de sécurité à la coupure 23/10/2026 :</strong> seul le script statique <code>tests/security/controles.sh</code> a été rejoué localement dans cette révision (11/11 contrôles, dont S-11/SEC-14). Les scénarios offensifs S-01…S-10, l’E2E, LineServ et les essais manuels n’ont pas été rejoués ; aucun avis général de sécurité n’est revendiqué.</p>
+<strong>Périmètre documentaire</strong> : application MiniShop et exigences SEC-01…SEC-14 ; les références S-01…S-10 sont les scénarios offensifs documentés dans <code>docs/02</code>, tandis que <code>tests/security/controles.sh</code> exécute <strong>11/11 contrôles statiques</strong> (dont <code>S-11</code>/<code>SEC-14</code>).
+<strong>État actualisé (17/11/2026, branche <code>arena/b5a4074b-sae-302</code>) :</strong> la note d’origine du <code>28/09/2026</code> a été complétée par la campagne sur VM Debian 13 (<code>f9b614f</code>, <code>docs/pv-recette.md</code>, <code>60/60</code> étapes vertes dont <code>11/11</code> contrôles statiques de sécurité, <code>105/105</code> HTTP SQL et <code>338/338</code> E2E JSON isolé). Les scénarios offensifs manuels sur LineServ et une recette humaine restent non joués.</p>
 </blockquote>
 <hr />
 <h2 id="1-strategie-defense-en-profondeur-preuve-par-lattaque">1. Stratégie : défense en profondeur, preuve par l'attaque<a class="headerlink" href="#1-strategie-defense-en-profondeur-preuve-par-lattaque" title="Permanent link">#</a></h2>
@@ -501,7 +500,7 @@ foreach ($routes as $motif =&gt; $route) {
 http_response_code(404); // rien n'a matché → 404, et c'est le SEUL comportement
 </code></pre>
 <p>Le contrôleur frontal vit seul dans <code>public/</code> (DocumentRoot) ; <code>public/.htaccess</code> ajoute en défense en profondeur <code>Require all denied</code> sur <code>.env*</code> et <code>*.log|*.sql|*.md</code> si jamais des fichiers sensibles étaient copiés là par erreur. Aucun <code>phpinfo()</code> dans le code (grep = 0). Pas d'upload de fichiers : les images sont des URL stockées en base (la validation du type/taille d'upload du CDC §SEC-11 n'a donc pas de surface à défendre ici).</p>
-<p>Deux <strong>outils de développement</strong> assumés vivent aussi dans <code>public/</code> (<code>gen_volumes.php</code>, <code>mesurer.php</code> — ENF-01/02, conçus ainsi par le CDC §.htaccess) : servis en environnement de développement, ils <strong>se bloquent eux-mêmes en production</strong> (détection <code>APP_ENV</code>/env.php → 404 volontaire, « pas 403, pour ne pas révéler l'existence de l'outil »). Ils n'ont accès à aucune table du moteur applicatif : le générateur cible la base SQL de référence (harness de volumétrie), jamais <code>data/minishop</code>.</p>
+<p>Les scripts de volumétrie et de mesure (<code>public/gen_volumes.php</code>, <code>public/mesurer.php</code> initialement prévus) ont été <strong>retirés du webroot <code>public/</code></strong> au profit d’outils CLI dédiés hors exposition HTTP (<code>scripts/gen_volumes_cli.php</code>, <code>scripts/run_perf_vm.sh</code>, <code>tests/perf/mesurer*.sh</code>), validés sur VM isolée (<code>cb0f814</code>, <code>tests/perf/dernieres_mesures.txt</code>). Aucun script d’installation (<code>public/install.php</code>) ni utilitaire de benchmark n’est donc exposé sous <code>public/</code>.</p>
 <table>
 <thead>
 <tr>
@@ -824,16 +823,15 @@ public static function exigeSuper(): array
 </tr>
 <tr>
 <td>9</td>
-<td>Outils de volumétrie/mesure (<code>public/gen_volumes.php</code>, <code>mesurer.php</code>)</td>
-<td>hérités de la phase SQL : ils visent la base MySQL de référence, pas le moteur JSON ; verrou = <code>APP_ENV</code> (404 en prod). À re-brancher sur le moteur JSON ou à retirer de <code>public/</code> au lot ENF-01</td>
+<td>Outils de volumétrie/mesure</td>
+<td><code>public/gen_volumes.php</code> et <code>public/mesurer.php</code> ont été retirés de <code>public/</code> et déplacés vers l’outillage CLI (<code>scripts/gen_volumes_cli.php</code>, <code>scripts/run_perf_vm.sh</code>, <code>tests/perf/</code>)</td>
 </tr>
 </tbody>
 </table>
 <hr />
 <h2 id="7-annexe-rejouer-les-attaques">7. Annexe — rejouer les attaques<a class="headerlink" href="#7-annexe-rejouer-les-attaques" title="Permanent link">#</a></h2>
-<pre><code class="language-bash">npm run test:all          # exécuter les suites configurées ; consigner date, SHA,
-                          # environnement, sorties et statut des tests non joués
-                          # (T6+T12+T13 = 45 vérifications de sécurité)
+<pre><code class="language-bash">php scripts/run-all-tests.php   # suite complète sur machine avec PHP CLI + MariaDB (`f9b614f` : 60/60)
+bash tests/security/controles.sh  # 11/11 contrôles statiques (S-11 / SEC-14 inclus)
 </code></pre>
 <p>Attaques rejouables individuellement (extraits de <code>scripts/wasm-e2e.mjs</code>) :</p>
 <pre><code class="language-js">// S-01  GET /recherche?q=' OR 1=1 --            → 200, « 0 produit trouvé »
@@ -845,7 +843,7 @@ public static function exigeSuper(): array
 // S-07  /.git/config, /sql/…, /../etc/passwd     → 404 ; 4 en-têtes vérifiés
 // S-10  inscription avec role=SUPER              → client simple, table admin intacte
 </code></pre>
-<p><em>Note rédigée le 28/09/2026 — toutes les affirmations ci-dessus sont vérifiables dans le dépôt : les extraits de code sont cités fidèlement, les tests sont exécutables par <code>npm run test:all</code>.</em></p>
+<p><em>Note d’origine rédigée le 28/09/2026 et actualisée au 17/11/2026 (<code>f9b614f</code> / <code>cb0f814</code>) — les extraits et contrôles statiques sont vérifiables dans le dépôt (<code>bash tests/security/controles.sh</code> et <code>php scripts/run-all-tests.php</code>).</em></p>
 <footer class="doc">
   <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/07-note-cybersecurite.md</code>
   par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>

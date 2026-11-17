@@ -105,16 +105,16 @@ final class HttpClient
         return $this->post($cheminPost, $champs);
     }
 
-    /** Cookie de session courant (`PHPSESSID`), `null` si absent. */
+    /** Cookie de session courant (`MINISHOPSESS`, repli `PHPSESSID`), `null` si absent. */
     public function cookieSession(): ?string
     {
-        return $this->cookies['PHPSESSID'] ?? null;
+        return $this->cookies['MINISHOPSESS'] ?? $this->cookies['PHPSESSID'] ?? null;
     }
 
     /** Émet une requête HTTP/1.1 brute et analyse la réponse. */
     private function requete(string $methode, string $chemin, ?string $corpsForm): HttpReponse
     {
-        $socket = @fsockopen('127.0.0.1', $this->port, $errno, $errstr, 5.0);
+        $socket = @fsockopen('127.0.0.1', $this->port, $errno, $errstr, 10.0);
         if ($socket === false) {
             return new HttpReponse(0, [], '');
         }
@@ -140,7 +140,7 @@ final class HttpClient
             $requete .= $corpsForm;
         }
         fwrite($socket, $requete);
-        stream_set_timeout($socket, 10);
+        stream_set_timeout($socket, 30);
         $brut = '';
         while (!feof($socket)) {
             $morceau = fread($socket, 8192);

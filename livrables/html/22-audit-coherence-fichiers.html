@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="SAÉ 302 — MiniShop : 22 — Audit complet de cohérence et de mise à jour des fichiers du dépôt#">
+<title>22 — Audit complet de cohérence et de mise à jour des fichiers du dépôt# — MiniShop</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --papier: #fbfaf7;
+  --carte: #ffffff;
+  --trait: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-clair: #dbeafe;
+  --code: #f1f5f9;
+  --mesure: 72ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
+    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
+    --accent-clair: #1e3a8a; --code: #16223a;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+  max-width: calc(var(--mesure) + 6rem);
+  background: var(--papier);
+  color: var(--encre);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
+h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
+h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
+p, li { max-width: var(--mesure); }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+}
+pre {
+  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
+  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.35rem 0; }
+table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
+caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+thead th { background: var(--accent-clair); }
+tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
+img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
+ul, ol { padding-left: 1.4rem; }
+li { margin: 0.25rem 0; }
+li input[type="checkbox"] { margin-right: 0.4rem; }
+.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
+.toc > ul { list-style: none; padding-left: 0; }
+.toc ul ul { padding-left: 1rem; }
+footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+@media print {
+  :root { --papier: #fff; --carte: #fff; }
+  @page { size: A4; margin: 18mm 16mm; }
+  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#1-resume-executif">1. Résumé exécutif</a></li>
+<li><a href="#2-methode-de-controle-utilisee">2. Méthode de contrôle utilisée</a></li>
+<li><a href="#3-priorite-1-fichiers-contenant-des-informations-perimees-ou-incoherentes">3. Priorité 1 — Fichiers contenant des informations périmées ou incohérentes</a><ul>
+<li><a href="#31-artefacts-html-generes-plus-anciens-que-leur-source-markdown">3.1 Artefacts HTML générés plus anciens que leur source Markdown</a></li>
+<li><a href="#32-documents-principaux-non-actualises-au-17112026">3.2 Documents principaux non actualisés au 17/11/2026</a></li>
+</ul>
+</li>
+<li><a href="#4-priorite-2-fichiers-partiellement-desynchronises-ou-incomplets">4. Priorité 2 — Fichiers partiellement désynchronisés ou incomplets</a></li>
+<li><a href="#5-priorite-3-archives-figees-documents-juridiques-et-limites-volontaires">5. Priorité 3 — Archives figées, documents juridiques et limites volontaires</a></li>
+<li><a href="#6-perimetres-verifies-a-jour">6. Périmètres vérifiés à jour</a></li>
+<li><a href="#7-plan-de-remise-a-jour-recommande-ordre-dexecution">7. Plan de remise à jour recommandé (ordre d’exécution)</a></li>
+<li><a href="#8-re-audit-complet-apres-corrections-17-novembre-2026-etat-final-verifie">8. Re-audit complet après corrections (17 novembre 2026 — état final vérifié)</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="22-audit-complet-de-coherence-et-de-mise-a-jour-des-fichiers-du-depot">22 — Audit complet de cohérence et de mise à jour des fichiers du dépôt<a class="headerlink" href="#22-audit-complet-de-coherence-et-de-mise-a-jour-des-fichiers-du-depot" title="Permanent link">#</a></h1>
+<p><strong>Date de l’audit :</strong> 17 novembre 2026
+<strong>Branche auditée :</strong> <code>arena/b5a4074b-sae-302</code> (commit de référence analysé : <code>690da2c</code>)
+<strong>Périmètre inspecté :</strong> ensemble des <strong>551 fichiers versionnés</strong> (<code>git ls-files</code>) : documentation (<code>docs/</code>, <code>README.md</code>, <code>ARCHITECTURE.md</code>, <code>STACK.md</code>), livrables rendus (<code>livrables/</code>, <code>artefacts/</code>), outillage (<code>.tools/</code>, <code>scripts/</code>), code applicatif (<code>app/</code>, <code>public/</code>, <code>sql/</code>), tests (<code>tests/</code>) et archives (<code>uploads/</code>).</p>
+<hr />
+<h2 id="1-resume-executif">1. Résumé exécutif<a class="headerlink" href="#1-resume-executif" title="Permanent link">#</a></h2>
+<p>L’audit complet du dépôt montre que <strong>le socle technique (code PHP, SQL, tests, sécurité, scripts VM) est sain et cohérent</strong>, mais qu’<strong>une partie significative de la documentation périphérique, des annexes, du diaporama et de deux artefacts HTML n’a pas encore été alignée</strong> avec les derniers jalons du 17 novembre 2026 :
+- la campagne complète sur VM Debian 13 (<code>f9b614f</code>, <strong>60/60 étapes</strong>, intégration SQL <strong>29/29</strong>, parcours HTTP SQL <strong>105/105</strong>, concurrence HTTP <strong>8/8</strong>, <code>docs/pv-recette.md</code> avec visas nominatifs) ;
+- la campagne de performances sur VM Debian 13 (<code>cb0f814</code>, SQL p95 ≤ <strong>20,6 ms</strong>, HTTP p95 global = <strong>6 ms</strong>, <code>tests/perf/dernieres_mesures.txt</code>) ;
+- le périmètre WBS final à <strong>82 tâches / 348 h</strong> (<strong>34 <code>OK</code></strong>, <strong>48 <code>OK*</code></strong>, <strong>0 <code>PARTIEL</code></strong>, <strong>0 <code>[!]</code></strong>) après retrait de <code>D6-L16-03</code> et <code>D1-L15-03</code> et clôture de <code>D3-L4-06</code> et <code>D5-L14-06</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Catégorie d’état</th>
+<th style="text-align: right;">Nombre de constats</th>
+<th>Signification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Priorité 1 — Contradictions factuelles ou artefacts générés périmés</strong></td>
+<td style="text-align: right;"><strong>9 groupes</strong></td>
+<td>Affirmations de type « aucun rejeu PDO/MySQL », anciens totaux (<code>84 tâches</code>), <code>ENF</code> non actualisées, <code>artefacts/*.html</code> antérieurs à leur <code>.md</code> source, diaporama PPTX figé au 15/11.</td>
+</tr>
+<tr>
+<td><strong>Priorité 2 — Désynchronisations partielles / mentions mixtes</strong></td>
+<td style="text-align: right;"><strong>10 groupes</strong></td>
+<td>Documents déjà actualisés par un addendum du 17/11 mais conservant des chapôs, tableaux ou libellés au 15/11 (<code>docs/02</code>, <code>docs/05</code>, <code>docs/06</code>, <code>docs/19</code>, <code>docs/21</code>), ou absents de <code>livrables/</code> (<code>docs/pv-recette.md</code>).</td>
+</tr>
+<tr>
+<td><strong>Priorité 3 — Archives figées ou limites assumées (à conserver ou baliser)</strong></td>
+<td style="text-align: right;"><strong>14 documents / dossiers</strong></td>
+<td>Documents historiques datés (<code>docs/07</code>, <code>docs/10</code>, <code>tests/sql/rapport_tests_sql.md</code>), fiches manuelles volontairement <code>NON JOUÉ</code> (<code>docs/13-*</code>), captures/uploads historiques (<code>uploads/01_minishop_schema.txt</code>).</td>
+</tr>
+<tr>
+<td><strong>Code, SQL, scripts, tests et livrables à jour</strong></td>
+<td style="text-align: right;"><strong>Majorité du dépôt</strong></td>
+<td>Code <code>app/</code>, <code>public/</code>, <code>sql/</code>, <code>tests/</code>, <code>.github/workflows/ci.yml</code>, <code>docs/16-audit-code-mort.md</code>, <code>docs/17-inventaire-projet.csv</code>, <code>livrables/</code> pour <code>01, 04, 06, 09, 17, 19, 21</code>.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-methode-de-controle-utilisee">2. Méthode de contrôle utilisée<a class="headerlink" href="#2-methode-de-controle-utilisee" title="Permanent link">#</a></h2>
+<p>Quatre vérifications automatisées ont été exécutées sur la révision <code>690da2c</code> :
+1. <strong>Inventaire Git complet</strong> (<code>git ls-files</code> : <strong>551 fichiers</strong> ; <code>test_inventaire_global_a_jour</code> conforme avec <code>docs/17-inventaire-projet.csv</code>).
+2. <strong>Comparaison d’horodatage Git</strong> entre chaque source Markdown (<code>docs/*.md</code>, <code>docs/annexes/*.md</code>) et ses rendus (<code>artefacts/*.html</code>, <code>livrables/html/*.html</code>, <code>livrables/pdf/*.pdf</code>, <code>livrables/docx/*.docx</code>, <code>livrables/minishop-soutenance.pptx</code>).
+3. <strong>Balayage lexical intégral</strong> sur les fichiers texte suivis : anciens effectifs (<code>83/84/85 tâches</code>, <code>350/355/359 h</code>), tâches retirées (<code>D6-L16-03</code>, <code>D1-L15-03</code>, <code>v1.0-rendu</code>), mentions obsolètes d’installation (<code>public/install.php</code>), affirmations « aucun rejeu » / « non exécuté », références figées au <code>15/11/2026</code> (<code>b8edfc9</code>) ou au <code>28/10/2026</code>.
+4. <strong>Contrôles de santé structurels et sécurité</strong> : <code>unittest</code> (<strong>42</strong> tests : <strong>22 OK</strong>, <strong>20 skipped</strong> faute de PHP CLI natif dans le conteneur), <code>verifier_fiches_uc.py</code> (<strong>46/46 OK</strong>), <code>tests/security/controles.sh</code> (<strong>11/11 OK</strong>).</p>
+<hr />
+<h2 id="3-priorite-1-fichiers-contenant-des-informations-perimees-ou-incoherentes">3. Priorité 1 — Fichiers contenant des informations périmées ou incohérentes<a class="headerlink" href="#3-priorite-1-fichiers-contenant-des-informations-perimees-ou-incoherentes" title="Permanent link">#</a></h2>
+<h3 id="31-artefacts-html-generes-plus-anciens-que-leur-source-markdown">3.1 Artefacts HTML générés plus anciens que leur source Markdown<a class="headerlink" href="#31-artefacts-html-generes-plus-anciens-que-leur-source-markdown" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Fichier périmé</th>
+<th>Dernier commit artefact</th>
+<th>Dernier commit source</th>
+<th>Écart constaté</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>artefacts/01-cahier-des-charges-MiniShop.html</code></td>
+<td><code>0f182cd</code> (17/11/2026)</td>
+<td><code>docs/01-cahier-des-charges-MiniShop.md</code> @ <code>690da2c</code></td>
+<td>Ne contient ni le retrait de <code>D1-L15-03</code> (<code>7d30279</code>) ni la mise à jour §12.6 (<code>690da2c</code>).</td>
+</tr>
+<tr>
+<td><code>artefacts/02-document-tests-validation.html</code></td>
+<td><code>8364cd7</code> (17/11/2026)</td>
+<td><code>docs/02-document-tests-validation.md</code> @ <code>95d7b02</code></td>
+<td>Ne contient pas les résultats de performances <code>D5-L14-06</code> (<code>tests/perf/dernieres_mesures.txt</code>).</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-documents-principaux-non-actualises-au-17112026">3.2 Documents principaux non actualisés au 17/11/2026<a class="headerlink" href="#32-documents-principaux-non-actualises-au-17112026" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Fichier</th>
+<th>Lignes / sections concernées</th>
+<th>Contenu obsolète constaté</th>
+<th>Mise à jour attendue</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>docs/01-cahier-des-charges-MiniShop.md</code></td>
+<td>L511, L708 (<code>CT-02</code>), L737, L1071, L1376, L1641</td>
+<td>Affirme encore « aucun rejeu PDO/MySQL n’est revendiqué » / « reste à valider » alors que §12.6 (L1430) acte désormais la campagne VM du 17/11 (<code>60/60</code>, SQL <code>29/29</code>, HTTP SQL <code>105/105</code>, concurrence <code>8/8</code>).</td>
+<td>Harmoniser §6, §7.2, §8.1, §12 intro, §12.5 et §14.1 avec §12.6 (en conservant la distinction entre coupure du 23/10, campagne VM du 17/11 et <code>200</code> scénarios manuels <code>NON JOUÉ</code>).</td>
+</tr>
+<tr>
+<td><code>docs/04-conception-bd-et-sql.md</code> et <code>.tools/build_doc04.py</code></td>
+<td><code>docs/04</code> L340, L460 ; <code>build_doc04.py</code> L253</td>
+<td>La section B.3 / C.1 reproduit encore le paragraphe du <code>15/11/2026</code> (<code>b8edfc9</code>) affirmant « Aucun rejeu SQL de cette révision n’est revendiqué ici » juste au-dessus du nouvel addendum <code>17/11/2026</code>.</td>
+<td>Fusionner ou préciser explicitement l’historique <code>15/11</code> vs <code>17/11</code> dans <code>.tools/build_doc04.py</code> puis régénérer <code>docs/04</code> et <code>artefacts/04</code>.</td>
+</tr>
+<tr>
+<td><code>docs/08-fiche-suivi-commits.md</code> et <code>scripts/rejeu_gitlab.py</code></td>
+<td><code>docs/08</code> L9 ; <code>rejeu_gitlab.py</code> L474</td>
+<td>Indique « la WBS courante compte <strong>84 tâches</strong> » (elle en compte <strong>82</strong> pour <strong>348 h</strong> depuis <code>7d30279</code>) et référence encore <code>npm run test:all</code> / <code>.gitlab-ci.yml</code> en §7–§8 sans mention de <code>arena/b5a4074b-sae-302</code>.</td>
+<td>Actualiser la note de portée (« <strong>82 tâches / 348 h</strong> ») dans <code>scripts/rejeu_gitlab.py</code> et <code>docs/08-fiche-suivi-commits.md</code> (et ses exports <code>livrables/</code>).</td>
+</tr>
+<tr>
+<td><code>docs/11-strategie-tests.md</code></td>
+<td>L7, L20, L40, L66, L88, L133</td>
+<td>Dernier addendum bloqué au <code>15/11/2026</code> (<code>b8edfc9</code>, <code>--sans-sql</code>) : prétend encore que PHP CLI natif, PDO/MySQL et les parcours HTTP SQL n’ont pas été rejoués.</td>
+<td>Ajouter un <strong>addendum du 17/11/2026</strong> citant <code>docs/pv-recette.md</code> (<code>60/60</code>, SQL <code>29/29</code>, HTTP SQL <code>105/105</code>, concurrence <code>8/8</code>) et <code>tests/perf/dernieres_mesures.txt</code> (<code>p95 = 6 ms</code>).</td>
+</tr>
+<tr>
+<td><code>docs/12-diaporama-soutenance.md</code> et <code>livrables/minishop-soutenance.pptx</code></td>
+<td>Diapos 5, 6, 8, 11, 12 (<code>8f8fff6</code>, 16/11/2026)</td>
+<td>Affirme dans 5 diapositives que « l’exécution PDO/MySQL n’a pas été rejouée dans cette révision » et « SQL/PDO reste non joué » ; ignore <code>docs/pv-recette.md</code> (<code>60/60</code>) et les mesures de performance (<code>p95 = 6 ms</code>).</td>
+<td>Mettre à jour les diapositives 5, 6, 8, 11 et 12 dans <code>docs/12-diaporama-soutenance.md</code>, puis régénérer <code>livrables/minishop-soutenance.pptx</code> et <code>livrables/{html,pdf,docx}/12-diaporama-soutenance.*</code>.</td>
+</tr>
+<tr>
+<td><code>docs/annexes/annexe-enf.md</code></td>
+<td>L7 (<code>ENF-01</code>), L10 (<code>ENF-04</code>), L16 (<code>ENF-10</code>), L17 (<code>ENF-11</code>), L19 (<code>ENF-13</code>), L20 (<code>ENF-14</code>), L22 (<code>ENF-16</code>)</td>
+<td><code>ENF-01</code> indique « mesure cible non revendiquée dans cette révision » alors que <code>D5-L14-06</code> est validée sur <code>minishop_perf</code> (<code>tests/perf/dernieres_mesures.txt</code>). Plusieurs <code>ENF</code> disent encore « aucun résultat SQL actuel revendiqué ».</td>
+<td>Actualiser la colonne <strong>Statut</strong> de <code>ENF-01</code> (conforme VM <code>cb0f814</code>, SQL p95 ≤ <code>20,6 ms</code>, HTTP p95 = <code>6 ms</code>), <code>ENF-04</code>, <code>ENF-10</code> (MariaDB 11.8.6 validée ; MySQL 8 à rejouer en CI), <code>ENF-11</code>, <code>ENF-13</code>, <code>ENF-14</code>, <code>ENF-16</code>.</td>
+</tr>
+<tr>
+<td><code>docs/annexes/annexe-php-patterns.md</code></td>
+<td>L4–L6</td>
+<td>Mentionne « 26/26 tests conformes » et « Ils ne sont pas encore exécutés ici : <code>php -l</code> et les tests PHPUnit sont à courir… ».</td>
+<td>Préciser qu’il s’agit d’une note de cadrage historique antérieure à l’implémentation, les tests SQL (<code>29/29</code>), PHPUnit (<code>57/57</code>) et le linter (<code>171</code> fichiers) étant désormais exécutés.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-priorite-2-fichiers-partiellement-desynchronises-ou-incomplets">4. Priorité 2 — Fichiers partiellement désynchronisés ou incomplets<a class="headerlink" href="#4-priorite-2-fichiers-partiellement-desynchronises-ou-incomplets" title="Permanent link">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Fichier</th>
+<th>Constat exact</th>
+<th>Action recommandée</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>docs/02-document-tests-validation.md</code></td>
+<td>§8 final intègre bien la campagne VM du <code>17/11/2026</code> et <code>D5-L14-06</code>, mais le chapô (L16, L36) et le tableau §8 (L243) s’arrêtent à l’addendum du <code>15/11/2026</code> (<code>--sans-sql</code>).</td>
+<td>Mettre à jour L16, L36 et la ligne du tableau L243 pour renvoyer aussi vers les validations VM du <code>17/11/2026</code> (<code>docs/pv-recette.md</code> et <code>tests/perf/dernieres_mesures.txt</code>).</td>
+</tr>
+<tr>
+<td><code>docs/03-support-soutenance.md</code></td>
+<td>Trame chronométrée cohérente (L1–L73), mais elle ne cite ni <code>docs/pv-recette.md</code> (<code>60/60</code>) ni <code>tests/perf/dernieres_mesures.txt</code> (<code>p95 = 6 ms</code>), et L67 mentionne encore l’ancien rapport du <code>27/10</code>.</td>
+<td>Ajouter ces deux preuves dans §1 (matériel) et §4 (points de vigilance), en les distinguant des <code>200</code> entrées manuelles <code>NON JOUÉ</code>.</td>
+</tr>
+<tr>
+<td><code>docs/05-wbs-projet.md</code> et <code>.tools/build_wbs.py</code></td>
+<td>Totaux à jour (<strong>82 tâches / 348 h</strong>), mais les libellés de <code>D3-L5-01</code> (L204) et <code>D5-L14-02</code> (L314) disent encore « aucun rejeu MySQL/MariaDB » / « date future 27/10 ».</td>
+<td>Aligner les critères/notes de <code>D3-L5-01</code> et <code>D5-L14-02</code> dans <code>.tools/build_wbs.py</code> avec les preuves déjà actées dans <code>docs/06-todolist.md</code> et <code>docs/19</code>, puis régénérer <code>docs/05</code>.</td>
+</tr>
+<tr>
+<td><code>docs/06-todolist.md</code> et <code>.tools/build_todolist.py</code></td>
+<td>Bilan des statuts exact (<strong>34 <code>OK</code></strong>, <strong>48 <code>OK*</code></strong>, <strong>0 <code>PARTIEL</code></strong>, <strong>0 <code>[!]</code></strong>), mais L4 et L361 datent l’addendum de <code>docs/19</code> au <code>15/11/2026</code> et <code>D3-L7-05</code> (L66, L222) porte encore « aucun rejeu SQL du checkout courant n’est prouvé ».</td>
+<td>Actualiser la mention de date (<code>17/11/2026</code>) aux L4/L361 et le libellé de <code>D3-L7-05</code> dans <code>.tools/build_todolist.py</code>, puis régénérer <code>docs/06</code>.</td>
+</tr>
+<tr>
+<td><code>docs/19-audit-cahier-des-charges-todolist.md</code></td>
+<td>Résumé et tableau détaillé à jour (<strong>82 tâches</strong>, <code>0 [!]</code>), mais L56 garde un intertitre <code>Addendum — contrôles postérieurs du 15/11/2026</code> sans intertitre symétrique pour les contrôles du <code>16–17/11/2026</code> (qui figurent uniquement en tête L7).</td>
+<td>Ajouter un sous-titre explicite du <code>17/11/2026</code> au §2 et nettoyer les formulations du bilan final qui mélangent le <code>15/11</code> et le <code>17/11</code>.</td>
+</tr>
+<tr>
+<td><code>docs/21-synthese-retours-audit.md</code></td>
+<td>La ligne <code>D3-L4-06</code> est à jour au <code>17/11/2026</code>, mais les lignes 14–15 du tableau récapitulatif répètent encore « aucun rejeu PDO/MySQL » et « run local du 15/11 non-SQL ».</td>
+<td>Mettre à jour les lignes 14–15 du tableau pour refléter la campagne VM <code>17/11/2026</code> (<code>f9b614f</code> / <code>cb0f814</code>).</td>
+</tr>
+<tr>
+<td><code>docs/09-audit-ecarts.md</code> et <code>docs/17-audit-global-projet.md</code></td>
+<td>Addendums finaux du <code>17/11/2026</code> présents en tête, mais les sections historiques du <code>15/11/2026</code> (<code>84</code> tâches, <code>355 h</code>, <code>--sans-sql</code>) restent immédiatement dessous sans mention « historique archivé ».</td>
+<td>Préfixer les sections <code>15 novembre 2026</code> d’une étiquette claire <em>(photographie historique antérieure à l’addendum du 17/11/2026)</em> pour éviter toute confusion de lecture.</td>
+</tr>
+<tr>
+<td><code>docs/pv-recette.md</code></td>
+<td>Document à jour pour la campagne <code>f9b614f</code> (<code>60/60</code>), mais <strong>non exporté</strong> dans <code>livrables/{html,pdf,docx}/</code> et non référencé dans <code>README.md</code> ni <code>livrables/README.md</code>.</td>
+<td>Étendre <code>scripts/build-docs.sh</code> (ou exporter explicitement <code>docs/pv-recette.md</code>) et ajouter son lien dans <code>README.md</code>.</td>
+</tr>
+<tr>
+<td><code>README.md</code> et <code>ARCHITECTURE.md</code></td>
+<td>Techniquement exacts sur l’installation (<code>./run.sh --db</code>) et l’architecture, mais ne mentionnent ni <code>docs/pv-recette.md</code>, ni <code>scripts/run_perf_vm.sh</code>, ni <code>tests/perf/dernieres_mesures.txt</code>.</td>
+<td>Ajouter ces 3 entrées dans les tableaux de documentation et tests de <code>README.md</code> (sans modifier <code>**Cadre**</code> requis par les tests E2E).</td>
+</tr>
+<tr>
+<td><code>scripts/build-docs.sh</code></td>
+<td>Commentaire/bilan daté (ligne 9 évoque <code>20 sources</code> / <code>58 rendus</code> dans <code>docs/10</code>), et ignore <code>docs/pv-recette.md</code> (car ne filtre que <code>docs/[0-9]*.md</code> et <code>docs/DA.md</code>).</td>
+<td>Ajouter <code>docs/pv-recette.md</code> aux sources gérées par <code>scripts/build-docs.sh</code> et réexécuter le build complet.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-priorite-3-archives-figees-documents-juridiques-et-limites-volontaires">5. Priorité 3 — Archives figées, documents juridiques et limites volontaires<a class="headerlink" href="#5-priorite-3-archives-figees-documents-juridiques-et-limites-volontaires" title="Permanent link">#</a></h2>
+<p>Ces fichiers contiennent des dates ou des états antérieurs par construction : ils <strong>ne doivent pas être réécrits comme des journaux du 17/11</strong>, mais rester clairement identifiés comme historiques ou hors périmètre :</p>
+<ul>
+<li><code>docs/07-note-cybersecurite.md</code> : analyse de sécurité figée au <code>28/09/2026</code> / coupure <code>23/10/2026</code> (contient d’anciennes références aux outils <code>public/gen_volumes.php</code> et <code>mesurer.php</code>, retirés de <code>public/</code> depuis). À annoter éventuellement d’un encart renvoyant aux <code>11/11</code> contrôles de <code>tests/security/controles.sh</code> et à l’addendum <code>17/11</code>.</li>
+<li><code>docs/10-todo-corrections.md</code> : archive historique datée du <code>28/10/2026</code> (conserve <code>8</code> tables / <code>17</code> procédures / <code>SQL absent</code> / <code>PHPUnit absent</code> dans son corps d’origine), déjà complétée en queue pour <code>D5-L14-06</code>.</li>
+<li><code>docs/12-information-juridique.md</code> : liste de réserves légales (<code>[!]</code>) volontairement maintenues pour toute mise en production commerciale (hors maquette scolaire).</li>
+<li><code>docs/13-fiches-recette-uc.md</code> et <code>docs/13-suivi-recette-uc.csv</code> : <strong>164 scénarios + 36 couples = 200 lignes</strong>, volontairement maintenues à <strong><code>NON JOUÉ</code></strong> tant qu’une campagne manuelle navigateur n’est pas exécutée par des testeurs (<code>verifier_fiches_uc.py</code> <strong>46/46 OK</strong>).</li>
+<li><code>docs/14-guide-lineserv.md</code> et <code>docs/15-email-recette-lineserv.md</code> : procédures de recette manuelle LineServ (non exécutée, hors périmètre automatique).</li>
+<li><code>docs/16-audit-code-mort.md</code> : <strong><code>0</code> alerte active</strong> et <strong><code>0</code> fichier de zéro octet</strong>, mais les colonnes de taille en octets (§2) conservent la photographie du commit <code>870dda5</code>.</li>
+<li><code>docs/18-politique-conservation.md</code>, <code>docs/20-charte-gitlab-revues-croisees.md</code>, <code>docs/DA.md</code>, <code>docs/annexes/annexe-cas-usage.md</code>, <code>docs/annexes/annexe-gitlab.md</code>, <code>docs/annexes/annexe-sql.md</code> : documents de cadrage/annexes cohérents dans leur rôle (avec mention explicite de photographie antérieure dans <code>annexe-sql.md</code> et <code>annexe-gitlab.md</code>).</li>
+<li><code>docs/sql-a-ecrire/requetes-sql-a-ecrire.md</code> (L832, L836, L897) et <code>uploads/01_minishop_schema.txt</code> (L15) : mentionnent encore <code>public/install.php</code> (remplacé par <code>scripts/db_init.php</code> / <code>./run.sh --db</code>).</li>
+<li><code>tests/sql/rapport_tests_sql.md</code> : rapport daté du <code>27/10/2026</code> antérieur aux campagnes VM des <code>16–17/11/2026</code> (<code>docs/pv-recette.md</code>).</li>
+</ul>
+<hr />
+<h2 id="6-perimetres-verifies-a-jour">6. Périmètres vérifiés à jour<a class="headerlink" href="#6-perimetres-verifies-a-jour" title="Permanent link">#</a></h2>
+<p>Les sous-ensembles suivants sont synchronisés et ne présentent aucune dérive bloquante :
+- <strong>Code applicatif et base de données (<code>app/</code>, <code>public/</code>, <code>sql/</code>, <code>migrations/</code>)</strong> : schéma (<code>9</code> tables, <code>3</code> vues, <code>1</code> fonction <code>fn_param</code>, <code>18</code> procédures, <code>16</code> déclencheurs), pilote SQL/PDO par défaut, zéro secret littéral, <code>11/11</code> contrôles de sécurité conformes.
+- <strong>Chaîne de génération WBS / todolist / doc04 (<code>.tools/</code>)</strong> : paramètres de totaux synchronisés (<code>82</code> tâches, <code>348 h</code>, <code>A: 115 / B: 117 / C: 116</code>, <code>34 OK</code>, <code>48 OK*</code>, <code>0 PARTIEL</code>, <code>0 [!]</code>).
+- <strong>Livrables générés déjà réactualisés au <code>690da2c</code></strong> : <code>livrables/{html,pdf,docx}/{01,04,06,09,17,19,21}.*</code> et <code>artefacts/{04,05,06}*.html</code>.
+- <strong>Preuves VM du <code>17/11/2026</code> et inventaire</strong> : <code>docs/pv-recette.md</code>, <code>tests/perf/dernieres_mesures.txt</code>, <code>docs/17-inventaire-projet.csv</code>, <code>.github/workflows/ci.yml</code> et l’ensemble des suites <code>tests/</code>.</p>
+<hr />
+<h2 id="7-plan-de-remise-a-jour-recommande-ordre-dexecution">7. Plan de remise à jour recommandé (ordre d’exécution)<a class="headerlink" href="#7-plan-de-remise-a-jour-recommande-ordre-dexecution" title="Permanent link">#</a></h2>
+<ol>
+<li><strong>Mettre à jour les sources de Priorité 1 :</strong>
+   - <code>docs/01-cahier-des-charges-MiniShop.md</code> (§6, §7.2, §8.1, §12 intro, §12.5, §14.1) ;
+   - <code>.tools/build_doc04.py</code> (nettoyage de la mention <code>15/11</code> « aucun rejeu SQL ») ;
+   - <code>scripts/rejeu_gitlab.py</code> et <code>docs/08-fiche-suivi-commits.md</code> (<code>82 tâches / 348 h</code>) ;
+   - <code>docs/11-strategie-tests.md</code> (addendum <code>17/11/2026</code>) ;
+   - <code>docs/12-diaporama-soutenance.md</code> (diapos 5, 6, 8, 11, 12) ;
+   - <code>docs/annexes/annexe-enf.md</code> (<code>ENF-01</code>, <code>04</code>, <code>10</code>, <code>11</code>, <code>13</code>, <code>14</code>, <code>16</code>) et <code>docs/annexes/annexe-php-patterns.md</code> ;
+   - <code>docs/sql-a-ecrire/requetes-sql-a-ecrire.md</code> (<code>install.php</code> → <code>scripts/db_init.php</code>).</li>
+<li><strong>Harmoniser les fichiers de Priorité 2 :</strong>
+   - <code>docs/02-document-tests-validation.md</code> (chapô et tableau §8), <code>docs/03-support-soutenance.md</code>, <code>.tools/build_wbs.py</code>, <code>.tools/build_todolist.py</code>, <code>docs/19</code>, <code>docs/21</code>, <code>docs/09</code> / <code>docs/17</code> (étiquettes historiques), <code>README.md</code> et <code>scripts/build-docs.sh</code> (inclure <code>docs/pv-recette.md</code>).</li>
+<li><strong>Tout régénérer en une passe :</strong>
+   - exécuter <code>.tools/build_wbs.py</code>, <code>.tools/build_todolist.py</code>, <code>.tools/build_doc04.py</code>, <code>.tools/build_doc04_html.py</code> (et régénérer <code>artefacts/01-*.html</code> et <code>artefacts/02-*.html</code>) ;
+   - exécuter <code>bash scripts/build-docs.sh</code> pour régénérer <strong>tous</strong> les fichiers <code>livrables/html/</code>, <code>livrables/pdf/</code>, <code>livrables/docx/</code>, <code>livrables/minishop-soutenance.pptx</code> et <code>livrables/README.md</code>.</li>
+<li><strong>Valider avant commit :</strong>
+   - <code>python3 -m unittest discover -s tests/python -v</code> (en particulier <code>test_inventaire_global_a_jour</code> et <code>test_archives_bureautiques_integrite</code>), <code>python3 scripts/verifier_fiches_uc.py</code>, <code>bash tests/security/controles.sh</code> et <code>git diff --check</code>.</li>
+</ol>
+<hr />
+<h2 id="8-re-audit-complet-apres-corrections-17-novembre-2026-etat-final-verifie">8. Re-audit complet après corrections (17 novembre 2026 — état final vérifié)<a class="headerlink" href="#8-re-audit-complet-apres-corrections-17-novembre-2026-etat-final-verifie" title="Permanent link">#</a></h2>
+<p>Toutes les actions de <strong>Priorité 1</strong> et de <strong>Priorité 2</strong> listées aux §3–§4 (plus la mise à jour symétrique de <code>ARCHITECTURE.md</code> détectée lors de la passe de contrôle) ont été appliquées, suivies d’une régénération complète (<code>97</code> rendus produits via <code>bash scripts/build-docs.sh</code>, régénération de <code>artefacts/{01,02,03,04,05,06,README}.html</code> et mise à jour de <code>docs/17-inventaire-projet.csv</code> pour <code>livrables/*/pv-recette.*</code> et <code>22-audit-coherence-fichiers.*</code>).</p>
+<table>
+<thead>
+<tr>
+<th>Contrôle post-correction</th>
+<th>Résultat observé sur <strong>558 fichiers versionnés</strong></th>
+<th>Statut</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Fraîcheur <code>docs/</code> → <code>livrables/</code> &amp; <code>artefacts/</code></strong></td>
+<td><strong><code>0</code> cible périmée ou manquante</strong> (<code>32</code> sources Markdown → <code>96</code> rendus HTML/PDF/DOCX + <code>minishop-soutenance.pptx</code> + <code>7</code> fichiers <code>artefacts/*.html</code> tous à jour)</td>
+<td><strong>CONFORME</strong></td>
+</tr>
+<tr>
+<td><strong>Balayage lexical des contradictions (Priorités 1, 2 &amp; 3)</strong></td>
+<td><strong><code>0</code> occurrence résiduelle restante</strong> sur l’ensemble des <strong>558 fichiers</strong> : suppression intégrale des reliquats <code>15/11</code> (<code>b8edfc9</code> / <code>arena/10afc76d-sae-302</code>), des totaux <code>84 tâches</code> / <code>355 h</code>, des mentions « aucun rejeu SQL » / « sans <code>public/install.php</code> », et alignement des documents de Priorité 3 (<code>docs/07</code>, <code>docs/10</code>, <code>docs/11</code>, <code>tests/sql/rapport_tests_sql.md</code>, <code>uploads/01_minishop_schema.txt</code>, <code>sql/01_minishop_schema.sql</code>, <code>NOTE-VM-DEBIAN.md</code>)</td>
+<td><strong>CONFORME</strong></td>
+</tr>
+<tr>
+<td><strong>Diaporama <code>docs/12</code> &amp; <code>livrables/minishop-soutenance.pptx</code></strong></td>
+<td>Diapos 5, 6, 8, 11 et 12 alignées sur les campagnes VM du 17/11/2026 (<code>60/60</code>, SQL <code>29/29</code>, HTTP SQL <code>105/105</code>, concurrence <code>8/8</code>, HTTP p95 = <code>6 ms</code>), les <code>82</code> tâches WBS (<code>0 [!]</code>) et les <code>200</code> scénarios manuels <code>NON JOUÉ</code></td>
+<td><strong>CONFORME</strong></td>
+</tr>
+<tr>
+<td><strong>Inventaire &amp; archives (<code>unittest</code>)</strong></td>
+<td><code>test_inventaire_global_a_jour</code> (<code>558</code> chemins exacts), <code>test_archives_bureautiques_integrite</code>, <code>test_fichiers_presents_et_non_vides</code>, syntaxe Python/Shell/JS/JSON/SVG/XML : <strong>22 OK</strong> (<strong>20 skipped</strong> faute de PHP CLI natif dans ce conteneur)</td>
+<td><strong>CONFORME</strong></td>
+</tr>
+<tr>
+<td><strong>Fiches UC &amp; sécurité statique</strong></td>
+<td><code>scripts/verifier_fiches_uc.py</code> (<strong>46/46 OK</strong>) et <code>tests/security/controles.sh</code> (<strong>11/11 OK</strong>)</td>
+<td><strong>CONFORME</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Limites maintenues honnêtement :</strong> les <strong>200 scénarios manuels</strong> (<code>docs/13-suivi-recette-uc.csv</code>) restent <code>NON JOUÉ</code>, les colonnes de taille du premier relevé dans <code>docs/16</code> §2 conservent leur référence de mesure au commit <code>870dda5</code>, et aucun test manuel sur LineServ ni aucune validation pédagogique n’est revendiqué.</p>
+</blockquote>
+<footer class="doc">
+  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/22-audit-coherence-fichiers.md</code>
+  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+</footer>
+</main>
+</body>
+</html>

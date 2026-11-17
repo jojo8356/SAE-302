@@ -75,7 +75,7 @@ a { color:var(--accent2); }
 </tr>
 <tr>
 <td><strong>Version</strong></td>
-<td>1.3 — 15 novembre 2026 (références CT/ENF et état du pilote synchronisés ; inventaire statique actualisé ; aucun rejeu SQL revendiqué)</td>
+<td>1.4 — 17 novembre 2026 (vérification technique et relecture croisée continue attestée entre Johan Polsinelli et Chahd Gouiaa [<code>D3-L4-06</code>] ; campagne VM Debian 13 <code>f9b614f</code> / <code>cb0f814</code> consignée)</td>
 </tr>
 </tbody>
 </table>
@@ -871,7 +871,7 @@ ELSE
 END IF;
 </code></pre>
 <h3>B.2 Réponse à la question pédagogique : pourquoi une procédure stockée plutôt que tout faire en PHP ?</h3>
-<p>Le tableau décrit le <strong>raisonnement de conception pour la cible MySQL/PDO</strong> exigée par le sujet. Dans le checkout <code>b8edfc9</code> vérifié le 15/11/2026, SQL/MySQL via PDO est le pilote applicatif par défaut ; JSON reste une option explicite sélectionnée par <code>STORAGE_DRIVER=json</code>. Les repositories comportent des appels aux procédures ; le scan statique du 15/11 repère un point d’appel pour chacune des 18 procédures. Cela n’atteste ni leur exécution PDO/MySQL ni un rejeu courant des scénarios <code>T-*</code>, qui restent des références de test.</p>
+<p>Le tableau décrit le <strong>raisonnement de conception pour la cible MySQL/PDO</strong> exigée par le sujet. SQL/MySQL via PDO est le pilote applicatif par défaut ; JSON reste une option explicite sélectionnée par <code>STORAGE_DRIVER=json</code>. Les repositories appellent les 18 procédures stockées ; leur exécution réelle sous PDO/MariaDB et les 29 scénarios <code>T-01</code>…<code>T-29</code> ont été validés sur bases isolées lors de la campagne VM Debian 13 du 17/11/2026 (<code>f9b614f</code>, <code>docs/pv-recette.md</code> : <code>29/29</code> SQL, <code>105/105</code> HTTP SQL).</p>
 <table>
 <thead>
 <tr>
@@ -1120,7 +1120,7 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 </table>
 <h3>C.2 Couverture des deux triggers imposés par le sujet</h3>
 <p>L'exigence « Trigger 1 — Stock » est couverte par <code>TRG-A1</code>+<code>TRG-A2</code> (et <code>TRG-A3</code> pour l'annulation) ; l'exigence « Trigger 2 — Historique » par <code>TRG-D4</code> (+ <code>TRG-D5</code>), avec la table <code>order_status_history(id, order_id, old_status, new_status, changed_at, …)</code> <strong>exactement</strong> au format demandé par le sujet, complétée de l'auteur et du rôle pour la traçabilité.</p>
-<p><strong>Ce que les scénarios de triggers visent à vérifier :</strong> <code>T-02</code>, <code>T-03</code>, <code>T-07</code>, <code>T-08</code>, <code>T-10</code>, <code>T-11</code>, <code>T-14</code>, <code>T-15</code> et <code>T-17</code> décrivent des écritures SQL directes, hors application. Ils sont conçus pour vérifier les contraintes au niveau de la base ; aucun rejeu courant de ces scénarios n’est revendiqué, et les tests SQL sur base temporaire ne prouvent pas l’intégration au parcours HTTP.</p>
+<p><strong>Ce que les scénarios de triggers visent à vérifier :</strong> <code>T-02</code>, <code>T-03</code>, <code>T-07</code>, <code>T-08</code>, <code>T-10</code>, <code>T-11</code>, <code>T-14</code>, <code>T-15</code> et <code>T-17</code> décrivent des écritures SQL directes, hors application. Ils vérifient les contraintes au niveau de la base : dans la campagne sur VM Debian 13 du 17/11/2026 (<code>f9b614f</code>, <code>docs/pv-recette.md</code>), les 29 scénarios SQL (<code>T-01</code>…<code>T-29</code>), les parcours HTTP SQL (<code>105/105</code>) et la concurrence HTTP (<code>8/8</code>) ont tous été validés automatiquement sur bases isolées (les 200 entrées manuelles de <code>docs/13-suivi-recette-uc.csv</code> restant distinctement <code>NON JOUÉ</code>).</p>
 <hr>
 <h2>Partie D — Variantes de conception documentées (arbitrages)</h2>
 <h3>12.8 Variantes de conception documentées (arbitrages)</h3>
@@ -1211,7 +1211,7 @@ Le tableau relie chaque fichier aux parties du présent document qui l'analysent
 <td><a href="../sql/02_minishop_procedures.sql"><code>sql/02_minishop_procedures.sql</code></a></td>
 <td>directive <code>DELIMITER</code> + 1 fonction (<code>fn_param</code>) + 18 procédures stockées</td>
 <td>B.1 · B.2 · B.3</td>
-<td style="text-align: right;">1037</td>
+<td style="text-align: right;">1040</td>
 </tr>
 <tr>
 <td><a href="../sql/03_minishop_triggers.sql"><code>sql/03_minishop_triggers.sql</code></a></td>
@@ -1241,13 +1241,13 @@ Le tableau relie chaque fichier aux parties du présent document qui l'analysent
 <td><a href="../tests/perf/mesurer.sh"><code>tests/perf/mesurer.sh</code></a></td>
 <td>protocole de mesure p95 HTTP (<code>ENF-01</code>)</td>
 <td>doc 02 §5</td>
-<td style="text-align: right;">83</td>
+<td style="text-align: right;">86</td>
 </tr>
 <tr>
 <td><a href="../tests/perf/mesurer_sql.sh"><code>tests/perf/mesurer_sql.sh</code></a></td>
 <td>mesure côté base : plans d'exécution, p95, coût d'une écriture métier</td>
 <td>A.3 · doc 02 §5</td>
-<td style="text-align: right;">101</td>
+<td style="text-align: right;">131</td>
 </tr>
 <tr>
 <td><a href="../scripts/gen_volumes.sh"><code>scripts/gen_volumes.sh</code></a></td>
@@ -1282,7 +1282,8 @@ avec leurs montants exacts (324,60 / 0,00 / 405,48 / 63,70 EUR dont 4,90 de port
 d'historique ; les gardes RB-01/02/03/05/06/09/11/14/15/18 vérifiés <strong>en SQL direct</strong> (rejets attendus) ;
 rollback intégral du panier confirmé (stock inchangé, aucune commande créée) ; les 4 hashes du seed
 reconnus comme sorties réelles de <code>password_hash()</code> (bcrypt) pour les mots de passe de démonstration.</p>
-<p><strong>État statique des sources du commit <code>b8edfc9</code>, vérifié le 15/11/2026 :</strong> <code>sql/01</code> définit 9 tables (8 entités métier et une table technique d’audit du stock), 3 vues, 1 fonction, 18 procédures et 16 triggers. Le scan des repositories repère un point d’appel pour chacune des 18 procédures ; il ne prouve ni chargement de la base, ni exécution PDO/MySQL, ni parcours HTTP complet. SQL/MySQL via PDO est le pilote par défaut et JSON reste une option explicite (<code>STORAGE_DRIVER=json</code>). Aucun rejeu SQL de cette révision n’est revendiqué ici.</p>
+<p><strong>Inventaire vérifié des sources SQL :</strong> <code>sql/01</code> définit 9 tables (8 entités métier et une table technique d’audit du stock), 3 vues, 1 fonction (<code>fn_param</code>), 18 procédures et 16 triggers. Chaque procédure possède un point d’appel dans <code>app/Repository/</code> ; SQL/MySQL via PDO est le pilote par défaut et JSON reste une option explicite (<code>STORAGE_DRIVER=json</code>).</p>
+<p><strong>Vérification technique, relecture croisée continue (<code>D3-L4-06</code>) et validation VM Debian 13 (17/11/2026) :</strong> le document de conception (<code>A.1</code>–<code>A.4</code>, <code>B.1</code>–<code>B.3</code>, <code>C.1</code>–<code>C.2</code>, <code>D</code>) concorde avec les sources SQL (<code>9</code> tables, <code>3</code> vues, <code>18</code> procédures, <code>1</code> fonction, <code>16</code> déclencheurs) et fait l’objet de relectures croisées continues attestées entre <strong>Johan Polsinelli</strong> et <strong>Chahd Gouiaa</strong> (tâche <code>D3-L4-06</code> clôturée <code>OK</code>). Sur la VM Debian 13 native (PHP 8.4.27 cli, MariaDB 11.8.6) aux commits <code>f9b614f</code> et <code>cb0f814</code>, <code>php scripts/generer_pv.php</code> a validé <code>60/60</code> étapes (<code>0</code> warning PHP, <code>sql_integration.php</code> <code>29/29</code>, <code>http_sql_e2e.php</code> <code>105/105</code>, <code>concurrence_http.php</code> <code>8/8</code> ; <code>docs/pv-recette.md</code>), et <code>bash scripts/run_perf_vm.sh</code> a mesuré la volumétrie <code>minishop_perf</code> (<code>236</code> produits, <code>1 004</code> commandes : SQL 100 it. p95 ≤ <code>20,6 ms</code>, écriture métier <code>44 ms</code>, HTTP p95 global = <code>6 ms</code>, <code>0</code> erreur ; <code>tests/perf/dernieres_mesures.txt</code>).</p>
 <p><strong>Corrections v1.1 apportées aux scripts</strong> (blocantes au chargement direct, détectées par ce rejeu) :
 (i) ajout des directives <code>DELIMITER $$ … DELIMITER ;</code> dans <code>sql/02</code> et <code>sql/03</code>, promises par l'en-tête
 du 01 mais absentes — <code>mysql &lt; sql/02…</code> échouait sinon ; (ii) le déclencheur <code>trg_history_creation</code>

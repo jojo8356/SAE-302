@@ -33,7 +33,14 @@ require_once dirname(__DIR__, 2) . '/app/bootstrap.php';
 
 use App\Config\Database;
 use App\Config\DbConnexion;
+use App\Security\Auth;
 use App\Tools\DbInstaller;
+
+// En CLI, pas d'en-têtes de cookie de session (démarrage silencieux avant toute sortie).
+if (PHP_SAPI !== 'wasm' && !headers_sent()) {
+    ini_set('session.use_cookies', '0');
+}
+Auth::demarrer();
 
 $racine = dirname(__DIR__, 2);
 $garder = in_array('--garder', $_SERVER['argv'] ?? [], true);
@@ -530,7 +537,7 @@ try {
 
     // D4-L10-01/02 : panier de session sur SqlStore, plafond serveur et total recalculé.
     if (session_status() !== PHP_SESSION_ACTIVE) {
-        session_start();
+        Auth::demarrer();
     }
     $_SESSION = [];
     $panierSql = new \App\Model\PanierSession(

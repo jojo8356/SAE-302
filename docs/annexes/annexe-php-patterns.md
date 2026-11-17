@@ -1,9 +1,6 @@
 # Annexe 17.7 — Patterns PHP / PDO / sécurité de référence
 
-Ces extraits sont les **modèles à reproduire** dans l'application (lot L8→L12 du planning) ; ils ont été
-écrits en cohérence avec le DDL, les procédures et les triggers réellement testés (`sql/01…04`, 26/26 tests
-conformes). Ils ne sont pas encore exécutés ici : `php -l` et les tests PHPUnit sont à courir par l'équipe
-sur son environnement PHP 8.2.
+Ces extraits sont les **modèles de référence historiques** rédigés en amont du lot L8→L12, en cohérence avec le DDL, les procédures et les triggers (`sql/01…04`, validés depuis à `29/29` en intégration SQL et `57/57` en PHPUnit sur VM Debian 13, `docs/pv-recette.md`). Ils servent de guide d’architecture et ne remplacent pas les classes implémentées dans `app/`.
 
 ## 1. Connexion PDO centralisée (`app/Config/Database.php`)
 

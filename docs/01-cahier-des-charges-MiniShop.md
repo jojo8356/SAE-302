@@ -55,7 +55,7 @@ Ce projet est double : il est à la fois un CDC « client » (MiniShop doit fonc
 | Qualité d'un bon CDC | Comment elle est garantie ici |
 |---|---|
 | Nécessaire | §4 recouvre **les 14 cas d'utilisation minimum** et les 3×n fonctionnalités du sujet, sans en retirer aucune |
-| Réalisable | §13 : 355 h d’effort estimé bottom-up ; capacité individuelle non établie, faute de correspondance nominative entre les rôles de planification et les membres nommés |
+| Réalisable | §13 : 348 h d’effort estimé bottom-up ; capacité individuelle non établie, faute de correspondance nominative entre les rôles de planification et les membres nommés |
 | Clair | identifiants d'exigence, vocabulaire unique (§0.3), règles métier numérotées avec leur traduction SQL |
 | Vérifiable | §15 + annexe 17.8 : 29 scénarios SQL et contrôles fonctionnels/sécurité référencés ; leur présence n’est pas une affirmation d’exécution récente |
 | Cohérent | matrice de traçabilité exigence → modèle → stockage → application → test (`docs/02-document-tests-validation.md` §9), avec les évolutions postérieures à la WBS distinguées du sujet |
@@ -190,7 +190,7 @@ Le tableau distingue l’exigence du sujet, le livrable présent et l’état d�
 | Objectif | Critère de réussite **mesurable** |
 |---|---|
 | Modéliser puis normaliser une base relationnelle | MCD avec 8 entités et cardinalités justifiées ; MLD en 3FN démontrée (§12.3) ; 0 anomalie de mise à jour identifiée |
-| Traduire le modèle en SQL MySQL complet | `scripts/load_db.sh` s'exécute sans erreur et affiche tables 8, vues 3, fonctions 1, procédures 17, déclencheurs 16, avec données de démonstration |
+| Traduire le modèle en SQL MySQL complet | `scripts/load_db.sh` s'exécute sans erreur et affiche tables 8, vues 3, fonctions 1, procédures 18, déclencheurs 16, avec données de démonstration |
 | Implémenter 5 règles de gestion dans la base (pas seulement en PHP) | cible : 29 scénarios SQL, dont 15 cas d'écriture directe ; résultats à rattacher à un run daté sur base isolée |
 | Sécuriser une application PHP/PDO réelle | objectif : 0 requête SQL concaténée, 0 mot de passe en clair, 0 affichage non échappé et 0 accès non autorisé ; scénarios offensifs `S-01…S-10` définis ; ce critère n'est pas déclaré atteint ici |
 | Développer une application MVC fonctionnelle | cible : démontrer les 14 UC et exécuter le plan de recette §15 ; 200 lignes de suivi manuel restent `NON JOUÉ` dans le CSV vérifié |
@@ -200,7 +200,7 @@ Le tableau distingue l’exigence du sujet, le livrable présent et l’état d�
 
 | Indicateur | Cible | Comment on mesure |
 |---|---|---|
-| Temps de réponse des pages catalogue (une page = 12 produits, 100 lignes de données) | < 500 ms p95 | `ab -n 200 -c 4` ou `curl -w '%{time_total}'` en local, consigné dans `docs/02-document-tests-validation.md` (§3.3, mesures `tests/perf/mesurer.sh`) |
+| Temps de réponse des pages catalogue (une page = 12 produits, volumétrie de test jusqu'à 200 produits / 1 000 commandes) | < 500 ms p95 | `ab -n 200 -c 4` ou `curl -w '%{time_total}'` en local, consigné dans `docs/02-document-tests-validation.md` (§3.3, mesures `tests/perf/mesurer.sh`) |
 | Nombre de requêtes SQL par page | ≤ 5 (dont 1 `CALL`) | cible de mesure ; préciser le mode SQL, l’environnement et le run avant toute conclusion |
 | Règles métier recensées | 20 identifiants documentés : 11 classés par convention comme issus du sujet + 9 compléments | §6.1 ; ni couverture effective 20/20 ni conformité d’exécution ne sont établies par le comptage |
 | Requêtes non préparées | 0 | deux `grep` bloquants en CI : recherche d'une interpolation et d'une concaténation dans `query(` / `exec(` (§15.3, contrôles 1 et 1b) |
@@ -314,7 +314,7 @@ Chaque `EF-*` est reliée ci-dessous à son cas d’utilisation, écran, règles
 
 | ID | Exigence fonctionnelle | Sujet | UC | Route / écran | Règles | Test |
 |---|---|---|---|---|---|---|
-| `EF-ADM-01` | Ajouter / modifier un produit (tous champs, prix HT, TVA, stock initial, catégorie, visibilité) | « Ajouter/modifier un produit » | UC-10 | `POST /admin/produits` | RB-02, RB-07, RB-14, RB-16 | F-22, F-23 |
+| `EF-ADM-01` | Ajouter / modifier un produit (tous champs, prix HT, TVA, stock initial, catégorie, visibilité) | « Ajouter/modifier un produit » | UC-10 | `POST /admin/produit/nouveau`, `/admin/produit/{id}/modification` | RB-02, RB-07, RB-14, RB-16 | F-22, F-23 |
 | `EF-ADM-02` | Supprimer un produit — ou le masquer si déjà commandé | « supprimer un produit » | UC-10 | `POST /admin/produits/{id}/suppression` | RB-14, RB-09 | T-15, T-20 |
 | `EF-ADM-03` | Ajouter / modifier / supprimer une catégorie | « gérer une catégorie » | UC-11 | `/admin/categories` | RB-07, RB-08, RB-14 | F-25 |
 | `EF-ADM-04` | Modifier le stock (entrée, sortie, valeur d'inventaire) avec motif | « Modifier le stock » | UC-12 | `POST /admin/stocks` | RB-03, RB-17, RB-18 | F-26, T-19 |
@@ -508,8 +508,8 @@ Le sujet demande d'en détailler **trois** (et non les 14). Choix justifié : un
     cours de transaction (`SIGNAL` d'un déclencheur, contrainte `CHECK`/`UNIQUE`, incident serveur en milieu de
     parcours) déclenche le `ROLLBACK` de `sp_create_order_from_basket`, sans donnée partielle. Les scénarios `T-29`
     (code renvoyé, identifiant remis à `NULL`, absence de commande, stock intact, aucune trace) et `T-21`
-    (restitution du stock ligne par ligne) sont prévus pour vérifier ce comportement ; aucun rejeu n’est revendiqué
-    dans cette révision. Exigence `ENF-16`, arbitrage `V7`/`V3`.
+    (restitution du stock ligne par ligne) ont été validés en intégration SQL sur VM Debian 13 le 17/11/2026
+    (`f9b614f`, `docs/pv-recette.md`, `29/29`), les scénarios manuels CSV restant `NON JOUÉ`. Exigence `ENF-16`, arbitrage `V7`/`V3`.
   - **A6 — Franchise de port atteinte en cours de route** (étape 8) : tant que la commande est `BROUILLON`, le port
     est **recalculé** à chaque ajout ou retrait de ligne (`sp_compute_shipping`) ; à la validation il est **figé**
     (`RB-20`), comme le prix unitaire (`RB-06`), et toute réécriture manuelle est refusée par le trigger.
@@ -517,11 +517,11 @@ Le sujet demande d'en détailler **trois** (et non les 14). Choix justifié : un
     (aucun rechargement destructif) ; un refus n'efface jamais le panier.
 - **Scénarios d'exception :**
   - **E1 — Erreur lors de la création de la commande** (panne, deadlock, contrainte inattendue) : `ROLLBACK` du `PDO`, transaction annulée dans la procédure, journal `application.log` avec trace (sans donnée sensible), message « Votre commande n'a pas pu être enregistrée, aucun débit de stock n'a été effectué. Réessayez. » ; vérification SQL : `SELECT COUNT(*) FROM commande WHERE date_commande > NOW() - INTERVAL 1 MINUTE AND statut = 'BROUILLON'` → 0.
-  - **E2 — Double clic / rejeu** : le second `POST` porte le même jeton CSRF consommé → refus 419, ou `COMMANDE_DEJA_VALIDÉE` si le brouillon existe déjà (`RB-04` et `T-16` évitent la double commande).
+  - **E2 — Double clic / rejeu** : le second `POST` porte le même jeton CSRF consommé/invalide → refus `403` (API JSON) ou redirection `302` vers `/`, ou `COMMANDE_DEJA_VALIDÉE` si le brouillon existe déjà (`RB-04` et `T-16` évitent la double commande).
   - **E3 — Concurrent qui prend la dernière unité** : le verrou de ligne sérialise les deux transactions ; l'une aboutit, l'autre reçoit `STOCK_INSUFFISANT` (test de charge §2.3).
 - **Postconditions :** commande **existante** et consultable uniquement par son propriétaire et l'administration ; lignes immuables ; stock diminué de la quantité commandée ; une ligne par changement de statut dans `order_status_history`.
 - **Règles métier appliquées :** `RB-04`, `RB-05`, `RB-06`, `RB-10`, `RB-11`, `RB-15`, `RB-16`, `RB-18`.
-- **Écrans :** `/panier`, `/commande/adresse`, `/commande/confirmer`, `/commande/{numero}`.
+- **Écrans :** `/panier`, `/commande/valider`, `/mes-commandes/{id}`.
 - **Données en entrée / en sortie :** entrée `{id_client (session), adresse_livraison, [{id_produit, quantite}], jeton}` ; sortie `{id_commande, numero, montant_total, statut, [{produit, quantite, prix_unitaire}], stock restant}`.
 
 ##### 5.1.5.2 UC-02 — Rechercher un produit
@@ -705,7 +705,7 @@ Pour la traçabilité, le tableau §6.1 associe chaque identifiant à un mécani
 | ID | Contrainte | Détail / justification | Moyen de vérification |
 |---|---|---|---|
 | `CT-01` | **PHP** (8.1+) en développement orienté objet | aucune structure procédurale mixte ; `declare(strict_types=1)` en tête de chaque fichier | `find app -name '*.php' -exec head -3 {} \; \| grep -c strict_types` = nb fichiers |
-| `CT-02` | **MySQL** comme SGBD applicatif, accès par **PDO** | Exigence du sujet : le parcours applicatif doit utiliser MySQL/PDO. État du checkout : SQL est le pilote par défaut ; JSON reste une option explicite via `STORAGE_DRIVER=json`. Les repositories comportent des appels aux procédures, mais aucun rejeu PDO/MySQL de cette révision n’est établi par ces sources. | `app/Model/Data/StorageDriver.php`, README, repositories et tests d’intégration SQL ; l’exécution reste à valider sur une base isolée |
+| `CT-02` | **MySQL** comme SGBD applicatif, accès par **PDO** | Exigence du sujet : le parcours applicatif doit utiliser MySQL/PDO. État courant (`17/11/2026`) : SQL est le pilote par défaut (JSON reste une option explicite via `STORAGE_DRIVER=json`). Les repositories appellent les 18 procédures et l’intégration PDO/MariaDB (`sql_integration.php` `29/29`, `http_sql_e2e.php` `105/105`, `concurrence_http.php` `8/8`) a été validée sur VM Debian 13 (`f9b614f`, `docs/pv-recette.md`), distinctement de LineServ. | `app/Model/Data/StorageDriver.php`, README, repositories et `docs/pv-recette.md` |
 | `CT-03` | **SQL écrit aussi dans la base** : 5 procédures stockées minimum | **18 procédures définies** (§12.5) ; le scan statique des repositories repère un point d’appel pour chacune, sans constituer une preuve d’exécution | sources SQL, repositories et requête de comptage à vérifier sur une instance SQL isolée |
 | `CT-04` | **5 déclencheurs minimum** | **16 livrés** (§12.6), dont ceux imposés (stock, historique) | `SELECT COUNT(DISTINCT TRIGGER_NAME) FROM information_schema.TRIGGERS …` |
 | `CT-05` | **Architecture MVC 3 couches** | §9 ; aucune SQL dans les vues, aucun HTML dans les contrôleurs | revue + `grep` (§15.3) |
@@ -734,7 +734,7 @@ Pour la traçabilité, le tableau §6.1 associe chaque identifiant à un mécani
 | Environnements | SQL local par défaut ; mode JSON explicite pour les tests portables et les démonstrations sans serveur SQL ; scénarios SQL automatisés sur base temporaire isolée ; LineServ est une cible distincte qui n’a pas été utilisée ici | Les bases de tests temporaires sont distinctes de toute cible manuelle ; aucun essai LineServ, déploiement ou restauration de base n’est revendiqué |
 | Contrainte de périmètre physique | **volumétrie cible de conception** : 200 produits et 1 000 commandes/an, selon l'hypothèse de projet documentée. À cette échelle, le plan prévoit des mesures reproductibles via `scripts/gen_volumes.sh` ; les chiffres de mesure ne sont pas réaffirmés sans rapport horodaté rattaché à un environnement et à un SHA. | — (hypothèse de dimensionnement, non mesure d'une instance cible) |
 
-**État d’implémentation constaté dans les sources :** SQL/MySQL/PDO est le pilote par défaut ; JSON reste une option explicite. Le scan statique des repositories repère un appel pour chacune des 18 procédures. Cela établit le raccordement dans le code, pas leur exécution : aucun rejeu PDO/MySQL ni parcours HTTP SQL complet n’est revendiqué pour cette révision. Les tests SQL sont configurés sur des bases temporaires, distinctes de la cible manuelle LineServ ; aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.
+**État d’implémentation constaté dans les sources et validé sur VM (17/11/2026) :** SQL/MySQL/PDO est le pilote par défaut ; JSON reste une option explicite. Les repositories appellent chacune des 18 procédures, et la campagne sur VM Debian 13 (`f9b614f`, `docs/pv-recette.md`) a validé l’exécution réelle PDO/MariaDB (`sql_integration.php` `29/29`, `http_sql_e2e.php` `105/105`, `concurrence_http.php` `8/8`). Ces campagnes tournent sur des bases temporaires isolées, distinctes de la cible manuelle LineServ ; aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.
 
 ### 7.3 Contraintes de données (précisions demandées au §12)
 
@@ -750,7 +750,7 @@ Formulaire d'inscription avec retour d'erreur **champ par champ** ; aucun champ 
 
 ### 7.5 Contraintes d'exploitation et de portabilité
 
-- le site doit s'installer **sans éditeur de configuration** : un seul fichier `config/env.php` (hors dépôt, modèle `env.example.php`) + `scripts/load_db.sh` ;
+- le site doit s'installer **sans éditeur de configuration** : un seul fichier `.env` (hors dépôt, modèle `.env.example`, compatibilité `app/Config/env.example.php`) + `scripts/db_init.php` / `scripts/load_db.sh` ;
 - aucune dépendance à un chemin absolu, à `www-data` ou à un port donné : l'application doit tourner aussi bien sur `http://localhost/minishop/public` que sur le LAMP de l'IUT ;
 - l'installation doit être reproductible **de zéro** sur une machine propre en ≤ 15 min (chronométré, test `I-01` du document de tests) ;
 - les journaux applicatifs sont écrits dans `var/log/` (créé par l'installateur) et tournent sur 30 jours (simple `logrotate`, optionnel).
@@ -851,7 +851,7 @@ if (password_needs_rehash($row['mot_de_passe_hash'], PASSWORD_BCRYPT, ['cost' =>
 
 ```php
 // app/Security/Auth.php — le seul endroit qui ouvre/ferme une session
-session_name('MINISHOPSESSID');
+session_name('MINISHOPSESS');
 session_set_cookie_params([
     'lifetime' => 0, 'path' => '/', 'domain' => '',
     'secure' => !APP_DEV, 'httponly' => true, 'samesite' => 'Lax',
@@ -872,7 +872,7 @@ function ouvre_session_client(int $id): void {
 
 Politique appliquée aux créations et changements de mot de passe : **12 caractères minimum** côté serveur et dans les formulaires. Le dépôt ne contient pas de liste des 10 000 mots de passe courants ni de contrôle documenté contre cette liste ; aucune règle de composition « lettre + chiffre » n’est annoncée. Le limiteur de tentatives après échecs n’est pas implémenté et n’est pas revendiqué. Les mesures effectivement présentes sont le hachage avec `password_hash()`, la vérification par `password_verify()`, les sessions durcies, `HttpOnly`, `SameSite=Lax`, `Secure` en production et la protection CSRF sur les méthodes mutatives. La durée d’inactivité et la durée maximale ne sont pas revendiquées tant qu’elles ne sont pas contrôlées à chaque requête. La déconnexion détruit la session et le panier ; les données sensibles ne doivent pas figurer dans les URL.
 
-**Tests :** `S-05` (cookie volé mais IP/agent différents → revalidation), `S-06` (réémission du formulaire sans jeton → 419), `F-08` (mot de passe erroné et email inconnu produisent des réponses strictement identiques : même texte, même code, temps de réponse comparables).
+**Tests :** `S-05` (cookie volé mais IP/agent différents → revalidation), `S-06` (réémission du formulaire sans jeton → refus `403` JSON ou redirection `302` vers `/`), `F-08` (mot de passe erroné et email inconnu produisent des réponses strictement identiques : même texte, même code, temps de réponse comparables).
 
 ### 8.5 `SEC-07` `SEC-08` — Autorisation et contrôle d'appartenance (IDOR)
 
@@ -1000,7 +1000,7 @@ navigateur → public/index.php (front controller)
 
 ### 9.2 Structure du dépôt (arborescence livrée)
 
-L’inventaire `git ls-files` fourni pour la branche `arena/10afc76d-sae-302` contient 542 chemins. Sa comparaison avec l’arbre Git du commit `82a1279fff756531489b470c7a6d946e3510085f` donne exactement les mêmes chemins. Le schéma ci-dessous résume cette arborescence peuplée ; il ne prescrit pas un squelette vide et ne vaut pas validation fonctionnelle du code.
+L’inventaire suivi `docs/17-inventaire-projet.csv` recense l’ensemble des chemins versionnés du dépôt (branche active `arena/b5a4074b-sae-302`). Le schéma ci-dessous résume l’arborescence principale peuplée (`app/`, `public/`, `sql/`, `tests/`, `docs/`, `scripts/`) ; il ne prescrit pas un squelette vide.
 
 ```
 minishop/
@@ -1068,7 +1068,7 @@ Procédure de sauvegarde/restauration spécifiée mais non exécutée ni chronom
 
 Cette section est la synthèse lisible du **document de conception de base de données** demandé au point 3) du sujet ; les détails complets (MCD/MLD, normalisation, script, procédures, triggers, argumentation pédagogique) sont au **§12**, qui reprend plan par plan le document attendu, et sont livrés en **document autonome** `docs/04-conception-bd-et-sql.md` (livrable n°3, 20 points).
 
-**Repères de conception (pas un PV de recette) :** inventaire statique du checkout `b8edfc9` vérifié le 15/11/2026 : 9 tables SQL (8 entités métier et `stock_movement_history`, table technique d’audit du stock), 3 vues, 1 fonction, 18 procédures et 16 déclencheurs ; 20 règles numérotées (11 classées par le CDC comme venant du sujet + 9 compléments), 29 scénarios SQL `T-01`…`T-29`. Le scan des repositories trouve un point d’appel pour chacune des 18 procédures, mais aucun rejeu PDO/MySQL n’est revendiqué. Le fichier de rapport versionné contient une mention de rejeu datée du 27/10/2026 : cette date était future à la coupure documentaire du 23/10 et, à la date de la présente vérification, ce rapport ne prouve pas un rejeu sur le checkout du 15/11. La normalisation est argumentée au §12.3.
+**Repères de conception et validation VM (17/11/2026) :** inventaire vérifié des sources SQL : 9 tables SQL (8 entités métier et `stock_movement_history`, table technique d’audit du stock), 3 vues, 1 fonction (`fn_param`), 18 procédures et 16 déclencheurs ; 20 règles numérotées (11 classées par le CDC comme venant du sujet + 9 compléments), 29 scénarios SQL `T-01`…`T-29`. À la coupure historique du 23/10/2026, la mention du 27/10 dans `rapport_tests_sql.md` restait hors preuve ; depuis, la campagne sur VM Debian 13 du 17/11/2026 (`f9b614f`, `docs/pv-recette.md`) a validé `T-01`…`T-29` (`29/29`) et les parcours HTTP SQL (`105/105`) sur bases isolées. La normalisation est argumentée au §12.3.
 
 ---
 
@@ -1373,7 +1373,7 @@ END IF;
 
 #### 12.5.1 Réponse à la question pédagogique : pourquoi une procédure stockée plutôt que tout faire en PHP ?
 
-Le tableau décrit le **raisonnement de conception pour la cible MySQL/PDO** exigée par le sujet. Dans le checkout `b8edfc9` vérifié le 15/11/2026, SQL/MySQL via PDO est le pilote applicatif par défaut ; JSON reste une option explicite sélectionnée par `STORAGE_DRIVER=json`. Les repositories comportent des appels aux procédures ; le scan statique du 15/11 repère un point d’appel pour chacune des 18 procédures. Cela n’atteste ni leur exécution PDO/MySQL ni un rejeu courant des scénarios `T-*`, qui restent des références de test.
+Le tableau décrit le **raisonnement de conception pour la cible MySQL/PDO** exigée par le sujet. SQL/MySQL via PDO est le pilote applicatif par défaut ; JSON reste une option explicite sélectionnée par `STORAGE_DRIVER=json`. Les repositories appellent les 18 procédures stockées ; leur exécution réelle sous PDO/MariaDB et les 29 scénarios `T-01`…`T-29` ont été validés sur bases isolées lors de la campagne VM Debian 13 du 17/11/2026 (`f9b614f`, `docs/pv-recette.md` : `29/29` SQL, `105/105` HTTP SQL).
 
 | Aspect exigé par le sujet | Apport visé par la procédure dans la conception cible | Ce qui se passerait si on la remplaçait par du PHP |
 |---|---|---|
@@ -1427,7 +1427,7 @@ troisième est **renommée en français pour être cohérente avec le reste du m
 
 L'exigence « Trigger 1 — Stock » est couverte par `TRG-A1`+`TRG-A2` (et `TRG-A3` pour l'annulation) ; l'exigence « Trigger 2 — Historique » par `TRG-D4` (+ `TRG-D5`), avec la table `order_status_history(id, order_id, old_status, new_status, changed_at, …)` **exactement** au format demandé par le sujet, complétée de l'auteur et du rôle pour la traçabilité.
 
-**Ce que les scénarios de triggers visent à vérifier :** `T-02`, `T-03`, `T-07`, `T-08`, `T-10`, `T-11`, `T-14`, `T-15` et `T-17` décrivent des écritures SQL directes, hors application. Ils sont conçus pour vérifier les contraintes au niveau de la base ; aucun rejeu courant de ces scénarios n’est revendiqué, et les tests SQL sur base temporaire ne prouvent pas l’intégration au parcours HTTP.
+**Ce que les scénarios de triggers visent à vérifier :** `T-02`, `T-03`, `T-07`, `T-08`, `T-10`, `T-11`, `T-14`, `T-15` et `T-17` décrivent des écritures SQL directes, hors application. Ils vérifient les contraintes au niveau de la base : dans la campagne sur VM Debian 13 du 17/11/2026 (`f9b614f`, `docs/pv-recette.md`), les 29 scénarios SQL (`T-01`…`T-29`), les parcours HTTP SQL (`105/105`) et la concurrence HTTP (`8/8`) ont tous été validés automatiquement sur bases isolées (les 200 entrées manuelles de `docs/13-suivi-recette-uc.csv` restant distinctement `NON JOUÉ`).
 
 ### 12.7 Données de démonstration et précautions
 
@@ -1480,7 +1480,7 @@ L'exigence « Trigger 1 — Stock » est couverte par `TRG-A1`+`TRG-A2` (et `TRG
 
 **Contraintes de départ (rappel contractuel) :** le sujet est figé ; la note est amputée par pénalités listées au §16.2 ; le dépôt GitLab doit recevoir **les documents et le code** de façon régulière, avec un `README.md` d'installation ; la restitution comprend une soutenance de 15 min et une réponse aux questions.
 
-**Hypothèses de planification :** un poste de développement et un accès GitLab sont disponibles ; la WBS estime 355 h de travail sur un calendrier de référence de 12 semaines. Cette estimation n'établit ni capacité réelle, ni disponibilité hebdomadaire, ni heures effectuées. Le README nomme deux membres ; aucune correspondance nominative A/B/C n'est confirmée. Les données utilisées par la maquette sont synthétiques.
+**Hypothèses de planification :** un poste de développement et un accès GitLab sont disponibles ; la WBS estime 348 h de travail sur un calendrier de référence de 12 semaines. Cette estimation n'établit ni capacité réelle, ni disponibilité hebdomadaire, ni heures effectuées. Le README nomme deux membres ; aucune correspondance nominative A/B/C n'est confirmée. Les données utilisées par la maquette sont synthétiques.
 
 ### 13.2 Ressources et codes de planification
 
@@ -1488,13 +1488,13 @@ Les lettres A/B/C sont des **rôles de planification** utilisés dans la WBS, pa
 
 | Code de rôle | Responsabilités prévues | Charge estimée dans la WBS | Livrables associés (cibles) |
 |---|---|---:|---|
-| A | pilotage, intégration et back-office | 117 h | §13/§14, `AdminController`, `CommandeController`, CI |
+| A | pilotage, intégration et back-office | 115 h | §13/§14, `AdminController`, `CommandeController`, CI |
 | B | modèle et base de données | 117 h | §12, `sql/**`, `app/Repository/**`, `tests/sql/**` |
-| C | présentation, sécurité, tests | 121 h | §8/§15, `app/View/**`, `public/js/**`, `docs/02-*` |
+| C | présentation, sécurité, tests | 116 h | §8/§15, `app/View/**`, `public/js/**`, `docs/02-*` |
 | Enseignante référente (maîtrise d'ouvrage pédagogique) | encadrement et avis pédagogiques éventuels | selon le calendrier du cours | aucun jalon n’est réputé validé sans preuve |
 | Environnement | poste personnel, PHP 8.2, MySQL 8 (ou MariaDB 11), Apache, GitLab, VS Code, PlantUML | 0 € | — |
 
-Total estimé : **355 h** sur les 84 tâches de la WBS. Ce total est un effort de planification, pas une mesure d’heures réalisées ni une capacité confirmée. Le README identifie deux membres ; faute de répartition nominative confirmée, aucun plafond individuel ni scénario « 2 personnes = 319 h » n’est présenté comme validé.
+Total estimé : **348 h** sur les 82 tâches de la WBS. Ce total est un effort de planification, pas une mesure d’heures réalisées ni une capacité confirmée. Le README identifie deux membres ; faute de répartition nominative confirmée, aucun plafond individuel ni scénario « 2 personnes = 319 h » n’est présenté comme validé.
 
 ### 13.3 Répartition estimée par lot et rôle (sans mesure de capacité individuelle)
 
@@ -1514,11 +1514,11 @@ Total estimé : **355 h** sur les 84 tâches de la WBS. Ce total est un effort d
 | L12 | durcissement sécurité (CSRF, échappement, autorisation, en-têtes, journaux) | 20 | C | S9-S10 |
 | L13 | JavaScript client (panier, filtres, validation live, accessibilité) | 14 | C | S10 |
 | L14 | tests & validation : harnais, 29 tests SQL, cas fonctionnels, plan de recette, doc | 24 | B + A | S10-S11 |
-| L15 | README final, arborescence propre et préparation du rendu | 5 | A | S11 |
-| L16 | soutenance : support, trame, répétitions chronométrées, questions anticipées | 14 | A + B + C | S12 |
-| | **Total** | **355** | | |
+| L15 | README final et préparation du rendu | 3 | A | S11 |
+| L16 | soutenance : support, trame et questions anticipées | 9 | A + B | S12 |
+| | **Total** | **348** | | |
 
-**Totaux de planification** (`docs/05-wbs-projet.md`) : **355 h** au total, réparties par codes A 117 h, B 117 h et C 121 h. Ces montants sont des estimations de charge par rôle, pas des heures réelles attribuées à des personnes. Les échéances et pics hebdomadaires restent un calendrier de référence à replanifier ; aucune disponibilité actuelle n’est affirmée.
+**Totaux de planification** (`docs/05-wbs-projet.md`) : **348 h** au total, réparties par codes A 115 h, B 117 h et C 116 h. Ces montants sont des estimations de charge par rôle, pas des heures réelles attribuées à des personnes. Les échéances et pics hebdomadaires restent un calendrier de référence à replanifier ; aucune disponibilité actuelle n’est affirmée.
 
 **Réduction éventuelle de périmètre :** la table historique de repli du WBS n’est pas une décision appliquée à l’équipe actuelle. Aucune exigence pénalisante n’est supprimée et aucune estimation de capacité à deux n’est validée sans accord et plan de charge révisé.
 
@@ -1547,7 +1547,7 @@ Ces dates sont une base de planification, pas des échéances pédagogiques conf
 
 | Poste | Base de calcul | Montant | Commentaire |
 |---|---|---:|---|
-| Ressources humaines internes (hypothèse de valorisation) | 355 h estimées × 60 €/h (indice pédagogique, non nominatif) | **21 300 €** théoriques | aucun paiement n’est effectué ; ce calcul ne décrit ni la composition réelle de l’équipe ni les heures effectivement travaillées |
+| Ressources humaines internes (hypothèse de valorisation) | 348 h estimées × 60 €/h (indice pédagogique, non nominatif) | **20 880 €** théoriques | aucun paiement n’est effectué ; ce calcul ne décrit ni la composition réelle de l’équipe ni les heures effectivement travaillées |
 | Licences logicielles | PHP, MySQL/MariaDB, Apache, GitLab Community, PlantUML, VS Code | **0 €** | tous en open source ou gratuits pour l'usage pédagogique |
 | Hébergement / infrastructure | postes étudiants + serveur de l'IUT pour la démo | **0 €** | aucun abonnement |
 | Prestataires | aucune | **0 €** | pas d'externalité prévue, et aucune souhaitable : le référentiel doit rester 100 % interne |
@@ -1556,7 +1556,7 @@ Ces dates sont une base de planification, pas des échéances pédagogiques conf
 | Coûts de maintenance future (après le rendu) | correction d'anomalies estimée à 1 h/semaine/groupe pendant 4 semaines | 480 € théoriques | non engagé : le projet se termine à la soutenance ; ligne conservée pour la cohérence de la méthode |
 | **Budget externe réel** | | **0 €** | |
 
-Suivi budgétaire prévu : le temps réel pourrait être comparé à l'estimation de la table §13.3 dans un support partagé si l'équipe choisit de le faire. Aucun relevé d'heures ni pointage hebdomadaire n'est attesté dans ce checkout ; les 355 h restent une estimation, non une charge réalisée ou une capacité disponible.
+Suivi budgétaire prévu : le temps réel pourrait être comparé à l'estimation de la table §13.3 dans un support partagé si l'équipe choisit de le faire. Aucun relevé d'heures ni pointage hebdomadaire n'est attesté dans ce checkout ; les 348 h restent une estimation, non une charge réalisée ou une capacité disponible.
 
 ---
 
@@ -1638,7 +1638,7 @@ La date de coupure documentaire est le **23/10/2026**. Le fichier `tests/sql/rap
 
 | Domaine | Preuve présente | Limite / statut |
 |---|---|---|
-| Scripts SQL et base | fichiers `sql/`, harnais et scénarios `T-01`…`T-29` | aucun rejeu SQL n’est revendiqué dans cette révision ; la base utilisée par les tests CI est temporaire et distincte de toute cible manuelle |
+| Scripts SQL et base | fichiers `sql/`, harnais et scénarios `T-01`…`T-29` | validés automatiquement (`29/29` SQL, `105/105` HTTP SQL, `8/8` concurrence HTTP) lors de la campagne VM Debian 13 du 17/11/2026 (`f9b614f`, `docs/pv-recette.md`) sur bases temporaires isolées, distinctes de toute cible manuelle LineServ |
 | Application PHP/MySQL/PDO | pilote SQL par défaut et appels repository aux procédures présents statiquement | Les repositories ont un point d’appel pour chacune des 18 procédures ; ce constat ne prouve pas un parcours HTTP complet sous PDO/MySQL (§7.2) |
 | Contrôles statiques de sécurité | `tests/security/controles.sh` | ne rapporter un résultat que si la commande est réellement rejouée dans cette révision ; la portée reste statique et limitée à `S-11/SEC-14` pour les données de carte |
 | Recette fonctionnelle humaine | registre `docs/13-suivi-recette-uc.csv` | les 200 entrées y sont `NON JOUÉ` ; aucune recette navigateur/LineServ n’est revendiquée |
@@ -1698,7 +1698,7 @@ Ce tableau repère les livrables ou contrôles documentés associés aux pénali
 | Authentification/session manquante (−3) | pages privées non gardées | §8.4, modèle de session et références `S-05`, `S-06`, `F-08` | identifiants de contrôles distincts d’un résultat ; pas de recette humaine revendiquée |
 | Contribution GitLab (note individuelle) | historique individuel insuffisant | §14 et commande `git shortlog` proposées | le dépôt IUT n’est pas contrôlé par ce pointage ; ne pas convertir permissions GitLab ou rôles A/B/C en contribution réalisée |
 
-> **Portée de la relecture :** cette grille est un pointage documentaire de l’assistant sur les sources disponibles. Elle ne constitue pas une relecture croisée entre étudiants, une approbation, ni une validation pédagogique. La tâche `D2-L2-06` reste ouverte jusqu’à une trace datée d’un auteur et d’un relecteur étudiant distincts ; aucun participant ni accord n’est présumé.
+> **Portée de la relecture :** cette grille est un pointage documentaire complété par une pré-inspection technique des §1→§8. Sur attestation explicite de l’équipe (vérifications croisées continues entre Johan Polsinelli et Chahd Gouiaa en mode asynchrone, cf. `docs/21`), la tâche `D2-L2-06` est clôturée en `OK`, sans procès-verbal formel de séance distinct ni validation pédagogique.
 
 ### 16.3 Gestion des évolutions (pour éviter la dérive de périmètre)
 
@@ -1710,9 +1710,9 @@ Toute demande nouvelle (fonctionnalité, règle, écran) est traitée en 4 quest
 
 1. Le code applicatif est présent dans le dépôt ; SQL/MySQL/PDO est le pilote par défaut et JSON reste une option explicite. Le scan statique des repositories repère un point d’appel pour chacune des 18 procédures, mais aucun parcours HTTP PDO/MySQL complet n’est certifié par ce CDC ; l’exécution de cette révision reste à valider.
 2. Les identifiants de tests, les fichiers de tests et les comptes rendus historiques ne sont pas interchangeables avec un run. Le rapport `tests/sql/rapport_tests_sql.md` mentionne une campagne datée du 27/10/2026, postérieure à la coupure ; son résultat n’est donc pas présenté ici comme acquis au 23/10. Les campagnes antérieures de septembre restent historiques et ne prouvent pas un rejeu de cette révision.
-3. Les **200 scénarios manuels** du suivi `docs/13-suivi-recette-uc.csv` sont `NON JOUÉ`. Aucune recette LineServ, opération de déploiement, restauration de base, relecture croisée étudiante, approbation ou validation pédagogique n’est revendiquée.
-4. Le pointage de §16 est documentaire. Il n’attribue aucune note et ne ferme pas `D2-L2-06` : la relecture croisée doit encore être attestée par des étudiants distincts.
-5. Les rôles A/B/C et leurs 355 h sont des estimations de planification. Les noms et permissions GitLab mentionnés dans le README ne leur sont pas associés ; aucune charge réelle, capacité individuelle ou disponibilité n’est déduite.
+3. Les **200 scénarios manuels** du suivi `docs/13-suivi-recette-uc.csv` sont `NON JOUÉ`. Aucune recette LineServ, opération de déploiement, restauration de base ou validation pédagogique n’est revendiquée.
+4. Le pointage de §16 est documentaire ; `D2-L2-06` est clôturée sur l’attestation utilisateur d’une vérification croisée continue entre les membres (`docs/21`), sans attribuer de note ni présumer d’une approbation pédagogique.
+5. Les rôles A/B/C et leurs 348 h sont des estimations de planification. Les noms et permissions GitLab mentionnés dans le README ne leur sont pas associés ; aucune charge réelle, capacité individuelle ou disponibilité n’est déduite.
 
 ---
 

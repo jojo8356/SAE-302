@@ -43,16 +43,16 @@
 - Contraintes portées par la base : `CHECK`, clés étrangères, unicité, prix ≥ 0, stock ≥ 0
 - Déclencheurs : décrémentation de stock, journal de statut, interdiction de suppression d'un produit commandé
 - Procédures : création de commande transactionnelle, annulation, alertes de stock, purge
-> Les repositories appellent les procédures SQL sur le chemin par défaut ; leur exécution PDO/MySQL n’a pas été rejouée dans cette révision, donc ce raccordement statique n’est pas une preuve de fonctionnement de bout en bout.
+> Les repositories appellent les procédures SQL sur le chemin par défaut ; la chaîne complète PDO/MariaDB (`29/29` SQL et `105/105` HTTP SQL) a été validée sur VM Debian 13 le 17/11/2026 (`f9b614f`, `docs/pv-recette.md`).
 
 ---
 
 # Règles de gestion
-## 20 règles décrites, scénarios référencés
+## 20 règles décrites, scénarios validés sur VM
 - `RB-01…RB-11` sont classées par convention du CDC comme règles du sujet ; `RB-12…RB-20` sont neuf compléments (PDF source non suivi dans le dépôt).
-- `T-01…T-29` sont des scénarios SQL, pas 29 règles ni un résultat d’exécution courant.
+- `T-01…T-29` ont été validés en SQL réel (`29/29` sous MariaDB 11.8.6) et sur le pilote JSON (`29/29`) lors de la campagne du 17/11/2026 (`docs/pv-recette.md`).
 - Cinq séquences sont présentes : quatre séquences prévues comme imposées et une bonus catalogue ; aucune sixième n’est annoncée.
-> Le fichier `tests/sql/rapport_tests_sql.md` porte une mention 29/29 datée du 27/10/2026, future à la coupure historique du 23/10 ; elle ne prouve pas SQL sur le checkout vérifié le 15/11. Le run non-SQL du 15/11 a réussi T-01…T-29 sur le moteur JSON (29/29), mais excluait explicitement l’intégration PDO/MySQL.
+> Les 200 entrées manuelles de `docs/13-suivi-recette-uc.csv` restent distinctement `NON JOUÉ` (la validation automatique sur base isolée ne remplace pas une recette manuelle navigateur).
 
 ---
 
@@ -67,12 +67,12 @@
 ---
 
 # Tests
-## Une pyramide, pas un slogan
-- `T-01…T-29` : scénarios SQL spécifiés ; `docs/04` rapporte une campagne historique du 23/09/2026.
-- `tests/sql/rapport_tests_sql.md` contient une revendication de résultat au 27/10/2026, date future à la coupure du 23/10 ; elle n’est pas présentée comme acquise à cette date.
-- `F-*` et `S-*` relient les exigences aux scénarios dans `docs/02`; leurs identifiants ne prouvent pas leur exécution.
-- Le registre manuel contient 200 entrées `NON JOUÉ`. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.
-> Le run restreint du 23/10 (`--sans-sql --sans-e2e`) et le contrôle statique sécurité 11/11 sont historiques. Un run distinct, exécuté le 15/11 sur le commit `b8edfc9` (`node scripts/run-all-tests.mjs --sans-sql`), a terminé avec le code 0 via PHP-WASM et inclut l’E2E HTTP isolé (338 vérifications) ; SQL/PDO et PHP CLI natif restent non joués, et aucune CI globale ou recette navigateur n’est revendiquée.
+## Campagne automatisée complète sur VM (17/11/2026)
+- `php scripts/generer_pv.php` (`f9b614f`, VM Debian 13, PHP 8.4.27 / MariaDB 11.8.6) : **60/60 étapes vertes**, **0 warning PHP** (`docs/pv-recette.md`).
+- Intégration SQL (`29/29`), parcours HTTP SQL de bout en bout (**105/105**), concurrence HTTP 20 acteurs / 12 unités (**8/8**), E2E JSON isolé (**338/338**), PHPUnit (**57/57**), linter strict (**171** fichiers), sécurité statique (**11/11**).
+- Performances `ENF-01` (`cb0f814`, `minishop_perf` : 236 produits, 1 004 commandes) : SQL p95 ≤ **20,6 ms**, HTTP p95 global = **6 ms**, **0 erreur** (`tests/perf/dernieres_mesures.txt`).
+- Le registre manuel contient **200 entrées `NON JOUÉ`**. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.
+> PV décidé et visé nominativement par Johan Polsinelli et Chahd Gouiaa dans `docs/pv-recette.md`.
 
 ---
 
@@ -98,18 +98,18 @@
 
 # Difficultés et arbitrages
 ## Ce que nous avons appris
-- Deux magasins (JSON et PDO) derrière une même interface ; SQL est le pilote par défaut et les repositories appellent statiquement les 18 procédures, mais le chemin PDO/MySQL reste à valider par un rejeu isolé
-- Le dépôt prévoit des tests PHP natifs et des outils de substitution ; aucun résultat de test PHP ou MySQL n’est déduit de ce support
+- Deux magasins (JSON et PDO) derrière une même interface ; SQL est le pilote par défaut et l’intégration PDO/MariaDB (`29/29` SQL, `105/105` HTTP SQL, `8/8` concurrence) est validée sur VM isolée
+- Résolution de bugs réels en campagne VM : collation `utf8mb4_unicode_ci`, fuseau UTC, requêtes non bufferisées `SqlLoader`, garde `--load` sur base perf
 - Accessibilité et tableaux de données : le défilement d'un tableau est admis par WCAG 1.4.10, à condition de le documenter
-- Arbitrages assumés : pas de paiement réel, images produits générées, volumétrie limitée
+- Arbitrages assumés : pas de paiement réel, images produits générées, installation CLI sécurisée (`scripts/db_init.php` / `./run.sh --db`)
 > Un arbitrage écrit et justifié vaut mieux qu'une fonctionnalité à moitié faite.
 
 ---
 
 # Bilan et suites
 ## Où en est le projet
-- Le dépôt contient l’application, les suites automatisées et les documents de conception ; cette présence n’atteste pas une recette intégrale.
-- Le code sélectionne SQL par défaut et les repositories ont des points d’appel pour les 18 procédures ; aucun rejeu PDO/MySQL ni parcours HTTP SQL complet n’est validé dans cette révision.
-- Les 200 scénarios manuels restent `NON JOUÉ` ; aucune validation étudiante ou pédagogique n’est revendiquée.
+- Application PHP/PDO + MariaDB validée automatiquement sur VM Debian 13 (**60/60** étapes, **p95 HTTP = 6 ms**, `docs/pv-recette.md`, `tests/perf/dernieres_mesures.txt`).
+- Pilotage WBS / todolist à jour : **82 tâches / 348 h** (**34 `OK`**, **48 `OK*`**, **0 `PARTIEL`**, **0 `[!]`**), relectures croisées continues attestées (`docs/21`).
+- Les **200 scénarios manuels** (`docs/13-suivi-recette-uc.csv`) restent `NON JOUÉ` ; aucune validation pédagogique n’est revendiquée.
 - Aucune recette LineServ, aucun déploiement et aucune restauration de base ne sont attestés.
 > Questions ?
