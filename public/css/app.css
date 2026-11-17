@@ -1144,6 +1144,11 @@ label {
     font-size: var(--t-sm);
 }
 
+fieldset p > label:only-of-type:not(:has(input[type="checkbox"])):not(:has(input[type="radio"])) {
+    display: block;
+    margin-bottom: var(--e-1);
+}
+
 input,
 select,
 textarea {

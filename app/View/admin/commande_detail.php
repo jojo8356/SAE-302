@@ -72,7 +72,7 @@ declare(strict_types=1);
             <td data-label="Quand"><?= date_html($entree['changed_at'], true) ?></td>
             <td data-label="Statut"><?= e(statut_libelle($entree['new_status'])) ?></td>
             <td data-label="Par"><?= e($entree['changed_by_role']) ?><?php if (!empty($entree['changed_by'])) { echo ' #' . (int) $entree['changed_by']; } else { echo ''; } ?></td>
-            <td data-label="Commentaire"><?= e($entree['commentaire']) ?></td>
+            <td data-label="Commentaire"><?= commentaire_historique_html($entree['commentaire'] ?? '') ?></td>
         </tr>
     <?php endforeach; ?>
     </tbody>
