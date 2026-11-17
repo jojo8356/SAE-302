@@ -21,6 +21,7 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/app/bootstrap.php';
 
+use App\Config\Database;
 use App\Config\DbConnexion;
 use App\Tools\SqlLoader;
 use App\Tools\VolumetryGenerator;
@@ -57,13 +58,40 @@ foreach (array_slice($argv, 1) as $arg) {
     }
 }
 
-$host = (string) (getenv('DB_HOST') ?: '127.0.0.1');
-$port = (string) (getenv('DB_PORT') ?: '3306');
-$user = (string) (getenv('DB_USER') ?: 'root');
-$pass = (string) (getenv('DB_PASS') ?: '');
-$dbName = (string) (getenv('DB_NAME') ?: 'minishop_perf');
+$config = Database::config();
+$host = getenv('DB_HOST');
+if ($host === false || $host === '') {
+    $host = (string) ($config['db_host'] ?? '127.0.0.1');
+}
+$port = getenv('DB_PORT');
+if ($port === false || $port === '') {
+    $port = (string) ($config['db_port'] ?? '3306');
+}
+$user = getenv('DB_USER');
+if ($user === false || $user === '') {
+    $user = (string) ($config['db_user'] ?? 'root');
+}
+$pass = getenv('DB_PASS');
+if ($pass === false) {
+    $pass = (string) ($config['db_pass'] ?? '');
+}
+$dbName = getenv('DB_NAME');
+if ($dbName === false || $dbName === '') {
+    $dbName = 'minishop_perf';
+}
+
+if (preg_match('/^[A-Za-z0-9_]{1,64}$/', $dbName) !== 1) {
+    fwrite(STDERR, "✘ nom de base invalide : $dbName\n");
+    exit(2);
+}
+
+$appDb = (string) ($config['db_name'] ?? 'minishop');
 
 if ($options['load']) {
+    if ($dbName === $appDb) {
+        fwrite(STDERR, "✘ refus de réinitialiser la base applicative active ($appDb) avec --load ; utiliser une base dédiée (ex. minishop_perf).\n");
+        exit(2);
+    }
     // Chargement sans shell : SQL exécuté par PDO via App\Tools\SqlLoader
     // (aucun binaire `mysql`, aucune fonction d'exécution — contrôle 9).
     echo "→ chargement de la base $dbName (sql/01→04) via PDO\n";
@@ -75,13 +103,17 @@ if ($options['load']) {
             [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION],
         );
         DbConnexion::imposerFuseauUtc($pdoChargement);
-        $pdoChargement->exec('CREATE DATABASE IF NOT EXISTS `' . str_replace('`', '', $dbName)
+        $pdoChargement->exec('DROP DATABASE IF EXISTS `' . $dbName . '`');
+        $pdoChargement->exec('CREATE DATABASE `' . $dbName
             . '` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci');
-        $pdoChargement->exec('USE `' . str_replace('`', '', $dbName) . '`');
+        $pdoChargement->exec('USE `' . $dbName . '`');
         $chargeur = new SqlLoader($pdoChargement);
         $fichiers = glob(dirname(__DIR__) . '/sql/*.sql');
+        if ($fichiers === false) {
+            $fichiers = [];
+        }
         sort($fichiers);
-        $instructions = $chargeur->chargerFichiers($fichiers ?: [], true);
+        $instructions = $chargeur->chargerFichiers($fichiers, true);
         $objets = $chargeur->compteObjets();
         printf(
             "   %d instructions — %d tables, %d procédures, %d fonction(s), %d déclencheurs, %d vues\n",

@@ -15,6 +15,7 @@
 # (ou `node scripts/wasm-serve.mjs` en sandbox sans PHP natif).
 # =====================================================================
 set -uo pipefail
+export LC_ALL=C
 
 if [ "${1:-}" = "--sql-only" ]; then
     shift
@@ -32,6 +33,7 @@ URLS=(
     "/catalogue"
     "/catalogue?cat=1&prix_max=500&stock=1&tri=prix_asc"
     "/recherche?q=clavier"
+    "/produit/casque-sans-fil-aura"
     "/panier"
 )
 

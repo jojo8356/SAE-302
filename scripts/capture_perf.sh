@@ -75,15 +75,22 @@ echo "   itérations     : $ITERATIONS"
 echo
 
 if [ "$VOLUMES" -eq 1 ]; then
-    echo "1. Volumétrie (scripts/gen_volumes.sh)"
+    echo "1. Volumétrie (scripts/gen_volumes.sh --load)"
     echo "   La base « $BASE_PERF » est recréée : elle ne contient que des données de mesure."
     # gen_volumes.sh attend DB_NAME (et non DB) : les deux sont transmis.
+    ERR_VOL="$(mktemp)"
     if ! DB_NAME="$BASE_PERF" DB="$BASE_PERF" DB_USER="$DB_USER" DB_PASS="$DB_PASS" \
         DB_HOST="$DB_HOST" DB_PORT="$DB_PORT" \
-        bash scripts/gen_volumes.sh >/dev/null 2>&1; then
-        echo "   ✘ génération impossible (relancer sans redirection pour voir l'erreur)." >&2
+        bash scripts/gen_volumes.sh --load >"$ERR_VOL" 2>&1; then
+        cat "$ERR_VOL" >&2
+        if grep -q "1044\|Access denied" "$ERR_VOL"; then
+            echo "  Astuce VM : sudo mariadb -e \"CREATE DATABASE IF NOT EXISTS ${BASE_PERF} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; GRANT ALL PRIVILEGES ON ${BASE_PERF}.* TO '${DB_USER}'@'localhost'; GRANT ALL PRIVILEGES ON ${BASE_PERF}.* TO '${DB_USER}'@'127.0.0.1'; FLUSH PRIVILEGES;\"" >&2
+        fi
+        rm -f "$ERR_VOL"
+        echo "   ✘ génération impossible." >&2
         exit 1
     fi
+    rm -f "$ERR_VOL"
     echo "   ✓ volumétrie générée"
     echo
 fi
