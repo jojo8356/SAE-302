@@ -58,6 +58,42 @@ foreach (array_slice($argv, 1) as $arg) {
     }
 }
 
+/** Lit le nom de base applicative persisté (.env puis app/Config/env.php), hors variables d'env du processus. */
+function baseApplicativePersistee(string $racine): string
+{
+    $appDb = 'minishop';
+    $envPhp = $racine . '/app/Config/env.php';
+    if (is_file($envPhp)) {
+        $donnees = require $envPhp;
+        if (is_array($donnees) && !empty($donnees['db_name'])) {
+            $appDb = (string) $donnees['db_name'];
+        }
+    }
+    $dotEnv = $racine . '/.env';
+    if (is_file($dotEnv)) {
+        $lignes = @file($dotEnv, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        if (is_array($lignes)) {
+            foreach ($lignes as $ligne) {
+                $ligne = trim($ligne);
+                if ($ligne === '' || str_starts_with($ligne, '#')) {
+                    continue;
+                }
+                if (preg_match('/^(?:export\s+)?DB_NAME\s*=\s*(.+)$/', $ligne, $m) === 1) {
+                    $val = trim($m[1]);
+                    if ((str_starts_with($val, '"') && str_ends_with($val, '"'))
+                        || (str_starts_with($val, "'") && str_ends_with($val, "'"))) {
+                        $val = substr($val, 1, -1);
+                    }
+                    if ($val !== '') {
+                        $appDb = $val;
+                    }
+                }
+            }
+        }
+    }
+    return $appDb;
+}
+
 $config = Database::config();
 $host = getenv('DB_HOST');
 if ($host === false || $host === '') {
@@ -73,9 +109,15 @@ if ($user === false || $user === '') {
 }
 $pass = getenv('DB_PASS');
 if ($pass === false) {
+    $pass = getenv('DB_PASSWORD');
+}
+if ($pass === false) {
     $pass = (string) ($config['db_pass'] ?? '');
 }
 $dbName = getenv('DB_NAME');
+if ($dbName === false || $dbName === '') {
+    $dbName = getenv('DB');
+}
 if ($dbName === false || $dbName === '') {
     $dbName = 'minishop_perf';
 }
@@ -85,7 +127,7 @@ if (preg_match('/^[A-Za-z0-9_]{1,64}$/', $dbName) !== 1) {
     exit(2);
 }
 
-$appDb = (string) ($config['db_name'] ?? 'minishop');
+$appDb = baseApplicativePersistee(dirname(__DIR__));
 
 if ($options['load']) {
     if ($dbName === $appDb) {
