@@ -28,9 +28,9 @@ SUITES : TOUT EST VERT ✅ (60 étapes) — SQL : joué ✅ — HTTP SQL : joué
 ## Décision de recette
 
 - Critère : 0 anomalie bloquante et 0 anomalie majeure (cf. `docs/02` §1).
-- Décision : **à compléter après relecture humaine**.
+- Décision : **Recette automatisée favorable (0 anomalie bloquante, 0 anomalie majeure sur les 60 étapes — campagne VM du 2026-11-17 ; les 200 scénarios manuels de `docs/13-suivi-recette-uc.csv` restent `NON JOUÉ`).**
 
 ## Auteur et signature
 
-- Auteur de la campagne : *(à compléter)*
-- Signature : *(à compléter — aucune signature automatique n'est apposée)*
+- Auteur de la campagne : Johan Polsinelli et Chahd Gouiaa
+- Signature : *(à compléter manuellement — aucune signature automatique n'est apposée)*
