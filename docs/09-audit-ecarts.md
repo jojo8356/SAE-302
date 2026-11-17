@@ -12,6 +12,19 @@
 > **Note de portée (révision du 23/10/2026).** Les références à `.gitlab-ci.yml`, aux jobs GitLab et à une « cible notée » ci-dessous décrivent l’état antérieur examiné par cet audit. La configuration GitLab CI et son exigence ont depuis été retirées du CDC ; la CI GitHub Actions est distincte et ne prouve pas un pipeline GitLab.
 
 
+## Addendum final — état vérifié le 17 novembre 2026 (VM Debian 13, branche `arena/b5a4074b-sae-302`)
+
+Cet addendum complète la photographie du 15/11/2026 avec les validations exécutées sur VM Debian 13 native (**PHP 8.4.27 cli**, **MariaDB 11.8.6**) et les clôtures documentaires consignées jusqu’au 17/11/2026 :
+
+| Domaine | État vérifié (17/11/2026) | Limite de preuve maintenue |
+|---|---|---|
+| Campagne globale (`generer_pv.php`) | Sur le commit `f9b614f`, `php scripts/generer_pv.php` termine avec code **0**, **60 / 60 étapes vertes** et **0 warning PHP** (`logs/pv-2026-11-17-114957.log`, `docs/pv-recette.md`) : intégration SQL (`29/29`), parcours HTTP SQL (`http_sql_e2e.php`, `105/105`), concurrence HTTP 20/12 (`concurrence_http.php`, `8/8`), E2E JSON isolé (`338/338`), préférences FR/EN (`48` vues), PHPUnit (`57/57`), linter strict (`171` fichiers, `0` violation) et sécurité statique (`11/11`). | Exécuté sur bases dédiées isolées (`minishop_test*`) ; distinct de LineServ et des **200 scénarios manuels** (`docs/13-suivi-recette-uc.csv`, `NON JOUÉ`). |
+| Performances SQL + HTTP (`D5-L14-06`) | Sur le commit `cb0f814`, `bash scripts/run_perf_vm.sh` sur `minishop_perf` (`236` produits, `1 004` commandes) mesure : SQL (100 it.) **p95 ≤ 20,6 ms**, écriture métier `sp_add_order_line` **44 ms**, et HTTP (200 it. × 6 parcours) **100 % HTTP 200**, **0 erreur**, **p95 global = 6 ms** (`ENF-01 < 500 ms` conforme ; `tests/perf/dernieres_mesures.txt`). | Mesures client/serveur sur la même VM ; `POST /commande/valider` HTTP (`P-03`) non bouclé séparément en HTTP (chaîne SQL mesurée à 44 ms). |
+| PV de recette et relectures croisées | `docs/pv-recette.md` complété avec décision favorable et visas nominatifs de **Johan Polsinelli** et **Chahd Gouiaa** (`D5-L14-05`). `D2-L2-06` et `D3-L4-06` clôturées `OK` sur vérifications techniques (`docs/01`, `docs/04`) et relectures croisées continues attestées (`docs/21`). | Sans procès-verbal formel de séance ni validation pédagogique ; `D4-L8-05` amendée (installation CLI `scripts/db_init.php` / `run.sh`). |
+| WBS / todolist & inventaire | `docs/05` et `docs/06` : **82 tâches**, **348 h** estimées (`A 115`, `B 117`, `C 116`), **34 `OK`**, **48 `OK*`**, **0 `PARTIEL`**, **0 `[!]`** (`0 h` ouverte) après retrait de `D6-L16-03` et `D1-L15-03` sur demande de l’utilisateur. `docs/17-inventaire-projet.csv` synchronisé avec l’index Git (`test_inventaire_global_a_jour` vert). | Les heures demeurent des estimations de planification, pas un pointage de temps passé ; aucun déploiement LineServ ni validation pédagogique revendiqué. |
+
+---
+
 ## État courant vérifié — 15 novembre 2026
 
 Cette section décrit les contrôles consignés pour le checkout du commit `b8edfc9` (branche `arena/10afc76d-sae-302`), vérifié le 15/11/2026 ; elle ne transforme pas les constats historiques A→J en résultats actuels. Les sections A→J conservent la photographie antérieure au 23/10/2026. Les exécutions du 15/11 sont distinctes du run restreint du 23/10 et ne requalifient pas l’audit historique.

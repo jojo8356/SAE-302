@@ -12,7 +12,7 @@
 | **Chiffres clés** | Inventaire statique : 9 tables SQL (8 entités métier + table technique d’audit du stock), 3 vues · 1 fonction + **18 procédures stockées** (min. 5) · **16 déclencheurs** (min. 5) · 29 scénarios SQL référencés |
 | **Documents liés** | `docs/01-cahier-des-charges-MiniShop.md` (spécification) · `docs/02-document-tests-validation.md` · `README.md` |
 | **Fichiers SQL liés** | `sql/01…04` (schéma, procédures, déclencheurs, démo) · `tests/sql/` (fixture, manifeste) — liens en fin de document |
-| **Version** | 1.3 — 15 novembre 2026 (références CT/ENF et état du pilote synchronisés ; inventaire statique actualisé ; aucun rejeu SQL revendiqué) |
+| **Version** | 1.4 — 17 novembre 2026 (vérification technique et relecture croisée continue attestée entre Johan Polsinelli et Chahd Gouiaa [`D3-L4-06`] ; campagne VM Debian 13 `f9b614f` / `cb0f814` consignée) |
 
 ---
 
@@ -399,7 +399,7 @@ troisième est **renommée en français pour être cohérente avec le reste du m
 
 L'exigence « Trigger 1 — Stock » est couverte par `TRG-A1`+`TRG-A2` (et `TRG-A3` pour l'annulation) ; l'exigence « Trigger 2 — Historique » par `TRG-D4` (+ `TRG-D5`), avec la table `order_status_history(id, order_id, old_status, new_status, changed_at, …)` **exactement** au format demandé par le sujet, complétée de l'auteur et du rôle pour la traçabilité.
 
-**Ce que les scénarios de triggers visent à vérifier :** `T-02`, `T-03`, `T-07`, `T-08`, `T-10`, `T-11`, `T-14`, `T-15` et `T-17` décrivent des écritures SQL directes, hors application. Ils sont conçus pour vérifier les contraintes au niveau de la base ; aucun rejeu courant de ces scénarios n’est revendiqué, et les tests SQL sur base temporaire ne prouvent pas l’intégration au parcours HTTP.
+**Ce que les scénarios de triggers visent à vérifier :** `T-02`, `T-03`, `T-07`, `T-08`, `T-10`, `T-11`, `T-14`, `T-15` et `T-17` décrivent des écritures SQL directes, hors application. Ils vérifient les contraintes au niveau de la base : dans la campagne sur VM Debian 13 du 17/11/2026 (`f9b614f`, `docs/pv-recette.md`), les 29 scénarios SQL (`T-01`…`T-29`), les parcours HTTP SQL (`105/105`) et la concurrence HTTP (`8/8`) ont tous été validés automatiquement sur bases isolées (les 200 entrées manuelles de `docs/13-suivi-recette-uc.csv` restant distinctement `NON JOUÉ`).
 
 
 ---
@@ -429,13 +429,13 @@ Le tableau relie chaque fichier aux parties du présent document qui l'analysent
 | Fichier | Contenu | Rattaché à | Lignes |
 |---|---|---|---:|
 | [`sql/01_minishop_schema.sql`](../sql/01_minishop_schema.sql) | DDL : 9 tables SQL (8 entités métier et `stock_movement_history`, table technique d’audit du stock), 3 vues, index FULLTEXT + jeu de données de référence (4 catégories, 36 produits, 3 clients, 1 admin, hashes `password_hash()`, table `parametre`) | A.1 · A.2 · A.4 · A.5 | 371 |
-| [`sql/02_minishop_procedures.sql`](../sql/02_minishop_procedures.sql) | directive `DELIMITER` + 1 fonction (`fn_param`) + 18 procédures stockées | B.1 · B.2 · B.3 | 1037 |
+| [`sql/02_minishop_procedures.sql`](../sql/02_minishop_procedures.sql) | directive `DELIMITER` + 1 fonction (`fn_param`) + 18 procédures stockées | B.1 · B.2 · B.3 | 1040 |
 | [`sql/03_minishop_triggers.sql`](../sql/03_minishop_triggers.sql) | directive `DELIMITER` + 16 déclencheurs (blocs A stock, B prix/immuabilité, C catégories, D commandes/historique) | C.1 · C.2 · C.3 | 315 |
 | [`sql/04_minishop_demo.sql`](../sql/04_minishop_demo.sql) | 4 commandes de démonstration créées **par `CALL` des procédures** (déclencheurs réellement exécutés) | A.5 | 46 |
 | [`tests/sql/fixture.sql`](../tests/sql/fixture.sql) | jeu de données des tests (état de référence mémorisé dans `stock_initial`) | C.3 · doc 02 | 108 |
 | [`tests/sql/manifest.txt`](../tests/sql/manifest.txt) | manifeste des 29 scénarios SQL (résultat attendu par scénario ; pas une preuve de rejeu) | C.3 · doc 02 | 38 |
-| [`tests/perf/mesurer.sh`](../tests/perf/mesurer.sh) | protocole de mesure p95 HTTP (`ENF-01`) | doc 02 §5 | 83 |
-| [`tests/perf/mesurer_sql.sh`](../tests/perf/mesurer_sql.sh) | mesure côté base : plans d'exécution, p95, coût d'une écriture métier | A.3 · doc 02 §5 | 101 |
+| [`tests/perf/mesurer.sh`](../tests/perf/mesurer.sh) | protocole de mesure p95 HTTP (`ENF-01`) | doc 02 §5 | 86 |
+| [`tests/perf/mesurer_sql.sh`](../tests/perf/mesurer_sql.sh) | mesure côté base : plans d'exécution, p95, coût d'une écriture métier | A.3 · doc 02 §5 | 131 |
 | [`scripts/gen_volumes.sh`](../scripts/gen_volumes.sh) | générateur de volumétrie (200 produits / 1 000 commandes via les procédures) | doc 02 §5 | 25 |
 | [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) | workflow CI GitHub Actions du dépôt ; il ne prouve pas un pipeline GitLab IUT | CDC §14.2 | 873 |
 | [`.gitignore`](../.gitignore) | secrets hors dépôt (`app/Config/env.php`), artefacts régénérables | CDC §14.1 règle 7 | 64 |
@@ -458,6 +458,8 @@ rollback intégral du panier confirmé (stock inchangé, aucune commande créée
 reconnus comme sorties réelles de `password_hash()` (bcrypt) pour les mots de passe de démonstration.
 
 **État statique des sources du commit `b8edfc9`, vérifié le 15/11/2026 :** `sql/01` définit 9 tables (8 entités métier et une table technique d’audit du stock), 3 vues, 1 fonction, 18 procédures et 16 triggers. Le scan des repositories repère un point d’appel pour chacune des 18 procédures ; il ne prouve ni chargement de la base, ni exécution PDO/MySQL, ni parcours HTTP complet. SQL/MySQL via PDO est le pilote par défaut et JSON reste une option explicite (`STORAGE_DRIVER=json`). Aucun rejeu SQL de cette révision n’est revendiqué ici.
+
+**Vérification technique, relecture croisée continue (`D3-L4-06`) et validation VM Debian 13 (17/11/2026) :** le document de conception (`A.1`–`A.4`, `B.1`–`B.3`, `C.1`–`C.2`, `D`) concorde avec les sources SQL (`9` tables, `3` vues, `18` procédures, `1` fonction, `16` déclencheurs) et fait l’objet de relectures croisées continues attestées entre **Johan Polsinelli** et **Chahd Gouiaa** (tâche `D3-L4-06` clôturée `OK`). Sur la VM Debian 13 native (PHP 8.4.27 cli, MariaDB 11.8.6) aux commits `f9b614f` et `cb0f814`, `php scripts/generer_pv.php` a validé `60/60` étapes (`0` warning PHP, `sql_integration.php` `29/29`, `http_sql_e2e.php` `105/105`, `concurrence_http.php` `8/8` ; `docs/pv-recette.md`), et `bash scripts/run_perf_vm.sh` a mesuré la volumétrie `minishop_perf` (`236` produits, `1 004` commandes : SQL 100 it. p95 ≤ `20,6 ms`, écriture métier `44 ms`, HTTP p95 global = `6 ms`, `0` erreur ; `tests/perf/dernieres_mesures.txt`).
 
 **Corrections v1.1 apportées aux scripts** (blocantes au chargement direct, détectées par ce rejeu) :
 (i) ajout des directives `DELIMITER $$ … DELIMITER ;` dans `sql/02` et `sql/03`, promises par l'en-tête

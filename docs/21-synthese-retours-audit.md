@@ -16,7 +16,8 @@
 | Sécurité | Les dix scénarios offensifs S-01…S-10 sont distincts des onze contrôles statiques. S-11/SEC-14 est un contrôle statique ciblé, pas une recette offensive ni une certification générale. | `docs/01`, `docs/02`, `docs/07` |
 | Règles métier | Le CDC dénombre 20 identifiants : RB-01…RB-11 classées par le document comme issues du sujet, plus RB-12…RB-20 comme compléments. Le PDF source n’étant pas dans le dépôt, cette classification n’est pas présentée comme vérifiée indépendamment ni validée pédagogiquement. | `docs/01`, `docs/19` |
 | Séquences UML | Cinq séquences sont documentées : quatre prévues comme imposées et une bonus. Aucune sixième séquence n’est annoncée. | `docs/01`, `docs/05`, `docs/19` |
-| Relecture croisée | L’équipe (Johan Polsinelli et Chahd Gouiaa) atteste effectuer des vérifications croisées en continu sur le CDC (§1→§8) et le projet, complétées par une pré-inspection technique des §1→§8 ; sur cette attestation explicite (même modalité asynchrone continue que `D1-L1-07`), `D2-L2-06` passe `OK`, sans procès-verbal formel de séance distinct ni validation pédagogique. | `docs/01`, `docs/05`, `docs/19` |
+| Relecture croisée CDC (`D2-L2-06`) | L’équipe (Johan Polsinelli et Chahd Gouiaa) atteste effectuer des vérifications croisées en continu sur le CDC (§1→§8) et le projet, complétées par une pré-inspection technique des §1→§8 ; sur cette attestation explicite (même modalité asynchrone continue que `D1-L1-07`), `D2-L2-06` passe `OK`, sans procès-verbal formel de séance distinct ni validation pédagogique. | `docs/01`, `docs/05`, `docs/19` |
+| Relecture croisée Conception BD (`D3-L4-06`) | Après contrôle technique de cohérence (`9` tables, `3` vues, `18` procédures, `1` fonction, `16` déclencheurs) et sur l’attestation explicite des relectures croisées constantes entre **Johan Polsinelli** et **Chahd Gouiaa**, `D3-L4-06` passe `OK` (conception validée par les campagnes SQL `29/29`, HTTP SQL `105/105`, concurrence `8/8` et performances `p95 ≤ 20,6 ms` sur VM Debian 13 les 16–17/11/2026, `docs/pv-recette.md` et `tests/perf/dernieres_mesures.txt`). | `docs/04`, `docs/05`, `docs/19` |
 
 ## Statut de la tâche
 
@@ -26,5 +27,5 @@
 
 - Aucune réunion complète ni aucun compte rendu de réunion n’est revendiqué.
 - Aucun participant, auteur de revue distinct, vote, approbation ou validation n’est inféré.
-- `D2-L2-06` est clôturée sur l’attestation utilisateur d’une relecture croisée continue entre Johan Polsinelli et Chahd Gouiaa (complétée par le pointage documentaire et technique de `docs/01` §1→§8), sans prétendre à une validation pédagogique ni à un compte rendu formel de réunion.
+- `D2-L2-06` et `D3-L4-06` sont clôturées sur l’attestation utilisateur des relectures croisées continues entre Johan Polsinelli et Chahd Gouiaa (complétées par le pointage documentaire et technique de `docs/01` et `docs/04`), sans prétendre à une validation pédagogique ni à un compte rendu formel de réunion.
 - Aucun test manuel LineServ, déploiement ou restauration de base n’est ajouté à la suite des retours.

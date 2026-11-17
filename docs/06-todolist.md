@@ -8,8 +8,8 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 
 | | |
 |---|---|
-| **Répartition des statuts d'audit** | **33 `OK` + 48 `OK*`**, 0 `PARTIEL`, 1 `[!]` non vérifiables (82 tâches) ; **1 tâches ouvertes ou à confirmer** |
-| **Estimation WBS historique affectée aux tâches ouvertes** | **4 h** (dont 0 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée |
+| **Répartition des statuts d'audit** | **34 `OK` + 48 `OK*`**, 0 `PARTIEL`, 0 `[!]` non vérifiables (82 tâches) ; **0 tâches ouvertes ou à confirmer** |
+| **Estimation WBS historique affectée aux tâches ouvertes** | **0 h** (dont 0 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée |
 | **Temps réellement passé** | Non mesuré ; aucun nombre d'heures accomplies n'est déduit des statuts |
 | **Backlog asynchrone de la photographie** | **0 h estimées** dans le graphe du 23/09 ; ni une disponibilité actuelle ni une mesure d'effort |
 | **Dernier contrôle non-SQL** | `node scripts/run-all-tests.mjs --sans-sql` : code 0 ; SQL/PDO et PHP CLI natif non joués (détails §8) |
@@ -26,21 +26,21 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 |---|---:|---:|---:|---:|---:|---:|
 | **D1 — Pilotage, dépôt GitLab & collaboration** | 17 h | 7 | 0 | 0 | 0 | 0 h |
 | **D2 — Document de spécification du système** | 54 h | 1 | 11 | 0 | 0 | 0 h |
-| **D3 — Conception de la base de données & SQL** | 98 h | 0 | 22 | 0 | 1 | 4 h |
+| **D3 — Conception de la base de données & SQL** | 98 h | 1 | 22 | 0 | 0 | 0 h |
 | **D4 — Application Web PHP / MySQL / PDO** | 146 h | 21 | 11 | 0 | 0 | 0 h |
 | **D5 — Tests & validation** | 24 h | 4 | 2 | 0 | 0 | 0 h |
 | **D6 — Soutenance** | 9 h | 0 | 2 | 0 | 0 | 0 h |
-| **Total** | **348 h** | **33** | **48** | **0** | **1** | **4 h** |
+| **Total** | **348 h** | **34** | **48** | **0** | **0** | **0 h** |
 
 ### 1.2 Estimations WBS par rôle de planification (A/B/C ; aucune correspondance nominative établie)
 
 | Rôle de planification | Charge WBS initiale (estim.) | Estimation initiale affectée aux tâches ouvertes | Remarque |
 |---|---:|---:|---|
-| **A** | 115 h | 4 h | rôle de planification du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |
+| **A** | 115 h | 0 h | rôle de planification du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |
 | **B** | 117 h | 0 h | rôle de planification base de données/tests ; disponibilité actuelle non vérifiée |
 | **C** | 116 h | 0 h | rôle de planification front-office/sécurité/JS ; disponibilité et attribution nominative non établies |
 
-> Les **4 h** sont la somme des estimations WBS initiales des 0 tâches `PARTIEL` et 1 tâches `[!]`. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
+> Les **0 h** sont la somme des estimations WBS initiales des 0 tâches `PARTIEL` et 0 tâches `[!]`. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
 > Les nombres de statut ne décrivent que les critères précis de la revue. Un `OK*` ne signifie ni que tout le produit est validé, ni que les tests associés ont été exécutés. Le registre manuel de recette reste `NON JOUÉ` pour ses 200 entrées.
 > Le dernier run non-SQL est vert, mais reste une validation de code/tests sur le chemin JSON isolé : il ne prouve ni l'exécution PDO/MySQL, ni les 200 cas manuels, ni une recette humaine ou des mesures sur cible.
 
@@ -176,9 +176,9 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | `D2-L3-06` | Sources .puml, docs/diagrams/render.sh et job PlantUML présents | B | 0 | ✅* `OK*` `ASYNC` | — | P1 |
 
 
-### D3 — Conception de la base de données & SQL (0 `OK`, 22 `OK*`, 0 `PARTIEL`, 1 `[!]` ; 4 h d'estimations WBS initiales à revalider sur 98 h de référence)
+### D3 — Conception de la base de données & SQL (1 `OK`, 22 `OK*`, 0 `PARTIEL`, 0 `[!]` ; 0 h d'estimations WBS initiales à revalider sur 98 h de référence)
 
-#### ⚠️ Lot L4 — MCD/MLD/normalisation (charge WBS initiale 28 h ; estimation affectée aux tâches ouvertes 4 h)
+#### ✅* Lot L4 — MCD/MLD/normalisation (charge WBS initiale 28 h ; estimation affectée aux tâches ouvertes 0 h)
 
 | ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
@@ -187,7 +187,7 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | `D3-L4-03` | MLD : 8 relations + 3 vues | B | 0 | ✅* `OK*` | — | — |
 | `D3-L4-04` | DF + démonstration 1FN/2FN/3FN | B | 0 | ✅* `OK*` | — | — |
 | `D3-L4-05` | Clés justifiées + redondances + requêtes de preuve | B | 0 | ✅* `OK*` | — | — |
-| `D3-L4-06` | Relecture croisée du document de conception (docs/04) : non démontrable par le dépôt seul | A | 4 | [!] `à vérifier / externe` | — | — |
+| `D3-L4-06` | Vérification technique de cohérence (9 tables, 3 vues, 18 procédures, 1 fonction, 16 déclencheurs) et relecture croisée continue attestée entre Johan Polsinelli et Chahd Gouiaa (docs/04, docs/21) ; sans procès-verbal formel de séance | A | 0 | ✅ `OK` | — | — |
 
 #### ✅* Lot L5 — Script SQL & seed (charge WBS initiale 20 h ; estimation affectée aux tâches ouvertes 0 h)
 

@@ -9,7 +9,7 @@ au dépôt GitLab du rendu (hors périmètre du barème) — d'où le dossier ca
 | `build_doc04.py` | `docs/04-conception-bd-et-sql.md` | `docs/01-cahier-des-charges-MiniShop.md` (§12) + `docs/annexes/annexe-sql.md` (titres d'annexes) + inventaire de `sql/`, `tests/` |
 | `build_doc04_html.py` | `artefacts/04-conception-bd-et-sql.html` | `docs/04-conception-bd-et-sql.md` (images MCD/MLD intégrées en base64) |
 | `build_wbs.py` | `docs/05-wbs-projet.md` + `artefacts/05-wbs-projet.html` | données WBS embarquées (6 divisions, 16 lots, 82 tâches, assertions bottom-up 348 h) |
-| `build_todolist.py` | `docs/06-todolist.md` + `artefacts/06-todolist.html` | 82 tâches WBS ; statuts de référence docs/19 (33 `OK`, 48 `OK*`, 0 `PARTIEL`, 1 `[!]`) ; les 4 h associées à la tâche `[!]` restante restent une estimation initiale à revalider, sans calcul d'heures accomplies ; graphe asynchrone/dépendant historique |
+| `build_todolist.py` | `docs/06-todolist.md` + `artefacts/06-todolist.html` | 82 tâches WBS ; statuts de référence docs/19 (34 `OK`, 48 `OK*`, 0 `PARTIEL`, 0 `[!]`) ; 0 h ouverte restante ; graphe asynchrone/dépendant historique |
 
 ## Régénération complète
 

@@ -4,6 +4,15 @@
 
 Le rapport d’archive porte un décompte historique de **532 chemins versionnés** après retrait d’éléments hors périmètre. Depuis, le CSV `docs/17-inventaire-projet.csv` a été synchronisé avec les **542 chemins suivis dans l’index courant** ; le contrôle structurel vérifie cette égalité, la présence et la non-vacuité, sans certifier le contenu. Les deux nombres se rapportent donc à des états différents ; le rapport daté du 28/10/2026 reste postérieur à la coupure documentaire du 23/10 et n’est pas une preuve d’audit acquise à cette date.
 
+## Addendum final — état vérifié le 17 novembre 2026 (VM Debian 13, branche `arena/b5a4074b-sae-302`)
+
+Cet addendum complète l’état du 15/11/2026 avec les validations exécutées sur VM Debian 13 native (**PHP 8.4.27 cli**, **MariaDB 11.8.6**) et la clôture de l’audit documentaire :
+
+- **Campagne complète (`f9b614f`, `docs/pv-recette.md`) :** `php scripts/generer_pv.php` a terminé avec le code **0**, **60 / 60 étapes vertes** et **0 warning PHP** (`logs/pv-2026-11-17-114957.log`), incluant `sql_integration.php` (**29/29**), `http_sql_e2e.php` (**105/105**), `concurrence_http.php` (**8/8**, 20 acteurs / 12 unités), `e2e_isolation.mjs` (**338/338**), `preferences_test.mjs` (**48** vues FR/EN), PHPUnit (**57/57**), linter strict (**171** fichiers, **0** violation) et sécurité statique (**11/11**). `docs/pv-recette.md` porte la décision favorable et les visas nominatifs de **Johan Polsinelli** et **Chahd Gouiaa** (`D5-L14-05` `OK`).
+- **Performances SQL + HTTP (`cb0f814`, `tests/perf/dernieres_mesures.txt`) :** `bash scripts/run_perf_vm.sh` sur la base isolée `minishop_perf` (`236` produits, `1 004` commandes) a mesuré SQL (100 it.) **p95 ≤ 20,6 ms**, écriture métier **44 ms**, et HTTP (200 it. × 6 parcours) **100 % HTTP 200**, **0 erreur**, **p95 global = 6 ms** (`ENF-01 < 500 ms` conforme ; `D5-L14-06` `OK`).
+- **Relectures croisées et périmètre WBS :** `D2-L2-06` (`docs/01`) et `D3-L4-06` (`docs/04`, `9` tables, `3` vues, `18` procédures, `1` fonction, `16` déclencheurs) clôturées `OK` sur vérification technique et relectures croisées continues attestées entre Johan Polsinelli et Chahd Gouiaa (`docs/21`) ; `D4-L8-05` amendée (`scripts/db_init.php` / `run.sh`) ; `D6-L16-03` et `D1-L15-03` retirées sur demande de l’utilisateur. Bilan WBS/todolist (`docs/05`, `docs/06`, `docs/19`) : **82 tâches**, **348 h** estimées (`A 115`, `B 117`, `C 116`), **34 `OK`**, **48 `OK*`**, **0 `PARTIEL`**, **0 `[!]`**.
+- **Inventaire et limites :** `docs/17-inventaire-projet.csv` est synchronisé avec l’index Git courant (`test_inventaire_global_a_jour` vert) ; les **200 scénarios manuels** (`docs/13-suivi-recette-uc.csv`) restent `NON JOUÉ` et aucun déploiement sur LineServ ni validation pédagogique n’est revendiqué.
+
 ## Addendum — état du checkout vérifié le 15 novembre 2026
 
 Cet addendum décrit le checkout du commit `b8edfc9` (branche `arena/10afc76d-sae-302`), vérifié le 15/11/2026 ; il est distinct du rapport historique daté du 28/10/2026 et de la coupure documentaire du 23/10. Les résultats d’exécution ci-dessous sont limités aux commandes explicitement citées.

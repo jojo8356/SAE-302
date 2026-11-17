@@ -45,11 +45,11 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 <tbody>
 <tr>
 <td><strong>Répartition des statuts d'audit</strong></td>
-<td><strong>33 <code>OK</code> + 48 <code>OK*</code></strong>, 0 <code>PARTIEL</code>, 1 <code>[!]</code> non vérifiables (82 tâches) ; <strong>1 tâches ouvertes ou à confirmer</strong></td>
+<td><strong>34 <code>OK</code> + 48 <code>OK*</code></strong>, 0 <code>PARTIEL</code>, 0 <code>[!]</code> non vérifiables (82 tâches) ; <strong>0 tâches ouvertes ou à confirmer</strong></td>
 </tr>
 <tr>
 <td><strong>Estimation WBS historique affectée aux tâches ouvertes</strong></td>
-<td><strong>4 h</strong> (dont 0 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée</td>
+<td><strong>0 h</strong> (dont 0 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée</td>
 </tr>
 <tr>
 <td><strong>Temps réellement passé</strong></td>
@@ -110,11 +110,11 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 <tr>
 <td><strong>D3 — Conception de la base de données &amp; SQL</strong></td>
 <td style="text-align: right;">98 h</td>
-<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;">22</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">4 h</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0 h</td>
 </tr>
 <tr>
 <td><strong>D4 — Application Web PHP / MySQL / PDO</strong></td>
@@ -146,11 +146,11 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 <tr>
 <td><strong>Total</strong></td>
 <td style="text-align: right;"><strong>348 h</strong></td>
-<td style="text-align: right;"><strong>33</strong></td>
+<td style="text-align: right;"><strong>34</strong></td>
 <td style="text-align: right;"><strong>48</strong></td>
 <td style="text-align: right;"><strong>0</strong></td>
-<td style="text-align: right;"><strong>1</strong></td>
-<td style="text-align: right;"><strong>4 h</strong></td>
+<td style="text-align: right;"><strong>0</strong></td>
+<td style="text-align: right;"><strong>0 h</strong></td>
 </tr>
 </tbody>
 </table>
@@ -168,7 +168,7 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 <tr>
 <td><strong>A</strong></td>
 <td style="text-align: right;">115 h</td>
-<td style="text-align: right;">4 h</td>
+<td style="text-align: right;">0 h</td>
 <td>rôle de planification du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée</td>
 </tr>
 <tr>
@@ -186,7 +186,7 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 </tbody>
 </table>
 <blockquote>
-<p>Les <strong>4 h</strong> sont la somme des estimations WBS initiales des 0 tâches <code>PARTIEL</code> et 1 tâches <code>[!]</code>. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
+<p>Les <strong>0 h</strong> sont la somme des estimations WBS initiales des 0 tâches <code>PARTIEL</code> et 0 tâches <code>[!]</code>. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
 Les nombres de statut ne décrivent que les critères précis de la revue. Un <code>OK*</code> ne signifie ni que tout le produit est validé, ni que les tests associés ont été exécutés. Le registre manuel de recette reste <code>NON JOUÉ</code> pour ses 200 entrées.
 Le dernier run non-SQL est vert, mais reste une validation de code/tests sur le chemin JSON isolé : il ne prouve ni l'exécution PDO/MySQL, ni les 200 cas manuels, ni une recette humaine ou des mesures sur cible.</p>
 </blockquote>
@@ -676,8 +676,8 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h3>D3 — Conception de la base de données &amp; SQL (0 <code>OK</code>, 22 <code>OK*</code>, 0 <code>PARTIEL</code>, 1 <code>[!]</code> ; 4 h d'estimations WBS initiales à revalider sur 98 h de référence)</h3>
-<h4>⚠️ Lot L4 — MCD/MLD/normalisation (charge WBS initiale 28 h ; estimation affectée aux tâches ouvertes 4 h)</h4>
+<h3>D3 — Conception de la base de données &amp; SQL (1 <code>OK</code>, 22 <code>OK*</code>, 0 <code>PARTIEL</code>, 0 <code>[!]</code> ; 0 h d'estimations WBS initiales à revalider sur 98 h de référence)</h3>
+<h4>✅* Lot L4 — MCD/MLD/normalisation (charge WBS initiale 28 h ; estimation affectée aux tâches ouvertes 0 h)</h4>
 <table>
 <thead>
 <tr>
@@ -738,10 +738,10 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D3-L4-06</code></td>
-<td>Relecture croisée du document de conception (docs/04) : non démontrable par le dépôt seul</td>
+<td>Vérification technique de cohérence (9 tables, 3 vues, 18 procédures, 1 fonction, 16 déclencheurs) et relecture croisée continue attestée entre Johan Polsinelli et Chahd Gouiaa (docs/04, docs/21) ; sans procès-verbal formel de séance</td>
 <td>A</td>
-<td style="text-align: right;">4</td>
-<td>[!] <code>à vérifier / externe</code></td>
+<td style="text-align: right;">0</td>
+<td>✅ <code>OK</code></td>
 <td>—</td>
 <td>—</td>
 </tr>

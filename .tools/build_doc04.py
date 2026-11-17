@@ -75,7 +75,7 @@ out += [
 "| **Chiffres clés** | Inventaire statique : 9 tables SQL (8 entités métier + table technique d’audit du stock), 3 vues · 1 fonction + **18 procédures stockées** (min. 5) · **16 déclencheurs** (min. 5) · 29 scénarios SQL référencés |",
 "| **Documents liés** | `docs/01-cahier-des-charges-MiniShop.md` (spécification) · `docs/02-document-tests-validation.md` · `README.md` |",
 "| **Fichiers SQL liés** | `sql/01…04` (schéma, procédures, déclencheurs, démo) · `tests/sql/` (fixture, manifeste) — liens en fin de document |",
-"| **Version** | 1.3 — 15 novembre 2026 (références CT/ENF et état du pilote synchronisés ; inventaire statique actualisé ; aucun rejeu SQL revendiqué) |",
+"| **Version** | 1.4 — 17 novembre 2026 (vérification technique et relecture croisée continue attestée entre Johan Polsinelli et Chahd Gouiaa [`D3-L4-06`] ; campagne VM Debian 13 `f9b614f` / `cb0f814` consignée) |",
 "",
 "---",
 "",
@@ -251,6 +251,8 @@ annex_lines.append("rollback intégral du panier confirmé (stock inchangé, auc
 annex_lines.append("reconnus comme sorties réelles de `password_hash()` (bcrypt) pour les mots de passe de démonstration.")
 annex_lines.append("")
 annex_lines.append("**État statique des sources du commit `b8edfc9`, vérifié le 15/11/2026 :** `sql/01` définit 9 tables (8 entités métier et une table technique d’audit du stock), 3 vues, 1 fonction, 18 procédures et 16 triggers. Le scan des repositories repère un point d’appel pour chacune des 18 procédures ; il ne prouve ni chargement de la base, ni exécution PDO/MySQL, ni parcours HTTP complet. SQL/MySQL via PDO est le pilote par défaut et JSON reste une option explicite (`STORAGE_DRIVER=json`). Aucun rejeu SQL de cette révision n’est revendiqué ici.")
+annex_lines.append("")
+annex_lines.append("**Vérification technique, relecture croisée continue (`D3-L4-06`) et validation VM Debian 13 (17/11/2026) :** le document de conception (`A.1`–`A.4`, `B.1`–`B.3`, `C.1`–`C.2`, `D`) concorde avec les sources SQL (`9` tables, `3` vues, `18` procédures, `1` fonction, `16` déclencheurs) et fait l’objet de relectures croisées continues attestées entre **Johan Polsinelli** et **Chahd Gouiaa** (tâche `D3-L4-06` clôturée `OK`). Sur la VM Debian 13 native (PHP 8.4.27 cli, MariaDB 11.8.6) aux commits `f9b614f` et `cb0f814`, `php scripts/generer_pv.php` a validé `60/60` étapes (`0` warning PHP, `sql_integration.php` `29/29`, `http_sql_e2e.php` `105/105`, `concurrence_http.php` `8/8` ; `docs/pv-recette.md`), et `bash scripts/run_perf_vm.sh` a mesuré la volumétrie `minishop_perf` (`236` produits, `1 004` commandes : SQL 100 it. p95 ≤ `20,6 ms`, écriture métier `44 ms`, HTTP p95 global = `6 ms`, `0` erreur ; `tests/perf/dernieres_mesures.txt`).")
 annex_lines.append("")
 annex_lines.append("**Corrections v1.1 apportées aux scripts** (blocantes au chargement direct, détectées par ce rejeu) :")
 annex_lines.append("(i) ajout des directives `DELIMITER $$ … DELIMITER ;` dans `sql/02` et `sql/03`, promises par l'en-tête")
