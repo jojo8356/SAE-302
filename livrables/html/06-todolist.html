@@ -103,7 +103,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li><a href="#4-graphe-de-dependances-vue-synthetique">4. Graphe de dépendances (vue synthétique)</a></li>
 <li><a href="#5-detail-tache-par-tache-84-taches-wbs-statuts-de-laudit-et-actions-restantes">5. Détail tâche par tâche — 84 tâches WBS, statuts de l'audit et actions restantes</a><ul>
 <li><a href="#d1-pilotage-depot-gitlab-collaboration-7-ok-0-ok-0-partiel-1-2-h-destimations-wbs-initiales-a-revalider-sur-19-h-de-reference">D1 — Pilotage, dépôt GitLab &amp; collaboration (7 OK, 0 OK*, 0 PARTIEL, 1 [!] ; 2 h d'estimations WBS initiales à revalider sur 19 h de référence)</a></li>
-<li><a href="#d2-document-de-specification-du-systeme-0-ok-11-ok-1-partiel-0-3-h-destimations-wbs-initiales-a-revalider-sur-54-h-de-reference">D2 — Document de spécification du système (0 OK, 11 OK*, 1 PARTIEL, 0 [!] ; 3 h d'estimations WBS initiales à revalider sur 54 h de référence)</a></li>
+<li><a href="#d2-document-de-specification-du-systeme-1-ok-11-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-54-h-de-reference">D2 — Document de spécification du système (1 OK, 11 OK*, 0 PARTIEL, 0 [!] ; 0 h d'estimations WBS initiales à revalider sur 54 h de référence)</a></li>
 <li><a href="#d3-conception-de-la-base-de-donnees-sql-0-ok-22-ok-0-partiel-1-4-h-destimations-wbs-initiales-a-revalider-sur-98-h-de-reference">D3 — Conception de la base de données &amp; SQL (0 OK, 22 OK*, 0 PARTIEL, 1 [!] ; 4 h d'estimations WBS initiales à revalider sur 98 h de référence)</a></li>
 <li><a href="#d4-application-web-php-mysql-pdo-21-ok-11-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-146-h-de-reference">D4 — Application Web PHP / MySQL / PDO (21 OK, 11 OK*, 0 PARTIEL, 0 [!] ; 0 h d'estimations WBS initiales à revalider sur 146 h de référence)</a></li>
 <li><a href="#d5-tests-validation-2-ok-2-ok-1-partiel-1-8-h-destimations-wbs-initiales-a-revalider-sur-24-h-de-reference">D5 — Tests &amp; validation (2 OK, 2 OK*, 1 PARTIEL, 1 [!] ; 8 h d'estimations WBS initiales à revalider sur 24 h de référence)</a></li>
@@ -132,11 +132,11 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 <tbody>
 <tr>
 <td><strong>Répartition des statuts d'audit</strong></td>
-<td><strong>30 <code>OK</code> + 48 <code>OK*</code></strong>, 2 <code>PARTIEL</code>, 4 <code>[!]</code> non vérifiables (84 tâches) ; <strong>6 tâches ouvertes ou à confirmer</strong></td>
+<td><strong>31 <code>OK</code> + 48 <code>OK*</code></strong>, 1 <code>PARTIEL</code>, 4 <code>[!]</code> non vérifiables (84 tâches) ; <strong>5 tâches ouvertes ou à confirmer</strong></td>
 </tr>
 <tr>
 <td><strong>Estimation WBS historique affectée aux tâches ouvertes</strong></td>
-<td><strong>22 h</strong> (dont 0 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée</td>
+<td><strong>19 h</strong> (dont 0 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée</td>
 </tr>
 <tr>
 <td><strong>Temps réellement passé</strong></td>
@@ -188,11 +188,11 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 <tr>
 <td><strong>D2 — Document de spécification du système</strong></td>
 <td style="text-align: right;">54 h</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">11</td>
 <td style="text-align: right;">1</td>
+<td style="text-align: right;">11</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">3 h</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0 h</td>
 </tr>
 <tr>
 <td><strong>D3 — Conception de la base de données &amp; SQL</strong></td>
@@ -233,11 +233,11 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 <tr>
 <td><strong>Total</strong></td>
 <td style="text-align: right;"><strong>355 h</strong></td>
-<td style="text-align: right;"><strong>30</strong></td>
+<td style="text-align: right;"><strong>31</strong></td>
 <td style="text-align: right;"><strong>48</strong></td>
-<td style="text-align: right;"><strong>2</strong></td>
+<td style="text-align: right;"><strong>1</strong></td>
 <td style="text-align: right;"><strong>4</strong></td>
-<td style="text-align: right;"><strong>22 h</strong></td>
+<td style="text-align: right;"><strong>19 h</strong></td>
 </tr>
 </tbody>
 </table>
@@ -255,7 +255,7 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 <tr>
 <td><strong>A</strong></td>
 <td style="text-align: right;">117 h</td>
-<td style="text-align: right;">17 h</td>
+<td style="text-align: right;">14 h</td>
 <td>rôle de planification du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée</td>
 </tr>
 <tr>
@@ -273,7 +273,7 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 </tbody>
 </table>
 <blockquote>
-<p>Les <strong>22 h</strong> sont la somme des estimations WBS initiales des 2 tâches <code>PARTIEL</code> et 4 tâches <code>[!]</code>. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
+<p>Les <strong>19 h</strong> sont la somme des estimations WBS initiales des 1 tâches <code>PARTIEL</code> et 4 tâches <code>[!]</code>. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
 Les nombres de statut ne décrivent que les critères précis de la revue. Un <code>OK*</code> ne signifie ni que tout le produit est validé, ni que les tests associés ont été exécutés. Le registre manuel de recette reste <code>NON JOUÉ</code> pour ses 200 entrées.
 Le dernier run non-SQL est vert, mais reste une validation de code/tests sur le chemin JSON isolé : il ne prouve ni l'exécution PDO/MySQL, ni les 200 cas manuels, ni une recette humaine ou des mesures sur cible.</p>
 </blockquote>
@@ -631,8 +631,8 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h3 id="d2-document-de-specification-du-systeme-0-ok-11-ok-1-partiel-0-3-h-destimations-wbs-initiales-a-revalider-sur-54-h-de-reference">D2 — Document de spécification du système (0 <code>OK</code>, 11 <code>OK*</code>, 1 <code>PARTIEL</code>, 0 <code>[!]</code> ; 3 h d'estimations WBS initiales à revalider sur 54 h de référence)<a class="headerlink" href="#d2-document-de-specification-du-systeme-0-ok-11-ok-1-partiel-0-3-h-destimations-wbs-initiales-a-revalider-sur-54-h-de-reference" title="Permanent link">#</a></h3>
-<h4 id="lot-l2-cdc-specification-charge-wbs-initiale-26-h-estimation-affectee-aux-taches-ouvertes-3-h">🟡 Lot L2 — CDC : spécification (charge WBS initiale 26 h ; estimation affectée aux tâches ouvertes 3 h)<a class="headerlink" href="#lot-l2-cdc-specification-charge-wbs-initiale-26-h-estimation-affectee-aux-taches-ouvertes-3-h" title="Permanent link">#</a></h4>
+<h3 id="d2-document-de-specification-du-systeme-1-ok-11-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-54-h-de-reference">D2 — Document de spécification du système (1 <code>OK</code>, 11 <code>OK*</code>, 0 <code>PARTIEL</code>, 0 <code>[!]</code> ; 0 h d'estimations WBS initiales à revalider sur 54 h de référence)<a class="headerlink" href="#d2-document-de-specification-du-systeme-1-ok-11-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-54-h-de-reference" title="Permanent link">#</a></h3>
+<h4 id="lot-l2-cdc-specification-charge-wbs-initiale-26-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L2 — CDC : spécification (charge WBS initiale 26 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l2-cdc-specification-charge-wbs-initiale-26-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link">#</a></h4>
 <table>
 <thead>
 <tr>
@@ -693,10 +693,10 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D2-L2-06</code></td>
-<td>Relecture croisée étudiante §1→§8 : aucune trace datée d'un auteur et d'un relecteur distincts</td>
+<td>Pointage documentaire des pénalités (§16.2), pré-inspection §1→§8 et relecture croisée continue attestée entre Johan Polsinelli et Chahd Gouiaa (mode asynchrone continu, docs/21) ; sans procès-verbal formel de séance</td>
 <td>A</td>
-<td style="text-align: right;">3</td>
-<td>🟡 <code>PARTIEL</code></td>
+<td style="text-align: right;">0</td>
+<td>✅ <code>OK</code></td>
 <td>—</td>
 <td>P1</td>
 </tr>

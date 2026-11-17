@@ -8,8 +8,8 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 
 | | |
 |---|---|
-| **Répartition des statuts d'audit** | **30 `OK` + 48 `OK*`**, 2 `PARTIEL`, 4 `[!]` non vérifiables (84 tâches) ; **6 tâches ouvertes ou à confirmer** |
-| **Estimation WBS historique affectée aux tâches ouvertes** | **22 h** (dont 0 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée |
+| **Répartition des statuts d'audit** | **31 `OK` + 48 `OK*`**, 1 `PARTIEL`, 4 `[!]` non vérifiables (84 tâches) ; **5 tâches ouvertes ou à confirmer** |
+| **Estimation WBS historique affectée aux tâches ouvertes** | **19 h** (dont 0 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée |
 | **Temps réellement passé** | Non mesuré ; aucun nombre d'heures accomplies n'est déduit des statuts |
 | **Backlog asynchrone de la photographie** | **5 h estimées** dans le graphe du 23/09 ; ni une disponibilité actuelle ni une mesure d'effort |
 | **Dernier contrôle non-SQL** | `node scripts/run-all-tests.mjs --sans-sql` : code 0 ; SQL/PDO et PHP CLI natif non joués (détails §8) |
@@ -25,22 +25,22 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 | Division | Charge WBS initiale (estim.) | `OK` | `OK*` | `PARTIEL` | `[!]` | Estimation initiale associée aux tâches ouvertes |
 |---|---:|---:|---:|---:|---:|---:|
 | **D1 — Pilotage, dépôt GitLab & collaboration** | 19 h | 7 | 0 | 0 | 1 | 2 h |
-| **D2 — Document de spécification du système** | 54 h | 0 | 11 | 1 | 0 | 3 h |
+| **D2 — Document de spécification du système** | 54 h | 1 | 11 | 0 | 0 | 0 h |
 | **D3 — Conception de la base de données & SQL** | 98 h | 0 | 22 | 0 | 1 | 4 h |
 | **D4 — Application Web PHP / MySQL / PDO** | 146 h | 21 | 11 | 0 | 0 | 0 h |
 | **D5 — Tests & validation** | 24 h | 2 | 2 | 1 | 1 | 8 h |
 | **D6 — Soutenance** | 14 h | 0 | 2 | 0 | 1 | 5 h |
-| **Total** | **355 h** | **30** | **48** | **2** | **4** | **22 h** |
+| **Total** | **355 h** | **31** | **48** | **1** | **4** | **19 h** |
 
 ### 1.2 Estimations WBS par rôle de planification (A/B/C ; aucune correspondance nominative établie)
 
 | Rôle de planification | Charge WBS initiale (estim.) | Estimation initiale affectée aux tâches ouvertes | Remarque |
 |---|---:|---:|---|
-| **A** | 117 h | 17 h | rôle de planification du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |
+| **A** | 117 h | 14 h | rôle de planification du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |
 | **B** | 117 h | 0 h | rôle de planification base de données/tests ; disponibilité actuelle non vérifiée |
 | **C** | 121 h | 5 h | rôle de planification front-office/sécurité/JS ; disponibilité et attribution nominative non établies |
 
-> Les **22 h** sont la somme des estimations WBS initiales des 2 tâches `PARTIEL` et 4 tâches `[!]`. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
+> Les **19 h** sont la somme des estimations WBS initiales des 1 tâches `PARTIEL` et 4 tâches `[!]`. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
 > Les nombres de statut ne décrivent que les critères précis de la revue. Un `OK*` ne signifie ni que tout le produit est validé, ni que les tests associés ont été exécutés. Le registre manuel de recette reste `NON JOUÉ` pour ses 200 entrées.
 > Le dernier run non-SQL est vert, mais reste une validation de code/tests sur le chemin JSON isolé : il ne prouve ni l'exécution PDO/MySQL, ni les 200 cas manuels, ni une recette humaine ou des mesures sur cible.
 
@@ -152,9 +152,9 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | `D1-L15-03` | Nettoyage et tag v1.0-rendu à vérifier sur le dépôt cible ; aucun tag n'est attesté dans les références examinées | A | 2 | [!] `à vérifier / externe` | D1-L15-02 | P1 |
 
 
-### D2 — Document de spécification du système (0 `OK`, 11 `OK*`, 1 `PARTIEL`, 0 `[!]` ; 3 h d'estimations WBS initiales à revalider sur 54 h de référence)
+### D2 — Document de spécification du système (1 `OK`, 11 `OK*`, 0 `PARTIEL`, 0 `[!]` ; 0 h d'estimations WBS initiales à revalider sur 54 h de référence)
 
-#### 🟡 Lot L2 — CDC : spécification (charge WBS initiale 26 h ; estimation affectée aux tâches ouvertes 3 h)
+#### ✅* Lot L2 — CDC : spécification (charge WBS initiale 26 h ; estimation affectée aux tâches ouvertes 0 h)
 
 | ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
@@ -163,7 +163,7 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | `D2-L2-03` | Traçabilité EF/EV ↔ UC ↔ écran ↔ test ↔ annexe | C | 0 | ✅* `OK*` | — | — |
 | `D2-L2-04` | Distinguer l'exigence MySQL/PDO de l'état actuel : SQL par défaut, JSON explicitement optionnel | A | 0 | ✅* `OK*` | — | — |
 | `D2-L2-05` | SEC-01…SEC-14 ; 10 scénarios offensifs S-01…S-10 ; 11 contrôles statiques dont S-11/SEC-14 | C | 0 | ✅* `OK*` | — | — |
-| `D2-L2-06` | Relecture croisée étudiante §1→§8 : aucune trace datée d'un auteur et d'un relecteur distincts | A | 3 | 🟡 `PARTIEL` | — | P1 |
+| `D2-L2-06` | Pointage documentaire des pénalités (§16.2), pré-inspection §1→§8 et relecture croisée continue attestée entre Johan Polsinelli et Chahd Gouiaa (mode asynchrone continu, docs/21) ; sans procès-verbal formel de séance | A | 0 | ✅ `OK` | — | P1 |
 
 #### ✅* Lot L3 — Diagrammes UML & règles (charge WBS initiale 28 h ; estimation affectée aux tâches ouvertes 0 h)
 

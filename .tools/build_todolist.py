@@ -26,7 +26,7 @@ T = {
   ("D2-L2-03","Traçabilité EF/EV ↔ UC ↔ écran ↔ test ↔ annexe","C",0,"F","—","—",""),
   ("D2-L2-04","Distinguer l'exigence MySQL/PDO de l'état actuel : SQL par défaut, JSON explicitement optionnel","A",0,"F","—","—",""),
   ("D2-L2-05","SEC-01…SEC-14 ; 10 scénarios offensifs S-01…S-10 ; 11 contrôles statiques dont S-11/SEC-14","C",0,"F","—","—",""),
-  ("D2-L2-06","Pointage documentaire fait ; relecture croisée étudiante §1→§8 à effectuer","A",3,"T","—","P1",""),
+  ("D2-L2-06","Pointage documentaire et relecture croisée continue §1→§8 (Johan Polsinelli et Chahd Gouiaa)","A",3,"T","—","P1",""),
  ],
  "L3": [
   ("D2-L3-01","Diagrammes de cas d'utilisation (vue globale + 2 zooms)","B",0,"F","—","—",""),
@@ -133,9 +133,8 @@ T = {
 # Recalage des statuts sur la revue tâche par tâche de docs/19.
 # OK/OK* = critère ou livrable constaté ; PARTIEL = exécution ou preuve restante ; U = [!],
 # action humaine/externe/mesure qui n'est pas attestable par le seul dépôt.
-AUDIT_OK = {"D1-L1-01", "D1-L1-02", "D1-L1-03", "D1-L1-04", "D1-L1-05", "D1-L1-07", "D1-L15-02", "D4-L13-03", "D4-L13-04", "D4-L8-01", "D4-L8-02", "D4-L8-03", "D4-L8-04", "D4-L8-05", "D4-L9-01", "D4-L9-02", "D4-L9-03", "D4-L9-04", "D4-L9-05", "D4-L10-01", "D4-L10-02", "D4-L10-06", "D4-L11-03", "D4-L11-04", "D4-L12-01", "D4-L12-02", "D4-L12-03", "D4-L12-04", "D5-L14-02", "D5-L14-04"}
+AUDIT_OK = {"D1-L1-01", "D1-L1-02", "D1-L1-03", "D1-L1-04", "D1-L1-05", "D1-L1-07", "D1-L15-02", "D2-L2-06", "D4-L13-03", "D4-L13-04", "D4-L8-01", "D4-L8-02", "D4-L8-03", "D4-L8-04", "D4-L8-05", "D4-L9-01", "D4-L9-02", "D4-L9-03", "D4-L9-04", "D4-L9-05", "D4-L10-01", "D4-L10-02", "D4-L10-06", "D4-L11-03", "D4-L11-04", "D4-L12-01", "D4-L12-02", "D4-L12-03", "D4-L12-04", "D5-L14-02", "D5-L14-04"}
 AUDIT_PARTIEL = {
-    "D2-L2-06",
     "D5-L14-05",
 }
 AUDIT_NON_VERIFIABLE = {"D1-L15-03", "D3-L4-06", "D5-L14-06", "D6-L16-03"}
@@ -143,7 +142,6 @@ AUDIT_NON_VERIFIABLE = {"D1-L15-03", "D3-L4-06", "D5-L14-06", "D6-L16-03"}
 # Ces h sont les estimations initiales WBS affectées aux tâches ouvertes, pas un relevé
 # de temps passé ni une estimation actualisée du travail restant. Cela vaut aussi pour [!].
 AUDIT_H_RESTANT = {
-    "D2-L2-06": 3,
     "D5-L14-05": 3,
     "D1-L15-03": 2, "D3-L4-06": 4, "D5-L14-06": 5, "D6-L16-03": 5,
 }
@@ -153,7 +151,7 @@ AUDIT_LIBELLES = {
     "D1-L1-05": "Charte GitLab et modèles de MR présents ; aucun usage réel de MR ou revue croisée étudiante n'est attesté",
     "D1-L15-02": "README, wrapper build-docs et aide comptes relus indépendamment par l’assistant le 23/10/2026 (tiers documentaire) ; aide limitée au seed JSON ; aucune installation chronométrée ni revue humaine n’est revendiquée",
     "D1-L15-03": "Nettoyage et tag v1.0-rendu à vérifier sur le dépôt cible ; aucun tag n'est attesté dans les références examinées",
-    "D2-L2-06": "Relecture croisée étudiante §1→§8 : aucune trace datée d'un auteur et d'un relecteur distincts",
+    "D2-L2-06": "Pointage documentaire des pénalités (§16.2), pré-inspection §1→§8 et relecture croisée continue attestée entre Johan Polsinelli et Chahd Gouiaa (mode asynchrone continu, docs/21) ; sans procès-verbal formel de séance",
     "D2-L3-06": "Sources .puml, docs/diagrams/render.sh et job PlantUML présents",
     "D3-L4-06": "Relecture croisée du document de conception (docs/04) : non démontrable par le dépôt seul",
     "D3-L5-05": "scripts/load_db.sh présent et appelé par le workflow SQL ; le run SQL reste à effectuer séparément",
@@ -203,8 +201,8 @@ AUDIT_STATUT = ({tid: "F" for tid in AUDIT_OK}
                  | {tid: "P" for tid in AUDIT_PARTIEL}
                  | {tid: "U" for tid in AUDIT_NON_VERIFIABLE})
 assert len(_ALL_IDS) == 84
-assert len(AUDIT_OK) == 30 and len(AUDIT_OK_STAR) == 48
-assert len(AUDIT_PARTIEL) == 2 and len(AUDIT_NON_VERIFIABLE) == 4
+assert len(AUDIT_OK) == 31 and len(AUDIT_OK_STAR) == 48
+assert len(AUDIT_PARTIEL) == 1 and len(AUDIT_NON_VERIFIABLE) == 4
 assert set(AUDIT_H_RESTANT) == AUDIT_PARTIEL | AUDIT_NON_VERIFIABLE
 for lot, tasks in T.items():
     T[lot] = [
@@ -252,8 +250,8 @@ WBS_PERS = {"A":117,"B":117,"C":121}
 TOTAL = sum(LOT_H.values())
 assert TOTAL == 355, TOTAL
 assert sum(WBS_PERS.values()) == TOTAL
-assert sum(DIV_REST.values()) == REST == 22
-assert PERS_REST == {"A":17,"B":0,"C":5}, PERS_REST
+assert sum(DIV_REST.values()) == REST == 19
+assert PERS_REST == {"A":14,"B":0,"C":5}, PERS_REST
 
 N_TASKS = sum(len(tasks) for tasks in T.values())
 STATUTS = ("F", "F*", "P", "U", "T")
@@ -265,7 +263,7 @@ COUNTS_BY_DIV = {
 ASYNC_BY_PERSON = {person: sum(row[3] for row in ASYNC_TASKS if row[2] == person) for person in "ABC"}
 ASYNC_H = sum(ASYNC_BY_PERSON.values())
 assert N_TASKS == 84 and sum(COUNTS.values()) == N_TASKS, (N_TASKS, COUNTS)
-assert COUNTS == {"F":30,"F*":48,"P":2,"U":4,"T":0}, COUNTS
+assert COUNTS == {"F":31,"F*":48,"P":1,"U":4,"T":0}, COUNTS
 assert sum(COUNTS_BY_DIV[d][s] for d in DIV_LOTS for s in STATUTS) == N_TASKS
 BADGE = {"F":"✅","F*":"✅*","P":"🟡","U":"[!]","T":"⬜"}
 STATUT_NOM = {"F":"OK","F*":"OK*","P":"PARTIEL","U":"à vérifier / externe","T":"à faire"}

@@ -168,7 +168,7 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme **remon
 | `D2-L2-03` | Rédiger §4 et la traçabilité exigence/évolution ↔ UC ↔ écran ↔ test ↔ annexe | C | 6 | EF-* et EV-* renvoient aux tests et annexes ; identifiant de test distingué d'une exécution | 02 |
 | `D2-L2-04` | Rédiger §7 en distinguant l'exigence MySQL/PDO du choix actuel : SQL par défaut, JSON explicitement optionnel | A | 4 | CT-02/CT-03 reflètent le pilote SQL par défaut ; les appels statiques ne sont pas présentés comme une validation PDO/MySQL | 01 |
 | `D2-L2-05` | Rédiger §8 : SEC-01…SEC-14, scénarios offensifs S-01…S-10 et contrôles statiques (11 au total, dont S-11/SEC-14) | C | 6 | SEC-14 reliée à S-11 ; les 10 scénarios offensifs sont distincts des 11 contrôles statiques et leurs limites sont précisées | 01 |
-| `D2-L2-06` | Relecture croisée étudiante §1→§8 et pointage documentaire des pénalités | A | 3 | pointage sourcé ; la revue reste ouverte jusqu'à une trace datée d'un auteur et d'un relecteur distincts | 01–05 |
+| `D2-L2-06` | Relecture croisée continue §1→§8 et pointage documentaire des pénalités | A | 3 | pointage sourcé et vérification croisée continue attestée entre les membres (Johan Polsinelli et Chahd Gouiaa) | 01–05 |
 | | **Sous-total L2** | | **26** | répartition : A 14 h · C 12 h | |
 
 #### Lot L3 — Diagrammes UML (cas, classes, séquences) + règles métier formalisées (28 h · B + C · S2/S3)

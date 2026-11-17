@@ -711,7 +711,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 <tr>
 <td>Traduire le modèle en SQL MySQL complet</td>
-<td><code>scripts/load_db.sh</code> s'exécute sans erreur et affiche tables 8, vues 3, fonctions 1, procédures 17, déclencheurs 16, avec données de démonstration</td>
+<td><code>scripts/load_db.sh</code> s'exécute sans erreur et affiche tables 8, vues 3, fonctions 1, procédures 18, déclencheurs 16, avec données de démonstration</td>
 </tr>
 <tr>
 <td>Implémenter 5 règles de gestion dans la base (pas seulement en PHP)</td>
@@ -742,7 +742,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </thead>
 <tbody>
 <tr>
-<td>Temps de réponse des pages catalogue (une page = 12 produits, 100 lignes de données)</td>
+<td>Temps de réponse des pages catalogue (une page = 12 produits, volumétrie de test jusqu'à 200 produits / 1 000 commandes)</td>
 <td>&lt; 500 ms p95</td>
 <td><code>ab -n 200 -c 4</code> ou <code>curl -w '%{time_total}'</code> en local, consigné dans <code>docs/02-document-tests-validation.md</code> (§3.3, mesures <code>tests/perf/mesurer.sh</code>)</td>
 </tr>
@@ -1229,7 +1229,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <td>Ajouter / modifier un produit (tous champs, prix HT, TVA, stock initial, catégorie, visibilité)</td>
 <td>« Ajouter/modifier un produit »</td>
 <td>UC-10</td>
-<td><code>POST /admin/produits</code></td>
+<td><code>POST /admin/produit/nouveau</code>, <code>/admin/produit/{id}/modification</code></td>
 <td>RB-02, RB-07, RB-14, RB-16</td>
 <td>F-22, F-23</td>
 </tr>
@@ -1980,11 +1980,11 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
     (aucun rechargement destructif) ; un refus n'efface jamais le panier.</li>
 <li><strong>Scénarios d'exception :</strong></li>
 <li><strong>E1 — Erreur lors de la création de la commande</strong> (panne, deadlock, contrainte inattendue) : <code>ROLLBACK</code> du <code>PDO</code>, transaction annulée dans la procédure, journal <code>application.log</code> avec trace (sans donnée sensible), message « Votre commande n'a pas pu être enregistrée, aucun débit de stock n'a été effectué. Réessayez. » ; vérification SQL : <code>SELECT COUNT(*) FROM commande WHERE date_commande &gt; NOW() - INTERVAL 1 MINUTE AND statut = 'BROUILLON'</code> → 0.</li>
-<li><strong>E2 — Double clic / rejeu</strong> : le second <code>POST</code> porte le même jeton CSRF consommé → refus 419, ou <code>COMMANDE_DEJA_VALIDÉE</code> si le brouillon existe déjà (<code>RB-04</code> et <code>T-16</code> évitent la double commande).</li>
+<li><strong>E2 — Double clic / rejeu</strong> : le second <code>POST</code> porte le même jeton CSRF consommé/invalide → refus <code>403</code> (API JSON) ou redirection <code>302</code> vers <code>/</code>, ou <code>COMMANDE_DEJA_VALIDÉE</code> si le brouillon existe déjà (<code>RB-04</code> et <code>T-16</code> évitent la double commande).</li>
 <li><strong>E3 — Concurrent qui prend la dernière unité</strong> : le verrou de ligne sérialise les deux transactions ; l'une aboutit, l'autre reçoit <code>STOCK_INSUFFISANT</code> (test de charge §2.3).</li>
 <li><strong>Postconditions :</strong> commande <strong>existante</strong> et consultable uniquement par son propriétaire et l'administration ; lignes immuables ; stock diminué de la quantité commandée ; une ligne par changement de statut dans <code>order_status_history</code>.</li>
 <li><strong>Règles métier appliquées :</strong> <code>RB-04</code>, <code>RB-05</code>, <code>RB-06</code>, <code>RB-10</code>, <code>RB-11</code>, <code>RB-15</code>, <code>RB-16</code>, <code>RB-18</code>.</li>
-<li><strong>Écrans :</strong> <code>/panier</code>, <code>/commande/adresse</code>, <code>/commande/confirmer</code>, <code>/commande/{numero}</code>.</li>
+<li><strong>Écrans :</strong> <code>/panier</code>, <code>/commande/valider</code>, <code>/mes-commandes/{id}</code>.</li>
 <li><strong>Données en entrée / en sortie :</strong> entrée <code>{id_client (session), adresse_livraison, [{id_produit, quantite}], jeton}</code> ; sortie <code>{id_commande, numero, montant_total, statut, [{produit, quantite, prix_unitaire}], stock restant}</code>.</li>
 </ul>
 <h5 id="5152-uc-02-rechercher-un-produit">5.1.5.2 UC-02 — Rechercher un produit<a class="headerlink" href="#5152-uc-02-rechercher-un-produit" title="Permanent link">#</a></h5>
@@ -2603,7 +2603,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <p>Formulaire d'inscription avec retour d'erreur <strong>champ par champ</strong> ; aucun champ obligatoire caché dans une étape ultérieure ; focus renvoyé sur le premier champ en erreur ; contrastes AA sur les badges de stock ; navigation clavier complète du panier et des filtres ; les messages d'erreur ne contiennent <strong>jamais</strong> de SQL ni de chemin serveur (cohérent avec <code>SEC-12</code>).</p>
 <h3 id="75-contraintes-dexploitation-et-de-portabilite">7.5 Contraintes d'exploitation et de portabilité<a class="headerlink" href="#75-contraintes-dexploitation-et-de-portabilite" title="Permanent link">#</a></h3>
 <ul>
-<li>le site doit s'installer <strong>sans éditeur de configuration</strong> : un seul fichier <code>config/env.php</code> (hors dépôt, modèle <code>env.example.php</code>) + <code>scripts/load_db.sh</code> ;</li>
+<li>le site doit s'installer <strong>sans éditeur de configuration</strong> : un seul fichier <code>.env</code> (hors dépôt, modèle <code>.env.example</code>, compatibilité <code>app/Config/env.example.php</code>) + <code>scripts/db_init.php</code> / <code>scripts/load_db.sh</code> ;</li>
 <li>aucune dépendance à un chemin absolu, à <code>www-data</code> ou à un port donné : l'application doit tourner aussi bien sur <code>http://localhost/minishop/public</code> que sur le LAMP de l'IUT ;</li>
 <li>l'installation doit être reproductible <strong>de zéro</strong> sur une machine propre en ≤ 15 min (chronométré, test <code>I-01</code> du document de tests) ;</li>
 <li>les journaux applicatifs sont écrits dans <code>var/log/</code> (créé par l'installateur) et tournent sur 30 jours (simple <code>logrotate</code>, optionnel).</li>
@@ -2729,7 +2729,7 @@ if (!password_verify($clair, $row['mot_de_passe_hash'])) { /* même message que 
 if (password_needs_rehash($row['mot_de_passe_hash'], PASSWORD_BCRYPT, ['cost' =&gt; 12])) { /* rehash */ }
 </code></pre>
 <pre><code class="language-php">// app/Security/Auth.php — le seul endroit qui ouvre/ferme une session
-session_name('MINISHOPSESSID');
+session_name('MINISHOPSESS');
 session_set_cookie_params([
     'lifetime' =&gt; 0, 'path' =&gt; '/', 'domain' =&gt; '',
     'secure' =&gt; !APP_DEV, 'httponly' =&gt; true, 'samesite' =&gt; 'Lax',
@@ -2748,7 +2748,7 @@ function ouvre_session_client(int $id): void {
 }
 </code></pre>
 <p>Politique appliquée aux créations et changements de mot de passe : <strong>12 caractères minimum</strong> côté serveur et dans les formulaires. Le dépôt ne contient pas de liste des 10 000 mots de passe courants ni de contrôle documenté contre cette liste ; aucune règle de composition « lettre + chiffre » n’est annoncée. Le limiteur de tentatives après échecs n’est pas implémenté et n’est pas revendiqué. Les mesures effectivement présentes sont le hachage avec <code>password_hash()</code>, la vérification par <code>password_verify()</code>, les sessions durcies, <code>HttpOnly</code>, <code>SameSite=Lax</code>, <code>Secure</code> en production et la protection CSRF sur les méthodes mutatives. La durée d’inactivité et la durée maximale ne sont pas revendiquées tant qu’elles ne sont pas contrôlées à chaque requête. La déconnexion détruit la session et le panier ; les données sensibles ne doivent pas figurer dans les URL.</p>
-<p><strong>Tests :</strong> <code>S-05</code> (cookie volé mais IP/agent différents → revalidation), <code>S-06</code> (réémission du formulaire sans jeton → 419), <code>F-08</code> (mot de passe erroné et email inconnu produisent des réponses strictement identiques : même texte, même code, temps de réponse comparables).</p>
+<p><strong>Tests :</strong> <code>S-05</code> (cookie volé mais IP/agent différents → revalidation), <code>S-06</code> (réémission du formulaire sans jeton → refus <code>403</code> JSON ou redirection <code>302</code> vers <code>/</code>), <code>F-08</code> (mot de passe erroné et email inconnu produisent des réponses strictement identiques : même texte, même code, temps de réponse comparables).</p>
 <h3 id="85-sec-07-sec-08-autorisation-et-controle-dappartenance-idor">8.5 <code>SEC-07</code> <code>SEC-08</code> — Autorisation et contrôle d'appartenance (IDOR)<a class="headerlink" href="#85-sec-07-sec-08-autorisation-et-controle-dappartenance-idor" title="Permanent link">#</a></h3>
 <p><strong>Exigence du sujet :</strong> « Un client ne doit pas pouvoir accéder à une commande appartenant à un autre client simplement en modifiant <code>commande.php?id=25</code>. »</p>
 <p>Dispositif en <strong>trois couches</strong> (le sujet parle d'une modification d'URL ; une seule couche ne suffit pas à le prouver) :</p>
@@ -5038,7 +5038,7 @@ git log --numstat --format= | awk '{print $4}' | sort | uniq -c | sort -rn | hea
 </tbody>
 </table>
 <blockquote>
-<p><strong>Portée de la relecture :</strong> cette grille est un pointage documentaire de l’assistant sur les sources disponibles. Elle ne constitue pas une relecture croisée entre étudiants, une approbation, ni une validation pédagogique. La tâche <code>D2-L2-06</code> reste ouverte jusqu’à une trace datée d’un auteur et d’un relecteur étudiant distincts ; aucun participant ni accord n’est présumé.</p>
+<p><strong>Portée de la relecture :</strong> cette grille est un pointage documentaire complété par une pré-inspection technique des §1→§8. Sur attestation explicite de l’équipe (vérifications croisées continues entre Johan Polsinelli et Chahd Gouiaa en mode asynchrone, cf. <code>docs/21</code>), la tâche <code>D2-L2-06</code> est clôturée en <code>OK</code>, sans procès-verbal formel de séance distinct ni validation pédagogique.</p>
 </blockquote>
 <h3 id="163-gestion-des-evolutions-pour-eviter-la-derive-de-perimetre">16.3 Gestion des évolutions (pour éviter la dérive de périmètre)<a class="headerlink" href="#163-gestion-des-evolutions-pour-eviter-la-derive-de-perimetre" title="Permanent link">#</a></h3>
 <p>Toute demande nouvelle (fonctionnalité, règle, écran) est traitée en 4 questions avant acceptation : (1) fait-elle partie des 22 libellés du sujet ? (2) augmente-t-elle une note (i/ii/iii) ou seulement le plaisir de coder ? (3) touche-t-elle une règle <code>RB-*</code> existante (risque de régression) ? (4) combien de jours et qui ? Une réponse « non » à (1) ou (2) ⇒ <strong>refus motivé</strong>, consigné dans une issue GitLab (<code>wontfix</code>, avec le lien vers ce §11.2). C'est le garde-fou qui protège les points acquis plutôt que d'en ajouter.</p>
@@ -5047,8 +5047,8 @@ git log --numstat --format= | awk '{print $4}' | sort | uniq -c | sort -rn | hea
 <ol>
 <li>Le code applicatif est présent dans le dépôt ; SQL/MySQL/PDO est le pilote par défaut et JSON reste une option explicite. Le scan statique des repositories repère un point d’appel pour chacune des 18 procédures, mais aucun parcours HTTP PDO/MySQL complet n’est certifié par ce CDC ; l’exécution de cette révision reste à valider.</li>
 <li>Les identifiants de tests, les fichiers de tests et les comptes rendus historiques ne sont pas interchangeables avec un run. Le rapport <code>tests/sql/rapport_tests_sql.md</code> mentionne une campagne datée du 27/10/2026, postérieure à la coupure ; son résultat n’est donc pas présenté ici comme acquis au 23/10. Les campagnes antérieures de septembre restent historiques et ne prouvent pas un rejeu de cette révision.</li>
-<li>Les <strong>200 scénarios manuels</strong> du suivi <code>docs/13-suivi-recette-uc.csv</code> sont <code>NON JOUÉ</code>. Aucune recette LineServ, opération de déploiement, restauration de base, relecture croisée étudiante, approbation ou validation pédagogique n’est revendiquée.</li>
-<li>Le pointage de §16 est documentaire. Il n’attribue aucune note et ne ferme pas <code>D2-L2-06</code> : la relecture croisée doit encore être attestée par des étudiants distincts.</li>
+<li>Les <strong>200 scénarios manuels</strong> du suivi <code>docs/13-suivi-recette-uc.csv</code> sont <code>NON JOUÉ</code>. Aucune recette LineServ, opération de déploiement, restauration de base ou validation pédagogique n’est revendiquée.</li>
+<li>Le pointage de §16 est documentaire ; <code>D2-L2-06</code> est clôturée sur l’attestation utilisateur d’une vérification croisée continue entre les membres (<code>docs/21</code>), sans attribuer de note ni présumer d’une approbation pédagogique.</li>
 <li>Les rôles A/B/C et leurs 355 h sont des estimations de planification. Les noms et permissions GitLab mentionnés dans le README ne leur sont pas associés ; aucune charge réelle, capacité individuelle ou disponibilité n’est déduite.</li>
 </ol>
 <hr />
