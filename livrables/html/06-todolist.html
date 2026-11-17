@@ -106,7 +106,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li><a href="#d2-document-de-specification-du-systeme-1-ok-11-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-54-h-de-reference">D2 — Document de spécification du système (1 OK, 11 OK*, 0 PARTIEL, 0 [!] ; 0 h d'estimations WBS initiales à revalider sur 54 h de référence)</a></li>
 <li><a href="#d3-conception-de-la-base-de-donnees-sql-0-ok-22-ok-0-partiel-1-4-h-destimations-wbs-initiales-a-revalider-sur-98-h-de-reference">D3 — Conception de la base de données &amp; SQL (0 OK, 22 OK*, 0 PARTIEL, 1 [!] ; 4 h d'estimations WBS initiales à revalider sur 98 h de référence)</a></li>
 <li><a href="#d4-application-web-php-mysql-pdo-21-ok-11-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-146-h-de-reference">D4 — Application Web PHP / MySQL / PDO (21 OK, 11 OK*, 0 PARTIEL, 0 [!] ; 0 h d'estimations WBS initiales à revalider sur 146 h de référence)</a></li>
-<li><a href="#d5-tests-validation-2-ok-2-ok-1-partiel-1-8-h-destimations-wbs-initiales-a-revalider-sur-24-h-de-reference">D5 — Tests &amp; validation (2 OK, 2 OK*, 1 PARTIEL, 1 [!] ; 8 h d'estimations WBS initiales à revalider sur 24 h de référence)</a></li>
+<li><a href="#d5-tests-validation-3-ok-2-ok-0-partiel-1-5-h-destimations-wbs-initiales-a-revalider-sur-24-h-de-reference">D5 — Tests &amp; validation (3 OK, 2 OK*, 0 PARTIEL, 1 [!] ; 5 h d'estimations WBS initiales à revalider sur 24 h de référence)</a></li>
 <li><a href="#d6-soutenance-0-ok-2-ok-0-partiel-1-5-h-destimations-wbs-initiales-a-revalider-sur-14-h-de-reference">D6 — Soutenance (0 OK, 2 OK*, 0 PARTIEL, 1 [!] ; 5 h d'estimations WBS initiales à revalider sur 14 h de référence)</a></li>
 </ul>
 </li>
@@ -132,11 +132,11 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 <tbody>
 <tr>
 <td><strong>Répartition des statuts d'audit</strong></td>
-<td><strong>31 <code>OK</code> + 48 <code>OK*</code></strong>, 1 <code>PARTIEL</code>, 4 <code>[!]</code> non vérifiables (84 tâches) ; <strong>5 tâches ouvertes ou à confirmer</strong></td>
+<td><strong>32 <code>OK</code> + 48 <code>OK*</code></strong>, 0 <code>PARTIEL</code>, 4 <code>[!]</code> non vérifiables (84 tâches) ; <strong>4 tâches ouvertes ou à confirmer</strong></td>
 </tr>
 <tr>
 <td><strong>Estimation WBS historique affectée aux tâches ouvertes</strong></td>
-<td><strong>19 h</strong> (dont 0 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée</td>
+<td><strong>16 h</strong> (dont 0 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée</td>
 </tr>
 <tr>
 <td><strong>Temps réellement passé</strong></td>
@@ -215,11 +215,11 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 <tr>
 <td><strong>D5 — Tests &amp; validation</strong></td>
 <td style="text-align: right;">24 h</td>
+<td style="text-align: right;">3</td>
 <td style="text-align: right;">2</td>
-<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">8 h</td>
+<td style="text-align: right;">5 h</td>
 </tr>
 <tr>
 <td><strong>D6 — Soutenance</strong></td>
@@ -233,11 +233,11 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 <tr>
 <td><strong>Total</strong></td>
 <td style="text-align: right;"><strong>355 h</strong></td>
-<td style="text-align: right;"><strong>31</strong></td>
+<td style="text-align: right;"><strong>32</strong></td>
 <td style="text-align: right;"><strong>48</strong></td>
-<td style="text-align: right;"><strong>1</strong></td>
+<td style="text-align: right;"><strong>0</strong></td>
 <td style="text-align: right;"><strong>4</strong></td>
-<td style="text-align: right;"><strong>19 h</strong></td>
+<td style="text-align: right;"><strong>16 h</strong></td>
 </tr>
 </tbody>
 </table>
@@ -255,7 +255,7 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 <tr>
 <td><strong>A</strong></td>
 <td style="text-align: right;">117 h</td>
-<td style="text-align: right;">14 h</td>
+<td style="text-align: right;">11 h</td>
 <td>rôle de planification du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée</td>
 </tr>
 <tr>
@@ -273,7 +273,7 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 </tbody>
 </table>
 <blockquote>
-<p>Les <strong>19 h</strong> sont la somme des estimations WBS initiales des 1 tâches <code>PARTIEL</code> et 4 tâches <code>[!]</code>. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
+<p>Les <strong>16 h</strong> sont la somme des estimations WBS initiales des 0 tâches <code>PARTIEL</code> et 4 tâches <code>[!]</code>. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
 Les nombres de statut ne décrivent que les critères précis de la revue. Un <code>OK*</code> ne signifie ni que tout le produit est validé, ni que les tests associés ont été exécutés. Le registre manuel de recette reste <code>NON JOUÉ</code> pour ses 200 entrées.
 Le dernier run non-SQL est vert, mais reste une validation de code/tests sur le chemin JSON isolé : il ne prouve ni l'exécution PDO/MySQL, ni les 200 cas manuels, ni une recette humaine ou des mesures sur cible.</p>
 </blockquote>
@@ -1429,8 +1429,8 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h3 id="d5-tests-validation-2-ok-2-ok-1-partiel-1-8-h-destimations-wbs-initiales-a-revalider-sur-24-h-de-reference">D5 — Tests &amp; validation (2 <code>OK</code>, 2 <code>OK*</code>, 1 <code>PARTIEL</code>, 1 <code>[!]</code> ; 8 h d'estimations WBS initiales à revalider sur 24 h de référence)<a class="headerlink" href="#d5-tests-validation-2-ok-2-ok-1-partiel-1-8-h-destimations-wbs-initiales-a-revalider-sur-24-h-de-reference" title="Permanent link">#</a></h3>
-<h4 id="lot-l14-tests-validation-charge-wbs-initiale-24-h-estimation-affectee-aux-taches-ouvertes-8-h">⚠️ Lot L14 — Tests &amp; validation (charge WBS initiale 24 h ; estimation affectée aux tâches ouvertes 8 h)<a class="headerlink" href="#lot-l14-tests-validation-charge-wbs-initiale-24-h-estimation-affectee-aux-taches-ouvertes-8-h" title="Permanent link">#</a></h4>
+<h3 id="d5-tests-validation-3-ok-2-ok-0-partiel-1-5-h-destimations-wbs-initiales-a-revalider-sur-24-h-de-reference">D5 — Tests &amp; validation (3 <code>OK</code>, 2 <code>OK*</code>, 0 <code>PARTIEL</code>, 1 <code>[!]</code> ; 5 h d'estimations WBS initiales à revalider sur 24 h de référence)<a class="headerlink" href="#d5-tests-validation-3-ok-2-ok-0-partiel-1-5-h-destimations-wbs-initiales-a-revalider-sur-24-h-de-reference" title="Permanent link">#</a></h3>
+<h4 id="lot-l14-tests-validation-charge-wbs-initiale-24-h-estimation-affectee-aux-taches-ouvertes-5-h">⚠️ Lot L14 — Tests &amp; validation (charge WBS initiale 24 h ; estimation affectée aux tâches ouvertes 5 h)<a class="headerlink" href="#lot-l14-tests-validation-charge-wbs-initiale-24-h-estimation-affectee-aux-taches-ouvertes-5-h" title="Permanent link">#</a></h4>
 <table>
 <thead>
 <tr>
@@ -1482,10 +1482,10 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 <tr>
 <td><code>D5-L14-05</code></td>
-<td>Matrice présente ; PV de recette généré sur VM réelle (docs/pv-recette.md, 60/60 étapes sur f9b614f, 17/11/2026) ; relecture, décision et signature humaines restant à compléter</td>
+<td>Matrice §9 complète ; PV de recette généré sur VM réelle (docs/pv-recette.md, 60/60 étapes sur f9b614f, 17/11/2026) avec décision et visas nominatifs de Johan Polsinelli et Chahd Gouiaa ; les 200 entrées manuelles de docs/13-suivi-recette-uc.csv restent NON JOUÉ</td>
 <td>A</td>
-<td style="text-align: right;">3</td>
-<td>🟡 <code>PARTIEL</code></td>
+<td style="text-align: right;">0</td>
+<td>✅ <code>OK</code></td>
 <td>D5-L14-02;D5-L14-03</td>
 <td>P1</td>
 </tr>

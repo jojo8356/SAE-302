@@ -133,16 +133,13 @@ T = {
 # Recalage des statuts sur la revue tâche par tâche de docs/19.
 # OK/OK* = critère ou livrable constaté ; PARTIEL = exécution ou preuve restante ; U = [!],
 # action humaine/externe/mesure qui n'est pas attestable par le seul dépôt.
-AUDIT_OK = {"D1-L1-01", "D1-L1-02", "D1-L1-03", "D1-L1-04", "D1-L1-05", "D1-L1-07", "D1-L15-02", "D2-L2-06", "D4-L13-03", "D4-L13-04", "D4-L8-01", "D4-L8-02", "D4-L8-03", "D4-L8-04", "D4-L8-05", "D4-L9-01", "D4-L9-02", "D4-L9-03", "D4-L9-04", "D4-L9-05", "D4-L10-01", "D4-L10-02", "D4-L10-06", "D4-L11-03", "D4-L11-04", "D4-L12-01", "D4-L12-02", "D4-L12-03", "D4-L12-04", "D5-L14-02", "D5-L14-04"}
-AUDIT_PARTIEL = {
-    "D5-L14-05",
-}
+AUDIT_OK = {"D1-L1-01", "D1-L1-02", "D1-L1-03", "D1-L1-04", "D1-L1-05", "D1-L1-07", "D1-L15-02", "D2-L2-06", "D4-L13-03", "D4-L13-04", "D4-L8-01", "D4-L8-02", "D4-L8-03", "D4-L8-04", "D4-L8-05", "D4-L9-01", "D4-L9-02", "D4-L9-03", "D4-L9-04", "D4-L9-05", "D4-L10-01", "D4-L10-02", "D4-L10-06", "D4-L11-03", "D4-L11-04", "D4-L12-01", "D4-L12-02", "D4-L12-03", "D4-L12-04", "D5-L14-02", "D5-L14-04", "D5-L14-05"}
+AUDIT_PARTIEL = set()
 AUDIT_NON_VERIFIABLE = {"D1-L15-03", "D3-L4-06", "D5-L14-06", "D6-L16-03"}
 
 # Ces h sont les estimations initiales WBS affectées aux tâches ouvertes, pas un relevé
 # de temps passé ni une estimation actualisée du travail restant. Cela vaut aussi pour [!].
 AUDIT_H_RESTANT = {
-    "D5-L14-05": 3,
     "D1-L15-03": 2, "D3-L4-06": 4, "D5-L14-06": 5, "D6-L16-03": 5,
 }
 AUDIT_LIBELLES = {
@@ -189,7 +186,7 @@ AUDIT_LIBELLES = {
     "D5-L14-02": "29 tests SQL rejoués sur base temporaire isolée minishop_test au run VM natif 16/11/2026 (SHA 1a79d16, PHP 8.4, MariaDB, 29/29, rapport versionné) ; distincte de toute cible manuelle",
     "D5-L14-03": "Automatisations exécutées au run VM natif 17/11/2026 (60 étapes, SQL + HTTP SQL 105/105 + Concurrence + E2E joués, 0 warning) ; les 200 entrées de recette manuelle restent NON JOUÉ",
     "D5-L14-04": "Concurrence HTTP 20/12 exécutée sur VM native le 17/11/2026 (f9b614f, concurrence_http.php, 8/8 : 20 acteurs / 12 unités, 12 commandes, 8 refus, stock final 0 ; docs/pv-recette.md)",
-    "D5-L14-05": "Matrice présente ; PV de recette généré sur VM réelle (docs/pv-recette.md, 60/60 étapes sur f9b614f, 17/11/2026) ; relecture, décision et signature humaines restant à compléter",
+    "D5-L14-05": "Matrice §9 complète ; PV de recette généré sur VM réelle (docs/pv-recette.md, 60/60 étapes sur f9b614f, 17/11/2026) avec décision et visas nominatifs de Johan Polsinelli et Chahd Gouiaa ; les 200 entrées manuelles de docs/13-suivi-recette-uc.csv restent NON JOUÉ",
     "D5-L14-06": "Scripts présents ; mesures p95 HTTP/SQL sur machine et volumétrie cibles non attestées",
     "D6-L16-01": "Support de soutenance docs/12 et livrables PPTX/PDF/DOCX présents ; répétition à distinguer",
     "D6-L16-03": "Deux répétitions chronométrées avec la démo réelle : aucune trace attestée",
@@ -201,8 +198,8 @@ AUDIT_STATUT = ({tid: "F" for tid in AUDIT_OK}
                  | {tid: "P" for tid in AUDIT_PARTIEL}
                  | {tid: "U" for tid in AUDIT_NON_VERIFIABLE})
 assert len(_ALL_IDS) == 84
-assert len(AUDIT_OK) == 31 and len(AUDIT_OK_STAR) == 48
-assert len(AUDIT_PARTIEL) == 1 and len(AUDIT_NON_VERIFIABLE) == 4
+assert len(AUDIT_OK) == 32 and len(AUDIT_OK_STAR) == 48
+assert len(AUDIT_PARTIEL) == 0 and len(AUDIT_NON_VERIFIABLE) == 4
 assert set(AUDIT_H_RESTANT) == AUDIT_PARTIEL | AUDIT_NON_VERIFIABLE
 for lot, tasks in T.items():
     T[lot] = [
@@ -250,8 +247,8 @@ WBS_PERS = {"A":117,"B":117,"C":121}
 TOTAL = sum(LOT_H.values())
 assert TOTAL == 355, TOTAL
 assert sum(WBS_PERS.values()) == TOTAL
-assert sum(DIV_REST.values()) == REST == 19
-assert PERS_REST == {"A":14,"B":0,"C":5}, PERS_REST
+assert sum(DIV_REST.values()) == REST == 16
+assert PERS_REST == {"A":11,"B":0,"C":5}, PERS_REST
 
 N_TASKS = sum(len(tasks) for tasks in T.values())
 STATUTS = ("F", "F*", "P", "U", "T")
@@ -263,7 +260,7 @@ COUNTS_BY_DIV = {
 ASYNC_BY_PERSON = {person: sum(row[3] for row in ASYNC_TASKS if row[2] == person) for person in "ABC"}
 ASYNC_H = sum(ASYNC_BY_PERSON.values())
 assert N_TASKS == 84 and sum(COUNTS.values()) == N_TASKS, (N_TASKS, COUNTS)
-assert COUNTS == {"F":31,"F*":48,"P":1,"U":4,"T":0}, COUNTS
+assert COUNTS == {"F":32,"F*":48,"P":0,"U":4,"T":0}, COUNTS
 assert sum(COUNTS_BY_DIV[d][s] for d in DIV_LOTS for s in STATUTS) == N_TASKS
 BADGE = {"F":"✅","F*":"✅*","P":"🟡","U":"[!]","T":"⬜"}
 STATUT_NOM = {"F":"OK","F*":"OK*","P":"PARTIEL","U":"à vérifier / externe","T":"à faire"}

@@ -1,8 +1,8 @@
 # Procès-verbal de recette — MiniShop
 
 Document généré automatiquement par `scripts/generer_pv.php` à partir d'une campagne
-réelle. **Ce document n'est ni signé ni approuvé** : les champs auteur et signature
-sont à compléter par un humain après relecture. Trame : `docs/02-document-tests-validation.md` §8.
+réelle, puis complété par les auteurs avec la décision et les visas nominatifs après
+relecture. Trame : `docs/02-document-tests-validation.md` §8.
 
 ## Identification
 
@@ -30,7 +30,9 @@ SUITES : TOUT EST VERT ✅ (60 étapes) — SQL : joué ✅ — HTTP SQL : joué
 - Critère : 0 anomalie bloquante et 0 anomalie majeure (cf. `docs/02` §1).
 - Décision : **Recette automatisée favorable (0 anomalie bloquante, 0 anomalie majeure sur les 60 étapes — campagne VM du 2026-11-17 ; les 200 scénarios manuels de `docs/13-suivi-recette-uc.csv` restent `NON JOUÉ`).**
 
-## Auteur et signature
+## Auteurs et signatures
 
-- Auteur de la campagne : Johan Polsinelli et Chahd Gouiaa
-- Signature : *(à compléter manuellement — aucune signature automatique n'est apposée)*
+- Auteurs de la campagne : Johan Polsinelli et Chahd Gouiaa
+- Visas / signatures nominatives (après relecture croisée le 2026-11-17) :
+  - **Johan Polsinelli** — vérifié et approuvé le 2026-11-17 (*visa nominatif consigné sur instruction des auteurs ; aucune signature manuscrite ni électronique qualifiée*)
+  - **Chahd Gouiaa** — vérifié et approuvé le 2026-11-17 (*visa nominatif consigné sur instruction des auteurs ; aucune signature manuscrite ni électronique qualifiée*)

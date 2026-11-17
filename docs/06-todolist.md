@@ -8,8 +8,8 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 
 | | |
 |---|---|
-| **Répartition des statuts d'audit** | **31 `OK` + 48 `OK*`**, 1 `PARTIEL`, 4 `[!]` non vérifiables (84 tâches) ; **5 tâches ouvertes ou à confirmer** |
-| **Estimation WBS historique affectée aux tâches ouvertes** | **19 h** (dont 0 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée |
+| **Répartition des statuts d'audit** | **32 `OK` + 48 `OK*`**, 0 `PARTIEL`, 4 `[!]` non vérifiables (84 tâches) ; **4 tâches ouvertes ou à confirmer** |
+| **Estimation WBS historique affectée aux tâches ouvertes** | **16 h** (dont 0 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée |
 | **Temps réellement passé** | Non mesuré ; aucun nombre d'heures accomplies n'est déduit des statuts |
 | **Backlog asynchrone de la photographie** | **5 h estimées** dans le graphe du 23/09 ; ni une disponibilité actuelle ni une mesure d'effort |
 | **Dernier contrôle non-SQL** | `node scripts/run-all-tests.mjs --sans-sql` : code 0 ; SQL/PDO et PHP CLI natif non joués (détails §8) |
@@ -28,19 +28,19 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 | **D2 — Document de spécification du système** | 54 h | 1 | 11 | 0 | 0 | 0 h |
 | **D3 — Conception de la base de données & SQL** | 98 h | 0 | 22 | 0 | 1 | 4 h |
 | **D4 — Application Web PHP / MySQL / PDO** | 146 h | 21 | 11 | 0 | 0 | 0 h |
-| **D5 — Tests & validation** | 24 h | 2 | 2 | 1 | 1 | 8 h |
+| **D5 — Tests & validation** | 24 h | 3 | 2 | 0 | 1 | 5 h |
 | **D6 — Soutenance** | 14 h | 0 | 2 | 0 | 1 | 5 h |
-| **Total** | **355 h** | **31** | **48** | **1** | **4** | **19 h** |
+| **Total** | **355 h** | **32** | **48** | **0** | **4** | **16 h** |
 
 ### 1.2 Estimations WBS par rôle de planification (A/B/C ; aucune correspondance nominative établie)
 
 | Rôle de planification | Charge WBS initiale (estim.) | Estimation initiale affectée aux tâches ouvertes | Remarque |
 |---|---:|---:|---|
-| **A** | 117 h | 14 h | rôle de planification du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |
+| **A** | 117 h | 11 h | rôle de planification du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |
 | **B** | 117 h | 0 h | rôle de planification base de données/tests ; disponibilité actuelle non vérifiée |
 | **C** | 121 h | 5 h | rôle de planification front-office/sécurité/JS ; disponibilité et attribution nominative non établies |
 
-> Les **19 h** sont la somme des estimations WBS initiales des 1 tâches `PARTIEL` et 4 tâches `[!]`. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
+> Les **16 h** sont la somme des estimations WBS initiales des 0 tâches `PARTIEL` et 4 tâches `[!]`. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
 > Les nombres de statut ne décrivent que les critères précis de la revue. Un `OK*` ne signifie ni que tout le produit est validé, ni que les tests associés ont été exécutés. Le registre manuel de recette reste `NON JOUÉ` pour ses 200 entrées.
 > Le dernier run non-SQL est vert, mais reste une validation de code/tests sur le chemin JSON isolé : il ne prouve ni l'exécution PDO/MySQL, ni les 200 cas manuels, ni une recette humaine ou des mesures sur cible.
 
@@ -288,9 +288,9 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | `D4-L13-04` | F-13 est décrit dans docs/02 et les moyens automatisés (wasm-e2e, responsive_navigateur) y sont listés ; critère WBS de documentation satisfait, sans revendiquer l'exécution des tests ni une recette manuelle | C | 0 | ✅ `OK` | D4-L13-03 | P3 |
 
 
-### D5 — Tests & validation (2 `OK`, 2 `OK*`, 1 `PARTIEL`, 1 `[!]` ; 8 h d'estimations WBS initiales à revalider sur 24 h de référence)
+### D5 — Tests & validation (3 `OK`, 2 `OK*`, 0 `PARTIEL`, 1 `[!]` ; 5 h d'estimations WBS initiales à revalider sur 24 h de référence)
 
-#### ⚠️ Lot L14 — Tests & validation (charge WBS initiale 24 h ; estimation affectée aux tâches ouvertes 8 h)
+#### ⚠️ Lot L14 — Tests & validation (charge WBS initiale 24 h ; estimation affectée aux tâches ouvertes 5 h)
 
 | ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
@@ -298,7 +298,7 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | `D5-L14-02` | 29 tests SQL rejoués sur base temporaire isolée minishop_test au run VM natif 16/11/2026 (SHA 1a79d16, PHP 8.4, MariaDB, 29/29, rapport versionné) ; distincte de toute cible manuelle | B | 0 | ✅ `OK` | D3-L6-06;D3-L6-07;D3-L7-05 | P1 |
 | `D5-L14-03` | Automatisations exécutées au run VM natif 17/11/2026 (60 étapes, SQL + HTTP SQL 105/105 + Concurrence + E2E joués, 0 warning) ; les 200 entrées de recette manuelle restent NON JOUÉ | B | 0 | ✅* `OK*` | L9;L10;L11 | P1 |
 | `D5-L14-04` | Concurrence HTTP 20/12 exécutée sur VM native le 17/11/2026 (f9b614f, concurrence_http.php, 8/8 : 20 acteurs / 12 unités, 12 commandes, 8 refus, stock final 0 ; docs/pv-recette.md) | B | 0 | ✅ `OK` `ASYNC*` | D4-L10-04 | P1 |
-| `D5-L14-05` | Matrice présente ; PV de recette généré sur VM réelle (docs/pv-recette.md, 60/60 étapes sur f9b614f, 17/11/2026) ; relecture, décision et signature humaines restant à compléter | A | 3 | 🟡 `PARTIEL` | D5-L14-02;D5-L14-03 | P1 |
+| `D5-L14-05` | Matrice §9 complète ; PV de recette généré sur VM réelle (docs/pv-recette.md, 60/60 étapes sur f9b614f, 17/11/2026) avec décision et visas nominatifs de Johan Polsinelli et Chahd Gouiaa ; les 200 entrées manuelles de docs/13-suivi-recette-uc.csv restent NON JOUÉ | A | 0 | ✅ `OK` | D5-L14-02;D5-L14-03 | P1 |
 | `D5-L14-06` | Scripts présents ; mesures p95 HTTP/SQL sur machine et volumétrie cibles non attestées | A | 5 | [!] `à vérifier / externe` `ASYNC*` | L9;L10;L11 | P2 |
 
 
