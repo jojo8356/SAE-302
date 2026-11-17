@@ -76,6 +76,7 @@
         'TTC': 'incl. VAT',
         'Voir la fiche': 'View details',
         'Ajouté le': 'Added on',
+        'Changement de statut le': 'Status changed on',
         'Date d’ajout indisponible': 'Date added unavailable',
         'Voir tout le catalogue →': 'Browse full catalog →',
         'Voir tout le catalogue': 'Browse full catalog',

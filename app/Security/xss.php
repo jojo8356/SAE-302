@@ -41,6 +41,21 @@ function date_html(?string $datetime, bool $avecHeure = false): string
     return '<time datetime="' . e($utc) . '" data-date-format="' . $format . '">' . e(date_fr($datetime, $avecHeure)) . '</time>';
 }
 
+/** Formate le commentaire d'historique en convertissant l'horodatage UTC auto-généré. */
+function commentaire_historique_html(?string $commentaire): string
+{
+    $texte = (string) ($commentaire ?? '');
+    if (preg_match('/^Changement de statut le (\d{4}-\d{2}-\d{2} \d{2}:\d{2}(?::\d{2})?)$/u', $texte, $parts) === 1) {
+        $horodatage = $parts[1];
+        if (strlen($horodatage) === 16) {
+            $horodatage .= ':00';
+        }
+        return 'Changement de statut le ' . date_html($horodatage, true);
+    }
+
+    return e($texte);
+}
+
 /** Libellé humain d'un statut de commande (RB-11). */
 function statut_libelle(string $statut): string
 {
