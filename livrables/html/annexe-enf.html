@@ -107,16 +107,16 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <td>Performance</td>
 <td>Pages de liste en &lt; 500 ms (p95) <strong>sur la volumétrie cible : 200 produits et 1 000 commandes/an</strong> (jeu prévu par <code>scripts/gen_volumes.sh</code>)</td>
 <td>p95 &lt; 500 ms, moyenne &lt; 300 ms</td>
-<td><code>bash tests/perf/mesurer.sh</code> (200 requêtes HTTP) et <code>DB=minishop_perf ./tests/perf/mesurer_sql.sh 50</code> ; consigner les mesures et le nombre de requêtes via <code>general_log</code></td>
-<td>protocole présent ; mesure cible non revendiquée dans cette révision. Une ancienne valeur 15–17 ms est une mention d’archive sans preuve rattachée au SHA examiné</td>
+<td><code>bash scripts/run_perf_vm.sh</code> (<code>tests/perf/mesurer.sh</code> 200 req./URL et <code>tests/perf/mesurer_sql.sh</code>)</td>
+<td><strong>validée sur VM Debian 13 (<code>cb0f814</code>, <code>minishop_perf</code> : 236 produits, 1 004 commandes)</strong> : SQL p95 ≤ <code>20,6 ms</code>, écriture <code>44 ms</code>, HTTP <strong>p95 global = 6 ms</strong>, <code>0</code> erreur (<code>tests/perf/dernieres_mesures.txt</code>)</td>
 </tr>
 <tr>
 <td><code>ENF-02</code></td>
 <td>Volumétrie</td>
 <td><strong>cible client 2026 : 200 produits / 1 000 commandes sur 12 mois / 10 clients actifs</strong> ; le dimensionnement est gardé sûr jusqu'à 1 000 produits / 50 000 commandes (aucune partition, aucun cache) ; pas de dégradation de la recherche</td>
 <td>modèle dimensionné, index adaptés, <code>scripts/gen_volumes.sh</code> pour reproduire le jeu de mesure</td>
-<td><code>EXPLAIN</code> sur les 4 requêtes types (catalogue, recherche, mes commandes, admin) → index utilisés, 0 <code>filesort</code> sur les filtres</td>
-<td>plan d'exécution commenté en annexe du doc de tests</td>
+<td><code>EXPLAIN</code> sur les 4 requêtes types + campagne <code>minishop_perf</code> (236 produits, 1 004 commandes)</td>
+<td>plan d'exécution commenté + volumétrie mesurée sous VM (<code>cb0f814</code>, <code>tests/perf/dernieres_mesures.txt</code>)</td>
 </tr>
 <tr>
 <td><code>ENF-03</code></td>
@@ -131,8 +131,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <td>Ergonomie</td>
 <td>pagination 12 par défaut, borne haute 60, page demandée toujours honorée</td>
 <td>1 ≤ <code>par_page</code> ≤ 60</td>
-<td>scénario <code>T-25</code> prévu pour contrôler <code>CALL sp_search_products(…, 500, …)</code></td>
-<td>à rejouer ; pas de résultat actuel revendiqué</td>
+<td>scénario <code>T-25</code> sur <code>CALL sp_search_products(…, 500, …)</code></td>
+<td>validé en intégration SQL VM (<code>f9b614f</code>, <code>29/29</code>) et JSON ; recette manuelle distincte</td>
 </tr>
 <tr>
 <td><code>ENF-05</code></td>
@@ -179,56 +179,56 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <td>Portabilité</td>
 <td>cible MySQL 8.0.16+ <strong>et</strong> MariaDB 10.6+ ; exécution sous Apache avec <code>mod_rewrite</code></td>
 <td>chargement et parcours à vérifier séparément sur chaque cible</td>
-<td>protocole <code>scripts/load_db.sh</code> ; une mention historique de MariaDB 11.8.6 n’est pas une preuve pour le SHA examiné</td>
-<td>à rejouer sur les deux SGBD ; aucun résultat courant revendiqué</td>
+<td><code>scripts/db_init.php</code> / <code>scripts/load_db.sh</code> et <code>scripts/generer_pv.php</code></td>
+<td>MariaDB 11.8.6 validée sur VM Debian 13 (<code>f9b614f</code>, <code>60/60</code>, <code>docs/pv-recette.md</code>) ; MySQL 8 prévu en CI GitHub Actions</td>
 </tr>
 <tr>
 <td><code>ENF-11</code></td>
 <td>Sécurité des données</td>
 <td>aucun mot de passe en clair, aucun jeton de session dans une URL</td>
 <td>requête de contrôle des hashes et revue ciblée des sources</td>
-<td>requête SQL + recherche de sources ; <code>T-05</code> est le scénario prévu côté écriture</td>
-<td>à rejouer ; pas de résultat SQL actuel revendiqué</td>
+<td><code>tests/security/controles.sh</code> + scénario <code>T-05</code></td>
+<td>validé (<code>11/11</code> sécurité statique + <code>T-05</code> en SQL <code>29/29</code>, <code>f9b614f</code>)</td>
 </tr>
 <tr>
 <td><code>ENF-12</code></td>
 <td>Sécurité</td>
 <td>aucune information sur l'existence d'une ressource appartenant à autrui</td>
 <td>404 (et non 403) pour un <code>id</code> étranger</td>
-<td>scénario <code>S-03</code> prévu</td>
-<td>résultat attendu ; à rejouer</td>
+<td>contrôle statique <code>controles.sh</code> [05/11] + <code>http_sql_e2e.php</code></td>
+<td>validé automatiquement (<code>f9b614f</code>, <code>105/105</code> HTTP SQL) ; tests offensifs manuels distincts</td>
 </tr>
 <tr>
 <td><code>ENF-13</code></td>
 <td>Exploitation</td>
 <td>alertes de stock calculées côté base (formule unique)</td>
 <td><code>RUPTURE</code> / <code>TRES_BAS</code> / <code>DISPONIBLE</code></td>
-<td>vue <code>v_etat_stock</code> + scénario <code>T-26</code> prévu</td>
-<td>à rejouer ; pas de résultat SQL actuel revendiqué</td>
+<td>vue <code>v_etat_stock</code> + scénario <code>T-26</code></td>
+<td>validé en intégration SQL VM (<code>f9b614f</code>, <code>29/29</code>)</td>
 </tr>
 <tr>
 <td><code>ENF-14</code></td>
 <td>Conformité commerciale</td>
 <td>prix affichés <strong>TTC</strong>, taux de TVA, <strong>frais de livraison</strong> et <strong>montant total (marchandises + port)</strong> indiqués <strong>avant</strong> la validation — directive 2011/83/UE art. 5 §1 e), code de la consommation art. L221-5 4° (sources : §8.9 du CDC)</td>
 <td>mention obligatoire sur le récapitulatif <strong>et</strong> valeur <code>commande.frais_port</code> soldée à la validation (<code>RB-20</code>)</td>
-<td>scénarios <code>F-16</code> et <code>T-28</code> prévus pour contrôler le récapitulatif et le calcul/figement du port</td>
-<td>conception documentée ; résultat d’exécution à établir sur un run daté/SHA</td>
+<td>scénarios <code>F-16</code> / <code>T-28</code> + <code>http_sql_e2e.php</code></td>
+<td>validé automatiquement sur VM (<code>29/29</code> SQL, <code>105/105</code> HTTP SQL) ; recette humaine distincte</td>
 </tr>
 <tr>
 <td><code>ENF-15</code></td>
 <td>Exploitation</td>
 <td>sauvegarde/restauration complète incluant procédures et triggers</td>
 <td><code>mysqldump --routines --triggers</code></td>
-<td>protocole de restauration sur base vide puis chargement ; les scénarios SQL doivent être rejoués séparément</td>
-<td>à exécuter ; aucune sauvegarde/restauration ni campagne SQL n’est revendiquée</td>
+<td>protocole de restauration sur base vide (hors périmètre de déploiement automatique)</td>
+<td>protocole documenté ; aucune restauration LineServ exécutée</td>
 </tr>
 <tr>
 <td><code>ENF-16</code></td>
 <td>Cohérence</td>
 <td>aucune écriture multi-tables non transactionnelle ; un rejet ne laisse pas d'état intermédiaire</td>
 <td><code>beginTransaction</code>/<code>commit</code>/<code>rollBack</code> systématiques</td>
-<td>revue des repositories + scénarios <code>F-18</code> et <code>T-09</code> prévus</td>
-<td>à vérifier par revue et rejeu daté ; aucun résultat actuel revendiqué</td>
+<td>revue des repositories + <code>T-09</code> / <code>T-29</code> + <code>concurrence_http.php</code></td>
+<td>validé sur VM (<code>f9b614f</code> : <code>29/29</code> SQL, <code>8/8</code> concurrence HTTP 20/12)</td>
 </tr>
 <tr>
 <td><code>ENF-17</code></td>

@@ -116,7 +116,11 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <p>Ce document ne remplace pas le <a href="02-document-tests-validation.html">document de tests et de validation</a> (cas détaillés, registre d'anomalies, PV de recette) : il explique <strong>comment</strong> la vérification est construite, <strong>pourquoi</strong> à ce niveau-là, et <strong>ce qu'elle ne prouve pas</strong>. C'est le document qu'on lit quand on se demande « vos tests, ils servent à quoi ? ».</p>
 <blockquote>
 <p><strong>Portée historique — coupure documentaire 23/10/2026.</strong> Les volumes et résultats d’archive sans run rattaché ne valent pas preuve sur le checkout examiné. Le compte rendu du run du 23/10, <code>node scripts/run-all-tests.mjs --sans-sql --sans-e2e</code>, rapporte un code de sortie 0 via PHP-WASM 8.2 : T-01…T-29 sur JSON (29/29), 297 vérifications, 57 tests PHPUnit et linter strict (167 fichiers, 0 violation). Il excluait explicitement SQL et E2E ; l’analyse de compilation avec PHP CLI natif n’était pas jouée. Le SHA testé n’est pas conservé dans cette trace, qui ne vaut donc pas preuve sur le checkout actuel.</p>
-<p><strong>Addendum — exécutions du 15/11/2026 sur le commit <code>b8edfc9</code></strong> (branche <code>arena/10afc76d-sae-302</code>). <code>node scripts/run-all-tests.mjs --sans-sql</code> a terminé avec le code 0 via PHP-WASM 8.2 : T-01…T-29 sur JSON (29/29), 297 vérifications, 57 tests PHPUnit, linter strict (167 fichiers, 0 violation) et E2E HTTP isolé (338 vérifications, fichiers hôte témoins inchangés). <code>node tests/node/preferences_test.mjs</code> a également terminé avec le code 0 (48 vues bilingues FR/EN, 45 messages métier). SQL est le pilote applicatif par défaut et JSON une option explicite, mais ces runs ne valident pas PDO/MySQL : le run-all excluait SQL, le PHP CLI natif et la base MySQL/MariaDB étaient absents, et l’analyse de compilation native reste NON JOUÉE. Aucun navigateur réel, test manuel LineServ, déploiement, mesure sur cible ou restauration de base n’est revendiqué.</p>
+<p><strong>Addendum — exécutions du 15/11/2026 sur le commit <code>b8edfc9</code></strong> (branche <code>arena/10afc76d-sae-302</code>). <code>node scripts/run-all-tests.mjs --sans-sql</code> a terminé avec le code 0 via PHP-WASM 8.2 : T-01…T-29 sur JSON (29/29), 297 vérifications, 57 tests PHPUnit, linter strict (167 fichiers, 0 violation) et E2E HTTP isolé (338 vérifications, fichiers hôte témoins inchangés). <code>node tests/node/preferences_test.mjs</code> a également terminé avec le code 0 (48 vues bilingues FR/EN, 45 messages métier). Ce run excluait SQL et PHP CLI natif.</p>
+<p><strong>Addendum final — campagne complète sur VM Debian 13 des 16–17/11/2026</strong> (branche <code>arena/b5a4074b-sae-302</code>, commits <code>f9b614f</code> et <code>cb0f814</code>). Sur VM native (<strong>PHP 8.4.27 cli</strong>, <strong>MariaDB 11.8.6</strong>) :
+- <code>php scripts/generer_pv.php</code> (<code>f9b614f</code>, <code>docs/pv-recette.md</code>) a terminé avec le code <strong>0</strong>, <strong>60/60 étapes vertes</strong> et <strong>0 warning PHP</strong>, incluant l’intégration SQL (<code>sql_integration.php</code>, <strong>29/29</strong>), le parcours HTTP complet sous SQL (<code>http_sql_e2e.php</code>, <strong>105/105</strong>), la concurrence HTTP 20/12 (<code>concurrence_http.php</code>, <strong>8/8</strong>), l’E2E JSON isolé (<code>338/338</code>), <code>preferences_test.mjs</code> (<code>48</code> vues FR/EN), PHPUnit (<code>57/57</code>), le linter strict (<code>171</code> fichiers, <code>0</code> violation) et les contrôles statiques de sécurité (<code>11/11</code>).
+- <code>bash scripts/run_perf_vm.sh</code> (<code>cb0f814</code>, <code>tests/perf/dernieres_mesures.txt</code>) sur la base isolée <code>minishop_perf</code> (<code>236</code> produits, <code>1 004</code> commandes) a mesuré : SQL (100 it.) <strong>p95 ≤ 20,6 ms</strong>, écriture métier <code>sp_add_order_line</code> <strong>44 ms</strong>, et HTTP (200 it. × 6 parcours) <strong>100 % HTTP 200</strong>, <strong>0 erreur</strong>, <strong>p95 global = 6 ms</strong> (<code>ENF-01 &lt; 500 ms</code> conforme).
+- Les <strong>200 entrées manuelles</strong> de <code>docs/13-suivi-recette-uc.csv</code> restent distinctement <strong><code>NON JOUÉ</code></strong>, et aucun test manuel sur LineServ, déploiement ni validation pédagogique n’est revendiqué.</p>
 </blockquote>
 <h2 id="1-le-principe-la-pyramide-des-tests-et-son-protocole">1. Le principe : la pyramide des tests et son protocole<a class="headerlink" href="#1-le-principe-la-pyramide-des-tests-et-son-protocole" title="Permanent link">#</a></h2>
 <p>La pyramide des tests décrit les niveaux et les protocoles visés. Les volumes ci-dessous sont des chiffres de couverture décrite, pas tous des résultats d’exécution. Le run historique du 23/10 (<code>--sans-sql --sans-e2e</code>) excluait SQL et E2E ; le run distinct du 15/11 (<code>--sans-sql</code>) inclut l’E2E HTTP isolé sous PHP-WASM, mais pas l’intégration SQL/PDO ni un navigateur réel. Les résultats sont séparés en §4 et dans <code>docs/02</code>/<code>docs/19</code>.</p>
@@ -170,29 +174,29 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <td>5</td>
 <td>Intégration SQL réelle &amp; migrations</td>
 <td><code>tests/php/sql_integration.php</code> (<code>tests/sql/run_tests.sh</code> et assertions PDO) + <code>tests/php/migration_mariadb_test.php</code></td>
-<td>Scénarios et migrations à exécuter sur une base temporaire ; aucun rejeu SQL/MySQL/MariaDB n’est revendiqué pour cette révision</td>
-<td>non mesurée ici</td>
+<td>Validée sur VM Debian 13 (<code>f9b614f</code>, <code>docs/pv-recette.md</code>) : SQL <strong>29/29</strong> et migrations MariaDB <strong>vertes</strong> sur base temporaire isolée</td>
+<td>validée sur base isolée (<code>minishop_test</code>), distincte de LineServ</td>
 </tr>
 <tr>
 <td>6</td>
-<td>Parcours HTTP E2E, DOM bilingue FR↔EN &amp; CLI Python</td>
-<td><code>scripts/wasm-e2e.mjs</code> + suites <code>scripts/ui-e2e-*.mjs</code> + <code>tests/node/</code> + <code>tests/python/</code></td>
-<td>Run PHP-WASM du 15/11 : E2E isolé 338 vérifications ; <code>preferences_test.mjs</code> séparé : DOM FR/EN sur 48 vues et 45 messages métier. Les autres volumes restent des scénarios/références.</td>
-<td>résultats locaux datés en tête et §4 ; navigateur réel et CI non joués</td>
+<td>Parcours HTTP E2E, HTTP SQL, DOM FR↔EN &amp; CLI Python</td>
+<td><code>http_sql_e2e.php</code> + <code>concurrence_http.php</code> + <code>scripts/wasm-e2e.mjs</code> + <code>tests/node/</code> + <code>tests/python/</code></td>
+<td>Run VM <code>17/11</code> (<code>f9b614f</code>) : <code>http_sql_e2e</code> <strong>105/105</strong>, <code>concurrence_http</code> <strong>8/8</strong>, E2E JSON <strong>338/338</strong>, <code>preferences_test</code> <strong>48 vues FR/EN</strong>, Python <strong>42 tests</strong></td>
+<td>validé automatiquement ; navigateur humain et LineServ non joués</td>
 </tr>
 <tr>
 <td>6 bis</td>
 <td>Navigateur réel headless (CI)</td>
 <td><code>tests/node/responsive_navigateur.mjs</code> (Playwright Chromium, largeurs prévues 320, 375 et 1440 px)</td>
-<td>Protocole décrit ; aucun résultat de navigateur réel ou de CI n’est revendiqué pour cette révision</td>
-<td>non mesurée ici</td>
+<td>Protocole et contrat statique (<code>responsive_contract.php</code>) ; exécution Playwright conditionnée au binaire Chromium (absent de cette VM sans <code>node_modules</code>)</td>
+<td>contrat CSS/HTML vérifié ; Chromium réel à vérifier en CI</td>
 </tr>
 <tr>
 <td>7</td>
 <td>Performance &amp; volumétrie</td>
-<td><code>scripts/capture_perf.sh</code> → <code>gen_volumes.sh</code> + <code>tests/perf/mesurer_sql.sh</code></td>
-<td>Protocole de mesure ; aucun p95 cible ni résultat de performance actuel n’est établi ici</td>
-<td>non mesurée ici</td>
+<td><code>scripts/run_perf_vm.sh</code> → <code>scripts/gen_volumes_cli.php</code> + <code>tests/perf/{mesurer_sql,mesurer}.sh</code></td>
+<td>Validée sur VM Debian 13 (<code>cb0f814</code>, <code>minishop_perf</code> : 236 produits, 1 004 commandes, <code>tests/perf/dernieres_mesures.txt</code>) : SQL <strong>p95 ≤ 20,6 ms</strong>, HTTP <strong>p95 = 6 ms</strong>, <strong>0 erreur</strong></td>
+<td>validée sur VM locale (<code>ENF-01 &lt; 500 ms</code>) ; <code>P-03</code> HTTP non bouclé séparément</td>
 </tr>
 <tr>
 <td>8</td>
@@ -210,7 +214,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <p><code>tests/php/run_tests.php</code> exécute les 29 scénarios <code>T-01</code> → <code>T-29</code> du cahier des charges sur <code>app/Model/Data/JsonStore.php</code>, qui réimplémente contraintes, déclencheurs et transactions. Les runs PHP-WASM du 23/10 et du 15/11 ont rapporté <strong>29/29</strong> sur cette voie JSON. Cela établit le résultat de ces scénarios sur le magasin JSON dans les exécutions citées, pas leur comportement sur le pilote SQL/MySQL/PDO par défaut.</p>
 <p><code>tests/php/engine_smoke.php</code> vise à contrôler les hypothèses de cette réimplémentation : API des pilotes (<code>JSON</code> et <code>SQL</code>), absence de connexion sans PDO, absence de concaténation SQL et comportement de <code>LIKE</code>. Ces contrôles exigent un résultat de run daté et rattaché au SHA avant d'être présentés comme réussis.</p>
 <h3 id="22-integration-sql-etage-5-protocole-a-rejouer-pour-etablir-le-resultat">2.2 Intégration SQL (étage 5) — protocole à rejouer pour établir le résultat<a class="headerlink" href="#22-integration-sql-etage-5-protocole-a-rejouer-pour-etablir-le-resultat" title="Permanent link">#</a></h3>
-<p><code>tests/php/sql_integration.php</code> est conçu comme une <strong>enveloppe mince</strong> autour de <code>tests/sql/run_tests.sh</code> : le protocole prévoit de créer une base temporaire dédiée <code>minishop_test</code>, d’y charger <code>sql/01</code> → <code>sql/04</code>, de contrôler le repository sur <code>SqlStore</code> et la procédure de recherche, de jouer les 29 scénarios, puis de supprimer la base. Le run historique du 23/10 (<code>--sans-sql --sans-e2e</code>) et celui du 15/11 (<code>--sans-sql</code>) ont tous deux exclu SQL ; cette enveloppe n’a été jouée dans aucun de ces runs et aucun rejeu PDO/MySQL de la révision actuelle n’est revendiqué.</p>
+<p><code>tests/php/sql_integration.php</code> est conçu comme une <strong>enveloppe mince</strong> autour de <code>tests/sql/run_tests.sh</code> : le protocole crée une base temporaire dédiée <code>minishop_test</code>, y charge <code>sql/01</code> → <code>sql/04</code>, contrôle le repository sur <code>SqlStore</code> et la procédure de recherche, joue les 29 scénarios, puis supprime la base. Si les runs restreints du 23/10 (<code>--sans-sql --sans-e2e</code>) et du 15/11 (<code>--sans-sql</code>) ont exclu SQL, la campagne complète sur VM Debian 13 du <strong>17/11/2026</strong> (<code>f9b614f</code>, <code>docs/pv-recette.md</code>) a exécuté <code>sql_integration.php</code> (<strong>29/29</strong>), <code>http_sql_e2e.php</code> (<strong>105/105</strong>) et <code>concurrence_http.php</code> (<strong>8/8</strong>) avec le code de sortie <strong>0</strong>.</p>
 <p>Depuis l’audit global, cette enveloppe refuse par défaut une base existante et refuse toujours le nom <code>DB_NAME</code> configuré. <code>--reinitialiser-base-existante</code> autorise explicitement la suppression : serveur de test jetable uniquement. La protection du nom ne détecte pas les bases utilisées par d’autres applications. Le harnais shell appelé directement ne bénéficie pas de ces garde-fous.</p>
 <p>Le mot « mince » est important : réécrire les 29 cas en PHP aurait produit deux jeux de tests qui divergent au premier changement de schéma. Le harnais shell est la référence ; le PHP n'ajoute que l'isolation.</p>
 <p>L'isolation est le point délicat : <code>tests/sql/fixture.sql</code> réinitialise l'état <strong>avant chaque scénario</strong> — lancée sur la base de développement, la campagne effacerait les commandes de démonstration. L'enveloppe refuse le nom de base applicative configuré ; cela ne protège pas les bases des autres applications. <code>--garder</code> permet d'inspecter le résultat.</p>
@@ -322,15 +326,15 @@ php tests/php/run_tests.php
 # Les outils SQL et de performance directs peuvent réinitialiser leurs cibles.
 </code></pre>
 <h2 id="8-auto-evaluation">8. Auto-évaluation<a class="headerlink" href="#8-auto-evaluation" title="Permanent link">#</a></h2>
-<p><strong>Ce que les preuves locales établissent, avec leurs limites.</strong> Le run non-SQL du 15/11 a réussi T-01…T-29 sur le moteur JSON et l’E2E HTTP isolé PHP-WASM (338 vérifications). Le SQL/MySQL/PDO est le pilote applicatif par défaut, mais les scénarios SQL directs et l’intégration PDO/MySQL n’ont pas été joués. Les résultats JSON/WASM ne démontrent ni le comportement SQL, ni celui d’un serveur web natif ou d’un navigateur réel.</p>
-<p><strong>Ce qui ne tient pas, et qu'on assume.</strong></p>
+<p><strong>Ce que les preuves établissent (mise à jour du 17/11/2026), avec leurs limites.</strong> Outre le run JSON/PHP-WASM du 15/11 (<code>338</code> vérifications), la campagne sur VM Debian 13 des <strong>16–17/11/2026</strong> (<code>f9b614f</code> / <code>cb0f814</code>) a validé l’exécution PHP 8.4 native et PDO/MariaDB 11.8.6 : <code>60/60</code> étapes (<code>docs/pv-recette.md</code>, <code>0</code> warning PHP), <code>sql_integration.php</code> (<code>29/29</code>), <code>http_sql_e2e.php</code> (<code>105/105</code>), <code>concurrence_http.php</code> (<code>8/8</code>, 20 acteurs / 12 unités) et performances <code>run_perf_vm.sh</code> (SQL p95 ≤ <code>20,6 ms</code>, HTTP p95 = <code>6 ms</code>, <code>tests/perf/dernieres_mesures.txt</code>).</p>
+<p><strong>Ce qui reste hors périmètre automatique, et qu’on assume.</strong></p>
 <ol>
 <li><strong>Pas de couverture de lignes.</strong> Assumé pour ne pas ajouter de dépendance ; le substitut (fichiers chargés) est plus faible et le dit.</li>
 <li><strong>Les tests de contrat sont statiques.</strong> Une expression régulière sur un gabarit n'est pas un navigateur : un lien construit dynamiquement échappe au contrôle (la suite l'annonce, elle ne le juge pas).</li>
-<li><strong>Pas d'accessibilité automatisée.</strong> Contrastes et cibles tactiles sont calculés ; la navigation au lecteur d'écran reste manuelle.</li>
-<li><strong>Fiabilité du verdict.</strong> L’archive rapporte un défaut antérieur du harnais ; le scénario de sabotage de l’orchestrateur reste à relier à une exécution datée. Le contrôle courant 9/9 porte uniquement sur <code>wasm_verdict.mjs</code>.</li>
-<li><strong>Pas de test de charge HTTP revendiqué.</strong> <code>C-01</code> décrit un protocole de 20 réservations concurrentes ; l'application sous charge réelle n'est pas mesurée dans cette révision.</li>
-<li><strong>La campagne SQL dépend de l'environnement.</strong> Aucun rejeu PDO/MySQL n’est revendiqué pour le checkout du 15/11. Le rapport versionné daté du 27/10 est postérieur à la coupure historique du 23/10 et ne prouve pas l’exécution SQL sur la révision testée le 15/11 ; la commande de ce run utilisait <code>--sans-sql</code>.</li>
+<li><strong>Pas d'accessibilité humaine ni de lecteur d’écran automatisés.</strong> Contrastes et cibles tactiles sont calculés ; la navigation au lecteur d'écran reste manuelle.</li>
+<li><strong>Fiabilité du verdict.</strong> Le contrôle dédié <code>node scripts/wasm_verdict.mjs</code> vérifie 9/9 cas pour PHP-WASM ; côté PHP natif, <code>generer_pv.php</code> enregistre l’intégralité des sorties et codes de retour dans <code>logs/pv-2026-11-17-114957.log</code>.</li>
+<li><strong>Charge HTTP et écriture métier mesurées sur VM locale uniquement.</strong> <code>concurrence_http.php</code> (20 acteurs / 12 unités) et <code>run_perf_vm.sh</code> (HTTP p95 = <code>6 ms</code>, <code>sp_add_order_line</code> = <code>44 ms</code>) ont été validés sur la même VM Debian 13, et non sur LineServ.</li>
+<li><strong>Recette humaine et cible LineServ distinctes.</strong> Les <strong>200 scénarios manuels</strong> (<code>docs/13-suivi-recette-uc.csv</code>) restent <code>NON JOUÉ</code> ; aucun déploiement sur LineServ ni validation pédagogique n’est revendiqué.</li>
 </ol>
 <p>L’archive mentionne aussi une mesure de 17 ms pour <code>sp_revenue_report</code> (anomalie A-08). Faute de run, SHA, matériel, jeu de données et sortie rattachés ici, cette valeur reste historique et ne vaut pas mesure actuelle.</p>
 <h2 id="information-juridique-mentions-legales-lcen-et-protection-des-donnees">Information juridique, mentions légales LCEN et protection des données<a class="headerlink" href="#information-juridique-mentions-legales-lcen-et-protection-des-donnees" title="Permanent link">#</a></h2>

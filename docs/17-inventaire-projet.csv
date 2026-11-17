@@ -239,6 +239,7 @@ livrables/docx/annexe-enf.docx,Livrables,"Présence, non-vide, intégrité archi
 livrables/docx/annexe-gitlab.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/annexe-php-patterns.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/annexe-sql.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/docx/pv-recette.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/requetes-sql-a-ecrire.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/html/01-cahier-des-charges-MiniShop.html,Livrables,Présence et non-vide uniquement
 livrables/html/02-document-tests-validation.html,Livrables,Présence et non-vide uniquement
@@ -270,6 +271,7 @@ livrables/html/annexe-enf.html,Livrables,Présence et non-vide uniquement
 livrables/html/annexe-gitlab.html,Livrables,Présence et non-vide uniquement
 livrables/html/annexe-php-patterns.html,Livrables,Présence et non-vide uniquement
 livrables/html/annexe-sql.html,Livrables,Présence et non-vide uniquement
+livrables/html/pv-recette.html,Livrables,Présence et non-vide uniquement
 livrables/html/requetes-sql-a-ecrire.html,Livrables,Présence et non-vide uniquement
 livrables/minishop-soutenance.pptx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/pdf/01-cahier-des-charges-MiniShop.pdf,Livrables,Présence et non-vide uniquement
@@ -302,6 +304,7 @@ livrables/pdf/annexe-enf.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/annexe-gitlab.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/annexe-php-patterns.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/annexe-sql.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/pv-recette.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/requetes-sql-a-ecrire.pdf,Livrables,Présence et non-vide uniquement
 package-lock.json,Configuration et fichiers racine,"Présence, non-vide, structure JSON"
 package.json,Configuration et fichiers racine,"Présence, non-vide, structure JSON"

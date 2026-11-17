@@ -829,11 +829,11 @@ Non prévu par le CDC → à ne pas implémenter.
 
 ### 2.9 Installateur / CI / scripts
 
-#### Q-INST-01 — Vérifier que la base est bien initialisée (install.php)
+#### Q-INST-01 — Vérifier que la base est bien initialisée (scripts/db_init.php)
 | Champ | Valeur |
 |---|---|
 | **Id** | EF-GEN-06 |
-| **Écran** | `public/install.php` |
+| **Écran** | CLI `scripts/db_init.php` / `./run.sh --db` (sans script web `public/install.php` exposé) |
 | **Question** | Vérifier que les 8 tables existent et qu'il y a au moins un administrateur et un client. |
 | **Type** | `SHOW TABLES LIKE 'client';` ou `SELECT COUNT(*) FROM administrateur;` — pas de requête métier particulière, c'est un simple contrôle. |
 
@@ -894,7 +894,7 @@ Non prévu par le CDC → à ne pas implémenter.
 | Q-ADM-18 | bloquer/débloquer admin | — | `UPDATE administrateur SET actif=?` | [ ] |
 | Q-ADM-19 | changer rôle admin | — | `UPDATE administrateur SET role=?` | [ ] |
 | Q-ADM-20 | connexion admin | **`sp_get_credentials(email, 'ADMIN')`** | — | [ ] |
-| Q-INST-01 | `install.php` | — | `SHOW TABLES` / comptages | [ ] |
+| Q-INST-01 | `scripts/db_init.php` | — | `SHOW TABLES` / comptages | [x] |
 | Q-INST-02 | CI seed | — | `SELECT COUNT(*) FROM <table>` (dans load_db.sh) | [ ] |
 
 **Total : 43 requêtes à écrire / appels de procédures à câbler.**

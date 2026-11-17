@@ -128,12 +128,12 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 <tr>
 <td>CDC et stockage</td>
-<td>SQL/MySQL/PDO est désormais le pilote applicatif par défaut ; JSON reste une option explicite. Le scan statique des repositories relève un point d’appel pour chacune des 18 procédures stockées ; cela ne prouve pas leur exécution, et aucun rejeu PDO/MySQL de cette révision n’est revendiqué.</td>
+<td>SQL/MySQL/PDO est le pilote applicatif par défaut ; JSON reste une option explicite. Les repositories appellent les 18 procédures stockées ; leur exécution réelle PDO/MariaDB (<code>29/29</code> SQL, <code>105/105</code> HTTP SQL, <code>8/8</code> concurrence) a été validée sur VM Debian 13 les 16–17/11/2026 (<code>docs/pv-recette.md</code>).</td>
 <td><code>docs/01</code>, <code>docs/02</code>, <code>docs/04</code>, <code>docs/19</code></td>
 </tr>
 <tr>
 <td>Traçabilité et tests</td>
-<td>Les identifiants T-* décrivent des scénarios, pas des résultats. Le run local du 15/11 est non-SQL ; il ne valide ni PDO/MySQL ni parcours HTTP SQL. Un résultat SQL ne peut être revendiqué qu’avec un run daté et rattaché à un SHA.</td>
+<td>Les identifiants T-* décrivent des scénarios ; après le run JSON non-SQL du 15/11, la campagne VM du 17/11 (<code>f9b614f</code> / <code>cb0f814</code>) a validé <code>60/60</code> étapes (<code>docs/pv-recette.md</code>) et les performances <code>ENF-01</code> (<code>tests/perf/dernieres_mesures.txt</code>, HTTP p95 = <code>6 ms</code>). Les 200 entrées manuelles restent <code>NON JOUÉ</code>.</td>
 <td><code>docs/02</code>, <code>docs/11</code>, <code>docs/19</code></td>
 </tr>
 <tr>

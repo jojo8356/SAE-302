@@ -101,6 +101,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li><a href="#5-priorite-3-archives-figees-documents-juridiques-et-limites-volontaires">5. Priorité 3 — Archives figées, documents juridiques et limites volontaires</a></li>
 <li><a href="#6-perimetres-verifies-a-jour">6. Périmètres vérifiés à jour</a></li>
 <li><a href="#7-plan-de-remise-a-jour-recommande-ordre-dexecution">7. Plan de remise à jour recommandé (ordre d’exécution)</a></li>
+<li><a href="#8-re-audit-complet-apres-corrections-17-novembre-2026-etat-final-verifie">8. Re-audit complet après corrections (17 novembre 2026 — état final vérifié)</a></li>
 </ul>
 </div>
 </nav>
@@ -337,6 +338,48 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li><strong>Valider avant commit :</strong>
    - <code>python3 -m unittest discover -s tests/python -v</code> (en particulier <code>test_inventaire_global_a_jour</code> et <code>test_archives_bureautiques_integrite</code>), <code>python3 scripts/verifier_fiches_uc.py</code>, <code>bash tests/security/controles.sh</code> et <code>git diff --check</code>.</li>
 </ol>
+<hr />
+<h2 id="8-re-audit-complet-apres-corrections-17-novembre-2026-etat-final-verifie">8. Re-audit complet après corrections (17 novembre 2026 — état final vérifié)<a class="headerlink" href="#8-re-audit-complet-apres-corrections-17-novembre-2026-etat-final-verifie" title="Permanent link">#</a></h2>
+<p>Toutes les actions de <strong>Priorité 1</strong> et de <strong>Priorité 2</strong> listées aux §3–§4 (plus la mise à jour symétrique de <code>ARCHITECTURE.md</code> détectée lors de la passe de contrôle) ont été appliquées, suivies d’une régénération complète (<code>97</code> rendus produits via <code>bash scripts/build-docs.sh</code>, régénération de <code>artefacts/{01,02,03,04,05,06,README}.html</code> et mise à jour de <code>docs/17-inventaire-projet.csv</code> pour <code>livrables/*/pv-recette.*</code> et <code>22-audit-coherence-fichiers.*</code>).</p>
+<table>
+<thead>
+<tr>
+<th>Contrôle post-correction</th>
+<th>Résultat observé sur <strong>558 fichiers versionnés</strong></th>
+<th>Statut</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Fraîcheur <code>docs/</code> → <code>livrables/</code> &amp; <code>artefacts/</code></strong></td>
+<td><strong><code>0</code> cible périmée ou manquante</strong> (<code>32</code> sources Markdown → <code>96</code> rendus HTML/PDF/DOCX + <code>minishop-soutenance.pptx</code> + <code>7</code> fichiers <code>artefacts/*.html</code> tous à jour)</td>
+<td><strong>CONFORME</strong></td>
+</tr>
+<tr>
+<td><strong>Balayage lexical des contradictions (Priorités 1 &amp; 2)</strong></td>
+<td><strong><code>0</code> contradiction active restante</strong> : toutes les occurrences résiduelles (<code>docs/02</code> coupure 23/10, <code>docs/04</code> incise historique 15/11, <code>docs/09</code>/<code>17</code>/<code>19</code> blocs <code>15/11</code> étiquetés historiques, « sans <code>public/install.php</code> exposé » dans WBS/todolist/SQL, <code>uploads/01_minishop_schema.txt</code> archive brute) sont explicitement contextualisées</td>
+<td><strong>CONFORME</strong></td>
+</tr>
+<tr>
+<td><strong>Diaporama <code>docs/12</code> &amp; <code>livrables/minishop-soutenance.pptx</code></strong></td>
+<td>Diapos 5, 6, 8, 11 et 12 alignées sur les campagnes VM du 17/11/2026 (<code>60/60</code>, SQL <code>29/29</code>, HTTP SQL <code>105/105</code>, concurrence <code>8/8</code>, HTTP p95 = <code>6 ms</code>), les <code>82</code> tâches WBS (<code>0 [!]</code>) et les <code>200</code> scénarios manuels <code>NON JOUÉ</code></td>
+<td><strong>CONFORME</strong></td>
+</tr>
+<tr>
+<td><strong>Inventaire &amp; archives (<code>unittest</code>)</strong></td>
+<td><code>test_inventaire_global_a_jour</code> (<code>558</code> chemins exacts), <code>test_archives_bureautiques_integrite</code>, <code>test_fichiers_presents_et_non_vides</code>, syntaxe Python/Shell/JS/JSON/SVG/XML : <strong>22 OK</strong> (<strong>20 skipped</strong> faute de PHP CLI natif dans ce conteneur)</td>
+<td><strong>CONFORME</strong></td>
+</tr>
+<tr>
+<td><strong>Fiches UC &amp; sécurité statique</strong></td>
+<td><code>scripts/verifier_fiches_uc.py</code> (<strong>46/46 OK</strong>) et <code>tests/security/controles.sh</code> (<strong>11/11 OK</strong>)</td>
+<td><strong>CONFORME</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Limites maintenues honnêtement :</strong> les <strong>200 scénarios manuels</strong> (<code>docs/13-suivi-recette-uc.csv</code>) restent <code>NON JOUÉ</code>, les documents historiques de Priorité 3 (<code>docs/07</code>, <code>docs/10</code>, <code>docs/16</code> §2, <code>tests/sql/rapport_tests_sql.md</code>, <code>uploads/01_minishop_schema.txt</code>) conservent leur portée d’archive datée, et aucun test manuel sur LineServ ni aucune validation pédagogique n’est revendiqué.</p>
+</blockquote>
 <footer class="doc">
   <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/22-audit-coherence-fichiers.md</code>
   par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>

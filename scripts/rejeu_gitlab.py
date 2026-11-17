@@ -471,7 +471,7 @@ def generer_fiche(chemin: str) -> None:
     a("> La fiche et `scripts/rejeu_gitlab.py` partagent le même plan ; le mode de rejeu vers un dépôt externe")
     a("> ne doit pas être utilisé sans demande explicite et vérification préalable de sa compatibilité.")
     a("")
-    a("> **Note de portée (23/10/2026).** Les entrées É5 (86 tâches) et É27 (GitLab CI) décrivent un périmètre historique ; la WBS courante compte 84 tâches et la CI GitLab a été retirée. Le scénario proposé ne comporte plus d’automatisation de mise en ligne. Aucune exécution de ce rejeu n’est revendiquée.")
+    a("> **Note de portée (actualisée au 17/11/2026).** Les entrées É5 (86 tâches) et É27 (GitLab CI) décrivent un périmètre historique ; la WBS courante compte **82 tâches (348 h)** et la CI GitLab a été retirée. Le scénario proposé ne comporte plus d’automatisation de mise en ligne. Aucune exécution de ce rejeu n’est revendiquée.")
     a("")
     a("## 1. Mode d'emploi express")
     a("")

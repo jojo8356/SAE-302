@@ -42,6 +42,7 @@ Les mêmes fichiers existent dans `dist/` (répertoire généré, hors Git, cf. 
 - **annexe-gitlab** — [HTML](html/annexe-gitlab.html) · [PDF](pdf/annexe-gitlab.pdf) · [Word](docx/annexe-gitlab.docx)
 - **annexe-php-patterns** — [HTML](html/annexe-php-patterns.html) · [PDF](pdf/annexe-php-patterns.pdf) · [Word](docx/annexe-php-patterns.docx)
 - **annexe-sql** — [HTML](html/annexe-sql.html) · [PDF](pdf/annexe-sql.pdf) · [Word](docx/annexe-sql.docx)
+- **pv-recette** — [HTML](html/pv-recette.html) · [PDF](pdf/pv-recette.pdf) · [Word](docx/pv-recette.docx)
 - **requetes-sql-a-ecrire** — [HTML](html/requetes-sql-a-ecrire.html) · [PDF](pdf/requetes-sql-a-ecrire.pdf) · [Word](docx/requetes-sql-a-ecrire.docx)
 
 ## Régénérer

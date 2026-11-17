@@ -324,7 +324,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 <tr>
 <td>Réalisable</td>
-<td>§13 : 355 h d’effort estimé bottom-up ; capacité individuelle non établie, faute de correspondance nominative entre les rôles de planification et les membres nommés</td>
+<td>§13 : 348 h d’effort estimé bottom-up ; capacité individuelle non établie, faute de correspondance nominative entre les rôles de planification et les membres nommés</td>
 </tr>
 <tr>
 <td>Clair</td>
@@ -1971,8 +1971,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
     cours de transaction (<code>SIGNAL</code> d'un déclencheur, contrainte <code>CHECK</code>/<code>UNIQUE</code>, incident serveur en milieu de
     parcours) déclenche le <code>ROLLBACK</code> de <code>sp_create_order_from_basket</code>, sans donnée partielle. Les scénarios <code>T-29</code>
     (code renvoyé, identifiant remis à <code>NULL</code>, absence de commande, stock intact, aucune trace) et <code>T-21</code>
-    (restitution du stock ligne par ligne) sont prévus pour vérifier ce comportement ; aucun rejeu n’est revendiqué
-    dans cette révision. Exigence <code>ENF-16</code>, arbitrage <code>V7</code>/<code>V3</code>.</li>
+    (restitution du stock ligne par ligne) ont été validés en intégration SQL sur VM Debian 13 le 17/11/2026
+    (<code>f9b614f</code>, <code>docs/pv-recette.md</code>, <code>29/29</code>), les scénarios manuels CSV restant <code>NON JOUÉ</code>. Exigence <code>ENF-16</code>, arbitrage <code>V7</code>/<code>V3</code>.</li>
 <li><strong>A6 — Franchise de port atteinte en cours de route</strong> (étape 8) : tant que la commande est <code>BROUILLON</code>, le port
     est <strong>recalculé</strong> à chaque ajout ou retrait de ligne (<code>sp_compute_shipping</code>) ; à la validation il est <strong>figé</strong>
     (<code>RB-20</code>), comme le prix unitaire (<code>RB-06</code>), et toute réécriture manuelle est refusée par le trigger.</li>
@@ -2453,8 +2453,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tr>
 <td><code>CT-02</code></td>
 <td><strong>MySQL</strong> comme SGBD applicatif, accès par <strong>PDO</strong></td>
-<td>Exigence du sujet : le parcours applicatif doit utiliser MySQL/PDO. État du checkout : SQL est le pilote par défaut ; JSON reste une option explicite via <code>STORAGE_DRIVER=json</code>. Les repositories comportent des appels aux procédures, mais aucun rejeu PDO/MySQL de cette révision n’est établi par ces sources.</td>
-<td><code>app/Model/Data/StorageDriver.php</code>, README, repositories et tests d’intégration SQL ; l’exécution reste à valider sur une base isolée</td>
+<td>Exigence du sujet : le parcours applicatif doit utiliser MySQL/PDO. État courant (<code>17/11/2026</code>) : SQL est le pilote par défaut (JSON reste une option explicite via <code>STORAGE_DRIVER=json</code>). Les repositories appellent les 18 procédures et l’intégration PDO/MariaDB (<code>sql_integration.php</code> <code>29/29</code>, <code>http_sql_e2e.php</code> <code>105/105</code>, <code>concurrence_http.php</code> <code>8/8</code>) a été validée sur VM Debian 13 (<code>f9b614f</code>, <code>docs/pv-recette.md</code>), distinctement de LineServ.</td>
+<td><code>app/Model/Data/StorageDriver.php</code>, README, repositories et <code>docs/pv-recette.md</code></td>
 </tr>
 <tr>
 <td><code>CT-03</code></td>
@@ -2590,7 +2590,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 </tbody>
 </table>
-<p><strong>État d’implémentation constaté dans les sources :</strong> SQL/MySQL/PDO est le pilote par défaut ; JSON reste une option explicite. Le scan statique des repositories repère un appel pour chacune des 18 procédures. Cela établit le raccordement dans le code, pas leur exécution : aucun rejeu PDO/MySQL ni parcours HTTP SQL complet n’est revendiqué pour cette révision. Les tests SQL sont configurés sur des bases temporaires, distinctes de la cible manuelle LineServ ; aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.</p>
+<p><strong>État d’implémentation constaté dans les sources et validé sur VM (17/11/2026) :</strong> SQL/MySQL/PDO est le pilote par défaut ; JSON reste une option explicite. Les repositories appellent chacune des 18 procédures, et la campagne sur VM Debian 13 (<code>f9b614f</code>, <code>docs/pv-recette.md</code>) a validé l’exécution réelle PDO/MariaDB (<code>sql_integration.php</code> <code>29/29</code>, <code>http_sql_e2e.php</code> <code>105/105</code>, <code>concurrence_http.php</code> <code>8/8</code>). Ces campagnes tournent sur des bases temporaires isolées, distinctes de la cible manuelle LineServ ; aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.</p>
 <h3 id="73-contraintes-de-donnees-precisions-demandees-au-12">7.3 Contraintes de données (précisions demandées au §12)<a class="headerlink" href="#73-contraintes-de-donnees-precisions-demandees-au-12" title="Permanent link">#</a></h3>
 <ul>
 <li><strong>Nommage</strong> : tables en MAJUSCULES au pluriel dans la conception (MLD) et en minuscules au pluriel dans le DDL MySQL (<code>client</code>, <code>produit</code>, <code>ligne_commande</code>) ; clés primaires <code>id_&lt;singulier&gt;</code> ; clés étrangères <code>&lt;table_référencée&gt;_id</code> ; index <code>idx_*</code>, uniques <code>uk_*</code>, FK <code>fk_*</code>, CHECK <code>ck_*</code>.</li>
@@ -3148,7 +3148,7 @@ validation rend le port nul et qu'une réécriture après validation est refusé
 <hr />
 <h2 id="10-modelisation-des-donnees-et-sql">10. Modélisation des données et SQL<a class="headerlink" href="#10-modelisation-des-donnees-et-sql" title="Permanent link">#</a></h2>
 <p>Cette section est la synthèse lisible du <strong>document de conception de base de données</strong> demandé au point 3) du sujet ; les détails complets (MCD/MLD, normalisation, script, procédures, triggers, argumentation pédagogique) sont au <strong>§12</strong>, qui reprend plan par plan le document attendu, et sont livrés en <strong>document autonome</strong> <code>docs/04-conception-bd-et-sql.md</code> (livrable n°3, 20 points).</p>
-<p><strong>Repères de conception (pas un PV de recette) :</strong> inventaire statique du checkout <code>b8edfc9</code> vérifié le 15/11/2026 : 9 tables SQL (8 entités métier et <code>stock_movement_history</code>, table technique d’audit du stock), 3 vues, 1 fonction, 18 procédures et 16 déclencheurs ; 20 règles numérotées (11 classées par le CDC comme venant du sujet + 9 compléments), 29 scénarios SQL <code>T-01</code>…<code>T-29</code>. Le scan des repositories trouve un point d’appel pour chacune des 18 procédures, mais aucun rejeu PDO/MySQL n’est revendiqué. Le fichier de rapport versionné contient une mention de rejeu datée du 27/10/2026 : cette date était future à la coupure documentaire du 23/10 et, à la date de la présente vérification, ce rapport ne prouve pas un rejeu sur le checkout du 15/11. La normalisation est argumentée au §12.3.</p>
+<p><strong>Repères de conception et validation VM (17/11/2026) :</strong> inventaire vérifié des sources SQL : 9 tables SQL (8 entités métier et <code>stock_movement_history</code>, table technique d’audit du stock), 3 vues, 1 fonction (<code>fn_param</code>), 18 procédures et 16 déclencheurs ; 20 règles numérotées (11 classées par le CDC comme venant du sujet + 9 compléments), 29 scénarios SQL <code>T-01</code>…<code>T-29</code>. À la coupure historique du 23/10/2026, la mention du 27/10 dans <code>rapport_tests_sql.md</code> restait hors preuve ; depuis, la campagne sur VM Debian 13 du 17/11/2026 (<code>f9b614f</code>, <code>docs/pv-recette.md</code>) a validé <code>T-01</code>…<code>T-29</code> (<code>29/29</code>) et les parcours HTTP SQL (<code>105/105</code>) sur bases isolées. La normalisation est argumentée au §12.3.</p>
 <hr />
 <h2 id="11-pre-conditions-de-recette-hypotheses-hors-perimetre">11. Pré-conditions de recette, hypothèses, hors périmètre<a class="headerlink" href="#11-pre-conditions-de-recette-hypotheses-hors-perimetre" title="Permanent link">#</a></h2>
 <h3 id="111-hypotheses-retenues-toute-rupture-avenant-163">11.1 Hypothèses retenues (toute rupture = avenant, §16.3)<a class="headerlink" href="#111-hypotheses-retenues-toute-rupture-avenant-163" title="Permanent link">#</a></h3>
@@ -3870,7 +3870,7 @@ ELSE
 END IF;
 </code></pre>
 <h4 id="1251-reponse-a-la-question-pedagogique-pourquoi-une-procedure-stockee-plutot-que-tout-faire-en-php">12.5.1 Réponse à la question pédagogique : pourquoi une procédure stockée plutôt que tout faire en PHP ?<a class="headerlink" href="#1251-reponse-a-la-question-pedagogique-pourquoi-une-procedure-stockee-plutot-que-tout-faire-en-php" title="Permanent link">#</a></h4>
-<p>Le tableau décrit le <strong>raisonnement de conception pour la cible MySQL/PDO</strong> exigée par le sujet. Dans le checkout <code>b8edfc9</code> vérifié le 15/11/2026, SQL/MySQL via PDO est le pilote applicatif par défaut ; JSON reste une option explicite sélectionnée par <code>STORAGE_DRIVER=json</code>. Les repositories comportent des appels aux procédures ; le scan statique du 15/11 repère un point d’appel pour chacune des 18 procédures. Cela n’atteste ni leur exécution PDO/MySQL ni un rejeu courant des scénarios <code>T-*</code>, qui restent des références de test.</p>
+<p>Le tableau décrit le <strong>raisonnement de conception pour la cible MySQL/PDO</strong> exigée par le sujet. SQL/MySQL via PDO est le pilote applicatif par défaut ; JSON reste une option explicite sélectionnée par <code>STORAGE_DRIVER=json</code>. Les repositories appellent les 18 procédures stockées ; leur exécution réelle sous PDO/MariaDB et les 29 scénarios <code>T-01</code>…<code>T-29</code> ont été validés sur bases isolées lors de la campagne VM Debian 13 du 17/11/2026 (<code>f9b614f</code>, <code>docs/pv-recette.md</code> : <code>29/29</code> SQL, <code>105/105</code> HTTP SQL).</p>
 <table>
 <thead>
 <tr>
@@ -4116,7 +4116,7 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 </tbody>
 </table>
 <p>L'exigence « Trigger 1 — Stock » est couverte par <code>TRG-A1</code>+<code>TRG-A2</code> (et <code>TRG-A3</code> pour l'annulation) ; l'exigence « Trigger 2 — Historique » par <code>TRG-D4</code> (+ <code>TRG-D5</code>), avec la table <code>order_status_history(id, order_id, old_status, new_status, changed_at, …)</code> <strong>exactement</strong> au format demandé par le sujet, complétée de l'auteur et du rôle pour la traçabilité.</p>
-<p><strong>Ce que les scénarios de triggers visent à vérifier :</strong> <code>T-02</code>, <code>T-03</code>, <code>T-07</code>, <code>T-08</code>, <code>T-10</code>, <code>T-11</code>, <code>T-14</code>, <code>T-15</code> et <code>T-17</code> décrivent des écritures SQL directes, hors application. Ils sont conçus pour vérifier les contraintes au niveau de la base ; aucun rejeu courant de ces scénarios n’est revendiqué, et les tests SQL sur base temporaire ne prouvent pas l’intégration au parcours HTTP.</p>
+<p><strong>Ce que les scénarios de triggers visent à vérifier :</strong> <code>T-02</code>, <code>T-03</code>, <code>T-07</code>, <code>T-08</code>, <code>T-10</code>, <code>T-11</code>, <code>T-14</code>, <code>T-15</code> et <code>T-17</code> décrivent des écritures SQL directes, hors application. Ils vérifient les contraintes au niveau de la base : dans la campagne sur VM Debian 13 du 17/11/2026 (<code>f9b614f</code>, <code>docs/pv-recette.md</code>), les 29 scénarios SQL (<code>T-01</code>…<code>T-29</code>), les parcours HTTP SQL (<code>105/105</code>) et la concurrence HTTP (<code>8/8</code>) ont tous été validés automatiquement sur bases isolées (les 200 entrées manuelles de <code>docs/13-suivi-recette-uc.csv</code> restant distinctement <code>NON JOUÉ</code>).</p>
 <h3 id="127-donnees-de-demonstration-et-precautions">12.7 Données de démonstration et précautions<a class="headerlink" href="#127-donnees-de-demonstration-et-precautions" title="Permanent link">#</a></h3>
 <table>
 <thead>
@@ -4286,7 +4286,7 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 </table>
 <p><strong>Hors périmètre :</strong> §11.2 (paiement réel, avis clients, promotions, multi-devises, facturation PDF, emailing, mobile, SEO, export comptable, multi-boutique, gestion admin des comptes clients).</p>
 <p><strong>Contraintes de départ (rappel contractuel) :</strong> le sujet est figé ; la note est amputée par pénalités listées au §16.2 ; le dépôt GitLab doit recevoir <strong>les documents et le code</strong> de façon régulière, avec un <code>README.md</code> d'installation ; la restitution comprend une soutenance de 15 min et une réponse aux questions.</p>
-<p><strong>Hypothèses de planification :</strong> un poste de développement et un accès GitLab sont disponibles ; la WBS estime 355 h de travail sur un calendrier de référence de 12 semaines. Cette estimation n'établit ni capacité réelle, ni disponibilité hebdomadaire, ni heures effectuées. Le README nomme deux membres ; aucune correspondance nominative A/B/C n'est confirmée. Les données utilisées par la maquette sont synthétiques.</p>
+<p><strong>Hypothèses de planification :</strong> un poste de développement et un accès GitLab sont disponibles ; la WBS estime 348 h de travail sur un calendrier de référence de 12 semaines. Cette estimation n'établit ni capacité réelle, ni disponibilité hebdomadaire, ni heures effectuées. Le README nomme deux membres ; aucune correspondance nominative A/B/C n'est confirmée. Les données utilisées par la maquette sont synthétiques.</p>
 <h3 id="132-ressources-et-codes-de-planification">13.2 Ressources et codes de planification<a class="headerlink" href="#132-ressources-et-codes-de-planification" title="Permanent link">#</a></h3>
 <p>Les lettres A/B/C sont des <strong>rôles de planification</strong> utilisés dans la WBS, pas des personnes. Le README identifie deux membres ; aucune correspondance entre leurs noms, leurs permissions GitLab et ces codes n’est établie.</p>
 <table>
@@ -4302,7 +4302,7 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 <tr>
 <td>A</td>
 <td>pilotage, intégration et back-office</td>
-<td style="text-align: right;">117 h</td>
+<td style="text-align: right;">115 h</td>
 <td>§13/§14, <code>AdminController</code>, <code>CommandeController</code>, CI</td>
 </tr>
 <tr>
@@ -4314,7 +4314,7 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 <tr>
 <td>C</td>
 <td>présentation, sécurité, tests</td>
-<td style="text-align: right;">121 h</td>
+<td style="text-align: right;">116 h</td>
 <td>§8/§15, <code>app/View/**</code>, <code>public/js/**</code>, <code>docs/02-*</code></td>
 </tr>
 <tr>
@@ -4331,7 +4331,7 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 </tr>
 </tbody>
 </table>
-<p>Total estimé : <strong>355 h</strong> sur les 84 tâches de la WBS. Ce total est un effort de planification, pas une mesure d’heures réalisées ni une capacité confirmée. Le README identifie deux membres ; faute de répartition nominative confirmée, aucun plafond individuel ni scénario « 2 personnes = 319 h » n’est présenté comme validé.</p>
+<p>Total estimé : <strong>348 h</strong> sur les 82 tâches de la WBS. Ce total est un effort de planification, pas une mesure d’heures réalisées ni une capacité confirmée. Le README identifie deux membres ; faute de répartition nominative confirmée, aucun plafond individuel ni scénario « 2 personnes = 319 h » n’est présenté comme validé.</p>
 <h3 id="133-repartition-estimee-par-lot-et-role-sans-mesure-de-capacite-individuelle">13.3 Répartition estimée par lot et rôle (sans mesure de capacité individuelle)<a class="headerlink" href="#133-repartition-estimee-par-lot-et-role-sans-mesure-de-capacite-individuelle" title="Permanent link">#</a></h3>
 <table>
 <thead>
@@ -4444,28 +4444,28 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 </tr>
 <tr>
 <td>L15</td>
-<td>README final, arborescence propre et préparation du rendu</td>
-<td style="text-align: right;">5</td>
+<td>README final et préparation du rendu</td>
+<td style="text-align: right;">3</td>
 <td>A</td>
 <td>S11</td>
 </tr>
 <tr>
 <td>L16</td>
-<td>soutenance : support, trame, répétitions chronométrées, questions anticipées</td>
-<td style="text-align: right;">14</td>
-<td>A + B + C</td>
+<td>soutenance : support, trame et questions anticipées</td>
+<td style="text-align: right;">9</td>
+<td>A + B</td>
 <td>S12</td>
 </tr>
 <tr>
 <td></td>
 <td><strong>Total</strong></td>
-<td style="text-align: right;"><strong>355</strong></td>
+<td style="text-align: right;"><strong>348</strong></td>
 <td></td>
 <td></td>
 </tr>
 </tbody>
 </table>
-<p><strong>Totaux de planification</strong> (<code>docs/05-wbs-projet.md</code>) : <strong>355 h</strong> au total, réparties par codes A 117 h, B 117 h et C 121 h. Ces montants sont des estimations de charge par rôle, pas des heures réelles attribuées à des personnes. Les échéances et pics hebdomadaires restent un calendrier de référence à replanifier ; aucune disponibilité actuelle n’est affirmée.</p>
+<p><strong>Totaux de planification</strong> (<code>docs/05-wbs-projet.md</code>) : <strong>348 h</strong> au total, réparties par codes A 115 h, B 117 h et C 116 h. Ces montants sont des estimations de charge par rôle, pas des heures réelles attribuées à des personnes. Les échéances et pics hebdomadaires restent un calendrier de référence à replanifier ; aucune disponibilité actuelle n’est affirmée.</p>
 <p><strong>Réduction éventuelle de périmètre :</strong> la table historique de repli du WBS n’est pas une décision appliquée à l’équipe actuelle. Aucune exigence pénalisante n’est supprimée et aucune estimation de capacité à deux n’est validée sans accord et plan de charge révisé.</p>
 <h3 id="134-planning-de-reference-et-jalons-previsions-pas-etat-davancement">13.4 Planning de référence et jalons (prévisions, pas état d'avancement)<a class="headerlink" href="#134-planning-de-reference-et-jalons-previsions-pas-etat-davancement" title="Permanent link">#</a></h3>
 <blockquote>
@@ -4582,8 +4582,8 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 <tbody>
 <tr>
 <td>Ressources humaines internes (hypothèse de valorisation)</td>
-<td>355 h estimées × 60 €/h (indice pédagogique, non nominatif)</td>
-<td style="text-align: right;"><strong>21 300 €</strong> théoriques</td>
+<td>348 h estimées × 60 €/h (indice pédagogique, non nominatif)</td>
+<td style="text-align: right;"><strong>20 880 €</strong> théoriques</td>
 <td>aucun paiement n’est effectué ; ce calcul ne décrit ni la composition réelle de l’équipe ni les heures effectivement travaillées</td>
 </tr>
 <tr>
@@ -4630,7 +4630,7 @@ troisième est <strong>renommée en français pour être cohérente avec le rest
 </tr>
 </tbody>
 </table>
-<p>Suivi budgétaire prévu : le temps réel pourrait être comparé à l'estimation de la table §13.3 dans un support partagé si l'équipe choisit de le faire. Aucun relevé d'heures ni pointage hebdomadaire n'est attesté dans ce checkout ; les 355 h restent une estimation, non une charge réalisée ou une capacité disponible.</p>
+<p>Suivi budgétaire prévu : le temps réel pourrait être comparé à l'estimation de la table §13.3 dans un support partagé si l'équipe choisit de le faire. Aucun relevé d'heures ni pointage hebdomadaire n'est attesté dans ce checkout ; les 348 h restent une estimation, non une charge réalisée ou une capacité disponible.</p>
 <hr />
 <h2 id="14-deroulement-gitlab-et-tracabilite-de-la-contribution">14. Déroulement GitLab et traçabilité de la contribution<a class="headerlink" href="#14-deroulement-gitlab-et-tracabilite-de-la-contribution" title="Permanent link">#</a></h2>
 <h3 id="141-regles-de-fonctionnement-du-depot">14.1 Règles de fonctionnement du dépôt<a class="headerlink" href="#141-regles-de-fonctionnement-du-depot" title="Permanent link">#</a></h3>
@@ -4778,7 +4778,7 @@ git log --numstat --format= | awk '{print $4}' | sort | uniq -c | sort -rn | hea
 <tr>
 <td>Scripts SQL et base</td>
 <td>fichiers <code>sql/</code>, harnais et scénarios <code>T-01</code>…<code>T-29</code></td>
-<td>aucun rejeu SQL n’est revendiqué dans cette révision ; la base utilisée par les tests CI est temporaire et distincte de toute cible manuelle</td>
+<td>validés automatiquement (<code>29/29</code> SQL, <code>105/105</code> HTTP SQL, <code>8/8</code> concurrence HTTP) lors de la campagne VM Debian 13 du 17/11/2026 (<code>f9b614f</code>, <code>docs/pv-recette.md</code>) sur bases temporaires isolées, distinctes de toute cible manuelle LineServ</td>
 </tr>
 <tr>
 <td>Application PHP/MySQL/PDO</td>
@@ -5049,7 +5049,7 @@ git log --numstat --format= | awk '{print $4}' | sort | uniq -c | sort -rn | hea
 <li>Les identifiants de tests, les fichiers de tests et les comptes rendus historiques ne sont pas interchangeables avec un run. Le rapport <code>tests/sql/rapport_tests_sql.md</code> mentionne une campagne datée du 27/10/2026, postérieure à la coupure ; son résultat n’est donc pas présenté ici comme acquis au 23/10. Les campagnes antérieures de septembre restent historiques et ne prouvent pas un rejeu de cette révision.</li>
 <li>Les <strong>200 scénarios manuels</strong> du suivi <code>docs/13-suivi-recette-uc.csv</code> sont <code>NON JOUÉ</code>. Aucune recette LineServ, opération de déploiement, restauration de base ou validation pédagogique n’est revendiquée.</li>
 <li>Le pointage de §16 est documentaire ; <code>D2-L2-06</code> est clôturée sur l’attestation utilisateur d’une vérification croisée continue entre les membres (<code>docs/21</code>), sans attribuer de note ni présumer d’une approbation pédagogique.</li>
-<li>Les rôles A/B/C et leurs 355 h sont des estimations de planification. Les noms et permissions GitLab mentionnés dans le README ne leur sont pas associés ; aucune charge réelle, capacité individuelle ou disponibilité n’est déduite.</li>
+<li>Les rôles A/B/C et leurs 348 h sont des estimations de planification. Les noms et permissions GitLab mentionnés dans le README ne leur sont pas associés ; aucune charge réelle, capacité individuelle ou disponibilité n’est déduite.</li>
 </ol>
 <hr />
 <h2 id="17-annexes">17. Annexes<a class="headerlink" href="#17-annexes" title="Permanent link">#</a></h2>

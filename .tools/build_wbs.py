@@ -52,7 +52,7 @@ LOTS = {
  ]),
  "L5": dict(nom="Script SQL complet (DDL, vues, index, seed)",
             resp="B", semaines=["S4"], tasks=[
-   ("D3-L5-01","DDL : 9 tables SQL (8 entités métier + table technique d’audit du stock), types, CHECK, InnoDB utf8mb4","B",6,"schéma vérifié statiquement ; aucun rejeu MySQL/MariaDB de cette révision n’est revendiqué","L4"),
+   ("D3-L5-01","DDL : 9 tables SQL (8 entités métier + table technique d’audit du stock), types, CHECK, InnoDB utf8mb4","B",6,"schéma vérifié statiquement et chargé lors de la campagne VM SQL 29/29 (`f9b614f`, `docs/pv-recette.md`)","L4"),
    ("D3-L5-02","Clés étrangères (CASCADE/RESTRICT au bon endroit) + index (FULLTEXT, filtres)","B",4,"plans d'exécution justifiant chaque index","01"),
    ("D3-L5-03","3 vues : v_etat_stock, v_catalogue, v_commandes_client","B",4,"vues créées et comptées par load_db.sh","01"),
    ("D3-L5-04","Seed : 4 catégories, 36 produits (3 pages de 12), 3 clients (password_hash), 1 admin","B",3,"comptage aligné sur sql/01 et app/Model/Data/Seed.php ; jeu de démonstration documenté","01"),
@@ -129,7 +129,7 @@ LOTS = {
  "L14": dict(nom="Tests & validation : harnais, 29 tests SQL, cas fonctionnels, plan de recette, doc",
              resp="B + A", semaines=["S10","S11"], tasks=[
    ("D5-L14-01","Doc de tests : dispositif, stratégie, niveaux, environnement","B",4,"structure §1–§2 du document 02","L6"),
-   ("D5-L14-02","Rejouer les 29 scénarios SQL sur une base temporaire isolée et versionner le rapport","B",4,"rapport lié à un run daté et un SHA ; le fichier versionné porte une date future (27/10/2026) par rapport à la coupure 23/10 et ne prouve aucun rejeu à cette coupure","L5–L7"),
+   ("D5-L14-02","Rejouer les 29 scénarios SQL sur une base temporaire isolée et versionner le rapport","B",4,"29/29 validés sur base temporaire isolée `minishop_test` (VM Debian 13, 16–17/11/2026, `docs/pv-recette.md`)","L5–L7"),
    ("D5-L14-03","Cas fonctionnels F-01…F-31 : exécution et preuves (captures)","B",3,"chaque EF-* a au moins un test exécuté","L9–L11"),
    ("D5-L14-04","Concurrence : reserver.sh (20 demandes / 12 exemplaires → 12 OK, 8 refus)","B",3,"pas de survente prouvée","L10"),
    ("D5-L14-05","Matrice de traçabilité exigence → test + PV de recette","A",5,"traçabilité §9 du document 02 complète","02–04"),

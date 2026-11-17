@@ -66,7 +66,7 @@ fi
 # --- sources ---------------------------------------------------------------
 SOURCES=()
 [ -f README.md ] && SOURCES+=("README.md")
-while IFS= read -r fichier; do SOURCES+=("$fichier"); done < <(ls docs/[0-9]*.md docs/DA.md 2>/dev/null | sort)
+while IFS= read -r fichier; do SOURCES+=("$fichier"); done < <(ls docs/[0-9]*.md docs/DA.md docs/pv-recette.md 2>/dev/null | sort)
 while IFS= read -r fichier; do SOURCES+=("$fichier"); done < <(ls docs/annexes/*.md 2>/dev/null | sort)
 while IFS= read -r fichier; do SOURCES+=("$fichier"); done < <(ls docs/sql-a-ecrire/*.md 2>/dev/null | sort)
 

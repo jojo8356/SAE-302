@@ -1971,8 +1971,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
     cours de transaction (<code>SIGNAL</code> d'un déclencheur, contrainte <code>CHECK</code>/<code>UNIQUE</code>, incident serveur en milieu de
     parcours) déclenche le <code>ROLLBACK</code> de <code>sp_create_order_from_basket</code>, sans donnée partielle. Les scénarios <code>T-29</code>
     (code renvoyé, identifiant remis à <code>NULL</code>, absence de commande, stock intact, aucune trace) et <code>T-21</code>
-    (restitution du stock ligne par ligne) sont prévus pour vérifier ce comportement ; aucun rejeu n’est revendiqué
-    dans cette révision. Exigence <code>ENF-16</code>, arbitrage <code>V7</code>/<code>V3</code>.</li>
+    (restitution du stock ligne par ligne) ont été validés en intégration SQL sur VM Debian 13 le 17/11/2026
+    (<code>f9b614f</code>, <code>docs/pv-recette.md</code>, <code>29/29</code>), les scénarios manuels CSV restant <code>NON JOUÉ</code>. Exigence <code>ENF-16</code>, arbitrage <code>V7</code>/<code>V3</code>.</li>
 <li><strong>A6 — Franchise de port atteinte en cours de route</strong> (étape 8) : tant que la commande est <code>BROUILLON</code>, le port
     est <strong>recalculé</strong> à chaque ajout ou retrait de ligne (<code>sp_compute_shipping</code>) ; à la validation il est <strong>figé</strong>
     (<code>RB-20</code>), comme le prix unitaire (<code>RB-06</code>), et toute réécriture manuelle est refusée par le trigger.</li>
@@ -2453,8 +2453,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tr>
 <td><code>CT-02</code></td>
 <td><strong>MySQL</strong> comme SGBD applicatif, accès par <strong>PDO</strong></td>
-<td>Exigence du sujet : le parcours applicatif doit utiliser MySQL/PDO. État du checkout : SQL est le pilote par défaut ; JSON reste une option explicite via <code>STORAGE_DRIVER=json</code>. Les repositories comportent des appels aux procédures, mais aucun rejeu PDO/MySQL de cette révision n’est établi par ces sources.</td>
-<td><code>app/Model/Data/StorageDriver.php</code>, README, repositories et tests d’intégration SQL ; l’exécution reste à valider sur une base isolée</td>
+<td>Exigence du sujet : le parcours applicatif doit utiliser MySQL/PDO. État courant (<code>17/11/2026</code>) : SQL est le pilote par défaut (JSON reste une option explicite via <code>STORAGE_DRIVER=json</code>). Les repositories appellent les 18 procédures et l’intégration PDO/MariaDB (<code>sql_integration.php</code> <code>29/29</code>, <code>http_sql_e2e.php</code> <code>105/105</code>, <code>concurrence_http.php</code> <code>8/8</code>) a été validée sur VM Debian 13 (<code>f9b614f</code>, <code>docs/pv-recette.md</code>), distinctement de LineServ.</td>
+<td><code>app/Model/Data/StorageDriver.php</code>, README, repositories et <code>docs/pv-recette.md</code></td>
 </tr>
 <tr>
 <td><code>CT-03</code></td>
@@ -2590,7 +2590,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 </tbody>
 </table>
-<p><strong>État d’implémentation constaté dans les sources :</strong> SQL/MySQL/PDO est le pilote par défaut ; JSON reste une option explicite. Le scan statique des repositories repère un appel pour chacune des 18 procédures. Cela établit le raccordement dans le code, pas leur exécution : aucun rejeu PDO/MySQL ni parcours HTTP SQL complet n’est revendiqué pour cette révision. Les tests SQL sont configurés sur des bases temporaires, distinctes de la cible manuelle LineServ ; aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.</p>
+<p><strong>État d’implémentation constaté dans les sources et validé sur VM (17/11/2026) :</strong> SQL/MySQL/PDO est le pilote par défaut ; JSON reste une option explicite. Les repositories appellent chacune des 18 procédures, et la campagne sur VM Debian 13 (<code>f9b614f</code>, <code>docs/pv-recette.md</code>) a validé l’exécution réelle PDO/MariaDB (<code>sql_integration.php</code> <code>29/29</code>, <code>http_sql_e2e.php</code> <code>105/105</code>, <code>concurrence_http.php</code> <code>8/8</code>). Ces campagnes tournent sur des bases temporaires isolées, distinctes de la cible manuelle LineServ ; aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.</p>
 <h3 id="73-contraintes-de-donnees-precisions-demandees-au-12">7.3 Contraintes de données (précisions demandées au §12)<a class="headerlink" href="#73-contraintes-de-donnees-precisions-demandees-au-12" title="Permanent link">#</a></h3>
 <ul>
 <li><strong>Nommage</strong> : tables en MAJUSCULES au pluriel dans la conception (MLD) et en minuscules au pluriel dans le DDL MySQL (<code>client</code>, <code>produit</code>, <code>ligne_commande</code>) ; clés primaires <code>id_&lt;singulier&gt;</code> ; clés étrangères <code>&lt;table_référencée&gt;_id</code> ; index <code>idx_*</code>, uniques <code>uk_*</code>, FK <code>fk_*</code>, CHECK <code>ck_*</code>.</li>
@@ -3148,7 +3148,7 @@ validation rend le port nul et qu'une réécriture après validation est refusé
 <hr />
 <h2 id="10-modelisation-des-donnees-et-sql">10. Modélisation des données et SQL<a class="headerlink" href="#10-modelisation-des-donnees-et-sql" title="Permanent link">#</a></h2>
 <p>Cette section est la synthèse lisible du <strong>document de conception de base de données</strong> demandé au point 3) du sujet ; les détails complets (MCD/MLD, normalisation, script, procédures, triggers, argumentation pédagogique) sont au <strong>§12</strong>, qui reprend plan par plan le document attendu, et sont livrés en <strong>document autonome</strong> <code>docs/04-conception-bd-et-sql.md</code> (livrable n°3, 20 points).</p>
-<p><strong>Repères de conception (pas un PV de recette) :</strong> inventaire statique du checkout <code>b8edfc9</code> vérifié le 15/11/2026 : 9 tables SQL (8 entités métier et <code>stock_movement_history</code>, table technique d’audit du stock), 3 vues, 1 fonction, 18 procédures et 16 déclencheurs ; 20 règles numérotées (11 classées par le CDC comme venant du sujet + 9 compléments), 29 scénarios SQL <code>T-01</code>…<code>T-29</code>. Le scan des repositories trouve un point d’appel pour chacune des 18 procédures, mais aucun rejeu PDO/MySQL n’est revendiqué. Le fichier de rapport versionné contient une mention de rejeu datée du 27/10/2026 : cette date était future à la coupure documentaire du 23/10 et, à la date de la présente vérification, ce rapport ne prouve pas un rejeu sur le checkout du 15/11. La normalisation est argumentée au §12.3.</p>
+<p><strong>Repères de conception et validation VM (17/11/2026) :</strong> inventaire vérifié des sources SQL : 9 tables SQL (8 entités métier et <code>stock_movement_history</code>, table technique d’audit du stock), 3 vues, 1 fonction (<code>fn_param</code>), 18 procédures et 16 déclencheurs ; 20 règles numérotées (11 classées par le CDC comme venant du sujet + 9 compléments), 29 scénarios SQL <code>T-01</code>…<code>T-29</code>. À la coupure historique du 23/10/2026, la mention du 27/10 dans <code>rapport_tests_sql.md</code> restait hors preuve ; depuis, la campagne sur VM Debian 13 du 17/11/2026 (<code>f9b614f</code>, <code>docs/pv-recette.md</code>) a validé <code>T-01</code>…<code>T-29</code> (<code>29/29</code>) et les parcours HTTP SQL (<code>105/105</code>) sur bases isolées. La normalisation est argumentée au §12.3.</p>
 <hr />
 <h2 id="11-pre-conditions-de-recette-hypotheses-hors-perimetre">11. Pré-conditions de recette, hypothèses, hors périmètre<a class="headerlink" href="#11-pre-conditions-de-recette-hypotheses-hors-perimetre" title="Permanent link">#</a></h2>
 <h3 id="111-hypotheses-retenues-toute-rupture-avenant-163">11.1 Hypothèses retenues (toute rupture = avenant, §16.3)<a class="headerlink" href="#111-hypotheses-retenues-toute-rupture-avenant-163" title="Permanent link">#</a></h3>
@@ -3870,7 +3870,7 @@ ELSE
 END IF;
 </code></pre>
 <h4 id="1251-reponse-a-la-question-pedagogique-pourquoi-une-procedure-stockee-plutot-que-tout-faire-en-php">12.5.1 Réponse à la question pédagogique : pourquoi une procédure stockée plutôt que tout faire en PHP ?<a class="headerlink" href="#1251-reponse-a-la-question-pedagogique-pourquoi-une-procedure-stockee-plutot-que-tout-faire-en-php" title="Permanent link">#</a></h4>
-<p>Le tableau décrit le <strong>raisonnement de conception pour la cible MySQL/PDO</strong> exigée par le sujet. Dans le checkout <code>b8edfc9</code> vérifié le 15/11/2026, SQL/MySQL via PDO est le pilote applicatif par défaut ; JSON reste une option explicite sélectionnée par <code>STORAGE_DRIVER=json</code>. Les repositories comportent des appels aux procédures ; le scan statique du 15/11 repère un point d’appel pour chacune des 18 procédures. Cela n’atteste ni leur exécution PDO/MySQL ni un rejeu courant des scénarios <code>T-*</code>, qui restent des références de test.</p>
+<p>Le tableau décrit le <strong>raisonnement de conception pour la cible MySQL/PDO</strong> exigée par le sujet. SQL/MySQL via PDO est le pilote applicatif par défaut ; JSON reste une option explicite sélectionnée par <code>STORAGE_DRIVER=json</code>. Les repositories appellent les 18 procédures stockées ; leur exécution réelle sous PDO/MariaDB et les 29 scénarios <code>T-01</code>…<code>T-29</code> ont été validés sur bases isolées lors de la campagne VM Debian 13 du 17/11/2026 (<code>f9b614f</code>, <code>docs/pv-recette.md</code> : <code>29/29</code> SQL, <code>105/105</code> HTTP SQL).</p>
 <table>
 <thead>
 <tr>
@@ -4778,7 +4778,7 @@ git log --numstat --format= | awk '{print $4}' | sort | uniq -c | sort -rn | hea
 <tr>
 <td>Scripts SQL et base</td>
 <td>fichiers <code>sql/</code>, harnais et scénarios <code>T-01</code>…<code>T-29</code></td>
-<td>aucun rejeu SQL n’est revendiqué dans cette révision ; la base utilisée par les tests CI est temporaire et distincte de toute cible manuelle</td>
+<td>validés automatiquement (<code>29/29</code> SQL, <code>105/105</code> HTTP SQL, <code>8/8</code> concurrence HTTP) lors de la campagne VM Debian 13 du 17/11/2026 (<code>f9b614f</code>, <code>docs/pv-recette.md</code>) sur bases temporaires isolées, distinctes de toute cible manuelle LineServ</td>
 </tr>
 <tr>
 <td>Application PHP/MySQL/PDO</td>

@@ -156,43 +156,43 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tr>
 <td style="text-align: right;">6-8</td>
 <td>rôle de planification B</td>
-<td><strong>Procédures stockées</strong> : présenter SQL comme pilote par défaut et les appels des repositories aux procédures ; distinguer ce raccordement statique d’une validation PDO/MySQL, non rejouée ici</td>
-<td>schéma, repositories et code SQL</td>
+<td><strong>Procédures stockées</strong> : présenter SQL comme pilote par défaut, les appels des repositories aux 18 procédures et leur validation sur VM Debian 13 (<code>docs/pv-recette.md</code>, <code>29/29</code> SQL, <code>105/105</code> HTTP SQL)</td>
+<td>schéma, repositories, code SQL et <code>docs/pv-recette.md</code></td>
 <td>§7.1, §12.5</td>
 </tr>
 <tr>
 <td style="text-align: right;">8-9</td>
 <td>rôle de planification B</td>
-<td><strong>Triggers</strong> : expliquer les règles exécutées par la base lors des écritures SQL correspondantes ; le scénario d’écriture directe <code>T-03</code> reste une référence et n’est pas présenté comme un résultat courant</td>
-<td>script SQL et scénario <code>T-03</code> (référence, pas résultat courant)</td>
+<td><strong>Triggers</strong> : expliquer les règles exécutées par la base lors des écritures SQL correspondantes ; <code>T-03</code> et l’ensemble <code>T-01…T-29</code> ont été validés sur base temporaire isolée le 17/11/2026 (<code>29/29</code>)</td>
+<td>script SQL, <code>T-03</code> et <code>docs/pv-recette.md</code></td>
 <td>§12.6</td>
 </tr>
 <tr>
 <td style="text-align: right;">9-10</td>
 <td>rôle de planification C</td>
-<td><strong>Tests</strong> : distinguer les 29 scénarios SQL, les dates des rapports et les scénarios manuels ; aucune exécution SQL de cette révision n’est revendiquée</td>
-<td>matrice <code>docs/02</code> ; rapport daté à qualifier</td>
+<td><strong>Tests &amp; performances</strong> : présenter la campagne VM <code>60/60</code> (<code>docs/pv-recette.md</code>) et les mesures <code>ENF-01</code> (<code>tests/perf/dernieres_mesures.txt</code>, HTTP p95 = <code>6 ms</code>), en distinguant les 200 scénarios manuels <code>NON JOUÉ</code></td>
+<td>matrice <code>docs/02</code>, <code>docs/pv-recette.md</code>, <code>dernieres_mesures.txt</code></td>
 <td>§15, doc tests</td>
 </tr>
 <tr>
 <td style="text-align: right;">10-12</td>
 <td>rôle de planification C</td>
-<td><strong>Parcours front</strong> : montrer uniquement un environnement local isolé disponible le jour de la soutenance ; préciser le mode JSON ou SQL réellement configuré et ne pas présenter une répétition antérieure comme preuve</td>
-<td>environnement de démonstration à confirmer</td>
+<td><strong>Parcours front</strong> : montrer l’environnement local isolé sous SQL (<code>./run.sh --db</code> puis <code>./run.sh</code>) ; ne pas confondre la démo locale avec une recette LineServ</td>
+<td>environnement local isolé</td>
 <td>§4.2-§4.4, §7.1</td>
 </tr>
 <tr>
 <td style="text-align: right;">12-13</td>
 <td>rôle de planification C</td>
-<td><strong>Sécurité</strong> : expliquer les scénarios offensifs <code>S-01…S-10</code> et les contrôles statiques ; leurs identifiants ne prouvent pas une exécution. Aucun test manuel LineServ n’est prévu ou revendiqué ici</td>
+<td><strong>Sécurité</strong> : expliquer les scénarios offensifs <code>S-01…S-10</code> et les <code>11/11</code> contrôles statiques (<code>tests/security/controles.sh</code>), rejoués le 23/10 et dans <code>generer_pv.php</code> le 17/11 ; aucun test manuel LineServ n’est revendiqué</td>
 <td>matrice des scénarios, <code>tests/security/controles.sh</code> (11 statiques)</td>
 <td>§8, §15.3</td>
 </tr>
 <tr>
 <td style="text-align: right;">13-14</td>
 <td>rôle de planification A</td>
-<td><strong>Back-office</strong> : présenter les fonctionnalités prévues et préciser que le chemin SQL par défaut appelle les procédures des repositories ; aucun rejeu PDO/MySQL n’est revendiqué ici</td>
-<td>environnement de démonstration à confirmer</td>
+<td><strong>Back-office</strong> : présenter les fonctionnalités livrées et leur couverture automatisée (<code>http_sql_e2e.php</code> §9, <code>105/105</code> sur VM <code>f9b614f</code>)</td>
+<td>environnement local isolé et <code>docs/pv-recette.md</code></td>
 <td>§4.5, §7.1</td>
 </tr>
 <tr>
@@ -217,7 +217,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tbody>
 <tr>
 <td>Pourquoi une procédure stockée plutôt que du PHP pour la commande ?</td>
-<td>SQL est le pilote par défaut et <code>CommandeRepository</code> appelle les procédures de commande ; elles portent atomicité et verrous côté serveur, logique commune et moins d’allers-retours. Le coût est la portabilité et le débogage. Le raccordement statique n’a pas été rejoué sous PDO/MySQL dans cette révision.</td>
+<td>SQL est le pilote par défaut et <code>CommandeRepository</code> appelle les procédures de commande ; elles portent atomicité et verrous côté serveur, logique commune et moins d’allers-retours. Le coût est la portabilité et le débogage. L’exécution PDO/MariaDB (<code>29/29</code> SQL et <code>105/105</code> HTTP SQL) est validée dans <code>docs/pv-recette.md</code>.</td>
 <td>§12.5.1, §7.1</td>
 </tr>
 <tr>
@@ -242,27 +242,27 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 <tr>
 <td>Comment est visée la prévention de survente ?</td>
-<td>Le chemin SQL par défaut utilise les procédures et verrous <code>SELECT … FOR UPDATE</code> pour les opérations concernées. <code>C-01</code> reste un scénario de charge à exécuter en environnement isolé ; aucun résultat 20/12 ni rejeu PDO/MySQL de cette révision n’est revendiqué. Le mode JSON est une option secondaire.</td>
+<td>Le chemin SQL par défaut utilise les procédures et verrous <code>SELECT … FOR UPDATE</code>. La campagne VM du 17/11 (<code>docs/pv-recette.md</code>) a validé <code>concurrence_http.php</code> (<strong>8/8</strong>, 20 acteurs / 12 unités) et <code>sql_integration.php</code> (<strong>29/29</strong>). Le mode JSON reste une option secondaire.</td>
 <td>§2.3, C-01, §7.1</td>
 </tr>
 <tr>
 <td>Que prévoit la conception si un contrôle d'appartenance est oublié ?</td>
-<td><code>sp_confirm_order</code> vérifie l’appartenance, et le repository utilise cette procédure sur le chemin SQL. <code>T-18</code> documente le scénario, mais aucun rejeu SQL de cette révision n’est revendiqué.</td>
+<td><code>sp_confirm_order</code> vérifie l’appartenance, et le repository utilise cette procédure sur le chemin SQL. <code>T-18</code> (dans <code>29/29</code>) et <code>http_sql_e2e.php</code> (<code>105/105</code>) ont validé ce comportement sur VM isolée (<code>docs/pv-recette.md</code>).</td>
 <td>SEC-08, T-18, §7.1</td>
 </tr>
 <tr>
 <td>Pourquoi un trigger et pas la procédure pour écrire l'historique ?</td>
-<td>Un <code>UPDATE</code> direct (import, reprise, correction) doit aussi laisser une trace. Le scénario <code>T-22</code> est prévu pour vérifier l’absence de doublon lors d’un changement de statut ; aucun résultat de rejeu SQL courant n’est revendiqué ici.</td>
+<td>Un <code>UPDATE</code> direct (import, reprise, correction) doit aussi laisser une trace. Le scénario <code>T-22</code> (validé dans <code>29/29</code> sur VM, <code>docs/pv-recette.md</code>) vérifie l’absence de doublon lors d’un changement de statut.</td>
 <td>A-02, T-22</td>
 </tr>
 <tr>
 <td>Quelle est la portée des vérifications anti-injection ?</td>
-<td><code>SEC-01</code>, les scénarios offensifs <code>S-01…S-10</code> et les contrôles statiques sont des références distinctes. Les 11 contrôles statiques comprennent <code>S-11</code>/<code>SEC-14</code> ; aucun test offensif ou run CI global n’est revendiqué dans cette trame.</td>
+<td><code>SEC-01</code>, les <code>11/11</code> contrôles statiques (<code>controles.sh</code>, dont <code>S-11</code>/<code>SEC-14</code>) et <code>http_sql_e2e.php</code> (<code>105/105</code>) ont été exécutés sur VM (<code>docs/pv-recette.md</code>), distinctement des scénarios offensifs manuels <code>S-01…S-10</code> et de LineServ.</td>
 <td>§8.1, §15.3</td>
 </tr>
 <tr>
 <td>Et si on tente une écriture SQL qui met le stock à −5 ?</td>
-<td>Le modèle décrit un <code>CHECK</code> et un déclencheur ; <code>T-02</code>/<code>T-03</code> référencent les scénarios. Un rejet doit être confirmé par un run isolé avant d’être présenté comme résultat.</td>
+<td>Le modèle applique un <code>CHECK</code> et un déclencheur ; <code>T-02</code> et <code>T-03</code> ont été validés en intégration SQL (<code>29/29</code>, <code>docs/pv-recette.md</code>) sur base temporaire isolée.</td>
 <td>§6.1, §6.2</td>
 </tr>
 <tr>
@@ -310,12 +310,12 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <tr>
 <td><strong>Les frais de port sont dans le périmètre</strong></td>
 <td>« Le CDC décrit <code>RB-20</code> comme une règle visant l’affichage du port avant validation. »</td>
-<td>Montrer le scénario <code>T-28</code> comme référence, pas comme résultat exécuté ; frais/règles configurables restent des choix de conception à confirmer.</td>
+<td>Montrer <code>T-28</code> (validé dans <code>29/29</code> SQL sur VM, <code>docs/pv-recette.md</code>) et les paramètres configurables côté admin.</td>
 </tr>
 <tr>
 <td><strong>Ventes interdites à stock nul</strong></td>
 <td>« Le modèle SQL décrit les contrôles de stock et l’isolation de l’écriture. »</td>
-<td><code>T-02</code> est un scénario de vérification ; ne pas exécuter une écriture de test sur une base réelle ou partagée.</td>
+<td><code>T-02</code> est validé en SQL (<code>29/29</code>) ; ne jamais lancer de test destructif sur une base de production ou partagée.</td>
 </tr>
 <tr>
 <td><strong>Deux rôles d'administrateur, pas de MFA</strong></td>
@@ -323,16 +323,16 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <td>Montrer <code>EF-ADM-10</code> (garde <code>SUPER</code>), <code>F-32</code> (un <code>GESTIONNAIRE</code> reçoit 403 sur la gestion d'équipe) et le §8.10 (tableau des écarts).</td>
 </tr>
 <tr>
-<td><strong>Volumétrie cible, pas mesure</strong></td>
+<td><strong>Volumétrie cible et mesures VM</strong></td>
 <td>« Le dimensionnement de conception retient 200 produits et 1 000 commandes par an. »</td>
-<td><code>scripts/gen_volumes.sh</code> et les seuils <code>ENF-*</code> définissent un protocole ; aucune volumétrie ou mesure de performance n’est revendiquée ici.</td>
+<td>Campagne <code>run_perf_vm.sh</code> (<code>minishop_perf</code>, <code>236</code> produits, <code>1 004</code> commandes) : SQL p95 ≤ <code>20,6 ms</code>, HTTP p95 = <code>6 ms</code> (<code>tests/perf/dernieres_mesures.txt</code>).</td>
 </tr>
 </tbody>
 </table>
 <h2 id="4-check-list-de-la-derniere-demi-heure-avant-lentree-en-salle">4. Check-list de la dernière demi-heure avant l'entrée en salle<a class="headerlink" href="#4-check-list-de-la-derniere-demi-heure-avant-lentree-en-salle" title="Permanent link">#</a></h2>
 <ul>
 <li>☐ Confirmer la durée autorisée, l’environnement local isolé et le mode de stockage effectivement configuré ; exclure LineServ et les bases partagées.</li>
-<li>☐ Si les scripts SQL sont rejoués, utiliser une base temporaire dédiée et conserver date, révision, sortie et résultat ; la mention 29/29 du rapport porte une date future (27/10) et n’est pas un résultat acquis à la coupure du 23/10.</li>
+<li>☐ Si les scripts SQL sont rejoués en direct, utiliser une base temporaire dédiée ; pour les preuves consignées, s’appuyer sur <code>docs/pv-recette.md</code> (<code>f9b614f</code>, 17/11/2026, <code>60/60</code>) et <code>tests/perf/dernieres_mesures.txt</code> (<code>cb0f814</code>, HTTP p95 = <code>6 ms</code>).</li>
 <li>☐ Vérifier les écrans de démonstration dans l’environnement réellement disponible, sans présenter un scénario documentaire comme résultat.</li>
 <li>☐ Préparer les références des 11 contrôles statiques (dont <code>S-11</code>/<code>SEC-14</code>) et des 10 scénarios offensifs distincts.</li>
 <li>☐ Ne lancer aucune requête destructive ou tentative de sécurité sur une base de production ou LineServ.</li>

@@ -508,8 +508,8 @@ Le sujet demande d'en détailler **trois** (et non les 14). Choix justifié : un
     cours de transaction (`SIGNAL` d'un déclencheur, contrainte `CHECK`/`UNIQUE`, incident serveur en milieu de
     parcours) déclenche le `ROLLBACK` de `sp_create_order_from_basket`, sans donnée partielle. Les scénarios `T-29`
     (code renvoyé, identifiant remis à `NULL`, absence de commande, stock intact, aucune trace) et `T-21`
-    (restitution du stock ligne par ligne) sont prévus pour vérifier ce comportement ; aucun rejeu n’est revendiqué
-    dans cette révision. Exigence `ENF-16`, arbitrage `V7`/`V3`.
+    (restitution du stock ligne par ligne) ont été validés en intégration SQL sur VM Debian 13 le 17/11/2026
+    (`f9b614f`, `docs/pv-recette.md`, `29/29`), les scénarios manuels CSV restant `NON JOUÉ`. Exigence `ENF-16`, arbitrage `V7`/`V3`.
   - **A6 — Franchise de port atteinte en cours de route** (étape 8) : tant que la commande est `BROUILLON`, le port
     est **recalculé** à chaque ajout ou retrait de ligne (`sp_compute_shipping`) ; à la validation il est **figé**
     (`RB-20`), comme le prix unitaire (`RB-06`), et toute réécriture manuelle est refusée par le trigger.
@@ -705,7 +705,7 @@ Pour la traçabilité, le tableau §6.1 associe chaque identifiant à un mécani
 | ID | Contrainte | Détail / justification | Moyen de vérification |
 |---|---|---|---|
 | `CT-01` | **PHP** (8.1+) en développement orienté objet | aucune structure procédurale mixte ; `declare(strict_types=1)` en tête de chaque fichier | `find app -name '*.php' -exec head -3 {} \; \| grep -c strict_types` = nb fichiers |
-| `CT-02` | **MySQL** comme SGBD applicatif, accès par **PDO** | Exigence du sujet : le parcours applicatif doit utiliser MySQL/PDO. État du checkout : SQL est le pilote par défaut ; JSON reste une option explicite via `STORAGE_DRIVER=json`. Les repositories comportent des appels aux procédures, mais aucun rejeu PDO/MySQL de cette révision n’est établi par ces sources. | `app/Model/Data/StorageDriver.php`, README, repositories et tests d’intégration SQL ; l’exécution reste à valider sur une base isolée |
+| `CT-02` | **MySQL** comme SGBD applicatif, accès par **PDO** | Exigence du sujet : le parcours applicatif doit utiliser MySQL/PDO. État courant (`17/11/2026`) : SQL est le pilote par défaut (JSON reste une option explicite via `STORAGE_DRIVER=json`). Les repositories appellent les 18 procédures et l’intégration PDO/MariaDB (`sql_integration.php` `29/29`, `http_sql_e2e.php` `105/105`, `concurrence_http.php` `8/8`) a été validée sur VM Debian 13 (`f9b614f`, `docs/pv-recette.md`), distinctement de LineServ. | `app/Model/Data/StorageDriver.php`, README, repositories et `docs/pv-recette.md` |
 | `CT-03` | **SQL écrit aussi dans la base** : 5 procédures stockées minimum | **18 procédures définies** (§12.5) ; le scan statique des repositories repère un point d’appel pour chacune, sans constituer une preuve d’exécution | sources SQL, repositories et requête de comptage à vérifier sur une instance SQL isolée |
 | `CT-04` | **5 déclencheurs minimum** | **16 livrés** (§12.6), dont ceux imposés (stock, historique) | `SELECT COUNT(DISTINCT TRIGGER_NAME) FROM information_schema.TRIGGERS …` |
 | `CT-05` | **Architecture MVC 3 couches** | §9 ; aucune SQL dans les vues, aucun HTML dans les contrôleurs | revue + `grep` (§15.3) |
@@ -734,7 +734,7 @@ Pour la traçabilité, le tableau §6.1 associe chaque identifiant à un mécani
 | Environnements | SQL local par défaut ; mode JSON explicite pour les tests portables et les démonstrations sans serveur SQL ; scénarios SQL automatisés sur base temporaire isolée ; LineServ est une cible distincte qui n’a pas été utilisée ici | Les bases de tests temporaires sont distinctes de toute cible manuelle ; aucun essai LineServ, déploiement ou restauration de base n’est revendiqué |
 | Contrainte de périmètre physique | **volumétrie cible de conception** : 200 produits et 1 000 commandes/an, selon l'hypothèse de projet documentée. À cette échelle, le plan prévoit des mesures reproductibles via `scripts/gen_volumes.sh` ; les chiffres de mesure ne sont pas réaffirmés sans rapport horodaté rattaché à un environnement et à un SHA. | — (hypothèse de dimensionnement, non mesure d'une instance cible) |
 
-**État d’implémentation constaté dans les sources :** SQL/MySQL/PDO est le pilote par défaut ; JSON reste une option explicite. Le scan statique des repositories repère un appel pour chacune des 18 procédures. Cela établit le raccordement dans le code, pas leur exécution : aucun rejeu PDO/MySQL ni parcours HTTP SQL complet n’est revendiqué pour cette révision. Les tests SQL sont configurés sur des bases temporaires, distinctes de la cible manuelle LineServ ; aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.
+**État d’implémentation constaté dans les sources et validé sur VM (17/11/2026) :** SQL/MySQL/PDO est le pilote par défaut ; JSON reste une option explicite. Les repositories appellent chacune des 18 procédures, et la campagne sur VM Debian 13 (`f9b614f`, `docs/pv-recette.md`) a validé l’exécution réelle PDO/MariaDB (`sql_integration.php` `29/29`, `http_sql_e2e.php` `105/105`, `concurrence_http.php` `8/8`). Ces campagnes tournent sur des bases temporaires isolées, distinctes de la cible manuelle LineServ ; aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.
 
 ### 7.3 Contraintes de données (précisions demandées au §12)
 
@@ -1068,7 +1068,7 @@ Procédure de sauvegarde/restauration spécifiée mais non exécutée ni chronom
 
 Cette section est la synthèse lisible du **document de conception de base de données** demandé au point 3) du sujet ; les détails complets (MCD/MLD, normalisation, script, procédures, triggers, argumentation pédagogique) sont au **§12**, qui reprend plan par plan le document attendu, et sont livrés en **document autonome** `docs/04-conception-bd-et-sql.md` (livrable n°3, 20 points).
 
-**Repères de conception (pas un PV de recette) :** inventaire statique du checkout `b8edfc9` vérifié le 15/11/2026 : 9 tables SQL (8 entités métier et `stock_movement_history`, table technique d’audit du stock), 3 vues, 1 fonction, 18 procédures et 16 déclencheurs ; 20 règles numérotées (11 classées par le CDC comme venant du sujet + 9 compléments), 29 scénarios SQL `T-01`…`T-29`. Le scan des repositories trouve un point d’appel pour chacune des 18 procédures, mais aucun rejeu PDO/MySQL n’est revendiqué. Le fichier de rapport versionné contient une mention de rejeu datée du 27/10/2026 : cette date était future à la coupure documentaire du 23/10 et, à la date de la présente vérification, ce rapport ne prouve pas un rejeu sur le checkout du 15/11. La normalisation est argumentée au §12.3.
+**Repères de conception et validation VM (17/11/2026) :** inventaire vérifié des sources SQL : 9 tables SQL (8 entités métier et `stock_movement_history`, table technique d’audit du stock), 3 vues, 1 fonction (`fn_param`), 18 procédures et 16 déclencheurs ; 20 règles numérotées (11 classées par le CDC comme venant du sujet + 9 compléments), 29 scénarios SQL `T-01`…`T-29`. À la coupure historique du 23/10/2026, la mention du 27/10 dans `rapport_tests_sql.md` restait hors preuve ; depuis, la campagne sur VM Debian 13 du 17/11/2026 (`f9b614f`, `docs/pv-recette.md`) a validé `T-01`…`T-29` (`29/29`) et les parcours HTTP SQL (`105/105`) sur bases isolées. La normalisation est argumentée au §12.3.
 
 ---
 
@@ -1373,7 +1373,7 @@ END IF;
 
 #### 12.5.1 Réponse à la question pédagogique : pourquoi une procédure stockée plutôt que tout faire en PHP ?
 
-Le tableau décrit le **raisonnement de conception pour la cible MySQL/PDO** exigée par le sujet. Dans le checkout `b8edfc9` vérifié le 15/11/2026, SQL/MySQL via PDO est le pilote applicatif par défaut ; JSON reste une option explicite sélectionnée par `STORAGE_DRIVER=json`. Les repositories comportent des appels aux procédures ; le scan statique du 15/11 repère un point d’appel pour chacune des 18 procédures. Cela n’atteste ni leur exécution PDO/MySQL ni un rejeu courant des scénarios `T-*`, qui restent des références de test.
+Le tableau décrit le **raisonnement de conception pour la cible MySQL/PDO** exigée par le sujet. SQL/MySQL via PDO est le pilote applicatif par défaut ; JSON reste une option explicite sélectionnée par `STORAGE_DRIVER=json`. Les repositories appellent les 18 procédures stockées ; leur exécution réelle sous PDO/MariaDB et les 29 scénarios `T-01`…`T-29` ont été validés sur bases isolées lors de la campagne VM Debian 13 du 17/11/2026 (`f9b614f`, `docs/pv-recette.md` : `29/29` SQL, `105/105` HTTP SQL).
 
 | Aspect exigé par le sujet | Apport visé par la procédure dans la conception cible | Ce qui se passerait si on la remplaçait par du PHP |
 |---|---|---|
@@ -1638,7 +1638,7 @@ La date de coupure documentaire est le **23/10/2026**. Le fichier `tests/sql/rap
 
 | Domaine | Preuve présente | Limite / statut |
 |---|---|---|
-| Scripts SQL et base | fichiers `sql/`, harnais et scénarios `T-01`…`T-29` | aucun rejeu SQL n’est revendiqué dans cette révision ; la base utilisée par les tests CI est temporaire et distincte de toute cible manuelle |
+| Scripts SQL et base | fichiers `sql/`, harnais et scénarios `T-01`…`T-29` | validés automatiquement (`29/29` SQL, `105/105` HTTP SQL, `8/8` concurrence HTTP) lors de la campagne VM Debian 13 du 17/11/2026 (`f9b614f`, `docs/pv-recette.md`) sur bases temporaires isolées, distinctes de toute cible manuelle LineServ |
 | Application PHP/MySQL/PDO | pilote SQL par défaut et appels repository aux procédures présents statiquement | Les repositories ont un point d’appel pour chacune des 18 procédures ; ce constat ne prouve pas un parcours HTTP complet sous PDO/MySQL (§7.2) |
 | Contrôles statiques de sécurité | `tests/security/controles.sh` | ne rapporter un résultat que si la commande est réellement rejouée dans cette révision ; la portée reste statique et limitée à `S-11/SEC-14` pour les données de carte |
 | Recette fonctionnelle humaine | registre `docs/13-suivi-recette-uc.csv` | les 200 entrées y sont `NON JOUÉ` ; aucune recette navigateur/LineServ n’est revendiquée |

@@ -115,3 +115,19 @@ Les sous-ensembles suivants sont synchronisés et ne présentent aucune dérive 
    - exécuter `bash scripts/build-docs.sh` pour régénérer **tous** les fichiers `livrables/html/`, `livrables/pdf/`, `livrables/docx/`, `livrables/minishop-soutenance.pptx` et `livrables/README.md`.
 4. **Valider avant commit :**
    - `python3 -m unittest discover -s tests/python -v` (en particulier `test_inventaire_global_a_jour` et `test_archives_bureautiques_integrite`), `python3 scripts/verifier_fiches_uc.py`, `bash tests/security/controles.sh` et `git diff --check`.
+
+---
+
+## 8. Re-audit complet après corrections (17 novembre 2026 — état final vérifié)
+
+Toutes les actions de **Priorité 1** et de **Priorité 2** listées aux §3–§4 (plus la mise à jour symétrique de `ARCHITECTURE.md` détectée lors de la passe de contrôle) ont été appliquées, suivies d’une régénération complète (`97` rendus produits via `bash scripts/build-docs.sh`, régénération de `artefacts/{01,02,03,04,05,06,README}.html` et mise à jour de `docs/17-inventaire-projet.csv` pour `livrables/*/pv-recette.*` et `22-audit-coherence-fichiers.*`).
+
+| Contrôle post-correction | Résultat observé sur **558 fichiers versionnés** | Statut |
+|---|---|---|
+| **Fraîcheur `docs/` → `livrables/` & `artefacts/`** | **`0` cible périmée ou manquante** (`32` sources Markdown → `96` rendus HTML/PDF/DOCX + `minishop-soutenance.pptx` + `7` fichiers `artefacts/*.html` tous à jour) | **CONFORME** |
+| **Balayage lexical des contradictions (Priorités 1 & 2)** | **`0` contradiction active restante** : toutes les occurrences résiduelles (`docs/02` coupure 23/10, `docs/04` incise historique 15/11, `docs/09`/`17`/`19` blocs `15/11` étiquetés historiques, « sans `public/install.php` exposé » dans WBS/todolist/SQL, `uploads/01_minishop_schema.txt` archive brute) sont explicitement contextualisées | **CONFORME** |
+| **Diaporama `docs/12` & `livrables/minishop-soutenance.pptx`** | Diapos 5, 6, 8, 11 et 12 alignées sur les campagnes VM du 17/11/2026 (`60/60`, SQL `29/29`, HTTP SQL `105/105`, concurrence `8/8`, HTTP p95 = `6 ms`), les `82` tâches WBS (`0 [!]`) et les `200` scénarios manuels `NON JOUÉ` | **CONFORME** |
+| **Inventaire & archives (`unittest`)** | `test_inventaire_global_a_jour` (`558` chemins exacts), `test_archives_bureautiques_integrite`, `test_fichiers_presents_et_non_vides`, syntaxe Python/Shell/JS/JSON/SVG/XML : **22 OK** (**20 skipped** faute de PHP CLI natif dans ce conteneur) | **CONFORME** |
+| **Fiches UC & sécurité statique** | `scripts/verifier_fiches_uc.py` (**46/46 OK**) et `tests/security/controles.sh` (**11/11 OK**) | **CONFORME** |
+
+> **Limites maintenues honnêtement :** les **200 scénarios manuels** (`docs/13-suivi-recette-uc.csv`) restent `NON JOUÉ`, les documents historiques de Priorité 3 (`docs/07`, `docs/10`, `docs/16` §2, `tests/sql/rapport_tests_sql.md`, `uploads/01_minishop_schema.txt`) conservent leur portée d’archive datée, et aucun test manuel sur LineServ ni aucune validation pédagogique n’est revendiqué.

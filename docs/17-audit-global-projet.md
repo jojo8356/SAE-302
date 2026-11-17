@@ -13,7 +13,7 @@ Cet addendum complète l’état du 15/11/2026 avec les validations exécutées 
 - **Relectures croisées et périmètre WBS :** `D2-L2-06` (`docs/01`) et `D3-L4-06` (`docs/04`, `9` tables, `3` vues, `18` procédures, `1` fonction, `16` déclencheurs) clôturées `OK` sur vérification technique et relectures croisées continues attestées entre Johan Polsinelli et Chahd Gouiaa (`docs/21`) ; `D4-L8-05` amendée (`scripts/db_init.php` / `run.sh`) ; `D6-L16-03` et `D1-L15-03` retirées sur demande de l’utilisateur. Bilan WBS/todolist (`docs/05`, `docs/06`, `docs/19`) : **82 tâches**, **348 h** estimées (`A 115`, `B 117`, `C 116`), **34 `OK`**, **48 `OK*`**, **0 `PARTIEL`**, **0 `[!]`**.
 - **Inventaire et limites :** `docs/17-inventaire-projet.csv` est synchronisé avec l’index Git courant (`test_inventaire_global_a_jour` vert) ; les **200 scénarios manuels** (`docs/13-suivi-recette-uc.csv`) restent `NON JOUÉ` et aucun déploiement sur LineServ ni validation pédagogique n’est revendiqué.
 
-## Addendum — état du checkout vérifié le 15 novembre 2026
+## Addendum — état du checkout vérifié le 15 novembre 2026 *(photographie historique antérieure à l’addendum final du 17/11/2026)*
 
 Cet addendum décrit le checkout du commit `b8edfc9` (branche `arena/10afc76d-sae-302`), vérifié le 15/11/2026 ; il est distinct du rapport historique daté du 28/10/2026 et de la coupure documentaire du 23/10. Les résultats d’exécution ci-dessous sont limités aux commandes explicitement citées.
 
