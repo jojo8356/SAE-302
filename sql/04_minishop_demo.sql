@@ -11,6 +11,8 @@
 
 -- Nom de la base : passe au client (`mariadb minishop < fichier`) par
 -- scripts/load_db.sh ; en mode interactif, taper `USE minishop;` d'abord.
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
+SET collation_connection = 'utf8mb4_unicode_ci';
 
 -- Client 1 : commande complète (2 x Casque Aura + 1 x Cable USB-C) validée
 CALL sp_create_order(1, '12 rue de France, 06000 Nice', @id_c1, @num_c1);
