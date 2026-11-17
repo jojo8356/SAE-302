@@ -7,10 +7,10 @@ estimation *bottom-up* de chaque tâche, répartition indicative par rôle A/B/C
 |---|---|
 | **Projet** | MiniShop — site e-commerce avec back-office (SAE — BUT Informatique / L3, Université Côte d'Azur) |
 | **Rôles de planification** | **A** pilotage/back-office · **B** modèle/base de données · **C** présentation/sécurité/tests ; deux membres sont nommés dans le README, sans correspondance nominative A/B/C |
-| **Effort total** | **355 h estimées** sur les 84 tâches de niveau 4, réparties par rôle de planification · calendrier de référence **S1 → S12** ; aucune capacité ou heure réalisée n'est établie |
+| **Effort total** | **350 h estimées** sur les 83 tâches de niveau 4, réparties par rôle de planification · calendrier de référence **S1 → S12** ; aucune capacité ou heure réalisée n'est établie |
 | **Divisions (niveau 2)** | 6 — alignées une à une sur les 5 lignes du barème + la gestion de projet |
 | **Lots (niveau 3)** | 16 (L1→L16, identiques au CDC §13.3, charges réconciliées) |
-| **Tâches (niveau 4)** | **84 tâches** avec rôle de planification, estimation et critère de fin ; l'affectation individuelle reste à confirmer |
+| **Tâches (niveau 4)** | **83 tâches** avec rôle de planification, estimation et critère de fin ; l'affectation individuelle reste à confirmer |
 | **Documents liés** | `docs/01-cahier-des-charges-MiniShop.md` (§13.3/§13.4) · `docs/02-document-tests-validation.md` · `docs/03-support-soutenance.md` · `docs/04-conception-bd-et-sql.md` · `README.md` |
 | **Version** | 1.2 — 23 octobre 2026 (révision de périmètre) |
 
@@ -25,7 +25,7 @@ La **Work Breakdown Structure** (structure de découpage de projet, ou organigra
 | **1** | le projet (produit final) | MiniShop : boutique + back-office + dossier de conception et de validation |
 | **2** | les **divisions** = livrables majeurs | 6 divisions D1→D6, une par ligne du barème (+ pilotage) |
 | **3** | les **lots** = sous-livrables | 16 lots L1→L16 (reprend le CDC §13.3) |
-| **4** | les tâches de travail | **84 tâches**, estimées en heures et réparties entre les rôles A/B/C, sans affectation nominative |
+| **4** | les tâches de travail | **83 tâches**, estimées en heures et réparties entre les rôles A/B/C, sans affectation nominative |
 
 **Règle d'arrêt** (jusqu'où descendre) : le niveau 4 rend chaque tâche estimable et vérifiable ; l'affectation nominative relève d'une décision d'équipe distincte —
 1. **rattachée** à un ou plusieurs codes de rôle de planification (colonne *Rôle(s)*),
@@ -39,7 +39,7 @@ C'est l'inverse d'une estimation globale « au doigt mouillé » : chaque heure 
 (cf. §10), ce qui relie la WBS au barème ; la trace de contribution réelle reste distincte des rôles A/B/C.
 
 **Note de version** — le livrable GitLab CI (2 h) avait déjà été retiré du périmètre. La présente révision retire aussi, sans remplacement, le déploiement de démonstration et sa validation staging (3 h) ;
-les 355 h sont une estimation de planification pour 84 tâches, sans capacité d'équipe, affectation nominative ou heures réalisées établies. Aucun déploiement réel n'est revendiqué.
+les 350 h sont une estimation de planification pour 83 tâches, sans capacité d'équipe, affectation nominative ou heures réalisées établies. Aucun déploiement réel n'est revendiqué.
 
 ---
 
@@ -65,15 +65,15 @@ spécification, sa base conçue et normalisée (3FN), son application à tester 
 | **D3** | Conception de la base de données & SQL | barème ii — 20 points | B | L4 + L5 + L6 + L7 | **98 h** |
 | **D4** | Application Web PHP / MySQL / PDO | barème iii — 30 points (avec D5) | A + C | L8 + L9 + L10 + L11 + L12 + L13 | **146 h** |
 | **D5** | Tests & validation (document de tests) | barème iii — −3 pts si le document manque | B + A | L14 | **24 h** |
-| **D6** | Soutenance (15 min + questions) | barème iv — 10 points | A + B + C | L16 | **14 h** |
-| | **Total projet** | | | 16 lots | **355 h** |
+| **D6** | Soutenance (15 min + questions) | barème iv — 10 points | A + B | L16 | **9 h** |
+| | **Total projet** | | | 16 lots | **350 h** |
 
 ### Arborescence WBS (niveaux 1 → 3)
 
 <!--ARBRE_WBS-->
 
 ```text
-MiniShop — 355 h estimées · rôles A/B/C · 12 semaines de référence (S1→S12)
+MiniShop — 350 h estimées · rôles A/B/C · 12 semaines de référence (S1→S12)
 │
 ├── D1 Pilotage, dépôt GitLab & collaboration — 19 h · rôles A · [barème v — contribution GitLab + README (10 pts, individuel)]
 │   ├── L1 Cadrage, relecture du sujet, grille de conformité, squelette du dépôt, README (14 h · A · S1)
@@ -95,8 +95,8 @@ MiniShop — 355 h estimées · rôles A/B/C · 12 semaines de référence (S1�
 │   └── L13 JavaScript client (panier, filtres, validation live, accessibilité) (14 h · C · S10)
 ├── D5 Tests & validation (document de tests) — 24 h · rôles B + A · [barème iii — −3 pts si le document manque]
 │   └── L14 Tests & validation : harnais, 29 tests SQL, cas fonctionnels, plan de recette, doc (24 h · B + A · S10/S11)
-└── D6 Soutenance (15 min + questions) — 14 h · rôles A + B + C · [barème iv — 10 points]
-    └── L16 Soutenance : support, trame, répétitions chronométrées, questions anticipées (14 h · A + B + C · S12)
+└── D6 Soutenance (15 min + questions) — 9 h · rôles A + B · [barème iv — 10 points]
+    └── L16 Soutenance : support, trame et questions anticipées (9 h · A + B · S12)
 ```
 
 *Niveau 1 = le projet ; niveau 2 = les 6 divisions (structure des livrables, « PBS ») ; niveau 3 = les lots ;
@@ -123,8 +123,8 @@ le niveau 4 — le travail lui-même — est détaillé section 5.*
 | **L13** | JavaScript client (panier, filtres, validation live, accessibilité) | D4 | C | S10 | 14 h |
 | **L14** | Tests & validation : harnais, 29 tests SQL, cas fonctionnels, plan de recette, doc | D5 | B + A | S10/S11 | 24 h |
 | **L15** | README final, arborescence propre, préparation du rendu | D1 | A | S11 | 5 h |
-| **L16** | Soutenance : support, trame, répétitions chronométrées, questions anticipées | D6 | A + B + C | S12 | 14 h |
-| | **Total** | | | S1→S12 | **355 h** |
+| **L16** | Soutenance : support, trame et questions anticipées | D6 | A + B | S12 | 9 h |
+| | **Total** | | | S1→S12 | **350 h** |
 
 ---
 
@@ -320,16 +320,15 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme **remon
 | | **Sous-total L14** | | **24** | répartition : A 10 h · B 14 h | |
 
 
-### D6 — Soutenance (15 min + questions) (14 h · rôles A + B + C · barème iv — 10 points)
+### D6 — Soutenance (15 min + questions) (9 h · rôles A + B · barème iv — 10 points)
 
-#### Lot L16 — Soutenance : support, trame, répétitions chronométrées, questions anticipées (14 h · A + B + C · S12)
+#### Lot L16 — Soutenance : support, trame et questions anticipées (9 h · A + B · S12)
 
 | ID | Tâche de travail | Rôle(s) de planification | h estimées | Définition de fini | Dépend de |
 |---|---|---|---:|---|---|
 | `D6-L16-01` | Support de soutenance : déroulé minute par minute, choix des démos | A | 4 | docs/03 : 15 min couvrant barème et démos | L15 |
 | `D6-L16-02` | Questions anticipées : sécurité, règles métier, choix de conception, réponses courtes | B | 5 | §3 du docs/03 connu par cœur | L14 |
-| `D6-L16-03` | Deux répétitions chronométrées + check-list de la dernière demi-heure | C | 5 | 15 min ± 30 s tenues deux fois | 01–02 |
-| | **Sous-total L16** | | **14** | répartition : A 4 h · B 5 h · C 5 h | |
+| | **Sous-total L16** | | **9** | répartition : A 4 h · B 5 h | |
 
 
 ---
@@ -340,19 +339,19 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme **remon
 
 | Niveau | Détail | Charge |
 |---|---|---:|
-| Tâches (niveau 4) | 84 tâches de travail estimées | **355 h** |
-| Lots (niveau 3) | 16 lots (L1→L16), sous-totaux des tâches | 355 h |
-| Divisions (niveau 2) | 6 divisions : D1 19 h · D2 54 h · D3 98 h · D4 146 h · D5 24 h · D6 14 h | 355 h |
-| Projet (niveau 1) | somme des estimations par rôle ; capacité et disponibilité non évaluées | **355 h** |
+| Tâches (niveau 4) | 83 tâches de travail estimées | **350 h** |
+| Lots (niveau 3) | 16 lots (L1→L16), sous-totaux des tâches | 350 h |
+| Divisions (niveau 2) | 6 divisions : D1 19 h · D2 54 h · D3 98 h · D4 146 h · D5 24 h · D6 9 h | 350 h |
+| Projet (niveau 1) | somme des estimations par rôle ; capacité et disponibilité non évaluées | **350 h** |
 
 ### 6.2 Estimation par rôle de planification (pas une capacité individuelle)
 
 | Code de rôle | Responsabilités prévues dans la WBS | Charge estimée | Part indicative |
 |---|---|---:|---:|
-| **A** | pilotage, intégration et back-office | 117 h | 33.0% |
-| **B** | modèle et base de données | 117 h | 33.0% |
-| **C** | présentation, sécurité et tests | 121 h | 34.1% |
-| | **Total estimé** | **355 h** | 100 % |
+| **A** | pilotage, intégration et back-office | 117 h | 33.4% |
+| **B** | modèle et base de données | 117 h | 33.4% |
+| **C** | présentation, sécurité et tests | 116 h | 33.1% |
+| | **Total estimé** | **350 h** | 100 % |
 
 Les codes A/B/C répartissent les estimations entre fonctions de planification ; une même personne peut porter plusieurs rôles. Ils ne décrivent ni les personnes, ni la contribution réelle, ni la disponibilité de l'équipe.
 
@@ -365,8 +364,8 @@ Valeurs arrondies à l'heure.*
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | **A** | 21 | 7 | 4 | 0 | 10 | 24 | 0 | 14 | 18 | 5 | 10 | 4 | **117** |
 | **B** | 0 | 8 | 32 | 20 | 30 | 8 | 0 | 0 | 0 | 7 | 7 | 5 | **117** |
-| **C** | 6 | 12 | 6 | 0 | 0 | 0 | 32 | 14 | 22 | 24 | 0 | 5 | **121** |
-| **Équipe** | **27** | **27** | **42** | **20** | **40** | **32** | **32** | **28** | **40** | **36** | **17** | **14** | **355** |
+| **C** | 6 | 12 | 6 | 0 | 0 | 0 | 32 | 14 | 22 | 24 | 0 | 0 | **116** |
+| **Équipe** | **27** | **27** | **42** | **20** | **40** | **32** | **32** | **28** | **40** | **36** | **17** | **9** | **350** |
 
 **Pics du scénario de planification par rôle** : S3 (B ≈ 32 h, lot L4 MCD/MLD), S5 (B ≈ 30 h, procédures), S7 (C = 32 h, front-office), S9 (charge agrégée d'environ 40 h). Ces valeurs ne sont ni des horaires individuels ni des disponibilités confirmées.
 Le calendrier et les charges hebdomadaires sont une base de discussion ; les replanifier après confirmation des disponibilités, sans déduire de capacité à partir du nombre de membres.
@@ -395,7 +394,7 @@ L12  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |  ██  
 L13  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |  ██  |   ·  |   ·    14 h  C
 L14  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |  ██  |  ██  |   ·    24 h  B + A
 L15  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |  ██  |   ·     5 h  A
-L16  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |  ██    14 h  A + B + C
+L16  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |  ██     9 h  A + B
 ```
 
 Jalons intermédiaires (CDC §13.4) : **J1** fin S2 (CDC validé) · **J2 bis** fin S3 (3 types de diagrammes livrés) ·
@@ -431,7 +430,7 @@ L1 ── L2 ── L3 ── L4 ── L5 ── L6 ── L7 ── L8 ── 
 
 | Poste | Base | Valeur |
 |---|---|---:|
-| Charge de production | 355 h × 60 €/h (indice pédagogique théorique) | 21 300 € théoriques |
+| Charge de production | 350 h × 60 €/h (indice pédagogique théorique) | 21 000 € théoriques |
 | Licences, hébergement, données | tout open source / poste personnel | 0 € |
 | **Budget externe réel** | | **0 €** |
 
@@ -442,7 +441,7 @@ Cette WBS propose un suivi des estimations par lot ; aucun relevé d'heures ni p
 ## 10. Exploitation dans GitLab (la WBS devient le tableau du projet)
 
 1. **Une issue par tâche de niveau 4** : titre `[(D3-L6-04)] sp_create_order, sp_add_order_line…` ;
-   description = définition de fini + dépendances ; 84 issues à suivre au total (bulk import CSV).
+   description = définition de fini + dépendances ; 83 issues à suivre au total (bulk import CSV).
 2. **Labels** : `D1`…`D6` (couleur de division), `L1`…`L16`, `A`/`B`/`C`, `jalon-J1`…`jalon-J6`.
 3. **Board** : colonnes *À faire → En cours → En revue (MR) → Fermé* ; une colonne par jalon en vue *Listes de jalons*.
 4. **MR** : une MR par lot minimum, **mergée par un autre développeur que l'auteur** (auto-merge interdit) ;
@@ -459,7 +458,7 @@ Le critère documentaire de `D1-L1-05` porte uniquement sur la charte versionné
 La CI automatisée du dépôt est GitHub Actions (`.github/workflows/ci.yml`) ; elle ne constitue pas une preuve de pipeline GitLab IUT.
 La documentation liée (CDC, conception, tests, README) est mise à jour avec le livrable concerné.
 
-**Replanification de l'équipe** — le README nomme deux membres alors que la WBS répartit 355 h entre trois rôles A/B/C. Aucun rôle n'est attribué à une personne sans confirmation. Le nombre de membres ne déclenche aucun retrait automatique d'exigences ; une répartition révisée exige une décision explicite de l'équipe.
+**Replanification de l'équipe** — le README nomme deux membres alors que la WBS répartit 350 h entre trois rôles A/B/C. Aucun rôle n'est attribué à une personne sans confirmation. Le nombre de membres ne déclenche aucun retrait automatique d'exigences ; une répartition révisée exige une décision explicite de l'équipe.
 
 ---
 

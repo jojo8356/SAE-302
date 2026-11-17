@@ -1,6 +1,6 @@
 # MiniShop — Todolist projet : suivi de base et planification historique
 
-**Périmètre :** 84 tâches de la WBS, dont la charge totale historique est estimée à 355 h. La répartition `OK`/`OK*`/`PARTIEL`/`[!]` reprend la revue tâche par tâche de `docs/19` ; elle ne constitue pas un nouvel audit exhaustif du working tree actuel.
+**Périmètre :** 83 tâches de la WBS, dont la charge totale historique est estimée à 350 h. La répartition `OK`/`OK*`/`PARTIEL`/`[!]` reprend la revue tâche par tâche de `docs/19` ; elle ne constitue pas un nouvel audit exhaustif du working tree actuel.
 **Avertissement temporel :** `docs/19` contient un addendum daté du 15/11/2026, postérieur à la date du présent rendu (23 octobre 2026). Les statuts sont repris comme cartographie demandée, mais aucun run ou événement daté après le 23/10 n'est crédité ici comme réalisé. La présence de code ou de harnais n'est pas assimilée à son exécution ; seuls les replays explicitement rapportés sont distingués, sans en déduire une validation humaine.
 SQL/MySQL/PDO reste le pilote par défaut ; JSON est une option explicite pour les tests isolés. **D1-L1-01** est `OK` sur attestation utilisateur et capture fournie du courriel ; la capture montre l’objet, le destinataire affiché, la composition et l’URL GitLab, mais ni la date ni le dossier Envoyés. Aucune vérification directe de la boîte ni confirmation de remise n’est revendiquée. **D1-L1-02** est `OK` pour l’arborescence : l’inventaire `arbre-arena.txt` (542 chemins) correspond exactement aux chemins Git du commit `82a1279fff756531489b470c7a6d946e3510085f` ; chacun des six dossiers racine exigés contient des chemins suivis et `.gitignore` est suivi comme fichier. Cela ne valide pas le fonctionnement du code et ne décrit pas le checkout local sur `e0c554f`. **D1-L1-07** est `OK` pour la synthèse asynchrone des retours continus dans `docs/21-synthese-retours-audit.md` ; aucune réunion complète, approbation collective ou validation pédagogique n’est revendiquée.
 La mise en ligne de démonstration et le staging ont été retirés du périmètre sans remplacement. Le graphe, les dépendances et le plan S6 restent la photographie du 23/09/2026, pas un ordre de priorité actuel.
@@ -8,8 +8,8 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 
 | | |
 |---|---|
-| **Répartition des statuts d'audit** | **32 `OK` + 48 `OK*`**, 0 `PARTIEL`, 4 `[!]` non vérifiables (84 tâches) ; **4 tâches ouvertes ou à confirmer** |
-| **Estimation WBS historique affectée aux tâches ouvertes** | **16 h** (dont 0 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée |
+| **Répartition des statuts d'audit** | **32 `OK` + 48 `OK*`**, 0 `PARTIEL`, 3 `[!]` non vérifiables (83 tâches) ; **3 tâches ouvertes ou à confirmer** |
+| **Estimation WBS historique affectée aux tâches ouvertes** | **11 h** (dont 0 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée |
 | **Temps réellement passé** | Non mesuré ; aucun nombre d'heures accomplies n'est déduit des statuts |
 | **Backlog asynchrone de la photographie** | **5 h estimées** dans le graphe du 23/09 ; ni une disponibilité actuelle ni une mesure d'effort |
 | **Dernier contrôle non-SQL** | `node scripts/run-all-tests.mjs --sans-sql` : code 0 ; SQL/PDO et PHP CLI natif non joués (détails §8) |
@@ -29,8 +29,8 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 | **D3 — Conception de la base de données & SQL** | 98 h | 0 | 22 | 0 | 1 | 4 h |
 | **D4 — Application Web PHP / MySQL / PDO** | 146 h | 21 | 11 | 0 | 0 | 0 h |
 | **D5 — Tests & validation** | 24 h | 3 | 2 | 0 | 1 | 5 h |
-| **D6 — Soutenance** | 14 h | 0 | 2 | 0 | 1 | 5 h |
-| **Total** | **355 h** | **32** | **48** | **0** | **4** | **16 h** |
+| **D6 — Soutenance** | 9 h | 0 | 2 | 0 | 0 | 0 h |
+| **Total** | **350 h** | **32** | **48** | **0** | **3** | **11 h** |
 
 ### 1.2 Estimations WBS par rôle de planification (A/B/C ; aucune correspondance nominative établie)
 
@@ -38,9 +38,9 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 |---|---:|---:|---|
 | **A** | 117 h | 11 h | rôle de planification du socle, panier/commande et back-office ; disponibilité actuelle non vérifiée |
 | **B** | 117 h | 0 h | rôle de planification base de données/tests ; disponibilité actuelle non vérifiée |
-| **C** | 121 h | 5 h | rôle de planification front-office/sécurité/JS ; disponibilité et attribution nominative non établies |
+| **C** | 116 h | 0 h | rôle de planification front-office/sécurité/JS ; disponibilité et attribution nominative non établies |
 
-> Les **16 h** sont la somme des estimations WBS initiales des 0 tâches `PARTIEL` et 4 tâches `[!]`. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
+> Les **11 h** sont la somme des estimations WBS initiales des 0 tâches `PARTIEL` et 3 tâches `[!]`. Elles sont à revalider ; il ne s'agit ni de temps restant mesuré, ni d'heures passées, ni d'une estimation actualisée du travail à fournir.
 > Les nombres de statut ne décrivent que les critères précis de la revue. Un `OK*` ne signifie ni que tout le produit est validé, ni que les tests associés ont été exécutés. Le registre manuel de recette reste `NON JOUÉ` pour ses 200 entrées.
 > Le dernier run non-SQL est vert, mais reste une validation de code/tests sur le chemin JSON isolé : il ne prouve ni l'exécution PDO/MySQL, ni les 200 cas manuels, ni une recette humaine ou des mesures sur cible.
 
@@ -66,7 +66,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 | 5 | `D3-L6-07` | Harnais et fichiers SQL T-25…T-29 présents ; l'exécution est suivie séparément par D5-L14-02 | A | 0 | P1 | le manifeste et la fixture étaient signalés présents dans la photographie |
 | 6 | `D3-L7-05` | Tests directs T-13…T-24 présents ; aucun rejeu SQL du checkout courant n'est prouvé | A | 0 | P1 | la validation du 23/09 est historique ; le fichier rapport porte une date future 27/10 et ne prouve pas de rejeu à la coupure 23/10 |
 | 7 | `D4-L8-01` | Front controller unique et routeur à liste blanche présents ; routes inconnues en 404 et tests de routes disponibles | A | 0 | P1 | les dépendances étaient marquées faites dans la photographie ; leur état n'a pas été revérifié dans cette liste |
-| 8 | `D6-L16-01` | Support de soutenance docs/12 et livrables PPTX/PDF/DOCX présents ; répétition à distinguer | A | 0 | P2 | docs/03 était déjà présent dans la photographie ; le statut des diapositives est à vérifier dans la todolist |
+| 8 | `D6-L16-01` | Support de soutenance docs/12 et livrables PPTX/PDF/DOCX présents | A | 0 | P2 | docs/03 était déjà présent dans la photographie ; le statut des diapositives est à vérifier dans la todolist |
 | 9 | `D2-L3-06` | Sources .puml, docs/diagrams/render.sh et job PlantUML présents | B | 0 | P1 | constat du 23/09 : les PNG existaient ; les sources et le script de rendu étaient alors signalés manquants (voir les corrections ultérieures de l'audit) |
 | 10 | `D3-L5-05` | scripts/load_db.sh présent et appelé par le workflow SQL ; le run SQL reste à effectuer séparément | B | 0 | P1 | le rapport de la campagne du 23/09 indiquait les quatre fichiers SQL corrigés ; cela ne remplace pas un contrôle actuel |
 | 11 | `D5-L14-04` | Concurrence HTTP 20/12 exécutée sur VM native le 17/11/2026 (f9b614f, concurrence_http.php, 8/8 : 20 acteurs / 12 unités, 12 commandes, 8 refus, stock final 0 ; docs/pv-recette.md) | B | 0 | P1 | le scénario de charge était défini dans la planification ; vérifier l'état actuel du harnais |
@@ -86,7 +86,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 
 Dans le graphe de référence, les tâches de cette section attendent leurs dépendances ; la chaîne critique prévue est :
 
-> **L8 (socle) → L9 (front-office) → L10 (panier/commande) → L11 (back-office) → L12 (sécurité) → L14 (tests) → L15 (rendu) → L16 (répétition)**
+> **L8 (socle) → L9 (front-office) → L10 (panier/commande) → L11 (back-office) → L12 (sécurité) → L14 (tests) → L15 (rendu) → L16 (soutenance)**
 
 | Ordre du plan | Lot | h WBS initiales | Dépendances prévues | Débloque dans le plan | Jalon historique |
 |---|---|---:|---|---|---|
@@ -96,8 +96,8 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | 4 | **L11** back-office (produits, catégories, stocks, commandes, statuts) | 30 | L8-04 (auth admin) ; vues après L11-02..04 | L12, L14-03 | **J4** parcours admin (S9) |
 | 5 | **L12** durcissement sécurité (CSRF, IDOR, échappement, en-têtes) | 20 | L9 + L10 + L11 (à l'exception du script, §2) | L14-03 | S-01…S-08 au vert (S9-S10) |
 | 6 | **L14** tests & validation (sauf parties déjà async) | 15 | L12 ; 02 dès que le harnais est prêt | L15 | **J5** recette exécutée (S10) |
-| 7 | **L15** README final, arborescence et tag de rendu | 3 | L11 + L14 | L16-03 | documentation et tag final préparés (S11) |
-| 8 | **L16-03** répétitions chronométrées | 5 | L16-01 (slides) + L11 (démo réelle) | — | **J6** soutenance (S12) |
+| 7 | **L15** README final, arborescence et tag de rendu | 3 | L11 + L14 | L16 | documentation et tag final préparés (S11) |
+| 8 | **L16** soutenance (support et questions anticipées) | 9 | L14 + L15 | — | **J6** soutenance (S12) |
 
 ### Sous-dépendances internes à respecter (les pièges classiques)
 
@@ -123,13 +123,13 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
  D3-L5-05 load_db (3h,B)│   EN PARALLÈLE                   ├─> L11 back (30h, A+C) ┘
  D3-L6-06/07 tNN (4h,A) │   de la chaîne ────────────────> │
  D3-L7-05 tNN (4h, A)   │                                   └─> L12 sécu (20h, C) ──> L14 tests (15h) ──> L15 rendu (3h)
- D6-L16-01 slides (4h,A)                                                                   └─> L16-03 répét (5h)
+ D6-L16-01 slides (4h,A)                                                                   └─> L16 soutenance (S12)
  D4-L12-05* / L14-04* / L14-06* (préparations)
 ```
 
 ---
 
-## 5. Détail tâche par tâche — 84 tâches WBS, statuts de l'audit et actions restantes
+## 5. Détail tâche par tâche — 83 tâches WBS, statuts de l'audit et actions restantes
 
 ### D1 — Pilotage, dépôt GitLab & collaboration (7 `OK`, 0 `OK*`, 0 `PARTIEL`, 1 `[!]` ; 2 h d'estimations WBS initiales à revalider sur 19 h de référence)
 
@@ -302,15 +302,14 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | `D5-L14-06` | Scripts présents ; mesures p95 HTTP/SQL sur machine et volumétrie cibles non attestées | A | 5 | [!] `à vérifier / externe` `ASYNC*` | L9;L10;L11 | P2 |
 
 
-### D6 — Soutenance (0 `OK`, 2 `OK*`, 0 `PARTIEL`, 1 `[!]` ; 5 h d'estimations WBS initiales à revalider sur 14 h de référence)
+### D6 — Soutenance (0 `OK`, 2 `OK*`, 0 `PARTIEL`, 0 `[!]` ; 0 h d'estimations WBS initiales à revalider sur 9 h de référence)
 
-#### ⚠️ Lot L16 — Soutenance (charge WBS initiale 14 h ; estimation affectée aux tâches ouvertes 5 h)
+#### ✅* Lot L16 — Soutenance (charge WBS initiale 9 h ; estimation affectée aux tâches ouvertes 0 h)
 
 | ID | Tâche | Rôle de planification | Estimation WBS initiale affectée (h) | Statut | Dépendances du plan | Prio de référence |
 |---|---|---|---:|---|---|---|
-| `D6-L16-01` | Support de soutenance docs/12 et livrables PPTX/PDF/DOCX présents ; répétition à distinguer | A | 0 | ✅* `OK*` `ASYNC` | — | P2 |
+| `D6-L16-01` | Support de soutenance docs/12 et livrables PPTX/PDF/DOCX présents | A | 0 | ✅* `OK*` `ASYNC` | — | P2 |
 | `D6-L16-02` | Questions anticipées + réponses courtes (docs/03 §3) | B | 0 | ✅* `OK*` | — | — |
-| `D6-L16-03` | Deux répétitions chronométrées avec la démo réelle : aucune trace attestée | C | 5 | [!] `à vérifier / externe` | D6-L16-01;L11 | P2 |
 
 
 ---
@@ -328,7 +327,7 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | **L11 complet** (J4 prévu) | L12 en mode validation, L14-03 (F-tests) |
 | **L12 complet** (S-01…S-08 vert) | L14-03/05 (recette finale) |
 | **L14 complet** (J5 prévu) | D1-L15-02 (README final et statut réel des tests) |
-| **L15-03** tag `v1.0-rendu` | L16-03 (répétitions sur la démo figée) |
+| **L15-03** tag `v1.0-rendu` | soutenance figée (L16) |
 
 ---
 
@@ -360,4 +359,4 @@ Le prochain contrôle SQL doit être rapporté séparément, avec le SHA et l'id
 
 ---
 
-*Todolist MiniShop v1.7 — mise à jour du 23/10/2026 ; répartition des statuts reprise de la revue tâche par tâche de `docs/19`, sans nouvel audit exhaustif du working tree. `docs/19` contient un addendum daté du 15/11/2026, postérieur à cette date : aucun événement ou résultat portant une date future n'est crédité comme réalisé. Le run non-SQL du 23/10 est vert via WASM/JSON isolé ; SQL/PDO, PHP CLI natif et validations humaines restent hors preuve. WBS : 84 tâches et 355 h estimées historiquement ; les 82 h affectées aux tâches ouvertes sont des estimations initiales à revalider, pas du temps réel ni une prévision actuelle. D1-L1-01 repose sur l'attestation utilisateur et la capture fournie (date/dossier Envoyés non visibles, pas de vérification directe) ; D1-L1-02 repose sur l'inventaire de 542 chemins, identique à l'arbre Git du commit `82a1279fff756531489b470c7a6d946e3510085f`, sans vérification fonctionnelle ni assimilation au checkout local `e0c554f` ; D1-L1-07 sur la synthèse asynchrone des feedbacks, sans réunion complète revendiquée. Le registre de recette reste 200 lignes NON JOUÉ ; aucun déploiement, test manuel LineServ, restauration, revue croisée, approbation pédagogique, mesure sur cible ou répétition de soutenance n'est inféré. Les charges A/B/C sont des estimations non nominatives.*
+*Todolist MiniShop v1.7 — mise à jour du 23/10/2026 ; répartition des statuts reprise de la revue tâche par tâche de `docs/19`, sans nouvel audit exhaustif du working tree. `docs/19` contient un addendum daté du 15/11/2026, postérieur à cette date : aucun événement ou résultat portant une date future n'est crédité comme réalisé. Le run non-SQL du 23/10 est vert via WASM/JSON isolé ; SQL/PDO, PHP CLI natif et validations humaines restent hors preuve. WBS : 83 tâches et 350 h estimées historiquement ; les heures affectées aux tâches ouvertes sont des estimations initiales à revalider, pas du temps réel ni une prévision actuelle. D1-L1-01 repose sur l'attestation utilisateur et la capture fournie (date/dossier Envoyés non visibles, pas de vérification directe) ; D1-L1-02 repose sur l'inventaire de 542 chemins, identique à l'arbre Git du commit `82a1279fff756531489b470c7a6d946e3510085f`, sans vérification fonctionnelle ni assimilation au checkout local `e0c554f` ; D1-L1-07 sur la synthèse asynchrone des feedbacks, sans réunion complète revendiquée. Le registre de recette reste 200 lignes NON JOUÉ ; aucun déploiement, test manuel LineServ, restauration, approbation pédagogique ou mesure sur cible n'est inféré. Les charges A/B/C sont des estimations non nominatives.*

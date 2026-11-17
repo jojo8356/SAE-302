@@ -126,7 +126,6 @@ T = {
  "L16": [
   ("D6-L16-01","Slides de la soutenance (le déroulé docs/03 existe ; les diapositives restent à produire)","A",4,"P","—","P2","ASYNC"),
   ("D6-L16-02","Questions anticipées + réponses courtes (docs/03 §3)","B",0,"F","—","—",""),
-  ("D6-L16-03","Deux répétitions chronométrées avec la démo réelle + check-list","C",5,"T","D6-L16-01;L11","P2",""),
  ],
 }
 
@@ -135,12 +134,12 @@ T = {
 # action humaine/externe/mesure qui n'est pas attestable par le seul dépôt.
 AUDIT_OK = {"D1-L1-01", "D1-L1-02", "D1-L1-03", "D1-L1-04", "D1-L1-05", "D1-L1-07", "D1-L15-02", "D2-L2-06", "D4-L13-03", "D4-L13-04", "D4-L8-01", "D4-L8-02", "D4-L8-03", "D4-L8-04", "D4-L8-05", "D4-L9-01", "D4-L9-02", "D4-L9-03", "D4-L9-04", "D4-L9-05", "D4-L10-01", "D4-L10-02", "D4-L10-06", "D4-L11-03", "D4-L11-04", "D4-L12-01", "D4-L12-02", "D4-L12-03", "D4-L12-04", "D5-L14-02", "D5-L14-04", "D5-L14-05"}
 AUDIT_PARTIEL = set()
-AUDIT_NON_VERIFIABLE = {"D1-L15-03", "D3-L4-06", "D5-L14-06", "D6-L16-03"}
+AUDIT_NON_VERIFIABLE = {"D1-L15-03", "D3-L4-06", "D5-L14-06"}
 
 # Ces h sont les estimations initiales WBS affectées aux tâches ouvertes, pas un relevé
 # de temps passé ni une estimation actualisée du travail restant. Cela vaut aussi pour [!].
 AUDIT_H_RESTANT = {
-    "D1-L15-03": 2, "D3-L4-06": 4, "D5-L14-06": 5, "D6-L16-03": 5,
+    "D1-L15-03": 2, "D3-L4-06": 4, "D5-L14-06": 5,
 }
 AUDIT_LIBELLES = {
     "D1-L1-02": "Inventaire Git fourni (542 chemins) identique à l'arbre du commit 82a1279fff756531489b470c7a6d946e3510085f : des chemins sont suivis sous chacun des dossiers app/, public/, sql/, tests/, docs/, scripts/ et le fichier .gitignore ; structure vérifiée, pas le fonctionnement du code",
@@ -188,8 +187,7 @@ AUDIT_LIBELLES = {
     "D5-L14-04": "Concurrence HTTP 20/12 exécutée sur VM native le 17/11/2026 (f9b614f, concurrence_http.php, 8/8 : 20 acteurs / 12 unités, 12 commandes, 8 refus, stock final 0 ; docs/pv-recette.md)",
     "D5-L14-05": "Matrice §9 complète ; PV de recette généré sur VM réelle (docs/pv-recette.md, 60/60 étapes sur f9b614f, 17/11/2026) avec décision et visas nominatifs de Johan Polsinelli et Chahd Gouiaa ; les 200 entrées manuelles de docs/13-suivi-recette-uc.csv restent NON JOUÉ",
     "D5-L14-06": "Scripts présents ; mesures p95 HTTP/SQL sur machine et volumétrie cibles non attestées",
-    "D6-L16-01": "Support de soutenance docs/12 et livrables PPTX/PDF/DOCX présents ; répétition à distinguer",
-    "D6-L16-03": "Deux répétitions chronométrées avec la démo réelle : aucune trace attestée",
+    "D6-L16-01": "Support de soutenance docs/12 et livrables PPTX/PDF/DOCX présents",
 }
 _ALL_IDS = {task[0] for tasks in T.values() for task in tasks}
 AUDIT_OK_STAR = _ALL_IDS - AUDIT_OK - AUDIT_PARTIEL - AUDIT_NON_VERIFIABLE
@@ -197,9 +195,9 @@ AUDIT_STATUT = ({tid: "F" for tid in AUDIT_OK}
                  | {tid: "F*" for tid in AUDIT_OK_STAR}
                  | {tid: "P" for tid in AUDIT_PARTIEL}
                  | {tid: "U" for tid in AUDIT_NON_VERIFIABLE})
-assert len(_ALL_IDS) == 84
+assert len(_ALL_IDS) == 83
 assert len(AUDIT_OK) == 32 and len(AUDIT_OK_STAR) == 48
-assert len(AUDIT_PARTIEL) == 0 and len(AUDIT_NON_VERIFIABLE) == 4
+assert len(AUDIT_PARTIEL) == 0 and len(AUDIT_NON_VERIFIABLE) == 3
 assert set(AUDIT_H_RESTANT) == AUDIT_PARTIEL | AUDIT_NON_VERIFIABLE
 for lot, tasks in T.items():
     T[lot] = [
@@ -219,7 +217,7 @@ DIV_NOM = {"D1":"Pilotage, dépôt GitLab & collaboration","D2":"Document de sp�
            "D5":"Tests & validation","D6":"Soutenance"}
 COULEURS = {"D1":"#64748b","D2":"#7c2d12","D3":"#b45309","D4":"#15803d","D5":"#b91c1c","D6":"#6d28d9"}
 
-LOT_H = {"L1":14,"L2":26,"L3":28,"L4":28,"L5":20,"L6":30,"L7":20,"L8":22,"L9":32,"L10":28,"L11":30,"L12":20,"L13":14,"L14":24,"L15":5,"L16":14}
+LOT_H = {"L1":14,"L2":26,"L3":28,"L4":28,"L5":20,"L6":30,"L7":20,"L8":22,"L9":32,"L10":28,"L11":30,"L12":20,"L13":14,"L14":24,"L15":5,"L16":9}
 
 # ---------- calculs + assertions ----------
 REST = 0
@@ -243,12 +241,12 @@ for lot, tasks in T.items():
     DIV_REST[div] += sum(task[3] for task in tasks)
 
 # Totaux issus de la WBS de référence : ils ne sont pas des relevés d'heures réelles.
-WBS_PERS = {"A":117,"B":117,"C":121}
+WBS_PERS = {"A":117,"B":117,"C":116}
 TOTAL = sum(LOT_H.values())
-assert TOTAL == 355, TOTAL
+assert TOTAL == 350, TOTAL
 assert sum(WBS_PERS.values()) == TOTAL
-assert sum(DIV_REST.values()) == REST == 16
-assert PERS_REST == {"A":11,"B":0,"C":5}, PERS_REST
+assert sum(DIV_REST.values()) == REST == 11
+assert PERS_REST == {"A":11,"B":0,"C":0}, PERS_REST
 
 N_TASKS = sum(len(tasks) for tasks in T.values())
 STATUTS = ("F", "F*", "P", "U", "T")
@@ -259,8 +257,8 @@ COUNTS_BY_DIV = {
 }
 ASYNC_BY_PERSON = {person: sum(row[3] for row in ASYNC_TASKS if row[2] == person) for person in "ABC"}
 ASYNC_H = sum(ASYNC_BY_PERSON.values())
-assert N_TASKS == 84 and sum(COUNTS.values()) == N_TASKS, (N_TASKS, COUNTS)
-assert COUNTS == {"F":32,"F*":48,"P":0,"U":4,"T":0}, COUNTS
+assert N_TASKS == 83 and sum(COUNTS.values()) == N_TASKS, (N_TASKS, COUNTS)
+assert COUNTS == {"F":32,"F*":48,"P":0,"U":3,"T":0}, COUNTS
 assert sum(COUNTS_BY_DIV[d][s] for d in DIV_LOTS for s in STATUTS) == N_TASKS
 BADGE = {"F":"✅","F*":"✅*","P":"🟡","U":"[!]","T":"⬜"}
 STATUT_NOM = {"F":"OK","F*":"OK*","P":"PARTIEL","U":"à vérifier / externe","T":"à faire"}
@@ -362,7 +360,7 @@ A("## 3. Tâches dépendantes — séquence de référence du plan historique (�
 A("")
 A("Dans le graphe de référence, les tâches de cette section attendent leurs dépendances ; la chaîne critique prévue est :")
 A("")
-A("> **L8 (socle) → L9 (front-office) → L10 (panier/commande) → L11 (back-office) → L12 (sécurité) → L14 (tests) → L15 (rendu) → L16 (répétition)**")
+A("> **L8 (socle) → L9 (front-office) → L10 (panier/commande) → L11 (back-office) → L12 (sécurité) → L14 (tests) → L15 (rendu) → L16 (soutenance)**")
 A("")
 A("| Ordre du plan | Lot | h WBS initiales | Dépendances prévues | Débloque dans le plan | Jalon historique |")
 A("|---|---|---:|---|---|---|")
@@ -372,8 +370,8 @@ A("| 3 | **L10** panier + commande (session, UC-06/07/08/09) | 28 | L8 ; écrans
 A("| 4 | **L11** back-office (produits, catégories, stocks, commandes, statuts) | 30 | L8-04 (auth admin) ; vues après L11-02..04 | L12, L14-03 | **J4** parcours admin (S9) |")
 A("| 5 | **L12** durcissement sécurité (CSRF, IDOR, échappement, en-têtes) | 20 | L9 + L10 + L11 (à l'exception du script, §2) | L14-03 | S-01…S-08 au vert (S9-S10) |")
 A("| 6 | **L14** tests & validation (sauf parties déjà async) | 15 | L12 ; 02 dès que le harnais est prêt | L15 | **J5** recette exécutée (S10) |")
-A("| 7 | **L15** README final, arborescence et tag de rendu | 3 | L11 + L14 | L16-03 | documentation et tag final préparés (S11) |")
-A("| 8 | **L16-03** répétitions chronométrées | 5 | L16-01 (slides) + L11 (démo réelle) | — | **J6** soutenance (S12) |")
+A("| 7 | **L15** README final, arborescence et tag de rendu | 3 | L11 + L14 | L16 | documentation et tag final préparés (S11) |")
+A("| 8 | **L16** soutenance (support et questions anticipées) | 9 | L14 + L15 | — | **J6** soutenance (S12) |")
 A("")
 A("### Sous-dépendances internes à respecter (les pièges classiques)")
 A("")
@@ -399,13 +397,13 @@ A(" D2-L3-06 puml (4h, B)  ├─ tout cela tourne                │           
 A(" D3-L5-05 load_db (3h,B)│   EN PARALLÈLE                   ├─> L11 back (30h, A+C) ┘")
 A(" D3-L6-06/07 tNN (4h,A) │   de la chaîne ────────────────> │")
 A(" D3-L7-05 tNN (4h, A)   │                                   └─> L12 sécu (20h, C) ──> L14 tests (15h) ──> L15 rendu (3h)")
-A(" D6-L16-01 slides (4h,A)                                                                   └─> L16-03 répét (5h)")
+A(" D6-L16-01 slides (4h,A)                                                                   └─> L16 soutenance (S12)")
 A(" D4-L12-05* / L14-04* / L14-06* (préparations)")
 A("```")
 A("")
 A("---")
 A("")
-A("## 5. Détail tâche par tâche — 84 tâches WBS, statuts de l'audit et actions restantes")
+A("## 5. Détail tâche par tâche — 83 tâches WBS, statuts de l'audit et actions restantes")
 A("")
 for d in ["D1","D2","D3","D4","D5","D6"]:
     tot = sum(LOT_H[l] for l in DIV_LOTS[d])
@@ -441,7 +439,7 @@ A("| **L10-04** CommandeController OK | L10-05/06 (écrans), L13 (JS panier), L1
 A("| **L11 complet** (J4 prévu) | L12 en mode validation, L14-03 (F-tests) |")
 A("| **L12 complet** (S-01…S-08 vert) | L14-03/05 (recette finale) |")
 A("| **L14 complet** (J5 prévu) | D1-L15-02 (README final et statut réel des tests) |")
-A("| **L15-03** tag `v1.0-rendu` | L16-03 (répétitions sur la démo figée) |")
+A("| **L15-03** tag `v1.0-rendu` | soutenance figée (L16) |")
 A("")
 A("---")
 A("")
@@ -473,7 +471,7 @@ A("Le prochain contrôle SQL doit être rapporté séparément, avec le SHA et l
 A("")
 A("---")
 A("")
-A("*Todolist MiniShop v1.7 — mise à jour du 23/10/2026 ; répartition des statuts reprise de la revue tâche par tâche de `docs/19`, sans nouvel audit exhaustif du working tree. `docs/19` contient un addendum daté du 15/11/2026, postérieur à cette date : aucun événement ou résultat portant une date future n'est crédité comme réalisé. Le run non-SQL du 23/10 est vert via WASM/JSON isolé ; SQL/PDO, PHP CLI natif et validations humaines restent hors preuve. WBS : 84 tâches et 355 h estimées historiquement ; les 82 h affectées aux tâches ouvertes sont des estimations initiales à revalider, pas du temps réel ni une prévision actuelle. D1-L1-01 repose sur l'attestation utilisateur et la capture fournie (date/dossier Envoyés non visibles, pas de vérification directe) ; D1-L1-02 repose sur l'inventaire de 542 chemins, identique à l'arbre Git du commit `82a1279fff756531489b470c7a6d946e3510085f`, sans vérification fonctionnelle ni assimilation au checkout local `e0c554f` ; D1-L1-07 sur la synthèse asynchrone des feedbacks, sans réunion complète revendiquée. Le registre de recette reste 200 lignes NON JOUÉ ; aucun déploiement, test manuel LineServ, restauration, revue croisée, approbation pédagogique, mesure sur cible ou répétition de soutenance n'est inféré. Les charges A/B/C sont des estimations non nominatives.*")
+A("*Todolist MiniShop v1.7 — mise à jour du 23/10/2026 ; répartition des statuts reprise de la revue tâche par tâche de `docs/19`, sans nouvel audit exhaustif du working tree. `docs/19` contient un addendum daté du 15/11/2026, postérieur à cette date : aucun événement ou résultat portant une date future n'est crédité comme réalisé. Le run non-SQL du 23/10 est vert via WASM/JSON isolé ; SQL/PDO, PHP CLI natif et validations humaines restent hors preuve. WBS : 83 tâches et 350 h estimées historiquement ; les heures affectées aux tâches ouvertes sont des estimations initiales à revalider, pas du temps réel ni une prévision actuelle. D1-L1-01 repose sur l'attestation utilisateur et la capture fournie (date/dossier Envoyés non visibles, pas de vérification directe) ; D1-L1-02 repose sur l'inventaire de 542 chemins, identique à l'arbre Git du commit `82a1279fff756531489b470c7a6d946e3510085f`, sans vérification fonctionnelle ni assimilation au checkout local `e0c554f` ; D1-L1-07 sur la synthèse asynchrone des feedbacks, sans réunion complète revendiquée. Le registre de recette reste 200 lignes NON JOUÉ ; aucun déploiement, test manuel LineServ, restauration, approbation pédagogique ou mesure sur cible n'est inféré. Les charges A/B/C sont des estimations non nominatives.*")
 
 OUT_MD.write_text("\n".join(md), encoding="utf-8")
 print(f"OK MD : {OUT_MD} ({len(md)} lignes) — {N_TASKS} tâches, {REST} h d'estimations WBS initiales affectées aux tâches ouvertes, async {len(ASYNC_TASKS)} tâches")
