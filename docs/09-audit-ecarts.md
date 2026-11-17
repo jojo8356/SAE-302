@@ -14,7 +14,7 @@
 
 ## Addendum final — état vérifié le 17 novembre 2026 (VM Debian 13, branche `arena/b5a4074b-sae-302`)
 
-Cet addendum complète la photographie du 15/11/2026 avec les validations exécutées sur VM Debian 13 native (**PHP 8.4.27 cli**, **MariaDB 11.8.6**) et les clôtures documentaires consignées jusqu’au 17/11/2026 :
+Cet addendum synthétise l’état final vérifié sur VM Debian 13 native (**PHP 8.4.27 cli**, **MariaDB 11.8.6**) et les clôtures documentaires consignées au 17/11/2026 :
 
 | Domaine | État vérifié (17/11/2026) | Limite de preuve maintenue |
 |---|---|---|
@@ -25,20 +25,7 @@ Cet addendum complète la photographie du 15/11/2026 avec les validations exécu
 
 ---
 
-## État courant vérifié — 15 novembre 2026 *(photographie historique antérieure à l’addendum final du 17/11/2026)*
-
-Cette section décrit les contrôles consignés pour le checkout du commit `b8edfc9` (branche `arena/10afc76d-sae-302`), vérifié le 15/11/2026 ; elle ne transforme pas les constats historiques A→J en résultats actuels. Les sections A→J conservent la photographie antérieure au 23/10/2026. Les exécutions du 15/11 sont distinctes du run restreint du 23/10 et ne requalifient pas l’audit historique.
-
-| Domaine | État vérifié | Limite de preuve |
-|---|---|---|
-| Pilote applicatif | SQL/MySQL/PDO est le pilote par défaut ; JSON reste une option explicite. | La configuration ne prouve pas qu’une connexion MySQL a été ouverte. |
-| Sources SQL | Inventaire statique : 9 tables, 3 vues, 18 procédures, 1 fonction et 16 triggers. Les repositories contiennent un point d’appel statiquement repéré pour chacune des 18 procédures. | Les compteurs et références de code ne prouvent ni chargement, ni exécution PDO/MySQL, ni parcours HTTP SQL complet. |
-| Tests automatisés (15/11) | `node scripts/run-all-tests.mjs --sans-sql` : code 0 via PHP-WASM 8.2 ; T-01…T-29 sur JSON (29/29), 297 vérifications, 57 tests PHPUnit, linter strict 167 fichiers/0 violation et E2E HTTP isolé (338 vérifications). `node tests/node/preferences_test.mjs` : code 0, DOM FR/EN (48 vues, 45 messages métier). | Le run du 15/11 exclut SQL ; aucun résultat PDO/MySQL n’en est déduit. L’E2E WASM/DOM n’est pas une recette navigateur réelle. PHP CLI natif est absent ; son analyse de compilation reste non jouée. |
-| Inventaire | `docs/17-inventaire-projet.csv` contient 542 chemins uniques, identiques aux 542 chemins suivis par Git dans le checkout. | Le contrôle porte sur les chemins et la présence, pas sur la justesse fonctionnelle du contenu. |
-| WBS / todolist | `docs/05` : 84 tâches et 355 h estimées. `docs/06` : 164 h classées terminées, 191 h restantes et 12 tâches classées asynchrones. | Les heures sont des estimations/classifications de planification, pas des pointages ni une mesure de travail humain. |
-| Environnement réel | Aucun déploiement, essai manuel LineServ ou restauration de base n’est revendiqué. Les tests SQL de CI, lorsqu’ils sont exécutés, utilisent une base temporaire distincte de toute cible manuelle. | Les limites ci-dessus restent à lever par un run SQL/PDO daté sur environnement isolé et par les parcours E2E correspondants. |
-
-Les sections A→J qui suivent sont conservées comme **audit historique** : leurs diagnostics, nombres de tests et plans de correction décrivent l’état antérieur et ne doivent pas être lus comme le statut actuel.
+Les sections A→J qui suivent sont conservées comme **audit historique** : leurs diagnostics, nombres de tests et plans de correction décrivent l’état antérieur au 23/10/2026 et ne doivent pas être lus comme le statut actuel.
 
 ## 0. Synthèse historique
 

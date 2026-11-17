@@ -2,23 +2,12 @@
 
 *Rapport versionné associé au harnais `tests/sql/` (manifeste : `tests/sql/manifest.txt`).*
 
-> **Avertissement de datation — coupure documentaire 23/10/2026 :** ce fichier porte une mention de rejeu datée du 27/10/2026, date future à la coupure. Le texte ci-dessous ne peut donc pas être considéré comme preuve d’un événement ou résultat acquis au 23/10 ; sa date, sa révision et ses sorties doivent être confirmées après la date portée par le fichier.
->
-> **Mention portée par l’artefact, non vérifiée à la coupure : rejeu du 27/10/2026 sur cette révision — 29/29 conformes.** La campagne lancée par
-> `php tests/php/sql_integration.php` (base `minishop_test`, MariaDB 11.8.6, Debian 13) a d'abord
-> donné **22/29** : sept scénarios dépendaient d'un état qu'ils ne créaient pas eux-mêmes
-> (commandes de démonstration renumérotées, brouillon vide supprimé par la fixture, hash de
-> 61 caractères dans une colonne `CHAR(60)`, assertion de montant ignorant les frais de port),
-> et le septième butait sur la **collation de session** (`ERROR 1267 Illegal mix` entre
-> `utf8mb4_unicode_ci` du schéma et `utf8mb4_uca1400_ai_ci`, défaut de MariaDB 11.4+, sur une
-> colonne de vue). Après correction — scénarios reconstruits, session alignée sur le schéma côté
-> PDO **et** côté client SQL — la campagne rend **29/29**. Détail des sept causes :
-> `docs/10-todo-corrections.md` §4 bis.
+> **Statut validé au 17/11/2026 (`f9b614f`, branche `arena/b5a4074b-sae-302`) :** la campagne complète sur VM Debian 13 (`PHP 8.4.27 cli`, `MariaDB 11.8.6`, base isolée `minishop_test`) a confirmé **`29/29` scénarios SQL**, **17** vérifications de dépôt SQL et **2 550** scénarios catalogue (`docs/pv-recette.md`). Le détail historique ci-dessous conserve également la trace de la campagne initiale du 23/09/2026 et du correctif de collation `utf8mb4_unicode_ci` (détail des 7 causes : `docs/10-todo-corrections.md` §4 bis).
 
 | | |
 |---|---|
-| **SGBD** | MariaDB 11.8.6 (Debian) — cible : MySQL 8.0.16+ ou MariaDB 10.6+ |
-| **Dates mentionnées dans le rapport** | 23/09/2026 (campagne historique) · 27/10/2026 (mention future à la coupure 23/10 ; résultat non vérifié) |
+| **SGBD** | MariaDB 11.8.6 (Debian 13) — cible : MySQL 8.0.16+ ou MariaDB 10.6+ |
+| **Dates de référence** | 23/09/2026 (campagne initiale) · 27/10/2026 (correctif collation) · **17/11/2026 (`f9b614f`, validation VM complète `29/29` dans `docs/pv-recette.md`)** |
 | **Jeu de données** | `sql/01` (référence) + `sql/04` (commandes créées par `CALL`) + `tests/sql/fixture.sql` (état déterministe) |
 
 ## 1. Chargement et inventaire (chaîne rejouée de zéro)
@@ -30,9 +19,8 @@
 | 3. Déclencheurs | `mysql -u root -p minishop < sql/03_minishop_triggers.sql` | ✅ sans erreur |
 | 4. Démo via `CALL` | `mysql -u root -p minishop < sql/04_minishop_demo.sql` | ✅ sans erreur |
 
-Inventaire vérifié dans `information_schema` : **8 tables · 3 vues · 1 fonction · 17 procédures · 16 déclencheurs**
-(le harnais affiche « tables 11 » parce qu'`information_schema.tables` compte aussi les 3 vues : 8 + 3)
-(minima du sujet : 5 procédures, 5 déclencheurs) ; 9 traces dans `order_status_history`
+Inventaire vérifié dans `information_schema` sur le schéma courant : **9 tables (8 entités métier + `stock_movement_history`) · 3 vues · 1 fonction (`fn_param`) · 18 procédures · 16 déclencheurs**
+(minima du sujet : 5 procédures, 5 déclencheurs) ; 9 traces initiales dans `order_status_history`
 (`NULL→BROUILLON` ×4, `BROUILLON→EN_PREPARATION` ×3, `EN_PREPARATION→PAYEE`, `PAYEE→EXPEDIEE`).
 
 Données de démonstration retrouvées avec les montants exacts attendus :

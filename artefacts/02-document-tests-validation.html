@@ -103,8 +103,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </ul>
 </li>
 <li><a href="#7-registre-des-anomalies-issues-reelles-resolues-et-verrouillees">7. Registre des anomalies (issues réelles résolues et verrouillées)</a></li>
-<li><a href="#8-etat-de-preuve-a-la-coupure-et-trame-de-proces-verbal">8. État de preuve à la coupure et trame de procès-verbal</a><ul>
-<li><a href="#addendum-executions-posterieures-a-la-coupure-15112026">Addendum — exécutions postérieures à la coupure, 15/11/2026</a></li>
+<li><a href="#8-etat-de-preuve-et-proces-verbal-de-recette">8. État de preuve et procès-verbal de recette</a><ul>
 <li><a href="#addendum-campagne-complete-sur-vm-debian-13-native-17112026-f9b614f">Addendum — campagne complète sur VM Debian 13 native, 17/11/2026 (f9b614f)</a></li>
 </ul>
 </li>
@@ -124,7 +123,7 @@ Complément du §15 du cahier des charges et compagnon des <strong>fiches de rec
 - préférences personnelles sur <code>/preferences</code> accessibles sans compte (<code>localStorage</code> seul, aucun cookie de suivi) : choix manuel ou géolocalisation navigateur locale sans tiers (<code>public/js/tz-lookup.js</code> CC0), traduction complète FR ↔ EN des 48 vues et du panier AJAX (<code>public/js/i18n-en.js</code>, <code>public/js/panier.js</code>), stockage UTC de bout en bout et affichage/filtrage selon le fuseau local choisi ;
 - compatibilité responsive à 320, 375, 768 et 1440 px avec tableaux administrateur et clients repliés en cartes mobiles étiquetées (<code>data-label</code>) et double implémentation décorative/informative des visuels produits ;
 - mentions légales de la maquette étudiante conformes à l'article 6, III, 2 de la LCEN (co-éditeurs <strong>Johan Polsinelli</strong> et <strong>Chahd Gouiaa</strong>, hébergeur pédagogique IUT Nice Côte d'Azur <code>linserv-info-01.campus.unice.fr</code>), transparence RGPD de la maquette scolaire et outils CLI de conservation/purge (<code>24 mois</code> comptes sans commande, <code>12 mois</code> contact, <code>6 mois</code> journaux, <code>30 jours</code> sauvegardes dédiées).</p>
-<p>Les mentions « automatisé » dans les tableaux désignent des scripts ou tests associés ; elles ne signifient pas que tous les scénarios ont réussi sur la révision examinée à la coupure du 23/10. Plusieurs campagnes datées sont à distinguer : le run restreint du 23/10/2026 (<code>--sans-sql --sans-e2e</code>), celui du 15/11/2026 (<code>--sans-sql</code>, E2E JSON isolé 338/338), puis les campagnes complètes sur VM Debian 13 des 16–17/11/2026 (<code>f9b614f</code> : <code>generer_pv.php</code> <strong>60/60</strong>, SQL <strong>29/29</strong>, HTTP SQL <strong>105/105</strong>, concurrence <strong>8/8</strong>, <code>docs/pv-recette.md</code> ; <code>cb0f814</code> : performances <code>run_perf_vm.sh</code> <strong>p95 = 6 ms</strong>, <code>tests/perf/dernieres_mesures.txt</code>). Les limites de chaque périmètre y sont consignées. Les 200 entrées de <a href="13-suivi-recette-uc.csv"><code>13-suivi-recette-uc.csv</code></a> restent <strong><code>NON JOUÉ</code></strong>. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué. Les tests SQL automatisés utilisent une base temporaire isolée, distincte de toute cible manuelle.</p>
+<p>Les mentions « automatisé » dans les tableaux désignent des scripts ou tests associés ; elles ne signifient pas que tous les scénarios ont réussi à la coupure historique du 23/10. Les campagnes complètes sur VM Debian 13 des 16–17/11/2026 (<code>f9b614f</code> : <code>generer_pv.php</code> <strong>60/60</strong>, SQL <strong>29/29</strong>, HTTP SQL <strong>105/105</strong>, concurrence <strong>8/8</strong>, <code>docs/pv-recette.md</code> ; <code>cb0f814</code> : performances <code>run_perf_vm.sh</code> <strong>p95 = 6 ms</strong>, <code>tests/perf/dernieres_mesures.txt</code>) sont consignées au §8. Les 200 entrées de <a href="13-suivi-recette-uc.csv"><code>13-suivi-recette-uc.csv</code></a> restent <strong><code>NON JOUÉ</code></strong>. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué. Les tests SQL automatisés utilisent une base temporaire isolée, distincte de toute cible manuelle.</p>
 <h2 id="1-dispositif">1. Dispositif<a class="headerlink" href="#1-dispositif" title="Permanent link">#</a></h2>
 <table>
 <thead>
@@ -1278,77 +1277,61 @@ Complément du §15 du cahier des charges et compagnon des <strong>fiches de rec
 </tr>
 </tbody>
 </table>
-<h2 id="8-etat-de-preuve-a-la-coupure-et-trame-de-proces-verbal">8. État de preuve à la coupure et trame de procès-verbal<a class="headerlink" href="#8-etat-de-preuve-a-la-coupure-et-trame-de-proces-verbal" title="Permanent link">#</a></h2>
-<p><strong>Date de coupure documentaire : 23/10/2026.</strong> Les lignes qui suivent décrivent uniquement les preuves disponibles à cette coupure ; les contrôles postérieurs du 15/11/2026 sont consignés dans un addendum séparé.</p>
-<ul>
-<li><code>docs/04-conception-bd-et-sql.md</code> rapporte une validation SQL du <strong>23/09/2026</strong> sur MariaDB 11.8.6 ; il s’agit d’un résultat historique, non rejoué ici.</li>
-<li><code>tests/sql/rapport_tests_sql.md</code> contient une mention de rejeu au <strong>27/10/2026</strong>, date future à la coupure du 23/10 ; le fichier ne constitue donc pas une preuve d’exécution acquise à cette date.</li>
-<li>Les scénarios manuels du registre <code>docs/13-suivi-recette-uc.csv</code> : <strong>200 <code>NON JOUÉ</code></strong>. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.</li>
-<li><code>bash tests/security/controles.sh</code> : <strong>11/11 contrôles statiques</strong> rejoués localement dans cette révision le 23/10/2026. La portée est limitée aux sources inspectées par le script ; cela ne vaut ni test offensif <code>S-01…S-10</code>, ni recette applicative complète, ni preuve sur LineServ.</li>
-<li><code>node scripts/run-all-tests.mjs --sans-sql --sans-e2e</code> : compte rendu de code de sortie <strong>0</strong> daté du 23/10/2026 via PHP-WASM 8.2. Les suites activées hors SQL/E2E sont rapportées vertes, dont T-01…T-29 sur le moteur JSON (<strong>29/29</strong>), <code>unit_tests.php</code> (<strong>297/297 vérifications</strong>), PHPUnit local (<strong>57 tests</strong>) et le linter strict (<strong>167 fichiers, 0 violation</strong>). La trace conservée ne fixe pas le SHA testé ; elle est historique et n’atteste pas le checkout actuel. La commande excluait explicitement SQL et E2E ; l’analyse avec PHP CLI natif est NON JOUÉE.</li>
-<li>À la coupure du 23/10, aucun résultat CI pour le working tree n’était revendiqué. Aucun rejeu PDO/MySQL, parcours HTTP complet sous SQL, test navigateur réel, test manuel LineServ, déploiement ou restauration de base n’était attesté à cette date ; les contrôles postérieurs sont séparés dans l’addendum ci-dessous.</li>
-</ul>
+<h2 id="8-etat-de-preuve-et-proces-verbal-de-recette">8. État de preuve et procès-verbal de recette<a class="headerlink" href="#8-etat-de-preuve-et-proces-verbal-de-recette" title="Permanent link">#</a></h2>
+<p><strong>Coupure historique du 23/10/2026 et campagnes courantes du 17/11/2026 :</strong> les validations automatisées complètes sur VM Debian 13 (<code>f9b614f</code> / <code>cb0f814</code>) sont consignées ci-dessous ; elles restent distinctes de la photographie à la coupure documentaire du 23/10 (run restreint <code>--sans-sql --sans-e2e</code> ; <code>tests/sql/rapport_tests_sql.md</code> daté du 27/10 et validation du 23/09 dans <code>docs/04</code> non retenus comme preuves à la coupure du 23/10).</p>
 <table>
 <thead>
 <tr>
 <th>Domaine</th>
 <th>Artefact / résultat daté</th>
-<th>État et limite à la coupure</th>
+<th>État vérifié (17/11/2026)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Règles métier PHP sur JSON</td>
-<td><code>tests/php/run_tests.php</code> exécuté via PHP-WASM 8.2</td>
-<td>29/29 conformes sur le pilote JSON ; ne valide pas SQL</td>
+<td><code>tests/php/run_tests.php</code></td>
+<td><strong>29/29 conformes</strong> sur le pilote JSON (et via PHP-WASM 8.2)</td>
 </tr>
 <tr>
-<td>Suites PHP restreintes (hors SQL/E2E)</td>
-<td><code>node scripts/run-all-tests.mjs --sans-sql --sans-e2e</code></td>
-<td>code 0 rapporté le 23/10 via PHP-WASM 8.2 ; SHA non consigné ; T-01…T-29 JSON 29/29, 297 vérifications, 57 tests PHPUnit, linter 167 fichiers/0 violation ; ni E2E, ni validation SQL, ni CI native</td>
+<td>Suites PHP &amp; qualité statique</td>
+<td><code>generer_pv.php</code> (<code>f9b614f</code>)</td>
+<td><strong>57/57 PHPUnit</strong>, linter strict (<strong>171</strong> fichiers, <code>0</code> violation), E2E JSON isolé (<strong>338/338</strong>), <code>preferences_test</code> (<strong>48</strong> vues FR/EN)</td>
 </tr>
 <tr>
-<td>Base de données</td>
-<td>Scénarios <code>T-01</code>…<code>T-29</code> et scripts SQL présents ; validation historique relatée dans <code>docs/04</code> le 23/09</td>
-<td>pas de rejeu SQL de cette révision ; le rapport du 27/10 est postérieur à la coupure</td>
+<td>Base de données (<code>T-01</code>…<code>T-29</code>)</td>
+<td><code>tests/php/sql_integration.php</code> (<code>f9b614f</code>)</td>
+<td><strong>29/29 conformes</strong> sous MariaDB 11.8.6 sur base temporaire isolée (<code>docs/pv-recette.md</code>)</td>
 </tr>
 <tr>
 <td>Application PHP/MySQL/PDO</td>
-<td>Coupure du 23/10 : aucun rejeu SQL/PDO établi ; addendum 17/11 : campagne VM Debian 13 (<code>f9b614f</code>, <code>docs/pv-recette.md</code>)</td>
-<td>Validé automatiquement sur VM isolée (<code>sql_integration</code> 29/29, <code>http_sql_e2e</code> 105/105, <code>concurrence_http</code> 8/8, <code>60/60</code>, perf <code>cb0f814</code> p95 = <code>6 ms</code>) ; distinct de LineServ et des 200 scénarios manuels <code>NON JOUÉ</code></td>
+<td><code>http_sql_e2e.php</code> &amp; <code>concurrence_http.php</code> (<code>f9b614f</code>)</td>
+<td><strong>105/105</strong> parcours HTTP SQL + <strong>8/8</strong> concurrence HTTP 20/12 (<code>60/60</code> étapes, <code>docs/pv-recette.md</code>) ; distinct de LineServ</td>
+</tr>
+<tr>
+<td>Performances <code>ENF-01</code></td>
+<td><code>scripts/run_perf_vm.sh</code> (<code>cb0f814</code>)</td>
+<td>SQL (100 it.) <strong>p95 ≤ 20,6 ms</strong>, écriture métier <strong>44 ms</strong>, HTTP (200 it. × 6 parcours) <strong>p95 global = 6 ms</strong>, <strong>0 erreur</strong> (<code>tests/perf/dernieres_mesures.txt</code>)</td>
 </tr>
 <tr>
 <td>Sécurité statique</td>
 <td><code>bash tests/security/controles.sh</code></td>
-<td>11/11 rejoués localement le 23/10 ; contrôle ciblé, non équivalent aux scénarios offensifs</td>
+<td><strong>11/11 conformes</strong> (dont <code>S-11</code>/<code>SEC-14</code>), rejoués le 23/10 et dans <code>generer_pv.php</code> le 17/11</td>
 </tr>
 <tr>
 <td>Sécurité offensive</td>
 <td>Scénarios documentés <code>S-01</code>…<code>S-10</code></td>
-<td>aucun rejeu offensif/LineServ revendiqué dans cette révision</td>
+<td>scénarios offensifs manuels / LineServ non exécutés</td>
 </tr>
 <tr>
 <td>Recette fonctionnelle humaine</td>
 <td>Fiches UC et registre CSV</td>
-<td>200 entrées <code>NON JOUÉ</code> ; aucune validation par un testeur étudiant n’est inférée</td>
-</tr>
-<tr>
-<td>Performance, hébergement et sauvegarde</td>
-<td>Scripts et protocoles référencés</td>
-<td>aucune mesure sur cible, opération de déploiement, recette LineServ ou restauration attestée</td>
+<td><strong>200 entrées <code>NON JOUÉ</code></strong> ; aucune recette navigateur humaine ou LineServ revendiquée</td>
 </tr>
 </tbody>
 </table>
-<h3 id="addendum-executions-posterieures-a-la-coupure-15112026">Addendum — exécutions postérieures à la coupure, 15/11/2026<a class="headerlink" href="#addendum-executions-posterieures-a-la-coupure-15112026" title="Permanent link">#</a></h3>
-<p>Cet addendum ne modifie pas les constats historiques du 23/10 ci-dessus. Dans le checkout du commit <code>b8edfc9</code> (branche <code>arena/10afc76d-sae-302</code>), vérifié le 15/11/2026, SQL/MySQL/PDO est le pilote applicatif par défaut ; JSON reste une option explicite (<code>STORAGE_DRIVER=json</code>). La présence de ce raccordement ne vaut pas validation SQL.</p>
-<ul>
-<li><code>node scripts/run-all-tests.mjs --sans-sql</code> : code de sortie <strong>0</strong> via PHP-WASM 8.2, rejoué le <strong>15/11/2026</strong> sur le commit <code>b8edfc9</code> de la branche <code>arena/10afc76d-sae-302</code>. Les suites non SQL activées ont réussi, notamment T-01…T-29 exécutés sur JSON (<strong>29/29</strong>), les tests unitaires (<strong>297 vérifications</strong>), PHPUnit local (<strong>57 tests</strong>), linter strict (<strong>167 fichiers, 0 violation</strong>) et l’E2E HTTP isolé (<strong>338 vérifications</strong>, fichiers témoins de l’hôte inchangés). Ce run inclut l’E2E exclu le 23/10, mais saute explicitement l’intégration SQL.</li>
-<li><code>node tests/node/preferences_test.mjs</code> : code de sortie <strong>0</strong> sur le même commit <code>b8edfc9</code> ; contrôles DOM bilingues FR↔EN sur <strong>48 vues</strong>, choix de langue/fuseau et <strong>45 messages métier</strong> vérifiés. Ce résultat est un test DOM, pas une recette dans un navigateur réel.</li>
-<li>L’E2E passe par le front controller sous PHP-WASM, sur stockage JSON et système de fichiers isolé ; il ne prouve ni connexion ou parcours PDO/MySQL, ni exécution PHP CLI native, ni fonctionnement sur serveur web ou navigateur réel. Dans cette sandbox, l’analyse de compilation PHP CLI native reste <strong>NON JOUÉE</strong> ; les <strong>5 tests de concurrence interprocessus</strong> sont aussi restés non joués faute de PHP natif. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.</li>
-</ul>
-<p>Le procès-verbal de recette reste une <strong>trame à compléter</strong> après exécution réelle : date, commit/SHA, environnement isolé, commandes, résultats, anomalies et auteur. La présence de la matrice ci-dessous n’est pas une signature ni une approbation. <code>scripts/generer_pv.php</code> génère l’instance datée (<code>docs/pv-recette.md</code> + log <code>logs/pv-*.log</code>) à partir d’une campagne réelle ; les champs auteur et signature restent à compléter par un humain après relecture.</p>
 <h3 id="addendum-campagne-complete-sur-vm-debian-13-native-17112026-f9b614f">Addendum — campagne complète sur VM Debian 13 native, 17/11/2026 (<code>f9b614f</code>)<a class="headerlink" href="#addendum-campagne-complete-sur-vm-debian-13-native-17112026-f9b614f" title="Permanent link">#</a></h3>
-<p>Cet addendum complète l’addendum du 15/11 sans modifier le constat historique à la coupure du 23/10. Exécutée sur la VM Debian 13 (<code>Linux 6.12.117+deb13-amd64</code>, <strong>PHP 8.4.27 cli</strong>, <strong>MariaDB 11.8.6</strong>) au commit <strong><code>f9b614fc241fb5fbbbc94bc18eb094a95aea33d6</code></strong> de la branche <code>arena/b5a4074b-sae-302</code>, la campagne complète <code>php scripts/generer_pv.php</code> a terminé avec le code de sortie <strong>0</strong>, <strong>0 anomalie</strong> et <strong>0 warning PHP</strong> (<code>logs/pv-2026-11-17-114957.log</code>, procès-verbal consigné dans <code>docs/pv-recette.md</code>) :</p>
+<p>Exécutée sur la VM Debian 13 (<code>Linux 6.12.117+deb13-amd64</code>, <strong>PHP 8.4.27 cli</strong>, <strong>MariaDB 11.8.6</strong>) au commit <strong><code>f9b614fc241fb5fbbbc94bc18eb094a95aea33d6</code></strong> de la branche <code>arena/b5a4074b-sae-302</code>, la campagne complète <code>php scripts/generer_pv.php</code> a terminé avec le code de sortie <strong>0</strong>, <strong>0 anomalie</strong> et <strong>0 warning PHP</strong> (<code>logs/pv-2026-11-17-114957.log</code>, procès-verbal consigné dans <code>docs/pv-recette.md</code>) :</p>
 <ul>
 <li><strong>Campagne globale (<code>run-all-tests.php</code>) :</strong> <strong>60 / 60 étapes vertes</strong> (<code>SQL : joué ✅ — HTTP SQL : joué ✅ — Concurrence : joué ✅ — E2E : joué ✅</code>).</li>
 <li><strong>Intégration SQL (<code>tests/php/sql_integration.php</code> / <code>tests/sql/run_tests.sh</code>) :</strong> <strong>29 / 29 scénarios SQL</strong> (<code>T-01</code>…<code>T-29</code>), <strong>17 vérifications dépôt SQL</strong>, <strong>2 550 scénarios</strong> catalogue SQL et contrôles UTC/rétention sur base isolée <code>minishop_test</code>.</li>

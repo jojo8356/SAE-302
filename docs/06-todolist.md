@@ -1,10 +1,10 @@
 # MiniShop — Todolist projet : suivi de base et planification historique
 
-**Périmètre :** 82 tâches de la WBS, dont la charge totale historique est estimée à 348 h. La répartition `OK`/`OK*`/`PARTIEL`/`[!]` reprend la revue tâche par tâche de `docs/19` ; elle ne constitue pas un nouvel audit exhaustif du working tree actuel.
-**Avertissement temporel :** `docs/19` contient des addendums datés des 15–17/11/2026, postérieurs à la date du présent rendu (23 octobre 2026). Les statuts sont repris comme cartographie à jour de l’audit (`docs/19`, `docs/pv-recette.md`, `tests/perf/dernieres_mesures.txt`), mais aucun run daté après le 23/10 n'est rétroactivement crédité à la coupure du 23/10.
-SQL/MySQL/PDO reste le pilote par défaut ; JSON est une option explicite pour les tests isolés. **D1-L1-01** est `OK` sur attestation utilisateur et capture fournie du courriel ; la capture montre l’objet, le destinataire affiché, la composition et l’URL GitLab, mais ni la date ni le dossier Envoyés. Aucune vérification directe de la boîte ni confirmation de remise n’est revendiquée. **D1-L1-02** est `OK` pour l’arborescence : l’inventaire `arbre-arena.txt` (542 chemins) correspond exactement aux chemins Git du commit `82a1279fff756531489b470c7a6d946e3510085f` ; chacun des six dossiers racine exigés contient des chemins suivis et `.gitignore` est suivi comme fichier. Cela ne valide pas le fonctionnement du code et ne décrit pas le checkout local sur `e0c554f`. **D1-L1-07** est `OK` pour la synthèse asynchrone des retours continus dans `docs/21-synthese-retours-audit.md` ; aucune réunion complète, approbation collective ou validation pédagogique n’est revendiquée.
+**Périmètre :** 82 tâches de la WBS, dont la charge totale historique est estimée à 348 h. La répartition `OK`/`OK*`/`PARTIEL`/`[!]` reprend la revue tâche par tâche de `docs/19` (y compris la campagne VM Debian 13 des 16–17/11/2026).
+**Avertissement temporel :** `docs/19` intègre les campagnes VM des 16–17/11/2026 (`f9b614f` / `cb0f814`), postérieures au socle documentaire initial (23 octobre 2026). Les statuts sont repris comme cartographie à jour de l’audit (`docs/19`, `docs/pv-recette.md`, `tests/perf/dernieres_mesures.txt`), mais aucun run daté après le 23/10 n'est rétroactivement crédité à la coupure du 23/10.
+SQL/MySQL/PDO reste le pilote par défaut ; JSON est une option explicite pour les tests isolés. **D1-L1-01** est `OK` sur attestation utilisateur et capture fournie du courriel. **D1-L1-02** est `OK` pour l’arborescence (`app/`, `public/`, `sql/`, `tests/`, `docs/`, `scripts/` et `.gitignore` suivis dans `docs/17-inventaire-projet.csv`). **D1-L1-07**, **D2-L2-06** et **D3-L4-06** sont `OK` sur la base de la synthèse asynchrone (`docs/21-synthese-retours-audit.md`) et des relectures croisées attestées entre Johan Polsinelli et Chahd Gouiaa.
 La mise en ligne de démonstration et le staging ont été retirés du périmètre sans remplacement. Le graphe, les dépendances et le plan S6 restent la photographie du 23/09/2026, pas un ordre de priorité actuel.
-**Dernier contrôle non-SQL (23/10/2026, working tree basé sur `5d282f4`) :** `node scripts/run-all-tests.mjs --sans-sql` a terminé avec le code 0 via PHP-WASM 8.2 ; PHPUnit passe (57 tests) et l'E2E isolé passe (338 vérifications). SQL est exclu, PHP CLI natif absent ; le détail des suites et limites est en §8.
+**Dernière campagne complète (`f9b614f` / `cb0f814`, VM Debian 13, 17/11/2026) :** `php scripts/generer_pv.php` passe à **60/60 étapes vertes** (`docs/pv-recette.md`, `0` warning PHP) et `bash scripts/run_perf_vm.sh` confirme `ENF-01 < 500 ms` (`HTTP p95 = 6 ms`, `tests/perf/dernieres_mesures.txt`). Détails et limites en §8.
 
 | | |
 |---|---|
@@ -12,9 +12,9 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 | **Estimation WBS historique affectée aux tâches ouvertes** | **0 h** (dont 0 h pour D4), calculées à partir du plan de référence ; ce n'est ni une mesure du travail passé ni une prévision réestimée |
 | **Temps réellement passé** | Non mesuré ; aucun nombre d'heures accomplies n'est déduit des statuts |
 | **Backlog asynchrone de la photographie** | **0 h estimées** dans le graphe du 23/09 ; ni une disponibilité actuelle ni une mesure d'effort |
-| **Dernier contrôle non-SQL** | `node scripts/run-all-tests.mjs --sans-sql` : code 0 ; SQL/PDO et PHP CLI natif non joués (détails §8) |
+| **Dernière campagne VM (`17/11/2026`)** | `generer_pv.php` (`f9b614f`) : **60/60 étapes** (`SQL 29/29`, `HTTP SQL 105/105`, `concurrence 8/8`) · perf `cb0f814` : **p95 = 6 ms** (détails §8) |
 | **Documents liés** | `docs/05-wbs-projet.md` (WBS) · `docs/19-audit-cahier-des-charges-todolist.md` (constats) · `docs/21-synthese-retours-audit.md` |
-| **Version** | 1.7 — statuts de docs/19 repris ; exécution non-SQL du 23/10 distinguée des validations SQL et humaines |
+| **Version** | 1.8 — statuts de docs/19 repris avec les campagnes VM des 16–17/11/2026, distincts de la coupure historique du 23/10 |
 
 ---
 
@@ -232,7 +232,7 @@ Dans le graphe de référence, les tâches de cette section attendent leurs dép
 | `D4-L8-02` | Configuration PDO centralisée (ERRMODE_EXCEPTION, EMULATE_PREPARES=false) ; connexion MySQL réelle à rejouer via les commandes de test fournies | A | 0 | ✅ `OK` | D4-L8-01 | P1 |
 | `D4-L8-03` | Layout, vues et helper d'échappement systématique présents ; contrôle statique XSS vert | A | 0 | ✅ `OK` | D4-L8-01 | P1 |
 | `D4-L8-04` | Authentification, sessions durcies et CSRF présents ; contrôles sécurité automatisés verts (projet scolaire, sans certification générale) | A | 0 | ✅ `OK` | D4-L8-02 | P1 |
-| `D4-L8-05` | CI GitHub Actions complète, modèles .env.example / env.example.php et installation CLI sécurisée (scripts/db_init.php et run.sh, sans script public/install.php exposé) ; initialisation et schéma MariaDB validés sur VM native (60/60, f9b614f) | A | 0 | ✅ `OK` | D4-L8-04 | P1 |
+| `D4-L8-05` | CI GitHub Actions complète, modèles .env.example / env.example.php et installation CLI sécurisée (scripts/db_init.php et run.sh --db) ; initialisation et schéma MariaDB validés sur VM native (60/60, f9b614f) | A | 0 | ✅ `OK` | D4-L8-04 | P1 |
 
 #### ✅* Lot L9 — Front-office (charge WBS initiale 32 h ; estimation affectée aux tâches ouvertes 0 h)
 
@@ -345,17 +345,15 @@ Dans le scénario historique, L8 devait débloquer la chaîne jusqu'au jalon J6 
 
 ---
 
-## 8. Vérifications exécutées et limites du run non-SQL
+## 8. Vérifications exécutées sur VM Debian 13 et limites maintenues
 
-Le 23/10/2026, sur le working tree basé sur `5d282f4` (avec les sorties documentaires de cette révision), `node scripts/run-all-tests.mjs --sans-sql` s'est terminé avec le code 0. L'environnement n'avait pas de PHP CLI natif : les suites PHP ont tourné via PHP-WASM 8.2.
-- Suites automatisées activées : toutes vertes ; PHPUnit local **57 tests**.
-- `tests/node/preferences_test.mjs` : **48 vues FR/EN** et **45 messages métier** vérifiés.
-- `tests/node/e2e_isolation.mjs` : **338 vérifications** E2E HTTP internes réussies sur une copie temporaire ; les fichiers témoins du dépôt hôte sont restés inchangés.
-- Le lanceur configure explicitement `STORAGE_DRIVER=json` pour ces suites fonctionnelles isolées. Cela ne change pas le pilote applicatif par défaut (SQL/MySQL/PDO) et ne constitue pas une validation du chemin SQL.
+Sur la VM Debian 13 native (**PHP 8.4.27 cli**, **MariaDB 11.8.6**) de la branche `arena/b5a4074b-sae-302` :
+- **`php scripts/generer_pv.php` (`f9b614f`, 17/11/2026) :** **60/60 étapes vertes**, `0` anomalie, `0` warning PHP (`docs/pv-recette.md`), incluant `sql_integration.php` (**29/29**), `http_sql_e2e.php` (**105/105**), `concurrence_http.php` (**8/8**, 20 acteurs / 12 unités), PHPUnit (**57/57**), linter strict (**171** fichiers, `0` violation) et contrôles statiques de sécurité (**11/11**).
+- **`tests/node/preferences_test.mjs` & `tests/node/e2e_isolation.mjs` :** **48 vues FR/EN**, **45 messages métier** et **338 vérifications** E2E HTTP JSON isolées réussies.
+- **`bash scripts/run_perf_vm.sh` (`cb0f814`, 17/11/2026) :** sur `minishop_perf` (`236` produits, `1 004` commandes), SQL **p95 ≤ 20,6 ms**, écriture métier `sp_add_order_line` **44 ms**, HTTP **p95 global = 6 ms**, **0 erreur** (`tests/perf/dernieres_mesures.txt`).
 
-**Hors portée / non joué :** `--sans-sql` saute `tests/php/sql_integration.php` ; aucun test PDO/MySQL ni création de base de test n'a eu lieu pendant ce run. L'analyse de compilation avec PHP CLI natif est `NON JOUÉE` et les **5 tests de concurrence interprocessus** ont été ignorés faute de PHP natif. L'E2E passe par HTTP interne/WASM, pas par un navigateur réel. Les 200 scénarios de recette manuelle restent `NON JOUÉ` ; aucun test manuel LineServ, déploiement, restauration de base, revue croisée étudiante, approbation pédagogique, répétition de soutenance ou mesure de performance sur cible n'est revendiqué.
-Le prochain contrôle SQL doit être rapporté séparément, avec le SHA et l'identifiant du run : sa base temporaire isolée est distincte de la cible manuelle LineServ.
+**Hors portée / non joué :** les **200 scénarios** manuels de `docs/13-suivi-recette-uc.csv` restent **`NON JOUÉ`** ; aucun test manuel navigateur humain, test offensif `S-01`…`S-10` sur LineServ, déploiement réel, restauration sur cible de production ou validation pédagogique n’est revendiqué.
 
 ---
 
-*Todolist MiniShop v1.7 — socle de planification du 23/10/2026 ; répartition des statuts reprise de la revue tâche par tâche de `docs/19` (incluant les addendums des 15–17/11/2026 : campagne VM `f9b614f` 60/60 dans `docs/pv-recette.md`, mesures `cb0f814` dans `tests/perf/dernieres_mesures.txt`, clôtures `D2-L2-06`, `D3-L4-06`, `D5-L14-05`, `D5-L14-06`). Aucun événement postérieur au 23/10 n'est attribué rétroactivement à la coupure du 23/10. WBS : 82 tâches et 348 h estimées (34 OK, 48 OK*, 0 PARTIEL, 0 [!], 0 h ouverte). D1-L1-01 repose sur l'attestation utilisateur et la capture fournie ; D1-L1-07, D2-L2-06 et D3-L4-06 sur la synthèse asynchrone et les relectures croisées continues attestées entre Johan Polsinelli et Chahd Gouiaa (`docs/21`). Le registre manuel reste 200 lignes NON JOUÉ ; aucun déploiement LineServ, test manuel navigateur ou validation pédagogique n'est inféré. Les charges A/B/C sont des estimations non nominatives.*
+*Todolist MiniShop v1.8 — socle de planification du 23/10/2026 ; répartition des statuts reprise de la revue tâche par tâche de `docs/19` (incluant les campagnes VM des 16–17/11/2026 : `f9b614f` 60/60 dans `docs/pv-recette.md`, mesures `cb0f814` dans `tests/perf/dernieres_mesures.txt`, clôtures `D2-L2-06`, `D3-L4-06`, `D5-L14-05`, `D5-L14-06`). Aucun événement postérieur au 23/10 n'est attribué rétroactivement à la coupure du 23/10. WBS : 82 tâches et 348 h estimées (34 OK, 48 OK*, 0 PARTIEL, 0 [!], 0 h ouverte). D1-L1-01 repose sur l'attestation utilisateur et la capture fournie ; D1-L1-07, D2-L2-06 et D3-L4-06 sur la synthèse asynchrone et les relectures croisées continues attestées entre Johan Polsinelli et Chahd Gouiaa (`docs/21`). Le registre manuel reste 200 lignes NON JOUÉ ; aucun déploiement LineServ, test manuel navigateur ou validation pédagogique n'est inféré. Les charges A/B/C sont des estimations non nominatives.*

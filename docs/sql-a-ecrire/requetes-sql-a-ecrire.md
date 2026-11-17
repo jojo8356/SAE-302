@@ -833,7 +833,7 @@ Non prévu par le CDC → à ne pas implémenter.
 | Champ | Valeur |
 |---|---|
 | **Id** | EF-GEN-06 |
-| **Écran** | CLI `scripts/db_init.php` / `./run.sh --db` (sans script web `public/install.php` exposé) |
+| **Écran** | CLI `scripts/db_init.php` / `./run.sh --db` |
 | **Question** | Vérifier que les 8 tables existent et qu'il y a au moins un administrateur et un client. |
 | **Type** | `SHOW TABLES LIKE 'client';` ou `SELECT COUNT(*) FROM administrateur;` — pas de requête métier particulière, c'est un simple contrôle. |
 

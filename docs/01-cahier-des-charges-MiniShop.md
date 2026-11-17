@@ -1000,7 +1000,7 @@ navigateur → public/index.php (front controller)
 
 ### 9.2 Structure du dépôt (arborescence livrée)
 
-L’inventaire `git ls-files` fourni pour la branche `arena/10afc76d-sae-302` contient 542 chemins. Sa comparaison avec l’arbre Git du commit `82a1279fff756531489b470c7a6d946e3510085f` donne exactement les mêmes chemins. Le schéma ci-dessous résume cette arborescence peuplée ; il ne prescrit pas un squelette vide et ne vaut pas validation fonctionnelle du code.
+L’inventaire suivi `docs/17-inventaire-projet.csv` recense l’ensemble des chemins versionnés du dépôt (branche active `arena/b5a4074b-sae-302`). Le schéma ci-dessous résume l’arborescence principale peuplée (`app/`, `public/`, `sql/`, `tests/`, `docs/`, `scripts/`) ; il ne prescrit pas un squelette vide.
 
 ```
 minishop/

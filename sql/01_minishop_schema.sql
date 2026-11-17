@@ -15,10 +15,10 @@
 -- (le fichier 01 crée la base et fait USE ; 02/03 contiennent la directive
 --  DELIMITER ; 03/04 supposent la base et les objets des étapes précédentes)
 --
--- Ou, via PHP PDO (script public/install.php) : exécuter les 3 fichiers
--- dans cet ordre (le fichier 02 contient des DELIMITER, donc il faut le
--- client mysql ou un parseur dédié ; en PDO, copier le corps des routines
--- sans la ligne DELIMITER).
+-- Chargement automatisé via PHP CLI : php scripts/db_init.php (le fichier 02
+-- contient des DELIMITER pris en charge par le client mariadb/mysql et par
+-- le parseur SQL dédié de app/Tools/SqlLoader.php ; aucun installateur HTTP
+-- n'est exposé dans public/).
 --
 -- Conventions de nommage (règle CT-nommage) :
 --   tables      MAJUSCULES au pluriel        CLIENT, PRODUIT, LIGNE_COMMANDE

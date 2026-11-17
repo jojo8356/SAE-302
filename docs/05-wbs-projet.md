@@ -243,7 +243,7 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme **remon
 | `D4-L8-02` | app/Config/Database.php : PDO, ERRMODE_EXCEPTION, EMULATE_PREPARES = false | A | 3 | connexion centralisée, aucune requête hors repository | 01 |
 | `D4-L8-03` | Gabarit de vues + layout + helper d'échappement systématique | A | 4 | toute variable passe par htmlspecialchars($v, ENT_QUOTES…) | 01 |
 | `D4-L8-04` | app/Security : AuthMiddleware, sessions durcies, jetons CSRF | A | 6 | pages privées inaccessibles sans session, CSRF vérifié | 02 |
-| `D4-L8-05` | CI GitHub Actions + .env.example / app/Config/env.example.php + installation CLI (scripts/db_init.php et run.sh, sans public/install.php exposé) | A | 4 | contrôles GitHub Actions verts et initialisation CLI vérifiée | 01 |
+| `D4-L8-05` | CI GitHub Actions + .env.example / app/Config/env.example.php + installation CLI sécurisée (scripts/db_init.php et run.sh --db) | A | 4 | contrôles GitHub Actions verts et initialisation CLI vérifiée sur VM native (60/60, f9b614f) | 01 |
 | | **Sous-total L8** | | **22** | répartition : A 22 h | |
 
 #### Lot L9 — Front-office : catalogue, recherche, fiche, inscription, connexion (32 h · C · S7)

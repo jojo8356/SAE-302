@@ -12,7 +12,7 @@
 --   mysql -u root -p < sql/02_minishop_procedures.sql
 --   mysql -u root -p < sql/03_minishop_triggers.sql
 --
--- Ou, via PHP PDO (script public/install.php) : exécuter les 3 fichiers
+-- Ou, via PHP PDO (scripts/db_init.php ou ./run.sh --db) : exécuter les 3 fichiers
 -- dans cet ordre (le fichier 02 contient des DELIMITER, donc il faut le
 -- client mysql ou un parseur dédié ; en PDO, copier le corps des routines
 -- sans la ligne DELIMITER).

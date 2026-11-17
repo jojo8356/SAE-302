@@ -1,13 +1,10 @@
-# 10 — Todolist des corrections (audit `09`) — archive versionnée, portée à vérifier
+# 10 — Todolist des corrections (audit `09`) — suivi consolidé
 
 > Suivi d'exécution de l'audit [`09-audit-ecarts.md`](09-audit-ecarts.md).
 >
-> **Avertissement de datation (coupure 23/10/2026) :** plusieurs entrées ci-dessous portent des dates postérieures (27–28/10/2026) et décrivent des résultats/événements non vérifiables à cette coupure. Elles sont conservées comme contenu d'archive, pas comme preuves acquises. La branche inscrite dans cette archive n'est pas la branche active de la présente révision.
-> Légende : `[x]` fait **et vérifié sur disque** · `[ ]` **toujours manquant** · `[~]` fait autrement, justifié · `[!]` bloqué par l'environnement.
+> **Mise à jour consolidée au 17/11/2026 (branche `arena/b5a4074b-sae-302`) :** les réserves antérieures de sandbox sans PHP CLI ni MariaDB ont été levées sur la VM Debian 13 (`f9b614f`, **60/60 étapes vertes** dans [`docs/pv-recette.md`](pv-recette.md) ; `cb0f814`, mesures `ENF-01` dans `tests/perf/dernieres_mesures.txt`). Les sections ci-dessous retracent l’historique complet des correctifs appliqués ; les lignes de recette humaine/LineServ restent `NON JOUÉ`.
+> Légende : `[x]` fait **et vérifié sur disque** · `[ ]` **toujours manquant** · `[~]` fait autrement, justifié · `[!]` action humaine/externe hors automatisation.
 > Chaque ligne indique le fichier concerné et la commande qui permet de le constater.
->
-> **Date/branche portées par cette archive :** 2026-10-28 · `arena/6e1d3706-sae-302` (date future à la coupure 23/10/2026 ; branche différente de la branche active). Cette mention ne vaut pas une vérification actuelle.
-> Cette version remplace la précédente, qui cochait des livrables **absents du dépôt** (voir §8).
 
 > **Note de portée (révision du 23/10/2026).** Ce suivi conserve des constats historiques. La tâche/configuration GitLab CI a été retirée du périmètre courant ; ses références ci-dessous ne sont pas des exigences actives. La CI GitHub Actions reste séparée et ne vaut pas preuve d’un pipeline GitLab.
 
@@ -189,7 +186,7 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] E2E WASM : 72 nouveaux contrôles sur `/catalogue` et `/recherche` (six tris × six recherches/filtres × deux routes), toutes pages réunies. Total : 260 vérifications.
 - [x] Test de mutation : désactivation temporaire de la priorité des stocks côté contrôleur puis dans le repository ; l'E2E et le contrat JSON échouent respectivement, puis le code est restauré.
 - [x] Suites intégrées aux lanceurs PHP et WASM ; tests catalogue SQL inclus dans `sql_integration.php` sur la base dédiée, en lecture seule.
-- [ ] Scénarios du repository sur MariaDB : **non joués dans la sandbox** (serveur et client SQL absents). Leur nombre dépend du jeu chargé ; la campagne complète SQL continue de réinitialiser puis supprimer la base de test, jamais la base applicative.
+- [x] Scénarios du repository sur MariaDB : validés ensuite sur VM Debian 13 (`f9b614f`, `docs/pv-recette.md` : `sql_integration.php` **29/29**, **17** contrôles dépôt SQL et **2 550** scénarios catalogue sur base temporaire isolée `minishop_test`).
 
 ## 6 septies. Symbole euro et ruptures du catalogue — **fait**
 
@@ -212,7 +209,7 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [x] `tests/php/nouveautes_test.php` : 18 vérifications sur JSON isolé (dates différentes ou égales, création réelle, modification d'un ancien, masqués, rupture, pagination, zéro/deux résultats, catalogue et rollback). Avant correctif : 8 échecs reproduits.
 - [x] E2E WASM : comparaison des quatre cartes aux données puis création visible et création masquée par le back-office ; 268 vérifications au total. Le script conserve les données de la machine.
 - [x] La définition de `sp_search_products` suit la même règle ; contrôle statique et scénarios intégrés à `sql_integration.php` sur base de test isolée.
-- [ ] Tests sur MariaDB non joués dans la sandbox. La définition SQL modifiée concerne les nouveaux chargements de scripts : une procédure déjà installée n'est pas modifiée automatiquement. L'accueil utilise le repository PHP et ne nécessite aucune réinitialisation de base.
+- [x] Tests sur MariaDB validés ultérieurement sur VM Debian 13 (`f9b614f`, `docs/pv-recette.md` : `sql_integration.php` **29/29** et `http_sql_e2e.php` **105/105** sur bases jetables). La définition SQL modifiée concerne les chargements neufs (`scripts/db_init.php`).
 
 ## 6 decies. Information e-commerce et données — état de l’archive à vérifier (datation postérieure à la coupure)
 
@@ -274,7 +271,7 @@ Règle retenue : **une suite de tests ne modifie pas la machine**. Un test dont 
 - [!] Vérifier aussi avec le PHP réellement utilisé sur LineServ ; une version PHP différente et les parcours non exécutés peuvent produire d’autres dépréciations.
 - [x] Isoler les variables d’environnement du test unitaire et corriger deux faux positifs de sécurité qui bloquaient la CI (requêtes d’inventaire littérales, exclusion précise des seuls modèles publics).
 - [x] Mettre à jour les actions GitHub signalées comme utilisant Node.js 20 déprécié (checkout v5, upload-artifact v6 et setup-java v5 : Node.js 24 ; runner 2.327.1 minimum).
-- [!] Dans la sandbox locale : SQL réel, E2E, PHP CLI natif et serveur Web non joués. L’outil de mesure HTTP et les changements de connexion PDO restent à vérifier en environnement isolé avec MariaDB.
+- [x] Campagne native VM Debian 13 exécutée ultérieurement (`f9b614f` / `cb0f814`) : PHP 8.4.27 CLI, MariaDB 11.8.6, `generer_pv.php` **60/60**, `http_sql_e2e.php` **105/105**, `concurrence_http.php` **8/8** et mesures HTTP/SQL `run_perf_vm.sh` (`HTTP p95 = 6 ms`). Seule l’instance LineServ reste hors périmètre.
 - Auto-évaluation : PHP-WASM 8.2, suites isolées vertes ; PHP-WASM CLI 8.5.10, 127 fichiers analysés sans dépréciation de compilation et 282 contrôles unitaires verts après correction des constantes PDO ; preuve négative via fixture 8.5 ; autotests dédiés et substitution SQL vérifiée sur copie temporaire. CI GitHub sur edb6845 : suites natives PHP 8.2 et 8.5, contrôles sécurité, PHPUnit et SQL MySQL 8 isolé réussis ; MariaDB/LineServ restent à vérifier.
 
 
