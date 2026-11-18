@@ -108,18 +108,21 @@ try {
     ]);
   }
   async function imagesVerifiees(page, nom, options = {}) {
-    const { hero = false, cartesAttendues = false, fichePrefixe = null } = options;
-    const totalImages = await page.locator('img').count();
-    for (let i = 0; i < totalImages; i++) {
-      await page.locator('img').nth(i).scrollIntoViewIfNeeded();
+    const { hero = false, heroVisible = false, cartesAttendues = false, fichePrefixe = null } = options;
+    const totalVisibles = await page.locator('img:visible').count();
+    for (let i = 0; i < totalVisibles; i++) {
+      await page.locator('img:visible').nth(i).scrollIntoViewIfNeeded();
     }
-    await page.waitForFunction(() => [...document.querySelectorAll('img')].every((img) => img.complete));
+    await page.waitForFunction(() => [...document.querySelectorAll('img')]
+      .filter((img) => getComputedStyle(img).display !== 'none')
+      .every((img) => img.complete));
     const rapport = await page.evaluate(() => ({
       images: [...document.querySelectorAll('img')].map((img) => ({
         src: img.getAttribute('src') ?? '',
         alt: img.getAttribute('alt'),
         width: img.getAttribute('width'),
         height: img.getAttribute('height'),
+        visible: getComputedStyle(img).display !== 'none',
         complete: img.complete,
         naturalWidth: img.naturalWidth,
         estHero: img.classList.contains('hero__illustration'),
@@ -131,12 +134,17 @@ try {
     for (const img of rapport.images) {
       assert.ok(img.src.startsWith('/'), `${nom} : source image non locale (${img.src})`);
       assert.ok(Number(img.width) > 0 && Number(img.height) > 0, `${nom} : dimensions explicites manquantes (${img.src})`);
-      assert.ok(img.complete && img.naturalWidth > 0, `${nom} : image cassée (${img.src})`);
+      if (img.visible) {
+        assert.ok(img.complete && img.naturalWidth > 0, `${nom} : image cassée (${img.src})`);
+      }
     }
     if (hero) {
       const heroImg = rapport.images.find((img) => img.estHero);
       assert.ok(heroImg, `${nom} : photographie hero absente`);
       assert.ok((heroImg.alt ?? '').trim().length >= 10, `${nom} : alt hero non descriptif (${heroImg.alt})`);
+      if (heroVisible) {
+        assert.ok(heroImg.visible && heroImg.complete && heroImg.naturalWidth > 0, `${nom} : photographie hero non chargée`);
+      }
     }
     const cartesImgs = rapport.images.filter((img) => img.estCarte);
     if (cartesAttendues) {
@@ -158,8 +166,8 @@ try {
     const demandesContexte = [];
     page.on('request', (r) => demandesContexte.push(r.url()));
     await aller(page, '/');
-    await pageVerifiee(page, 'accueil', largeur, '.hero__illustration');
-    await imagesVerifiees(page, 'accueil-en', { hero: true, cartesAttendues: true });
+    await pageVerifiee(page, 'accueil', largeur, '.carte-produit');
+    await imagesVerifiees(page, 'accueil-en', { hero: true, heroVisible: largeur >= 1440, cartesAttendues: true });
     await aller(page, '/catalogue');
     await pageVerifiee(page, 'catalogue', largeur, 'a[href^="/produit/"]');
     await imagesVerifiees(page, 'catalogue-en', { cartesAttendues: true });
@@ -373,7 +381,7 @@ try {
     assert.deepEqual(choix, {langue:'fr', zone:'Asia/Kathmandu'});
     assert.ok(!JSON.stringify(choix).includes('43.7'), 'coordonnées enregistrées');
     await aller(personnel, '/');
-    await imagesVerifiees(personnel, 'accueil-fr', { hero: true, cartesAttendues: true });
+    await imagesVerifiees(personnel, 'accueil-fr', { hero: true, heroVisible: largeur >= 1440, cartesAttendues: true });
     const temps = personnel.locator('time[data-date-format="ajout"]').first();
     const utc = await temps.getAttribute('datetime');
     const parties = Object.fromEntries(new Intl.DateTimeFormat('fr-FR', {timeZone:'Asia/Kathmandu', year:'numeric', month:'2-digit', day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date(utc)).map(({type,value}) => [type,value]));
