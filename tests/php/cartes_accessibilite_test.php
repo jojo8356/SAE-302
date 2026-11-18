@@ -27,6 +27,11 @@ ob_start();
 require dirname(__DIR__, 2) . '/app/View/home/index.php';
 $accueil = (string) ob_get_clean();
 
+// TC01-10 : photographie d'accueil locale informative (alt descriptif + dimensions explicites)
+$check('accueil : photographie hero locale avec alt descriptif et dimensions explicites',
+    preg_match('/<img\b(?=[^>]*class="hero__illustration")(?=[^>]*src="\/img\/illustration-achat\.jpg")(?=[^>]*alt="([^"]{10,})")(?=[^>]*width="960")(?=[^>]*height="524")[^>]*>/s', $accueil) === 1
+    && is_file(dirname(__DIR__, 2) . '/public/img/illustration-achat.jpg'));
+
 $resultat = ['lignes' => $produits, 'total' => 2, 'page' => 1, 'pages' => 1];
 $criteres = ['mot_cle' => '', 'id_categorie' => null, 'prix_min' => null, 'prix_max' => null, 'en_stock' => false, 'tri' => 'nom'];
 $tris = ['nom' => 'Nom'];
@@ -37,10 +42,14 @@ require dirname(__DIR__, 2) . '/app/View/catalogue/index.php';
 $catalogue = (string) ob_get_clean();
 
 foreach (['accueil' => $accueil, 'catalogue' => $catalogue] as $page => $html) {
+    $check($page . ' : aucune source image externe (http/https/protocol-relative)',
+        preg_match('/<img\b[^>]*\bsrc="(?:https?:)?\/\/[^"]*"/i', $html) === 0);
     preg_match_all('/<article class="carte carte-produit">(.*?)<\\/article>/s', $html, $trouves);
     $cartes = $trouves[1];
     $check($page . ' : les deux produits sont rendus', count($cartes) === count($produits));
-    $check($page . ' : visuel de la carte décoratif', str_contains($cartes[0] ?? '', 'alt=""'));
+    $check($page . ' : visuel de la carte décoratif avec dimensions explicites',
+        str_contains($cartes[0] ?? '', 'alt=""')
+        && preg_match('/<img\b(?=[^>]*width="\d+")(?=[^>]*height="\d+")[^>]*>/s', $cartes[0] ?? '') === 1);
     foreach ($produits as $index => $produit) {
         $carte = $cartes[$index] ?? '';
         preg_match_all('/<a\\b[^>]*>/', $carte, $liens);

@@ -107,11 +107,62 @@ try {
       cible.click({ force: true }),
     ]);
   }
+  async function imagesVerifiees(page, nom, options = {}) {
+    const { hero = false, cartesAttendues = false, fichePrefixe = null } = options;
+    const totalImages = await page.locator('img').count();
+    for (let i = 0; i < totalImages; i++) {
+      await page.locator('img').nth(i).scrollIntoViewIfNeeded();
+    }
+    await page.waitForFunction(() => [...document.querySelectorAll('img')].every((img) => img.complete));
+    const rapport = await page.evaluate(() => ({
+      images: [...document.querySelectorAll('img')].map((img) => ({
+        src: img.getAttribute('src') ?? '',
+        alt: img.getAttribute('alt'),
+        width: img.getAttribute('width'),
+        height: img.getAttribute('height'),
+        complete: img.complete,
+        naturalWidth: img.naturalWidth,
+        estHero: img.classList.contains('hero__illustration'),
+        estCarte: img.closest('.carte-produit__media') !== null,
+        estFiche: img.closest('.fiche__media') !== null,
+      })),
+    }));
+    assert.ok(rapport.images.length > 0, `${nom} : aucune image rendue`);
+    for (const img of rapport.images) {
+      assert.ok(img.src.startsWith('/'), `${nom} : source image non locale (${img.src})`);
+      assert.ok(Number(img.width) > 0 && Number(img.height) > 0, `${nom} : dimensions explicites manquantes (${img.src})`);
+      assert.ok(img.complete && img.naturalWidth > 0, `${nom} : image cassée (${img.src})`);
+    }
+    if (hero) {
+      const heroImg = rapport.images.find((img) => img.estHero);
+      assert.ok(heroImg, `${nom} : photographie hero absente`);
+      assert.ok((heroImg.alt ?? '').trim().length >= 10, `${nom} : alt hero non descriptif (${heroImg.alt})`);
+    }
+    const cartesImgs = rapport.images.filter((img) => img.estCarte);
+    if (cartesAttendues) {
+      assert.ok(cartesImgs.length > 0, `${nom} : aucune vignette de carte produit`);
+    }
+    for (const img of cartesImgs) {
+      assert.equal(img.alt, '', `${nom} : vignette produit non décorative (alt=${JSON.stringify(img.alt)})`);
+    }
+    if (fichePrefixe !== null) {
+      const ficheImg = rapport.images.find((img) => img.estFiche);
+      assert.ok(ficheImg, `${nom} : image principale de fiche absente`);
+      assert.ok((ficheImg.alt ?? '').startsWith(fichePrefixe),
+        `${nom} : alt fiche inattendu (${JSON.stringify(ficheImg.alt)})`);
+    }
+  }
   for (const largeur of [320, 375, 1440]) {
     const contexte = await browser.newContext({ viewport: { width: largeur, height: 900 }, locale: 'en-US', reducedMotion: 'reduce' });
     const page = await contexte.newPage();
+    const demandesContexte = [];
+    page.on('request', (r) => demandesContexte.push(r.url()));
+    await aller(page, '/');
+    await pageVerifiee(page, 'accueil', largeur, '.hero__illustration');
+    await imagesVerifiees(page, 'accueil-en', { hero: true, cartesAttendues: true });
     await aller(page, '/catalogue');
     await pageVerifiee(page, 'catalogue', largeur, 'a[href^="/produit/"]');
+    await imagesVerifiees(page, 'catalogue-en', { cartesAttendues: true });
     assert.equal(await page.evaluate(() => document.documentElement.lang), 'en');
     assert.equal(await page.locator('h1').first().innerText(), 'Catalog');
     await page.locator('.filtres-catalogue summary').click();
@@ -132,6 +183,7 @@ try {
     const href = await page.locator('a[href^="/produit/"]').first().getAttribute('href');
     await aller(page, href);
     await pageVerifiee(page, 'produit', largeur, '.tableau-caracteristiques');
+    await imagesVerifiees(page, 'produit-en', { fichePrefixe: 'Illustrative image: ' });
     const [ajout] = await Promise.all([
       page.waitForResponse((reponse) => reponse.url().includes('/api/panier/ajouter') && reponse.request().method() === 'POST'),
       page.locator('form[action="/panier/ajouter"] button').click(),
@@ -216,6 +268,8 @@ try {
       }));
       assert.deepEqual(ecartsEn, [], `${nomEn} : libellés anglais incohérents`);
     }
+    assert.ok(demandesContexte.every((u) => u.startsWith(base)),
+      `Ressource externe sollicitée (EN) : ${demandesContexte.filter((u) => !u.startsWith(base)).join(', ')}`);
     await contexte.close();
 
     const admin = await browser.newContext({ viewport: { width: largeur, height: 900 }, javaScriptEnabled: false, reducedMotion: 'reduce' });
@@ -319,10 +373,16 @@ try {
     assert.deepEqual(choix, {langue:'fr', zone:'Asia/Kathmandu'});
     assert.ok(!JSON.stringify(choix).includes('43.7'), 'coordonnées enregistrées');
     await aller(personnel, '/');
+    await imagesVerifiees(personnel, 'accueil-fr', { hero: true, cartesAttendues: true });
     const temps = personnel.locator('time[data-date-format="ajout"]').first();
     const utc = await temps.getAttribute('datetime');
     const parties = Object.fromEntries(new Intl.DateTimeFormat('fr-FR', {timeZone:'Asia/Kathmandu', year:'numeric', month:'2-digit', day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date(utc)).map(({type,value}) => [type,value]));
     assert.equal(await temps.innerText(), `${parties.day}/${parties.month}/${parties.year} à ${parties.hour}h${parties.minute}`);
+    await aller(personnel, '/catalogue');
+    await imagesVerifiees(personnel, 'catalogue-fr', { cartesAttendues: true });
+    const hrefFr = await personnel.locator('a[href^="/produit/"]').first().getAttribute('href');
+    await aller(personnel, hrefFr);
+    await imagesVerifiees(personnel, 'produit-fr', { fichePrefixe: 'Visuel indicatif : ' });
     await aller(personnel, '/admin/connexion');
     await personnel.fill('#email', 'admin@minishop.fr');
     await personnel.fill('#mot_de_passe', 'Admin2026!');
