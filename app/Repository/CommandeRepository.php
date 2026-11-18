@@ -517,11 +517,11 @@ final class CommandeRepository
                 throw new BusinessError('ACCES_NON_AUTORISE');
             }
             $statut = (string) $commande['statut'];
-            $autorisés = ['BROUILLON', 'EN_PREPARATION', 'PAYEE'];
+            $autorises = ['BROUILLON', 'EN_PREPARATION', 'PAYEE'];
             if ($roleAuteur === 'ADMIN') {
-                $autorisés[] = 'EXPEDIEE';
+                $autorises[] = 'EXPEDIEE';
             }
-            if (!in_array($statut, $autorisés, true)) {
+            if (!in_array($statut, $autorises, true)) {
                 if ($messageTardive && $roleAuteur === 'CLIENT' && $statut === 'EXPEDIEE') {
                     throw new BusinessError('ANNULATION_TROP_TARDIVE');
                 }

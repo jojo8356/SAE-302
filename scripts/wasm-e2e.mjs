@@ -30,7 +30,7 @@ class Navigateur {
     return entetes;
   }
 
-  mémoriseCookies(reponse) {
+  memoriseCookies(reponse) {
     for (const sc of reponse.headers['set-cookie'] ?? []) {
       const m = /^([^=]+)=([^;]*)/.exec(sc);
       if (m) this.cookies[m[1]] = m[2];
@@ -39,7 +39,7 @@ class Navigateur {
 
   async get(chemin) {
     const r = await php.request({ method: 'GET', url: chemin, headers: this.entetes() });
-    this.mémoriseCookies(r);
+    this.memoriseCookies(r);
     return r;
   }
 
@@ -48,7 +48,7 @@ class Navigateur {
       method: 'POST', url: chemin, headers: this.entetes(),
       formData: Object.fromEntries(Object.entries(donnees).map(([k, v]) => [k, String(v)])),
     });
-    this.mémoriseCookies(r);
+    this.memoriseCookies(r);
     return r;
   }
 
@@ -61,11 +61,11 @@ class Navigateur {
 }
 
 // ---------------------------------------------------------------- assertions
-let échecs = 0, tests = 0;
-const check = (label, ok, détail = '') => {
+let echecs = 0, tests = 0;
+const check = (label, ok, detail = '') => {
   ++tests;
-  console.log(`  ${ok ? '✅' : '❌'} ${label}${détail && !ok ? ` — ${détail}` : ''}`);
-  if (!ok) ++échecs;
+  console.log(`  ${ok ? '✅' : '❌'} ${label}${detail && !ok ? ` — ${detail}` : ''}`);
+  if (!ok) ++echecs;
 };
 const contient = (label, page, morceau) =>
   check(label, (page ?? '').includes(morceau), `page sans « ${morceau} »`);
@@ -1191,9 +1191,9 @@ process.stdout.write(B('T15 · mentions LCEN, préférences sans session, annula
 
 // Les données et journaux du runtime WASM sont jetables ; rien n'est rapatrié.
 process.stdout.write(`\n${'='.repeat(60)}\n`);
-if (échecs === 0) {
+if (echecs === 0) {
   console.log(`E2E : TOUT EST VERT ✅  (${tests} vérifications)`);
   process.exit(0);
 }
-console.log(`E2E : ${échecs} échec(s) sur ${tests} vérifications ❌`);
+console.log(`E2E : ${echecs} échec(s) sur ${tests} vérifications ❌`);
 process.exit(1);

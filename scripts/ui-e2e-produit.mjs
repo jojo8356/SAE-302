@@ -58,11 +58,11 @@ if (!process.env.UI_BASE_URL) {
 }
 
 // ---------------------------------------------------------------- assertions
-let tests = 0, échecs = 0;
-const check = (label, ok, détail = '') => {
+let tests = 0, echecs = 0;
+const check = (label, ok, detail = '') => {
   ++tests;
-  console.log(`  ${ok ? '✅' : '❌'} ${label}${!ok && détail ? ` — ${détail}` : ''}`);
-  if (!ok) ++échecs;
+  console.log(`  ${ok ? '✅' : '❌'} ${label}${!ok && detail ? ` — ${detail}` : ''}`);
+  if (!ok) ++echecs;
   if (!ok && process.env.GITHUB_ACTIONS === 'true') {
     console.log(`::error title=ui-e2e-produit::${label.replaceAll('%', '%25').replaceAll('\n', '%0A')}`);
   }
@@ -90,8 +90,8 @@ const doc = () => page.dom.window.document;
 const texte = () => doc().body.textContent.replace(/\s+/g, ' ').trim();
 
 async function attendreServeur() {
-  const échéance = Date.now() + 60000;
-  while (Date.now() < échéance) {
+  const echeance = Date.now() + 60000;
+  while (Date.now() < echeance) {
     try {
       const res = await fetch(`${base}/`, { redirect: 'manual' });
       await res.text();
@@ -174,8 +174,8 @@ try {
     (!!doc().querySelector('form[action="/panier/ajouter"]')) === enStock);
 
   console.log(`\n${'='.repeat(64)}`);
-  if (échecs > 0) {
-    console.log(`E2E UI produit : ${échecs}/${tests} vérification(s) en échec ❌`);
+  if (echecs > 0) {
+    console.log(`E2E UI produit : ${echecs}/${tests} vérification(s) en échec ❌`);
     process.exitCode = 1;
   } else {
     console.log(`E2E UI produit : TOUT EST VERT ✅ (${tests} vérifications, interactions DOM simulées avec jsdom)`);

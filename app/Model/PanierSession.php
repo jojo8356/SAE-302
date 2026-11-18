@@ -34,7 +34,7 @@ final class PanierSession
     }
 
     /** Fabrique pratique branchée sur le store applicatif. */
-    public static function chargé(): self
+    public static function charge(): self
     {
         $store = \App\Config\Database::store();
 

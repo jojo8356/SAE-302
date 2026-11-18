@@ -13,13 +13,13 @@ if (!process.env.UI_BASE_URL || process.env.UI_TEST_INSTANCE_JETABLE !== '1') {
 
 const PORT = 8128;
 const base = process.env.UI_BASE_URL ?? `http://127.0.0.1:${PORT}`;
-let échecs = 0;
+let echecs = 0;
 let serveur = null;
 
-function check(libellé, ok, détail = '') {
-  console.log(`  ${ok ? '✅' : '❌'} ${libellé}${détail !== '' && !ok ? ' — ' + détail : ''}`);
+function check(libelle, ok, detail = '') {
+  console.log(`  ${ok ? '✅' : '❌'} ${libelle}${detail !== '' && !ok ? ' — ' + detail : ''}`);
   if (!ok) {
-    échecs += 1;
+    echecs += 1;
   }
 }
 const attendre = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -38,7 +38,7 @@ class NavigateurUI {
     return cookie ? { cookie, ...extra } : { ...extra };
   }
 
-  mémorise(res) {
+  memorise(res) {
     for (const sc of res.headers.getSetCookie()) {
       const m = /^([^=]+)=([^;]*)/.exec(sc);
       if (m) this.cookies[m[1]] = m[2];
@@ -49,7 +49,7 @@ class NavigateurUI {
     let url = new URL(chemin, base).href;
     for (let i = 0; i < 6; ++i) {
       const res = await fetch(url, { headers: this.enTetes(), redirect: 'manual' });
-      this.mémorise(res);
+      this.memorise(res);
       const html = await res.text();
       if (res.status >= 300 && res.status < 400 && res.headers.get('location')) {
         url = new URL(res.headers.get('location'), url).href;
@@ -96,7 +96,7 @@ class NavigateurUI {
       body: corps.toString(),
       redirect: 'manual',
     });
-    this.mémorise(res);
+    this.memorise(res);
     await res.text();
     if (res.status >= 300 && res.status < 400 && res.headers.get('location')) {
       return this.aller(new URL(res.headers.get('location'), action).pathname);
@@ -182,11 +182,11 @@ async function aller() {
     ligneCadre.includes('SAE — BUT Informatique (BUT2), Université Côte d\'Azur')
       && !ligneCadre.includes('Licence 3'));
 
-  console.log(`\n${échecs === 0 ? '✅' : '❌'} Mentions légales : ${échecs === 0 ? 'toutes les vérifications réussies' : échecs + ' vérification(s) en échec'}\n`);
+  console.log(`\n${echecs === 0 ? '✅' : '❌'} Mentions légales : ${echecs === 0 ? 'toutes les vérifications réussies' : echecs + ' vérification(s) en échec'}\n`);
   if (serveur) {
     serveur.kill();
   }
-  process.exit(échecs === 0 ? 0 : 1);
+  process.exit(echecs === 0 ? 0 : 1);
 }
 
 aller().catch(async (error) => {

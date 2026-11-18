@@ -21,7 +21,7 @@ final class PanierController extends Controller
 
     public function __construct()
     {
-        $this->panier = PanierSession::chargé();
+        $this->panier = PanierSession::charge();
     }
 
     public function index(): void

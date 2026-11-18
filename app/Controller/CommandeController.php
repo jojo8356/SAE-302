@@ -27,7 +27,7 @@ final class CommandeController extends Controller
     public function formulaire(): void
     {
         $client = Auth::exigeClient();
-        $panier = PanierSession::chargé();
+        $panier = PanierSession::charge();
         $recap = $panier->recapitulatif();
 
         if ($panier->estVide()) {
@@ -55,7 +55,7 @@ final class CommandeController extends Controller
     {
         $this->verifierCsrf();
         $session = Auth::exigeClient();
-        $panier = PanierSession::chargé();
+        $panier = PanierSession::charge();
 
         $adresse = $this->str('adresse', 255);
         if ($adresse === '') {

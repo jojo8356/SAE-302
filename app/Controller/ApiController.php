@@ -29,7 +29,7 @@ final class ApiController extends Controller
 
     public function __construct()
     {
-        $this->panier = PanierSession::chargé();
+        $this->panier = PanierSession::charge();
     }
 
     /** État courant du panier (badge, compteurs, total) — lecture seule. */
