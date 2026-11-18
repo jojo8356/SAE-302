@@ -100,7 +100,7 @@ const suites = [
   ['Unitaires PHPUnit', 'tests/phpunit/run-local.php'],
 ];
 
-let échecs = 0;
+let echecs = 0;
 
 console.log(phpExiste
   ? '\nExécution en PHP natif (aucune dépendance npm requise).'
@@ -111,7 +111,7 @@ console.log('  Les suites WASM contrôlent les dépréciations à l’exécution
 
 console.log(`\n${'='.repeat(64)}\n▸ Autotests du contrôle des dépréciations\n${'='.repeat(64)}`);
 const autoAnalyse = spawnSync('python3', ['tests/python/test_deprecations.py'], { stdio: 'inherit' });
-if (autoAnalyse.status !== 0) ++échecs;
+if (autoAnalyse.status !== 0) ++echecs;
 for (const test of [
   'tests/python/test_code_mort_integration.py',
   'tests/python/test_aide_cli.py',
@@ -126,54 +126,54 @@ for (const test of [
   'scripts/verifier_fiches_uc.py',
 ]) {
   const result = spawnSync('python3', [test], { stdio: 'inherit' });
-  if (result.status !== 0) ++échecs;
+  if (result.status !== 0) ++echecs;
 }
 const autoWasm = spawnSync('node', ['tests/js/deprecations_wasm.mjs'], { stdio: 'inherit' });
-if (autoWasm.status !== 0) ++échecs;
+if (autoWasm.status !== 0) ++echecs;
 
 // Le harnais se vérifie lui-même : sans cela, une régression du calcul du
 // verdict rendrait toutes les suites vertes par construction.
 console.log(`\n${'='.repeat(64)}\n▸ Autotest du verdict WASM — scripts/wasm_verdict.mjs\n${'='.repeat(64)}`);
 const autotest = spawnSync('node', ['scripts/wasm_verdict.mjs'], { stdio: 'inherit' });
-if (autotest.status !== 0) ++échecs;
+if (autotest.status !== 0) ++echecs;
 
 console.log(`\n${'='.repeat(64)}\n▸ Linter strict types — scripts/strict_types_lint.php\n${'='.repeat(64)}`);
 const lint = lancer('scripts/strict_types_lint.php');
-if (lint.status !== 0) ++échecs;
+if (lint.status !== 0) ++echecs;
 
 for (const [nom, fichier] of suites) {
   console.log(`\n${'='.repeat(64)}\n▸ ${nom} — ${fichier}\n${'='.repeat(64)}`);
   const r = lancer(fichier);
-  if (r.status !== 0) ++échecs;
+  if (r.status !== 0) ++echecs;
 }
 
 // Intégration SQL : code 2 = suite non jouable ici (pas de serveur), ce n'est
 // pas un échec. La compter comme telle ferait échouer la sandbox sur une suite
 // qu'elle ne peut structurellement pas exécuter.
-let étatsql = 'NON JOUÉ ⏭ (serveur ou client MySQL absent)';
+let etatSql = 'NON JOUÉ ⏭ (serveur ou client MySQL absent)';
 if (sansSql) {
-  étatsql = 'NON JOUÉ ⏭ (--sans-sql)';
+  etatSql = 'NON JOUÉ ⏭ (--sans-sql)';
   console.log('⏭ NON JOUÉ : intégration SQL (--sans-sql).');
 } else if (!existsSync('tests/php/sql_integration.php')) {
   console.log('  ❌ fichier absent');
-  ++échecs;
-  étatsql = 'fichier absent ❌';
+  ++echecs;
+  etatSql = 'fichier absent ❌';
 } else {
   console.log(`\n${'='.repeat(64)}\n▸ Intégration SQL — tests/php/sql_integration.php\n${'='.repeat(64)}`);
   const sql = lancer('tests/php/sql_integration.php');
-  if (sql.status === 0) étatsql = 'joué ✅';
+  if (sql.status === 0) etatSql = 'joué ✅';
   if (sql.status !== 0 && sql.status !== 2) {
-    ++échecs;
-    étatsql = 'ÉCHEC ❌';
+    ++echecs;
+    etatSql = 'ÉCHEC ❌';
   }
 }
 
 console.log(`\n${'='.repeat(64)}\n${'='.repeat(64)}`);
-if (échecs > 0) {
-  console.log(`SUITES : ${échecs} étape(s) en échec ❌ — E2E non joué`);
+if (echecs > 0) {
+  console.log(`SUITES : ${echecs} étape(s) en échec ❌ — E2E non joué`);
   process.exit(1);
 }
-console.log(`SUITES PHP EXÉCUTÉES : TOUT EST VERT ✅ — analyse de compilation : NON JOUÉE — SQL : ${étatsql} — E2E :`);
+console.log(`SUITES PHP EXÉCUTÉES : TOUT EST VERT ✅ — analyse de compilation : NON JOUÉE — SQL : ${etatSql} — E2E :`);
 
 // L'E2E pilote l'application par requêtes HTTP internes : il repose sur le
 // runtime WASM. Sans PHP natif, il tourne partout ; avec PHP natif, il faut

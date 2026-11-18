@@ -26,7 +26,7 @@ if (is_string($cheminBrut) && $cheminBrut !== '') {
 
 $nbArticlesPanier = 0;
 try {
-    $nbArticlesPanier = \App\Model\PanierSession::chargé()->nombreArticles();
+    $nbArticlesPanier = \App\Model\PanierSession::charge()->nombreArticles();
 } catch (Throwable) {
     // un panier cassé ne doit jamais empêcher l'affichage d'une page
 }

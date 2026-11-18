@@ -82,7 +82,7 @@ else:
         self.assertEqual(resultat.returncode, 0)
         self.assertIn('❌ DÉPRÉCIATION PHP : obsolete', resultat.stderr)
 
-    def test_pas_de_traversée_de_liens(self):
+    def test_pas_de_traversee_de_liens(self):
         (self.sources / 'sain.php').write_text('<?php', encoding='utf8')
         externe = self.racine / 'externe'
         externe.mkdir()

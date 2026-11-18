@@ -56,11 +56,11 @@ if (!process.env.UI_BASE_URL) {
 }
 
 // ---------------------------------------------------------------- assertions
-let tests = 0, échecs = 0;
-const check = (label, ok, détail = '') => {
+let tests = 0, echecs = 0;
+const check = (label, ok, detail = '') => {
   ++tests;
-  console.log(`  ${ok ? '✅' : '❌'} ${label}${!ok && détail ? ` — ${détail}` : ''}`);
-  if (!ok) ++échecs;
+  console.log(`  ${ok ? '✅' : '❌'} ${label}${!ok && detail ? ` — ${detail}` : ''}`);
+  if (!ok) ++echecs;
   if (!ok && process.env.GITHUB_ACTIONS === 'true') {
     console.log(`::error title=ui-e2e-panier::${label.replaceAll('%', '%25').replaceAll('\n', '%0A')}`);
   }
@@ -80,7 +80,7 @@ class NavigateurUI {
     return cookie ? { cookie, ...extra } : { ...extra };
   }
 
-  mémorise(res) {
+  memorise(res) {
     for (const sc of res.headers.getSetCookie()) {
       const m = /^([^=]+)=([^;]*)/.exec(sc);
       if (m) this.cookies[m[1]] = m[2];
@@ -92,7 +92,7 @@ class NavigateurUI {
     let url = new URL(chemin, base).href;
     for (let i = 0; i < 6; ++i) {
       const res = await fetch(url, { headers: this.enTetes(), redirect: 'manual' });
-      this.mémorise(res);
+      this.memorise(res);
       const html = await res.text();
       if (res.status >= 300 && res.status < 400 && res.headers.get('location')) {
         url = new URL(res.headers.get('location'), url).href;
@@ -141,7 +141,7 @@ class NavigateurUI {
       body: corps.toString(),
       redirect: 'manual',
     });
-    this.mémorise(res);
+    this.memorise(res);
     await res.text();
     if (res.status >= 300 && res.status < 400 && res.headers.get('location')) {
       return this.aller(new URL(res.headers.get('location'), action).pathname);
@@ -161,8 +161,8 @@ function bouton(formulaire, libelle) {
 }
 
 async function attendreServeur() {
-  const échéance = Date.now() + 60000;
-  while (Date.now() < échéance) {
+  const echeance = Date.now() + 60000;
+  while (Date.now() < echeance) {
     try {
       const res = await fetch(`${base}/`, { redirect: 'manual' });
       await res.text();
@@ -252,8 +252,8 @@ try {
     [...doc().querySelectorAll('button')].some((b) => b.textContent.includes('Confirmer et payer')));
 
   console.log(`\n${'='.repeat(64)}`);
-  if (échecs > 0) {
-    console.log(`E2E UI panier : ${échecs}/${tests} vérification(s) en échec ❌`);
+  if (echecs > 0) {
+    console.log(`E2E UI panier : ${echecs}/${tests} vérification(s) en échec ❌`);
     process.exitCode = 1;
   } else {
     console.log(`E2E UI panier : TOUT EST VERT ✅ (${tests} vérifications, interactions DOM simulées avec jsdom)`);
