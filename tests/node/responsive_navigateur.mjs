@@ -183,7 +183,12 @@ try {
     assert.equal(motion.reduced, true, 'TCX-13 : prefers-reduced-motion: reduce inactif');
     assert.ok(motion.duree <= 0.001, `TCX-13 : transition non réduite (${motion.duree}s)`);
 
+    await page.bringToFront();
     await page.keyboard.press('Tab');
+    await page.waitForFunction(() => {
+      const el = document.activeElement;
+      return Boolean(el?.classList.contains('lien-evitement')) && el.getBoundingClientRect().left >= 0;
+    }, { timeout: 2000 }).catch(() => {});
     const skip = await page.evaluate(() => {
       const el = document.activeElement;
       const r = el?.getBoundingClientRect();
@@ -194,6 +199,10 @@ try {
         largeur: r?.width ?? 0,
         hauteur: r?.height ?? 0,
         contour: el ? getComputedStyle(el).outlineStyle : 'none',
+        computedLeft: el ? getComputedStyle(el).left : null,
+        matchesFocus: Boolean(el?.matches(':focus')),
+        matchesFocusVisible: Boolean(el?.matches(':focus-visible')),
+        hasFocus: document.hasFocus(),
       };
     });
     assert.ok(skip.estSkip && skip.href === '#contenu', `TCX-13 : 1er Tab != skip-link (${JSON.stringify(skip)})`);

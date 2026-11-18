@@ -257,7 +257,8 @@ a:hover {
     border-radius: 0 0 var(--r-sm) 0;
 }
 
-.lien-evitement:focus {
+.lien-evitement:focus,
+.lien-evitement:focus-visible {
     left: 0;
     color: #fff;
 }
