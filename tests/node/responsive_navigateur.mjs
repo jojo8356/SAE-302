@@ -158,7 +158,90 @@ try {
       assert.ok(ficheImg, `${nom} : image principale de fiche absente`);
       assert.ok((ficheImg.alt ?? '').startsWith(fichePrefixe),
         `${nom} : alt fiche inattendu (${JSON.stringify(ficheImg.alt)})`);
+      const detailsFiche = await page.evaluate(() => ({
+        liensAriane: document.querySelectorAll('.fil-ariane a').length,
+        prix: document.querySelector('.achat__prix')?.textContent?.trim() ?? '',
+        tva: document.querySelector('.achat__tva')?.textContent?.trim() ?? '',
+        stockVisible: Boolean(document.querySelector('.achat__stock')?.textContent?.trim()),
+        tableauVisible: Boolean(document.querySelector('.tableau-caracteristiques')),
+      }));
+      assert.ok(detailsFiche.liensAriane >= 2, `${nom} : fil d'Ariane incomplet`);
+      assert.match(detailsFiche.prix, /€/, `${nom} : prix TTC absent (${detailsFiche.prix})`);
+      assert.match(detailsFiche.tva, /20(?:[,.]00)?\s*%/, `${nom} : mention TVA 20 % absente (${detailsFiche.tva})`);
+      assert.ok(detailsFiche.stockVisible && detailsFiche.tableauVisible, `${nom} : stock ou caractéristiques manquants`);
     }
+  }
+  async function navigationClavierEtMouvementReduit(page, hrefProduit) {
+    await aller(page, '/');
+    const motion = await page.evaluate(() => {
+      const btn = document.querySelector('.btn');
+      return {
+        reduced: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+        duree: btn ? Number.parseFloat(getComputedStyle(btn).transitionDuration) : 0,
+      };
+    });
+    assert.equal(motion.reduced, true, 'TCX-13 : prefers-reduced-motion: reduce inactif');
+    assert.ok(motion.duree <= 0.001, `TCX-13 : transition non réduite (${motion.duree}s)`);
+
+    await page.keyboard.press('Tab');
+    const skip = await page.evaluate(() => {
+      const el = document.activeElement;
+      const r = el?.getBoundingClientRect();
+      return {
+        estSkip: Boolean(el?.classList.contains('lien-evitement')),
+        href: el?.getAttribute('href'),
+        gauche: r?.left ?? -1,
+        largeur: r?.width ?? 0,
+        hauteur: r?.height ?? 0,
+        contour: el ? getComputedStyle(el).outlineStyle : 'none',
+      };
+    });
+    assert.ok(skip.estSkip && skip.href === '#contenu', `TCX-13 : 1er Tab != skip-link (${JSON.stringify(skip)})`);
+    assert.ok(skip.gauche >= 0 && skip.largeur > 0 && skip.hauteur > 0, `TCX-13 : skip-link non visible au focus (${JSON.stringify(skip)})`);
+    assert.notEqual(skip.contour, 'none', 'TCX-13 : contour focus absent sur skip-link');
+
+    await page.keyboard.press('Enter');
+    await page.waitForFunction(() => window.location.hash === '#contenu');
+
+    await page.keyboard.press('Tab');
+    const premierLien = await page.evaluate(() => ({
+      tag: document.activeElement?.tagName,
+      href: document.activeElement?.getAttribute('href'),
+      contour: document.activeElement ? getComputedStyle(document.activeElement).outlineStyle : 'none',
+    }));
+    assert.notEqual(premierLien.contour, 'none', `TCX-13 : contour focus absent après Tab (${JSON.stringify(premierLien)})`);
+    await page.keyboard.press('Tab');
+    const secondHref = await page.evaluate(() => document.activeElement?.getAttribute('href'));
+    await page.keyboard.press('Shift+Tab');
+    const retourHref = await page.evaluate(() => document.activeElement?.getAttribute('href'));
+    assert.equal(retourHref, premierLien.href, `TCX-13 : Shift+Tab ne revient pas (${retourHref} != ${premierLien.href})`);
+    assert.notEqual(secondHref, premierLien.href, 'TCX-13 : Tab suivant bloqué');
+
+    await aller(page, '/catalogue');
+    await page.locator('.filtres-catalogue > summary').focus();
+    const ouvertAvant = await page.evaluate(() => document.querySelector('.filtres-catalogue')?.hasAttribute('open'));
+    await page.keyboard.press('Space');
+    const ouvertApres = await page.evaluate(() => document.querySelector('.filtres-catalogue')?.hasAttribute('open'));
+    assert.equal(ouvertApres, !ouvertAvant, 'TCX-13 : Espace ne bascule pas les filtres');
+    await page.keyboard.press('Space');
+    const ouvertFinal = await page.evaluate(() => document.querySelector('.filtres-catalogue')?.hasAttribute('open'));
+    assert.equal(ouvertFinal, ouvertAvant, 'TCX-13 : second Espace ne referme pas les filtres');
+
+    await aller(page, hrefProduit);
+    let trouveBouton = false;
+    for (let i = 0; i < 60; i++) {
+      await page.keyboard.press('Tab');
+      trouveBouton = await page.evaluate(() =>
+        Boolean(document.activeElement?.matches('form[action="/panier/ajouter"] button[type="submit"]')));
+      if (trouveBouton) break;
+    }
+    assert.ok(trouveBouton, 'TCX-13 : bouton Ajouter au panier inatteignable par Tab');
+    await Promise.all([
+      page.waitForResponse((reponse) => reponse.url().includes('/api/panier/ajouter') && reponse.request().method() === 'POST'),
+      page.keyboard.press('Enter'),
+    ]);
+    await page.waitForFunction(() => document.querySelector('#badge-panier') && !document.querySelector('#badge-panier').hidden);
+    console.log('✅ Clavier seul (Tab / Shift+Tab / Entrée / Espace / skip-link) + prefers-reduced-motion');
   }
   for (const largeur of [320, 375, 1440]) {
     const contexte = await browser.newContext({ viewport: { width: largeur, height: 900 }, locale: 'en-US', reducedMotion: 'reduce' });
@@ -391,6 +474,9 @@ try {
     const hrefFr = await personnel.locator('a[href^="/produit/"]').first().getAttribute('href');
     await aller(personnel, hrefFr);
     await imagesVerifiees(personnel, 'produit-fr', { fichePrefixe: 'Visuel indicatif : ' });
+    if (largeur === 1440) {
+      await navigationClavierEtMouvementReduit(personnel, hrefFr);
+    }
     await aller(personnel, '/admin/connexion');
     await personnel.fill('#email', 'admin@minishop.fr');
     await personnel.fill('#mot_de_passe', 'Admin2026!');
