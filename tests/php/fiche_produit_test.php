@@ -86,6 +86,7 @@ $produit = [
     'id_produit' => 5,
     'nom' => 'Casque audio sans fil Aura',
     'reference' => 'CASQ-005',
+    'image_url' => 'img/produits/aura.jpg',
     'prix_ht' => 129.00,
     'tva' => 20.00,
     'prix_ttc' => 154.80,
@@ -137,6 +138,16 @@ $check('le tableau est avant la description et l\'ajout au panier',
 $check('le formulaire d\'ajout est toujours là (avec CSRF et plafond de stock)',
     str_contains($html, 'name="_csrf"') && str_contains($html, 'max="16"'));
 $check('le retour au catalogue est toujours là', str_contains($html, '<a href="/catalogue">Catalogue</a>'));
+$check('fil d\'Ariane complet (Accueil, Catalogue, Catégorie)',
+    str_contains($html, 'aria-label="Fil d\'Ariane"')
+    && str_contains($html, '<a href="/">Accueil</a>')
+    && str_contains($html, '<a href="/catalogue?cat=2">Audio</a>'));
+$check('encadré d\'achat : prix TTC + détail TVA 20 % + stock',
+    str_contains($html, '154,80 €')
+    && str_contains($html, 'TTC — prix 129,00 € HT + TVA 20,00 %')
+    && str_contains($html, '16 unités'));
+$check('TC03-09 : visuel principal informatif (« Visuel indicatif : … »)',
+    str_contains($html, 'alt="Visuel indicatif : Casque audio sans fil Aura"'));
 $check('les anciennes sections « Prix »/« Disponibilité » en prose ont laissé place au tableau',
     !str_contains($html, '<h2>Prix</h2>') && !str_contains($html, '<h2>Disponibilité</h2>'));
 

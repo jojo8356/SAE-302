@@ -107,11 +107,162 @@ try {
       cible.click({ force: true }),
     ]);
   }
+  async function imagesVerifiees(page, nom, options = {}) {
+    const { hero = false, heroVisible = false, cartesAttendues = false, fichePrefixe = null } = options;
+    const totalVisibles = await page.locator('img:visible').count();
+    for (let i = 0; i < totalVisibles; i++) {
+      await page.locator('img:visible').nth(i).scrollIntoViewIfNeeded();
+    }
+    await page.waitForFunction(() => [...document.querySelectorAll('img')]
+      .filter((img) => getComputedStyle(img).display !== 'none')
+      .every((img) => img.complete));
+    const rapport = await page.evaluate(() => ({
+      images: [...document.querySelectorAll('img')].map((img) => ({
+        src: img.getAttribute('src') ?? '',
+        alt: img.getAttribute('alt'),
+        width: img.getAttribute('width'),
+        height: img.getAttribute('height'),
+        visible: getComputedStyle(img).display !== 'none',
+        complete: img.complete,
+        naturalWidth: img.naturalWidth,
+        estHero: img.classList.contains('hero__illustration'),
+        estCarte: img.closest('.carte-produit__media') !== null,
+        estFiche: img.closest('.fiche__media') !== null,
+      })),
+    }));
+    assert.ok(rapport.images.length > 0, `${nom} : aucune image rendue`);
+    for (const img of rapport.images) {
+      assert.ok(img.src.startsWith('/'), `${nom} : source image non locale (${img.src})`);
+      assert.ok(Number(img.width) > 0 && Number(img.height) > 0, `${nom} : dimensions explicites manquantes (${img.src})`);
+      if (img.visible) {
+        assert.ok(img.complete && img.naturalWidth > 0, `${nom} : image cassée (${img.src})`);
+      }
+    }
+    if (hero) {
+      const heroImg = rapport.images.find((img) => img.estHero);
+      assert.ok(heroImg, `${nom} : photographie hero absente`);
+      assert.ok((heroImg.alt ?? '').trim().length >= 10, `${nom} : alt hero non descriptif (${heroImg.alt})`);
+      if (heroVisible) {
+        assert.ok(heroImg.visible && heroImg.complete && heroImg.naturalWidth > 0, `${nom} : photographie hero non chargée`);
+      }
+    }
+    const cartesImgs = rapport.images.filter((img) => img.estCarte);
+    if (cartesAttendues) {
+      assert.ok(cartesImgs.length > 0, `${nom} : aucune vignette de carte produit`);
+    }
+    for (const img of cartesImgs) {
+      assert.equal(img.alt, '', `${nom} : vignette produit non décorative (alt=${JSON.stringify(img.alt)})`);
+    }
+    if (fichePrefixe !== null) {
+      const ficheImg = rapport.images.find((img) => img.estFiche);
+      assert.ok(ficheImg, `${nom} : image principale de fiche absente`);
+      assert.ok((ficheImg.alt ?? '').startsWith(fichePrefixe),
+        `${nom} : alt fiche inattendu (${JSON.stringify(ficheImg.alt)})`);
+      const detailsFiche = await page.evaluate(() => ({
+        liensAriane: document.querySelectorAll('.fil-ariane a').length,
+        prix: document.querySelector('.achat__prix')?.textContent?.trim() ?? '',
+        tva: document.querySelector('.achat__tva')?.textContent?.trim() ?? '',
+        stockVisible: Boolean(document.querySelector('.achat__stock')?.textContent?.trim()),
+        tableauVisible: Boolean(document.querySelector('.tableau-caracteristiques')),
+      }));
+      assert.ok(detailsFiche.liensAriane >= 2, `${nom} : fil d'Ariane incomplet`);
+      assert.match(detailsFiche.prix, /€/, `${nom} : prix TTC absent (${detailsFiche.prix})`);
+      assert.match(detailsFiche.tva, /20(?:[,.]00)?\s*%/, `${nom} : mention TVA 20 % absente (${detailsFiche.tva})`);
+      assert.ok(detailsFiche.stockVisible && detailsFiche.tableauVisible, `${nom} : stock ou caractéristiques manquants`);
+    }
+  }
+  async function navigationClavierEtMouvementReduit(page, hrefProduit) {
+    await aller(page, '/');
+    const motion = await page.evaluate(() => {
+      const btn = document.querySelector('.btn');
+      return {
+        reduced: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+        duree: btn ? Number.parseFloat(getComputedStyle(btn).transitionDuration) : 0,
+      };
+    });
+    assert.equal(motion.reduced, true, 'TCX-13 : prefers-reduced-motion: reduce inactif');
+    assert.ok(motion.duree <= 0.001, `TCX-13 : transition non réduite (${motion.duree}s)`);
+
+    await page.bringToFront();
+    await page.keyboard.press('Tab');
+    await page.waitForFunction(() => {
+      const el = document.activeElement;
+      return Boolean(el?.classList.contains('lien-evitement')) && el.getBoundingClientRect().left >= 0;
+    }, { timeout: 2000 }).catch(() => {});
+    const skip = await page.evaluate(() => {
+      const el = document.activeElement;
+      const r = el?.getBoundingClientRect();
+      return {
+        estSkip: Boolean(el?.classList.contains('lien-evitement')),
+        href: el?.getAttribute('href'),
+        gauche: r?.left ?? -1,
+        largeur: r?.width ?? 0,
+        hauteur: r?.height ?? 0,
+        contour: el ? getComputedStyle(el).outlineStyle : 'none',
+        computedLeft: el ? getComputedStyle(el).left : null,
+        matchesFocus: Boolean(el?.matches(':focus')),
+        matchesFocusVisible: Boolean(el?.matches(':focus-visible')),
+        hasFocus: document.hasFocus(),
+      };
+    });
+    assert.ok(skip.estSkip && skip.href === '#contenu', `TCX-13 : 1er Tab != skip-link (${JSON.stringify(skip)})`);
+    assert.ok(skip.gauche >= 0 && skip.largeur > 0 && skip.hauteur > 0, `TCX-13 : skip-link non visible au focus (${JSON.stringify(skip)})`);
+    assert.notEqual(skip.contour, 'none', 'TCX-13 : contour focus absent sur skip-link');
+
+    await page.keyboard.press('Enter');
+    await page.waitForFunction(() => window.location.hash === '#contenu');
+
+    await page.keyboard.press('Tab');
+    const premierLien = await page.evaluate(() => ({
+      tag: document.activeElement?.tagName,
+      href: document.activeElement?.getAttribute('href'),
+      contour: document.activeElement ? getComputedStyle(document.activeElement).outlineStyle : 'none',
+    }));
+    assert.notEqual(premierLien.contour, 'none', `TCX-13 : contour focus absent après Tab (${JSON.stringify(premierLien)})`);
+    await page.keyboard.press('Tab');
+    const secondHref = await page.evaluate(() => document.activeElement?.getAttribute('href'));
+    await page.keyboard.press('Shift+Tab');
+    const retourHref = await page.evaluate(() => document.activeElement?.getAttribute('href'));
+    assert.equal(retourHref, premierLien.href, `TCX-13 : Shift+Tab ne revient pas (${retourHref} != ${premierLien.href})`);
+    assert.notEqual(secondHref, premierLien.href, 'TCX-13 : Tab suivant bloqué');
+
+    await aller(page, '/catalogue');
+    await page.locator('.filtres-catalogue > summary').focus();
+    const ouvertAvant = await page.evaluate(() => document.querySelector('.filtres-catalogue')?.hasAttribute('open'));
+    await page.keyboard.press('Space');
+    const ouvertApres = await page.evaluate(() => document.querySelector('.filtres-catalogue')?.hasAttribute('open'));
+    assert.equal(ouvertApres, !ouvertAvant, 'TCX-13 : Espace ne bascule pas les filtres');
+    await page.keyboard.press('Space');
+    const ouvertFinal = await page.evaluate(() => document.querySelector('.filtres-catalogue')?.hasAttribute('open'));
+    assert.equal(ouvertFinal, ouvertAvant, 'TCX-13 : second Espace ne referme pas les filtres');
+
+    await aller(page, hrefProduit);
+    let trouveBouton = false;
+    for (let i = 0; i < 60; i++) {
+      await page.keyboard.press('Tab');
+      trouveBouton = await page.evaluate(() =>
+        Boolean(document.activeElement?.matches('form[action="/panier/ajouter"] button[type="submit"]')));
+      if (trouveBouton) break;
+    }
+    assert.ok(trouveBouton, 'TCX-13 : bouton Ajouter au panier inatteignable par Tab');
+    await Promise.all([
+      page.waitForResponse((reponse) => reponse.url().includes('/api/panier/ajouter') && reponse.request().method() === 'POST'),
+      page.keyboard.press('Enter'),
+    ]);
+    await page.waitForFunction(() => document.querySelector('#badge-panier') && !document.querySelector('#badge-panier').hidden);
+    console.log('✅ Clavier seul (Tab / Shift+Tab / Entrée / Espace / skip-link) + prefers-reduced-motion');
+  }
   for (const largeur of [320, 375, 1440]) {
     const contexte = await browser.newContext({ viewport: { width: largeur, height: 900 }, locale: 'en-US', reducedMotion: 'reduce' });
     const page = await contexte.newPage();
+    const demandesContexte = [];
+    page.on('request', (r) => demandesContexte.push(r.url()));
+    await aller(page, '/');
+    await pageVerifiee(page, 'accueil', largeur, '.carte-produit');
+    await imagesVerifiees(page, 'accueil-en', { hero: true, heroVisible: largeur >= 1440, cartesAttendues: true });
     await aller(page, '/catalogue');
     await pageVerifiee(page, 'catalogue', largeur, 'a[href^="/produit/"]');
+    await imagesVerifiees(page, 'catalogue-en', { cartesAttendues: true });
     assert.equal(await page.evaluate(() => document.documentElement.lang), 'en');
     assert.equal(await page.locator('h1').first().innerText(), 'Catalog');
     await page.locator('.filtres-catalogue summary').click();
@@ -132,6 +283,7 @@ try {
     const href = await page.locator('a[href^="/produit/"]').first().getAttribute('href');
     await aller(page, href);
     await pageVerifiee(page, 'produit', largeur, '.tableau-caracteristiques');
+    await imagesVerifiees(page, 'produit-en', { fichePrefixe: 'Illustrative image: ' });
     const [ajout] = await Promise.all([
       page.waitForResponse((reponse) => reponse.url().includes('/api/panier/ajouter') && reponse.request().method() === 'POST'),
       page.locator('form[action="/panier/ajouter"] button').click(),
@@ -216,6 +368,8 @@ try {
       }));
       assert.deepEqual(ecartsEn, [], `${nomEn} : libellés anglais incohérents`);
     }
+    assert.ok(demandesContexte.every((u) => u.startsWith(base)),
+      `Ressource externe sollicitée (EN) : ${demandesContexte.filter((u) => !u.startsWith(base)).join(', ')}`);
     await contexte.close();
 
     const admin = await browser.newContext({ viewport: { width: largeur, height: 900 }, javaScriptEnabled: false, reducedMotion: 'reduce' });
@@ -319,10 +473,57 @@ try {
     assert.deepEqual(choix, {langue:'fr', zone:'Asia/Kathmandu'});
     assert.ok(!JSON.stringify(choix).includes('43.7'), 'coordonnées enregistrées');
     await aller(personnel, '/');
+    await imagesVerifiees(personnel, 'accueil-fr', { hero: true, heroVisible: largeur >= 1440, cartesAttendues: true });
     const temps = personnel.locator('time[data-date-format="ajout"]').first();
     const utc = await temps.getAttribute('datetime');
     const parties = Object.fromEntries(new Intl.DateTimeFormat('fr-FR', {timeZone:'Asia/Kathmandu', year:'numeric', month:'2-digit', day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date(utc)).map(({type,value}) => [type,value]));
     assert.equal(await temps.innerText(), `${parties.day}/${parties.month}/${parties.year} à ${parties.hour}h${parties.minute}`);
+    await aller(personnel, '/catalogue');
+    await imagesVerifiees(personnel, 'catalogue-fr', { cartesAttendues: true });
+    const hrefFr = await personnel.locator('a[href^="/produit/"]').first().getAttribute('href');
+    await aller(personnel, hrefFr);
+    await imagesVerifiees(personnel, 'produit-fr', { fichePrefixe: 'Visuel indicatif : ' });
+    if (largeur === 1440) {
+      await navigationClavierEtMouvementReduit(personnel, hrefFr);
+    }
+    const cookiesStockage = await perso.cookies();
+    assert.equal(cookiesStockage.length, 1, `TCX-09 : cookies inattendus (${JSON.stringify(cookiesStockage.map((c) => c.name))})`);
+    assert.equal(cookiesStockage[0].name, 'MINISHOPSESS', `TCX-09 : cookie inattendu (${cookiesStockage[0].name})`);
+    assert.equal(cookiesStockage[0].httpOnly, true, 'TCX-09 : cookie de session non HttpOnly');
+    assert.equal(cookiesStockage[0].sameSite, 'Lax', 'TCX-09 : SameSite != Lax');
+    const stockageNavigateur = await personnel.evaluate(() => ({
+      localKeys: Object.keys(localStorage),
+      sessionLen: sessionStorage.length,
+      docCookie: document.cookie,
+    }));
+    assert.deepEqual(stockageNavigateur.localKeys, ['minishop.preferences.v1'],
+      `TCX-09 : clés localStorage inattendues (${JSON.stringify(stockageNavigateur.localKeys)})`);
+    assert.equal(stockageNavigateur.sessionLen, 0, 'TCX-09 : sessionStorage non vide');
+    assert.equal(stockageNavigateur.docCookie, '', 'TCX-09 : cookie accessible via document.cookie');
+    console.log(`✅ Stockage navigateur minimal (TCX-09 : MINISHOPSESS HttpOnly + localStorage préférences) — ${largeur}px`);
+
+    if (largeur === 1440) {
+      await aller(personnel, '/contact');
+      await personnel.fill('#nom', 'Testeur Recette');
+      await personnel.fill('#email', 'recette.contact@example.test');
+      await personnel.fill('#message', 'Message fictif de recette navigateur TCX-11.');
+      await Promise.all([
+        personnel.waitForURL(/\/contact$/),
+        personnel.locator('form[action="/contact"] button[type="submit"]').click(),
+      ]);
+      const accuse = await personnel.locator('.message--succes').innerText();
+      assert.ok(accuse.includes('Message de démonstration enregistré localement.'), `TCX-11 : accusé absent (${accuse})`);
+      assert.ok(accuse.includes('Aucun e-mail n’a été envoyé'), `TCX-11 : mention sans e-mail absente (${accuse})`);
+      const contenuContact = await readFile(path.join(tmp, 'var/log/contact.jsonl'), 'utf8');
+      const lignesContact = contenuContact.trim().split('\n').filter(Boolean);
+      assert.ok(lignesContact.length >= 1, 'TCX-11 : contact.jsonl vide');
+      const dernierContact = JSON.parse(lignesContact[lignesContact.length - 1]);
+      assert.equal(dernierContact.nom, 'Testeur Recette');
+      assert.equal(dernierContact.email, 'recette.contact@example.test');
+      assert.equal(dernierContact.message, 'Message fictif de recette navigateur TCX-11.');
+      assert.match(dernierContact.date ?? '', /^\d{4}-\d{2}-\d{2}T/, 'TCX-11 : date ISO absente dans contact.jsonl');
+      console.log('✅ Contact local (TCX-11 : accusé sans promesse e-mail + var/log/contact.jsonl)');
+    }
     await aller(personnel, '/admin/connexion');
     await personnel.fill('#email', 'admin@minishop.fr');
     await personnel.fill('#mot_de_passe', 'Admin2026!');
