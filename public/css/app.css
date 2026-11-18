@@ -2378,6 +2378,7 @@ select[data-largeur-courte] {
 .tableau-categories .col-description { width: 26%; }
 .tableau-categories .col-actions { width: 16%; }
 .tableau-commandes th, .tableau-commandes td, .tableau-categories th, .tableau-categories td { overflow-wrap: anywhere; }
+.tableau-commandes thead th, .tableau-categories thead th { white-space: normal; overflow-wrap: break-word; }
 .tableau-commandes .statut { font-weight: 700; }
 .tableau-commandes .montant { text-align: right; white-space: nowrap; }
 .tableau-categories form { display: grid; gap: var(--e-2); }
