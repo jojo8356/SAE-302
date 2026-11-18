@@ -477,6 +477,44 @@ try {
     if (largeur === 1440) {
       await navigationClavierEtMouvementReduit(personnel, hrefFr);
     }
+    const cookiesStockage = await perso.cookies();
+    assert.equal(cookiesStockage.length, 1, `TCX-09 : cookies inattendus (${JSON.stringify(cookiesStockage.map((c) => c.name))})`);
+    assert.equal(cookiesStockage[0].name, 'MINISHOPSESS', `TCX-09 : cookie inattendu (${cookiesStockage[0].name})`);
+    assert.equal(cookiesStockage[0].httpOnly, true, 'TCX-09 : cookie de session non HttpOnly');
+    assert.equal(cookiesStockage[0].sameSite, 'Lax', 'TCX-09 : SameSite != Lax');
+    const stockageNavigateur = await personnel.evaluate(() => ({
+      localKeys: Object.keys(localStorage),
+      sessionLen: sessionStorage.length,
+      docCookie: document.cookie,
+    }));
+    assert.deepEqual(stockageNavigateur.localKeys, ['minishop.preferences.v1'],
+      `TCX-09 : clés localStorage inattendues (${JSON.stringify(stockageNavigateur.localKeys)})`);
+    assert.equal(stockageNavigateur.sessionLen, 0, 'TCX-09 : sessionStorage non vide');
+    assert.equal(stockageNavigateur.docCookie, '', 'TCX-09 : cookie accessible via document.cookie');
+    console.log(`✅ Stockage navigateur minimal (TCX-09 : MINISHOPSESS HttpOnly + localStorage préférences) — ${largeur}px`);
+
+    if (largeur === 1440) {
+      await aller(personnel, '/contact');
+      await personnel.fill('#nom', 'Testeur Recette');
+      await personnel.fill('#email', 'recette.contact@example.test');
+      await personnel.fill('#message', 'Message fictif de recette navigateur TCX-11.');
+      await Promise.all([
+        personnel.waitForURL(/\/contact$/),
+        personnel.locator('form[action="/contact"] button[type="submit"]').click(),
+      ]);
+      const accuse = await personnel.locator('.message--succes').innerText();
+      assert.ok(accuse.includes('Message de démonstration enregistré localement.'), `TCX-11 : accusé absent (${accuse})`);
+      assert.ok(accuse.includes('Aucun e-mail n’a été envoyé'), `TCX-11 : mention sans e-mail absente (${accuse})`);
+      const contenuContact = await readFile(path.join(tmp, 'var/log/contact.jsonl'), 'utf8');
+      const lignesContact = contenuContact.trim().split('\n').filter(Boolean);
+      assert.ok(lignesContact.length >= 1, 'TCX-11 : contact.jsonl vide');
+      const dernierContact = JSON.parse(lignesContact[lignesContact.length - 1]);
+      assert.equal(dernierContact.nom, 'Testeur Recette');
+      assert.equal(dernierContact.email, 'recette.contact@example.test');
+      assert.equal(dernierContact.message, 'Message fictif de recette navigateur TCX-11.');
+      assert.match(dernierContact.date ?? '', /^\d{4}-\d{2}-\d{2}T/, 'TCX-11 : date ISO absente dans contact.jsonl');
+      console.log('✅ Contact local (TCX-11 : accusé sans promesse e-mail + var/log/contact.jsonl)');
+    }
     await aller(personnel, '/admin/connexion');
     await personnel.fill('#email', 'admin@minishop.fr');
     await personnel.fill('#mot_de_passe', 'Admin2026!');
