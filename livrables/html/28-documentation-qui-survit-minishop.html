@@ -265,7 +265,7 @@ footer.doc p { text-align: left; margin: 0; }
 <tr>
 <td><strong>Explication</strong> (comprendre pourquoi)</td>
 <td><em>« Pourquoi SQL + JSON, pourquoi ces ADRs, comment évoluer ? »</em></td>
-<td><code>ARCHITECTURE.md</code>, <code>docs/adr/adr-0001..0004</code>, <code>docs/diagrams/src/c4_*.puml</code>, <code>docs/27-rapport-universitaire-projet-minishop.md</code></td>
+<td><code>ARCHITECTURE.md</code>, <code>docs/adr/0000..0005</code>, <code>docs/diagrams/src/c4_*.puml</code>, <code>docs/27-rapport-universitaire-projet-minishop.md</code></td>
 <td>Architectes</td>
 </tr>
 </tbody>
@@ -278,8 +278,8 @@ footer.doc p { text-align: left; margin: 0; }
    - Chaque classe, contrôleur, dépôt, service, script SQL et vue (<code>app/</code>, <code>public/</code>, <code>sql/</code>) porte désormais un en-tête documentaire précisant son rôle, sa route ou sa règle métier (<code>app/View/home/*.php</code> complété).</li>
 <li><strong>Porte d’entrée et historique</strong> (<code>README.md</code> et <code>CHANGELOG.md</code>) :
    - <code>README.md</code> oriente immédiatement le lecteur vers le lancement local, les tests et la carte des documents ; <code>CHANGELOG.md</code> trace les versions livrées (<code>[1.0.0]</code> et <code>[1.1.0]</code>).</li>
-<li><strong>Décisions d’architecture versionnées</strong> (<code>docs/adr/</code>) :
-   - <code>adr-0001</code> (double persistance <code>SqlStore</code>/<code>JsonStore</code>), <code>adr-0002</code> (procédures stockées &amp; déclencheurs MariaDB), <code>adr-0003</code> (sessions strictes, RBAC et zéro dépendance CDN) et <code>adr-0004</code> (<em>Documentation as Code</em>).</li>
+<li><strong>Décisions d’architecture versionnées</strong> (<code>docs/adr/</code>, format MADR) :
+   - <code>0000</code> (adopter les ADR), <code>0001</code> (double persistance <code>SqlStore</code>/<code>JsonStore</code>), <code>0002</code> (procédures stockées &amp; déclencheurs MariaDB), <code>0003</code> (sessions strictes, RBAC et zéro dépendance CDN), <code>0004</code> (<em>Docs-as-Code</em>) et <code>0005</code> (MVC PHP 8.2+ natif sans framework lourd), accompagnés de <code>template.md</code>.</li>
 <li><strong>Schémas C4 et UML écrits en code</strong> (<code>docs/diagrams/src/</code>) :
    - En complément des <code>14</code> diagrammes UML historiques, deux diagrammes C4 en texte PlantUML (<code>c4_contexte.puml</code> et <code>c4_conteneurs.puml</code>) décrivent le système, ses utilisateurs et ses frontières de confiance tout en restant lisibles sans rendu graphique.</li>
 <li><strong>Documents d’exploitation</strong> (<code>docs/exploitation/</code>) :

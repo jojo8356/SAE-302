@@ -158,7 +158,7 @@ Un scénario ne doit être marqué comme joué qu’après son exécution réell
 | [Informations juridiques](docs/12-information-juridique.md) | Cadre légal de la maquette pédagogique |
 | [Conservation des données](docs/18-politique-conservation.md) | Politique proposée et limites des outils de la maquette |
 | [Historique des versions](CHANGELOG.md) | Évolutions livrées (format *Keep a Changelog*) |
-| [Décisions d’architecture (ADR)](docs/adr/adr-index.md) | Justification durable des choix structurants (`adr-0001` à `adr-0004`) |
+| [Décisions d’architecture (ADR)](docs/adr/adr-index.md) | Justification durable des choix structurants au format MADR (`0000` à `0005` + `template.md`) |
 | [Documents d’exploitation](docs/exploitation/exploitation-index.md) | Fiche de service, *runbooks* incidents/sauvegardes et modèle de *postmortem* |
 | [Documentation vivante & C4](docs/28-documentation-qui-survit-minishop.md) | Gouvernance Diátaxis, diagrammes C4 (`docs/diagrams/src/c4_*.puml`) et génération PDF |
 | [Référence API PHP](livrables/reference/php/index.html) | Documentation HTML générée depuis les PHPDoc de `app/` et `public/index.php` |

@@ -825,13 +825,38 @@ jobs:
   #    (plantuml.jar + docs/diagrams/render.sh) — non bloquant en dev si pas de .puml
   # -----------------------------------------------------------------
   docs:
-    name: docs (plantuml & docstrings)
+    name: docs (plantuml, ADR & docstrings)
     runs-on: ubuntu-latest
     needs: [php-lint]
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
 
-      - name: Vérifier docstrings Python, doctests et PHPDoc
+      - name: Vérifier format MADR et numérotation séquentielle des ADR
+        run: |
+          status=0
+          expected=""
+          for file in docs/adr/[0-9]*.md; do
+            grep -qE "^## (Status|Statut)" "$file" || { echo "Missing Statut in $file"; status=1; }
+            grep -qE "^## (Context|Contexte)" "$file" || { echo "Missing Contexte in $file"; status=1; }
+            grep -qE "^## Decision Drivers" "$file" || { echo "Missing Decision Drivers in $file"; status=1; }
+            grep -qE "^## Options considérées" "$file" || { echo "Missing Options in $file"; status=1; }
+            grep -qE "^## (Decision|Décision)" "$file" || { echo "Missing Décision in $file"; status=1; }
+            grep -qE "^## (Consequences|Conséquences)" "$file" || { echo "Missing Conséquences in $file"; status=1; }
+            num=$((10#$(basename "$file" | cut -d'-' -f1)))
+            expected=${expected:-$num}
+            if [ "$num" -ne "$expected" ]; then
+              echo "Gap in ADR numbering: expected $expected, got $num"
+              status=1
+            fi
+            expected=$((num + 1))
+          done
+          exit $status
+
+      - name: Vérifier docstrings Python, doctests, PHPDoc et ADR
         run: |
           python3 scripts/verifier_doc_code.py
 

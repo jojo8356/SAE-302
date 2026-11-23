@@ -10,7 +10,7 @@
 
 ### Ajouté
 - **Gouvernance documentaire complète** dans Git selon le cadre *Documenter : créer une documentation qui survit* (`docs/28-documentation-qui-survit-minishop.md`).
-- **Registre des décisions d’architecture** (`docs/adr/`) : `adr-0001` (double persistance `SqlStore`/`JsonStore`), `adr-0002` (procédures stockées & déclencheurs MariaDB), `adr-0003` (sessions, sécurité OWASP & zéro dépendance CDN) et `adr-0004` (*Documentation as Code* multi-formats).
+- **Registre des décisions d’architecture** (`docs/adr/`) : format MADR complet (`0000-utiliser-les-adr.md` à `0005-architecture-mvc-php-natif-sans-framework.md` + `template.md`).
 - **Documents d’exploitation** (`docs/exploitation/`) : fiche de service MiniShop, *runbook* incidents, *runbook* sauvegarde/restauration (`db_init.php --nettoyage` + `libsodium`) et modèle de *postmortem* sans blâme.
 - **Diagrammes C4 en code** (`docs/diagrams/src/`) : `c4_contexte.puml` et `c4_conteneurs.puml` prêts pour `docs/diagrams/render.sh` (`plantuml.jar` sous Java).
 - **En-têtes PHPDoc complétés** sur les `10` vues réglementaires/préférences de `app/View/home/` (`112/112` fichiers `app/**/*.php` documentés).

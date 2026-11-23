@@ -226,6 +226,63 @@ def verifier_php(racine: pathlib.Path = RACINE) -> tuple[list[FichierPhp], list[
     return fichiers, erreurs
 
 
+def verifier_adr(racine: pathlib.Path = RACINE) -> list[str]:
+    """Vérifie la structure MADR et la numérotation séquentielle des ADR.
+
+    Args:
+        racine: Racine du dépôt contenant ``docs/adr/``.
+
+    Returns:
+        Liste des anomalies détectées (vide si tous les ADR sont conformes).
+    """
+    dossier = racine / "docs" / "adr"
+    erreurs: list[str] = []
+    if not (dossier / "template.md").is_file():
+        erreurs.append("docs/adr/template.md manquant")
+    if not (dossier / "adr-index.md").is_file():
+        erreurs.append("docs/adr/adr-index.md manquant")
+
+    fichiers = sorted(dossier.glob("[0-9]*.md"))
+    if not fichiers:
+        return erreurs + ["docs/adr/: aucun fichier ADR numéroté (NNNN-*.md) trouvé"]
+
+    sections_requises = (
+        r"^## (Statut|Status)\b",
+        r"^## (Contexte|Context)\b",
+        r"^## Decision Drivers\b",
+        r"^## Options considérées\b",
+        r"^## (Décision|Decision)\b",
+        r"^## (Conséquences|Consequences)\b",
+        r"^### Positives\b",
+        r"^### Négatives\b",
+        r"^## (Liens|Links)\b",
+    )
+
+    attendu: int | None = None
+    for fichier in fichiers:
+        relatif = str(fichier.relative_to(racine)).replace("\\", "/")
+        prefixe = fichier.name.split("-", 1)[0]
+        if not re.fullmatch(r"\d{4}", prefixe):
+            erreurs.append(f"{relatif}: préfixe numérique NNNN attendu")
+            continue
+        numero = int(prefixe, 10)
+        if attendu is None:
+            attendu = numero
+        elif numero != attendu:
+            erreurs.append(f"{relatif}: trou de numérotation (attendu {attendu:04d}, trouvé {numero:04d})")
+        attendu = numero + 1
+
+        contenu = fichier.read_text(encoding="utf-8")
+        for motif in sections_requises:
+            if not re.search(motif, contenu, re.MULTILINE):
+                erreurs.append(f"{relatif}: section MADR manquante ({motif})")
+        nb_options = len(re.findall(r"^### Option \d+", contenu, re.MULTILINE))
+        if nb_options < 2:
+            erreurs.append(f"{relatif}: au moins 2 options documentées requises (trouvé {nb_options})")
+
+    return erreurs
+
+
 def generer_reference_php(fichiers: list[FichierPhp], sortie: pathlib.Path) -> None:
     """Génère une référence HTML statique à partir des PHPDoc du code PHP.
 
@@ -348,11 +405,12 @@ def main(argv: list[str] | None = None) -> int:
 
     erreurs_py = verifier_python(RACINE)
     fichiers_php, erreurs_php = verifier_php(RACINE)
+    erreurs_adr = verifier_adr(RACINE)
 
     if args.gen_php_ref:
         generer_reference_php(fichiers_php, RACINE / "livrables" / "reference" / "php")
 
-    total_erreurs = erreurs_py + erreurs_php
+    total_erreurs = erreurs_py + erreurs_php + erreurs_adr
     if total_erreurs:
         for err in total_erreurs:
             print(f"ERREUR: {err}", file=sys.stderr)
@@ -360,9 +418,11 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     total_methodes = sum(len(f.methodes) for f in fichiers_php)
+    nb_adr = len(list((RACINE / "docs" / "adr").glob("[0-9]*.md")))
     print(
-        f"OK — Python (docstrings + {len(MODULES_DOCTEST)} modules doctest) "
-        f"et PHP ({len(fichiers_php)} fichiers, {total_methodes} méthodes publiques PHPDoc) conformes."
+        f"OK — Python (docstrings + {len(MODULES_DOCTEST)} modules doctest), "
+        f"PHP ({len(fichiers_php)} fichiers, {total_methodes} méthodes publiques PHPDoc) "
+        f"et ADR ({nb_adr} fiches MADR) conformes."
     )
     return 0
 

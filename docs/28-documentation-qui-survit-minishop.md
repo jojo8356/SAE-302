@@ -14,7 +14,7 @@ Une documentation absente coûte cher lors d’un incident à 2 h du matin, et u
 | **Tutoriel** (découvrir) | *« Comment démarrer MiniShop sur mon poste ? »* | `README.md` (Démarrage rapide `./run.sh --db`), `docs/14-guide-lineserv.md` | Équipe MiniShop |
 | **Guide pratique** (agir sous pression) | *« Comment rétablir MariaDB ou restaurer une sauvegarde ? »* | `docs/exploitation/runbook-incidents.md`, `docs/exploitation/runbook-sauvegarde-restauration.md`, `docs/exploitation/postmortem-modele.md` | Exploitation / SRE |
 | **Référence** (vérifier un fait exact) | *« Quelles routes, tables, procédures et fiches existent ? »* | `CHANGELOG.md`, `docs/exploitation/fiche-service-minishop.md`, `docs/04-conception-bd-et-sql.md`, `docs/13-fiches-recette-uc.md`, en-têtes PHPDoc (`112/112` fichiers `app/`) | Dev / DBA |
-| **Explication** (comprendre pourquoi) | *« Pourquoi SQL + JSON, pourquoi ces ADRs, comment évoluer ? »* | `ARCHITECTURE.md`, `docs/adr/adr-0001..0004`, `docs/diagrams/src/c4_*.puml`, `docs/27-rapport-universitaire-projet-minishop.md` | Architectes |
+| **Explication** (comprendre pourquoi) | *« Pourquoi SQL + JSON, pourquoi ces ADRs, comment évoluer ? »* | `ARCHITECTURE.md`, `docs/adr/0000..0005`, `docs/diagrams/src/c4_*.puml`, `docs/27-rapport-universitaire-projet-minishop.md` | Architectes |
 
 *Tableau 1 — Cartographie complète de la documentation MiniShop selon les 4 familles Diátaxis.*
 
@@ -26,8 +26,8 @@ Une documentation absente coûte cher lors d’un incident à 2 h du matin, et u
    - Chaque classe, contrôleur, dépôt, service, script SQL et vue (`app/`, `public/`, `sql/`) porte désormais un en-tête documentaire précisant son rôle, sa route ou sa règle métier (`app/View/home/*.php` complété).
 2. **Porte d’entrée et historique** (`README.md` et `CHANGELOG.md`) :
    - `README.md` oriente immédiatement le lecteur vers le lancement local, les tests et la carte des documents ; `CHANGELOG.md` trace les versions livrées (`[1.0.0]` et `[1.1.0]`).
-3. **Décisions d’architecture versionnées** (`docs/adr/`) :
-   - `adr-0001` (double persistance `SqlStore`/`JsonStore`), `adr-0002` (procédures stockées & déclencheurs MariaDB), `adr-0003` (sessions strictes, RBAC et zéro dépendance CDN) et `adr-0004` (*Documentation as Code*).
+3. **Décisions d’architecture versionnées** (`docs/adr/`, format MADR) :
+   - `0000` (adopter les ADR), `0001` (double persistance `SqlStore`/`JsonStore`), `0002` (procédures stockées & déclencheurs MariaDB), `0003` (sessions strictes, RBAC et zéro dépendance CDN), `0004` (*Docs-as-Code*) et `0005` (MVC PHP 8.2+ natif sans framework lourd), accompagnés de `template.md`.
 4. **Schémas C4 et UML écrits en code** (`docs/diagrams/src/`) :
    - En complément des `14` diagrammes UML historiques, deux diagrammes C4 en texte PlantUML (`c4_contexte.puml` et `c4_conteneurs.puml`) décrivent le système, ses utilisateurs et ses frontières de confiance tout en restant lisibles sans rendu graphique.
 5. **Documents d’exploitation** (`docs/exploitation/`) :

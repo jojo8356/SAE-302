@@ -221,48 +221,62 @@ footer.doc p { text-align: left; margin: 0; }
 </header>
 <h1 id="index-des-adr-decisions-darchitecture-de-minishop">Index des ADR — Décisions d’architecture de MiniShop<a class="headerlink" href="#index-des-adr-decisions-darchitecture-de-minishop" title="Permanent link"></a></h1>
 <p><strong>Type Diátaxis :</strong> Référence &amp; Explication · <strong>Propriétaire :</strong> Architectes MiniShop (Johan Polsinelli &amp; Chahd Gouiaa)<br />
-<strong>Revue :</strong> À chaque changement d’infrastructure, de sécurité ou de schéma SQL (<code>docs/20-charte-gitlab-revues-croisees.md</code>)</p>
+<strong>Modèle MADR :</strong> <a href="template.html"><code>template.md</code></a> · <strong>Revue :</strong> À chaque changement d’architecture, de sécurité ou de schéma SQL (<code>docs/20-charte-gitlab-revues-croisees.md</code>)</p>
 <hr />
 <h2 id="regle-de-gouvernance">Règle de gouvernance<a class="headerlink" href="#regle-de-gouvernance" title="Permanent link"></a></h2>
-<p>Un <strong>ADR</strong> (<em>Architecture Decision Record</em>) explique <strong>pourquoi</strong> un choix technique a été retenu à un instant donné, quelles alternatives ont été écartées et quelles conséquences il impose à l’exploitation. On ne réécrit jamais un ADR passé en silence : si une décision change en V2, on crée un nouvel ADR qui marque le précédent comme <em>Remplacé par ADR-XXXX</em>.</p>
+<p>Un <strong>ADR</strong> (<em>Architecture Decision Record</em>) suit le format <strong>MADR</strong> (<code>NNNN-titre-en-kebab-case.md</code>) et capture <strong>une seule décision</strong> en 1 à 2 pages : statut, contexte, critères de choix (<em>Decision Drivers</em>), options comparées, décision et conséquences (positives, négatives et neutres). Un ADR passé au statut <code>Accepted</code> est <strong>immuable</strong> : si une décision évolue en V2, un nouvel ADR est créé et marque le précédent comme <code>Superseded</code>.</p>
 <table>
 <thead>
 <tr>
 <th>Identifiant</th>
 <th>Titre</th>
 <th>Statut</th>
-<th>Propriétaire</th>
+<th>Date</th>
 <th>Fichier</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td><strong>ADR-0000</strong></td>
+<td>Adopter les Architecture Decision Records (MADR) dans Git</td>
+<td><code>Accepted</code></td>
+<td>2026-09-15</td>
+<td><a href="0000-utiliser-les-adr.html"><code>0000-utiliser-les-adr.md</code></a></td>
+</tr>
+<tr>
 <td><strong>ADR-0001</strong></td>
-<td>Double persistance <code>SqlStore</code> et <code>JsonStore</code> derrière <code>StoreInterface</code></td>
-<td>Accepté</td>
-<td>Équipe MiniShop</td>
-<td><code>adr-0001-double-persistance-sqlstore-jsonstore.md</code></td>
+<td>Adopter une double persistance <code>SqlStore</code> et <code>JsonStore</code> derrière <code>StoreInterface</code></td>
+<td><code>Accepted</code></td>
+<td>2026-09-20</td>
+<td><a href="0001-double-persistance-sqlstore-jsonstore.html"><code>0001-double-persistance-sqlstore-jsonstore.md</code></a></td>
 </tr>
 <tr>
 <td><strong>ADR-0002</strong></td>
-<td>Procédures stockées et déclencheurs dans MariaDB 3FN</td>
-<td>Accepté</td>
-<td>Équipe MiniShop</td>
-<td><code>adr-0002-procedures-stockees-triggers-mariadb.md</code></td>
+<td>Porter les invariants transactionnels et d’audit par procédures stockées et déclencheurs MariaDB</td>
+<td><code>Accepted</code></td>
+<td>2026-09-25</td>
+<td><a href="0002-procedures-stockees-triggers-mariadb.html"><code>0002-procedures-stockees-triggers-mariadb.md</code></a></td>
 </tr>
 <tr>
 <td><strong>ADR-0003</strong></td>
-<td>Sessions strictes, RBAC et zéro dépendance CDN hors ligne</td>
-<td>Accepté</td>
-<td>Équipe MiniShop</td>
-<td><code>adr-0003-authentification-session-rbac-hors-ligne.md</code></td>
+<td>Utiliser des sessions PHP durcies, un routeur RBAC à liste blanche et zéro CDN externe</td>
+<td><code>Accepted</code></td>
+<td>2026-10-02</td>
+<td><a href="0003-authentification-session-rbac-hors-ligne.html"><code>0003-authentification-session-rbac-hors-ligne.md</code></a></td>
 </tr>
 <tr>
 <td><strong>ADR-0004</strong></td>
-<td>Documentation dans Git (<em>Docs-as-Code</em>) et génération multi-formats</td>
-<td>Accepté</td>
-<td>Équipe MiniShop</td>
-<td><code>adr-0004-documentation-as-code-multi-formats.md</code></td>
+<td>Adopter une documentation dans Git (<em>Docs-as-Code</em>) compilée en multi-formats</td>
+<td><code>Accepted</code></td>
+<td>2026-11-16</td>
+<td><a href="0004-documentation-as-code-multi-formats.html"><code>0004-documentation-as-code-multi-formats.md</code></a></td>
+</tr>
+<tr>
+<td><strong>ADR-0005</strong></td>
+<td>Construire une architecture MVC en PHP 8.2+ natif sans framework lourd</td>
+<td><code>Accepted</code></td>
+<td>2026-09-12</td>
+<td><a href="0005-architecture-mvc-php-natif-sans-framework.html"><code>0005-architecture-mvc-php-natif-sans-framework.md</code></a></td>
 </tr>
 </tbody>
 </table>

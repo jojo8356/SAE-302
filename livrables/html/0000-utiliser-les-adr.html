@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : ADR-0000 : Adopter les Architecture Decision Records (MADR) dans Git">
+<title>ADR-0000 : Adopter les Architecture Decision Records (MADR) dans Git — MiniShop (SAÉ 302)</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
+  color: var(--encre);
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
+}
+pre {
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
+}
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
+}
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
+@media print {
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/adr/0000-utiliser-les-adr.md</code></div>
+</header>
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#statut">Statut</a></li>
+<li><a href="#contexte-et-probleme">Contexte et problème</a></li>
+<li><a href="#decision-drivers">Decision Drivers</a></li>
+<li><a href="#options-considerees">Options considérées</a><ul>
+<li><a href="#option-1-consigner-les-choix-uniquement-dans-les-messages-de-commit-et-le-rapport-final">Option 1 : Consigner les choix uniquement dans les messages de commit et le rapport final</a></li>
+<li><a href="#option-2-wiki-externe-gitlab-wiki-notion">Option 2 : Wiki externe (GitLab Wiki / Notion)</a></li>
+<li><a href="#option-3-adr-au-format-madr-dans-docsadrnnnn-titremd">Option 3 : ADR au format MADR dans docs/adr/NNNN-titre.md</a></li>
+</ul>
+</li>
+<li><a href="#decision">Décision</a></li>
+<li><a href="#consequences">Conséquences</a><ul>
+<li><a href="#positives">Positives</a></li>
+<li><a href="#negatives">Négatives</a></li>
+<li><a href="#neutres">Neutres</a></li>
+</ul>
+</li>
+<li><a href="#liens">Liens</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="adr-0000-adopter-les-architecture-decision-records-madr-dans-git">ADR-0000 : Adopter les Architecture Decision Records (MADR) dans Git<a class="headerlink" href="#adr-0000-adopter-les-architecture-decision-records-madr-dans-git" title="Permanent link"></a></h1>
+<h2 id="statut">Statut<a class="headerlink" href="#statut" title="Permanent link"></a></h2>
+<p>Accepted</p>
+<p>Date: 2026-09-15
+Auteurs: Johan Polsinelli, Chahd Gouiaa
+Reviewers: Équipe MiniShop</p>
+<h2 id="contexte-et-probleme">Contexte et problème<a class="headerlink" href="#contexte-et-probleme" title="Permanent link"></a></h2>
+<p>Le dépôt Git de MiniShop conserve l’historique des commits (<em>ce qui</em> a été modifié), mais pas le raisonnement complet derrière les choix d’architecture coûteux à défaire (persistance, SQL, sécurité, outillage). Sans trace dédiée, un repreneur ou un membre du jury ne retrouve ni les critères de décision ni les options écartées.</p>
+<h2 id="decision-drivers">Decision Drivers<a class="headerlink" href="#decision-drivers" title="Permanent link"></a></h2>
+<ul>
+<li>Conserver la mémoire des décisions à côté du code qu’elles concernent</li>
+<li>Garder un format court (1 à 2 pages) lisible en moins de cinq minutes</li>
+<li>Imposer la comparaison d’options avant de conclure</li>
+<li>Automatiser la vérification de forme et de numérotation en CI</li>
+</ul>
+<h2 id="options-considerees">Options considérées<a class="headerlink" href="#options-considerees" title="Permanent link"></a></h2>
+<h3 id="option-1-consigner-les-choix-uniquement-dans-les-messages-de-commit-et-le-rapport-final">Option 1 : Consigner les choix uniquement dans les messages de commit et le rapport final<a class="headerlink" href="#option-1-consigner-les-choix-uniquement-dans-les-messages-de-commit-et-le-rapport-final" title="Permanent link"></a></h3>
+<p><strong>Avantages</strong> :</p>
+<ul>
+<li>Aucun fichier supplémentaire à maintenir</li>
+</ul>
+<p><strong>Inconvénients</strong> :</p>
+<ul>
+<li>Raisonnement dispersé sur des dizaines de commits ou noyé dans un rapport de plus de 100 pages</li>
+<li>Aucune structure homogène pour retrouver les alternatives rejetées</li>
+</ul>
+<h3 id="option-2-wiki-externe-gitlab-wiki-notion">Option 2 : Wiki externe (GitLab Wiki / Notion)<a class="headerlink" href="#option-2-wiki-externe-gitlab-wiki-notion" title="Permanent link"></a></h3>
+<p><strong>Avantages</strong> :</p>
+<ul>
+<li>Édition web rapide hors Git</li>
+</ul>
+<p><strong>Inconvénients</strong> :</p>
+<ul>
+<li>Désynchronisé des pull requests et inaccessible lors d’une exécution hors ligne (<code>ENF-20</code>)</li>
+</ul>
+<h3 id="option-3-adr-au-format-madr-dans-docsadrnnnn-titremd">Option 3 : ADR au format MADR dans <code>docs/adr/NNNN-titre.md</code><a class="headerlink" href="#option-3-adr-au-format-madr-dans-docsadrnnnn-titremd" title="Permanent link"></a></h3>
+<p><strong>Avantages</strong> :</p>
+<ul>
+<li>Une décision par fichier, immuable une fois acceptée (<code>Accepted</code>), versionnée dans le même commit que le code</li>
+<li>Structure MADR normalisée (<code>Statut</code>, <code>Contexte</code>, <code>Decision Drivers</code>, <code>Options considérées</code>, <code>Décision</code>, <code>Conséquences</code>, <code>Liens</code>)</li>
+</ul>
+<p><strong>Inconvénients</strong> :</p>
+<ul>
+<li>Demande 15 à 30 minutes de rédaction lors des choix structurants</li>
+<li>Exige un contrôle CI pour éviter les oublis de sections ou trous de numérotation</li>
+</ul>
+<h2 id="decision">Décision<a class="headerlink" href="#decision" title="Permanent link"></a></h2>
+<p><strong>Nous adoptons les Architecture Decision Records au format MADR</strong> dans <code>docs/adr/NNNN-titre.md</code>, avec un modèle <code>docs/adr/template.md</code> et une numérotation séquentielle commençant à <code>0000</code>.</p>
+<p>Raisons principales :</p>
+<ol>
+<li>Chaque décision majeure reste courte, datée et immuable à côté du code source.</li>
+<li>Une fois accepté, un ADR n’est plus réécrit ; toute remise en cause crée un nouvel ADR qui remplace l’ancien (<code>Superseded</code>).</li>
+</ol>
+<h2 id="consequences">Conséquences<a class="headerlink" href="#consequences" title="Permanent link"></a></h2>
+<h3 id="positives">Positives<a class="headerlink" href="#positives" title="Permanent link"></a></h3>
+<ul>
+<li>Traçabilité claire des choix d’architecture pour les développeurs, l’exploitation et la soutenance</li>
+<li>Validation automatisée de la structure et de la numérotation par script et CI</li>
+</ul>
+<h3 id="negatives">Négatives<a class="headerlink" href="#negatives" title="Permanent link"></a></h3>
+<ul>
+<li>Toute nouvelle décision structurante doit passer par la création d’un fichier numéroté dans <code>docs/adr/</code> et la mise à jour de <code>docs/17-inventaire-projet.csv</code></li>
+</ul>
+<h3 id="neutres">Neutres<a class="headerlink" href="#neutres" title="Permanent link"></a></h3>
+<ul>
+<li>Les détails d’implémentation courants restent dans la documentation technique (<code>ARCHITECTURE.md</code>, <code>docs/04-*</code>, <code>docs/07-*</code>) et les docstrings</li>
+</ul>
+<h2 id="liens">Liens<a class="headerlink" href="#liens" title="Permanent link"></a></h2>
+<ul>
+<li>Modèle MADR : <code>docs/adr/template.md</code></li>
+<li>Gouvernance documentaire : <code>docs/28-documentation-qui-survit-minishop.md</code></li>
+</ul>
+<footer class="doc">
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/adr/0000-utiliser-les-adr.md</code> · 0 figure(s) intégrée(s).</p>
+</footer>
+</main>
+</body>
+</html>

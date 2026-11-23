@@ -177,11 +177,14 @@ docs/26-transition-exploitation-maintenance-build-to-run.md,Documentation,Prése
 docs/27-rapport-universitaire-projet-minishop.md,Documentation,Présence et non-vide uniquement
 docs/28-documentation-qui-survit-minishop.md,Documentation,Présence et non-vide uniquement
 docs/DA.md,Documentation,Présence et non-vide uniquement
-docs/adr/adr-0001-double-persistance-sqlstore-jsonstore.md,Documentation,Présence et non-vide uniquement
-docs/adr/adr-0002-procedures-stockees-triggers-mariadb.md,Documentation,Présence et non-vide uniquement
-docs/adr/adr-0003-authentification-session-rbac-hors-ligne.md,Documentation,Présence et non-vide uniquement
-docs/adr/adr-0004-documentation-as-code-multi-formats.md,Documentation,Présence et non-vide uniquement
+docs/adr/0000-utiliser-les-adr.md,Documentation,Présence et non-vide uniquement
+docs/adr/0001-double-persistance-sqlstore-jsonstore.md,Documentation,Présence et non-vide uniquement
+docs/adr/0002-procedures-stockees-triggers-mariadb.md,Documentation,Présence et non-vide uniquement
+docs/adr/0003-authentification-session-rbac-hors-ligne.md,Documentation,Présence et non-vide uniquement
+docs/adr/0004-documentation-as-code-multi-formats.md,Documentation,Présence et non-vide uniquement
+docs/adr/0005-architecture-mvc-php-natif-sans-framework.md,Documentation,Présence et non-vide uniquement
 docs/adr/adr-index.md,Documentation,Présence et non-vide uniquement
+docs/adr/template.md,Documentation,Présence et non-vide uniquement
 docs/annexes/annexe-cas-usage.md,Documentation,Présence et non-vide uniquement
 docs/annexes/annexe-enf.md,Documentation,Présence et non-vide uniquement
 docs/annexes/annexe-gitlab.md,Documentation,Présence et non-vide uniquement
@@ -228,6 +231,12 @@ docs/pv-recette.md,Documentation,Présence et non-vide uniquement
 docs/sql-a-ecrire/requetes-sql-a-ecrire.md,Documentation,Présence et non-vide uniquement
 docs/sql-a-ecrire/requetes-sql-a-ecrire.pdf,Documentation,Présence et non-vide uniquement
 livrables/README.md,Livrables,Présence et non-vide uniquement
+livrables/docx/0000-utiliser-les-adr.docx,Livrables générés,Présence et non-vide uniquement
+livrables/docx/0001-double-persistance-sqlstore-jsonstore.docx,Livrables générés,Présence et non-vide uniquement
+livrables/docx/0002-procedures-stockees-triggers-mariadb.docx,Livrables générés,Présence et non-vide uniquement
+livrables/docx/0003-authentification-session-rbac-hors-ligne.docx,Livrables générés,Présence et non-vide uniquement
+livrables/docx/0004-documentation-as-code-multi-formats.docx,Livrables générés,Présence et non-vide uniquement
+livrables/docx/0005-architecture-mvc-php-natif-sans-framework.docx,Livrables générés,Présence et non-vide uniquement
 livrables/docx/01-cahier-des-charges-MiniShop.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/02-document-tests-validation.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/03-support-soutenance.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
@@ -260,10 +269,6 @@ livrables/docx/28-documentation-qui-survit-minishop.docx,Livrables générés,Pr
 livrables/docx/CHANGELOG.docx,Livrables générés,Présence et non-vide uniquement
 livrables/docx/DA.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/README.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
-livrables/docx/adr-0001-double-persistance-sqlstore-jsonstore.docx,Livrables générés,Présence et non-vide uniquement
-livrables/docx/adr-0002-procedures-stockees-triggers-mariadb.docx,Livrables générés,Présence et non-vide uniquement
-livrables/docx/adr-0003-authentification-session-rbac-hors-ligne.docx,Livrables générés,Présence et non-vide uniquement
-livrables/docx/adr-0004-documentation-as-code-multi-formats.docx,Livrables générés,Présence et non-vide uniquement
 livrables/docx/adr-index.docx,Livrables générés,Présence et non-vide uniquement
 livrables/docx/annexe-cas-usage.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/annexe-enf.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
@@ -277,6 +282,12 @@ livrables/docx/pv-recette.docx,Livrables,"Présence, non-vide, intégrité archi
 livrables/docx/requetes-sql-a-ecrire.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/runbook-incidents.docx,Livrables générés,Présence et non-vide uniquement
 livrables/docx/runbook-sauvegarde-restauration.docx,Livrables générés,Présence et non-vide uniquement
+livrables/html/0000-utiliser-les-adr.html,Livrables générés,Présence et non-vide uniquement
+livrables/html/0001-double-persistance-sqlstore-jsonstore.html,Livrables générés,Présence et non-vide uniquement
+livrables/html/0002-procedures-stockees-triggers-mariadb.html,Livrables générés,Présence et non-vide uniquement
+livrables/html/0003-authentification-session-rbac-hors-ligne.html,Livrables générés,Présence et non-vide uniquement
+livrables/html/0004-documentation-as-code-multi-formats.html,Livrables générés,Présence et non-vide uniquement
+livrables/html/0005-architecture-mvc-php-natif-sans-framework.html,Livrables générés,Présence et non-vide uniquement
 livrables/html/01-cahier-des-charges-MiniShop.html,Livrables,Présence et non-vide uniquement
 livrables/html/02-document-tests-validation.html,Livrables,Présence et non-vide uniquement
 livrables/html/03-support-soutenance.html,Livrables,Présence et non-vide uniquement
@@ -309,10 +320,6 @@ livrables/html/28-documentation-qui-survit-minishop.html,Livrables générés,Pr
 livrables/html/CHANGELOG.html,Livrables générés,Présence et non-vide uniquement
 livrables/html/DA.html,Livrables,Présence et non-vide uniquement
 livrables/html/README.html,Livrables,Présence et non-vide uniquement
-livrables/html/adr-0001-double-persistance-sqlstore-jsonstore.html,Livrables générés,Présence et non-vide uniquement
-livrables/html/adr-0002-procedures-stockees-triggers-mariadb.html,Livrables générés,Présence et non-vide uniquement
-livrables/html/adr-0003-authentification-session-rbac-hors-ligne.html,Livrables générés,Présence et non-vide uniquement
-livrables/html/adr-0004-documentation-as-code-multi-formats.html,Livrables générés,Présence et non-vide uniquement
 livrables/html/adr-index.html,Livrables générés,Présence et non-vide uniquement
 livrables/html/annexe-cas-usage.html,Livrables,Présence et non-vide uniquement
 livrables/html/annexe-enf.html,Livrables,Présence et non-vide uniquement
@@ -327,6 +334,12 @@ livrables/html/requetes-sql-a-ecrire.html,Livrables,Présence et non-vide unique
 livrables/html/runbook-incidents.html,Livrables générés,Présence et non-vide uniquement
 livrables/html/runbook-sauvegarde-restauration.html,Livrables générés,Présence et non-vide uniquement
 livrables/minishop-soutenance.pptx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/pdf/0000-utiliser-les-adr.pdf,Livrables générés,Présence et non-vide uniquement
+livrables/pdf/0001-double-persistance-sqlstore-jsonstore.pdf,Livrables générés,Présence et non-vide uniquement
+livrables/pdf/0002-procedures-stockees-triggers-mariadb.pdf,Livrables générés,Présence et non-vide uniquement
+livrables/pdf/0003-authentification-session-rbac-hors-ligne.pdf,Livrables générés,Présence et non-vide uniquement
+livrables/pdf/0004-documentation-as-code-multi-formats.pdf,Livrables générés,Présence et non-vide uniquement
+livrables/pdf/0005-architecture-mvc-php-natif-sans-framework.pdf,Livrables générés,Présence et non-vide uniquement
 livrables/pdf/01-cahier-des-charges-MiniShop.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/02-document-tests-validation.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/03-support-soutenance.pdf,Livrables,Présence et non-vide uniquement
@@ -359,10 +372,6 @@ livrables/pdf/28-documentation-qui-survit-minishop.pdf,Livrables générés,Pré
 livrables/pdf/CHANGELOG.pdf,Livrables générés,Présence et non-vide uniquement
 livrables/pdf/DA.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/README.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/adr-0001-double-persistance-sqlstore-jsonstore.pdf,Livrables générés,Présence et non-vide uniquement
-livrables/pdf/adr-0002-procedures-stockees-triggers-mariadb.pdf,Livrables générés,Présence et non-vide uniquement
-livrables/pdf/adr-0003-authentification-session-rbac-hors-ligne.pdf,Livrables générés,Présence et non-vide uniquement
-livrables/pdf/adr-0004-documentation-as-code-multi-formats.pdf,Livrables générés,Présence et non-vide uniquement
 livrables/pdf/adr-index.pdf,Livrables générés,Présence et non-vide uniquement
 livrables/pdf/annexe-cas-usage.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/annexe-enf.pdf,Livrables,Présence et non-vide uniquement

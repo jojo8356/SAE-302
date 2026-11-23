@@ -12,6 +12,12 @@ Les mêmes fichiers existent dans `dist/` (répertoire généré, hors Git, cf. 
 
 ## Documents
 
+- **0000-utiliser-les-adr** — [HTML](html/0000-utiliser-les-adr.html) · [PDF](pdf/0000-utiliser-les-adr.pdf) · [Word](docx/0000-utiliser-les-adr.docx)
+- **0001-double-persistance-sqlstore-jsonstore** — [HTML](html/0001-double-persistance-sqlstore-jsonstore.html) · [PDF](pdf/0001-double-persistance-sqlstore-jsonstore.pdf) · [Word](docx/0001-double-persistance-sqlstore-jsonstore.docx)
+- **0002-procedures-stockees-triggers-mariadb** — [HTML](html/0002-procedures-stockees-triggers-mariadb.html) · [PDF](pdf/0002-procedures-stockees-triggers-mariadb.pdf) · [Word](docx/0002-procedures-stockees-triggers-mariadb.docx)
+- **0003-authentification-session-rbac-hors-ligne** — [HTML](html/0003-authentification-session-rbac-hors-ligne.html) · [PDF](pdf/0003-authentification-session-rbac-hors-ligne.pdf) · [Word](docx/0003-authentification-session-rbac-hors-ligne.docx)
+- **0004-documentation-as-code-multi-formats** — [HTML](html/0004-documentation-as-code-multi-formats.html) · [PDF](pdf/0004-documentation-as-code-multi-formats.pdf) · [Word](docx/0004-documentation-as-code-multi-formats.docx)
+- **0005-architecture-mvc-php-natif-sans-framework** — [HTML](html/0005-architecture-mvc-php-natif-sans-framework.html) · [PDF](pdf/0005-architecture-mvc-php-natif-sans-framework.pdf) · [Word](docx/0005-architecture-mvc-php-natif-sans-framework.docx)
 - **01-cahier-des-charges-MiniShop** — [HTML](html/01-cahier-des-charges-MiniShop.html) · [PDF](pdf/01-cahier-des-charges-MiniShop.pdf) · [Word](docx/01-cahier-des-charges-MiniShop.docx)
 - **02-document-tests-validation** — [HTML](html/02-document-tests-validation.html) · [PDF](pdf/02-document-tests-validation.pdf) · [Word](docx/02-document-tests-validation.docx)
 - **03-support-soutenance** — [HTML](html/03-support-soutenance.html) · [PDF](pdf/03-support-soutenance.pdf) · [Word](docx/03-support-soutenance.docx)
@@ -44,10 +50,6 @@ Les mêmes fichiers existent dans `dist/` (répertoire généré, hors Git, cf. 
 - **CHANGELOG** — [HTML](html/CHANGELOG.html) · [PDF](pdf/CHANGELOG.pdf) · [Word](docx/CHANGELOG.docx)
 - **DA** — [HTML](html/DA.html) · [PDF](pdf/DA.pdf) · [Word](docx/DA.docx)
 - **README** — [HTML](html/README.html) · [PDF](pdf/README.pdf) · [Word](docx/README.docx)
-- **adr-0001-double-persistance-sqlstore-jsonstore** — [HTML](html/adr-0001-double-persistance-sqlstore-jsonstore.html) · [PDF](pdf/adr-0001-double-persistance-sqlstore-jsonstore.pdf) · [Word](docx/adr-0001-double-persistance-sqlstore-jsonstore.docx)
-- **adr-0002-procedures-stockees-triggers-mariadb** — [HTML](html/adr-0002-procedures-stockees-triggers-mariadb.html) · [PDF](pdf/adr-0002-procedures-stockees-triggers-mariadb.pdf) · [Word](docx/adr-0002-procedures-stockees-triggers-mariadb.docx)
-- **adr-0003-authentification-session-rbac-hors-ligne** — [HTML](html/adr-0003-authentification-session-rbac-hors-ligne.html) · [PDF](pdf/adr-0003-authentification-session-rbac-hors-ligne.pdf) · [Word](docx/adr-0003-authentification-session-rbac-hors-ligne.docx)
-- **adr-0004-documentation-as-code-multi-formats** — [HTML](html/adr-0004-documentation-as-code-multi-formats.html) · [PDF](pdf/adr-0004-documentation-as-code-multi-formats.pdf) · [Word](docx/adr-0004-documentation-as-code-multi-formats.docx)
 - **adr-index** — [HTML](html/adr-index.html) · [PDF](pdf/adr-index.pdf) · [Word](docx/adr-index.docx)
 - **annexe-cas-usage** — [HTML](html/annexe-cas-usage.html) · [PDF](pdf/annexe-cas-usage.pdf) · [Word](docx/annexe-cas-usage.docx)
 - **annexe-enf** — [HTML](html/annexe-enf.html) · [PDF](pdf/annexe-enf.pdf) · [Word](docx/annexe-enf.docx)

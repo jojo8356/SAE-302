@@ -27,3 +27,7 @@ class TestDocumentationCode(unittest.TestCase):
         self.assertTrue(php_index.is_file(), 'Référence HTML PHP absente')
         self.assertGreater(py_index.stat().st_size, 0)
         self.assertGreater(php_index.stat().st_size, 0)
+
+    def test_adr_madr_et_numerotation(self):
+        erreurs = verifier_doc_code.verifier_adr(ROOT)
+        self.assertEqual(erreurs, [], '\n'.join(erreurs))
