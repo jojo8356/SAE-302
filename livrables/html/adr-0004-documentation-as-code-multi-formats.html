@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : ADR-0004 — Documentation dans Git (Docs-as-Code) et génération multi-formats">
+<title>ADR-0004 — Documentation dans Git (Docs-as-Code) et génération multi-formats — MiniShop (SAÉ 302)</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
+  color: var(--encre);
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
+}
+pre {
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
+}
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
+}
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
+@media print {
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/adr/adr-0004-documentation-as-code-multi-formats.md</code></div>
+</header>
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#1-contexte">1. Contexte</a></li>
+<li><a href="#2-decision">2. Décision</a></li>
+<li><a href="#3-consequences">3. Conséquences</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="adr-0004-documentation-dans-git-docs-as-code-et-generation-multi-formats">ADR-0004 — Documentation dans Git (<em>Docs-as-Code</em>) et génération multi-formats<a class="headerlink" href="#adr-0004-documentation-dans-git-docs-as-code-et-generation-multi-formats" title="Permanent link"></a></h1>
+<p><strong>Statut :</strong> Accepté · <strong>Date :</strong> 2026-11-16 · <strong>Propriétaire :</strong> Équipe MiniShop<br />
+<strong>Fichiers concernés :</strong> <code>scripts/build-docs.sh</code>, <code>scripts/md_to_*.py</code>, <code>docs/diagrams/render.sh</code>, <code>.github/workflows/ci.yml</code></p>
+<hr />
+<h2 id="1-contexte">1. Contexte<a class="headerlink" href="#1-contexte" title="Permanent link"></a></h2>
+<p>Une documentation stockée sur un wiki externe ou dans des fichiers bureautiques non versionnés dérive rapidement par rapport au code. Le projet exige en outre des livrables lisibles hors ligne (HTML autonome, PDF A4, DOCX, diaporama) et des diagrammes reproductibles.</p>
+<h2 id="2-decision">2. Décision<a class="headerlink" href="#2-decision" title="Permanent link"></a></h2>
+<ol>
+<li><strong>Source unique dans Git :</strong> toute la documentation vit en Markdown (<code>README.md</code>, <code>CHANGELOG.md</code>, <code>docs/*.md</code>, <code>docs/adr/</code>, <code>docs/exploitation/</code>) et en code PlantUML (<code>docs/diagrams/src/*.puml</code>) dans le même dépôt que le code.</li>
+<li><strong>Chaîne de compilation reproductible :</strong>
+   - Les diagrammes PlantUML (<code>docs/diagrams/src/*.puml</code>, incluant UML et C4) sont compilés en PNG par <strong><code>docs/diagrams/render.sh</code></strong> via <strong>Java (<code>temurin</code> 17) + <code>plantuml.jar</code></strong> (job CI <code>docs</code> de <code>.github/workflows/ci.yml</code>) ;
+   - Les documents Markdown sont assemblés en HTML, PDF A4, DOCX et PPTX par <strong><code>scripts/build-docs.sh</code></strong> (<code>markdown</code>, <code>fpdf2</code>, <code>python-docx</code>, <code>python-pptx</code>).</li>
+<li><strong>Garde-fous automatisés :</strong> <code>scripts/verifier_fiches_uc.py</code> et <code>tests/python/test_audit_structurel.py</code> bloquent toute désynchronisation d’inventaire ou de liens.</li>
+</ol>
+<h2 id="3-consequences">3. Conséquences<a class="headerlink" href="#3-consequences" title="Permanent link"></a></h2>
+<ul>
+<li><strong>Positives :</strong> une pull request modifiant une route, une table SQL ou une procédure met à jour code, ADR et documentation dans le même commit.</li>
+<li><strong>Contrainte d’environnement :</strong> la régénération des PNG PlantUML exige <code>java</code> + <code>plantuml.jar</code> ; en l’absence de JVM dans un bac à sable, les sources <code>.puml</code> restent néanmoins directement lisibles en texte brut et les PDF restent générables par <code>scripts/build-docs.sh</code>.</li>
+</ul>
+<footer class="doc">
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/adr/adr-0004-documentation-as-code-multi-formats.md</code> · 0 figure(s) intégrée(s).</p>
+</footer>
+</main>
+</body>
+</html>

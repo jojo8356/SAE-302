@@ -1902,7 +1902,7 @@ Sur le plan réflexif, les difficultés les plus formatrices ont porté sur l’
 
 ### 5.4 Gouvernance GitLab, `README.md`, soutenance (15 min) et grille de conformité au barème
 
-Le dépôt comporte un `README.md` complet (présentation, architecture, installation `./run.sh --db` et `./run.sh`, répartition entre **Johan Polsinelli** et **Chahd Gouiaa**, rôle `Reporter` pour **Mr Thanh-Phuong Nguyen**). Le support de soutenance de `15` minutes est préparé (`docs/03`, `docs/12`, `livrables/minishop-soutenance.pptx`, `docs/24-preparation-soutenance-complete.md`).
+Le dépôt comporte un `README.md` complet (présentation, architecture, installation `./run.sh --db` et `./run.sh`, répartition entre **Johan Polsinelli** et **Chahd Gouiaa**, rôle `Reporter` pour **Mr Thanh-Phuong Nguyen**), complété par un dispositif de **documentation vivante** dans Git (`CHANGELOG.md`, `docs/adr/`, `docs/exploitation/`, diagrammes C4 dans `docs/diagrams/src/c4_*.puml` et synthèse `docs/28-documentation-qui-survit-minishop.md`). Le support de soutenance de `15` minutes est préparé (`docs/03`, `docs/12`, `livrables/minishop-soutenance.pptx`, `docs/24-preparation-soutenance-complete.md`).
 
 | Bloc du barème officiel (p. 8–9) | Points | Pénalités listées par le sujet | Vérification de conformité MiniShop |
 |---|---:|---|---|

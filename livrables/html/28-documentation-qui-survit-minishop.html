@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : MiniShop — Documentation complète qui survit (Gouvernance, ADR, C4 et Exploitation)">
+<title>MiniShop — Documentation complète qui survit (Gouvernance, ADR, C4 et Exploitation) — MiniShop (SAÉ 302)</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
+  color: var(--encre);
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
+}
+pre {
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
+}
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
+}
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
+@media print {
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/28-documentation-qui-survit-minishop.md</code></div>
+</header>
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#1-principe-pourquoi-et-pour-qui-documenter-minishop">1. Principe : pourquoi et pour qui documenter MiniShop ?</a></li>
+<li><a href="#2-niveau-1-couverture-complete-dans-chacun-des-fichiers-du-depot">2. Niveau 1 : Couverture complète dans chacun des fichiers du dépôt</a></li>
+<li><a href="#3-niveau-2-chaine-de-generation-outils-java-vs-chaine-python-du-depot">3. Niveau 2 : Chaîne de génération (Outils Java vs Chaîne Python du dépôt)</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="minishop-documentation-complete-qui-survit-gouvernance-adr-c4-et-exploitation">MiniShop — Documentation complète qui survit (Gouvernance, ADR, C4 et Exploitation)<a class="headerlink" href="#minishop-documentation-complete-qui-survit-gouvernance-adr-c4-et-exploitation" title="Permanent link"></a></h1>
+<p><strong>Type Diátaxis :</strong> Guide de référence &amp; Explication · <strong>Propriétaires :</strong> Johan Polsinelli &amp; Chahd Gouiaa<br />
+<strong>Dernière vérification :</strong> 2026-11-16 · <strong>Cible :</strong> Développeurs, Administrateurs / SRE, Architectes et Jury SAÉ 302</p>
+<hr />
+<h2 id="1-principe-pourquoi-et-pour-qui-documenter-minishop">1. Principe : pourquoi et pour qui documenter MiniShop ?<a class="headerlink" href="#1-principe-pourquoi-et-pour-qui-documenter-minishop" title="Permanent link"></a></h2>
+<p>Une documentation absente coûte cher lors d’un incident à 2 h du matin, et une documentation obsolète coûte encore plus cher parce qu’on lui fait confiance. Dans MiniShop, chaque document répond à un <strong>lecteur précis</strong> et vit <strong>dans le même dépôt Git</strong> que le code qu’il décrit, avec un propriétaire et des contrôles automatisés.</p>
+<table>
+<thead>
+<tr>
+<th>Type de document (Diátaxis)</th>
+<th>Question du lecteur</th>
+<th>Fichiers MiniShop correspondants</th>
+<th>Propriétaire</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Tutoriel</strong> (découvrir)</td>
+<td><em>« Comment démarrer MiniShop sur mon poste ? »</em></td>
+<td><code>README.md</code> (Démarrage rapide <code>./run.sh --db</code>), <code>docs/14-guide-lineserv.md</code></td>
+<td>Équipe MiniShop</td>
+</tr>
+<tr>
+<td><strong>Guide pratique</strong> (agir sous pression)</td>
+<td><em>« Comment rétablir MariaDB ou restaurer une sauvegarde ? »</em></td>
+<td><code>docs/exploitation/runbook-incidents.md</code>, <code>docs/exploitation/runbook-sauvegarde-restauration.md</code>, <code>docs/exploitation/postmortem-modele.md</code></td>
+<td>Exploitation / SRE</td>
+</tr>
+<tr>
+<td><strong>Référence</strong> (vérifier un fait exact)</td>
+<td><em>« Quelles routes, tables, procédures et fiches existent ? »</em></td>
+<td><code>CHANGELOG.md</code>, <code>docs/exploitation/fiche-service-minishop.md</code>, <code>docs/04-conception-bd-et-sql.md</code>, <code>docs/13-fiches-recette-uc.md</code>, en-têtes PHPDoc (<code>112/112</code> fichiers <code>app/</code>)</td>
+<td>Dev / DBA</td>
+</tr>
+<tr>
+<td><strong>Explication</strong> (comprendre pourquoi)</td>
+<td><em>« Pourquoi SQL + JSON, pourquoi ces ADRs, comment évoluer ? »</em></td>
+<td><code>ARCHITECTURE.md</code>, <code>docs/adr/adr-0001..0004</code>, <code>docs/diagrams/src/c4_*.puml</code>, <code>docs/27-rapport-universitaire-projet-minishop.md</code></td>
+<td>Architectes</td>
+</tr>
+</tbody>
+</table>
+<p><em>Tableau 1 — Cartographie complète de la documentation MiniShop selon les 4 familles Diátaxis.</em></p>
+<hr />
+<h2 id="2-niveau-1-couverture-complete-dans-chacun-des-fichiers-du-depot">2. Niveau 1 : Couverture complète dans chacun des fichiers du dépôt<a class="headerlink" href="#2-niveau-1-couverture-complete-dans-chacun-des-fichiers-du-depot" title="Permanent link"></a></h2>
+<ol>
+<li><strong>Documentation dans le code source</strong> (<code>112/112</code> PHP + <code>8/8</code> public + <code>8/8</code> SQL) :
+   - Chaque classe, contrôleur, dépôt, service, script SQL et vue (<code>app/</code>, <code>public/</code>, <code>sql/</code>) porte désormais un en-tête documentaire précisant son rôle, sa route ou sa règle métier (<code>app/View/home/*.php</code> complété).</li>
+<li><strong>Porte d’entrée et historique</strong> (<code>README.md</code> et <code>CHANGELOG.md</code>) :
+   - <code>README.md</code> oriente immédiatement le lecteur vers le lancement local, les tests et la carte des documents ; <code>CHANGELOG.md</code> trace les versions livrées (<code>[1.0.0]</code> et <code>[1.1.0]</code>).</li>
+<li><strong>Décisions d’architecture versionnées</strong> (<code>docs/adr/</code>) :
+   - <code>adr-0001</code> (double persistance <code>SqlStore</code>/<code>JsonStore</code>), <code>adr-0002</code> (procédures stockées &amp; déclencheurs MariaDB), <code>adr-0003</code> (sessions strictes, RBAC et zéro dépendance CDN) et <code>adr-0004</code> (<em>Documentation as Code</em>).</li>
+<li><strong>Schémas C4 et UML écrits en code</strong> (<code>docs/diagrams/src/</code>) :
+   - En complément des <code>14</code> diagrammes UML historiques, deux diagrammes C4 en texte PlantUML (<code>c4_contexte.puml</code> et <code>c4_conteneurs.puml</code>) décrivent le système, ses utilisateurs et ses frontières de confiance tout en restant lisibles sans rendu graphique.</li>
+<li><strong>Documents d’exploitation</strong> (<code>docs/exploitation/</code>) :
+   - Fiche de service, <em>runbook</em> incidents (4 scénarios critiques), <em>runbook</em> sauvegarde/restauration (<code>--nettoyage</code> + <code>mysqldump --routines --triggers</code> + <code>libsodium</code>) et modèle de <em>postmortem</em> sans blâme.</li>
+</ol>
+<hr />
+<h2 id="3-niveau-2-chaine-de-generation-outils-java-vs-chaine-python-du-depot">3. Niveau 2 : Chaîne de génération (Outils Java vs Chaîne Python du dépôt)<a class="headerlink" href="#3-niveau-2-chaine-de-generation-outils-java-vs-chaine-python-du-depot" title="Permanent link"></a></h2>
+<p>Pour survivre, la documentation est <strong>compilée et vérifiée automatiquement</strong> :</p>
+<table>
+<thead>
+<tr>
+<th>Chaîne de génération</th>
+<th>Outils utilisés</th>
+<th>Rôle exact dans MiniShop</th>
+<th>État / Limite d’exécution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Chaîne Java (Diagrammes &amp; Docs)</strong></td>
+<td><strong>Java 17 (Temurin) + <code>plantuml.jar</code></strong> (<code>docs/diagrams/render.sh</code>, job CI <code>docs</code> de <code>.github/workflows/ci.yml</code>) ; écosystème Java PDF (<code>AsciidoctorJ PDF</code> / <code>Apache FOP</code>)</td>
+<td>Transforme les sources texte <code>.puml</code> (UML + C4) en images PNG/SVG reproductibles ; dans les projets Java, <code>AsciidoctorJ</code>/<code>FOP</code> convertit aussi vers PDF.</td>
+<td>Le dépôt est écrit en PHP/Python : <code>docs/diagrams/render.sh</code> pilote Java + <code>plantuml.jar</code> en CI GitHub. Dans un bac à sable sans JVM ni accès à Maven Central / <code>release-assets.githubusercontent.com</code>, les <code>.puml</code> restent lisibles en clair et vérifiés dans Git.</td>
+</tr>
+<tr>
+<td><strong>Chaîne Python du dépôt (Livrables multi-formats)</strong></td>
+<td><code>scripts/build-docs.sh</code> + <code>scripts/md_to_pdf.py</code> (<code>fpdf2</code>), <code>md_to_html.py</code>, <code>md_to_docx.py</code>, <code>md_to_pptx.py</code></td>
+<td>Génère <strong>hors ligne</strong> l’ensemble des <strong>PDF A4</strong>, HTML autonomes (images base64), DOCX et PPTX dans <code>livrables/</code> (<code>README</code>, <code>CHANGELOG</code>, <code>docs/adr/</code>, <code>docs/exploitation/</code>, <code>docs/01..28</code>).</td>
+<td><strong>Actif et exécuté localement :</strong> produit chaque PDF en quelques secondes sans dépendance réseau.</td>
+</tr>
+<tr>
+<td><strong>Contrôles anti-dérive (CI)</strong></td>
+<td><code>scripts/verifier_fiches_uc.py</code>, <code>tests/python/test_audit_structurel.py</code>, <code>tests/security/controles.sh</code></td>
+<td>Vérifie que 100 % des fichiers suivis sont inventoriés dans <code>docs/17-inventaire-projet.csv</code>, que les liens et scénarios UC restent valides et qu’aucune règle de sécurité n’est cassée.</td>
+<td><strong>Actif :</strong> exécuté à chaque évolution avant commit et push.</td>
+</tr>
+</tbody>
+</table>
+<p><em>Tableau 2 — Chaînes de publication et de vérification automatisée de la documentation MiniShop.</em></p>
+<footer class="doc">
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/28-documentation-qui-survit-minishop.md</code> · 0 figure(s) intégrée(s).</p>
+</footer>
+</main>
+</body>
+</html>

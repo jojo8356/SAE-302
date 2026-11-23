@@ -90,7 +90,9 @@ if [ ${#CIBLES[@]} -gt 0 ]; then
     done
 else
     [ -f README.md ] && SOURCES+=("README.md")
+    [ -f CHANGELOG.md ] && SOURCES+=("CHANGELOG.md")
     while IFS= read -r fichier; do SOURCES+=("$fichier"); done < <(ls docs/[0-9]*.md docs/DA.md docs/pv-recette.md 2>/dev/null | sort)
+    while IFS= read -r fichier; do SOURCES+=("$fichier"); done < <(ls docs/adr/*.md docs/exploitation/*.md 2>/dev/null | sort)
     while IFS= read -r fichier; do SOURCES+=("$fichier"); done < <(ls docs/annexes/*.md 2>/dev/null | sort)
     while IFS= read -r fichier; do SOURCES+=("$fichier"); done < <(ls docs/sql-a-ecrire/*.md 2>/dev/null | sort)
 fi

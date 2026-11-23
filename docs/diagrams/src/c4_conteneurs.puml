@@ -1,0 +1,39 @@
+@startuml
+' =====================================================================
+' MiniShop — Diagramme C4 Niveau 2 : Conteneurs (C4 Containers)
+' Lisible en texte brut dans Git ; compilable en PNG via Java + plantuml.jar
+' (bash docs/diagrams/render.sh)
+' =====================================================================
+!pragma layout smetana
+left to right direction
+skinparam shadowing false
+skinparam roundcorner 8
+
+title MiniShop — C4 Niveau 2 : Conteneurs et frontières de confiance
+
+actor "Client / Admin" as User
+
+package "Bordure réseau" {
+  component "Reverse Proxy / WAF\n[Apache / NGINX + TLS]\nEn-têtes CSP, HSTS, rate-limit" as Proxy
+}
+
+package "Plateforme d'exécution (VM KVM / Orchestrateur)" {
+  component "Frontal Web MVC\n[PHP 8.2 — public/index.php]\nRouter, Contrôleurs, Auth, CSRF" as Web
+  component "Tâche de maintenance CLI\n[PHP CLI — scripts/db_init.php]\n--nettoyage RGPD & libsodium" as Cli
+}
+
+package "Services consommés (Données & État)" {
+  database "MariaDB 11.8.6\n[SqlStore — 9 tables, 18 proc., 16 trig.]\nSource de vérité transactionnelle" as DB
+  database "Stockage JSON local\n[JsonStore — data/minishop/]\nMode secondaire isolé / tests" as Json
+  storage "Journaux locaux V1\n[var/journal/db.jsonl, contact.jsonl]\nAudit non bloquant" as Logs
+}
+
+User --> Proxy : "HTTPS (443)\nCookie __Host-MINISHOPSESS"
+Proxy --> Web : "HTTP interne / FastCGI\nX-Forwarded-Proto"
+Web --> DB : "PDO requêtes préparées\net procédures sp_* [TCP 3306]"
+Web ..> Json : "Mode STORAGE_DRIVER=json\n(tests / démo sans SGBD)"
+Web ..> Logs : "Écriture append-only\n(non bloquante)"
+Cli --> DB : "Purge comptes inactifs\n(--nettoyage)"
+Cli --> Logs : "Rotation & archivage\nNettoyageJournaux"
+
+@enduml

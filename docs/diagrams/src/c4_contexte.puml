@@ -1,0 +1,29 @@
+@startuml
+' =====================================================================
+' MiniShop — Diagramme C4 Niveau 1 : Contexte système (C4 Context)
+' Lisible en texte brut dans Git ; compilable en PNG via Java + plantuml.jar
+' (bash docs/diagrams/render.sh)
+' =====================================================================
+!pragma layout smetana
+left to right direction
+skinparam shadowing false
+skinparam roundcorner 8
+
+title MiniShop — C4 Niveau 1 : Contexte système
+
+actor "Visiteur / Client\n(Navigateur Web)" as Client
+actor "Administrateur\n(GESTIONNAIRE / SUPER)" as Admin
+
+rectangle "Système MiniShop\n[Application Web PHP 8.2 MVC]\nCatalogue, panier, commandes,\nback-office et conformité RGPD" as MiniShop #1168BD;text:white
+
+rectangle "Service PSP externe\n[Cible prod V2]\nPaiement CB & webhooks HMAC\n(simulé en V1)" as PSP #999999;text:white
+rectangle "IdP / Annuaire SSO\n[Cible prod V2 : sso.minishop.fr]\nOIDC, MFA TOTP et groupes\n(Auth locale en V1)" as IdP #999999;text:white
+rectangle "Observabilité externe\n[Hors domaine de panne]\nCollecteur OTel, logs, alertes\net watchdog externe" as Obs #999999;text:white
+
+Client --> MiniShop : "Consulte catalogue, commande\n[HTTPS]"
+Admin --> MiniShop : "Gère catalogue, stocks, équipe\n[HTTPS + MFA]"
+MiniShop --> PSP : "Initie paiement & reçoit\nconfirmation [HTTPS / HMAC]"
+MiniShop --> IdP : "Vérifie jetons OIDC (JWKS)\n[HTTPS]"
+MiniShop ..> Obs : "Émet logs JSON, métriques,\ntraces [Asynchrone non bloquant]"
+
+@enduml

@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : Changelog — MiniShop">
+<title>Changelog — MiniShop — MiniShop (SAÉ 302)</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
+  color: var(--encre);
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
+}
+pre {
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
+}
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
+}
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
+@media print {
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>CHANGELOG.md</code></div>
+</header>
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#110-2026-11-16-gouvernance-documentaire-et-documentation-vivante">[1.1.0] — 2026-11-16 — Gouvernance documentaire et documentation vivante</a><ul>
+<li><a href="#ajoute">Ajouté</a></li>
+<li><a href="#modifie">Modifié</a></li>
+</ul>
+</li>
+<li><a href="#100-2026-10-25-socle-applicatif-base-3fn-securite-et-validation-vm">[1.0.0] — 2026-10-25 — Socle applicatif, base 3FN, sécurité et validation VM</a><ul>
+<li><a href="#ajoute_1">Ajouté</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<h1 id="changelog-minishop">Changelog — MiniShop<a class="headerlink" href="#changelog-minishop" title="Permanent link"></a></h1>
+<p><strong>Propriétaire :</strong> Équipe MiniShop (Johan Polsinelli &amp; Chahd Gouiaa)<br />
+<strong>Format :</strong> <a href="https://keepachangelog.com/fr/1.1.0/">Keep a Changelog</a> · <strong>Versioning :</strong> SemVer pédagogique<br />
+<strong>Dernière mise à jour :</strong> 2026-11-16</p>
+<hr />
+<h2 id="110-2026-11-16-gouvernance-documentaire-et-documentation-vivante">[1.1.0] — 2026-11-16 — Gouvernance documentaire et documentation vivante<a class="headerlink" href="#110-2026-11-16-gouvernance-documentaire-et-documentation-vivante" title="Permanent link"></a></h2>
+<h3 id="ajoute">Ajouté<a class="headerlink" href="#ajoute" title="Permanent link"></a></h3>
+<ul>
+<li><strong>Gouvernance documentaire complète</strong> dans Git selon le cadre <em>Documenter : créer une documentation qui survit</em> (<code>docs/28-documentation-qui-survit-minishop.md</code>).</li>
+<li><strong>Registre des décisions d’architecture</strong> (<code>docs/adr/</code>) : <code>adr-0001</code> (double persistance <code>SqlStore</code>/<code>JsonStore</code>), <code>adr-0002</code> (procédures stockées &amp; déclencheurs MariaDB), <code>adr-0003</code> (sessions, sécurité OWASP &amp; zéro dépendance CDN) et <code>adr-0004</code> (<em>Documentation as Code</em> multi-formats).</li>
+<li><strong>Documents d’exploitation</strong> (<code>docs/exploitation/</code>) : fiche de service MiniShop, <em>runbook</em> incidents, <em>runbook</em> sauvegarde/restauration (<code>db_init.php --nettoyage</code> + <code>libsodium</code>) et modèle de <em>postmortem</em> sans blâme.</li>
+<li><strong>Diagrammes C4 en code</strong> (<code>docs/diagrams/src/</code>) : <code>c4_contexte.puml</code> et <code>c4_conteneurs.puml</code> prêts pour <code>docs/diagrams/render.sh</code> (<code>plantuml.jar</code> sous Java).</li>
+<li><strong>En-têtes PHPDoc complétés</strong> sur les <code>10</code> vues réglementaires/préférences de <code>app/View/home/</code> (<code>112/112</code> fichiers <code>app/**/*.php</code> documentés).</li>
+</ul>
+<h3 id="modifie">Modifié<a class="headerlink" href="#modifie" title="Permanent link"></a></h3>
+<ul>
+<li><code>README.md</code> : ajout de la carte de gouvernance documentaire (types Diátaxis, propriétaires, ADRs, runbooks et diagrammes C4).</li>
+<li><code>docs/26-transition-exploitation-maintenance-build-to-run.md</code> : validation de la ligne <code>Documentation &amp; runbooks</code> dans la checklist <em>Build → Run</em>.</li>
+<li><code>docs/27-rapport-universitaire-projet-minishop.md</code> : enrichissement des sections <code>4.1.12</code> (ordonnanceurs/Saga), <code>4.1.13</code> (domaine de production, annuaire, IdP, IAM), <code>5.1.5</code> (plateformes d’exécution &amp; orchestration) et <code>6.1.1</code> (pipeline de journaux &amp; observabilité).</li>
+<li><code>scripts/build-docs.sh</code> : inclusion de <code>CHANGELOG.md</code>, <code>docs/adr/*.md</code> et <code>docs/exploitation/*.md</code> dans la génération HTML/PDF/DOCX.</li>
+</ul>
+<hr />
+<h2 id="100-2026-10-25-socle-applicatif-base-3fn-securite-et-validation-vm">[1.0.0] — 2026-10-25 — Socle applicatif, base 3FN, sécurité et validation VM<a class="headerlink" href="#100-2026-10-25-socle-applicatif-base-3fn-securite-et-validation-vm" title="Permanent link"></a></h2>
+<h3 id="ajoute_1">Ajouté<a class="headerlink" href="#ajoute_1" title="Permanent link"></a></h3>
+<ul>
+<li><strong>Architecture MVC PHP 8.2+</strong> sans framework (<code>public/index.php</code>, <code>app/Router.php</code>, <code>15</code> contrôleurs, <code>7</code> dépôts, <code>app/Security/</code>).</li>
+<li><strong>Base de données MariaDB 3FN (<code>sql/01..04</code>) :</strong> <code>9</code> tables, <code>4</code> vues, <code>18</code> procédures stockées, <code>1</code> fonction et <code>16</code> déclencheurs (stock, historique de statuts et audit).</li>
+<li><strong>Double persistance par contrat (<code>StoreInterface</code>) :</strong> <code>SqlStore</code> (PDO préparé par défaut) et <code>JsonStore</code> (<code>data/minishop/</code>) avec piste d’audit <code>var/journal/db.jsonl</code>.</li>
+<li><strong>Sécurité applicative (<code>tests/security/controles.sh</code>, 11/11) :</strong> <code>bcrypt</code>, CSRF en temps constant (<code>hash_equals</code>), protection IDOR, sessions strictes (<code>HttpOnly</code>, <code>SameSite=Lax</code>, régénération d’ID), en-têtes CSP.</li>
+<li><strong>Conformité RGPD et juridique (<code>app/View/home/</code>) :</strong> <code>8</code> pages réglementaires et tâche CLI <code>scripts/db_init.php --nettoyage</code> (<code>RetentionComptes</code>, <code>NettoyageJournaux</code>, <code>NettoyageSauvegardes</code> + chiffrement <code>libsodium</code>).</li>
+<li><strong>Validation multi-niveaux :</strong> <code>14</code> diagrammes UML PlantUML (<code>docs/diagrams/</code>), pyramide de tests à <code>9</code> étages (<code>docs/11-strategie-tests.md</code>), recette VM Debian 13 (<code>60/60</code>, <code>docs/pv-recette.md</code>) et campagne performance <code>ENF-01</code> (<code>p95 = 6,0 ms</code> HTTP, <code>tests/perf/dernieres_mesures.txt</code>).</li>
+</ul>
+<footer class="doc">
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>CHANGELOG.md</code> · 0 figure(s) intégrée(s).</p>
+</footer>
+</main>
+</body>
+</html>

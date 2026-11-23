@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : Runbook — Réponse aux incidents en production (MiniShop)">
+<title>Runbook — Réponse aux incidents en production (MiniShop) — MiniShop (SAÉ 302)</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
+  color: var(--encre);
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
+}
+pre {
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
+}
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
+}
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
+@media print {
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/exploitation/runbook-incidents.md</code></div>
+</header>
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#scenario-1-erreurs-http-500-generalisees-panne-mariadb-ou-identifiants-env">Scénario 1 — Erreurs HTTP 500 généralisées (panne MariaDB ou identifiants .env)</a></li>
+<li><a href="#scenario-2-ralentissement-anormal-p95-200-ms">Scénario 2 — Ralentissement anormal (p95 &gt; 200 ms)</a></li>
+<li><a href="#scenario-3-verrouillage-administrateur-ou-panne-de-lidp-ssominishopfr">Scénario 3 — Verrouillage administrateur ou panne de l’IdP (sso.minishop.fr)</a></li>
+<li><a href="#scenario-4-observabilite-muette-declenchement-du-watchdog-externe">Scénario 4 — Observabilité muette (déclenchement du watchdog externe)</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="runbook-reponse-aux-incidents-en-production-minishop">Runbook — Réponse aux incidents en production (MiniShop)<a class="headerlink" href="#runbook-reponse-aux-incidents-en-production-minishop" title="Permanent link"></a></h1>
+<p><strong>Propriétaire :</strong> Astreinte Niveau 2 MiniShop · <strong>Objectif :</strong> Rétablir le service avant de chercher à embellir le diagnostic</p>
+<hr />
+<h2 id="scenario-1-erreurs-http-500-generalisees-panne-mariadb-ou-identifiants-env">Scénario 1 — Erreurs HTTP 500 généralisées (panne MariaDB ou identifiants <code>.env</code>)<a class="headerlink" href="#scenario-1-erreurs-http-500-generalisees-panne-mariadb-ou-identifiants-env" title="Permanent link"></a></h2>
+<ol>
+<li><strong>Vérifier l’état du service MariaDB</strong> et les connexions actives :
+   <code>bash
+   systemctl status mariadb --no-pager
+   journalctl -u mariadb -n 50 --no-pager</code></li>
+<li><strong>Contrôler la configuration <code>.env</code></strong> (sans jamais afficher les secrets dans un ticket ou un log) : vérifier <code>STORAGE_DRIVER=sql</code>, <code>DB_HOST</code>, <code>DB_PORT</code>, <code>DB_NAME</code> (<code>app/Config/Database.php</code>).</li>
+<li><strong>Vérifier l’espace disque et les verrous InnoDB</strong> :
+   <code>bash
+   df -h /var/lib/mysql /var
+   mariadb -e "SHOW ENGINE INNODB STATUS\G" | head -n 40</code></li>
+<li><strong>Si MariaDB a redémarré :</strong> vérifier le maintien des <code>18</code> procédures et <code>16</code> déclencheurs via <code>php scripts/run-all-tests.php --sans-e2e</code> sur la base de test (jamais sur la base client de production).</li>
+</ol>
+<h2 id="scenario-2-ralentissement-anormal-p95-200-ms">Scénario 2 — Ralentissement anormal (<code>p95 &gt; 200 ms</code>)<a class="headerlink" href="#scenario-2-ralentissement-anormal-p95-200-ms" title="Permanent link"></a></h2>
+<ol>
+<li><strong>Identifier la couche coupable</strong> : consulter les métriques de latence HTTP vs temps SQL (<em>Slow Query Log</em> MariaDB <code>long_query_time = 0.05</code>, § <code>3.7</code>).</li>
+<li><strong>Vérifier les processus PHP-FPM / Apache</strong> et la saturation mémoire (<code>free -m</code>, <code>top -b -n1 | head -n 20</code>).</li>
+<li><strong>Appliquer le repli immédiat :</strong> activer le cache HTTP/bordure sur les pages publiques catalogue (<code>GET /</code>, <code>GET /catalogue</code>, § <code>4.1.8</code>) et vérifier l’absence d’un script de volumétrie ou de nettoyage concurrent.</li>
+</ol>
+<h2 id="scenario-3-verrouillage-administrateur-ou-panne-de-lidp-ssominishopfr">Scénario 3 — Verrouillage administrateur ou panne de l’IdP (<code>sso.minishop.fr</code>)<a class="headerlink" href="#scenario-3-verrouillage-administrateur-ou-panne-de-lidp-ssominishopfr" title="Permanent link"></a></h2>
+<ol>
+<li><strong>Ne pas couper le trafic client :</strong> les utilisateurs possédant un jeton JWT non expiré continuent de naviguer (§ <code>4.1.13</code>).</li>
+<li><strong>Utiliser le compte de secours (<code>break-glass</code>) :</strong> accéder via le bastion/VPN autorisé avec le compte <code>SUPER</code> hors IdP (<code>Auth::verifierAdmin()</code>) pour diagnostiquer et relancer l’IdP ou l’annuaire LDAP.</li>
+<li><strong>Après rétablissement :</strong> renouveler les secrets utilisés pendant l’urgence et consigner l’usage du compte de secours dans un <em>postmortem</em>.</li>
+</ol>
+<h2 id="scenario-4-observabilite-muette-declenchement-du-watchdog-externe">Scénario 4 — Observabilité muette (déclenchement du <em>watchdog</em> externe)<a class="headerlink" href="#scenario-4-observabilite-muette-declenchement-du-watchdog-externe" title="Permanent link"></a></h2>
+<ol>
+<li><strong>Vérifier si la boutique sert toujours</strong> : tester <code>curl -I https://minishop.fr/catalogue</code> depuis un réseau externe.</li>
+<li><strong>Vérifier le collecteur</strong> (<code>OpenTelemetry Collector</code> / <code>Fluent Bit</code>) et l’espace disque tampon local sans redémarrer aveuglément <code>front-web</code> (le pipeline de logs doit rester non bloquant, § <code>6.1.1</code>).</li>
+</ol>
+<footer class="doc">
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/exploitation/runbook-incidents.md</code> · 0 figure(s) intégrée(s).</p>
+</footer>
+</main>
+</body>
+</html>

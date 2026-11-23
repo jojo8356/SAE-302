@@ -1,5 +1,15 @@
 <?php
+
 declare(strict_types=1);
+
+/**
+ * FragmentGarantiesEncadre — Encadré légal officiel art. D. 211-2 Code de la consommation.
+ *
+ * Réutilisé par cgv.php et garanties.php.
+ *
+ * @package App\View\Home
+ * @see     docs/12-information-juridique.md
+ */
 ?>
 <div class="legal__encadre">
     <h3>Encadré légal — garantie de conformité et vices cachés</h3>

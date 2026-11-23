@@ -1,5 +1,16 @@
 <?php
+
 declare(strict_types=1);
+
+/**
+ * VueConditionsGeneralesVente — Conditions générales de vente (route GET /cgv).
+ *
+ * Inclut le fragment réglementaire garanties_encadre.php (art. D. 211-2).
+ *
+ * @package App\View\Home
+ * @see     \App\Controller\HomeController::cgv()
+ * @see     docs/12-information-juridique.md
+ */
 ?>
 <article class="legal">
     <header><p class="legal__sur-titre">Informations légales</p><h1>Conditions générales de vente</h1><p class="chapo">Parcours de commande et droits des consommateurs.</p></header>

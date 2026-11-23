@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : Fiche de service — MiniShop (Boutique &amp;amp; Back-office)">
+<title>Fiche de service — MiniShop (Boutique &amp;amp; Back-office) — MiniShop (SAÉ 302)</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
+  color: var(--encre);
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
+}
+pre {
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
+}
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
+}
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
+@media print {
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/exploitation/fiche-service-minishop.md</code></div>
+</header>
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#1-identite-du-service">1. Identité du service</a></li>
+<li><a href="#2-dependances-et-rayon-dimpact">2. Dépendances et rayon d’impact</a></li>
+<li><a href="#3-objectifs-de-niveau-de-service-reference-enf-01">3. Objectifs de niveau de service (référence ENF-01)</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="fiche-de-service-minishop-boutique-back-office">Fiche de service — MiniShop (Boutique &amp; Back-office)<a class="headerlink" href="#fiche-de-service-minishop-boutique-back-office" title="Permanent link"></a></h1>
+<p><strong>Propriétaire :</strong> Équipe MiniShop · <strong>Criticité :</strong> Service transactionnel e-commerce · <strong>Dernière vérification :</strong> 2026-11-16</p>
+<hr />
+<h2 id="1-identite-du-service">1. Identité du service<a class="headerlink" href="#1-identite-du-service" title="Permanent link"></a></h2>
+<ul>
+<li><strong>Point d’entrée HTTP :</strong> <code>public/index.php</code> (<code>app/Router.php</code>, PHP 8.2+)</li>
+<li><strong>Configuration locale / prod :</strong> <code>.env</code> (hors Git, modèle <code>.env.example</code>, lu par <code>app/Config/Env.php</code>)</li>
+<li><strong>Mode de stockage production :</strong> <code>STORAGE_DRIVER=sql</code> (MariaDB 10.6+ / 11.8.6 via <code>app/Model/Data/SqlStore.php</code>)</li>
+<li><strong>Journaux locaux V1 :</strong> <code>var/journal/db.jsonl</code> (<code>Journal.php</code>), <code>var/log/contact.jsonl</code> (<code>HomeController.php</code>), <code>error_log</code> PHP</li>
+<li><strong>Maintenance CLI :</strong> <code>php scripts/db_init.php --nettoyage</code> (<code>RetentionComptes</code>, <code>NettoyageJournaux</code>, <code>NettoyageSauvegardes</code>)</li>
+</ul>
+<h2 id="2-dependances-et-rayon-dimpact">2. Dépendances et rayon d’impact<a class="headerlink" href="#2-dependances-et-rayon-dimpact" title="Permanent link"></a></h2>
+<table>
+<thead>
+<tr>
+<th>Dépendance</th>
+<th>Type</th>
+<th>Rôle</th>
+<th>Effet si indisponible</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MariaDB (<code>minishop</code>)</strong></td>
+<td>Service consommé critique</td>
+<td>Catalogue, paniers persistés, commandes (<code>sp_*</code>), comptes</td>
+<td><strong>HTTP 500</strong> sur toutes les routes SQL</td>
+</tr>
+<tr>
+<td><strong>Système de fichiers <code>var/</code></strong></td>
+<td>Stockage local V1</td>
+<td>Sessions PHP (<code>MINISHOPSESS</code>), journaux JSONL</td>
+<td>Journaux ignorés (<code>Journal::create()</code> non bloquant) ; sessions coupées si plein</td>
+</tr>
+<tr>
+<td><strong>CDN / WAF / IdP (cible prod)</strong></td>
+<td>Bordure &amp; identité (§ <code>4.1.13</code>, <code>5.1.3</code>)</td>
+<td>TLS, filtrage L7, SSO <code>sso.minishop.fr</code></td>
+<td>Sessions JWT actives maintenues jusqu’à expiration ; nouvelles connexions bloquées (secours <em>break-glass</em> requis)</td>
+</tr>
+</tbody>
+</table>
+<p><em>Tableau 1 — Dépendances directes et comportement en cas de panne.</em></p>
+<h2 id="3-objectifs-de-niveau-de-service-reference-enf-01">3. Objectifs de niveau de service (référence <code>ENF-01</code>)<a class="headerlink" href="#3-objectifs-de-niveau-de-service-reference-enf-01" title="Permanent link"></a></h2>
+<ul>
+<li><strong>Latence HTTP mesurée (VM Debian 13) :</strong> <code>p95 = 6,0 ms</code> sur les routes catalogue/produit (<code>tests/perf/dernieres_mesures.txt</code>).</li>
+<li><strong>Latence SQL mesurée :</strong> <code>p95 &lt;= 20,6 ms</code> en lecture/recherche, <code>44 ms</code> sur <code>sp_create_order_from_basket</code>.</li>
+<li><strong>Commandes rapides de santé :</strong></li>
+<li><code>php scripts/run-all-tests.php --sans-sql --sans-e2e</code> (contrôle applicatif isolé)</li>
+<li><code>bash tests/security/controles.sh</code> (11 contrôles statiques de sécurité)</li>
+</ul>
+<footer class="doc">
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/exploitation/fiche-service-minishop.md</code> · 0 figure(s) intégrée(s).</p>
+</footer>
+</main>
+</body>
+</html>

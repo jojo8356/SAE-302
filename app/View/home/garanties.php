@@ -1,5 +1,14 @@
 <?php
+
 declare(strict_types=1);
+
+/**
+ * VueGaranties — Page dédiée aux garanties légales (route GET /garanties).
+ *
+ * @package App\View\Home
+ * @see     \App\Controller\HomeController::garanties()
+ * @see     docs/12-information-juridique.md
+ */
 ?>
 <article class="legal">
     <header><p class="legal__sur-titre">Vos droits</p><h1>Garanties et médiation</h1><p class="chapo">Repères pour une vente réelle de biens à un consommateur.</p></header>

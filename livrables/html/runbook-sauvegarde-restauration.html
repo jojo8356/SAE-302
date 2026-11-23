@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : Runbook — Sauvegarde, nettoyage RGPD et restauration (MiniShop)">
+<title>Runbook — Sauvegarde, nettoyage RGPD et restauration (MiniShop) — MiniShop (SAÉ 302)</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
+  color: var(--encre);
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
+}
+pre {
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
+}
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
+}
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
+@media print {
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/exploitation/runbook-sauvegarde-restauration.md</code></div>
+</header>
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#1-tache-planifiee-de-retention-rgpd-nettoyage">1. Tâche planifiée de rétention RGPD (--nettoyage)</a></li>
+<li><a href="#2-sauvegarde-complete-avant-intervention-mysqldump-coherent">2. Sauvegarde complète avant intervention (mysqldump cohérent)</a></li>
+<li><a href="#3-procedure-de-restauration-et-verification-sur-base-dediee">3. Procédure de restauration et vérification (sur base dédiée)</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="runbook-sauvegarde-nettoyage-rgpd-et-restauration-minishop">Runbook — Sauvegarde, nettoyage RGPD et restauration (MiniShop)<a class="headerlink" href="#runbook-sauvegarde-nettoyage-rgpd-et-restauration-minishop" title="Permanent link"></a></h1>
+<p><strong>Propriétaire :</strong> Équipe Exploitation / DBA MiniShop · <strong>Références :</strong> <code>docs/18-politique-conservation.md</code>, <code>scripts/db_init.php</code>, <code>app/Service/</code></p>
+<hr />
+<h2 id="1-tache-planifiee-de-retention-rgpd-nettoyage">1. Tâche planifiée de rétention RGPD (<code>--nettoyage</code>)<a class="headerlink" href="#1-tache-planifiee-de-retention-rgpd-nettoyage" title="Permanent link"></a></h2>
+<p>Exécutée hors pic de trafic (<code>cron</code> ou <code>systemd</code> avec <code>Persistent=true</code> en V1 ; <code>CronJob concurrencyPolicy: Forbid</code> en orchestrateur, § <code>4.1.12</code>) :</p>
+<pre><code class="language-bash"># Aperçu sans suppression (dry-run recommandé après mise à jour)
+php scripts/db_init.php --nettoyage --simulation
+
+# Exécution réelle : purge comptes inactifs, journaux expirés et archives obsolètes
+php scripts/db_init.php --nettoyage
+</code></pre>
+<p>Services déclenchés dans l’ordre : <code>RetentionComptes</code> (comptes sans commande au-delà du seuil), <code>NettoyageJournaux</code> (<code>var/journal/db.jsonl</code>, <code>var/log/contact.jsonl</code>) et <code>NettoyageSauvegardes</code> (archives chiffrées <code>libsodium</code> dans le répertoire dédié).</p>
+<h2 id="2-sauvegarde-complete-avant-intervention-mysqldump-coherent">2. Sauvegarde complète avant intervention (<code>mysqldump</code> cohérent)<a class="headerlink" href="#2-sauvegarde-complete-avant-intervention-mysqldump-coherent" title="Permanent link"></a></h2>
+<pre><code class="language-bash">DATE_UTC=$(date -u +%Y%m%dT%H%M%SZ)
+mysqldump --single-transaction --routines --triggers --events minishop &gt; &quot;/srv/backups/minishop_${DATE_UTC}.sql&quot;
+sha256sum &quot;/srv/backups/minishop_${DATE_UTC}.sql&quot; &gt; &quot;/srv/backups/minishop_${DATE_UTC}.sha256&quot;
+</code></pre>
+<p>Les options <code>--routines --triggers</code> sont <strong>obligatoires</strong> pour sauvegarder les <code>18</code> procédures stockées et <code>16</code> déclencheurs livrés dans <code>sql/02</code> et <code>sql/03</code>.</p>
+<h2 id="3-procedure-de-restauration-et-verification-sur-base-dediee">3. Procédure de restauration et vérification (sur base dédiée)<a class="headerlink" href="#3-procedure-de-restauration-et-verification-sur-base-dediee" title="Permanent link"></a></h2>
+<ol>
+<li><strong>Vérifier l’empreinte SHA-256</strong> de la sauvegarde avant toute restauration :
+   <code>bash
+   sha256sum -c "/srv/backups/minishop_${DATE_UTC}.sha256"</code></li>
+<li><strong>Restaurer sur une base de validation isolée</strong> (jamais directement sur la prod sans test préalable) :
+   <code>bash
+   mariadb -e "CREATE DATABASE IF NOT EXISTS minishop_restore CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+   mariadb minishop_restore &lt; "/srv/backups/minishop_${DATE_UTC}.sql"</code></li>
+<li><strong>Contrôler l’intégrité des objets SQL</strong> (<code>9</code> tables, <code>4</code> vues, <code>18</code> procédures, <code>1</code> fonction, <code>16</code> déclencheurs) :
+   <code>bash
+   mariadb -N -e "SELECT COUNT(*) FROM information_schema.ROUTINES WHERE ROUTINE_SCHEMA='minishop_restore';"
+   mariadb -N -e "SELECT COUNT(*) FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA='minishop_restore';"</code></li>
+<li><strong>Tester l’application</strong> en pointant un environnement de recette sur <code>minishop_restore</code>, puis basculer ou supprimer <code>minishop_restore</code> une fois le contrôle validé.</li>
+</ol>
+<footer class="doc">
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/exploitation/runbook-sauvegarde-restauration.md</code> · 0 figure(s) intégrée(s).</p>
+</footer>
+</main>
+</body>
+</html>

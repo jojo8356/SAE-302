@@ -1,5 +1,14 @@
 <?php
+
 declare(strict_types=1);
+
+/**
+ * VueConditionsGeneralesUtilisation — Conditions d'utilisation (route GET /cgu).
+ *
+ * @package App\View\Home
+ * @see     \App\Controller\HomeController::cgu()
+ * @see     docs/12-information-juridique.md
+ */
 ?>
 <article class="legal">
     <header><p class="legal__sur-titre">Utilisation du site</p><h1>Conditions d’utilisation</h1><p class="chapo">Cadre de la démonstration MiniShop.</p></header>
