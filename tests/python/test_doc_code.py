@@ -1,13 +1,14 @@
 """Contrôles automatisés de documentation du code (Python docstrings/doctest et PHPDoc)."""
 import pathlib
 import sys
+import tempfile
 import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts import verifier_doc_code  # noqa: E402
+from scripts import nouveau_postmortem, verifier_doc_code  # noqa: E402
 
 
 class TestDocumentationCode(unittest.TestCase):
@@ -35,3 +36,19 @@ class TestDocumentationCode(unittest.TestCase):
     def test_diagrammes_c4_complets_et_fideles_au_code(self):
         erreurs = verifier_doc_code.verifier_c4(ROOT)
         self.assertEqual(erreurs, [], '\n'.join(erreurs))
+
+    def test_postmortem_blameless_et_generation(self):
+        erreurs = verifier_doc_code.verifier_exploitation(ROOT)
+        self.assertEqual(erreurs, [], '\n'.join(erreurs))
+        with tempfile.TemporaryDirectory() as tmp:
+            cible = pathlib.Path(tmp) / 'postmortem-2026-11-16-test.md'
+            genere = nouveau_postmortem.generer_postmortem(
+                'INC-2026-11-16-99',
+                'Saisie test concurrence',
+                date_iso='2026-11-16',
+                sortie=cible,
+            )
+            texte = genere.read_text(encoding='utf-8')
+            self.assertIn('INC-2026-11-16-99', texte)
+            self.assertIn('Saisie test concurrence', texte)
+            self.assertIn('Méthode des 5 pourquoi', texte)

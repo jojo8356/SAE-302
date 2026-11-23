@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : Modèle de postmortem sans blâme (Blameless Postmortem) — MiniShop">
-<title>Modèle de postmortem sans blâme (Blameless Postmortem) — MiniShop — MiniShop (SAÉ 302)</title>
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : Postmortem blameless : [Titre court de l’incident]">
+<title>Postmortem blameless : [Titre court de l’incident] — MiniShop (SAÉ 302)</title>
 <style>
 :root {
   --encre: #0f172a;
@@ -222,83 +222,205 @@ footer.doc p { text-align: left; margin: 0; }
 <nav class="toc" aria-label="Sommaire"><div class="toc">
 <ul>
 <li><a href="#1-resume-executif">1. Résumé exécutif</a></li>
-<li><a href="#2-chronologie-exacte-heure-utc">2. Chronologie exacte (heure UTC)</a></li>
-<li><a href="#3-cause-racine-et-facteurs-aggravants">3. Cause racine et facteurs aggravants</a></li>
-<li><a href="#4-plan-dactions-correctives-avec-proprietaire-et-echeance">4. Plan d’actions correctives (avec propriétaire et échéance)</a></li>
+<li><a href="#2-chronologie-des-evenements-heure-utc">2. Chronologie des événements (heure UTC)</a></li>
+<li><a href="#3-analyse-des-causes">3. Analyse des causes</a><ul>
+<li><a href="#cause-immediate">Cause immédiate</a></li>
+<li><a href="#causes-contributives">Causes contributives</a></li>
+<li><a href="#cause-profonde">Cause profonde</a></li>
+<li><a href="#methode-des-5-pourquoi-du-symptome-a-la-cause-racine">Méthode des 5 pourquoi (du symptôme à la cause racine)</a></li>
+</ul>
+</li>
+<li><a href="#4-ce-qui-a-bien-fonctionne">4. Ce qui a bien fonctionné</a></li>
+<li><a href="#5-ce-qui-a-mal-fonctionne">5. Ce qui a mal fonctionné</a></li>
+<li><a href="#6-actions-correctives-smart">6. Actions correctives (SMART)</a></li>
+<li><a href="#7-lecons-apprises">7. Leçons apprises</a></li>
+<li><a href="#8-metriques-de-suivi">8. Métriques de suivi</a></li>
 </ul>
 </div>
 </nav>
-<h1 id="modele-de-postmortem-sans-blame-blameless-postmortem-minishop">Modèle de postmortem sans blâme (<em>Blameless Postmortem</em>) — MiniShop<a class="headerlink" href="#modele-de-postmortem-sans-blame-blameless-postmortem-minishop" title="Permanent link"></a></h1>
-<p><strong>Identifiant incident :</strong> <code>INC-AAAA-MM-JJ-01</code> · <strong>Date :</strong> <code>AAAA-MM-JJ</code> · <strong>Responsable rédaction :</strong> <code>Nom</code><br />
-<strong>Règle d’or :</strong> On cherche les défaillances de système, de documentation ou d’alerte — <strong>jamais</strong> un coupable humain.</p>
+<h1 id="postmortem-blameless-titre-court-de-lincident">Postmortem blameless : [Titre court de l’incident]<a class="headerlink" href="#postmortem-blameless-titre-court-de-lincident" title="Permanent link"></a></h1>
+<p><strong>Identifiant incident :</strong> <code>INC-AAAA-MM-JJ-01</code> · <strong>Date de l’incident :</strong> <code>AAAA-MM-JJ</code><br />
+<strong>Auteur :</strong> <code>Nom</code> · <strong>Facilitateur neutre :</strong> <code>Nom</code> · <strong>Participants :</strong> <code>Rôles / noms impliqués</code><br />
+<strong>Type :</strong> <code>Technique | Organisationnel | Hybride</code> · <strong>Statut :</strong> <code>En cours de rédaction | En cours de suivi | Clôturé</code><br />
+<strong>Compte-rendu à chaud / Ticket :</strong> <code>Lien vers issue GitLab ou ticket d’incident</code><br />
+<strong>Règle d’or :</strong> Chacun a agi rationnellement avec les informations disponibles ; on corrige le système, la documentation et les garde-fous, <strong>jamais</strong> une personne.</p>
 <hr />
 <h2 id="1-resume-executif">1. Résumé exécutif<a class="headerlink" href="#1-resume-executif" title="Permanent link"></a></h2>
 <ul>
-<li><strong>Service touché :</strong> (<code>front-web</code> / <code>admin-web</code> / <code>mariadb</code> / <code>observabilité</code>)</li>
+<li><strong>Service ou composant MiniShop touché :</strong> (<code>front-web</code> / <code>admin-web</code> / <code>mariadb</code> / <code>jsonstore</code> / <code>scripts-cli</code>)</li>
 <li><strong>Durée totale d’impact :</strong> <code>HH:MM UTC</code> → <code>HH:MM UTC</code> (<code>X min</code>)</li>
-<li><strong>Impact utilisateur :</strong> (ex. impossibilité de valider une commande ; consultation catalogue intacte)</li>
-<li><strong>Détection :</strong> (alerte métrique / <em>watchdog</em> / signalement client)</li>
+<li><strong>Impact utilisateur :</strong> (ex. impossibilité de valider une commande ; consultation du catalogue restée disponible)</li>
+<li><strong>Détection :</strong> (alerte / <em>watchdog</em> / test automatisé / signalement utilisateur)</li>
 </ul>
-<h2 id="2-chronologie-exacte-heure-utc">2. Chronologie exacte (heure UTC)<a class="headerlink" href="#2-chronologie-exacte-heure-utc" title="Permanent link"></a></h2>
+<hr />
+<h2 id="2-chronologie-des-evenements-heure-utc">2. Chronologie des événements (heure UTC)<a class="headerlink" href="#2-chronologie-des-evenements-heure-utc" title="Permanent link"></a></h2>
+<blockquote>
+<p><strong>Exigence :</strong> toutes les heures proviennent des journaux (<code>var/journal/*.jsonl</code>, logs Apache/PHP, logs MariaDB, sortie CI), jamais de souvenirs approximatifs.</p>
+</blockquote>
 <table>
 <thead>
 <tr>
 <th>Heure UTC</th>
-<th>Événement ou action observée</th>
+<th>Événement ou action observée (source log)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>HH:MM</code></td>
-<td>Début probable de l’anomalie (signal métrique ou erreur SQL)</td>
+<td>Début probable de l’anomalie (signal métrique, erreur SQL ou HTTP 500)</td>
 </tr>
 <tr>
 <td><code>HH:MM</code></td>
-<td>Déclenchement alerte / prise en charge astreinte</td>
+<td>Détection / ouverture de l’incident et prise en charge</td>
 </tr>
 <tr>
 <td><code>HH:MM</code></td>
-<td>Action de contournement appliquée (<code>runbook-incidents.md</code>)</td>
+<td>Action de diagnostic ou tentative de contournement (résultat observé)</td>
 </tr>
 <tr>
 <td><code>HH:MM</code></td>
-<td>Retour vérifié à l’état nominal (<code>p95</code> et taux 5xx normaux)</td>
+<td>Application de la correction / bascule (<code>runbook-incidents.md</code>)</td>
+</tr>
+<tr>
+<td><code>HH:MM</code></td>
+<td>Retour vérifié à l’état nominal (HTTP 200, <code>p95</code> et cohérence stock/commandes contrôlés)</td>
 </tr>
 </tbody>
 </table>
-<h2 id="3-cause-racine-et-facteurs-aggravants">3. Cause racine et facteurs aggravants<a class="headerlink" href="#3-cause-racine-et-facteurs-aggravants" title="Permanent link"></a></h2>
-<ul>
-<li><strong>Cause technique directe :</strong> (ex. saturation disque <code>/var/lib/mysql</code>, migration non testée, clé JWKS expirée)</li>
-<li><strong>Pourquoi l’incident n’a-t-il pas été stoppé avant ?</strong> (test manquant, alerte absente, runbook obsolète)</li>
-</ul>
-<h2 id="4-plan-dactions-correctives-avec-proprietaire-et-echeance">4. Plan d’actions correctives (avec propriétaire et échéance)<a class="headerlink" href="#4-plan-dactions-correctives-avec-proprietaire-et-echeance" title="Permanent link"></a></h2>
+<hr />
+<h2 id="3-analyse-des-causes">3. Analyse des causes<a class="headerlink" href="#3-analyse-des-causes" title="Permanent link"></a></h2>
+<h3 id="cause-immediate">Cause immédiate<a class="headerlink" href="#cause-immediate" title="Permanent link"></a></h3>
+<p>Décrire le déclencheur technique direct qui a provoqué le symptôme (sans jugement ni interprétation).</p>
+<h3 id="causes-contributives">Causes contributives<a class="headerlink" href="#causes-contributives" title="Permanent link"></a></h3>
+<ol>
+<li>Absence de garde-fou, de limite de temps ou de validation préalable ;</li>
+<li>Angle mort de supervision, d’alerte ou de journalisation ;</li>
+<li>Lacune de documentation ou de <em>runbook</em> d’exploitation.</li>
+</ol>
+<h3 id="cause-profonde">Cause profonde<a class="headerlink" href="#cause-profonde" title="Permanent link"></a></h3>
+<p>Identifier la faiblesse structurelle (architecture, procédure, test ou outillage) qui a permis qu’une action normale ou une panne isolée produise cet impact.</p>
+<h3 id="methode-des-5-pourquoi-du-symptome-a-la-cause-racine">Méthode des 5 pourquoi (du symptôme à la cause racine)<a class="headerlink" href="#methode-des-5-pourquoi-du-symptome-a-la-cause-racine" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
-<th>Action concrète</th>
-<th>Type</th>
-<th>Propriétaire</th>
+<th>Niveau</th>
+<th>Question</th>
+<th>Réponse factuelle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Symptôme</strong></td>
+<td>Quel incident a été observé ?</td>
+<td><code>[Symptôme constaté et durée]</code></td>
+</tr>
+<tr>
+<td><strong>Pourquoi 1 ?</strong></td>
+<td>Pourquoi ce symptôme s’est-il produit ?</td>
+<td><code>[Cause technique immédiate]</code></td>
+</tr>
+<tr>
+<td><strong>Pourquoi 2 ?</strong></td>
+<td>Pourquoi cette situation était-elle possible ?</td>
+<td><code>[Défaillance du mécanisme ou verrou]</code></td>
+</tr>
+<tr>
+<td><strong>Pourquoi 3 ?</strong></td>
+<td>Pourquoi aucun garde-fou ne l’a bloquée ?</td>
+<td><code>[Absence de limite, alerte ou test]</code></td>
+</tr>
+<tr>
+<td><strong>Pourquoi 4 ?</strong></td>
+<td>Pourquoi ce garde-fou n’était-il pas en place ?</td>
+<td><code>[Lacune de processus ou de conception]</code></td>
+</tr>
+<tr>
+<td><strong>Pourquoi 5 ?</strong></td>
+<td>Quelle cause racine systémique faut-il traiter ?</td>
+<td><code>[Cause architecturale ou organisationnelle]</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-ce-qui-a-bien-fonctionne">4. Ce qui a bien fonctionné<a class="headerlink" href="#4-ce-qui-a-bien-fonctionne" title="Permanent link"></a></h2>
+<blockquote>
+<p>Identifier explicitement les pratiques efficaces (détection rapide, message <code>BusinessError</code> propre, verrou <code>FOR UPDATE</code>, rollback sans perte) afin de ne pas les casser lors des corrections.</p>
+</blockquote>
+<ul>
+<li><code>[Pratique efficace #1]</code></li>
+<li><code>[Pratique efficace #2]</code></li>
+</ul>
+<hr />
+<h2 id="5-ce-qui-a-mal-fonctionne">5. Ce qui a mal fonctionné<a class="headerlink" href="#5-ce-qui-a-mal-fonctionne" title="Permanent link"></a></h2>
+<ul>
+<li><code>[Angle mort de détection, diagnostic trop long ou procédure manquante #1]</code></li>
+<li><code>[Angle mort #2]</code></li>
+</ul>
+<hr />
+<h2 id="6-actions-correctives-smart">6. Actions correctives (SMART)<a class="headerlink" href="#6-actions-correctives-smart" title="Permanent link"></a></h2>
+<blockquote>
+<p>Chaque cause identifiée doit produire au moins une action <strong>Spécifique, Mesurable, Atteignable, Réaliste et Temporelle</strong>, associée à un responsable, une échéance, une priorité et un ticket suivi. Inclure systématiquement la mise à jour du <em>runbook</em> et des contrôles/alertes.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Action concrète (SMART)</th>
+<th>Catégorie</th>
+<th>Responsable</th>
 <th>Échéance</th>
+<th>Priorité</th>
+<th>Ticket</th>
 <th>Statut</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Ajouter un test de non-régression ou une alerte dédiée</td>
+<td><code>[Corriger la cause racine dans le code / SQL / config]</code></td>
 <td>Prévention</td>
 <td><code>À désigner</code></td>
 <td><code>J+7</code></td>
+<td><code>Critique</code></td>
+<td><code>#...</code></td>
 <td><code>[ ]</code></td>
 </tr>
 <tr>
-<td>Mettre à jour le runbook et l’ADR impacté dans Git</td>
-<td>Documentation</td>
+<td><code>[Ajouter alerte ou test automatisé bloquant sur la métrique concernée]</code></td>
+<td>Détection / Monitoring</td>
+<td><code>À désigner</code></td>
+<td><code>J+7</code></td>
+<td><code>Haute</code></td>
+<td><code>#...</code></td>
+<td><code>[ ]</code></td>
+</tr>
+<tr>
+<td><code>[Créer ou mettre à jour le runbook d’exploitation dans docs/exploitation/]</code></td>
+<td>Runbook</td>
 <td><code>À désigner</code></td>
 <td><code>J+3</code></td>
+<td><code>Moyenne</code></td>
+<td><code>#...</code></td>
 <td><code>[ ]</code></td>
 </tr>
 </tbody>
 </table>
+<hr />
+<h2 id="7-lecons-apprises">7. Leçons apprises<a class="headerlink" href="#7-lecons-apprises" title="Permanent link"></a></h2>
+<ol>
+<li><code>[Enseignement clé #1 pour l’équipe et les autres composants]</code></li>
+<li><code>[Enseignement clé #2]</code></li>
+</ol>
+<hr />
+<h2 id="8-metriques-de-suivi">8. Métriques de suivi<a class="headerlink" href="#8-metriques-de-suivi" title="Permanent link"></a></h2>
+<ul>
+<li><strong>Récurrence de ce type d’incident :</strong> objectif <code>0</code> sur <code>6</code> mois.</li>
+<li><strong>Temps moyen de détection :</strong> objectif <code>&lt; 5 min</code>.</li>
+<li><strong>Temps moyen de résolution :</strong> objectif <code>&lt; 30 min</code> grâce au <em>runbook</em> mis à jour.</li>
+<li><strong>Clôture des actions correctives :</strong> revue planifiée à <code>J+14</code> et à l’échéance finale.</li>
+</ul>
+<hr />
+<blockquote>
+<p><strong>Convention de stockage :</strong> enregistrer chaque postmortem rédigé dans <code>docs/exploitation/postmortems/postmortem-AAAA-MM-JJ-resume-court.md</code> (générable via <code>python3 scripts/nouveau_postmortem.py</code>) et le relier depuis <code>docs/exploitation/exploitation-index.md</code>.</p>
+</blockquote>
 <footer class="doc">
   <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/exploitation/postmortem-modele.md</code> · 0 figure(s) intégrée(s).</p>
 </footer>

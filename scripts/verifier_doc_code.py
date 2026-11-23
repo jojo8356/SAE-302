@@ -29,6 +29,7 @@ MODULES_DOCTEST = (
     "scripts.md_to_html",
     "scripts.md_to_pdf",
     "scripts.md_to_pptx",
+    "scripts.nouveau_postmortem",
     "scripts.rejeu_gitlab",
     "scripts.verifier_deprecations",
     "scripts.verifier_doc_code",
@@ -347,6 +348,56 @@ def verifier_c4(racine: pathlib.Path = RACINE) -> list[str]:
     return erreurs
 
 
+def verifier_exploitation(racine: pathlib.Path = RACINE) -> list[str]:
+    """Vérifie le modèle et le guide de postmortem blameless dans ``docs/exploitation/``.
+
+    Args:
+        racine: Racine du dépôt MiniShop.
+
+    Returns:
+        Liste des anomalies détectées (vide si la documentation d'exploitation est conforme).
+    """
+    dossier = racine / "docs" / "exploitation"
+    erreurs: list[str] = []
+
+    modele = dossier / "postmortem-modele.md"
+    guide = dossier / "guide-postmortem-blameless.md"
+    for f in (modele, guide):
+        if not f.is_file():
+            erreurs.append(f"{f.relative_to(racine)} manquant")
+
+    if modele.is_file():
+        contenu_m = modele.read_text(encoding="utf-8")
+        for motif in (
+            "Chronologie des événements",
+            "Cause immédiate",
+            "Causes contributives",
+            "Cause profonde",
+            "5 pourquoi",
+            "Ce qui a bien fonctionné",
+            "Actions correctives",
+            "SMART",
+            "Métriques de suivi",
+        ):
+            if motif not in contenu_m:
+                erreurs.append(f"docs/exploitation/postmortem-modele.md: rubrique `{motif}` absente")
+
+    if guide.is_file():
+        contenu_g = guide.read_text(encoding="utf-8")
+        for motif in (
+            "Near miss",
+            "Pendant l’incident",
+            "Préparation",
+            "Réunion de postmortem",
+            "Post-réunion",
+            "Chasse aux sorcières",
+        ):
+            if motif.lower() not in contenu_g.lower():
+                erreurs.append(f"docs/exploitation/guide-postmortem-blameless.md: section `{motif}` absente")
+
+    return erreurs
+
+
 def generer_reference_php(fichiers: list[FichierPhp], sortie: pathlib.Path) -> None:
     """Génère une référence HTML statique à partir des PHPDoc du code PHP.
 
@@ -471,11 +522,12 @@ def main(argv: list[str] | None = None) -> int:
     fichiers_php, erreurs_php = verifier_php(RACINE)
     erreurs_adr = verifier_adr(RACINE)
     erreurs_c4 = verifier_c4(RACINE)
+    erreurs_exp = verifier_exploitation(RACINE)
 
     if args.gen_php_ref:
         generer_reference_php(fichiers_php, RACINE / "livrables" / "reference" / "php")
 
-    total_erreurs = erreurs_py + erreurs_php + erreurs_adr + erreurs_c4
+    total_erreurs = erreurs_py + erreurs_php + erreurs_adr + erreurs_c4 + erreurs_exp
     if total_erreurs:
         for err in total_erreurs:
             print(f"ERREUR: {err}", file=sys.stderr)
@@ -487,7 +539,7 @@ def main(argv: list[str] | None = None) -> int:
     print(
         f"OK — Python (docstrings + {len(MODULES_DOCTEST)} modules doctest), "
         f"PHP ({len(fichiers_php)} fichiers, {total_methodes} méthodes publiques PHPDoc), "
-        f"ADR ({nb_adr} fiches MADR) et C4 (4 niveaux) conformes."
+        f"ADR ({nb_adr} fiches MADR), C4 (4 niveaux) et Postmortem blameless conformes."
     )
     return 0
 

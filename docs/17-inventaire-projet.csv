@@ -1,6 +1,7 @@
 chemin,categorie,controle_structurel
 .env.example,Configuration et fichiers racine,Présence et non-vide uniquement
 .github/workflows/ci.yml,Outils et intégration continue,Présence et non-vide uniquement
+.github/workflows/postmortem-template.yml,CI / Outillage,Présence et non-vide uniquement
 .gitignore,Configuration et fichiers racine,Présence et non-vide uniquement
 .gitlab/merge_request_templates/Bugfix.md,Outils et intégration continue,Présence et non-vide uniquement
 .gitlab/merge_request_templates/Docs.md,Outils et intégration continue,Présence et non-vide uniquement
@@ -225,6 +226,7 @@ docs/diagrams/src/seq_passer_commande.puml,Documentation,Présence et non-vide u
 docs/diagrams/src/seq_recherche_produit.puml,Documentation,Présence et non-vide uniquement
 docs/exploitation/exploitation-index.md,Documentation,Présence et non-vide uniquement
 docs/exploitation/fiche-service-minishop.md,Documentation,Présence et non-vide uniquement
+docs/exploitation/guide-postmortem-blameless.md,Documentation,Présence et non-vide uniquement
 docs/exploitation/postmortem-modele.md,Documentation,Présence et non-vide uniquement
 docs/exploitation/runbook-incidents.md,Documentation,Présence et non-vide uniquement
 docs/exploitation/runbook-sauvegarde-restauration.md,Documentation,Présence et non-vide uniquement
@@ -279,6 +281,7 @@ livrables/docx/annexe-php-patterns.docx,Livrables,"Présence, non-vide, intégri
 livrables/docx/annexe-sql.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/exploitation-index.docx,Livrables générés,Présence et non-vide uniquement
 livrables/docx/fiche-service-minishop.docx,Livrables générés,Présence et non-vide uniquement
+livrables/docx/guide-postmortem-blameless.docx,Livrables générés,Présence et non-vide uniquement
 livrables/docx/postmortem-modele.docx,Livrables générés,Présence et non-vide uniquement
 livrables/docx/pv-recette.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/requetes-sql-a-ecrire.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
@@ -330,6 +333,7 @@ livrables/html/annexe-php-patterns.html,Livrables,Présence et non-vide uniqueme
 livrables/html/annexe-sql.html,Livrables,Présence et non-vide uniquement
 livrables/html/exploitation-index.html,Livrables générés,Présence et non-vide uniquement
 livrables/html/fiche-service-minishop.html,Livrables générés,Présence et non-vide uniquement
+livrables/html/guide-postmortem-blameless.html,Livrables générés,Présence et non-vide uniquement
 livrables/html/postmortem-modele.html,Livrables générés,Présence et non-vide uniquement
 livrables/html/pv-recette.html,Livrables,Présence et non-vide uniquement
 livrables/html/requetes-sql-a-ecrire.html,Livrables,Présence et non-vide uniquement
@@ -382,6 +386,7 @@ livrables/pdf/annexe-php-patterns.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/annexe-sql.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/exploitation-index.pdf,Livrables générés,Présence et non-vide uniquement
 livrables/pdf/fiche-service-minishop.pdf,Livrables générés,Présence et non-vide uniquement
+livrables/pdf/guide-postmortem-blameless.pdf,Livrables générés,Présence et non-vide uniquement
 livrables/pdf/postmortem-modele.pdf,Livrables générés,Présence et non-vide uniquement
 livrables/pdf/pv-recette.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/requetes-sql-a-ecrire.pdf,Livrables,Présence et non-vide uniquement
@@ -464,6 +469,7 @@ livrables/reference/python/md_to_docx.html,Livrables,reference_api_html
 livrables/reference/python/md_to_html.html,Livrables,reference_api_html
 livrables/reference/python/md_to_pdf.html,Livrables,reference_api_html
 livrables/reference/python/md_to_pptx.html,Livrables,reference_api_html
+livrables/reference/python/nouveau_postmortem.html,Livrables générés,Présence et non-vide uniquement
 livrables/reference/python/rejeu_gitlab.html,Livrables,reference_api_html
 livrables/reference/python/search.js,Livrables,reference_api_html
 livrables/reference/python/verifier_deprecations.html,Livrables,reference_api_html
@@ -542,6 +548,7 @@ scripts/md_to_html.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
 scripts/md_to_pdf.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
 scripts/md_to_pptx.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
 scripts/nettoyage_donnees.php,Scripts et outillage,Présence et non-vide uniquement
+scripts/nouveau_postmortem.py,Scripts,Présence et non-vide uniquement
 scripts/preparer_sql_lineserv.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
 scripts/purger_comptes.php,Outils et intégration continue,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 scripts/rejeu_gitlab.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"

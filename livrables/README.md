@@ -58,6 +58,7 @@ Les mêmes fichiers existent dans `dist/` (répertoire généré, hors Git, cf. 
 - **annexe-sql** — [HTML](html/annexe-sql.html) · [PDF](pdf/annexe-sql.pdf) · [Word](docx/annexe-sql.docx)
 - **exploitation-index** — [HTML](html/exploitation-index.html) · [PDF](pdf/exploitation-index.pdf) · [Word](docx/exploitation-index.docx)
 - **fiche-service-minishop** — [HTML](html/fiche-service-minishop.html) · [PDF](pdf/fiche-service-minishop.pdf) · [Word](docx/fiche-service-minishop.docx)
+- **guide-postmortem-blameless** — [HTML](html/guide-postmortem-blameless.html) · [PDF](pdf/guide-postmortem-blameless.pdf) · [Word](docx/guide-postmortem-blameless.docx)
 - **postmortem-modele** — [HTML](html/postmortem-modele.html) · [PDF](pdf/postmortem-modele.pdf) · [Word](docx/postmortem-modele.docx)
 - **pv-recette** — [HTML](html/pv-recette.html) · [PDF](pdf/pv-recette.pdf) · [Word](docx/pv-recette.docx)
 - **requetes-sql-a-ecrire** — [HTML](html/requetes-sql-a-ecrire.html) · [PDF](pdf/requetes-sql-a-ecrire.pdf) · [Word](docx/requetes-sql-a-ecrire.docx)

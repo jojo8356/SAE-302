@@ -12,7 +12,7 @@ Une documentation absente coûte cher lors d’un incident à 2 h du matin, et u
 | Type de document (Diátaxis) | Question du lecteur | Fichiers MiniShop correspondants | Propriétaire |
 |---|---|---|---|
 | **Tutoriel** (découvrir) | *« Comment démarrer MiniShop sur mon poste ? »* | `README.md` (Démarrage rapide `./run.sh --db`), `docs/14-guide-lineserv.md` | Équipe MiniShop |
-| **Guide pratique** (agir sous pression) | *« Comment rétablir MariaDB ou restaurer une sauvegarde ? »* | `docs/exploitation/runbook-incidents.md`, `docs/exploitation/runbook-sauvegarde-restauration.md`, `docs/exploitation/postmortem-modele.md` | Exploitation / SRE |
+| **Guide pratique** (agir sous pression) | *« Comment rétablir MariaDB ou restaurer une sauvegarde ? »* | `docs/exploitation/runbook-incidents.md`, `docs/exploitation/runbook-sauvegarde-restauration.md`, `docs/exploitation/postmortem-modele.md`, `docs/exploitation/guide-postmortem-blameless.md` | Exploitation / SRE |
 | **Référence** (vérifier un fait exact) | *« Quelles routes, tables, procédures et fiches existent ? »* | `CHANGELOG.md`, `docs/exploitation/fiche-service-minishop.md`, `docs/04-conception-bd-et-sql.md`, `docs/13-fiches-recette-uc.md`, en-têtes PHPDoc (`112/112` fichiers `app/`) | Dev / DBA |
 | **Explication** (comprendre pourquoi) | *« Pourquoi SQL + JSON, pourquoi ces ADRs, comment évoluer ? »* | `ARCHITECTURE.md`, `docs/adr/0000..0005`, `docs/diagrams/src/c4_*.puml`, `docs/27-rapport-universitaire-projet-minishop.md` | Architectes |
 
@@ -31,7 +31,7 @@ Une documentation absente coûte cher lors d’un incident à 2 h du matin, et u
 4. **Schémas C4 et UML écrits en code** (`docs/diagrams/src/`) :
    - En complément des `14` diagrammes UML historiques, les **4 niveaux C4** en texte PlantUML (`c4_contexte.puml`, `c4_conteneurs.puml`, `c4_composants.puml` et `c4_code.puml`) modélisent exactement le code réel du dépôt (sans services fictifs), avec titre, types explicites, flèches verbales/protocoles, légende et texte alternatif (`c4_contexte.puml` reste sobre et sans détail technologique interne, destiné aussi aux lecteurs non techniques).
 5. **Documents d’exploitation** (`docs/exploitation/`) :
-   - Fiche de service, *runbook* incidents (4 scénarios critiques), *runbook* sauvegarde/restauration (`--nettoyage` + `mysqldump --routines --triggers` + `libsodium`) et modèle de *postmortem* sans blâme.
+   - Fiche de service, *runbook* incidents (4 scénarios critiques reliés à l’ouverture de postmortem), *runbook* sauvegarde/restauration (`--nettoyage` + `mysqldump --routines --triggers` + `libsodium`), modèle complet de *postmortem blameless* (5 pourquoi, actions SMART, métriques) et guide pratique (critères de déclenchement dont *near miss*, 4 checklists, anti-patterns, `scripts/nouveau_postmortem.py`, `.github/workflows/postmortem-template.yml`).
 
 ---
 

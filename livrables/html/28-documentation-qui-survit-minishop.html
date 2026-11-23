@@ -253,7 +253,7 @@ footer.doc p { text-align: left; margin: 0; }
 <tr>
 <td><strong>Guide pratique</strong> (agir sous pression)</td>
 <td><em>« Comment rétablir MariaDB ou restaurer une sauvegarde ? »</em></td>
-<td><code>docs/exploitation/runbook-incidents.md</code>, <code>docs/exploitation/runbook-sauvegarde-restauration.md</code>, <code>docs/exploitation/postmortem-modele.md</code></td>
+<td><code>docs/exploitation/runbook-incidents.md</code>, <code>docs/exploitation/runbook-sauvegarde-restauration.md</code>, <code>docs/exploitation/postmortem-modele.md</code>, <code>docs/exploitation/guide-postmortem-blameless.md</code></td>
 <td>Exploitation / SRE</td>
 </tr>
 <tr>
@@ -283,7 +283,7 @@ footer.doc p { text-align: left; margin: 0; }
 <li><strong>Schémas C4 et UML écrits en code</strong> (<code>docs/diagrams/src/</code>) :
    - En complément des <code>14</code> diagrammes UML historiques, les <strong>4 niveaux C4</strong> en texte PlantUML (<code>c4_contexte.puml</code>, <code>c4_conteneurs.puml</code>, <code>c4_composants.puml</code> et <code>c4_code.puml</code>) modélisent exactement le code réel du dépôt (sans services fictifs), avec titre, types explicites, flèches verbales/protocoles, légende et texte alternatif (<code>c4_contexte.puml</code> reste sobre et sans détail technologique interne, destiné aussi aux lecteurs non techniques).</li>
 <li><strong>Documents d’exploitation</strong> (<code>docs/exploitation/</code>) :
-   - Fiche de service, <em>runbook</em> incidents (4 scénarios critiques), <em>runbook</em> sauvegarde/restauration (<code>--nettoyage</code> + <code>mysqldump --routines --triggers</code> + <code>libsodium</code>) et modèle de <em>postmortem</em> sans blâme.</li>
+   - Fiche de service, <em>runbook</em> incidents (4 scénarios critiques reliés à l’ouverture de postmortem), <em>runbook</em> sauvegarde/restauration (<code>--nettoyage</code> + <code>mysqldump --routines --triggers</code> + <code>libsodium</code>), modèle complet de <em>postmortem blameless</em> (5 pourquoi, actions SMART, métriques) et guide pratique (critères de déclenchement dont <em>near miss</em>, 4 checklists, anti-patterns, <code>scripts/nouveau_postmortem.py</code>, <code>.github/workflows/postmortem-template.yml</code>).</li>
 </ol>
 <hr />
 <h2 id="3-niveau-2-chaine-de-generation-outils-java-vs-chaine-python-du-depot">3. Niveau 2 : Chaîne de génération (Outils Java vs Chaîne Python du dépôt)<a class="headerlink" href="#3-niveau-2-chaine-de-generation-outils-java-vs-chaine-python-du-depot" title="Permanent link"></a></h2>

@@ -223,13 +223,16 @@ footer.doc p { text-align: left; margin: 0; }
 <ul>
 <li><a href="#scenario-1-erreurs-http-500-generalisees-panne-mariadb-ou-identifiants-env">Scénario 1 — Erreurs HTTP 500 généralisées (panne MariaDB ou identifiants .env)</a></li>
 <li><a href="#scenario-2-ralentissement-anormal-p95-200-ms">Scénario 2 — Ralentissement anormal (p95 &gt; 200 ms)</a></li>
-<li><a href="#scenario-3-verrouillage-administrateur-ou-panne-de-lidp-ssominishopfr">Scénario 3 — Verrouillage administrateur ou panne de l’IdP (sso.minishop.fr)</a></li>
-<li><a href="#scenario-4-observabilite-muette-declenchement-du-watchdog-externe">Scénario 4 — Observabilité muette (déclenchement du watchdog externe)</a></li>
+<li><a href="#scenario-3-verrouillage-administrateur-ou-panne-idp-cible-v2">Scénario 3 — Verrouillage administrateur (ou panne IdP cible V2)</a></li>
+<li><a href="#scenario-4-journaux-muets-ou-defaillance-de-supervision">Scénario 4 — Journaux muets ou défaillance de supervision</a></li>
 </ul>
 </div>
 </nav>
 <h1 id="runbook-reponse-aux-incidents-en-production-minishop">Runbook — Réponse aux incidents en production (MiniShop)<a class="headerlink" href="#runbook-reponse-aux-incidents-en-production-minishop" title="Permanent link"></a></h1>
 <p><strong>Propriétaire :</strong> Astreinte Niveau 2 MiniShop · <strong>Objectif :</strong> Rétablir le service avant de chercher à embellir le diagnostic</p>
+<blockquote>
+<p><strong>Pendant l’incident (à chaud) :</strong> conserver l’heure UTC exacte et les journaux périssables (<code>var/journal/*.jsonl</code>, <code>mariadb</code>, Apache/PHP). Après stabilisation, si un critère de <a href="guide-postmortem-blameless.html"><code>guide-postmortem-blameless.md</code></a> est atteint (indisponibilité <code>&gt; 15–30 min</code>, perte de données, faille sécurité ou <em>near miss</em>), ouvrir un postmortem sans blâme via <code>python3 scripts/nouveau_postmortem.py</code>.</p>
+</blockquote>
 <hr />
 <h2 id="scenario-1-erreurs-http-500-generalisees-panne-mariadb-ou-identifiants-env">Scénario 1 — Erreurs HTTP 500 généralisées (panne MariaDB ou identifiants <code>.env</code>)<a class="headerlink" href="#scenario-1-erreurs-http-500-generalisees-panne-mariadb-ou-identifiants-env" title="Permanent link"></a></h2>
 <ol>
@@ -250,16 +253,17 @@ footer.doc p { text-align: left; margin: 0; }
 <li><strong>Vérifier les processus PHP-FPM / Apache</strong> et la saturation mémoire (<code>free -m</code>, <code>top -b -n1 | head -n 20</code>).</li>
 <li><strong>Appliquer le repli immédiat :</strong> activer le cache HTTP/bordure sur les pages publiques catalogue (<code>GET /</code>, <code>GET /catalogue</code>, § <code>4.1.8</code>) et vérifier l’absence d’un script de volumétrie ou de nettoyage concurrent.</li>
 </ol>
-<h2 id="scenario-3-verrouillage-administrateur-ou-panne-de-lidp-ssominishopfr">Scénario 3 — Verrouillage administrateur ou panne de l’IdP (<code>sso.minishop.fr</code>)<a class="headerlink" href="#scenario-3-verrouillage-administrateur-ou-panne-de-lidp-ssominishopfr" title="Permanent link"></a></h2>
+<h2 id="scenario-3-verrouillage-administrateur-ou-panne-idp-cible-v2">Scénario 3 — Verrouillage administrateur (ou panne IdP cible V2)<a class="headerlink" href="#scenario-3-verrouillage-administrateur-ou-panne-idp-cible-v2" title="Permanent link"></a></h2>
 <ol>
-<li><strong>Ne pas couper le trafic client :</strong> les utilisateurs possédant un jeton JWT non expiré continuent de naviguer (§ <code>4.1.13</code>).</li>
-<li><strong>Utiliser le compte de secours (<code>break-glass</code>) :</strong> accéder via le bastion/VPN autorisé avec le compte <code>SUPER</code> hors IdP (<code>Auth::verifierAdmin()</code>) pour diagnostiquer et relancer l’IdP ou l’annuaire LDAP.</li>
-<li><strong>Après rétablissement :</strong> renouveler les secrets utilisés pendant l’urgence et consigner l’usage du compte de secours dans un <em>postmortem</em>.</li>
+<li><strong>En V1 (auth locale dans <code>administrateur</code>) :</strong> vérifier que le compte <code>SUPER</code> est actif (<code>actif = 1</code> en base), sans couper le trafic client, puis utiliser <code>Auth::verifierAdmin()</code> via l’accès d’administration sécurisé.</li>
+<li><strong>En cible V2 (<code>sso.minishop.fr</code> / OIDC) :</strong> ne pas couper les clients porteurs de jetons valides et basculer sur le compte de secours (<code>break-glass</code>) hors IdP via bastion/VPN (§ <code>4.1.13</code>).</li>
+<li><strong>Après rétablissement :</strong> renouveler les secrets utilisés pendant l’urgence et ouvrir obligatoirement un <em>postmortem blameless</em> (<code>postmortem-modele.md</code>).</li>
 </ol>
-<h2 id="scenario-4-observabilite-muette-declenchement-du-watchdog-externe">Scénario 4 — Observabilité muette (déclenchement du <em>watchdog</em> externe)<a class="headerlink" href="#scenario-4-observabilite-muette-declenchement-du-watchdog-externe" title="Permanent link"></a></h2>
+<h2 id="scenario-4-journaux-muets-ou-defaillance-de-supervision">Scénario 4 — Journaux muets ou défaillance de supervision<a class="headerlink" href="#scenario-4-journaux-muets-ou-defaillance-de-supervision" title="Permanent link"></a></h2>
 <ol>
-<li><strong>Vérifier si la boutique sert toujours</strong> : tester <code>curl -I https://minishop.fr/catalogue</code> depuis un réseau externe.</li>
-<li><strong>Vérifier le collecteur</strong> (<code>OpenTelemetry Collector</code> / <code>Fluent Bit</code>) et l’espace disque tampon local sans redémarrer aveuglément <code>front-web</code> (le pipeline de logs doit rester non bloquant, § <code>6.1.1</code>).</li>
+<li><strong>Vérifier si la boutique sert toujours</strong> : tester <code>curl -I https://minishop.fr/catalogue</code> (ou l’URL locale configurée).</li>
+<li><strong>Vérifier les journaux locaux V1</strong> (<code>var/journal/db.jsonl</code>, <code>var/journal/contact.jsonl</code>, permissions d’écriture et espace disque sous <code>var/</code>) ainsi que la rotation par <code>App\Service\NettoyageJournaux</code>.</li>
+<li><strong>En cible V2 avec collecteur externe</strong> (<code>OpenTelemetry Collector</code> / <code>Fluent Bit</code>) : vérifier le tampon disque sans redémarrer aveuglément <code>front-web</code> (pipeline non bloquant, § <code>6.1.1</code>), puis ouvrir un <em>postmortem blameless</em> pour combler l’angle mort de détection.</li>
 </ol>
 <footer class="doc">
   <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/exploitation/runbook-incidents.md</code> · 0 figure(s) intégrée(s).</p>

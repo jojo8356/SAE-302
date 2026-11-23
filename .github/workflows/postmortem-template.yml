@@ -1,0 +1,55 @@
+name: Générer un squelette de postmortem blameless
+
+on:
+  workflow_dispatch:
+    inputs:
+      incident_id:
+        description: "Identifiant d'incident (ex. INC-2026-11-16-01)"
+        required: true
+        type: string
+      incident_title:
+        description: "Titre court de l'incident"
+        required: true
+        type: string
+      incident_severity:
+        description: "Sévérité de l'incident"
+        required: true
+        default: "major"
+        type: choice
+        options:
+          - critical
+          - major
+          - minor
+
+permissions: {}
+
+jobs:
+  create-postmortem:
+    name: Créer le gabarit de postmortem
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Générer le squelette daté
+        env:
+          INCIDENT_ID: ${{ inputs.incident_id }}
+          INCIDENT_TITLE: ${{ inputs.incident_title }}
+          INCIDENT_SEVERITY: ${{ inputs.incident_severity }}
+        run: |
+          python3 scripts/nouveau_postmortem.py \
+            --id "$INCIDENT_ID" \
+            --titre "$INCIDENT_TITLE" \
+            --out "${RUNNER_TEMP}/postmortem-$(date -u +%Y-%m-%d)-${INCIDENT_ID}.md"
+          echo "Sévérité déclarée : ${INCIDENT_SEVERITY}"
+          ls -lh "${RUNNER_TEMP}"/postmortem-*.md
+
+      - name: Publier le squelette en artefact
+        uses: actions/upload-artifact@v6
+        with:
+          name: postmortem-${{ inputs.incident_id }}
+          path: ${{ runner.temp }}/postmortem-*.md
+          retention-days: 14
