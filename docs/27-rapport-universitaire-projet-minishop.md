@@ -109,11 +109,12 @@ Les campagnes automatisées exécutées sur machine virtuelle Debian 13 (PHP `8.
   - 5.4 Gouvernance GitLab, `README.md`, soutenance et conformité au barème
 - **Chapitre 6 — Feuille de route d’industrialisation : vers une marketplace professionnelle, intelligente et automatisée (modèle « Amazon »)**
   - 6.1 Industrialisation : PSP, cache distribué, recherche et observabilité
-  - 6.2 Évolution du modèle 3FN vers une *Marketplace* multi-vendeurs (*Seller Central* et *Buy Box*)
+  - 6.2 Vers une *Marketplace* multi-vendeurs (*Seller Central* et *Buy Box*)
   - 6.3 Fournisseurs, fiches fournisseurs et approvisionnements back-office
   - 6.4 Moteur de recommandation hybride (SQL, collaboratif et sémantique)
   - 6.5 Automatisation back-office vendeur, réassort prédictif et logistique
   - 6.6 Trajectoire de migration incrémentale en 4 paliers (*Strangler Fig Pattern*)
+  - 6.7 Échelles de production idéales selon la popularité et les besoins de *scaling*
 - **Conclusion générale et perspectives**
 - **Bibliographie et webographie**
 - **Annexes** — A : 14 `UC` · B : 15 contrôleurs PHP · C : 9 tables, 18 proc., 16 triggers · D : 39 tests · E : Preuves SQL
@@ -205,6 +206,8 @@ Les campagnes automatisées exécutées sur machine virtuelle Debian 13 (PHP `8.
 - **Tableau 62** — Architecture du moteur de recommandation hybride (V1 à V3)
 - **Tableau 63** — Automatisations back-office vendeur, logistique et anti-fraude
 - **Tableau 64** — Plan de migration incrémental en 4 paliers (MiniShop → *Marketplace*)
+- **Tableau 65** — Les 6 échelles de production idéales de MiniShop selon popularité et charge
+- **Tableau 66** — Signaux déclencheurs de bascule d’une échelle à l’autre sur notre code
 
 \newpage
 
@@ -1795,6 +1798,44 @@ L’erreur classique d’une montée en charge consiste à vouloir tout réécri
 *Tableau 64 — Plan de migration incrémental en 4 paliers vers une plateforme e-commerce professionnelle.*
 
 Cette approche progressive préserve intégralement les garanties transactionnelles prouvées dans les chapitres précédents — verrouillage des stocks sans survente, immuabilité financière des commandes et traçabilité d’audit — tout en levant méthodiquement chaque limite du prototype académique.
+
+### 6.7 Échelles de production idéales selon la popularité et les besoins de *scaling*
+
+En synthétisant l’ensemble des chapitres précédents — les **7 familles de bases** (§ `1.4.5`), les **12 optimisations MariaDB** (§ `3.7`), l’architecture **stateless/queues/domaines de panne/proxys** (§ `4.1.4`–`4.1.7`), la **répartition L4/L7** (§ `4.4.3`–`4.4.4`), la **bordure CDN/WAF/anti-DDoS** (§ `5.1.3`) et le **benchmark VM vs Conteneurs/Micro-VM** (§ `5.1.4`) — il apparaît qu’**il n’existe pas une infrastructure idéale unique, mais une architecture adaptée à chaque stade de popularité**. Sur-dimensionner dès le premier jour (ex. Kubernetes + sharding pour `20` clients) gaspille budget et complexité ; sous-dimensionner lors d’un pic viral provoque saturation et coupure.
+
+Le `Tableau 65` établit la **trajectoire complète en six échelles de production**, de la machine locale du développeur jusqu’à une *Marketplace* à trafic massif :
+
+1. **Échelle 0 — Développement local (run.sh / conteneurs poste dev) :** le code tourne sur le portable du développeur (`php -S 127.0.0.1:8000` + `scripts/dev-router.php` ou `Podman`/`Docker`). Dès que le poste s’éteint, le site disparaît : cette échelle sert uniquement au développement, aux tests unitaires/Playwright et aux démonstrations hors ligne (`JsonStore`).
+2. **Échelle 1 — Serveur unique tout-en-un (ENF-03, lancement et trafic local, <= 40–60 req. parallèles) :** le site quitte le portable pour **une VM Type 1 KVM dédiée** (ou *LineServ*, `2`–`4 vCPU`, `4 Go RAM`) allumée `24/7` exécutant `Apache 2.4` (`mpm_event` + `PHP-FPM` + `OPcache`), `MariaDB 11.8` et le `cron` d’archivage (`--nettoyage`). Simple et suffisant pour démarrer (`p95 = 6,0 ms` mesuré), mais **Apache/PHP et MariaDB se disputent la même RAM/CPU** et partagent un **domaine de panne unique** (`~99,7 %` en série, § `4.4.4`).
+3. **Échelle 2 — Séparation App / BDD + Scale-up vertical ciblé (50–500 actifs simultanés) :** dès que PHP et MariaDB entrent en concurrence de ressources, on **sépare l’application et la base sur deux machines distinctes** (VM PHP/Apache + VM MariaDB NVMe) et l’on monte verticalement les ressources (`innodb_buffer_pool_size` `50`–`70 %` RAM SQL, index couvrants, suppression des boucles `N+1` dans `CommandeController::mes()` et `PanierSession::recapitulatif()`). **Limites :** le *scale-up* se heurte vite au plafond matériel et au coût non linéaire des CPU/RAM haut de gamme, tandis que le serveur applicatif unique reste un SPOF.
+4. **Échelle 3 — Scale-out Applicatif Stateless + Répartiteur L7 + Redis (500–5 000 actifs) :** quand l’application devient le goulot (calcul PHP, sessions `flock()`), on rend les frontaux PHP-FPM **totalement sans état (stateless)** en externalisant `MINISHOPSESS` et le cache catalogue vers **Redis**, et l’on déploie **N copies identiques** en conteneurs applicatifs sur `>= 2` hôtes KVM derrière un **répartiteur L7 (NGINX / HAProxy)** (`round-robin` ou `least-connections`, sonde `/healthz` dédiée sans SQL, `X-Forwarded-Proto: https` vérifié pour le drapeau `Secure` dans `Auth.php:58`), tout en déportant PDF/SMTP/PSP sur des **files asynchrones + Outbox transactionnelle**.
+5. **Échelle 4 — Haute Disponibilité complète + Bordure + DNS Multi-IP + Read Replicas (5 000–50 000+ actifs, 99,9 %–99,99 %) :** lors d’une forte notoriété (campagne média/virale), **trois goulets restants sont levés simultanément** :
+   - **Bordure et Entrée sans SPOF :** `Anti-DDoS (L3/L4) → CDN (actifs statiques sans _csrf) → WAF + CrowdSec → DNS multi-IP / Anycast → >= 2 répartiteurs L7 (VRRP/Keepalived, mTLS verrouillant l’origine § 5.1.3)`.
+   - **Réplication SQL asymétrique (90–95 % lectures / 5–10 % écritures) :** comme l’immense majorité du trafic e-commerce lit le catalogue (`v_catalogue`, `/recherche`) et l’historique, on conserve **un seul Primary MariaDB** (seul garant des écritures ACID `sp_confirm_order` / `FOR UPDATE`) et l’on ajoute **N Read Replicas en lecture seule** derrière un *connection pooler* (`ProxySQL`/`MaxScale` + répartiteur L4), plus un *Standby* HA avec quorum/STONITH anti-*split-brain* (§ `4.1.6`) et une supervision **TSDB (Prometheus)**.
+6. **Échelle 5 — Très Grande Échelle / Marketplace Multi-Vendeurs (50 000+ actifs, Chap. 6) :** lorsque même le *Primary* unique sature en écriture ou en volume (`> 50 000`–`10M` de commandes), on combine **partitionnement annuel** (`PARTITION BY RANGE (YEAR(created_at))`), **sharding horizontal** (découpage des données par grappes indépendantes — complexe en SQL à cause des FK, naturel en NoSQL/colonnes), **persistance polyglotte** (`ClickHouse` BI, `Qdrant`/`pgvector` recherche sémantique, `Neo4j` recommandation/fraude) et **Micro-VM (Firecracker/Kata)** pour isoler le code tiers des vendeurs.
+
+| Échelle & Popularité | Topologie idéale (Briques & Isolation § 5.1.4) | Bordure, Réseau & Stockage | Base de données & État (§ 1.4.5 & § 3.7) | Disponibilité & Limite assumée |
+|---|---|---|---|---|
+| **0. Dev / Recette** (`0`–`5` users) | Portable dev (`run.sh`) ou `Docker`/`Podman` local | HTTP local `127.0.0.1:8000` (`dev-router.php`) | MariaDB local ou `JsonStore` démo | Non exposé Internet ; `0` HA |
+| **1. Lancement V1** (`10`–`50` actifs, `ENF-03`) | **1 VM Type 1 KVM** tout-en-un (`Apache` + `PHP-FPM` + `MariaDB`) | Pare-feu + TLS direct ; `.htaccess` ; `mysqldump` hors hôte | MariaDB unique + sessions fichiers (`flock()`) | `~99,7 %` (1 domaine de panne, `40`–`60` req. //) |
+| **2. Croissance locale** (`50`–`500` actifs) | **2 VM KVM séparées** (`App` PHP/OPcache + `BDD` NVMe) + *scale-up* | Reverse proxy TLS (`X-Forwarded-Proto`) ; sauvegardes binlog | MariaDB tuné (`innodb_buffer_pool_size`), index couvrants, `0` `N+1` | App unique reste un SPOF ; coût matériel croissant |
+| **3. Pic soutenu** (`500`–`5 000` actifs) | **≥ 2 Conteneurs front-web + admin-web + cli** sur ≥ 2 VM KVM | **1 LB L7** (`/healthz` dédié, `least-conn`) + forward proxy egress V2 | **Redis** (sessions + cache + Queue) + MariaDB *Primary/Standby* | Plus de SPOF PHP ; LB unique et BDD en écriture à surveiller |
+| **4. Trafic viral** (`5k`–`50k+` actifs) | **Cluster multi-AZ** (K8s `Ingress` + Contrôleur ou HAProxy/VRRP × 2+) | **Anti-DDoS → CDN → WAF → DNS multi-IP → ≥ 2 LB L7** (origine verrouillée) | **ProxySQL/MaxScale** + `1 Primary` écritures + `N Read Replicas` + **Prometheus** | `99,9 %`–`99,99 %` (`53 min/an` max) ; écriture mono-Primary |
+| **5. Marketplace massive** (`50k+` actifs, Chap. 6) | Multi-région + **Micro-VM (Firecracker/Kata)** pour code vendeurs | Bordure globale + **Passerelle API (/v1/*)** + *Outbox* / Kafka | **Partitionnement + Sharding** + **ClickHouse** + **Qdrant** + **Neo4j** | Complexité opérationnelle maximale ; équipe SRE/DevOps requise |
+
+*Tableau 65 — Synthèse des 6 échelles de production idéales pour MiniShop selon la popularité et les besoins de scaling.*
+
+**Critère d’ingénierie : quand passer d’une échelle à la suivante ?** (`Tableau 66`)
+Le passage d’un palier au suivant ne doit jamais se faire « à l’intuition », mais uniquement sur franchissement de signaux mesurables observés en supervision (évitant la sur-ingénierie précoce autant que la panne sous charge) :
+
+| Transition d’échelle | Signal technique mesuré sur MiniShop (Seuil d’alerte) | Action architecturale immédiate (sans refonte globale) |
+|---|---|---|
+| **Échelle 1 → 2** (Mono-serveur → Séparation App/BDD) | RAM disputée entre `pm.max_children` et `innodb_buffer_pool_size` ; CPU/I/O disque `> 70 %` | Extraire MariaDB sur un nœud NVMe dédié ; activer `slow_query_log`, index couvrants et corriger les `N+1` (§ `3.7`) |
+| **Échelle 2 → 3** (1 App → Pool PHP stateless + LB) | Saturation des `40`–`60` workers PHP, verrous `flock()` sessions ou besoin de zéro coupure | Passer `MINISHOPSESS` sur **Redis** (§ `4.1.4`), ajouter ≥ `2` frontaux + LB L7 (`/healthz`) et files asynchrones |
+| **Échelle 3 → 4** (1 LB / 1 BDD → HA + Bordure + Replicas) | `p95` lecture catalogue dégradé (`> 100 ms`), bots/attaques `/connexion`, objectif `>= 99,9 %` | Activer **Anti-DDoS → CDN → WAF** (origine verrouillée § `5.1.3`), doubler le LB (VRRP/DNS) et ajouter `Read Replicas` |
+| **Échelle 4 → 5** (Replicas → Sharding + Polyglotte) | Saturation écritures `Primary` (`FOR UPDATE` > cap SKU/s), catalogue > millions, vendeurs tiers | Partitionner `commande` par année, introduire *sharding*, **ClickHouse/Qdrant/Neo4j** (§ `1.4.5`) et **Micro-VM** |
+
+*Tableau 66 — Matrice des signaux mesurables déclenchant le passage d’une échelle de production à la suivante.*
 
 \newpage
 

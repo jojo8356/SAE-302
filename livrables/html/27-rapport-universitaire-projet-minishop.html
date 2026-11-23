@@ -283,6 +283,7 @@ footer.doc p { text-align: left; margin: 0; }
 <li><a href="#64-moteur-de-recommandation-hybride-analyse-du-panier-filtrage-collaboratif-et-semantique">6.4 Moteur de recommandation hybride (analyse du panier, filtrage collaboratif et sémantique)</a></li>
 <li><a href="#65-automatisation-du-back-office-vendeur-reapprovisionnement-predictif-et-logistique">6.5 Automatisation du back-office vendeur, réapprovisionnement prédictif et logistique</a></li>
 <li><a href="#66-trajectoire-de-migration-incrementale-en-4-paliers-strangler-fig-pattern">6.6 Trajectoire de migration incrémentale en 4 paliers (Strangler Fig Pattern)</a></li>
+<li><a href="#67-echelles-de-production-ideales-selon-la-popularite-et-les-besoins-de-scaling">6.7 Échelles de production idéales selon la popularité et les besoins de scaling</a></li>
 </ul>
 </li>
 <li><a href="#conclusion-generale-et-perspectives">Conclusion générale et perspectives</a></li>
@@ -443,11 +444,12 @@ footer.doc p { text-align: left; margin: 0; }
 <li>5.4 Gouvernance GitLab, <code>README.md</code>, soutenance et conformité au barème</li>
 <li><strong>Chapitre 6 — Feuille de route d’industrialisation : vers une marketplace professionnelle, intelligente et automatisée (modèle « Amazon »)</strong></li>
 <li>6.1 Industrialisation : PSP, cache distribué, recherche et observabilité</li>
-<li>6.2 Évolution du modèle 3FN vers une <em>Marketplace</em> multi-vendeurs (<em>Seller Central</em> et <em>Buy Box</em>)</li>
+<li>6.2 Vers une <em>Marketplace</em> multi-vendeurs (<em>Seller Central</em> et <em>Buy Box</em>)</li>
 <li>6.3 Fournisseurs, fiches fournisseurs et approvisionnements back-office</li>
 <li>6.4 Moteur de recommandation hybride (SQL, collaboratif et sémantique)</li>
 <li>6.5 Automatisation back-office vendeur, réassort prédictif et logistique</li>
 <li>6.6 Trajectoire de migration incrémentale en 4 paliers (<em>Strangler Fig Pattern</em>)</li>
+<li>6.7 Échelles de production idéales selon la popularité et les besoins de <em>scaling</em></li>
 <li><strong>Conclusion générale et perspectives</strong></li>
 <li><strong>Bibliographie et webographie</strong></li>
 <li><strong>Annexes</strong> — A : 14 <code>UC</code> · B : 15 contrôleurs PHP · C : 9 tables, 18 proc., 16 triggers · D : 39 tests · E : Preuves SQL</li>
@@ -537,6 +539,8 @@ footer.doc p { text-align: left; margin: 0; }
 <li><strong>Tableau 62</strong> — Architecture du moteur de recommandation hybride (V1 à V3)</li>
 <li><strong>Tableau 63</strong> — Automatisations back-office vendeur, logistique et anti-fraude</li>
 <li><strong>Tableau 64</strong> — Plan de migration incrémental en 4 paliers (MiniShop → <em>Marketplace</em>)</li>
+<li><strong>Tableau 65</strong> — Les 6 échelles de production idéales de MiniShop selon popularité et charge</li>
+<li><strong>Tableau 66</strong> — Signaux déclencheurs de bascule d’une échelle à l’autre sur notre code</li>
 </ul>
 <div style="break-before: page;"></div>
 <h2 id="glossaire-des-sigles-et-acronymes">Glossaire des sigles et acronymes<a class="headerlink" href="#glossaire-des-sigles-et-acronymes" title="Permanent link"></a></h2>
@@ -4305,6 +4309,109 @@ HAVING co_achats &gt;= 3
 </table>
 <p><em>Tableau 64 — Plan de migration incrémental en 4 paliers vers une plateforme e-commerce professionnelle.</em></p>
 <p>Cette approche progressive préserve intégralement les garanties transactionnelles prouvées dans les chapitres précédents — verrouillage des stocks sans survente, immuabilité financière des commandes et traçabilité d’audit — tout en levant méthodiquement chaque limite du prototype académique.</p>
+<h3 id="67-echelles-de-production-ideales-selon-la-popularite-et-les-besoins-de-scaling">6.7 Échelles de production idéales selon la popularité et les besoins de <em>scaling</em><a class="headerlink" href="#67-echelles-de-production-ideales-selon-la-popularite-et-les-besoins-de-scaling" title="Permanent link"></a></h3>
+<p>En synthétisant l’ensemble des chapitres précédents — les <strong>7 familles de bases</strong> (§ <code>1.4.5</code>), les <strong>12 optimisations MariaDB</strong> (§ <code>3.7</code>), l’architecture <strong>stateless/queues/domaines de panne/proxys</strong> (§ <code>4.1.4</code>–<code>4.1.7</code>), la <strong>répartition L4/L7</strong> (§ <code>4.4.3</code>–<code>4.4.4</code>), la <strong>bordure CDN/WAF/anti-DDoS</strong> (§ <code>5.1.3</code>) et le <strong>benchmark VM vs Conteneurs/Micro-VM</strong> (§ <code>5.1.4</code>) — il apparaît qu’<strong>il n’existe pas une infrastructure idéale unique, mais une architecture adaptée à chaque stade de popularité</strong>. Sur-dimensionner dès le premier jour (ex. Kubernetes + sharding pour <code>20</code> clients) gaspille budget et complexité ; sous-dimensionner lors d’un pic viral provoque saturation et coupure.</p>
+<p>Le <code>Tableau 65</code> établit la <strong>trajectoire complète en six échelles de production</strong>, de la machine locale du développeur jusqu’à une <em>Marketplace</em> à trafic massif :</p>
+<ol>
+<li><strong>Échelle 0 — Développement local (run.sh / conteneurs poste dev) :</strong> le code tourne sur le portable du développeur (<code>php -S 127.0.0.1:8000</code> + <code>scripts/dev-router.php</code> ou <code>Podman</code>/<code>Docker</code>). Dès que le poste s’éteint, le site disparaît : cette échelle sert uniquement au développement, aux tests unitaires/Playwright et aux démonstrations hors ligne (<code>JsonStore</code>).</li>
+<li><strong>Échelle 1 — Serveur unique tout-en-un (ENF-03, lancement et trafic local, &lt;= 40–60 req. parallèles) :</strong> le site quitte le portable pour <strong>une VM Type 1 KVM dédiée</strong> (ou <em>LineServ</em>, <code>2</code>–<code>4 vCPU</code>, <code>4 Go RAM</code>) allumée <code>24/7</code> exécutant <code>Apache 2.4</code> (<code>mpm_event</code> + <code>PHP-FPM</code> + <code>OPcache</code>), <code>MariaDB 11.8</code> et le <code>cron</code> d’archivage (<code>--nettoyage</code>). Simple et suffisant pour démarrer (<code>p95 = 6,0 ms</code> mesuré), mais <strong>Apache/PHP et MariaDB se disputent la même RAM/CPU</strong> et partagent un <strong>domaine de panne unique</strong> (<code>~99,7 %</code> en série, § <code>4.4.4</code>).</li>
+<li><strong>Échelle 2 — Séparation App / BDD + Scale-up vertical ciblé (50–500 actifs simultanés) :</strong> dès que PHP et MariaDB entrent en concurrence de ressources, on <strong>sépare l’application et la base sur deux machines distinctes</strong> (VM PHP/Apache + VM MariaDB NVMe) et l’on monte verticalement les ressources (<code>innodb_buffer_pool_size</code> <code>50</code>–<code>70 %</code> RAM SQL, index couvrants, suppression des boucles <code>N+1</code> dans <code>CommandeController::mes()</code> et <code>PanierSession::recapitulatif()</code>). <strong>Limites :</strong> le <em>scale-up</em> se heurte vite au plafond matériel et au coût non linéaire des CPU/RAM haut de gamme, tandis que le serveur applicatif unique reste un SPOF.</li>
+<li><strong>Échelle 3 — Scale-out Applicatif Stateless + Répartiteur L7 + Redis (500–5 000 actifs) :</strong> quand l’application devient le goulot (calcul PHP, sessions <code>flock()</code>), on rend les frontaux PHP-FPM <strong>totalement sans état (stateless)</strong> en externalisant <code>MINISHOPSESS</code> et le cache catalogue vers <strong>Redis</strong>, et l’on déploie <strong>N copies identiques</strong> en conteneurs applicatifs sur <code>&gt;= 2</code> hôtes KVM derrière un <strong>répartiteur L7 (NGINX / HAProxy)</strong> (<code>round-robin</code> ou <code>least-connections</code>, sonde <code>/healthz</code> dédiée sans SQL, <code>X-Forwarded-Proto: https</code> vérifié pour le drapeau <code>Secure</code> dans <code>Auth.php:58</code>), tout en déportant PDF/SMTP/PSP sur des <strong>files asynchrones + Outbox transactionnelle</strong>.</li>
+<li><strong>Échelle 4 — Haute Disponibilité complète + Bordure + DNS Multi-IP + Read Replicas (5 000–50 000+ actifs, 99,9 %–99,99 %) :</strong> lors d’une forte notoriété (campagne média/virale), <strong>trois goulets restants sont levés simultanément</strong> :
+   - <strong>Bordure et Entrée sans SPOF :</strong> <code>Anti-DDoS (L3/L4) → CDN (actifs statiques sans _csrf) → WAF + CrowdSec → DNS multi-IP / Anycast → &gt;= 2 répartiteurs L7 (VRRP/Keepalived, mTLS verrouillant l’origine § 5.1.3)</code>.
+   - <strong>Réplication SQL asymétrique (90–95 % lectures / 5–10 % écritures) :</strong> comme l’immense majorité du trafic e-commerce lit le catalogue (<code>v_catalogue</code>, <code>/recherche</code>) et l’historique, on conserve <strong>un seul Primary MariaDB</strong> (seul garant des écritures ACID <code>sp_confirm_order</code> / <code>FOR UPDATE</code>) et l’on ajoute <strong>N Read Replicas en lecture seule</strong> derrière un <em>connection pooler</em> (<code>ProxySQL</code>/<code>MaxScale</code> + répartiteur L4), plus un <em>Standby</em> HA avec quorum/STONITH anti-<em>split-brain</em> (§ <code>4.1.6</code>) et une supervision <strong>TSDB (Prometheus)</strong>.</li>
+<li><strong>Échelle 5 — Très Grande Échelle / Marketplace Multi-Vendeurs (50 000+ actifs, Chap. 6) :</strong> lorsque même le <em>Primary</em> unique sature en écriture ou en volume (<code>&gt; 50 000</code>–<code>10M</code> de commandes), on combine <strong>partitionnement annuel</strong> (<code>PARTITION BY RANGE (YEAR(created_at))</code>), <strong>sharding horizontal</strong> (découpage des données par grappes indépendantes — complexe en SQL à cause des FK, naturel en NoSQL/colonnes), <strong>persistance polyglotte</strong> (<code>ClickHouse</code> BI, <code>Qdrant</code>/<code>pgvector</code> recherche sémantique, <code>Neo4j</code> recommandation/fraude) et <strong>Micro-VM (Firecracker/Kata)</strong> pour isoler le code tiers des vendeurs.</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Échelle &amp; Popularité</th>
+<th>Topologie idéale (Briques &amp; Isolation § 5.1.4)</th>
+<th>Bordure, Réseau &amp; Stockage</th>
+<th>Base de données &amp; État (§ 1.4.5 &amp; § 3.7)</th>
+<th>Disponibilité &amp; Limite assumée</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>0. Dev / Recette</strong> (<code>0</code>–<code>5</code> users)</td>
+<td>Portable dev (<code>run.sh</code>) ou <code>Docker</code>/<code>Podman</code> local</td>
+<td>HTTP local <code>127.0.0.1:8000</code> (<code>dev-router.php</code>)</td>
+<td>MariaDB local ou <code>JsonStore</code> démo</td>
+<td>Non exposé Internet ; <code>0</code> HA</td>
+</tr>
+<tr>
+<td><strong>1. Lancement V1</strong> (<code>10</code>–<code>50</code> actifs, <code>ENF-03</code>)</td>
+<td><strong>1 VM Type 1 KVM</strong> tout-en-un (<code>Apache</code> + <code>PHP-FPM</code> + <code>MariaDB</code>)</td>
+<td>Pare-feu + TLS direct ; <code>.htaccess</code> ; <code>mysqldump</code> hors hôte</td>
+<td>MariaDB unique + sessions fichiers (<code>flock()</code>)</td>
+<td><code>~99,7 %</code> (1 domaine de panne, <code>40</code>–<code>60</code> req. //)</td>
+</tr>
+<tr>
+<td><strong>2. Croissance locale</strong> (<code>50</code>–<code>500</code> actifs)</td>
+<td><strong>2 VM KVM séparées</strong> (<code>App</code> PHP/OPcache + <code>BDD</code> NVMe) + <em>scale-up</em></td>
+<td>Reverse proxy TLS (<code>X-Forwarded-Proto</code>) ; sauvegardes binlog</td>
+<td>MariaDB tuné (<code>innodb_buffer_pool_size</code>), index couvrants, <code>0</code> <code>N+1</code></td>
+<td>App unique reste un SPOF ; coût matériel croissant</td>
+</tr>
+<tr>
+<td><strong>3. Pic soutenu</strong> (<code>500</code>–<code>5 000</code> actifs)</td>
+<td><strong>≥ 2 Conteneurs front-web + admin-web + cli</strong> sur ≥ 2 VM KVM</td>
+<td><strong>1 LB L7</strong> (<code>/healthz</code> dédié, <code>least-conn</code>) + forward proxy egress V2</td>
+<td><strong>Redis</strong> (sessions + cache + Queue) + MariaDB <em>Primary/Standby</em></td>
+<td>Plus de SPOF PHP ; LB unique et BDD en écriture à surveiller</td>
+</tr>
+<tr>
+<td><strong>4. Trafic viral</strong> (<code>5k</code>–<code>50k+</code> actifs)</td>
+<td><strong>Cluster multi-AZ</strong> (K8s <code>Ingress</code> + Contrôleur ou HAProxy/VRRP × 2+)</td>
+<td><strong>Anti-DDoS → CDN → WAF → DNS multi-IP → ≥ 2 LB L7</strong> (origine verrouillée)</td>
+<td><strong>ProxySQL/MaxScale</strong> + <code>1 Primary</code> écritures + <code>N Read Replicas</code> + <strong>Prometheus</strong></td>
+<td><code>99,9 %</code>–<code>99,99 %</code> (<code>53 min/an</code> max) ; écriture mono-Primary</td>
+</tr>
+<tr>
+<td><strong>5. Marketplace massive</strong> (<code>50k+</code> actifs, Chap. 6)</td>
+<td>Multi-région + <strong>Micro-VM (Firecracker/Kata)</strong> pour code vendeurs</td>
+<td>Bordure globale + *<em>Passerelle API (/v1/<em>)</em></em> + <em>Outbox</em> / Kafka</td>
+<td><strong>Partitionnement + Sharding</strong> + <strong>ClickHouse</strong> + <strong>Qdrant</strong> + <strong>Neo4j</strong></td>
+<td>Complexité opérationnelle maximale ; équipe SRE/DevOps requise</td>
+</tr>
+</tbody>
+</table>
+<p><em>Tableau 65 — Synthèse des 6 échelles de production idéales pour MiniShop selon la popularité et les besoins de scaling.</em></p>
+<p><strong>Critère d’ingénierie : quand passer d’une échelle à la suivante ?</strong> (<code>Tableau 66</code>)
+Le passage d’un palier au suivant ne doit jamais se faire « à l’intuition », mais uniquement sur franchissement de signaux mesurables observés en supervision (évitant la sur-ingénierie précoce autant que la panne sous charge) :</p>
+<table>
+<thead>
+<tr>
+<th>Transition d’échelle</th>
+<th>Signal technique mesuré sur MiniShop (Seuil d’alerte)</th>
+<th>Action architecturale immédiate (sans refonte globale)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Échelle 1 → 2</strong> (Mono-serveur → Séparation App/BDD)</td>
+<td>RAM disputée entre <code>pm.max_children</code> et <code>innodb_buffer_pool_size</code> ; CPU/I/O disque <code>&gt; 70 %</code></td>
+<td>Extraire MariaDB sur un nœud NVMe dédié ; activer <code>slow_query_log</code>, index couvrants et corriger les <code>N+1</code> (§ <code>3.7</code>)</td>
+</tr>
+<tr>
+<td><strong>Échelle 2 → 3</strong> (1 App → Pool PHP stateless + LB)</td>
+<td>Saturation des <code>40</code>–<code>60</code> workers PHP, verrous <code>flock()</code> sessions ou besoin de zéro coupure</td>
+<td>Passer <code>MINISHOPSESS</code> sur <strong>Redis</strong> (§ <code>4.1.4</code>), ajouter ≥ <code>2</code> frontaux + LB L7 (<code>/healthz</code>) et files asynchrones</td>
+</tr>
+<tr>
+<td><strong>Échelle 3 → 4</strong> (1 LB / 1 BDD → HA + Bordure + Replicas)</td>
+<td><code>p95</code> lecture catalogue dégradé (<code>&gt; 100 ms</code>), bots/attaques <code>/connexion</code>, objectif <code>&gt;= 99,9 %</code></td>
+<td>Activer <strong>Anti-DDoS → CDN → WAF</strong> (origine verrouillée § <code>5.1.3</code>), doubler le LB (VRRP/DNS) et ajouter <code>Read Replicas</code></td>
+</tr>
+<tr>
+<td><strong>Échelle 4 → 5</strong> (Replicas → Sharding + Polyglotte)</td>
+<td>Saturation écritures <code>Primary</code> (<code>FOR UPDATE</code> &gt; cap SKU/s), catalogue &gt; millions, vendeurs tiers</td>
+<td>Partitionner <code>commande</code> par année, introduire <em>sharding</em>, <strong>ClickHouse/Qdrant/Neo4j</strong> (§ <code>1.4.5</code>) et <strong>Micro-VM</strong></td>
+</tr>
+</tbody>
+</table>
+<p><em>Tableau 66 — Matrice des signaux mesurables déclenchant le passage d’une échelle de production à la suivante.</em></p>
 <div style="break-before: page;"></div>
 <h2 id="conclusion-generale-et-perspectives">Conclusion générale et perspectives<a class="headerlink" href="#conclusion-generale-et-perspectives" title="Permanent link"></a></h2>
 <p>À l’issue de cette SAÉ 302, le projet <strong>MiniShop</strong> apporte une réponse complète, mesurée et documentée à la problématique initiale. En concevant une application <strong>PHP 8.2+ sans framework tiers</strong> adossée à une base relationnelle normalisée en <strong>3FN</strong> et protégée par <strong>18 procédures stockées</strong> et <strong>16 déclencheurs</strong>, nous démontrons que la logique transactionnelle critique (prévention de survente sous concurrence, immutabilité des tarifs facturés, traçabilité des statuts et des mouvements de stock) peut être garantie de manière stricte côté SGBD tout en maintenant une architecture MVC lisible, portable (<code>StoreInterface</code>) et performante (<code>6,0 ms</code> au 95e centile en HTTP).</p>
