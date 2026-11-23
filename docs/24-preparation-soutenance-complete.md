@@ -14,7 +14,7 @@
 | **i. Cahier des charges & conception** | Problème initial, acteurs (`Visiteur`, `Client`, `Administrateur`), 14 UC minimum, 11 règles métier (`RB-01`…`RB-11` + extensions), sécurité (`SEC-01`…`SEC-14`), architecture MVC | `docs/01-cahier-des-charges-MiniShop.md`, diagrammes UML (`docs/diagrams/`) |
 | **ii. Modélisation BD & SQL** | MCD (cardinalités justifiées), MLD en 3FN (dénormalisations contrôlées justifiées), scripts reproductibles, **≥ 5 procédures stockées** et **≥ 5 triggers**, requêtes d’analyse | `docs/04-conception-bd-et-sql.md`, `sql/01`…`04`, terminal `mysql` |
 | **iii. Application Web & sécurité** | MVC PHP natif (`declare(strict_types=1)`), PDO préparé (`ATTR_EMULATE_PREPARES => false`), `password_hash`/`password_verify`, protection CSRF, contrôle IDOR, séparation front/back-office, accessibilité/responsive | Code `app/`, démo navigateur en direct, `tests/security/controles.sh` (`11/11`) |
-| **iv. Tests, GitLab & soutenance (15 min)** | Stratégie & exécution des tests (unitaires, intégration SQL, E2E, concurrence, perf), dépôt **GitLab IUT** propre (commits des deux membres, README complet, accès `Reporter` de l’enseignante), clarté de la démo et réponses aux questions | GitLab IUT (`git shortlog -sne`), `docs/pv-recette.md`, `tests/perf/dernieres_mesures.txt` |
+| **iv. Tests, GitLab & soutenance (15 min)** | Stratégie & exécution des tests (unitaires, intégration SQL, E2E, concurrence, perf), dépôt **GitLab IUT** propre (commits des deux membres, README complet, accès `Reporter` de l’enseignant), clarté de la démo et réponses aux questions | GitLab IUT (`git shortlog -sne`), `docs/pv-recette.md`, `tests/perf/dernieres_mesures.txt` |
 
 ### 1.2 Points de vigilance critiques (pénalités du sujet à éviter absolument)
 
@@ -219,7 +219,7 @@ Si le jury compare mot à mot `sujetSAE.pdf` avec le dépôt, voici les **6 poin
 ### La veille (J−1)
 
 - [ ] Dernière version fusionnée et poussée sur le **GitLab IUT** (pas uniquement sur GitHub).
-- [ ] Vérifier sur GitLab IUT : rôle `Reporter` actif pour l’enseignante référente, `README.md` lisible à la racine, `git shortlog -sne` montrant bien les commits des membres du groupe.
+- [ ] Vérifier sur GitLab IUT : rôle `Reporter` actif pour l’enseignant référent, `README.md` lisible à la racine, `git shortlog -sne` montrant bien les commits des membres du groupe.
 - [ ] Vérifier que les tests rapides passent localement :
   - `bash tests/security/controles.sh` (`11/11`)
   - `python3 scripts/verifier_fiches_uc.py` (`46/46`)

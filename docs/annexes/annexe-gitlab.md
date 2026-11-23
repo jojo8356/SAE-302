@@ -5,7 +5,7 @@
 ## 1. Ouverture et accès (semaine 1)
 
 1. Créer le dépôt **privé** `minishop-sae-<groupe>` sur le GitLab de l'établissement (ou `gitlab.com` si imposé).
-2. Ajouter les 3 développeurs (**Developer**) et l'enseignante (**Reporter**, au minimum, pour pouvoir lire le code, les MR et l'historique).
+2. Ajouter les 3 développeurs (**Developer**) et l'enseignant (**Reporter**, au minimum, pour pouvoir lire le code, les MR et l'historique).
 3. Envoyer le courriel obligatoire : à `thanh-phuong.nguyen@univ-cotedazur.fr`, **sujet `Composition SAE`**, corps : noms/prénoms/numéros étudiants, rôle de chacun (cf. RACI §3.3 du CDC), **URL du dépôt**.
 4. Protéger `main` (pas de push direct) ; activer les MR ; **désactiver le squash** pour conserver les commits individuels ; activer « Delete source branch ».
 5. Tag initial `v0-cadrage` ; tags de jalons `v1-mcd`, `v2-base`, `v3-front`, `v4-back`, `v5-rendu`.
