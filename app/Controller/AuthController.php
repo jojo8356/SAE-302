@@ -22,11 +22,13 @@ final class AuthController extends Controller
 {
     // ------------------------------------------------------------ client
 
+    /** Affiche le formulaire vierge d'inscription d'un nouveau client. */
     public function formulaireInscription(): void
     {
         $this->render('auth/inscription', ['erreurs' => [], 'valeurs' => []], 'Créer un compte');
     }
 
+    /** Traite la soumission du formulaire d'inscription client et ouvre la session. */
     public function inscription(): void
     {
         $this->verifierCsrf();
@@ -79,11 +81,13 @@ final class AuthController extends Controller
         ], 'Créer un compte');
     }
 
+    /** Affiche le formulaire de connexion de l'espace client. */
     public function formulaireConnexion(): void
     {
         $this->render('auth/connexion', ['erreurs' => [], 'email' => ''], 'Connexion');
     }
 
+    /** Authentifie un client par bcrypt et régénère l'identifiant de session (SEC-04). */
     public function connexion(): void
     {
         $this->verifierCsrf();
@@ -115,6 +119,7 @@ final class AuthController extends Controller
         $this->render('auth/connexion', ['erreurs' => [$erreur], 'email' => $email], 'Connexion');
     }
 
+    /** Clôt la session client et redirige vers l'accueil. */
     public function deconnexion(): void
     {
         Auth::deconnecterClient();
@@ -124,11 +129,13 @@ final class AuthController extends Controller
 
     // ------------------------------------------------------------- admin
 
+    /** Affiche le formulaire de connexion du back-office administrateur. */
     public function formulaireConnexionAdmin(): void
     {
         $this->render('auth/admin_connexion', ['erreurs' => [], 'email' => ''], 'Back-office — connexion');
     }
 
+    /** Authentifie un administrateur (GESTIONNAIRE/SUPER) et enregistre l'acteur en base. */
     public function connexionAdmin(): void
     {
         $this->verifierCsrf();
@@ -148,6 +155,7 @@ final class AuthController extends Controller
         $this->rediriger('/admin');
     }
 
+    /** Clôt la session administrateur et redirige vers l'accueil public. */
     public function deconnexionAdmin(): void
     {
         Auth::deconnecterAdmin();

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Controller\CommandeController — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Controller · <span>app/Controller/CommandeController.php</span></div>
+    <h1>CommandeController</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — validation, historique, détail et annulation des commandes
+(UC-07/08/09, EF-CLI-07…10, RB-04/06/08/10/11/15/18/20, SEC-08).
+
+Le contrôle d&#x27;appartenance est systématique côté serveur (SEC-08) : une
+requête portant l&#x27;identifiant d&#x27;une commande absente ou d&#x27;un AUTRE client
+répond 404 générique (COMMANDE_INTROUVABLE), sans révéler l&#x27;existence de
+la ressource (test S-04 du document de tests).</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (6)</h2>
+    <div class="method" id="m-formulaire">
+  <code>public function formulaire(): void</code>
+  <p> Étape 1 — récapitulatif + adresse de livraison (port affiché AVANT validation, art. L221-5).</p>
+</div><div class="method" id="m-valider">
+  <code>public function valider(): void</code>
+  <p>Étape 2 — validation : création transactionnelle depuis le panier<br>(UC-07), panier vidé ensuite (EF-GEN-02), stock décrémenté par les<br>déclencheurs (RB-18), prix et port figés (RB-06/RB-20).</p>
+</div><div class="method" id="m-mes">
+  <code>public function mes(): void</code>
+  <p> UC-08 — historique des commandes du client (EF-CLI-08).</p>
+</div><div class="method" id="m-detail">
+  <code>public function detail(string $id): void</code>
+  <p> UC-08 — détail d&#x27;une de ses commandes (EF-CLI-09) + piste de statuts.</p>
+</div><div class="method" id="m-confirmerAnnulation">
+  <code>public function confirmerAnnulation(string $id): void</code>
+  <p>Étape de confirmation avant annulation : l&#x27;annulation est<br>définitive, un simple clic ne doit pas y suffire. Cette page<br>(GET, sans effet de bord) demande « Êtes-vous sûr ? » ; seul le<br>POST annuler() exécute. Même garde qu&#x27;annuler() : appartenance<br>(SEC-08) et commande encore annulable.</p>
+</div><div class="method" id="m-annuler">
+  <code>public function annuler(string $id): void</code>
+  <p> UC-09 — annulation tant que non expédiée (EF-CLI-10, RB-11/18/20).</p>
+</div>
+  </section>
+</body>
+</html>

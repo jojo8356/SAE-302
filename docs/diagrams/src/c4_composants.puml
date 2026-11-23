@@ -1,0 +1,59 @@
+@startuml
+' =====================================================================
+' MiniShop — C4 Niveau 3 : Composants (C4 Components)
+' Zoom sur le conteneur "Application Web MVC [PHP 8.2+]" (public/ + app/).
+' =====================================================================
+!pragma layout smetana
+left to right direction
+skinparam shadowing false
+skinparam roundcorner 8
+
+title MiniShop — Diagramme C4 Niveau 3 : Composants de l'Application Web MVC (PHP 8.2+)
+
+rectangle "Interface Web Navigateur\n[Conteneur : HTML5 / CSS / JS natif]" as Browser #438DD5;text:white
+database "Base relationnelle\n[Conteneur : MariaDB / SqlStore]" as MariaDB #2E6295;text:white
+database "Magasin JSON secondaire\n[Conteneur : data/minishop/ / JsonStore]" as JsonFiles #2E6295;text:white
+
+package "Conteneur : Application Web MVC [PHP 8.2+]" {
+  rectangle "Frontal & Routeur\n[Composant : public/index.php, App\\Router]\nEn-têtes CSP, routes liste blanche\net gardes RBAC (public/client/admin/super)" as Router #85BBF0;text:black
+
+  rectangle "Sécurité & Session\n[Composant : App\\Security\\{Auth,Csrf,xss}]\nSession MINISHOPSESS HttpOnly/SameSite,\njeton CSRF hash_equals(), échappement e()" as Security #85BBF0;text:black
+
+  rectangle "Contrôleurs Boutique & API\n[Composant : App\\Controller\\{Home,Catalogue,\nPanier,Commande,Compte,Auth,Api}Controller]\nValide entrées HTTP, CSRF et orchestre" as CtrlFront #85BBF0;text:black
+
+  rectangle "Contrôleurs Back-Office\n[Composant : App\\Controller\\Admin\\*]\nDashboard, Produit, Categorie, Stock,\nCommande, Parametre, Equipe (SUPER)" as CtrlAdmin #85BBF0;text:black
+
+  rectangle "Panier en session\n[Composant : App\\Model\\PanierSession]\nStocke {id_produit => quantite} en session,\nrecalcule prix et port côté serveur" as Panier #85BBF0;text:black
+
+  rectangle "Dépôts métier (Repositories)\n[Composant : App\\Repository\\*]\nProduit, Categorie, Client (+ Gateway),\nCommande, Parametre" as Repos #85BBF0;text:black
+
+  rectangle "Couche d'accès aux données\n[Composant : App\\Model\\Data\\*]\nStoreInterface, SqlStore, JsonStore,\nTriggers, Views, BusinessError, Schema" as DataLayer #85BBF0;text:black
+
+  rectangle "Vues & Gabarit HTML\n[Composant : App\\View\\layout.php + vues]\nGénère HTML échappé e() et fragments" as Views #85BBF0;text:black
+}
+
+Browser --> Router : "Envoie requête GET / POST (HTTP)"
+Router --> Security : "Vérifie rôle Auth avant exécution (Appel PHP)"
+Router --> CtrlFront : "Dispatche routes publiques / client / API (Appel PHP)"
+Router --> CtrlAdmin : "Dispatche routes /admin/* gardées (Appel PHP)"
+CtrlFront --> Security : "Valide jeton CSRF sur POST (verifierCsrf)"
+CtrlAdmin --> Security : "Valide jeton CSRF sur POST (verifierCsrf)"
+CtrlFront --> Panier : "Lit / modifie quantités du panier (Appel PHP)"
+CtrlFront --> Repos : "Exécute cas d'usage boutique (Appel PHP)"
+CtrlAdmin --> Repos : "Exécute cas d'usage back-office (Appel PHP)"
+Panier --> Repos : "Relit prix TTC, stock et port serveur (Appel PHP)"
+CtrlFront --> Views : "Rend gabarits HTML ou JSON (Appel PHP)"
+CtrlAdmin --> Views : "Rend vues back-office (Appel PHP)"
+Views --> Browser : "Retourne réponse HTML / JSON (HTTP)"
+Repos --> DataLayer : "Persiste via StoreInterface (Appel PHP)"
+DataLayer --> MariaDB : "Exécute requêtes préparées & sp_* (PDO / TCP 3306)"
+DataLayer ..> JsonFiles : "Lit / écrit tables JSON (flock)"
+
+legend right
+  |= Couleur |= Abstraction C4 |= Signification |
+  | <#438DD5> | Conteneur externe | Navigateur Web appelant |
+  | <#85BBF0> | Composant PHP | Regroupement cohésif sous app/ et public/ |
+  | <#2E6295> | Magasin de données | MariaDB ou JSON |
+endlegend
+
+@enduml

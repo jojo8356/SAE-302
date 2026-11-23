@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """Génère la todolist MiniShop (Markdown + HTML dans le dépôt).
-Les mesures de septembre restent historiques ; les statuts et preuves datées sont qualifiés dans le document généré."""
+
+Les mesures de septembre restent historiques ; les statuts et preuves datées sont qualifiés dans le document généré.
+"""
 import pathlib, re, markdown
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Model\Data\Triggers — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Model\Data · <span>app/Model/Data/Triggers.php</span></div>
+    <h1>Triggers</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — les 16 déclencheurs métier de sql/03 portés en opérations JSON.
+
+Comme en SQL, les déclencheurs sont la DERNIÈRE barrière : ils s&#x27;exécutent
+dans le pilote (JsonStore), pas dans les contrôleurs — un code applicatif
+défaillant ne peut donc pas violer RB-02/03/05/06/09/11/14/18, pas plus
+qu&#x27;un appel direct au store.
+
+Correspondance exacte avec sql/03_minishop_triggers.sql :
+
+  SQL (16 triggers)                       → port PHP (cette classe)
+  ------------------------------------------------------------------
+  trg_ligne_controle_insert  (BEFORE INS) → ligne_commande.beforeInsert
+  trg_ligne_prix_snapshot    (BEFORE INS) → ligne_commande.beforeInsert
+  trg_ligne_decrement_stock  (AFTER INS)  → ligne_commande.afterInsert
+  trg_ligne_restore_stock    (AFTER DEL)  → ligne_commande.afterDelete
+  trg_ligne_immutable        (BEFORE UPD) → ligne_commande.beforeUpdate
+  trg_produit_ttc            (BEFORE INS) → produit.beforeInsert
+  trg_produit_ttc_update     (BEFORE UPD) → produit.beforeUpdate
+  trg_produit_regles         (BEFORE UPD) → produit.beforeUpdate
+  trg_produit_delete         (BEFORE DEL) → produit.beforeDelete
+  trg_categorie_slug         (BEFORE INS) → categorie.beforeInsert
+  trg_categorie_delete       (BEFORE DEL) → categorie.beforeDelete
+  trg_commande_transition_statut (B UPD)  → commande.beforeUpdate
+  trg_commande_controle_insert (BEFORE INS)→ commande.beforeInsert
+  trg_commande_delete        (BEFORE DEL) → commande.beforeDelete
+  trg_history_statut         (AFTER UPD)  → commande.afterUpdate
+  trg_history_creation       (AFTER INS)  → commande.afterInsert
+
+Deux différences assumées, documentées :
+  1. trg_history_statut écrit l&#x27;ACTEUR réel (client/admin/système, via
+     StoreInterface::actor()) alors que le trigger SQL ne pouvait tracer
+     que &#x27;SYSTEME&#x27; — même garantie d&#x27;exhaustivité (écriture automatique,
+     impossible à « oublier »), meilleure attributions.
+  2. MySQL interdit à un trigger de muter sa propre table : chaque règle
+     est écrite « du bon côté ». Ici les déclencheurs reçoivent le store
+     complet et peuvent donc tout lire — les règles restent identiques.</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (1)</h2>
+    <div class="method" id="m-fire">
+  <code>public static function fire(StoreInterface $store, string $table, string $phase, string $event, ?array $old, ?array $new): ?array</code>
+  <p>Point d&#x27;entrée appelé par JsonStore.<br><br>@param array&lt;string,mixed&gt;|null $old ligne avant l&#x27;événement (insert : null)<br>@param array&lt;string,mixed&gt;|null $new ligne après l&#x27;événement (delete : null)<br>@return array&lt;string,mixed&gt;|null ligne éventuellement ajustée (BEFORE)</p>
+</div>
+  </section>
+</body>
+</html>

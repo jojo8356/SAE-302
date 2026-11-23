@@ -15,6 +15,7 @@ use App\Model\Data\StoreInterface;
  */
 final class ClientAccountGatewayFactory
 {
+    /** Sélectionne la stratégie SQL (procédures stockées) ou générique selon le pilote. */
     public static function forStore(StoreInterface $store): ClientAccountGateway
     {
         if ($store instanceof StoredProcedureExecutor) {

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Model\Data\JsonTable — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Model\Data · <span>app/Model/Data/JsonTable.php</span></div>
+    <h1>JsonTable</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — une table = un fichier JSON (pilote StorageDriver::JSON).
+
+Format du fichier data/minishop/&lt;table&gt;.json :
+{
+    &quot;table&quot;: &quot;produit&quot;,
+    &quot;auto_increment&quot;: 13,
+    &quot;rows&quot;: [ {...}, {...} ]
+}
+
+- Chargement paresseux (le fichier n&#x27;est lu qu&#x27;à la première utilisation).
+- Écriture ATOMIQUE : sérialisation dans un fichier temporaire puis
+  rename() — un crash ne peut jamais laisser une table à moitié écrite
+  (garantie par fichier seulement, sans journal transactionnel multi-tables).
+- Écriture différée : la table marquée « dirty » n&#x27;est écrite qu&#x27;au
+  commit()/flush() du store — une transaction multi-tables coûte une seule
+  écriture par table réellement modifiée.</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (15)</h2>
+    <div class="method" id="m-name">
+  <code>public function name(): string</code>
+  <p> Retourne le nom logique de la table.</p>
+</div><div class="method" id="m-filePath">
+  <code>public function filePath(): string</code>
+  <p> Retourne le chemin absolu du fichier JSON associé.</p>
+</div><div class="method" id="m-isDirty">
+  <code>public function isDirty(): bool</code>
+  <p> Est-ce que la table a des modifications non écrites ?</p>
+</div><div class="method" id="m-load">
+  <code>public function load(): void</code>
+  <p> Charge le fichier si nécessaire (table absente = table vide à créer).</p>
+</div><div class="method" id="m-rows">
+  <code>public function rows(): array</code>
+  <p> @return list&lt;array&lt;string,mixed&gt;&gt;</p>
+</div><div class="method" id="m-setRows">
+  <code>public function setRows(array $rows, ?int $autoIncrement = null): void</code>
+  <p> Remplace les lignes (usage interne : transactions, seed).</p>
+</div><div class="method" id="m-append">
+  <code>public function append(array $row): void</code>
+  <p> Ajoute une ligne (l&#x27;id auto doit déjà être affecté par le store).</p>
+</div><div class="method" id="m-replace">
+  <code>public function replace(int $index, array $row): void</code>
+  <p> Remplace la ligne à l&#x27;index donné.</p>
+</div><div class="method" id="m-remove">
+  <code>public function remove(int $index): void</code>
+  <p> Supprime la ligne à l&#x27;index donné.</p>
+</div><div class="method" id="m-takeNextId">
+  <code>public function takeNextId(): int</code>
+  <p> Consomme et retourne la prochaine valeur d&#x27;auto-incrément.</p>
+</div><div class="method" id="m-peekNextId">
+  <code>public function peekNextId(): int</code>
+  <p> Prochaine valeur SANS consommer le compteur (numéro lisible).</p>
+</div><div class="method" id="m-bumpBeyond">
+  <code>public function bumpBeyond(int $id): void</code>
+  <p> Force le compteur au-delà d&#x27;un id explicite (seed / reprise de données).</p>
+</div><div class="method" id="m-flush">
+  <code>public function flush(): void</code>
+  <p> Écrit la table sur disque si elle est sale (atomique).</p>
+</div><div class="method" id="m-snapshot">
+  <code>public function snapshot(): array</code>
+  <p> Snapshot profond (transactions : rollback).</p>
+</div><div class="method" id="m-restore">
+  <code>public function restore(array $snapshot): void</code>
+  <p> Restaure un snapshot (transactions : rollback).</p>
+</div>
+  </section>
+</body>
+</html>

@@ -456,10 +456,27 @@ TAGS = {
 # Génération de la fiche markdown
 # ---------------------------------------------------------------------------
 def message_complet(etape: dict) -> str:
+    r"""Assemble le message de commit complet d'une étape de rejeu.
+
+    Args:
+        etape: Dictionnaire contenant les clés ``titre`` et ``corps``.
+
+    Returns:
+        Chaîne multi-lignes prête pour ``git commit``.
+
+    Example:
+        >>> message_complet({"titre": "feat: init", "corps": ["Base prête."]})
+        'feat: init\n\nBase prête.'
+    """
     return "\n\n".join([etape["titre"], *etape["corps"]])
 
 
 def generer_fiche(chemin: str) -> None:
+    """Écrit la fiche Markdown complète des 32 commits de rejeu GitLab.
+
+    Args:
+        chemin: Chemin du fichier Markdown à produire.
+    """
     lignes: list[str] = []
     a = lignes.append
 
@@ -617,6 +634,18 @@ def generer_fiche(chemin: str) -> None:
 # Rejeu automatique
 # ---------------------------------------------------------------------------
 def git(cwd: str, *args: str) -> subprocess.CompletedProcess:
+    """Exécute une sous-commande Git dans un dépôt cible et échoue si le retour diffère de 0.
+
+    Args:
+        cwd: Chemin du dépôt Git cible.
+        *args: Arguments transmis à ``git``.
+
+    Returns:
+        Résultat ``CompletedProcess`` de l'exécution Git.
+
+    Raises:
+        SystemExit: Si la commande Git retourne un code non nul.
+    """
     r = subprocess.run(["git", "-C", cwd, *args], capture_output=True, text=True)
     if r.returncode != 0:
         raise SystemExit(f"git {' '.join(args)} a échoué dans {cwd} :\n{r.stderr}")
@@ -624,6 +653,16 @@ def git(cwd: str, *args: str) -> subprocess.CompletedProcess:
 
 
 def rejouer(dest: str, nom: str, email: str) -> None:
+    """Extrait HEAD dans un dossier vierge et rejoue l'historique des 32 commits.
+
+    Args:
+        dest: Dossier cible vierge où créer le dépôt Git reconstruit.
+        nom: Nom d'auteur utilisé pour les commits rejoués.
+        email: Adresse courriel utilisée pour les commits rejoués.
+
+    Raises:
+        SystemExit: Si ``dest`` est non vide ou si la couverture finale diffère de ``HEAD``.
+    """
     dest = os.path.abspath(dest)
     if os.path.exists(dest) and os.listdir(dest):
         raise SystemExit(f"Le dossier {dest} existe et n'est pas vide — choisir un --dest vierge.")
@@ -678,6 +717,7 @@ def rejouer(dest: str, nom: str, email: str) -> None:
 
 
 def main() -> None:
+    """Analyse les options CLI et déclenche soit l'export Markdown, soit le rejeu Git."""
     p = argparse.ArgumentParser(description="Rejoue l'historique MiniShop vers un nouveau GitLab.")
     p.add_argument("--fiche", metavar="CHEMIN", help="génère la fiche markdown au chemin donné puis s'arrête")
     p.add_argument("--dest", metavar="DOSSIER", default="../minishop-sae", help="dossier cible du rejeu (défaut : ../minishop-sae)")

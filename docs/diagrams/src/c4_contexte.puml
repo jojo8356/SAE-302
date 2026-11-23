@@ -1,0 +1,42 @@
+@startuml
+' =====================================================================
+' Diagramme de contexte du système MiniShop (C4 Niveau 1)
+' Conforme à c4model.com :
+'   - Niveau 1 (public non technique et technique) : personnes + système seul.
+'   - Zéro technologie interne dans les boîtes (ni PHP, ni MariaDB, ni JSON).
+'   - Aucun système externe fictif : paiements/livraisons simulés, contact local.
+'   - Flèches unidirectionnelles avec verbe d'intention et protocole discret.
+'
+' Texte alternatif :
+'   Le diagramme de contexte du système MiniShop montre deux personnes :
+'   le Visiteur / Client, qui consulte le catalogue, gère son panier et passe
+'   commande en HTTPS, et l'Administrateur (Gestionnaire / Super), qui administre
+'   le catalogue, les stocks, les commandes, les paramètres et l'équipe en HTTPS.
+'   Au centre se trouve l'unique boîte du système logiciel Boutique en ligne MiniShop.
+'   Aucun système externe tiers n'est relié au système (maquette autonome hors ligne).
+' =====================================================================
+!pragma layout smetana
+left to right direction
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam packageStyle rectangle
+
+title Diagramme de contexte du système MiniShop
+
+actor "Visiteur / Client\n[Personne]\nParcourt le catalogue, gère son panier,\npasse commande et suit ses achats" as Client #08427B
+actor "Administrateur\n[Personne : Gestionnaire / Super]\nMet à jour le catalogue, les stocks,\nles commandes, les paramètres et l'équipe" as Admin #08427B
+
+rectangle "Boutique en ligne MiniShop\n[Système logiciel]\nPropose le catalogue informatique,\nenregistre les commandes et fournit le\nback-office (paiements et envois simulés)" as MiniShop #1168BD;text:white
+
+Client --> MiniShop : "Consulte le catalogue,\ncommande et suit ses achats (HTTPS)"
+Admin --> MiniShop : "Gère le catalogue, les stocks,\nles commandes et l'équipe (HTTPS)"
+
+legend right
+  |= Couleur / Forme |= Abstraction C4 |= Signification |
+  | <#08427B> Acteur | Personne | Rôle utilisateur humain |
+  | <#1168BD> Boîte bleue | Système logiciel | Système MiniShop modélisé (boîte unique, sans détail interne) |
+  | Flèche pleine | Relation | Intention métier et protocole discret |
+  Note : aucun système externe tiers dans ce périmètre (paiement simulé, pas de serveur mail ni CDN).
+endlegend
+
+@enduml

@@ -19,6 +19,7 @@ use App\Tools\Heure;
 
 final class DashboardController extends Controller
 {
+    /** Affiche les indicateurs clés du back-office (chiffre d'affaires du jour et alertes stock). */
     public function index(): void
     {
         Auth::exigeAdmin();

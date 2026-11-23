@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Controller\Admin\ProduitAdminController — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Controller\Admin · <span>app/Controller/Admin/ProduitAdminController.php</span></div>
+    <h1>ProduitAdminController</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — gestion des produits (UC-10, EF-ADM-01/02, RB-02/07/14/16/17).</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (7)</h2>
+    <div class="method" id="m-index">
+  <code>public function index(): void</code>
+  <p> Liste les produits du catalogue (y compris masqués) avec recherche et filtres.</p>
+</div><div class="method" id="m-formulaireNouveau">
+  <code>public function formulaireNouveau(): void</code>
+  <p> Affiche le formulaire vierge de création d&#x27;un produit.</p>
+</div><div class="method" id="m-creer">
+  <code>public function creer(): void</code>
+  <p> Enregistre un nouveau produit depuis la soumission POST back-office.</p>
+</div><div class="method" id="m-formulaireModifier">
+  <code>public function formulaireModifier(string $id): void</code>
+  <p> Affiche le formulaire de modification d&#x27;un produit existant.</p>
+</div><div class="method" id="m-enregistrerModification">
+  <code>public function enregistrerModification(string $id): void</code>
+  <p> Enregistre les modifications soumises pour le produit ciblé.</p>
+</div><div class="method" id="m-confirmerSuppression">
+  <code>public function confirmerSuppression(string $id): void</code>
+  <p>Étape de confirmation avant suppression : action définitive, un<br>simple clic ne doit pas suffire (page « Êtes-vous sûr ? », GET<br>sans effet de bord ; seul le POST supprimer() exécute).</p>
+</div><div class="method" id="m-supprimer">
+  <code>public function supprimer(string $id): void</code>
+  <p> Supprime un produit ou le masque s&#x27;il figure déjà dans des commandes.</p>
+</div>
+  </section>
+</body>
+</html>

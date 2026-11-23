@@ -21,6 +21,7 @@ use UnexpectedValueException;
 
 final class ParametreRepository
 {
+    /** Injecte le store abstrait servant de source aux paramètres commerciaux. */
     public function __construct(private readonly StoreInterface $store)
     {
     }

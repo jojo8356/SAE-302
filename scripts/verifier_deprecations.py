@@ -21,10 +21,30 @@ DEPRECATION = re.compile(r'(?im)^\s*(?:PHP\s+)?(?:Deprecated|User Deprecated)\s*
 
 
 def erreur_marche(erreur: OSError) -> None:
+    """Propage immédiatement toute erreur d'accès lors du parcours de dossiers.
+
+    Args:
+        erreur: Exception système rencontrée par ``os.walk``.
+
+    Raises:
+        OSError: L'exception reçue sans l'ignorer silencieusement.
+    """
     raise erreur
 
 
 def collecter(chemins: list[Path]) -> list[Path]:
+    """Collecte les fichiers PHP triés sans suivre les liens symboliques.
+
+    Args:
+        chemins: Fichiers ou dossiers racine à inspecter.
+
+    Returns:
+        Liste triée de chemins résolus vers des fichiers ``.php``.
+
+    Raises:
+        ValueError: Si un chemin n'existe pas, est un lien symbolique ou n'est pas en ``.php``.
+        OSError: Si la traversée d'un répertoire échoue.
+    """
     fichiers: set[Path] = set()
     for chemin in chemins:
         if not chemin.exists():
@@ -46,6 +66,11 @@ def collecter(chemins: list[Path]) -> list[Path]:
 
 
 def main() -> int:
+    """Analyse la syntaxe et les dépréciations PHP en ligne de commande.
+
+    Returns:
+        Code de sortie 0 si aucune alerte, 1 en cas de dépréciation ou erreur, 2 si PHP est absent.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--php', default='php', help='binaire PHP CLI à analyser (défaut : php dans le PATH)')
     parser.add_argument('--chemin', action='append', help='fichier ou dossier PHP ; répétable (défaut : code et suites du dépôt)')

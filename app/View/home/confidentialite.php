@@ -1,5 +1,14 @@
 <?php
+
 declare(strict_types=1);
+
+/**
+ * VueConfidentialite — Politique de confidentialité et RGPD (route GET /confidentialite).
+ *
+ * @package App\View\Home
+ * @see     \App\Controller\HomeController::confidentialite()
+ * @see     docs/18-politique-conservation.md
+ */
 ?>
 <article class="legal">
     <header><p class="legal__sur-titre">Vos données</p><h1>Politique de confidentialité</h1><p class="chapo">Quelles informations la maquette traite-t-elle et pourquoi ?</p></header>

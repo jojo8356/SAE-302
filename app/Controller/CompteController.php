@@ -16,6 +16,7 @@ use App\Security\Auth;
 
 final class CompteController extends Controller
 {
+    /** Affiche la fiche profil et les formulaires d'édition du client connecté. */
     public function index(): void
     {
         $client = Auth::exigeClient();

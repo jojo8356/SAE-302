@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Model\Data\Schema — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Model\Data · <span>app/Model/Data/Schema.php</span></div>
+    <h1>Schema</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — schéma de données descriptif (portrait fidèle de sql/01_minishop_schema.sql).
+
+Le schéma est décrit en DONNÉES (pas en SQL) : chaque table, colonne,
+contrainte UNIQUE, CHECK, ENUM et clé étrangère est déclaré ici une seule
+fois. JsonStore l&#x27;applique en PHP ; SqlStore s&#x27;appuie sur les DDL, routines
+et déclencheurs installés depuis les scripts SQL versionnés.
+
+Types gérés : int, decimal (2 décimales, arrondi américain), string,
+bool (0/1), datetime (&#x27;Y-m-d H:i:s&#x27;), text.
+Les CHECK sont exprimés avec la même grammaire déclarative que les filtres
+de StoreInterface : [[&#x27;prix_ht&#x27;, &#x27;&gt;&#x27;, 0]] → CHECK (prix_ht &gt; 0).</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (4)</h2>
+    <div class="method" id="m-tables">
+  <code>public static function tables(): array</code>
+  <p>@return array&lt;string, array{<br>  pk: string,<br>  autoIncrement: bool,<br>  columns: array&lt;string, array{type: string, required?: bool, default?: mixed, enum?: list&lt;string&gt;, max?: int}&gt;,<br>  unique: array&lt;string, list&lt;string&gt;&gt;,<br>  checks: array&lt;string, list&lt;mixed&gt;&gt;,<br>  foreignKeys: array&lt;string, array{table: string, column: string, onDelete: &#x27;RESTRICT&#x27;|&#x27;CASCADE&#x27;}&gt;,<br>  indexes: list&lt;string&gt;<br>}&gt;</p>
+</div><div class="method" id="m-table">
+  <code>public static function table(string $name): array</code>
+  <p> Définition d&#x27;une table ou erreur SchemaError (liste blanche).</p>
+</div><div class="method" id="m-primaryKey">
+  <code>public static function primaryKey(string $table): string</code>
+  <p> Nom de la clé primaire d&#x27;une table.</p>
+</div><div class="method" id="m-childrenOf">
+  <code>public static function childrenOf(string $table): array</code>
+  <p> Les tables qui référencent $table par une clé étrangère (enfants).</p>
+</div>
+  </section>
+</body>
+</html>

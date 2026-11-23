@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Repository\ProduitRepository — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Repository · <span>app/Repository/ProduitRepository.php</span></div>
+    <h1>ProduitRepository</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — produits &amp; recherche catalogue (portage de sp_search_products,
+sp_save_product, sp_delete_product, sp_adjust_stock).
+
+La recherche applique EF-VIS-02/03 : mot-clé insensible casse/accents
+(nom, description, référence), filtres catégorie / prix min-max / stock,
+cumulables, tri en LISTE BLANCHE, pagination bornée (12 par défaut, max 60).</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (10)</h2>
+    <div class="method" id="m-specTri">
+  <code>public static function specTri(string $tri): array</code>
+  <p> Spécification de tri évaluée à l&#x27;exécution (une constante de classe ne peut pas appeler de méthode).</p>
+</div><div class="method" id="m-__construct">
+  <code>public function __construct(private readonly StoreInterface $store)</code>
+  <p> Injecte le store abstrait (SqlStore ou JsonStore ; voir ADR-0001).</p>
+</div><div class="method" id="m-find">
+  <code>public function find(int $idProduit): ?array</code>
+  <p> Retourne un produit par son identifiant primaire, qu&#x27;il soit visible ou masqué.</p>
+</div><div class="method" id="m-findVisibleBySlug">
+  <code>public function findVisibleBySlug(string $slug): ?array</code>
+  <p> Fiche produit par slug — 404 côté contrôleur si absent ou masqué (RB-19).</p>
+</div><div class="method" id="m-disponible">
+  <code>public function disponible(int $idProduit): int</code>
+  <p> Disponibilité instantanée d&#x27;un produit (contrôle serveur avant tout ajout panier).</p>
+</div><div class="method" id="m-searchProducts">
+  <code>public function searchProducts(array $criteres = []): array</code>
+  <p>sp_search_products — recherche + filtres + tri + pagination.<br><br>@param array{mot_cle?: ?string, id_categorie?: ?int, prix_min?: ?float, prix_max?: ?float,<br>              en_stock?: bool, tri?: ?string, page?: int, par_page?: int, admin?: bool, ruptures_fin?: bool} $criteres<br>@return array{lignes: list&lt;array&lt;string,mixed&gt;&gt;, total: int, page: int, par_page: int, pages: int}</p>
+</div><div class="method" id="m-deleteProduct">
+  <code>public function deleteProduct(int $idProduit): void</code>
+  <p>sp_delete_product — suppression protégée (EF-ADM-02, RB-14/RB-17) :<br>un produit déjà commandé est MASQUÉ (visible=0) afin de conserver<br>l&#x27;historique des lignes de commande ; sinon suppression réelle.</p>
+</div><div class="method" id="m-adjustStock">
+  <code>public function adjustStock(int $idProduit, string $mode, int $quantite, string $motif): int</code>
+  <p>sp_adjust_stock — réappro / inventaire (EF-ADM-04, RB-03).<br>mode &#x27;SET&#x27; (valeur absolue) ou &#x27;DELTA&#x27; (mouvement ±). Toute écriture<br>de stock porte un MOTIF (règle non fonctionnelle §6.3, EF-ADM-04).</p>
+</div><div class="method" id="m-etatStocks">
+  <code>public function etatStocks(): array</code>
+  <p> État des stocks enrichi (vue v_etat_stock) pour le back-office.</p>
+</div><div class="method" id="m-alertesStock">
+  <code>public function alertesStock(): array</code>
+  <p> Produits en alerte de stock (EF-ADM-05 : seuil atteint ou rupture).</p>
+</div>
+  </section>
+</body>
+</html>

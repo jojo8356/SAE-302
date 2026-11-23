@@ -23,6 +23,7 @@ use Throwable;
  */
 final class VolumetryGenerator
 {
+    /** Injecte la connexion PDO utilisée pour générer le jeu volumétrique. */
     public function __construct(private readonly PDO $pdo) {}
 
     /** @return array<string,int> */

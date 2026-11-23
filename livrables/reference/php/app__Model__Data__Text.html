@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Model\Data\Text — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Model\Data · <span>app/Model/Data/Text.php</span></div>
+    <h1>Text</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — utilitaires texte du pilote JSON.
+
+La collation cible du projet est utf8mb4_unicode_ci : insensible à la casse
+ET aux accents. Pour que le pilote JSON se comporte à l&#x27;identique (recherche
+EF-VIS-02 « insensible à la casse et aux accents », comparaisons de tri),
+les comparaisons passent par ce pliage (folding).
+
+Stratégie « modules natifs d&#x27;abord, repli maison ensuite » (env-agnostic) :
+  1. ext/intl (ICU)  : \Transliterator « Any-Latin; Latin-ASCII » —
+     dé-accentuation Unicode COMPLÈTE (grec, cyrillique, ligatures…) et
+     \Collator (force PRIMARY) pour les comparaisons — l&#x27;équivalent direct
+     d&#x27;une collation utf8mb4_unicode_ci. Utilisé dès que l&#x27;extension est
+     chargée (serveur LAMP normal).
+  2. ext/mbstring    : mb_convert_case(…, MB_CASE_FOLD) — pliage de casse
+     Unicode complet (ß → ss, Œ → œ…), complété par la table latine maison
+     pour les accents. C&#x27;est le chemin actif dans le bac à sable PHP-WASM
+     (intl n&#x27;y est pas compilé).
+  3. repli minimal   : table latine + strtolower (environnement sans
+     mbstring — les clés majuscules de la table prennent alors le relais).
+
+Quel que soit le chemin, le résultat est identique pour l&#x27;alphabet latin :
+le jeu de tests (tests/php/run_tests.php, T-25) verrouille ce contrat.</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (3)</h2>
+    <div class="method" id="m-fold">
+  <code>public static function fold(?string $value): string</code>
+  <p> Pliage insensible casse + accents (clé de comparaison « collation »).</p>
+</div><div class="method" id="m-slug">
+  <code>public static function slug(string $value): string</code>
+  <p>Génère un slug URL : minuscules ASCII, accents pliés, séparateurs &#x27;-&#x27;.<br>(Équivalent du trigger trg_categorie_slug + usage produit du CDC.)</p>
+</div><div class="method" id="m-compare">
+  <code>public static function compare(?string $a, ?string $b): int</code>
+  <p>Comparaison de tri « collation » : insensible casse/accent, null d&#x27;abord.<br>Utilise le Collator ICU (force PRIMARY ≈ utf8mb4_unicode_ci) quand<br>ext/intl est disponible, sinon le pliage ASCII.<br><br>@return int -1, 0 ou 1 (contrat strcmp)</p>
+</div>
+  </section>
+</body>
+</html>

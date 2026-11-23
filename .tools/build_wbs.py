@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-"""Génère la WBS du projet MiniShop : docs/05-wbs-projet.md (+ .html autoportant).
-Méthode : structure 4 niveaux (projet → divisions → lots → tâches), estimation bottom-up
-par rôle de planification, Gantt, chemin critique, coûts et exploitation GitLab."""
+"""Génère la WBS du projet MiniShop : docs/05-wbs-projet.md (+ HTML autoportant).
+
+Méthode : structure 4 niveaux (projet, divisions, lots, tâches), estimation bottom-up
+par rôle de planification, Gantt, chemin critique, coûts et exploitation GitLab.
+"""
 import pathlib, re, markdown
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]

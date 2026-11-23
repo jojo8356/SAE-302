@@ -17,6 +17,7 @@ use App\Security\Auth;
 
 final class ProduitAdminController extends Controller
 {
+    /** Liste les produits du catalogue (y compris masqués) avec recherche et filtres. */
     public function index(): void
     {
         Auth::exigeAdmin();
@@ -45,17 +46,20 @@ final class ProduitAdminController extends Controller
         ], 'Back-office — produits');
     }
 
+    /** Affiche le formulaire vierge de création d'un produit. */
     public function formulaireNouveau(): void
     {
         Auth::exigeAdmin();
         $this->rendreFormulaire(null);
     }
 
+    /** Enregistre un nouveau produit depuis la soumission POST back-office. */
     public function creer(): void
     {
         $this->enregistrer(null);
     }
 
+    /** Affiche le formulaire de modification d'un produit existant. */
     public function formulaireModifier(string $id): void
     {
         Auth::exigeAdmin();
@@ -67,6 +71,7 @@ final class ProduitAdminController extends Controller
         $this->rendreFormulaire($produit);
     }
 
+    /** Enregistre les modifications soumises pour le produit ciblé. */
     public function enregistrerModification(string $id): void
     {
         $this->enregistrer((int) $id);
@@ -161,6 +166,7 @@ final class ProduitAdminController extends Controller
         ], 'Supprimer le produit ' . $produit['reference'] . ' ?');
     }
 
+    /** Supprime un produit ou le masque s'il figure déjà dans des commandes. */
     public function supprimer(string $id): void
     {
         $this->verifierCsrf();

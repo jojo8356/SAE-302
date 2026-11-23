@@ -32,6 +32,7 @@ final class JsonTable
 
     private bool $dirty = false;
 
+    /** Initialise le descripteur d'une table JSON avec chargement paresseux. */
     public function __construct(
         private readonly string $name,
         private readonly string $filePath,
@@ -39,11 +40,13 @@ final class JsonTable
     ) {
     }
 
+    /** Retourne le nom logique de la table. */
     public function name(): string
     {
         return $this->name;
     }
 
+    /** Retourne le chemin absolu du fichier JSON associé. */
     public function filePath(): string
     {
         return $this->filePath;

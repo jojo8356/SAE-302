@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Tools\DbProvision — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Tools · <span>app/Tools/DbProvision.php</span></div>
+    <h1>DbProvision</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — création du compte MySQL applicatif (outil de développement).
+
+Pourquoi cette classe existe : sous Debian/Ubuntu, `mariadb-server` crée
+`root@localhost` avec le greffon `unix_socket`. Ce greffon ne compare PAS un
+mot de passe : il autorise la connexion quand le **processus qui se connecte
+tourne sous le même utilisateur du système** que le compte. Conséquences :
+
+  sudo mariadb        ✅ (le shell est root)
+  php scripts/…       ❌ (PHP tourne sous « jojokes ») → [1698] Access denied
+
+Aucun repli côté PHP ne peut contourner cela — c&#x27;est une décision du SGBD.
+La seule solution propre est donc un compte dédié, créé une fois, par un
+`sudo mariadb` ponctuel. C&#x27;est exactement ce que fait cette classe :
+
+  1. elle génère un mot de passe aléatoire (hexadécimal : rien à échapper) ;
+  2. elle écrit les CREATE USER / GRANT dans un fichier temporaire (0600) ;
+  3. elle l&#x27;exécute avec `sudo mariadb &lt; fichier` ;
+  4. `scripts/db_init.php --compte` reporte les identifiants dans `.env`.
+
+Le compte est restreint à la base du projet (`GRANT … ON base.*`), jamais
+global. Deux hôtes sont créés (`localhost` et `127.0.0.1`) car MariaDB les
+distingue : PHP en TCP arrive en `127.0.0.1`, mais `localhost` reste utile
+pour les outils en socket.</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (14)</h2>
+    <div class="method" id="m-depuisConfiguration">
+  <code>public static function depuisConfiguration(): self</code>
+  <p> Depuis `.env` / l&#x27;environnement.</p>
+</div><div class="method" id="m-motDePasse">
+  <code>public static function motDePasse(int $octets = 16): string</code>
+  <p>Mot de passe aléatoire en hexadécimal.<br><br>Aucun caractère à échapper (`&#x27;`, `\`) : la valeur peut être insérée dans<br>une chaîne SQL ou dans `.env` sans transformation, donc sans risque de<br>corruption ni d&#x27;injection.</p>
+</div><div class="method" id="m-base">
+  <code>public function base(): string</code>
+  <p> Retourne le nom de la base de données cible provisionnée.</p>
+</div><div class="method" id="m-utilisateur">
+  <code>public function utilisateur(): string</code>
+  <p> Retourne le nom du compte SQL dédié provisionné.</p>
+</div><div class="method" id="m-valide">
+  <code>public function valide(): bool</code>
+  <p> Le nom de base / d&#x27;utilisateur ne contient que des caractères sûrs.</p>
+</div><div class="method" id="m-instructions">
+  <code>public function instructions(string $motDePasse): array</code>
+  <p>Instructions SQL de création du compte. Le mot de passe doit provenir<br>de motDePasse() : 32 caractères hexadécimaux, sans interpolation SQL dangereuse.<br><br>@return list&lt;string&gt;</p>
+</div><div class="method" id="m-creerCompte">
+  <code>public function creerCompte(string $motDePasse): array</code>
+  <p>Crée le compte en passant par `sudo mariadb`.<br><br>@return array{ok:bool, sortie:string, methode:string}</p>
+</div><div class="method" id="m-instructionsBaseAnnexe">
+  <code>public function instructionsBaseAnnexe(string $baseAnnexe): array</code>
+  <p>Instructions pour une base ANNEXE (tests d&#x27;intégration : `minishop_test`).<br><br>Elles créent la base et accordent les droits au compte applicatif, sans<br>jamais toucher à son mot de passe ni élargir ses droits sur la base de<br>production. Le moindre privilège reste la règle : `minishop` n&#x27;a des<br>droits que sur `minishop` et sur la base de test explicitement nommée.<br><br>@return list&lt;string&gt;</p>
+</div><div class="method" id="m-baseValide">
+  <code>public static function baseValide(string $nom): bool</code>
+  <p> Le nom d&#x27;une base annexe est sûr (pas d&#x27;injection possible).</p>
+</div><div class="method" id="m-ajouterBaseAnnexe">
+  <code>public function ajouterBaseAnnexe(string $baseAnnexe): array</code>
+  <p>Crée une base annexe et ses droits, en passant par `sudo mariadb`.<br><br>@return array{ok:bool, sortie:string, methode:string}</p>
+</div><div class="method" id="m-script">
+  <code>public function script(string $motDePasse): string</code>
+  <p> Commande SQL exécutable en root, prête à copier-coller.</p>
+</div><div class="method" id="m-clientSql">
+  <code>public static function clientSql(): ?string</code>
+  <p> Client en ligne de commande disponible (`mariadb`, `mysql`, ou `null`).</p>
+</div><div class="method" id="m-contexteDeTest">
+  <code>public static function contexteDeTest(): bool</code>
+  <p>Une suite de tests ne doit jamais provisionner le système.<br><br>Incident réel : une vérification unitaire appelait `creerCompte()` pour<br>constater l&#x27;échec en l&#x27;absence de client SQL. Sur une machine où le client<br>existe, elle a exécuté un vrai `sudo mariadb` : le mot de passe du compte<br>applicatif a été remplacé par une valeur aléatoire écrite nulle part, et<br>toutes les connexions PDO suivantes ont échoué en `1045`.<br><br>Le garde-fou rend l&#x27;accident impossible même si un futur test se trompe :<br>`MINISHOP_TESTS=1` (posé par les suites et par les exécuteurs) suffit à<br>refuser toute création de compte ou de base.</p>
+</div><div class="method" id="m-sudoDisponible">
+  <code>public static function sudoDisponible(): bool</code>
+  <p> `sudo` est-il installé ?</p>
+</div>
+  </section>
+</body>
+</html>

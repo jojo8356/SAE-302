@@ -25,6 +25,7 @@ final class PanierSession
 {
     private const CLE = 'panier'; // [id_produit => quantite]
 
+    /** Initialise le panier session avec le store, les produits et les paramètres serveur. */
     public function __construct(
         private readonly StoreInterface $store,
         private readonly ProduitRepository $produits,
@@ -105,6 +106,7 @@ final class PanierSession
         $_SESSION[self::CLE] = $panier;
     }
 
+    /** Retire un article du panier en session. */
     public function retirer(int $idProduit): void
     {
         $panier = $this->articlesBruts();
@@ -112,11 +114,13 @@ final class PanierSession
         $_SESSION[self::CLE] = $panier;
     }
 
+    /** Vide intégralement le panier en session (après commande validée). */
     public function vider(): void
     {
         $_SESSION[self::CLE] = [];
     }
 
+    /** Indique si le panier ne contient aucun article. */
     public function estVide(): bool
     {
         return $this->articlesBruts() === [];
@@ -187,6 +191,7 @@ final class PanierSession
 /** Démarrage de session sans dépendance circulaire (délégation vers Auth). */
 final class AuthSession
 {
+    /** Démarre la session durcie via Auth::demarrer(). */
     public static function demarrer(): void
     {
         \App\Security\Auth::demarrer();

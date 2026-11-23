@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : ADR-0001 : Adopter une double persistance SqlStore et JsonStore derrière StoreInterface">
+<title>ADR-0001 : Adopter une double persistance SqlStore et JsonStore derrière StoreInterface — MiniShop (SAÉ 302)</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
+  color: var(--encre);
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
+}
+pre {
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
+}
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
+}
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
+@media print {
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/adr/0001-double-persistance-sqlstore-jsonstore.md</code></div>
+</header>
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#statut">Statut</a></li>
+<li><a href="#contexte-et-probleme">Contexte et problème</a></li>
+<li><a href="#decision-drivers">Decision Drivers</a></li>
+<li><a href="#options-considerees">Options considérées</a><ul>
+<li><a href="#option-1-sql-uniquement-mariadbmysql-obligatoire-partout">Option 1 : SQL uniquement (MariaDB/MySQL obligatoire partout)</a></li>
+<li><a href="#option-2-orm-complet-doctrine-orm-ou-eloquent-avec-sqlite-en-test">Option 2 : ORM complet (Doctrine ORM ou Eloquent) avec SQLite en test</a></li>
+<li><a href="#option-3-contrat-storeinterface-avec-pilotes-sqlstore-et-jsonstore">Option 3 : Contrat StoreInterface avec pilotes SqlStore et JsonStore</a></li>
+</ul>
+</li>
+<li><a href="#decision">Décision</a></li>
+<li><a href="#consequences">Conséquences</a><ul>
+<li><a href="#positives">Positives</a></li>
+<li><a href="#negatives">Négatives</a></li>
+<li><a href="#neutres">Neutres</a></li>
+</ul>
+</li>
+<li><a href="#liens">Liens</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="adr-0001-adopter-une-double-persistance-sqlstore-et-jsonstore-derriere-storeinterface">ADR-0001 : Adopter une double persistance <code>SqlStore</code> et <code>JsonStore</code> derrière <code>StoreInterface</code><a class="headerlink" href="#adr-0001-adopter-une-double-persistance-sqlstore-et-jsonstore-derriere-storeinterface" title="Permanent link"></a></h1>
+<h2 id="statut">Statut<a class="headerlink" href="#statut" title="Permanent link"></a></h2>
+<p>Accepted</p>
+<p>Date: 2026-09-20
+Auteurs: Johan Polsinelli, Chahd Gouiaa
+Reviewers: Équipe MiniShop</p>
+<h2 id="contexte-et-probleme">Contexte et problème<a class="headerlink" href="#contexte-et-probleme" title="Permanent link"></a></h2>
+<p>MiniShop cible une base relationnelle MariaDB/MySQL (<code>STORAGE_DRIVER=sql</code>) pour garantir l’intégrité transactionnelle, les clés étrangères et les procédures stockées. Cependant, les tests unitaires isolés en CI sans serveur SQL, le rejeu en navigateur PHP-WASM et les démonstrations sur poste dépourvu de SGBD nécessitent de pouvoir exécuter toute l’application sans base de données.</p>
+<h2 id="decision-drivers">Decision Drivers<a class="headerlink" href="#decision-drivers" title="Permanent link"></a></h2>
+<ul>
+<li>Respecter l’exigence <code>CT-03</code> (SQL pur, requêtes préparées PDO et procédures stockées en production)</li>
+<li>Permettre l’exécution des suites isolées (<code>--sans-sql</code>) et des tests E2E PHP-WASM sans serveur MariaDB</li>
+<li>Éviter toute duplication de la logique métier dans les contrôleurs PHP</li>
+<li>Conserver une bascule simple par configuration sans modifier le code applicatif</li>
+</ul>
+<h2 id="options-considerees">Options considérées<a class="headerlink" href="#options-considerees" title="Permanent link"></a></h2>
+<h3 id="option-1-sql-uniquement-mariadbmysql-obligatoire-partout">Option 1 : SQL uniquement (MariaDB/MySQL obligatoire partout)<a class="headerlink" href="#option-1-sql-uniquement-mariadbmysql-obligatoire-partout" title="Permanent link"></a></h3>
+<p><strong>Avantages</strong> :</p>
+<ul>
+<li>Une seule implémentation de persistance à tester et maintenir</li>
+<li>Zéro écart possible entre moteur principal et moteur de test</li>
+</ul>
+<p><strong>Inconvénients</strong> :</p>
+<ul>
+<li>Bloque l’exécution des tests rapides sans SGBD et rend impossible la démonstration PHP-WASM hors ligne</li>
+</ul>
+<h3 id="option-2-orm-complet-doctrine-orm-ou-eloquent-avec-sqlite-en-test">Option 2 : ORM complet (Doctrine ORM ou Eloquent) avec SQLite en test<a class="headerlink" href="#option-2-orm-complet-doctrine-orm-ou-eloquent-avec-sqlite-en-test" title="Permanent link"></a></h3>
+<p><strong>Avantages</strong> :</p>
+<ul>
+<li>Abstraction standardisée des entités et requêtes</li>
+</ul>
+<p><strong>Inconvénients</strong> :</p>
+<ul>
+<li>Masque le SQL explicite et contourne les procédures stockées imposées par le cahier des charges (<code>CT-03</code>)</li>
+<li>Ajoute des dépendances Composer lourdes contraires au socle léger retenu</li>
+</ul>
+<h3 id="option-3-contrat-storeinterface-avec-pilotes-sqlstore-et-jsonstore">Option 3 : Contrat <code>StoreInterface</code> avec pilotes <code>SqlStore</code> et <code>JsonStore</code><a class="headerlink" href="#option-3-contrat-storeinterface-avec-pilotes-sqlstore-et-jsonstore" title="Permanent link"></a></h3>
+<p><strong>Avantages</strong> :</p>
+<ul>
+<li>Les dépôts (<code>app/Repository/</code>) ne dépendent que de <code>StoreInterface</code> et de capacités optionnelles (<code>StoredProcedureExecutor</code>, <code>RowLockingStore</code>)</li>
+<li><code>SqlStore</code> exécute PDO + les <code>18</code> procédures stockées en production, tandis que <code>JsonStore</code> assure les tests isolés et WASM via fichiers JSON verrouillés (<code>flock</code>)</li>
+</ul>
+<p><strong>Inconvénients</strong> :</p>
+<ul>
+<li>Impose de maintenir la parité comportementale entre <code>SqlStore</code> et <code>Triggers.php</code> côté JSON</li>
+<li><code>JsonStore</code> reste limité à un nœud unique et ne convient pas à une forte concurrence réelle</li>
+</ul>
+<h2 id="decision">Décision<a class="headerlink" href="#decision" title="Permanent link"></a></h2>
+<p><strong>Nous choisissons le contrat <code>StoreInterface</code> servi par <code>SqlStore</code> (par défaut) et <code>JsonStore</code> (secondaire explicite)</strong>.</p>
+<p>Raisons principales :</p>
+<ol>
+<li>La variable <code>STORAGE_DRIVER</code> dans <code>.env</code> bascule d’un moteur à l’autre sans toucher aux contrôleurs ni aux vues.</li>
+<li>Les invariants SQL restent au cœur de <code>SqlStore</code> tandis que <code>JsonStore</code> débloque l’isolation des tests et PHP-WASM.</li>
+</ol>
+<h2 id="consequences">Conséquences<a class="headerlink" href="#consequences" title="Permanent link"></a></h2>
+<h3 id="positives">Positives<a class="headerlink" href="#positives" title="Permanent link"></a></h3>
+<ul>
+<li>Parité fonctionnelle vérifiée en CI sur les deux pilotes</li>
+<li>Isolation complète des données de test et exécution hors ligne garantie</li>
+</ul>
+<h3 id="negatives">Négatives<a class="headerlink" href="#negatives" title="Permanent link"></a></h3>
+<ul>
+<li>Toute nouvelle règle portée par un déclencheur SQL doit être répliquée et testée dans <code>app/Model/Data/Triggers.php</code></li>
+<li>Double surface de tests à maintenir pour <code>SqlStore</code> et <code>JsonStore</code></li>
+</ul>
+<h3 id="neutres">Neutres<a class="headerlink" href="#neutres" title="Permanent link"></a></h3>
+<ul>
+<li>Les horodatages stockés sont uniformisés en <code>UTC</code> dans les deux pilotes (<code>App\Tools\Heure</code>)</li>
+</ul>
+<h2 id="liens">Liens<a class="headerlink" href="#liens" title="Permanent link"></a></h2>
+<ul>
+<li>Implémentation : <code>app/Model/Data/StoreInterface.php</code>, <code>app/Model/Data/SqlStore.php</code>, <code>app/Model/Data/JsonStore.php</code></li>
+<li>Architecture générale : <code>ARCHITECTURE.md</code></li>
+</ul>
+<footer class="doc">
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/adr/0001-double-persistance-sqlstore-jsonstore.md</code> · 0 figure(s) intégrée(s).</p>
+</footer>
+</main>
+</body>
+</html>

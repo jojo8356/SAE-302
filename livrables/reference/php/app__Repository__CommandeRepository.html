@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Repository\CommandeRepository — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Repository · <span>app/Repository/CommandeRepository.php</span></div>
+    <h1>CommandeRepository</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — commandes &amp; lignes (portage de sp_create_order, sp_add_order_line,
+sp_create_order_from_basket, sp_confirm_order, sp_update_order_status,
+sp_cancel_order, sp_revenue_report).
+
+L&#x27;ordre des opérations de sp_add_order_line est critique et conservé :
+  1) contrôle RB-05 (quantité &gt; 0) AVANT toute écriture ;
+  2) verrou « commande » (statut modifiable : BROUILLON/EN_PREPARATION) ;
+  3) lecture produit + disponibilité agrégée (stock − déjà réservé) ;
+  4) INSERT de la ligne (le déclencheur fige le prix RB-06) ;
+  5) décrément du stock par le déclencheur (RB-18) ;
+  6) recalcul du montant = Σ lignes + port (RB-15) — le port est recalculé
+     à chaque ligne tant que la commande est BROUILLON (la franchise ne doit
+     pas dépendre de l&#x27;ordre d&#x27;ajout), puis figé à la validation (RB-20).
+
+Toute écriture multi-tables est transactionnelle (ENF-16) : un refus ne
+laisse JAMAIS de données incohérentes (rollback automatique).</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (13)</h2>
+    <div class="method" id="m-for">
+  <code>public static function for(StoreInterface $store): self</code>
+  <p> Fabrique pratique : les deux repositories partagent le même store.</p>
+</div><div class="method" id="m-find">
+  <code>public function find(int $idCommande): ?array</code>
+  <p> Retourne une commande par son identifiant primaire, ou null.</p>
+</div><div class="method" id="m-findByNumero">
+  <code>public function findByNumero(string $numero): ?array</code>
+  <p> Retourne une commande par son numéro fonctionnel (CMD2026-NNNNNN), ou null.</p>
+</div><div class="method" id="m-lignes">
+  <code>public function lignes(int $idCommande): array</code>
+  <p> Lignes d&#x27;une commande (avec nom/référence du produit pour l&#x27;affichage).</p>
+</div><div class="method" id="m-historique">
+  <code>public function historique(int $idCommande): array</code>
+  <p> Piste d&#x27;audit des statuts d&#x27;une commande (RB-11, EF-ADM-08).</p>
+</div><div class="method" id="m-pourClient">
+  <code>public function pourClient(int $idClient): array</code>
+  <p> Historique de commandes d&#x27;un client (UC-08, EF-CLI-08).</p>
+</div><div class="method" id="m-createOrder">
+  <code>public function createOrder(int $idClient, string $adresse): array</code>
+  <p>sp_create_order — ouverture d&#x27;une commande BROUILLON (première étape<br>du cas d&#x27;usage « Passer une commande », UC-07).<br><br>@return array{id_commande: int, numero: string}</p>
+</div><div class="method" id="m-addOrderLine">
+  <code>public function addOrderLine(int $idCommande, int $idProduit, int $quantite): array</code>
+  <p>sp_add_order_line — ajout d&#x27;une ligne : RB-05/06/18 puis recalcul RB-15.<br><br>@return array{id_ligne: int, total: float} total = somme des lignes de la commande</p>
+</div><div class="method" id="m-createOrderFromBasket">
+  <code>public function createOrderFromBasket(int $idClient, string $adresse, array $panier, bool $payee = false): array</code>
+  <p>sp_create_order_from_basket — commande complète depuis le panier session<br>(UC-07) : une seule transaction, un contrôle de stock par produit.<br><br>@param list&lt;array{id_produit: int, quantite: int}&gt; $panier<br>@param bool $payee true =&gt; statut initial PAYEE, sinon EN_PREPARATION<br>@return array{id_commande: int, numero: string, montant: float}</p>
+</div><div class="method" id="m-confirmOrder">
+  <code>public function confirmOrder(int $idCommande, ?int $idClient, bool $payee = false): float</code>
+  <p>sp_confirm_order — validation du panier (RB-04 : au moins une ligne ;<br>RB-20 : le port est figé au snapshot, comme le prix).<br><br>@return float montant total confirmé</p>
+</div><div class="method" id="m-updateOrderStatus">
+  <code>public function updateOrderStatus(int $idCommande, string $nouveauStatut, ?string $commentaire, ?int $idAuteur, string $roleAuteur): string</code>
+  <p>sp_update_order_status — changement de statut (EF-ADM-07, RB-11).<br>La matrice est contrôlée par le déclencheur (défense en profondeur) ;<br>la règle « le client n&#x27;annule que tant que ce n&#x27;est pas expédié » est ici.<br><br>@param &#x27;CLIENT&#x27;|&#x27;ADMIN&#x27;|&#x27;SYSTEME&#x27; $roleAuteur<br>@return &#x27;OK&#x27;|&#x27;STATUT_DEJA_A_JOUR&#x27;</p>
+</div><div class="method" id="m-cancelOrder">
+  <code>public function cancelOrder(int $idCommande, ?int $idClient): array</code>
+  <p> Annulation client : lignes conservées et montants soldés.<br>@return array{unites_rendues: int, montant_rembourse: float}</p>
+</div><div class="method" id="m-revenueReport">
+  <code>public function revenueReport(?string $dateDebut = null, ?string $dateFin = null): array</code>
+  <p>sp_revenue_report — tableau de bord back-office (EF-ADM-07) :<br>ventes par statut + top 5 produits (commandes non annulées).<br><br>@return array{par_statut: list&lt;array&lt;string,mixed&gt;&gt;, top_produits: list&lt;array&lt;string,mixed&gt;&gt;}</p>
+</div>
+  </section>
+</body>
+</html>

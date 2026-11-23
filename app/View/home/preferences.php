@@ -1,4 +1,16 @@
-<?php declare(strict_types=1); ?>
+<?php
+
+declare(strict_types=1);
+
+/**
+ * VuePreferences — Préférences locales d'interface (langue fr/en et fuseau horaire IANA, route GET /preferences).
+ *
+ * Stockage exclusivement côté navigateur (localStorage) via public/js/preferences.js.
+ *
+ * @package App\View\Home
+ * @see     \App\Controller\HomeController::preferences()
+ */
+?>
 <section class="preferences" aria-labelledby="titre-preferences">
     <h1 id="titre-preferences">Préférences</h1>
     <p>Ces choix restent dans ce navigateur et ne modifient pas votre compte. Effacer les données du site les réinitialise.</p>

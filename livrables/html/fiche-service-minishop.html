@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : Service Overview : MiniShop (Boutique &amp;amp; Back-office)">
+<title>Service Overview : MiniShop (Boutique &amp;amp; Back-office) — MiniShop (SAÉ 302)</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
+  color: var(--encre);
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
+}
+pre {
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
+}
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
+}
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
+@media print {
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/exploitation/fiche-service-minishop.md</code></div>
+</header>
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#1-vue-densemble">1. Vue d’ensemble</a></li>
+<li><a href="#2-architecture-et-dependances">2. Architecture et dépendances</a></li>
+<li><a href="#3-donnees-et-conformite-rgpd">3. Données et conformité RGPD</a></li>
+<li><a href="#4-operations-essentielles">4. Opérations essentielles</a></li>
+<li><a href="#5-liens-rapides">5. Liens rapides</a></li>
+<li><a href="#6-contacts-et-escalade">6. Contacts et escalade</a></li>
+<li><a href="#7-maintien-a-jour-et-checklist-pr-definition-of-done">7. Maintien à jour et Checklist PR (Definition of Done)</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="service-overview-minishop-boutique-back-office">Service Overview : MiniShop (Boutique &amp; Back-office)<a class="headerlink" href="#service-overview-minishop-boutique-back-office" title="Permanent link"></a></h1>
+<p><strong>Owner :</strong> Équipe MiniShop (<code>Johan Polsinelli</code> &amp; <code>Chahd Gouiaa</code>)<br />
+<strong>Criticité :</strong> Tier 2 pédagogique — maquette e-commerce (non destinée à la production réelle)<br />
+<strong>SLA / Objectif de latence (<code>ENF-01</code>) :</strong> <code>&lt; 500 ms</code> par requête (<code>p95 = 6,0 ms</code> HTTP mesuré sur VM Debian 13) · <strong>Dernière vérification :</strong> 2026-11-16</p>
+<hr />
+<h2 id="1-vue-densemble">1. Vue d’ensemble<a class="headerlink" href="#1-vue-densemble" title="Permanent link"></a></h2>
+<p><strong>MiniShop</strong> est une boutique en ligne pédagogique développée en PHP 8.2+ MVC. Elle permet aux visiteurs et clients de parcourir un catalogue informatique, gérer leur panier, créer un compte et passer ou annuler des commandes (paiements et livraisons simulés), et fournit aux administrateurs (<code>GESTIONNAIRE</code>, <code>SUPER</code>) un back-office complet de gestion du catalogue, des stocks et des commandes.</p>
+<p><strong>Chiffres clés (dépôt vérifié) :</strong></p>
+<ul>
+<li><code>9</code> tables normalisées 3FN, <code>4</code> vues SQL, <code>18</code> procédures stockées et <code>16</code> déclencheurs (<code>sql/01..04</code>)</li>
+<li><code>15</code> contrôleurs PHP (<code>public/index.php</code>, <code>app/Router.php</code>), <code>113</code> fichiers PHP documentés (<code>394</code> méthodes publiques)</li>
+<li>Latence mesurée sur VM Debian 13 (<code>minishop_perf</code>) : <strong><code>p95 = 6,0 ms</code> HTTP</strong> et <strong><code>p95 &lt;= 20,6 ms</code> SQL</strong> (<code>44 ms</code> sur <code>sp_create_order_from_basket</code>)</li>
+</ul>
+<hr />
+<h2 id="2-architecture-et-dependances">2. Architecture et dépendances<a class="headerlink" href="#2-architecture-et-dependances" title="Permanent link"></a></h2>
+<pre><code class="language-mermaid">flowchart TB
+  client[&quot;Visiteur / Client / Admin (Navigateur Web)&quot;] --&gt; router[&quot;Frontal &amp; Routeur (PHP 8.2 — public/index.php)&quot;]
+  router --&gt; ctrl[&quot;Contrôleurs MVC &amp; PanierSession&quot;]
+  ctrl --&gt; repos[&quot;Dépôts métier (app/Repository/*)&quot;]
+  repos --&gt; store[&quot;StoreInterface (SqlStore / JsonStore)&quot;]
+  store --&gt; db[(&quot;MariaDB 10.6+ / MySQL 8.0+ (défaut)&quot;)]
+  store -. &quot;STORAGE_DRIVER=json&quot; .-&gt; json[(&quot;Fichiers JSON + flock (data/minishop/)&quot;)]
+  ctrl -. &quot;contact / audit&quot; .-&gt; logs[(&quot;Journaux locaux (var/journal/, var/log/)&quot;)]
+</code></pre>
+<p><em>(Diagrammes complets sur 4 niveaux dans <code>docs/diagrams/src/c4_*.puml</code> ; architecture détaillée dans <code>ARCHITECTURE.md</code>.)</em></p>
+<p><strong>Composants principaux :</strong></p>
+<ul>
+<li><strong>Frontal &amp; Routeur :</strong> <code>public/index.php</code>, <code>app/Router.php</code> (liste blanche HTTP + gardes <code>public</code>/<code>client</code>/<code>admin</code>/<code>super</code>)</li>
+<li><strong>Sécurité &amp; Session :</strong> <code>app/Security/{Auth,Csrf,xss}.php</code> (cookies <code>HttpOnly</code>/<code>SameSite=Lax</code>, CSRF <code>hash_equals</code>, CSP <code>'self'</code>)</li>
+<li><strong>Métier &amp; Persistance :</strong> <code>app/Repository/*</code>, <code>app/Model/PanierSession.php</code>, <code>app/Model/Data/{StoreInterface,SqlStore,JsonStore}</code></li>
+<li><strong>Outils CLI d’exploitation :</strong> <code>scripts/db_init.php</code> (<code>--nettoyage</code> RGPD, <code>RetentionComptes</code>, <code>NettoyageJournaux</code>, <code>libsodium</code>)</li>
+</ul>
+<p><strong>Dépendances :</strong></p>
+<table>
+<thead>
+<tr>
+<th>Dépendance</th>
+<th>Catégorie</th>
+<th>Rôle</th>
+<th>Impact si indisponible</th>
+<th>Timeout / Repli (Fallback)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MariaDB (<code>minishop</code>)</strong></td>
+<td>Infrastructure critique</td>
+<td>Catalogue, clients, commandes (<code>sp_*</code>), triggers d’audit</td>
+<td><strong>HTTP 500</strong> sur toutes les routes SQL</td>
+<td>Verrous <code>FOR UPDATE</code> en SQL ; bascule manuelle possible en démo/test via <code>STORAGE_DRIVER=json</code></td>
+</tr>
+<tr>
+<td><strong>Système de fichiers <code>var/</code></strong></td>
+<td>Infrastructure locale</td>
+<td>Sessions PHP (<code>MINISHOPSESS</code>), <code>var/journal/db.jsonl</code>, <code>var/log/contact.jsonl</code>, <code>var/backups/</code></td>
+<td>Coupure de session si disque plein ; perte de trace si saturé</td>
+<td><code>Journal::create()</code> et <code>NettoyageJournaux::ajouter()</code> sont <strong>non bloquants</strong> (ne cassent pas le parcours boutique)</td>
+</tr>
+<tr>
+<td><strong>Services externes (PSP / SMTP / CDN)</strong></td>
+<td>Externe (aucun en V1)</td>
+<td>Paiements, livraisons et contact sont simulés en local ; polices et CSS servis depuis <code>public/</code></td>
+<td>Aucun impact réseau (<code>ENF-20</code> hors ligne)</td>
+<td>En cible V2 documentée (<code>docs/27</code>), prévoir PSP HMAC, OIDC <code>sso.minishop.fr</code> et Redis sessions</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-donnees-et-conformite-rgpd">3. Données et conformité RGPD<a class="headerlink" href="#3-donnees-et-conformite-rgpd" title="Permanent link"></a></h2>
+<table>
+<thead>
+<tr>
+<th>Donnée</th>
+<th>Sensibilité</th>
+<th>Stockage</th>
+<th>Rétention / Protection</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Compte client (<code>client</code>)</strong></td>
+<td>PII (nom, prénom, email, adresse, téléphone)</td>
+<td>MariaDB (<code>SqlStore</code>) ou <code>data/minishop/client.json</code></td>
+<td>Mot de passe haché <code>bcrypt</code> ; purge des comptes inactifs via <code>RetentionComptes</code> (<code>db_init.php --nettoyage</code>)</td>
+</tr>
+<tr>
+<td><strong>Compte administrateur (<code>administrateur</code>)</strong></td>
+<td>PII + rôle RBAC (<code>GESTIONNAIRE</code>/<code>SUPER</code>)</td>
+<td>MariaDB / <code>administrateur.json</code></td>
+<td>Aucune route d’inscription admin ; création réservée au rôle <code>SUPER</code></td>
+</tr>
+<tr>
+<td><strong>Commandes &amp; stocks (<code>commande</code>, <code>journal_stock</code>)</strong></td>
+<td>Interne / audit comptable</td>
+<td>MariaDB (<code>16</code> triggers d’audit)</td>
+<td>Conservées même après purge client (<code>commande.id_client</code> nullable)</td>
+</tr>
+<tr>
+<td><strong>Panier (<code>MINISHOPSESS</code>)</strong></td>
+<td>Session locale</td>
+<td>Session PHP serveur</td>
+<td>Contient uniquement <code>{id_produit =&gt; quantite}</code> ; prix/totaux recalculés côté serveur</td>
+</tr>
+<tr>
+<td><strong>Données de carte bancaire</strong></td>
+<td>Critique (PCI-DSS)</td>
+<td><strong>Jamais stockée</strong></td>
+<td>Paiement simulé en maquette (<code>11/11</code> contrôles <code>tests/security/controles.sh</code>)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-operations-essentielles">4. Opérations essentielles<a class="headerlink" href="#4-operations-essentielles" title="Permanent link"></a></h2>
+<ul>
+<li><strong>Lancement / déploiement local :</strong> <code>cp .env.example .env &amp;&amp; ./run.sh --db &amp;&amp; ./run.sh</code> (ou <code>STORAGE_DRIVER=json</code> sans serveur SQL).</li>
+<li><strong>Supervision &amp; journaux :</strong> <code>var/journal/db.jsonl</code>, <code>var/log/contact.jsonl</code>, <em>Slow Query Log</em> MariaDB (<code>long_query_time = 0.05</code> en recette VM), <code>error_log</code> PHP.</li>
+<li><strong>Santé &amp; validation rapide :</strong> <code>php scripts/run-all-tests.php --sans-sql --sans-e2e</code>, <code>bash tests/security/controles.sh</code>, <code>python3 scripts/verifier_doc_code.py</code>.</li>
+<li><strong>Seuils d’alerte &amp; ouverture de postmortem :</strong> HTTP 500 récurrents, <code>p95 &gt; 500 ms</code> (<code>ENF-01</code>), indisponibilité <code>&gt; 15–30 min</code>, échec sauvegarde/restauration (<code>near miss</code>) → suivre <code>docs/exploitation/runbook-incidents.md</code> puis <code>guide-postmortem-blameless.md</code>.</li>
+</ul>
+<hr />
+<h2 id="5-liens-rapides">5. Liens rapides<a class="headerlink" href="#5-liens-rapides" title="Permanent link"></a></h2>
+<table>
+<thead>
+<tr>
+<th>Ressource</th>
+<th>Emplacement dans le dépôt</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Code &amp; architecture</strong></td>
+<td><a href="README.html"><code>README.md</code></a> · <a href="ARCHITECTURE.html"><code>ARCHITECTURE.md</code></a> · <a href="STACK.html"><code>STACK.md</code></a></td>
+</tr>
+<tr>
+<td><strong>Catalogue Backstage</strong></td>
+<td><a href="../../catalog-info.yaml"><code>catalog-info.yaml</code></a></td>
+</tr>
+<tr>
+<td><strong>Références API HTML</strong></td>
+<td><a href="../../livrables/reference/php/index.html"><code>livrables/reference/php/index.html</code></a> · <a href="../../livrables/reference/python/index.html"><code>livrables/reference/python/index.html</code></a></td>
+</tr>
+<tr>
+<td><strong>Décisions d’architecture (ADR)</strong></td>
+<td><a href="adr-index.html"><code>docs/adr/adr-index.md</code></a> (<code>0000</code> à <code>0005</code> + <code>template.md</code>)</td>
+</tr>
+<tr>
+<td><strong>Runbook incidents</strong></td>
+<td><a href="runbook-incidents.html"><code>docs/exploitation/runbook-incidents.md</code></a></td>
+</tr>
+<tr>
+<td><strong>Runbook sauvegarde &amp; restauration</strong></td>
+<td><a href="runbook-sauvegarde-restauration.html"><code>docs/exploitation/runbook-sauvegarde-restauration.md</code></a></td>
+</tr>
+<tr>
+<td><strong>Postmortem blameless</strong></td>
+<td><a href="postmortem-modele.html"><code>docs/exploitation/postmortem-modele.md</code></a> · <a href="guide-postmortem-blameless.html"><code>docs/exploitation/guide-postmortem-blameless.md</code></a></td>
+</tr>
+<tr>
+<td><strong>Diagrammes C4 (4 niveaux)</strong></td>
+<td><code>docs/diagrams/src/c4_{contexte,conteneurs,composants,code}.puml</code></td>
+</tr>
+<tr>
+<td><strong>Pipeline CI</strong></td>
+<td><a href="../../.github/workflows/ci.yml"><code>.github/workflows/ci.yml</code></a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-contacts-et-escalade">6. Contacts et escalade<a class="headerlink" href="#6-contacts-et-escalade" title="Permanent link"></a></h2>
+<table>
+<thead>
+<tr>
+<th>Rôle</th>
+<th>Responsable / Canal</th>
+<th>Périmètre</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Équipe Owner</strong></td>
+<td>Johan Polsinelli &amp; Chahd Gouiaa (<code>GitLab IUT</code> / <code>GitHub jojo8356/SAE-302</code>)</td>
+<td>Code applicatif, SQL, documentation et corrections</td>
+</tr>
+<tr>
+<td><strong>Astreinte / Exploitation MCO</strong></td>
+<td>Équipe MiniShop (<code>runbook-incidents.md</code>)</td>
+<td>Rétablissement service, sauvegardes et postmortem blameless</td>
+</tr>
+<tr>
+<td><strong>Encadrement / Escalade pédagogique</strong></td>
+<td>NGUYEN Thanh-Phuong (<code>Reporter</code> sur GitLab IUT)</td>
+<td>Suivi SAÉ 302 et cadrage pédagogique</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="7-maintien-a-jour-et-checklist-pr-definition-of-done">7. Maintien à jour et Checklist PR (Definition of Done)<a class="headerlink" href="#7-maintien-a-jour-et-checklist-pr-definition-of-done" title="Permanent link"></a></h2>
+<table>
+<thead>
+<tr>
+<th>Événement déclencheur</th>
+<th>Mise à jour attendue</th>
+<th>Moment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Changement d’architecture ou de route</td>
+<td>Mettre à jour le schéma Mermaid et les <code>.puml</code> C4</td>
+<td>Revue de PR</td>
+</tr>
+<tr>
+<td>Nouvelle dépendance ou variable <code>.env</code></td>
+<td>Compléter le tableau Dépendances et <code>.env.example</code></td>
+<td>Revue de PR</td>
+</tr>
+<tr>
+<td>Changement de SLA, propriétaire ou contact</td>
+<td>Actualiser l’en-tête et la section Contacts</td>
+<td>Revue trimestrielle / départ</td>
+</tr>
+</tbody>
+</table>
+<p><strong>PR Checklist (si changement significatif d’architecture ou d’exploitation) :</strong></p>
+<ul>
+<li>[ ] <em>Service Overview</em> (<code>docs/exploitation/fiche-service-minishop.md</code>) et <code>catalog-info.yaml</code> à jour</li>
+<li>[ ] Schéma Mermaid et diagrammes C4 (<code>docs/diagrams/src/c4_*.puml</code>) alignés sur le code</li>
+<li>[ ] Dépendances, données PII et liens vers les <em>runbooks</em> vérifiés</li>
+</ul>
+<footer class="doc">
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/exploitation/fiche-service-minishop.md</code> · 0 figure(s) intégrée(s).</p>
+</footer>
+</main>
+</body>
+</html>

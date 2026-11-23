@@ -12,10 +12,12 @@ use App\Tools\Heure;
 /** Stratégie de persistance générique, utilisée notamment par le pilote JSON. */
 final class StoreClientAccountGateway implements ClientAccountGateway
 {
+    /** Injecte le store générique (JSON ou SQL sans procédures). */
     public function __construct(private readonly StoreInterface $store)
     {
     }
 
+    /** Crée un compte client dans le magasin générique (contrôle d'unicité applicatif). */
     public function createAccount(string $nom, string $prenom, string $email, string $hash): int
     {
         if ($this->store->exists('client', [Filter::eq('email', $email)])) {
@@ -31,6 +33,7 @@ final class StoreClientAccountGateway implements ClientAccountGateway
         ]);
     }
 
+    /** Lit les identifiants client (id, hash, statut actif/bloqué) par email. */
     public function getCredentials(string $email): array
     {
         $row = $this->store->findOne('client', [Filter::eq('email', $email)]);
@@ -50,6 +53,7 @@ final class StoreClientAccountGateway implements ClientAccountGateway
         ];
     }
 
+    /** Met à jour les coordonnées client après contrôle d'unicité d'adresse email. */
     public function updateClient(
         int $idClient,
         string $nom,

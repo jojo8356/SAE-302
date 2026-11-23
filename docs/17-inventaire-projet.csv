@@ -1,6 +1,7 @@
 chemin,categorie,controle_structurel
 .env.example,Configuration et fichiers racine,Présence et non-vide uniquement
 .github/workflows/ci.yml,Outils et intégration continue,Présence et non-vide uniquement
+.github/workflows/postmortem-template.yml,CI / Outillage,Présence et non-vide uniquement
 .gitignore,Configuration et fichiers racine,Présence et non-vide uniquement
 .gitlab/merge_request_templates/Bugfix.md,Outils et intégration continue,Présence et non-vide uniquement
 .gitlab/merge_request_templates/Docs.md,Outils et intégration continue,Présence et non-vide uniquement
@@ -13,6 +14,7 @@ chemin,categorie,controle_structurel
 .tools/build_todolist.py,Outils et intégration continue,"Présence, non-vide, syntaxe Python"
 .tools/build_wbs.py,Outils et intégration continue,"Présence, non-vide, syntaxe Python"
 ARCHITECTURE.md,Documentation,Présence et non-vide uniquement
+CHANGELOG.md,Documentation,Présence et non-vide uniquement
 NOTE-VM-DEBIAN.md,Documentation,Présence et non-vide uniquement
 README.md,Configuration et fichiers racine,Présence et non-vide uniquement
 STACK.md,Documentation,Présence et non-vide uniquement
@@ -135,6 +137,7 @@ artefacts/04-conception-bd-et-sql.html,Artefacts documentaires,Présence et non-
 artefacts/05-wbs-projet.html,Artefacts documentaires,Présence et non-vide uniquement
 artefacts/06-todolist.html,Artefacts documentaires,Présence et non-vide uniquement
 artefacts/README.html,Artefacts documentaires,Présence et non-vide uniquement
+catalog-info.yaml,Documentation,Présence et non-vide uniquement
 composer.json,Configuration et fichiers racine,"Présence, non-vide, structure JSON"
 data/minishop/administrateur.json,Données de démonstration,"Présence, non-vide, structure JSON"
 data/minishop/categorie.json,Données de démonstration,"Présence, non-vide, structure JSON"
@@ -174,7 +177,16 @@ docs/24-preparation-soutenance-complete.md,Documentation,Présence et non-vide u
 docs/25-bilan-de-projet-methode-et-modele.md,Documentation,Présence et non-vide uniquement
 docs/26-transition-exploitation-maintenance-build-to-run.md,Documentation,Présence et non-vide uniquement
 docs/27-rapport-universitaire-projet-minishop.md,Documentation,Présence et non-vide uniquement
+docs/28-documentation-qui-survit-minishop.md,Documentation,Présence et non-vide uniquement
 docs/DA.md,Documentation,Présence et non-vide uniquement
+docs/adr/0000-utiliser-les-adr.md,Documentation,Présence et non-vide uniquement
+docs/adr/0001-double-persistance-sqlstore-jsonstore.md,Documentation,Présence et non-vide uniquement
+docs/adr/0002-procedures-stockees-triggers-mariadb.md,Documentation,Présence et non-vide uniquement
+docs/adr/0003-authentification-session-rbac-hors-ligne.md,Documentation,Présence et non-vide uniquement
+docs/adr/0004-documentation-as-code-multi-formats.md,Documentation,Présence et non-vide uniquement
+docs/adr/0005-architecture-mvc-php-natif-sans-framework.md,Documentation,Présence et non-vide uniquement
+docs/adr/adr-index.md,Documentation,Présence et non-vide uniquement
+docs/adr/template.md,Documentation,Présence et non-vide uniquement
 docs/annexes/annexe-cas-usage.md,Documentation,Présence et non-vide uniquement
 docs/annexes/annexe-enf.md,Documentation,Présence et non-vide uniquement
 docs/annexes/annexe-gitlab.md,Documentation,Présence et non-vide uniquement
@@ -197,6 +209,10 @@ docs/diagrams/seq_passer_commande.png,Documentation,Présence et non-vide unique
 docs/diagrams/seq_recherche_produit.png,Documentation,Présence et non-vide uniquement
 docs/diagrams/src/activite_passer_commande.puml,Documentation,Présence et non-vide uniquement
 docs/diagrams/src/architecture_mvc.puml,Documentation,Présence et non-vide uniquement
+docs/diagrams/src/c4_code.puml,Diagrammes,Présence et non-vide uniquement
+docs/diagrams/src/c4_composants.puml,Diagrammes,Présence et non-vide uniquement
+docs/diagrams/src/c4_conteneurs.puml,Diagrammes et schémas,Présence et non-vide uniquement
+docs/diagrams/src/c4_contexte.puml,Diagrammes et schémas,Présence et non-vide uniquement
 docs/diagrams/src/cas_utilisation_commandes.puml,Documentation,Présence et non-vide uniquement
 docs/diagrams/src/cas_utilisation_detail.puml,Documentation,Présence et non-vide uniquement
 docs/diagrams/src/cas_utilisation_global.puml,Documentation,Présence et non-vide uniquement
@@ -209,11 +225,23 @@ docs/diagrams/src/seq_authentification.puml,Documentation,Présence et non-vide 
 docs/diagrams/src/seq_consulter_catalogue.puml,Documentation,Présence et non-vide uniquement
 docs/diagrams/src/seq_passer_commande.puml,Documentation,Présence et non-vide uniquement
 docs/diagrams/src/seq_recherche_produit.puml,Documentation,Présence et non-vide uniquement
+docs/exploitation/exploitation-index.md,Documentation,Présence et non-vide uniquement
+docs/exploitation/fiche-service-minishop.md,Documentation,Présence et non-vide uniquement
+docs/exploitation/guide-postmortem-blameless.md,Documentation,Présence et non-vide uniquement
+docs/exploitation/postmortem-modele.md,Documentation,Présence et non-vide uniquement
+docs/exploitation/runbook-incidents.md,Documentation,Présence et non-vide uniquement
+docs/exploitation/runbook-sauvegarde-restauration.md,Documentation,Présence et non-vide uniquement
 docs/licences/tz-lookup-CC0.txt,Documentation,Présence et non-vide ; contrôles dédiés selon le composant
 docs/pv-recette.md,Documentation,Présence et non-vide uniquement
 docs/sql-a-ecrire/requetes-sql-a-ecrire.md,Documentation,Présence et non-vide uniquement
 docs/sql-a-ecrire/requetes-sql-a-ecrire.pdf,Documentation,Présence et non-vide uniquement
 livrables/README.md,Livrables,Présence et non-vide uniquement
+livrables/docx/0000-utiliser-les-adr.docx,Livrables générés,Présence et non-vide uniquement
+livrables/docx/0001-double-persistance-sqlstore-jsonstore.docx,Livrables générés,Présence et non-vide uniquement
+livrables/docx/0002-procedures-stockees-triggers-mariadb.docx,Livrables générés,Présence et non-vide uniquement
+livrables/docx/0003-authentification-session-rbac-hors-ligne.docx,Livrables générés,Présence et non-vide uniquement
+livrables/docx/0004-documentation-as-code-multi-formats.docx,Livrables générés,Présence et non-vide uniquement
+livrables/docx/0005-architecture-mvc-php-natif-sans-framework.docx,Livrables générés,Présence et non-vide uniquement
 livrables/docx/01-cahier-des-charges-MiniShop.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/02-document-tests-validation.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/03-support-soutenance.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
@@ -242,15 +270,30 @@ livrables/docx/24-preparation-soutenance-complete.docx,Livrables,Présence et no
 livrables/docx/25-bilan-de-projet-methode-et-modele.docx,Livrables,Présence et non-vide uniquement
 livrables/docx/26-transition-exploitation-maintenance-build-to-run.docx,Livrables,Présence et non-vide uniquement
 livrables/docx/27-rapport-universitaire-projet-minishop.docx,Livrables,Présence et non-vide uniquement
+livrables/docx/28-documentation-qui-survit-minishop.docx,Livrables générés,Présence et non-vide uniquement
+livrables/docx/CHANGELOG.docx,Livrables générés,Présence et non-vide uniquement
 livrables/docx/DA.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/README.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/docx/adr-index.docx,Livrables générés,Présence et non-vide uniquement
 livrables/docx/annexe-cas-usage.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/annexe-enf.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/annexe-gitlab.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/annexe-php-patterns.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/annexe-sql.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/docx/exploitation-index.docx,Livrables générés,Présence et non-vide uniquement
+livrables/docx/fiche-service-minishop.docx,Livrables générés,Présence et non-vide uniquement
+livrables/docx/guide-postmortem-blameless.docx,Livrables générés,Présence et non-vide uniquement
+livrables/docx/postmortem-modele.docx,Livrables générés,Présence et non-vide uniquement
 livrables/docx/pv-recette.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/requetes-sql-a-ecrire.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/docx/runbook-incidents.docx,Livrables générés,Présence et non-vide uniquement
+livrables/docx/runbook-sauvegarde-restauration.docx,Livrables générés,Présence et non-vide uniquement
+livrables/html/0000-utiliser-les-adr.html,Livrables générés,Présence et non-vide uniquement
+livrables/html/0001-double-persistance-sqlstore-jsonstore.html,Livrables générés,Présence et non-vide uniquement
+livrables/html/0002-procedures-stockees-triggers-mariadb.html,Livrables générés,Présence et non-vide uniquement
+livrables/html/0003-authentification-session-rbac-hors-ligne.html,Livrables générés,Présence et non-vide uniquement
+livrables/html/0004-documentation-as-code-multi-formats.html,Livrables générés,Présence et non-vide uniquement
+livrables/html/0005-architecture-mvc-php-natif-sans-framework.html,Livrables générés,Présence et non-vide uniquement
 livrables/html/01-cahier-des-charges-MiniShop.html,Livrables,Présence et non-vide uniquement
 livrables/html/02-document-tests-validation.html,Livrables,Présence et non-vide uniquement
 livrables/html/03-support-soutenance.html,Livrables,Présence et non-vide uniquement
@@ -279,16 +322,31 @@ livrables/html/24-preparation-soutenance-complete.html,Livrables,Présence et no
 livrables/html/25-bilan-de-projet-methode-et-modele.html,Livrables,Présence et non-vide uniquement
 livrables/html/26-transition-exploitation-maintenance-build-to-run.html,Livrables,Présence et non-vide uniquement
 livrables/html/27-rapport-universitaire-projet-minishop.html,Livrables,Présence et non-vide uniquement
+livrables/html/28-documentation-qui-survit-minishop.html,Livrables générés,Présence et non-vide uniquement
+livrables/html/CHANGELOG.html,Livrables générés,Présence et non-vide uniquement
 livrables/html/DA.html,Livrables,Présence et non-vide uniquement
 livrables/html/README.html,Livrables,Présence et non-vide uniquement
+livrables/html/adr-index.html,Livrables générés,Présence et non-vide uniquement
 livrables/html/annexe-cas-usage.html,Livrables,Présence et non-vide uniquement
 livrables/html/annexe-enf.html,Livrables,Présence et non-vide uniquement
 livrables/html/annexe-gitlab.html,Livrables,Présence et non-vide uniquement
 livrables/html/annexe-php-patterns.html,Livrables,Présence et non-vide uniquement
 livrables/html/annexe-sql.html,Livrables,Présence et non-vide uniquement
+livrables/html/exploitation-index.html,Livrables générés,Présence et non-vide uniquement
+livrables/html/fiche-service-minishop.html,Livrables générés,Présence et non-vide uniquement
+livrables/html/guide-postmortem-blameless.html,Livrables générés,Présence et non-vide uniquement
+livrables/html/postmortem-modele.html,Livrables générés,Présence et non-vide uniquement
 livrables/html/pv-recette.html,Livrables,Présence et non-vide uniquement
 livrables/html/requetes-sql-a-ecrire.html,Livrables,Présence et non-vide uniquement
+livrables/html/runbook-incidents.html,Livrables générés,Présence et non-vide uniquement
+livrables/html/runbook-sauvegarde-restauration.html,Livrables générés,Présence et non-vide uniquement
 livrables/minishop-soutenance.pptx,Livrables,"Présence, non-vide, intégrité archive ZIP"
+livrables/pdf/0000-utiliser-les-adr.pdf,Livrables générés,Présence et non-vide uniquement
+livrables/pdf/0001-double-persistance-sqlstore-jsonstore.pdf,Livrables générés,Présence et non-vide uniquement
+livrables/pdf/0002-procedures-stockees-triggers-mariadb.pdf,Livrables générés,Présence et non-vide uniquement
+livrables/pdf/0003-authentification-session-rbac-hors-ligne.pdf,Livrables générés,Présence et non-vide uniquement
+livrables/pdf/0004-documentation-as-code-multi-formats.pdf,Livrables générés,Présence et non-vide uniquement
+livrables/pdf/0005-architecture-mvc-php-natif-sans-framework.pdf,Livrables générés,Présence et non-vide uniquement
 livrables/pdf/01-cahier-des-charges-MiniShop.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/02-document-tests-validation.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/03-support-soutenance.pdf,Livrables,Présence et non-vide uniquement
@@ -317,15 +375,106 @@ livrables/pdf/24-preparation-soutenance-complete.pdf,Livrables,Présence et non-
 livrables/pdf/25-bilan-de-projet-methode-et-modele.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/26-transition-exploitation-maintenance-build-to-run.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/27-rapport-universitaire-projet-minishop.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/28-documentation-qui-survit-minishop.pdf,Livrables générés,Présence et non-vide uniquement
+livrables/pdf/CHANGELOG.pdf,Livrables générés,Présence et non-vide uniquement
 livrables/pdf/DA.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/README.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/adr-index.pdf,Livrables générés,Présence et non-vide uniquement
 livrables/pdf/annexe-cas-usage.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/annexe-enf.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/annexe-gitlab.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/annexe-php-patterns.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/annexe-sql.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/exploitation-index.pdf,Livrables générés,Présence et non-vide uniquement
+livrables/pdf/fiche-service-minishop.pdf,Livrables générés,Présence et non-vide uniquement
+livrables/pdf/guide-postmortem-blameless.pdf,Livrables générés,Présence et non-vide uniquement
+livrables/pdf/postmortem-modele.pdf,Livrables générés,Présence et non-vide uniquement
 livrables/pdf/pv-recette.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/requetes-sql-a-ecrire.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/runbook-incidents.pdf,Livrables générés,Présence et non-vide uniquement
+livrables/pdf/runbook-sauvegarde-restauration.pdf,Livrables générés,Présence et non-vide uniquement
+livrables/reference/php/app__Config__Database.html,Livrables,reference_api_html
+livrables/reference/php/app__Config__DbConnexion.html,Livrables,reference_api_html
+livrables/reference/php/app__Config__Env.html,Livrables,reference_api_html
+livrables/reference/php/app__Config__env.example.html,Livrables,reference_api_html
+livrables/reference/php/app__Controller__Admin__CategorieAdminController.html,Livrables,reference_api_html
+livrables/reference/php/app__Controller__Admin__CommandeAdminController.html,Livrables,reference_api_html
+livrables/reference/php/app__Controller__Admin__DashboardController.html,Livrables,reference_api_html
+livrables/reference/php/app__Controller__Admin__EquipeAdminController.html,Livrables,reference_api_html
+livrables/reference/php/app__Controller__Admin__ParametreAdminController.html,Livrables,reference_api_html
+livrables/reference/php/app__Controller__Admin__ProduitAdminController.html,Livrables,reference_api_html
+livrables/reference/php/app__Controller__Admin__StockAdminController.html,Livrables,reference_api_html
+livrables/reference/php/app__Controller__ApiController.html,Livrables,reference_api_html
+livrables/reference/php/app__Controller__AuthController.html,Livrables,reference_api_html
+livrables/reference/php/app__Controller__CatalogueController.html,Livrables,reference_api_html
+livrables/reference/php/app__Controller__CommandeController.html,Livrables,reference_api_html
+livrables/reference/php/app__Controller__CompteController.html,Livrables,reference_api_html
+livrables/reference/php/app__Controller__Controller.html,Livrables,reference_api_html
+livrables/reference/php/app__Controller__HomeController.html,Livrables,reference_api_html
+livrables/reference/php/app__Controller__PanierController.html,Livrables,reference_api_html
+livrables/reference/php/app__Model__Data__BusinessError.html,Livrables,reference_api_html
+livrables/reference/php/app__Model__Data__ConstraintError.html,Livrables,reference_api_html
+livrables/reference/php/app__Model__Data__Errors.html,Livrables,reference_api_html
+livrables/reference/php/app__Model__Data__Filter.html,Livrables,reference_api_html
+livrables/reference/php/app__Model__Data__Journal.html,Livrables,reference_api_html
+livrables/reference/php/app__Model__Data__JsonStore.html,Livrables,reference_api_html
+livrables/reference/php/app__Model__Data__JsonTable.html,Livrables,reference_api_html
+livrables/reference/php/app__Model__Data__QueryError.html,Livrables,reference_api_html
+livrables/reference/php/app__Model__Data__RowLockingStore.html,Livrables,reference_api_html
+livrables/reference/php/app__Model__Data__Schema.html,Livrables,reference_api_html
+livrables/reference/php/app__Model__Data__SchemaError.html,Livrables,reference_api_html
+livrables/reference/php/app__Model__Data__Seed.html,Livrables,reference_api_html
+livrables/reference/php/app__Model__Data__SqlStore.html,Livrables,reference_api_html
+livrables/reference/php/app__Model__Data__StockMovementAuditor.html,Livrables,reference_api_html
+livrables/reference/php/app__Model__Data__StorageDriver.html,Livrables,reference_api_html
+livrables/reference/php/app__Model__Data__StoreInterface.html,Livrables,reference_api_html
+livrables/reference/php/app__Model__Data__StoredFunctionExecutor.html,Livrables,reference_api_html
+livrables/reference/php/app__Model__Data__StoredProcedureExecutor.html,Livrables,reference_api_html
+livrables/reference/php/app__Model__Data__StoredProcedureResultExecutor.html,Livrables,reference_api_html
+livrables/reference/php/app__Model__Data__Text.html,Livrables,reference_api_html
+livrables/reference/php/app__Model__Data__Triggers.html,Livrables,reference_api_html
+livrables/reference/php/app__Model__Data__Views.html,Livrables,reference_api_html
+livrables/reference/php/app__Model__PanierSession.html,Livrables,reference_api_html
+livrables/reference/php/app__Repository__CategorieRepository.html,Livrables,reference_api_html
+livrables/reference/php/app__Repository__ClientAccountGateway.html,Livrables,reference_api_html
+livrables/reference/php/app__Repository__ClientAccountGatewayFactory.html,Livrables,reference_api_html
+livrables/reference/php/app__Repository__ClientRepository.html,Livrables,reference_api_html
+livrables/reference/php/app__Repository__CommandeRepository.html,Livrables,reference_api_html
+livrables/reference/php/app__Repository__ParametreRepository.html,Livrables,reference_api_html
+livrables/reference/php/app__Repository__ProduitRepository.html,Livrables,reference_api_html
+livrables/reference/php/app__Repository__SqlClientAccountGateway.html,Livrables,reference_api_html
+livrables/reference/php/app__Repository__StoreClientAccountGateway.html,Livrables,reference_api_html
+livrables/reference/php/app__Router.html,Livrables,reference_api_html
+livrables/reference/php/app__Security__AccesRefuse.html,Livrables,reference_api_html
+livrables/reference/php/app__Security__Auth.html,Livrables,reference_api_html
+livrables/reference/php/app__Security__Csrf.html,Livrables,reference_api_html
+livrables/reference/php/app__Security__xss.html,Livrables,reference_api_html
+livrables/reference/php/app__Service__NettoyageJournaux.html,Livrables,reference_api_html
+livrables/reference/php/app__Service__NettoyageSauvegardes.html,Livrables,reference_api_html
+livrables/reference/php/app__Service__RetentionComptes.html,Livrables,reference_api_html
+livrables/reference/php/app__Tools__DbInstaller.html,Livrables,reference_api_html
+livrables/reference/php/app__Tools__DbProvision.html,Livrables,reference_api_html
+livrables/reference/php/app__Tools__EnvFile.html,Livrables,reference_api_html
+livrables/reference/php/app__Tools__Heure.html,Livrables,reference_api_html
+livrables/reference/php/app__Tools__Revision.html,Livrables,reference_api_html
+livrables/reference/php/app__Tools__SqlLoader.html,Livrables,reference_api_html
+livrables/reference/php/app__Tools__VolumetryGenerator.html,Livrables,reference_api_html
+livrables/reference/php/app__View__Image__AlternativeDecorative.html,Livrables,reference_api_html
+livrables/reference/php/app__View__Image__AlternativeImage.html,Livrables,reference_api_html
+livrables/reference/php/app__View__Image__AlternativeInformative.html,Livrables,reference_api_html
+livrables/reference/php/app__bootstrap.html,Livrables,reference_api_html
+livrables/reference/php/index.html,Livrables,reference_api_html
+livrables/reference/php/public__index.html,Livrables,reference_api_html
+livrables/reference/python/index.html,Livrables,reference_api_html
+livrables/reference/python/md_to_docx.html,Livrables,reference_api_html
+livrables/reference/python/md_to_html.html,Livrables,reference_api_html
+livrables/reference/python/md_to_pdf.html,Livrables,reference_api_html
+livrables/reference/python/md_to_pptx.html,Livrables,reference_api_html
+livrables/reference/python/nouveau_postmortem.html,Livrables générés,Présence et non-vide uniquement
+livrables/reference/python/rejeu_gitlab.html,Livrables,reference_api_html
+livrables/reference/python/search.js,Livrables,reference_api_html
+livrables/reference/python/verifier_deprecations.html,Livrables,reference_api_html
+livrables/reference/python/verifier_doc_code.html,Livrables,reference_api_html
 package-lock.json,Configuration et fichiers racine,"Présence, non-vide, structure JSON"
 package.json,Configuration et fichiers racine,"Présence, non-vide, structure JSON"
 phpstan.neon,Configuration et fichiers racine,Présence et non-vide uniquement
@@ -373,6 +522,7 @@ public/js/ui.js,Ressources et point d’entrée publics,"Présence, non-vide, sy
 public/mesurer.php,Ressources et point d’entrée publics,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 public/minishop.css,Ressources publiques,Présence et non-vide uniquement
 requirements-docs.txt,Configuration et fichiers racine,Présence et non-vide uniquement
+ruff.toml,Outillage,ruff_config
 run.sh,Configuration et fichiers racine,"Présence, non-vide, syntaxe Bash si disponible"
 scripts/aide.php,Scripts et outillage,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 scripts/archive_restreinte.php,Outils et intégration continue,Présence et non-vide uniquement
@@ -399,6 +549,7 @@ scripts/md_to_html.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
 scripts/md_to_pdf.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
 scripts/md_to_pptx.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
 scripts/nettoyage_donnees.php,Scripts et outillage,Présence et non-vide uniquement
+scripts/nouveau_postmortem.py,Scripts,Présence et non-vide uniquement
 scripts/preparer_sql_lineserv.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
 scripts/purger_comptes.php,Outils et intégration continue,"Présence, non-vide ; syntaxe PHP par contrôle séparé"
 scripts/rejeu_gitlab.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
@@ -433,6 +584,7 @@ scripts/ui-e2e-retractation.mjs,Scripts et outils,"Présence, non-vide ; syntaxe
 scripts/ui-e2e-stocks.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
 scripts/ui-e2e-valider.mjs,Scripts et outils,"Présence, non-vide ; syntaxe JavaScript par contrôle séparé"
 scripts/verifier_deprecations.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
+scripts/verifier_doc_code.py,Scripts,python_compile
 scripts/verifier_fiches_uc.py,Scripts et outillage,"Présence, non-vide, syntaxe Python"
 scripts/wasm-e2e.mjs,Scripts et outillage,"Présence, non-vide, syntaxe Node si disponible"
 scripts/wasm-serve.mjs,Scripts et outillage,"Présence, non-vide, syntaxe Node si disponible"
@@ -524,6 +676,7 @@ tests/python/test_audit_structurel.py,Tests et fixtures,"Présence, non-vide, sy
 tests/python/test_auth_403_http.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
 tests/python/test_code_mort_integration.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
 tests/python/test_deprecations.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
+tests/python/test_doc_code.py,Tests,unittest
 tests/python/test_inventaire_app.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"
 tests/python/test_nettoyage_cli.py,Tests et validation,Présence et non-vide uniquement
 tests/python/test_preparer_sql_lineserv.py,Tests et fixtures,"Présence, non-vide, syntaxe Python"

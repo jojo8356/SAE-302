@@ -1,0 +1,98 @@
+@startuml
+' =====================================================================
+' MiniShop — C4 Niveau 4 : Code (C4 Code)
+' Zoom sur les classes réelles du parcours critique de commande :
+' CommandeController -> PanierSession -> CommandeRepository -> StoreInterface.
+' =====================================================================
+!pragma layout smetana
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam roundcorner 6
+
+title MiniShop — Diagramme C4 Niveau 4 : Code du flux critique Commande
+
+package "App\\Controller" {
+  class CommandeController <<class>> {
+    +formulaire() : void
+    +valider() : void
+    +mes() : void
+    +detail(id : string) : void
+    +confirmerAnnulation(id : string) : void
+    +annuler(id : string) : void
+  }
+}
+
+package "App\\Model" {
+  class PanierSession <<class>> {
+    -store : StoreInterface
+    -produits : ProduitRepository
+    -parametres : ParametreRepository
+    +{static} charge() : PanierSession
+    +ajouter(idProduit : int, quantite : int) : int
+    +recapitulatif() : array
+    +pourCommande() : array
+    +vider() : void
+  }
+}
+
+package "App\\Repository" {
+  class CommandeRepository <<class>> {
+    -store : StoreInterface
+    -parametres : ParametreRepository
+    +{static} for(store : StoreInterface) : CommandeRepository
+    +createOrderFromBasket(idClient : int, adresse : string, panier : array, payee : bool) : array
+    +confirmOrder(idCommande : int, idClient : ?int, payee : bool) : float
+    +cancelOrder(idCommande : int, idClient : ?int) : array
+    +updateOrderStatus(idCommande : int, statut : string, ...) : string
+  }
+
+  class ParametreRepository <<class>> {
+    +fnParam(cle : string, defaut : string) : string
+    +fraisPort() : float
+    +franchisePort() : float
+  }
+}
+
+package "App\\Model\\Data" {
+  interface StoreInterface <<interface>> {
+    +select(table : string, spec : array) : array
+    +find(table : string, pk : int|string) : ?array
+    +insert(table : string, row : array) : int
+    +update(table : string, where : array, changes : array) : int
+    +transactional(work : callable) : mixed
+  }
+
+  class SqlStore <<class>> {
+    +pdo() : PDO
+    +findForUpdate(table : string, pk : int|string) : ?array
+    +callProcedure(name : string, in : array, out : array) : array
+  }
+
+  class JsonStore <<class>> {
+    +beginTransaction() : void
+    +logStockMovement(...) : void
+  }
+
+  class BusinessError <<exception>> {
+    +businessCode : string
+    +messageHumain() : string
+  }
+}
+
+CommandeController --> PanierSession : "lit lignes & vide après succès"
+CommandeController --> CommandeRepository : "délègue création & annulation"
+PanierSession --> ParametreRepository : "calcule frais & franchise port"
+CommandeRepository --> ParametreRepository : "lit frais_port / franchise_port"
+CommandeRepository --> StoreInterface : "exécute transactions & persistance"
+SqlStore ..|> StoreInterface : "implémente (pilote SQL défaut)"
+JsonStore ..|> StoreInterface : "implémente (pilote JSON isolé)"
+CommandeRepository ..> BusinessError : "lève sur refus métier (stock, statut, IDOR)"
+
+legend right
+  |= Stéréotype |= Abstraction C4 |= Source réelle dans app/ |
+  | <<interface>> | Interface PHP | Contrat de persistance |
+  | <<class>> | Classe PHP | Contrôleur, modèle ou dépôt |
+  | <<exception>> | Exception métier | Code normalisé SNAKE_UPPER |
+endlegend
+
+@enduml

@@ -157,6 +157,13 @@ Un scénario ne doit être marqué comme joué qu’après son exécution réell
 | [Sécurité](docs/07-note-cybersecurite.md) | Mesures mises en place et limites connues |
 | [Informations juridiques](docs/12-information-juridique.md) | Cadre légal de la maquette pédagogique |
 | [Conservation des données](docs/18-politique-conservation.md) | Politique proposée et limites des outils de la maquette |
+| [Historique des versions](CHANGELOG.md) | Évolutions livrées (format *Keep a Changelog*) |
+| [Décisions d’architecture (ADR)](docs/adr/adr-index.md) | Justification durable des choix structurants au format MADR (`0000` à `0005` + `template.md`) |
+| [Documents d’exploitation](docs/exploitation/exploitation-index.md) | Index MCO, *runbooks* incidents/sauvegardes, *postmortem blameless* et *Service Overview* |
+| [Service Overview (carte d’identité)](docs/exploitation/fiche-service-minishop.md) | Identité, architecture Mermaid, dépendances, données PII/RGPD, opérations, liens et contacts (`catalog-info.yaml`) |
+| [Documentation vivante & C4](docs/28-documentation-qui-survit-minishop.md) | Gouvernance Diátaxis, 4 niveaux C4 (`docs/diagrams/src/c4_*.puml`) et génération PDF |
+| [Référence API PHP](livrables/reference/php/index.html) | Documentation HTML générée depuis les PHPDoc de `app/` et `public/index.php` |
+| [Référence API Python (`pdoc`)](livrables/reference/python/index.html) | Documentation HTML générée depuis les docstrings Google de `scripts/` (`ruff.toml`, `doctest`) |
 
 ## Organisation du dépôt
 

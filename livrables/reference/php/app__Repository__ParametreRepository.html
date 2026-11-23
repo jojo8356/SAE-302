@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Repository\ParametreRepository — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Repository · <span>app/Repository/ParametreRepository.php</span></div>
+    <h1>ParametreRepository</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — paramètres métier (portage de fn_param + sp_compute_shipping).
+
+Les règles chiffrées (frais de port, franchise, TVA par défaut) sont des
+DONNÉES (table « parametre »), pas des constantes recopiées dans le code :
+c&#x27;est ce qui permet de les faire évoluer sans toucher une ligne de PHP
+(RB-15, ENF-14).</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (6)</h2>
+    <div class="method" id="m-__construct">
+  <code>public function __construct(private readonly StoreInterface $store)</code>
+  <p> Injecte le store abstrait servant de source aux paramètres commerciaux.</p>
+</div><div class="method" id="m-fnParam">
+  <code>public function fnParam(string $cle, string $defaut): string</code>
+  <p> fn_param(p_cle, p_defaut) : valeur lue dans la table, sinon défaut.</p>
+</div><div class="method" id="m-computeShipping">
+  <code>public function computeShipping(float $marchandises): array</code>
+  <p>sp_compute_shipping(p_marchandises) : frais de port applicables,<br>calculés AVANT la validation (obligation d&#x27;affichage, art. L221-5<br>4° C. conso.) — 4,90 € en standard, offert à partir de 80,00 €.<br><br>@return array{port: float, motif: string}</p>
+</div><div class="method" id="m-tvaDefaut">
+  <code>public function tvaDefaut(): float</code>
+  <p> TVA proposée par défaut à la création d&#x27;un produit (EF-ADM-01).</p>
+</div><div class="method" id="m-enregistrer">
+  <code>public function enregistrer(string $cle, string $valeur): void</code>
+  <p>Met à jour un paramètre existant (écran back-office, EF-ADM-11).<br><br>Les paramètres sont des données de pilotage commercial : frais de port,<br>franchise, TVA par défaut, durée de conservation. Aucune constante n&#x27;est<br>recopiée dans le code (voir l&#x27;en-tête de cette classe).<br><br>@throws \App\Model\Data\BusinessError si le paramètre est inconnu ou la valeur invalide</p>
+</div><div class="method" id="m-tous">
+  <code>public function tous(): array</code>
+  <p> Tous les paramètres (page d&#x27;affichage back-office).</p>
+</div>
+  </section>
+</body>
+</html>

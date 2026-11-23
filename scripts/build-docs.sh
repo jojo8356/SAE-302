@@ -2,10 +2,12 @@
 # =====================================================================
 # MiniShop — assemblage documentaire complet (CDC §5, README §14.1)
 #
-#   bash scripts/build-docs.sh                 # HTML + DOCX + PDF + diaporama
-#   bash scripts/build-docs.sh --only html     # un seul format
-#   bash scripts/build-docs.sh --out dist      # dossier de sortie (défaut : dist)
-#   bash scripts/build-docs.sh --no-livrables  # ne pas recopier dans livrables/
+#   bash scripts/build-docs.sh                           # tout (HTML + DOCX + PDF + diaporama)
+#   bash scripts/build-docs.sh --only pdf                # un seul format (rapide)
+#   bash scripts/build-docs.sh --only pdf --doc docs/27* # un seul PDF ciblé (< 2 s)
+#   bash scripts/build-docs.sh docs/27-*.md              # un seul document (tous formats)
+#   bash scripts/build-docs.sh --out dist                # dossier de sortie (défaut : dist)
+#   bash scripts/build-docs.sh --no-livrables            # ne pas recopier dans livrables/
 #
 # Entrées  : README.md, docs/*.md, docs/annexes/*.md, docs/sql-a-ecrire/*.md
 # Sorties  : <out>/html/*.html   HTML autonome (images en base64, hors ligne)
@@ -27,14 +29,17 @@ SORTIE="dist"
 LIVRABLES="livrables"
 FORMATS="html pdf docx slides"
 COPIER=1
+CIBLES=()
 
 while [ $# -gt 0 ]; do
     case "$1" in
         --only)      FORMATS="$2"; shift 2 ;;
+        --doc)       CIBLES+=("$2"); shift 2 ;;
         --out)       SORTIE="$2"; shift 2 ;;
         --no-livrables) COPIER=0; shift ;;
-        -h|--help)   sed -n '2,26p' "$0"; exit 0 ;;
-        *) echo "✘ option inconnue : $1" >&2; exit 2 ;;
+        -h|--help)   sed -n '2,28p' "$0"; exit 0 ;;
+        -*) echo "✘ option inconnue : $1" >&2; exit 2 ;;
+        *)  CIBLES+=("$1"); shift ;;
     esac
 done
 
@@ -46,30 +51,51 @@ PYTHON_BIN="${PYTHON_BIN:-python3}"
 command -v "$PYTHON_BIN" >/dev/null 2>&1 || { rouge "✘ python3 introuvable"; exit 2; }
 
 manquants=""
-"$PYTHON_BIN" - <<'PY' || manquants="1"
+"$PYTHON_BIN" - "$FORMATS" <<'PY' || manquants="1"
 import importlib, sys
-attendus = {"markdown": "markdown", "fpdf": "fpdf2", "docx": "python-docx", "pptx": "python-pptx"}
+formats = set(sys.argv[1].split())
+corresp = {
+    "html": ("markdown", "markdown"),
+    "pdf": ("fpdf", "fpdf2"),
+    "docx": ("docx", "python-docx"),
+    "slides": ("pptx", "python-pptx"),
+}
 absents = []
-for module, paquet in attendus.items():
-    try:
-        importlib.import_module(module)
-    except ImportError:
-        absents.append(paquet)
+for fmt in formats:
+    if fmt in corresp:
+        module, paquet = corresp[fmt]
+        try:
+            importlib.import_module(module)
+        except ImportError:
+            absents.append(paquet)
 if absents:
     print("  paquets manquants : " + ", ".join(absents) + " → pip install " + " ".join(absents), file=sys.stderr)
     sys.exit(1)
 PY
 if [ -n "$manquants" ]; then
-    rouge "✘ dépendances Python incomplètes : pip install markdown fpdf2 python-docx python-pptx"
+    rouge "✘ dépendances Python incomplètes : pip install -r requirements-docs.txt"
     exit 2
 fi
 
 # --- sources ---------------------------------------------------------------
 SOURCES=()
-[ -f README.md ] && SOURCES+=("README.md")
-while IFS= read -r fichier; do SOURCES+=("$fichier"); done < <(ls docs/[0-9]*.md docs/DA.md docs/pv-recette.md 2>/dev/null | sort)
-while IFS= read -r fichier; do SOURCES+=("$fichier"); done < <(ls docs/annexes/*.md 2>/dev/null | sort)
-while IFS= read -r fichier; do SOURCES+=("$fichier"); done < <(ls docs/sql-a-ecrire/*.md 2>/dev/null | sort)
+if [ ${#CIBLES[@]} -gt 0 ]; then
+    for cible in "${CIBLES[@]}"; do
+        if [ -f "$cible" ]; then
+            SOURCES+=("$cible")
+        else
+            rouge "✘ source ciblée introuvable : $cible"
+            exit 2
+        fi
+    done
+else
+    [ -f README.md ] && SOURCES+=("README.md")
+    [ -f CHANGELOG.md ] && SOURCES+=("CHANGELOG.md")
+    while IFS= read -r fichier; do SOURCES+=("$fichier"); done < <(ls docs/[0-9]*.md docs/DA.md docs/pv-recette.md 2>/dev/null | sort)
+    while IFS= read -r fichier; do SOURCES+=("$fichier"); done < <(ls docs/adr/[0-9]*.md docs/adr/adr-index.md docs/exploitation/*.md 2>/dev/null | sort)
+    while IFS= read -r fichier; do SOURCES+=("$fichier"); done < <(ls docs/annexes/*.md 2>/dev/null | sort)
+    while IFS= read -r fichier; do SOURCES+=("$fichier"); done < <(ls docs/sql-a-ecrire/*.md 2>/dev/null | sort)
+fi
 
 if [ ${#SOURCES[@]} -eq 0 ]; then
     rouge "✘ aucune source Markdown trouvée"
@@ -124,11 +150,13 @@ for source in "${SOURCES[@]}"; do
 done
 
 if printf '%s' "$FORMATS" | grep -qw slides; then
-    if [ -f docs/12-diaporama-soutenance.md ]; then
-        traiter pptx docs/12-diaporama-soutenance.md "$SORTIE/minishop-soutenance.pptx" "Diaporama"
-    else
-        rouge "  ✘ diaporama : docs/12-diaporama-soutenance.md absent"
-        nombre_erreurs=$((nombre_erreurs + 1))
+    if [ ${#CIBLES[@]} -eq 0 ] || printf '%s\n' "${CIBLES[@]}" | grep -q "12-diaporama-soutenance.md"; then
+        if [ -f docs/12-diaporama-soutenance.md ]; then
+            traiter pptx docs/12-diaporama-soutenance.md "$SORTIE/minishop-soutenance.pptx" "Diaporama"
+        else
+            rouge "  ✘ diaporama : docs/12-diaporama-soutenance.md absent"
+            nombre_erreurs=$((nombre_erreurs + 1))
+        fi
     fi
 fi
 

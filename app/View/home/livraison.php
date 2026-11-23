@@ -1,5 +1,14 @@
 <?php
+
 declare(strict_types=1);
+
+/**
+ * VueLivraison — Information sur les modalités de livraison et retours (route GET /livraison).
+ *
+ * @package App\View\Home
+ * @see     \App\Controller\HomeController::livraison()
+ * @see     docs/12-information-juridique.md
+ */
 ?>
 <article class="legal">
     <header><p class="legal__sur-titre">Vos commandes</p><h1>Livraison</h1><p class="chapo">Coûts affichés, délais et retours.</p></header>

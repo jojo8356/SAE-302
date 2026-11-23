@@ -242,12 +242,29 @@ footer.doc p { text-align: left; margin: 0; }
 
 
 def data_uri(chemin: Path) -> str:
+    """Encode un fichier binaire (image) sous forme d'URI data base64.
+
+    Args:
+        chemin: Chemin vers le fichier image à encoder.
+
+    Returns:
+        Chaîne ``data:<mime>;base64,...``.
+    """
     type_mime = mimetypes.guess_type(chemin.name)[0] or "application/octet-stream"
     contenu = base64.b64encode(chemin.read_bytes()).decode("ascii")
     return f"data:{type_mime};base64,{contenu}"
 
 
 def resoudre(source: Path, cible: str) -> Path | None:
+    """Résout un lien relatif d'image par rapport au document source ou au dépôt.
+
+    Args:
+        source: Chemin du fichier Markdown courant.
+        cible: URL ou chemin relatif extrait de la balise image.
+
+    Returns:
+        Chemin résolu si le fichier existe localement, sinon ``None``.
+    """
     if re.match(r"^[a-z]+://", cible) or cible.startswith("data:"):
         return None
     propre = cible.split("#", 1)[0].split(" ", 1)[0]
@@ -261,10 +278,20 @@ def resoudre(source: Path, cible: str) -> Path | None:
 
 
 def integrer_images(source: Path, corps: str) -> tuple[str, int]:
+    """Remplace les sources ``<img src="...">`` locales par des URI base64 autonomes.
+
+    Args:
+        source: Fichier Markdown source servant de base aux chemins relatifs.
+        corps: Fragment HTML généré par Python-Markdown.
+
+    Returns:
+        Tuple ``(html_enrichi, nombre_images_integrees)``.
+    """
     manquantes: list[str] = []
     compte = 0
 
     def remplacer(match: re.Match[str]) -> str:
+        """Remplace l'attribut src d'une balise img si le fichier cible existe."""
         nonlocal compte
         balise, chemin = match.group(0), match.group(1)
         if chemin.startswith("data:"):
@@ -283,6 +310,18 @@ def integrer_images(source: Path, corps: str) -> tuple[str, int]:
 
 
 def reecrire_liens(corps: str) -> str:
+    """Convertit les liens internes ``.md`` vers leur équivalent ``.html``.
+
+    Args:
+        corps: Fragment HTML généré par Markdown.
+
+    Returns:
+        HTML avec les liens internes pointant vers ``.html``.
+
+    Example:
+        >>> reecrire_liens('<a href="docs/04-conception-bd-et-sql.md#mcd">MCD</a>')
+        '<a href="04-conception-bd-et-sql.html#mcd">MCD</a>'
+    """
     return re.sub(
         r'href="([^"#]+?)\.md(#[^"]*)?"',
         lambda m: f'href="{Path(m.group(1)).name}.html{m.group(2) or ""}"',
@@ -291,8 +330,19 @@ def reecrire_liens(corps: str) -> str:
 
 
 def convertir(source: Path, sortie: Path, titre_force: str | None = None) -> dict[str, object]:
+    """Convertit un document Markdown en page HTML5 autonome hors ligne.
+
+    Args:
+        source: Chemin du fichier Markdown source.
+        sortie: Chemin du fichier HTML cible à écrire.
+        titre_force: Titre optionnel remplaçant le premier H1 détecté.
+
+    Returns:
+        Dictionnaire récapitulatif (sortie, titre, images, octets).
+    """
     brut = source.read_text(encoding="utf-8")
     brut = brut.replace("- [x] ", "- [OK] ").replace("- [ ] ", "- [ ] ").replace("- [~] ", "- [~] ")
+    brut = re.sub(r"^\s*\\newpage\s*$", '<div style="break-before: page;"></div>', brut, flags=re.M)
     convertisseur = markdown.Markdown(
         extensions=["tables", "fenced_code", "toc", "sane_lists", "attr_list", "md_in_html"],
         extension_configs={"toc": {"permalink": "", "toc_depth": "2-3"}},
@@ -340,6 +390,14 @@ def convertir(source: Path, sortie: Path, titre_force: str | None = None) -> dic
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Point d'entrée CLI pour la conversion Markdown vers HTML autonome.
+
+    Args:
+        argv: Arguments de ligne de commande optionnels.
+
+    Returns:
+        Code de sortie 0 en cas de succès, 2 en cas d'erreur de fichier.
+    """
     analyseur = argparse.ArgumentParser(description="Markdown → HTML académique (SAÉ 302 — MiniShop).")
     analyseur.add_argument("source", type=Path, help="fichier .md à convertir")
     analyseur.add_argument("--out", type=Path, help="fichier .html de sortie")

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Model\PanierSession — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Model · <span>app/Model/PanierSession.php</span></div>
+    <h1>PanierSession</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — panier en session (UC-06, EF-VIS-09/EF-CLI-03…06, RB-18/19).
+
+Le panier vit UNIQUEMENT dans la session (aucune écriture en base tant
+que la commande n&#x27;est pas validée — EF-VIS-09) et :
+  - chaque ajout est PLAFONNÉ au stock disponible mesuré côté SERVEUR
+    (jamais au montant envoyé par le navigateur, EF-GEN-01, RB-18) ;
+  - les produits masqués (RB-19) ou en rupture sont refusés ;
+  - le total et le port sont recalculés serveur (RB-15/20) ;
+  - il est vidé après validation de la commande (EF-GEN-02).</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (11)</h2>
+    <div class="method" id="m-charge">
+  <code>public static function charge(): self</code>
+  <p> Fabrique pratique branchée sur le store applicatif.</p>
+</div><div class="method" id="m-articlesBruts">
+  <code>public function articlesBruts(): array</code>
+  <p> @return array&lt;int, int&gt; id_produit =&gt; quantité</p>
+</div><div class="method" id="m-ajouter">
+  <code>public function ajouter(int $idProduit, int $quantite): int</code>
+  <p>Ajoute une quantité d&#x27;un produit (plafonnée au stock serveur, RB-18).<br><br>@return int quantité réellement dans le panier après l&#x27;ajout</p>
+</div><div class="method" id="m-modifierQuantite">
+  <code>public function modifierQuantite(int $idProduit, int $quantite): void</code>
+  <p> Modifie la quantité d&#x27;une ligne (EF-CLI-04 : plafonnée au stock).</p>
+</div><div class="method" id="m-retirer">
+  <code>public function retirer(int $idProduit): void</code>
+  <p> Retire un article du panier en session.</p>
+</div><div class="method" id="m-vider">
+  <code>public function vider(): void</code>
+  <p> Vide intégralement le panier en session (après commande validée).</p>
+</div><div class="method" id="m-estVide">
+  <code>public function estVide(): bool</code>
+  <p> Indique si le panier ne contient aucun article.</p>
+</div><div class="method" id="m-nombreArticles">
+  <code>public function nombreArticles(): int</code>
+  <p> Nombre total d&#x27;articles (badge du panier).</p>
+</div><div class="method" id="m-recapitulatif">
+  <code>public function recapitulatif(): array</code>
+  <p>Panier complet pour l&#x27;affichage / la validation : chaque ligne joint<br>le produit courant (nom, prix TTC SERVEUR — jamais un prix client),<br>le total de ligne, et l&#x27;écart de stock éventuel.<br><br>@return array{articles: list&lt;array&lt;string,mixed&gt;&gt;, sous_total: float, frais_port: float, total: float, port_motif: string}</p>
+</div><div class="method" id="m-pourCommande">
+  <code>public function pourCommande(): array</code>
+  <p> Panier au format attendu par CommandeRepository::createOrderFromBasket().</p>
+</div><div class="method" id="m-demarrer">
+  <code>public static function demarrer(): void</code>
+  <p> Démarre la session durcie via Auth::demarrer().</p>
+</div>
+  </section>
+</body>
+</html>

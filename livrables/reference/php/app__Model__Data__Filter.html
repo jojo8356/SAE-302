@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Model\Data\Filter — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Model\Data · <span>app/Model/Data/Filter.php</span></div>
+    <h1>Filter</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — constructeur déclaratif de conditions (helper de StoreInterface).
+
+Les Repository décrivent leurs filtres avec ces helpers plutôt qu&#x27;en
+écrivant des tableaux à la main : l&#x27;intention reste lisible et la
+spécification sérialisable. JsonStore l&#x27;évalue en PHP ; SqlStore la traduit
+actuellement en clauses SQL préparées pour les opérations génériques.
+
+Exemple :
+  $store-&gt;select(&#x27;produit&#x27;, [
+      &#x27;where&#x27; =&gt; [
+          Filter::eq(&#x27;visible&#x27;, 1),
+          Filter::like(&#x27;nom&#x27;, &#x27;%clavier%&#x27;),
+          Filter::between(&#x27;prix_ttc&#x27;, 20, 100),
+      ],
+      &#x27;order&#x27; =&gt; [Filter::sort(&#x27;prix_ttc&#x27;, &#x27;desc&#x27;)],
+      &#x27;limit&#x27; =&gt; 12,
+  ]);</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (16)</h2>
+    <div class="method" id="m-eq">
+  <code>public static function eq(string $col, mixed $value): array</code>
+  <p> @return list{string,string,mixed}</p>
+</div><div class="method" id="m-neq">
+  <code>public static function neq(string $col, mixed $value): array</code>
+  <p> @return list{string,string,mixed}</p>
+</div><div class="method" id="m-lt">
+  <code>public static function lt(string $col, mixed $value): array</code>
+  <p> @return list{string,string,mixed}</p>
+</div><div class="method" id="m-lte">
+  <code>public static function lte(string $col, mixed $value): array</code>
+  <p> @return list{string,string,mixed}</p>
+</div><div class="method" id="m-gt">
+  <code>public static function gt(string $col, mixed $value): array</code>
+  <p> @return list{string,string,mixed}</p>
+</div><div class="method" id="m-gte">
+  <code>public static function gte(string $col, mixed $value): array</code>
+  <p> @return list{string,string,mixed}</p>
+</div><div class="method" id="m-like">
+  <code>public static function like(string $col, string $pattern): array</code>
+  <p> Recherche insensible à la casse et aux accents, jokers % et _.</p>
+</div><div class="method" id="m-notLike">
+  <code>public static function notLike(string $col, string $pattern): array</code>
+  <p> Exclut les valeurs correspondant au motif SQL LIKE insensible à la casse.</p>
+</div><div class="method" id="m-in">
+  <code>public static function in(string $col, array $values): array</code>
+  <p> @param list&lt;mixed&gt; $values</p>
+</div><div class="method" id="m-notIn">
+  <code>public static function notIn(string $col, array $values): array</code>
+  <p> @param list&lt;mixed&gt; $values</p>
+</div><div class="method" id="m-between">
+  <code>public static function between(string $col, mixed $min, mixed $max): array</code>
+  <p> @return list{string,string,list{mixed,mixed}}</p>
+</div><div class="method" id="m-isNull">
+  <code>public static function isNull(string $col): array</code>
+  <p> @return list{string,string,null}</p>
+</div><div class="method" id="m-isNotNull">
+  <code>public static function isNotNull(string $col): array</code>
+  <p> @return list{string,string,null}</p>
+</div><div class="method" id="m-or">
+  <code>public static function or(array $conditions): array</code>
+  <p> Groupe OU : au moins une des conditions internes doit être vraie.</p>
+</div><div class="method" id="m-and">
+  <code>public static function and(array $conditions): array</code>
+  <p> Groupe ET explicite.</p>
+</div><div class="method" id="m-sort">
+  <code>public static function sort(string $col, string $direction = &#x27;asc&#x27;): array</code>
+  <p> @return list{string,string}</p>
+</div>
+  </section>
+</body>
+</html>

@@ -19,6 +19,7 @@ use App\Service\NettoyageJournaux;
 
 final class HomeController extends Controller
 {
+    /** Affiche la page d'accueil avec les catégories et les 4 nouveautés. */
     public function index(): void
     {
         $store = Database::store();
@@ -28,6 +29,7 @@ final class HomeController extends Controller
         $this->render('home/index', ['categories' => $categories, 'nouveautes' => $nouveautes['lignes']], 'MiniShop — matériel informatique & objets connectés');
     }
 
+    /** Affiche la liste des catégories actives et leur compteur de produits. */
     public function categories(): void
     {
         $store = Database::store();
@@ -36,41 +38,49 @@ final class HomeController extends Controller
         $this->render('home/categories', ['categories' => $categories], 'Nos catégories');
     }
 
+    /** Affiche les mentions légales LCEN de la maquette pédagogique. */
     public function mentionsLegales(): void
     {
         $this->render('home/mentions_legales', [], 'Mentions légales');
     }
 
+    /** Affiche les conditions générales de vente (CGV). */
     public function cgv(): void
     {
         $this->render('home/cgv', [], 'Conditions générales de vente');
     }
 
+    /** Affiche la politique de confidentialité et les durées RGPD. */
     public function confidentialite(): void
     {
         $this->render('home/confidentialite', [], 'Confidentialité');
     }
 
+    /** Affiche la politique d'information sur les cookies et traceurs. */
     public function cookies(): void
     {
         $this->render('home/cookies', [], 'Cookies et traceurs');
     }
 
+    /** Affiche les informations générales de livraison et retours. */
     public function livraison(): void
     {
         $this->render('home/livraison', [], 'Livraison');
     }
 
+    /** Affiche la page d'information sur le droit de rétractation de 14 jours. */
     public function retractation(): void
     {
         $this->render('home/retractation', [], 'Rétractation');
     }
 
+    /** Affiche l'encadré réglementaire des garanties légales. */
     public function garanties(): void
     {
         $this->render('home/garanties', [], 'Garanties légales');
     }
 
+    /** Affiche les conditions générales d'utilisation (CGU). */
     public function cgu(): void
     {
         $this->render('home/cgu', [], 'Conditions d’utilisation');
@@ -169,11 +179,13 @@ final class HomeController extends Controller
         $this->render('home/preferences', [], 'Préférences');
     }
 
+    /** Affiche la page d'erreur 404 personnalisée (route inconnue). */
     public function page404(): void
     {
         $this->render('errors/404', [], 'Page introuvable');
     }
 
+    /** Affiche la page d'erreur 403 personnalisée (accès refusé). */
     public function page403(): void
     {
         $this->render('errors/403', [], 'Accès refusé');

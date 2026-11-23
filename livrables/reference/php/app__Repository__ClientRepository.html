@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Repository\ClientRepository — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Repository · <span>app/Repository/ClientRepository.php</span></div>
+    <h1>ClientRepository</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — comptes clients (portage de sp_create_account, sp_get_credentials,
+sp_update_client).
+
+Les mots de passe ne sont JAMAIS stockés ni renvoyés en clair : la couche
+modèle compare les hash avec password_verify() côté contrôleur (RB-12,
+SEC-04) — le hash ne quitte ce repository que pour la vérification.</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (9)</h2>
+    <div class="method" id="m-createAccount">
+  <code>public function createAccount(string $nom, string $prenom, string $email, string $hash): int</code>
+  <p>sp_create_account — création d&#x27;un compte (RB-01 : email unique).<br><br>@param string $hash sortie de password_hash() (jamais du clair)<br>@return int id_client créé</p>
+</div><div class="method" id="m-emailExiste">
+  <code>public function emailExiste(string $email): bool</code>
+  <p>Cette adresse est-elle déjà prise ? (RB-01 — même normalisation<br>que getCredentials, pour signaler le doublon dès la validation,<br>en même temps que les autres erreurs du formulaire.)</p>
+</div><div class="method" id="m-getCredentials">
+  <code>public function getCredentials(string $email): array</code>
+  <p>sp_get_credentials — identifiants pour la connexion.<br>Le compte bloqué est refusé en couche modèle, pas seulement en PHP.<br><br>@return array{id_client: int|null, hash: string|null, statut: &#x27;OK&#x27;|&#x27;COMPTE_BLOQUE&#x27;|&#x27;INCONNU&#x27;}</p>
+</div><div class="method" id="m-find">
+  <code>public function find(int $idClient): ?array</code>
+  <p> Client complet par id (le hash n&#x27;est jamais affiché par les vues).</p>
+</div><div class="method" id="m-adresseLivraisonComplete">
+  <code>public static function adresseLivraisonComplete(array $client): string</code>
+  <p>Adresse de livraison COMPLÈTE du profil, pour le préremplissage du<br>formulaire de commande. Le profil stocke rue, code postal et ville<br>dans trois colonnes séparées (EF-CLI-01) alors que la commande<br>n&#x27;enregistre qu&#x27;une seule chaîne (commande.adresse_livraison) :<br>composer « rue, CP Ville » ici évite de préremplir avec la seule<br>rue — la commande garderait sinon une adresse sans code postal ni<br>ville. Les parties absentes (profil incomplet) sont omises, sans<br>virgule ni espace orphelins ; un profil sans adresse donne &#x27;&#x27;.<br><br>@param array&lt;string,mixed&gt; $client</p>
+</div><div class="method" id="m-changeMotDePasse">
+  <code>public function changeMotDePasse(int $idClient, string $nouveauHash): void</code>
+  <p>Change le mot de passe d&#x27;un client (EF-CLI-02) : l&#x27;ancien mot de passe<br>est exigé et vérifié par l&#x27;appelant, le nouveau est re-haché (RB-12).</p>
+</div><div class="method" id="m-clientActif">
+  <code>public function clientActif(int $idClient): ?array</code>
+  <p> Dernière activité d&#x27;une session authentifiée, arrondie à une heure maximum.<br>Le verrou partage la discipline du traitement d&#x27;inactivité.<br>@return array&lt;string,mixed&gt;|null</p>
+</div><div class="method" id="m-noteConnexion">
+  <code>public function noteConnexion(int $idClient): void</code>
+  <p> Horodate la dernière connexion (traçabilité, sans bloquer le flux).</p>
+</div><div class="method" id="m-listerTous">
+  <code>public function listerTous(): array</code>
+  <p> Admin : liste des clients (EF-ADM, lecture seule — RB-13 : l&#x27;admin ne GÈRE pas les comptes).</p>
+</div>
+  </section>
+</body>
+</html>

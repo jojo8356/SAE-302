@@ -122,21 +122,25 @@ final class DbInstaller
         );
     }
 
+    /** Retourne le nom de la base SQL cible. */
     public function base(): string
     {
         return $this->base;
     }
 
+    /** Retourne l'hôte du serveur MariaDB/MySQL. */
     public function hote(): string
     {
         return $this->hote;
     }
 
+    /** Retourne le port TCP du serveur MariaDB/MySQL. */
     public function port(): string
     {
         return $this->port;
     }
 
+    /** Retourne le nom de l'utilisateur SQL configuré pour l'installation. */
     public function utilisateur(): string
     {
         return $this->utilisateur;

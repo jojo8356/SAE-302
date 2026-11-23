@@ -26,11 +26,13 @@ final class CatalogueController extends Controller
         'stock' => 'Stock',
     ];
 
+    /** Affiche le catalogue public filtré et paginé selon les paramètres GET. */
     public function catalogue(): void
     {
         $this->rendreRecherche('catalogue/index', 'Catalogue');
     }
 
+    /** Affiche les résultats de recherche plein texte sur le catalogue public. */
     public function recherche(): void
     {
         $this->rendreRecherche('catalogue/index', 'Recherche', true);

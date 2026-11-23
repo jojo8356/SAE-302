@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : Guide pratique — Postmortem blameless et apprentissage des incidents (MiniShop)">
+<title>Guide pratique — Postmortem blameless et apprentissage des incidents (MiniShop) — MiniShop (SAÉ 302)</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
+  color: var(--encre);
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
+}
+pre {
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
+}
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
+}
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
+@media print {
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/exploitation/guide-postmortem-blameless.md</code></div>
+</header>
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#1-compte-rendu-dincident-vs-postmortem-blameless">1. Compte-rendu d’incident vs Postmortem blameless</a></li>
+<li><a href="#2-les-trois-angles-danalyse">2. Les trois angles d’analyse</a></li>
+<li><a href="#3-criteres-objectifs-de-declenchement-sur-minishop">3. Critères objectifs de déclenchement sur MiniShop</a></li>
+<li><a href="#4-regles-blameless-et-conduite-de-la-reunion-1-h-30-max">4. Règles blameless et conduite de la réunion (1 h 30 max)</a><ul>
+<li><a href="#cinq-regles-affichees-en-debut-de-seance">Cinq règles affichées en début de séance</a></li>
+<li><a href="#participants-et-facilitateur">Participants et facilitateur</a></li>
+<li><a href="#deroulement-minute-90-minutes">Déroulement minuté (90 minutes)</a></li>
+</ul>
+</li>
+<li><a href="#5-quatre-checklists-operationnelles">5. Quatre checklists opérationnelles</a><ul>
+<li><a href="#checklist-pendant-lincident-a-chaud">Checklist « Pendant l’incident » (à chaud)</a></li>
+<li><a href="#checklist-preparation-a-froid">Checklist « Préparation » (à froid)</a></li>
+<li><a href="#checklist-reunion-de-postmortem">Checklist « Réunion de postmortem »</a></li>
+<li><a href="#checklist-post-reunion-suivi-effectif">Checklist « Post-réunion » (suivi effectif)</a></li>
+</ul>
+</li>
+<li><a href="#6-quatre-anti-patterns-a-bloquer">6. Quatre anti-patterns à bloquer</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="guide-pratique-postmortem-blameless-et-apprentissage-des-incidents-minishop">Guide pratique — Postmortem blameless et apprentissage des incidents (MiniShop)<a class="headerlink" href="#guide-pratique-postmortem-blameless-et-apprentissage-des-incidents-minishop" title="Permanent link"></a></h1>
+<p><strong>Type Diátaxis :</strong> Guide pratique &amp; Référence d’exploitation · <strong>Propriétaire :</strong> Équipe Exploitation / MCO MiniShop<br />
+<strong>Référence complémentaire :</strong> Modèle prêt à remplir dans <a href="postmortem-modele.html"><code>postmortem-modele.md</code></a></p>
+<hr />
+<h2 id="1-compte-rendu-dincident-vs-postmortem-blameless">1. Compte-rendu d’incident vs Postmortem blameless<a class="headerlink" href="#1-compte-rendu-dincident-vs-postmortem-blameless" title="Permanent link"></a></h2>
+<table>
+<thead>
+<tr>
+<th>Critère</th>
+<th>Compte-rendu d’incident (à chaud)</th>
+<th>Postmortem blameless (à froid)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Moment</strong></td>
+<td>Pendant ou juste après l’incident</td>
+<td>Sous quelques jours ouvrés après stabilisation</td>
+</tr>
+<tr>
+<td><strong>Question centrale</strong></td>
+<td><em>« Que s’est-il passé et comment a-t-on rétabli ? »</em></td>
+<td><em>« Pourquoi le système l’a-t-il permis et comment éviter la récidive ? »</em></td>
+</tr>
+<tr>
+<td><strong>Contenu</strong></td>
+<td>Horodatage des faits, actions de contournement, statut</td>
+<td>Causes immédiate/contributives/profonde, <strong>5 pourquoi</strong>, actions SMART</td>
+</tr>
+<tr>
+<td><strong>Audience</strong></td>
+<td>Intervenants techniques et support immédiat</td>
+<td>Toute l’équipe projet, exploitation et documentation</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-les-trois-angles-danalyse">2. Les trois angles d’analyse<a class="headerlink" href="#2-les-trois-angles-danalyse" title="Permanent link"></a></h2>
+<ol>
+<li><strong>Postmortem technique :</strong> panne MariaDB, saturation disque <code>/var/lib/mysql</code>, verrou concurrent non protégé, régression PHP ou saturation latence (<code>p95 &gt; 200 ms</code>).</li>
+<li><strong>Postmortem organisationnel :</strong> absence d’astreinte identifiée, escalade bloquée, procédure de restauration non testée ou ticket resté sans propriétaire.</li>
+<li><strong>Postmortem hybride :</strong> défaillance technique aggravée par un <em>runbook</em> absent, une alerte manquante ou une mauvaise coordination.</li>
+</ol>
+<hr />
+<h2 id="3-criteres-objectifs-de-declenchement-sur-minishop">3. Critères objectifs de déclenchement sur MiniShop<a class="headerlink" href="#3-criteres-objectifs-de-declenchement-sur-minishop" title="Permanent link"></a></h2>
+<p>Un postmortem est ouvert sur des critères prédéfinis (jamais au cas par cas après coup) :</p>
+<table>
+<thead>
+<tr>
+<th>Critère</th>
+<th>Postmortem obligatoire</th>
+<th>Postmortem recommandé</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Indisponibilité HTTP (<code>front-web</code> / <code>admin-web</code>)</strong></td>
+<td><code>&gt; 30 min</code></td>
+<td><code>15 – 30 min</code></td>
+</tr>
+<tr>
+<td><strong>Dégradation de latence (<code>p95 &gt; 500 ms</code>, seuil <code>ENF-01</code>)</strong></td>
+<td>Persistante <code>&gt; 30 min</code></td>
+<td>Pic <code>&gt; 15 min</code></td>
+</tr>
+<tr>
+<td><strong>Intégrité des données ou sécurité</strong></td>
+<td>Toute perte/corruption de données, stock négatif, faille CSRF/XSS/IDOR ou fuite de secret</td>
+<td>Anomalie détectée en recette avant mise en ligne</td>
+</tr>
+<tr>
+<td><strong>Incident récurrent</strong></td>
+<td><code>3e</code> occurrence d’un même symptôme</td>
+<td><code>2e</code> occurrence</td>
+</tr>
+<tr>
+<td><strong>Presque-incident (<em>Near miss</em>)</strong></td>
+<td>Échec d’une sauvegarde/restauration (<code>runbook-sauvegarde-restauration.md</code>), échec d’un test de concurrence ou anomalie critique évitée de justesse avant déploiement</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-regles-blameless-et-conduite-de-la-reunion-1-h-30-max">4. Règles blameless et conduite de la réunion (1 h 30 max)<a class="headerlink" href="#4-regles-blameless-et-conduite-de-la-reunion-1-h-30-max" title="Permanent link"></a></h2>
+<h3 id="cinq-regles-affichees-en-debut-de-seance">Cinq règles affichées en début de séance<a class="headerlink" href="#cinq-regles-affichees-en-debut-de-seance" title="Permanent link"></a></h3>
+<ol>
+<li><strong>Nous cherchons les causes, pas les coupables.</strong></li>
+<li><strong>Chacun a agi rationnellement avec les informations disponibles à l’instant T.</strong></li>
+<li><strong>Les erreurs humaines sont des symptômes d’un système ou d’un outil perfectible, pas des causes.</strong></li>
+<li><strong>Nous sommes là pour apprendre, pas pour juger.</strong></li>
+<li><strong>Les désaccords factuels sont bienvenus ; les attaques personnelles sont exclues.</strong></li>
+</ol>
+<h3 id="participants-et-facilitateur">Participants et facilitateur<a class="headerlink" href="#participants-et-facilitateur" title="Permanent link"></a></h3>
+<ul>
+<li><strong>Obligatoire :</strong> les personnes directement impliquées dans la détection et la résolution.</li>
+<li><strong>Recommandé :</strong> les rôles impactés (administration boutique / support).</li>
+<li><strong>Facilitateur neutre :</strong> ni le supérieur hiérarchique ni l’intervenant principal ; il garde le cap sur les faits, coupe toute accusation naissante et veille au respect du minutage.</li>
+</ul>
+<h3 id="deroulement-minute-90-minutes">Déroulement minuté (90 minutes)<a class="headerlink" href="#deroulement-minute-90-minutes" title="Permanent link"></a></h3>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Durée</th>
+<th>Objectif</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Introduction</strong></td>
+<td><code>5 min</code></td>
+<td>Rappeler les 5 règles <em>blameless</em></td>
+</tr>
+<tr>
+<td><strong>Chronologie</strong></td>
+<td><code>20 min</code></td>
+<td>Valider les faits horodatés UTC à partir des logs (ne pas déborder)</td>
+</tr>
+<tr>
+<td><strong>Analyse des causes</strong></td>
+<td><code>30 min</code></td>
+<td>Remonter de la cause immédiate à la cause profonde via les <strong>5 pourquoi</strong></td>
+</tr>
+<tr>
+<td><strong>Ce qui a bien fonctionné</strong></td>
+<td><code>10 min</code></td>
+<td>Identifier les garde-fous efficaces à préserver</td>
+</tr>
+<tr>
+<td><strong>Actions correctives SMART</strong></td>
+<td><code>20 min</code></td>
+<td>Définir actions prévention + monitoring/tests + mise à jour <em>runbook</em>, responsable, échéance</td>
+</tr>
+<tr>
+<td><strong>Conclusion</strong></td>
+<td><code>5 min</code></td>
+<td>Vérifier la création des tickets et la date de revue du suivi</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-quatre-checklists-operationnelles">5. Quatre checklists opérationnelles<a class="headerlink" href="#5-quatre-checklists-operationnelles" title="Permanent link"></a></h2>
+<h3 id="checklist-pendant-lincident-a-chaud">Checklist « Pendant l’incident » (à chaud)<a class="headerlink" href="#checklist-pendant-lincident-a-chaud" title="Permanent link"></a></h3>
+<ul>
+<li>[ ] Noter l’heure UTC exacte de début d’anomalie.</li>
+<li>[ ] Identifier les intervenants mobilisés.</li>
+<li>[ ] Préserver les preuves périssables : <code>var/journal/db.jsonl</code>, <code>var/log/contact.jsonl</code>, journaux Apache/PHP et MariaDB (<code>journalctl -u mariadb</code>).</li>
+<li>[ ] Noter chaque commande/action tentée et le résultat constaté.</li>
+<li>[ ] Noter l’heure UTC de rétablissement confirmé.</li>
+</ul>
+<h3 id="checklist-preparation-a-froid">Checklist « Préparation » (à froid)<a class="headerlink" href="#checklist-preparation-a-froid" title="Permanent link"></a></h3>
+<ul>
+<li>[ ] Programmer la réunion rapidement après stabilisation (sous quelques jours ouvrés).</li>
+<li>[ ] Rassembler les logs, captures et résultats de tests (<code>run-all-tests.php</code>, <code>controles.sh</code>).</li>
+<li>[ ] Ébaucher la chronologie UTC à partir des preuves horodatées.</li>
+<li>[ ] Générer le squelette daté : <code>python3 scripts/nouveau_postmortem.py --id INC-AAAA-MM-JJ-01 --titre "..."</code>.</li>
+<li>[ ] Inviter uniquement les témoins directs et les rôles impactés.</li>
+</ul>
+<h3 id="checklist-reunion-de-postmortem">Checklist « Réunion de postmortem »<a class="headerlink" href="#checklist-reunion-de-postmortem" title="Permanent link"></a></h3>
+<ul>
+<li>[ ] Rappeler les 5 règles <em>blameless</em> en ouverture.</li>
+<li>[ ] Valider collectivement la chronologie (sans y passer plus de 20 min).</li>
+<li>[ ] Appliquer les <strong>5 pourquoi</strong> jusqu’à la cause architecturale ou organisationnelle.</li>
+<li>[ ] Consigner ce qui a bien fonctionné (pour ne pas le casser).</li>
+<li>[ ] Rédiger des actions <strong>SMART</strong> (jamais « améliorer le monitoring », mais une métrique/test précis).</li>
+<li>[ ] Attribuer un responsable, une priorité et une échéance à chaque action.</li>
+</ul>
+<h3 id="checklist-post-reunion-suivi-effectif">Checklist « Post-réunion » (suivi effectif)<a class="headerlink" href="#checklist-post-reunion-suivi-effectif" title="Permanent link"></a></h3>
+<ul>
+<li>[ ] Finaliser le fichier <code>docs/exploitation/postmortems/postmortem-AAAA-MM-JJ-*.md</code> dès la fin de séance.</li>
+<li>[ ] Faire relire par les participants.</li>
+<li>[ ] Mettre à jour le <em>runbook</em> concerné (<code>docs/exploitation/runbook-*.md</code>) et ajouter les tests/alertes.</li>
+<li>[ ] Ouvrir un ticket suivi dans GitLab/GitHub pour chaque action corrective.</li>
+<li>[ ] Partager le postmortem à toute l’équipe et planifier la revue de clôture des actions.</li>
+</ul>
+<hr />
+<h2 id="6-quatre-anti-patterns-a-bloquer">6. Quatre anti-patterns à bloquer<a class="headerlink" href="#6-quatre-anti-patterns-a-bloquer" title="Permanent link"></a></h2>
+<table>
+<thead>
+<tr>
+<th>Anti-pattern</th>
+<th>Symptôme</th>
+<th>Remède immédiat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Chasse aux sorcières</strong></td>
+<td>Questions en <em>« Qui a lancé… ? »</em> ou <em>« Pourquoi as-tu… ? »</em></td>
+<td>Reformuler : <em>« Quelle protection ou information manquait dans l’outil ? »</em></td>
+</tr>
+<tr>
+<td><strong>Analyse superficielle</strong></td>
+<td>Arrêt à la cause immédiate (<em>« Disque plein → ajouter du disque »</em>)</td>
+<td>Appliquer systématiquement les <strong>5 pourquoi</strong></td>
+</tr>
+<tr>
+<td><strong>Postmortem fantôme</strong></td>
+<td>Fichier rédigé mais jamais relu ni lié depuis <code>exploitation-index.md</code></td>
+<td>Diffuser à l’équipe et référencer dans Git</td>
+</tr>
+<tr>
+<td><strong>Actions sans suite</strong></td>
+<td>Tableau d’actions complet sans ticket ni date de bilan</td>
+<td>Créer chaque ticket dès la fin de séance et vérifier le statut à <code>J+14</code></td>
+</tr>
+</tbody>
+</table>
+<footer class="doc">
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/exploitation/guide-postmortem-blameless.md</code> · 0 figure(s) intégrée(s).</p>
+</footer>
+</main>
+</body>
+</html>

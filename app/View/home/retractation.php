@@ -1,5 +1,14 @@
 <?php
+
 declare(strict_types=1);
+
+/**
+ * VueRetractation — Droit de rétractation légal de 14 jours et modèle R. 221-1 (route GET /retractation).
+ *
+ * @package App\View\Home
+ * @see     \App\Controller\HomeController::retractation()
+ * @see     docs/12-information-juridique.md
+ */
 ?>
 <article class="legal">
     <header><p class="legal__sur-titre">Vos droits</p><h1>Rétractation et retours</h1><p class="chapo">Droit applicable aux ventes à distance et modèle légal.</p></header>

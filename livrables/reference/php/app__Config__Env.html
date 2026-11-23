@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Config\Env — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Config · <span>app/Config/Env.php</span></div>
+    <h1>Env</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — lecture du fichier `.env` (configuration locale).
+
+La configuration de l&#x27;application vient de trois sources, dans cet ordre
+de priorité (la dernière gagne) :
+
+  1. valeurs par défaut du code (pilote SQL, 127.0.0.1:3306, base minishop) ;
+  2. `.env` à la racine — fichier LOCAL, jamais commité (`.env.example` est
+     le modèle versionné) ;
+  3. variables d&#x27;environnement réelles du processus (`DB_USER=… ./run.sh`),
+     pratiques en CI, en conteneur et pour un test ponctuel.
+
+Le format accepté est volontairement minimal et strict :
+
+  # commentaire
+  CLE=valeur
+  export CLE=&quot;valeur avec espaces&quot;     # préfixe `export` toléré
+  CLE=&#x27;sans interprétation&#x27;
+
+Aucune expansion de variable, aucune exécution : une ligne non reconnue est
+ignorée (le fichier reste un simple fichier de données). Les clés sont
+validées (`[A-Za-z_][A-Za-z0-9_]*`) pour qu&#x27;une faute de frappe ne puisse
+pas polluer l&#x27;environnement.
+
+Emplacement : `&lt;racine&gt;/.env`, surchargeable par `MINISHOP_ENV_FILE`
+(utilisé par les tests pour ne jamais toucher au fichier du développeur).</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (9)</h2>
+    <div class="method" id="m-racine">
+  <code>public static function racine(): string</code>
+  <p> Racine du projet (le fichier `.env` y est cherché par défaut).</p>
+</div><div class="method" id="m-chemin">
+  <code>public static function chemin(): string</code>
+  <p> Chemin du fichier de configuration à lire.</p>
+</div><div class="method" id="m-cheminLu">
+  <code>public static function cheminLu(): ?string</code>
+  <p> Chemin effectivement lu au dernier chargement (`null` si absent).</p>
+</div><div class="method" id="m-toutes">
+  <code>public static function toutes(): array</code>
+  <p> Toutes les valeurs du fichier (lecture unique, mise en cache).</p>
+</div><div class="method" id="m-get">
+  <code>public static function get(string $cle, ?string $defaut = null): ?string</code>
+  <p>Valeur d&#x27;une clé : variable d&#x27;environnement réelle, puis `.env`, puis<br>le défaut fourni.</p>
+</div><div class="method" id="m-entier">
+  <code>public static function entier(string $cle, int $defaut): int</code>
+  <p> Valeur entière, avec repli si la valeur n&#x27;est pas numérique.</p>
+</div><div class="method" id="m-booleen">
+  <code>public static function booleen(string $cle, bool $defaut): bool</code>
+  <p> Valeur booléenne : 1/true/oui/yes/on (casse ignorée).</p>
+</div><div class="method" id="m-reinitialiser">
+  <code>public static function reinitialiser(): void</code>
+  <p> Oublie le cache (tests, bascule de fichier à chaud).</p>
+</div><div class="method" id="m-analyser">
+  <code>public static function analyser(string $chemin): array</code>
+  <p>Analyse d&#x27;un fichier `.env`.<br><br>@return array&lt;string,string&gt;</p>
+</div>
+  </section>
+</body>
+</html>

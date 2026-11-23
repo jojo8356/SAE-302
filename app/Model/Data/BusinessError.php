@@ -19,6 +19,7 @@ namespace App\Model\Data;
 
 final class BusinessError extends \RuntimeException
 {
+    /** Construit l'exception métier associée au code normalisé SNAKE_UPPER. */
     public function __construct(public readonly string $businessCode)
     {
         parent::__construct($businessCode);

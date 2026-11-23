@@ -16,6 +16,7 @@ use App\Security\Auth;
 
 final class CategorieAdminController extends Controller
 {
+    /** Affiche la liste des catégories et le compteur de produits associés. */
     public function index(): void
     {
         Auth::exigeAdmin();
@@ -28,6 +29,7 @@ final class CategorieAdminController extends Controller
         ], 'Back-office — catégories');
     }
 
+    /** Crée une nouvelle catégorie après validation CSRF et contrôle d'accès admin. */
     public function creer(): void
     {
         $this->verifierCsrf();
@@ -55,6 +57,7 @@ final class CategorieAdminController extends Controller
         $this->rediriger('/admin/categories');
     }
 
+    /** Met à jour le libellé, le slug et la description d'une catégorie existante. */
     public function modifier(string $id): void
     {
         $this->verifierCsrf();

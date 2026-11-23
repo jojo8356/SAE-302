@@ -1,5 +1,14 @@
 <?php
+
 declare(strict_types=1);
+
+/**
+ * VueMentionsLegales — Identification LCEN et cadre pédagogique (route GET /mentions-legales).
+ *
+ * @package App\View\Home
+ * @see     \App\Controller\HomeController::mentionsLegales()
+ * @see     docs/12-information-juridique.md
+ */
 ?>
 <article class="legal">
     <header><p class="legal__sur-titre">Informations légales</p><h1>Mentions légales</h1>

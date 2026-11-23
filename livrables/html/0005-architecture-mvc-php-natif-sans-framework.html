@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : ADR-0005 : Construire une architecture MVC en PHP 8.2+ natif sans framework lourd">
+<title>ADR-0005 : Construire une architecture MVC en PHP 8.2+ natif sans framework lourd — MiniShop (SAÉ 302)</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
+  color: var(--encre);
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
+}
+pre {
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
+}
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
+}
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
+@media print {
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/adr/0005-architecture-mvc-php-natif-sans-framework.md</code></div>
+</header>
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#statut">Statut</a></li>
+<li><a href="#contexte-et-probleme">Contexte et problème</a></li>
+<li><a href="#decision-drivers">Decision Drivers</a></li>
+<li><a href="#options-considerees">Options considérées</a><ul>
+<li><a href="#option-1-framework-complet-symfony-ou-laravel">Option 1 : Framework complet (Symfony ou Laravel)</a></li>
+<li><a href="#option-2-scripts-php-proceduraux-par-page-cataloguephp-panierphp">Option 2 : Scripts PHP procéduraux par page (catalogue.php, panier.php)</a></li>
+<li><a href="#option-3-architecture-mvc-legere-en-php-82-natif-avec-controleur-frontal-unique">Option 3 : Architecture MVC légère en PHP 8.2+ natif avec contrôleur frontal unique</a></li>
+</ul>
+</li>
+<li><a href="#decision">Décision</a></li>
+<li><a href="#consequences">Conséquences</a><ul>
+<li><a href="#positives">Positives</a></li>
+<li><a href="#negatives">Négatives</a></li>
+<li><a href="#neutres">Neutres</a></li>
+</ul>
+</li>
+<li><a href="#liens">Liens</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="adr-0005-construire-une-architecture-mvc-en-php-82-natif-sans-framework-lourd">ADR-0005 : Construire une architecture MVC en PHP 8.2+ natif sans framework lourd<a class="headerlink" href="#adr-0005-construire-une-architecture-mvc-en-php-82-natif-sans-framework-lourd" title="Permanent link"></a></h1>
+<h2 id="statut">Statut<a class="headerlink" href="#statut" title="Permanent link"></a></h2>
+<p>Accepted — Date: 2026-09-12 · Auteurs: Johan Polsinelli, Chahd Gouiaa · Reviewers: Équipe MiniShop</p>
+<h2 id="contexte-et-probleme">Contexte et problème<a class="headerlink" href="#contexte-et-probleme" title="Permanent link"></a></h2>
+<p>Au démarrage de la SAÉ 302, l’équipe devait choisir le socle applicatif PHP pour bâtir une boutique complète (catalogue, panier, commandes, back-office RBAC, double persistance SQL/JSON). Ce choix conditionne la maîtrise de la sécurité, le déploiement sur l’hébergement pédagogique LineServ et l’exécution sous PHP-WASM pour les tests E2E.</p>
+<h2 id="decision-drivers">Decision Drivers<a class="headerlink" href="#decision-drivers" title="Permanent link"></a></h2>
+<ul>
+<li>Maîtriser intégralement chaque couche HTTP, routage, session, CSRF et SQL sans boîte noire (objectif BUT2)</li>
+<li>Supprimer toute dépendance runtime tierce (<code>vendor/</code> absent en production)</li>
+<li>Assurer l’exécution directe sur PHP <code>8.2+</code> standard, LineServ et PHP-WASM avec faible latence</li>
+</ul>
+<h2 id="options-considerees">Options considérées<a class="headerlink" href="#options-considerees" title="Permanent link"></a></h2>
+<h3 id="option-1-framework-complet-symfony-ou-laravel">Option 1 : Framework complet (Symfony ou Laravel)<a class="headerlink" href="#option-1-framework-complet-symfony-ou-laravel" title="Permanent link"></a></h3>
+<p><strong>Avantages</strong> : outillage riche intégré (routeur, formulaires, sécurité, CLI, migrations) et conventions standards.
+<strong>Inconvénients</strong> : masque PDO, les sessions et la mécanique CSRF derrière des abstractions lourdes, embarque des centaines de paquets <code>vendor/</code> et complique PHP-WASM / LineServ.</p>
+<h3 id="option-2-scripts-php-proceduraux-par-page-cataloguephp-panierphp">Option 2 : Scripts PHP procéduraux par page (<code>catalogue.php</code>, <code>panier.php</code>)<a class="headerlink" href="#option-2-scripts-php-proceduraux-par-page-cataloguephp-panierphp" title="Permanent link"></a></h3>
+<p><strong>Avantages</strong> : démarrage immédiat sans routeur ni autoloader.
+<strong>Inconvénients</strong> : duplique les contrôles d’accès, CSRF et en-têtes HTTP sur chaque fichier et couple HTML, métier et SQL.</p>
+<h3 id="option-3-architecture-mvc-legere-en-php-82-natif-avec-controleur-frontal-unique">Option 3 : Architecture MVC légère en PHP 8.2+ natif avec contrôleur frontal unique<a class="headerlink" href="#option-3-architecture-mvc-legere-en-php-82-natif-avec-controleur-frontal-unique" title="Permanent link"></a></h3>
+<p><strong>Avantages</strong> : point d’entrée unique (<code>public/index.php</code>), routeur explicite (<code>App\Router</code>), séparation <code>Controller</code>/<code>Repository</code>/<code>Model</code>/<code>Security</code>/<code>Service</code> sous <code>app/</code>, autoloader PSR-4 léger sans <code>vendor/</code> runtime.
+<strong>Inconvénients</strong> : l’équipe développe et maintient elle-même ses briques transversales (routeur, CSRF, échappement <code>e()</code>, chargement SQL), avec une convention interne à découvrir pour un nouvel arrivant.</p>
+<h2 id="decision">Décision<a class="headerlink" href="#decision" title="Permanent link"></a></h2>
+<p><strong>Nous choisissons une architecture MVC en PHP 8.2+ natif sans framework tiers en production</strong>, articulée autour de <code>public/index.php</code> et d’espaces de noms PSR-4 sous <code>app/</code>.</p>
+<h2 id="consequences">Conséquences<a class="headerlink" href="#consequences" title="Permanent link"></a></h2>
+<h3 id="positives">Positives<a class="headerlink" href="#positives" title="Permanent link"></a></h3>
+<ul>
+<li>Zéro dépendance runtime tierce à patcher, empreinte mémoire minimale et exécution directe en PHP-WASM.</li>
+<li>Séparation nette permettant les tests isolés, la sécurité statique (<code>11/11</code>) et la double persistance (<code>ADR-0001</code>).</li>
+</ul>
+<h3 id="negatives">Négatives<a class="headerlink" href="#negatives" title="Permanent link"></a></h3>
+<ul>
+<li>Maintenance interne du routeur, des aides de vues et du moteur de rendu ; une évolution vers une API REST complexe ou multi-équipes demanderait une migration de la couche <code>Controller</code>/<code>Router</code>.</li>
+</ul>
+<h3 id="neutres">Neutres<a class="headerlink" href="#neutres" title="Permanent link"></a></h3>
+<ul>
+<li>PHPUnit reste utilisable en développement et en CI (<code>tests/phpunit/</code>) sans être embarqué en production.</li>
+</ul>
+<h2 id="liens">Liens<a class="headerlink" href="#liens" title="Permanent link"></a></h2>
+<ul>
+<li><code>ARCHITECTURE.md</code> · <code>STACK.md</code> · <code>public/index.php</code> · <code>app/Router.php</code></li>
+</ul>
+<footer class="doc">
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/adr/0005-architecture-mvc-php-natif-sans-framework.md</code> · 0 figure(s) intégrée(s).</p>
+</footer>
+</main>
+</body>
+</html>

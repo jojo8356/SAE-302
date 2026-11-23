@@ -12,6 +12,12 @@ Les mêmes fichiers existent dans `dist/` (répertoire généré, hors Git, cf. 
 
 ## Documents
 
+- **0000-utiliser-les-adr** — [HTML](html/0000-utiliser-les-adr.html) · [PDF](pdf/0000-utiliser-les-adr.pdf) · [Word](docx/0000-utiliser-les-adr.docx)
+- **0001-double-persistance-sqlstore-jsonstore** — [HTML](html/0001-double-persistance-sqlstore-jsonstore.html) · [PDF](pdf/0001-double-persistance-sqlstore-jsonstore.pdf) · [Word](docx/0001-double-persistance-sqlstore-jsonstore.docx)
+- **0002-procedures-stockees-triggers-mariadb** — [HTML](html/0002-procedures-stockees-triggers-mariadb.html) · [PDF](pdf/0002-procedures-stockees-triggers-mariadb.pdf) · [Word](docx/0002-procedures-stockees-triggers-mariadb.docx)
+- **0003-authentification-session-rbac-hors-ligne** — [HTML](html/0003-authentification-session-rbac-hors-ligne.html) · [PDF](pdf/0003-authentification-session-rbac-hors-ligne.pdf) · [Word](docx/0003-authentification-session-rbac-hors-ligne.docx)
+- **0004-documentation-as-code-multi-formats** — [HTML](html/0004-documentation-as-code-multi-formats.html) · [PDF](pdf/0004-documentation-as-code-multi-formats.pdf) · [Word](docx/0004-documentation-as-code-multi-formats.docx)
+- **0005-architecture-mvc-php-natif-sans-framework** — [HTML](html/0005-architecture-mvc-php-natif-sans-framework.html) · [PDF](pdf/0005-architecture-mvc-php-natif-sans-framework.pdf) · [Word](docx/0005-architecture-mvc-php-natif-sans-framework.docx)
 - **01-cahier-des-charges-MiniShop** — [HTML](html/01-cahier-des-charges-MiniShop.html) · [PDF](pdf/01-cahier-des-charges-MiniShop.pdf) · [Word](docx/01-cahier-des-charges-MiniShop.docx)
 - **02-document-tests-validation** — [HTML](html/02-document-tests-validation.html) · [PDF](pdf/02-document-tests-validation.pdf) · [Word](docx/02-document-tests-validation.docx)
 - **03-support-soutenance** — [HTML](html/03-support-soutenance.html) · [PDF](pdf/03-support-soutenance.pdf) · [Word](docx/03-support-soutenance.docx)
@@ -40,15 +46,24 @@ Les mêmes fichiers existent dans `dist/` (répertoire généré, hors Git, cf. 
 - **25-bilan-de-projet-methode-et-modele** — [HTML](html/25-bilan-de-projet-methode-et-modele.html) · [PDF](pdf/25-bilan-de-projet-methode-et-modele.pdf) · [Word](docx/25-bilan-de-projet-methode-et-modele.docx)
 - **26-transition-exploitation-maintenance-build-to-run** — [HTML](html/26-transition-exploitation-maintenance-build-to-run.html) · [PDF](pdf/26-transition-exploitation-maintenance-build-to-run.pdf) · [Word](docx/26-transition-exploitation-maintenance-build-to-run.docx)
 - **27-rapport-universitaire-projet-minishop** — [HTML](html/27-rapport-universitaire-projet-minishop.html) · [PDF](pdf/27-rapport-universitaire-projet-minishop.pdf) · [Word](docx/27-rapport-universitaire-projet-minishop.docx)
+- **28-documentation-qui-survit-minishop** — [HTML](html/28-documentation-qui-survit-minishop.html) · [PDF](pdf/28-documentation-qui-survit-minishop.pdf) · [Word](docx/28-documentation-qui-survit-minishop.docx)
+- **CHANGELOG** — [HTML](html/CHANGELOG.html) · [PDF](pdf/CHANGELOG.pdf) · [Word](docx/CHANGELOG.docx)
 - **DA** — [HTML](html/DA.html) · [PDF](pdf/DA.pdf) · [Word](docx/DA.docx)
 - **README** — [HTML](html/README.html) · [PDF](pdf/README.pdf) · [Word](docx/README.docx)
+- **adr-index** — [HTML](html/adr-index.html) · [PDF](pdf/adr-index.pdf) · [Word](docx/adr-index.docx)
 - **annexe-cas-usage** — [HTML](html/annexe-cas-usage.html) · [PDF](pdf/annexe-cas-usage.pdf) · [Word](docx/annexe-cas-usage.docx)
 - **annexe-enf** — [HTML](html/annexe-enf.html) · [PDF](pdf/annexe-enf.pdf) · [Word](docx/annexe-enf.docx)
 - **annexe-gitlab** — [HTML](html/annexe-gitlab.html) · [PDF](pdf/annexe-gitlab.pdf) · [Word](docx/annexe-gitlab.docx)
 - **annexe-php-patterns** — [HTML](html/annexe-php-patterns.html) · [PDF](pdf/annexe-php-patterns.pdf) · [Word](docx/annexe-php-patterns.docx)
 - **annexe-sql** — [HTML](html/annexe-sql.html) · [PDF](pdf/annexe-sql.pdf) · [Word](docx/annexe-sql.docx)
+- **exploitation-index** — [HTML](html/exploitation-index.html) · [PDF](pdf/exploitation-index.pdf) · [Word](docx/exploitation-index.docx)
+- **fiche-service-minishop** — [HTML](html/fiche-service-minishop.html) · [PDF](pdf/fiche-service-minishop.pdf) · [Word](docx/fiche-service-minishop.docx)
+- **guide-postmortem-blameless** — [HTML](html/guide-postmortem-blameless.html) · [PDF](pdf/guide-postmortem-blameless.pdf) · [Word](docx/guide-postmortem-blameless.docx)
+- **postmortem-modele** — [HTML](html/postmortem-modele.html) · [PDF](pdf/postmortem-modele.pdf) · [Word](docx/postmortem-modele.docx)
 - **pv-recette** — [HTML](html/pv-recette.html) · [PDF](pdf/pv-recette.pdf) · [Word](docx/pv-recette.docx)
 - **requetes-sql-a-ecrire** — [HTML](html/requetes-sql-a-ecrire.html) · [PDF](pdf/requetes-sql-a-ecrire.pdf) · [Word](docx/requetes-sql-a-ecrire.docx)
+- **runbook-incidents** — [HTML](html/runbook-incidents.html) · [PDF](pdf/runbook-incidents.pdf) · [Word](docx/runbook-incidents.docx)
+- **runbook-sauvegarde-restauration** — [HTML](html/runbook-sauvegarde-restauration.html) · [PDF](pdf/runbook-sauvegarde-restauration.pdf) · [Word](docx/runbook-sauvegarde-restauration.docx)
 
 ## Régénérer
 

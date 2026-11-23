@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Repository\CategorieRepository — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Repository · <span>app/Repository/CategorieRepository.php</span></div>
+    <h1>CategorieRepository</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — catégories (portage de sp_save_category, sp_delete_category).
+RB-08 : une catégorie peut contenir 0..N produits (catégorie vide autorisée).</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (6)</h2>
+    <div class="method" id="m-__construct">
+  <code>public function __construct(private readonly StoreInterface $store)</code>
+  <p> Injecte le store abstrait (SqlStore ou JsonStore ; voir ADR-0001).</p>
+</div><div class="method" id="m-find">
+  <code>public function find(int $idCategorie): ?array</code>
+  <p> Catégorie par id.</p>
+</div><div class="method" id="m-findBySlug">
+  <code>public function findBySlug(string $slug): ?array</code>
+  <p> Catégorie par slug (routes /catalogue?cat=…, fiche produit).</p>
+</div><div class="method" id="m-listerAvecCompteur">
+  <code>public function listerAvecCompteur(): array</code>
+  <p>Toutes les catégories avec le nombre de produits VISIBLES<br>(EF-VIS-01 « consulter les catégories »).</p>
+</div><div class="method" id="m-saveCategory">
+  <code>public function saveCategory(?int $idCategorie, string $nom, ?string $slug, ?string $description): int</code>
+  <p>sp_save_category — création / renommage (EF-ADM-03).<br>p_id_categorie null =&gt; création. Le slug vide est normalisé<br>(portage du trigger trg_categorie_slug, ici en amont pour l&#x27;app).<br><br>Unicité (uk_categorie_nom / uk_categorie_slug) : un nom — ou un<br>slug — déjà porté par une AUTRE catégorie est REFUSÉ avant toute<br>écriture (NOM_DEJA_UTILISE / SLUG_CATEGORIE_DEJA_UTILISE), en<br>création comme en renommage. La comparaison passe par le magasin<br>(Filter::eq = insensible casse/accents, comme la collation SQL).<br>Divergence assumée avec l&#x27;ancien portage « ON DUPLICATE KEY<br>UPDATE » : fusionner en silence écrasait la description de la<br>catégorie existante (bug « Admin &gt; Catégories : un doublon écrase<br>la catégorie existante »), alors que l&#x27;attendu métier est un refus.</p>
+</div><div class="method" id="m-deleteCategory">
+  <code>public function deleteCategory(int $idCategorie): void</code>
+  <p>sp_delete_category — RB-14 : on ne supprime pas une catégorie occupée.</p>
+</div>
+  </section>
+</body>
+</html>

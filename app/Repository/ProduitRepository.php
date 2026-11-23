@@ -41,10 +41,12 @@ final class ProduitRepository
         };
     }
 
+    /** Injecte le store abstrait (SqlStore ou JsonStore ; voir ADR-0001). */
     public function __construct(private readonly StoreInterface $store)
     {
     }
 
+    /** Retourne un produit par son identifiant primaire, qu'il soit visible ou masqué. */
     public function find(int $idProduit): ?array
     {
         return $this->store->find('produit', $idProduit);

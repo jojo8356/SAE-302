@@ -1,5 +1,14 @@
 <?php
+
 declare(strict_types=1);
+
+/**
+ * VueCookies — Information sur les cookies de session et traceurs (route GET /cookies).
+ *
+ * @package App\View\Home
+ * @see     \App\Controller\HomeController::cookies()
+ * @see     docs/12-information-juridique.md
+ */
 ?>
 <article class="legal">
     <header><p class="legal__sur-titre">Vos données</p><h1>Cookies et traceurs</h1><p class="chapo">Ce que la maquette utilise réellement.</p></header>

@@ -11,6 +11,7 @@ final class AlternativeInformative implements AlternativeImage
 {
     private readonly string $description;
 
+    /** Valide que le texte alternatif descriptif n'est pas vide. */
     public function __construct(string $description)
     {
         $description = trim($description);
@@ -20,6 +21,7 @@ final class AlternativeInformative implements AlternativeImage
         $this->description = $description;
     }
 
+    /** Retourne le texte alternatif validé non vide de l'image informative. */
     public function texte(): string
     {
         return $this->description;

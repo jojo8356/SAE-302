@@ -35,6 +35,7 @@ final class ParametreAdminController extends Controller
         'conservation_compte' => 'Délai des comptes inactifs sans commande (mois)',
     ];
 
+    /** Affiche le formulaire d'édition des paramètres commerciaux et légaux. */
     public function index(): void
     {
         Auth::exigeAdmin();
@@ -47,6 +48,7 @@ final class ParametreAdminController extends Controller
         ], 'Back-office — paramètres');
     }
 
+    /** Enregistre les paramètres commerciaux validés côté serveur en traçant l'acteur admin. */
     public function enregistrer(): void
     {
         $this->verifierCsrf();

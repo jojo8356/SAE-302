@@ -46,6 +46,12 @@ MOTIFS = [
 
 
 def ombrer(element, couleur: str) -> None:
+    """Applique un fond de couleur hexadécimale sur une cellule ou un paragraphe Word.
+
+    Args:
+        element: Nœud XML ``w:tc`` ou ``w:p``.
+        couleur: Code couleur hexadécimal sur 6 caractères sans ``#``.
+    """
     proprietes = element.get_or_add_tcPr() if element.tag.endswith("tc") else element.get_or_add_pPr()
     shd = OxmlElement("w:shd")
     shd.set(qn("w:val"), "clear")
@@ -55,6 +61,14 @@ def ombrer(element, couleur: str) -> None:
 
 
 def bordure_paragraphe(paragraphe, cote: str, couleur: str, taille_eighths: int) -> None:
+    """Ajoute une bordure simple sur un côté d'un paragraphe Word.
+
+    Args:
+        paragraphe: Paragraphe ``python-docx`` cible.
+        cote: Nom du côté (``top``, ``bottom``, ``left`` ou ``right``).
+        couleur: Code couleur hexadécimal sur 6 caractères.
+        taille_eighths: Épaisseur exprimée en huitièmes de point.
+    """
     pPr = paragraphe._p.get_or_add_pPr()
     pBdr = pPr.find(qn("w:pBdr"))
     if pBdr is None:
@@ -69,6 +83,11 @@ def bordure_paragraphe(paragraphe, cote: str, couleur: str, taille_eighths: int)
 
 
 def style_tableau_booktabs(tableau) -> None:
+    """Applique des filets horizontaux style booktabs sur un tableau Word.
+
+    Args:
+        tableau: Tableau ``python-docx`` à mettre en forme.
+    """
     tblPr = tableau._tbl.tblPr
     tblBorders = OxmlElement("w:tblBorders")
     for nom, val, sz, color in (
@@ -90,6 +109,11 @@ def style_tableau_booktabs(tableau) -> None:
 
 
 def bordure_ligne_entete(ligne) -> None:
+    """Trace un filet inférieur marqué sous la ligne d'en-tête d'un tableau Word.
+
+    Args:
+        ligne: Première ligne du tableau ``python-docx``.
+    """
     for cellule in ligne.cells:
         tcPr = cellule._tc.get_or_add_tcPr()
         tcBorders = OxmlElement("w:tcBorders")
@@ -103,6 +127,12 @@ def bordure_ligne_entete(ligne) -> None:
 
 
 def ajouter_champ(paragraphe, nom_champ: str) -> None:
+    """Insère un champ dynamique Word (``PAGE``, ``NUMPAGES``) dans un paragraphe.
+
+    Args:
+        paragraphe: Paragraphe Word récepteur.
+        nom_champ: Nom du champ OOXML à évaluer.
+    """
     run = paragraphe.add_run()
     run.font.name = "Calibri"
     run.font.size = Pt(8.5)
@@ -123,6 +153,18 @@ def ajouter_champ(paragraphe, nom_champ: str) -> None:
 
 
 def segments(texte: str) -> list[tuple[str, str]]:
+    """Découpe une ligne Markdown en jetons typés (texte, code, gras, italique).
+
+    Args:
+        texte: Chaîne Markdown inline à analyser.
+
+    Returns:
+        Liste de couples ``(type_segment, contenu)``.
+
+    Example:
+        >>> segments("Mot **gras** et `code`")
+        [('texte', 'Mot '), ('gras', 'gras'), ('texte', ' et '), ('code', 'code')]
+    """
     sortie: list[tuple[str, str]] = []
     reste = texte
     while reste:
@@ -144,6 +186,15 @@ def segments(texte: str) -> list[tuple[str, str]]:
 
 def ecrire_riche(paragraphe, texte: str, taille: float = 10.5, couleur: RGBColor = ENCRE,
                  police: str = "Georgia") -> None:
+    """Écrit un texte Markdown enrichi dans un paragraphe Word.
+
+    Args:
+        paragraphe: Paragraphe Word cible.
+        texte: Texte pouvant contenir du gras, de l'italique et du code inline.
+        taille: Taille de police en points.
+        couleur: Couleur par défaut des runs de texte.
+        police: Famille de police principale.
+    """
     for genre, contenu in segments(texte):
         run = paragraphe.add_run(contenu)
         run.font.name = police
@@ -160,6 +211,13 @@ def ecrire_riche(paragraphe, texte: str, taille: float = 10.5, couleur: RGBColor
 
 
 def styler_document(document: Document, titre_courant: str, ref_source: str) -> None:
+    """Configure la mise en page A4, les styles et l'en-tête/pied Word.
+
+    Args:
+        document: Document ``python-docx`` nouvellement créé.
+        titre_courant: Titre affiché dans l'en-tête des pages intérieures.
+        ref_source: Chemin relatif du fichier Markdown d'origine.
+    """
     section = document.sections[0]
     section.page_width = Cm(21)
     section.page_height = Cm(29.7)
@@ -228,6 +286,12 @@ def styler_document(document: Document, titre_courant: str, ref_source: str) -> 
 
 
 def ajouter_code(document: Document, lignes: list[str]) -> None:
+    """Insère un bloc de code encadré en police monospace dans le document Word.
+
+    Args:
+        document: Document ``python-docx`` cible.
+        lignes: Lignes brutes du bloc de code.
+    """
     if not lignes:
         return
     paragraphe = document.add_paragraph()
@@ -247,6 +311,12 @@ def ajouter_code(document: Document, lignes: list[str]) -> None:
 
 
 def ajouter_citation(document: Document, lignes: list[str]) -> None:
+    """Insère un encadré de citation ombré avec filet gauche dans le document Word.
+
+    Args:
+        document: Document ``python-docx`` cible.
+        lignes: Lignes de citation sans le préfixe ``>``.
+    """
     if not lignes:
         return
     paragraphe = document.add_paragraph()
@@ -263,6 +333,12 @@ def ajouter_citation(document: Document, lignes: list[str]) -> None:
 
 
 def ajouter_tableau(document: Document, lignes: list[list[str]]) -> None:
+    """Ajoute un tableau Markdown mis en forme (style booktabs) dans le document Word.
+
+    Args:
+        document: Document ``python-docx`` cible.
+        lignes: Lignes découpées du tableau Markdown (en-tête, séparateur, corps).
+    """
     if len(lignes) < 2:
         return
     entetes = [nettoyer_cellule(c) for c in lignes[0]]
@@ -296,12 +372,32 @@ def ajouter_tableau(document: Document, lignes: list[list[str]]) -> None:
 
 
 def nettoyer_cellule(texte: str) -> str:
+    """Supprime le marquage inline gras/italique/code d'une cellule de tableau.
+
+    Args:
+        texte: Contenu brut d'une cellule Markdown.
+
+    Returns:
+        Chaîne nettoyée sans délimiteurs Markdown superflus.
+
+    Example:
+        >>> nettoyer_cellule(" **SQL** et `PDO` ")
+        'SQL et PDO'
+    """
     texte = re.sub(r"\*\*(.+?)\*\*", r"\1", texte)
     texte = re.sub(r"`([^`]+)`", r"\1", texte)
     return re.sub(r"(?<![\w*])\*([^*\n]+)\*(?![\w*])", r"\1", texte).strip()
 
 
 def ajouter_image(document: Document, source: Path, chemin: str, legende: str) -> None:
+    """Intègre une image locale centrée avec sa légende dans le document Word.
+
+    Args:
+        document: Document ``python-docx`` cible.
+        source: Chemin du fichier Markdown source.
+        chemin: Chemin relatif vers l'image.
+        legende: Texte de légende affiché sous la figure.
+    """
     cible = (source.parent / chemin).resolve()
     if not cible.is_file():
         cible = (RACINE / chemin).resolve()
@@ -326,6 +422,15 @@ def ajouter_image(document: Document, source: Path, chemin: str, legende: str) -
 
 
 def convertir(source: Path, sortie: Path) -> tuple[int, int]:
+    """Convertit un fichier Markdown en document Word ``.docx``.
+
+    Args:
+        source: Chemin du fichier Markdown source.
+        sortie: Chemin du fichier ``.docx`` à produire.
+
+    Returns:
+        Tuple ``(nombre_blocs, nombre_images)`` insérés.
+    """
     markdown = source.read_text(encoding="utf-8")
     markdown = markdown.replace("- [x] ", "- [OK] ").replace("- [ ] ", "- [ ] ").replace("- [~] ", "- [~] ")
     premier_titre = re.search(r"^#\s+(.+)$", markdown, flags=re.M)
@@ -345,6 +450,7 @@ def convertir(source: Path, sortie: Path) -> tuple[int, int]:
     paragraphes = 0
 
     def vider_table() -> None:
+        """Écrit le tableau accumulé puis réinitialise le tampon."""
         nonlocal table, paragraphes
         if table:
             ajouter_tableau(document, table)
@@ -352,6 +458,7 @@ def convertir(source: Path, sortie: Path) -> tuple[int, int]:
             table = []
 
     def vider_citation() -> None:
+        """Écrit l'encadré de citation accumulé puis réinitialise le tampon."""
         nonlocal citation, paragraphes
         if citation:
             ajouter_citation(document, citation)
@@ -389,6 +496,11 @@ def convertir(source: Path, sortie: Path) -> tuple[int, int]:
             index += 1
             continue
         vider_citation()
+
+        if re.match(r"^\s*(\\newpage|<!--\s*pagebreak\s*-->)\s*$", brute):
+            document.add_page_break()
+            index += 1
+            continue
 
         trouve = re.match(r"^(#{1,4})\s+(.*)$", brute)
         if trouve:
@@ -462,6 +574,14 @@ def convertir(source: Path, sortie: Path) -> tuple[int, int]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Point d'entrée CLI pour la conversion Markdown vers Word DOCX.
+
+    Args:
+        argv: Arguments de ligne de commande optionnels.
+
+    Returns:
+        Code de sortie 0 en cas de succès, 2 si la source est introuvable.
+    """
     analyseur = argparse.ArgumentParser(description="Markdown → DOCX académique (SAÉ 302 — MiniShop).")
     analyseur.add_argument("source", type=Path)
     analyseur.add_argument("--out", type=Path)

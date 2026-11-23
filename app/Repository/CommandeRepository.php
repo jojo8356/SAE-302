@@ -35,6 +35,7 @@ use UnexpectedValueException;
 
 final class CommandeRepository
 {
+    /** Injecte le store et le dépôt de paramètres (frais/franchise de port). */
     public function __construct(
         private readonly StoreInterface $store,
         ?ParametreRepository $parametres = null,
@@ -53,11 +54,13 @@ final class CommandeRepository
 
     // ------------------------------------------------------------ lecture
 
+    /** Retourne une commande par son identifiant primaire, ou null. */
     public function find(int $idCommande): ?array
     {
         return $this->store->find('commande', $idCommande);
     }
 
+    /** Retourne une commande par son numéro fonctionnel (CMD2026-NNNNNN), ou null. */
     public function findByNumero(string $numero): ?array
     {
         return $this->store->findOne('commande', [Filter::eq('numero', $numero)]);

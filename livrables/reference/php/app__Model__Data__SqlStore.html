@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Model\Data\SqlStore — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Model\Data · <span>app/Model/Data/SqlStore.php</span></div>
+    <h1>SqlStore</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — pilote SQL (MySQL / MariaDB via PDO).
+
+Implémente le contrat commun StoreInterface et expose séparément les
+capacités SQL spécialisées (procédures stockées et verrouillage de lignes).
+Les contrôleurs et repositories consomment ces capacités via des interfaces,
+sans dépendre de cette classe concrète. Le pilote est choisi par la configuration
+(`storage_driver = &#x27;sql&#x27;`, cf. StorageDriver) :
+
+  « SQL »  → SqlStore   : MySQL/MariaDB, règles appliquées par la base
+                          (CHECK, clés étrangères, 16 déclencheurs,
+                          1 fonction + 18 procédures de sql/01→03)
+  « JSON » → JsonStore  : moteur secondaire, règles appliquées en PHP
+
+Principes de sécurité (SEC-01) :
+  - AUCUNE valeur n&#x27;est concaténée dans le SQL : tout passe par des
+    marqueurs `?` et des requêtes préparées natives
+    (PDO::ATTR_EMULATE_PREPARES = false) ;
+  - les noms de tables et de colonnes sont validés contre le SCHÉMA
+    (liste blanche Schema::tables()), jamais contre une entrée utilisateur ;
+  - les opérateurs sont limités à une table de correspondance fermée.
+
+Transactions : `beginTransaction/commit/rollback` sont délégués à PDO.
+L&#x27;acteur courant est mémorisé en PHP : il sert à appeler les procédures
+qui tracent l&#x27;auteur (historique de statut, mouvements de stock).</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (26)</h2>
+    <div class="method" id="m-__construct">
+  <code>public function __construct(private readonly ?PDO $connexionFournie = null)</code>
+  <p> Initialise le store SQL, optionnellement avec une connexion PDO injectée.</p>
+</div><div class="method" id="m-pdo">
+  <code>public function pdo(): PDO</code>
+  <p> Retourne l&#x27;instance PDO configurée en UTC (lazy init ou connexion injectée).</p>
+</div><div class="method" id="m-select">
+  <code>public function select(string $table, array $spec = []): array</code>
+  <p> @param array{where?: array, order?: array, limit?: int, offset?: int, fields?: array} $spec</p>
+</div><div class="method" id="m-findOne">
+  <code>public function findOne(string $table, array $where = []): ?array</code>
+  <p> Retourne la première ligne correspondant au prédicat PDO, ou null.</p>
+</div><div class="method" id="m-find">
+  <code>public function find(string $table, int|string $pk): ?array</code>
+  <p> Recherche une ligne par sa clé primaire via requête préparée.</p>
+</div><div class="method" id="m-findForUpdate">
+  <code>public function findForUpdate(string $table, int|string $pk): ?array</code>
+  <p> Lecture verrouillante réservée aux transactions métier SQL.</p>
+</div><div class="method" id="m-count">
+  <code>public function count(string $table, array $where = []): int</code>
+  <p> Compte le nombre de lignes satisfaisant la clause WHERE préparée.</p>
+</div><div class="method" id="m-sum">
+  <code>public function sum(string $table, string $column, array $where = []): float</code>
+  <p> Calcule la somme SQL d&#x27;une colonne numérique via COALESCE(SUM(...), 0).</p>
+</div><div class="method" id="m-exists">
+  <code>public function exists(string $table, array $where = []): bool</code>
+  <p> Vérifie l&#x27;existence d&#x27;au moins une ligne correspondant au prédicat.</p>
+</div><div class="method" id="m-all">
+  <code>public function all(string $table): array</code>
+  <p> @return array&lt;int|string, array&lt;string,mixed&gt;&gt;</p>
+</div><div class="method" id="m-insert">
+  <code>public function insert(string $table, array $row): int</code>
+  <p> @param array&lt;string,mixed&gt; $row</p>
+</div><div class="method" id="m-update">
+  <code>public function update(string $table, array $where, array $changes): int</code>
+  <p> @param array&lt;string,mixed&gt; $changes</p>
+</div><div class="method" id="m-delete">
+  <code>public function delete(string $table, array $where): int</code>
+  <p> Supprime les lignes correspondant au prédicat WHERE (refusé si vide pour éviter un vidage accidentel).</p>
+</div><div class="method" id="m-nextId">
+  <code>public function nextId(string $table): int</code>
+  <p> Estime le prochain identifiant disponible sur une table SQL.</p>
+</div><div class="method" id="m-beginTransaction">
+  <code>public function beginTransaction(): void</code>
+  <p> Démarre une transaction PDO au premier niveau d&#x27;imbrication.</p>
+</div><div class="method" id="m-commit">
+  <code>public function commit(): void</code>
+  <p> Valide la transaction SQL lorsque la profondeur d&#x27;imbrication revient à zéro.</p>
+</div><div class="method" id="m-rollback">
+  <code>public function rollback(): void</code>
+  <p> Annule la transaction PDO ouverte en cas d&#x27;erreur métier ou SQL.</p>
+</div><div class="method" id="m-inTransaction">
+  <code>public function inTransaction(): bool</code>
+  <p> Indique si une transaction SQL est actuellement ouverte dans ce store.</p>
+</div><div class="method" id="m-transactional">
+  <code>public function transactional(callable $work): mixed</code>
+  <p> Exécute $work dans une transaction SQL avec rollback automatique sur exception (voir ADR-0001).</p>
+</div><div class="method" id="m-setActor">
+  <code>public function setActor(array $actor): void</code>
+  <p> @param array{id?: int|null, role?: &#x27;CLIENT&#x27;|&#x27;ADMIN&#x27;|&#x27;SYSTEME&#x27;, nom?: string|null} $actor</p>
+</div><div class="method" id="m-actor">
+  <code>public function actor(): array</code>
+  <p> @return array{id?: int|null, role?: string, nom?: string|null}</p>
+</div><div class="method" id="m-appeler">
+  <code>public function appeler(string $procedure, array $entrees = [], array $sorties = []): array</code>
+  <p>Appelle une procédure stockée de sql/02 et retourne ses paramètres OUT.<br><br>Les procédures sont la couche métier de la base (RB-04, RB-05, RB-06,<br>RB-11, RB-15, RB-18, RB-20) : les écritures critiques passent par elles<br>quand ce pilote est actif (voir CommandeRepository / ProduitRepository).<br><br>  $store-&gt;appeler(&#x27;sp_cancel_order&#x27;, [$idCommande, $idClient], [&#x27;p_code_retour&#x27;]);<br><br>@param list&lt;mixed&gt;  $entrees valeurs des paramètres IN, dans l&#x27;ordre<br>@param list&lt;string&gt; $sorties noms des paramètres OUT à récupérer<br>@return array&lt;string,mixed&gt;</p>
+</div><div class="method" id="m-callProcedureWithResults">
+  <code>public function callProcedureWithResults(string $procedure, array $entrees = [], array $sorties = []): array</code>
+  <p>@param list&lt;mixed&gt; $entrees<br>@param list&lt;string&gt; $sorties noms des paramètres OUT à récupérer<br>@return array{results: list&lt;list&lt;array&lt;string,mixed&gt;&gt;&gt;, out: array&lt;string,mixed&gt;}</p>
+</div><div class="method" id="m-callProcedure">
+  <code>public function callProcedure(string $procedure, array $entrees = [], array $sorties = []): array</code>
+  <p>`CALL` d&#x27;une procédure, paramètres OUT retournés sous la clé `out`.<br><br>Forme attendue par les dépôts (App\Repository\*) qui passent par les<br>procédures stockées quand le pilote SQL est actif :<br><br>  $r = $store-&gt;callProcedure(&#x27;sp_create_order&#x27;, [$idClient, $adresse],<br>                             [&#x27;id_commande&#x27;, &#x27;numero&#x27;]);<br>  $id = (int) $r[&#x27;out&#x27;][&#x27;id_commande&#x27;];<br><br>C&#x27;est un adaptateur de `appeler()` : éviter deux variantes de la même<br>logique (une seule implémentation, testée).<br><br>@param list&lt;mixed&gt;  $entrees paramètres IN, dans l&#x27;ordre de la procédure<br>@param list&lt;string&gt; $sorties noms des paramètres OUT à récupérer<br>@return array{out: array&lt;string,mixed&gt;}</p>
+</div><div class="method" id="m-callFunction">
+  <code>public function callFunction(string $fonction, array $entrees = []): mixed</code>
+  <p>Appelle une fonction stockée (sql/02 : `fn_param`, calcul des frais de<br>port par exemple) et retourne sa valeur.<br><br>@param list&lt;mixed&gt; $entrees paramètres IN, dans l&#x27;ordre</p>
+</div><div class="method" id="m-sessionVariable">
+  <code>public function sessionVariable(string $nom): mixed</code>
+  <p>Valeur d&#x27;une variable de session MySQL (`@p_code_retour`…), utile après<br>un `CALL` dont on ne récupère pas les paramètres OUT nommés.</p>
+</div>
+  </section>
+</body>
+</html>

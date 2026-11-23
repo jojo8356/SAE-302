@@ -38,6 +38,7 @@ final class Auth
 
     private static ?string $derniereRequete = null;
 
+    /** Démarre la session PHP durcie (HttpOnly, SameSite=Lax, use_strict_mode ; voir ADR-0003). */
     public static function demarrer(): void
     {
         if (PHP_SAPI === 'wasm') {
@@ -182,6 +183,7 @@ final class Auth
         $_SESSION['client_id'] = $idClient;
     }
 
+    /** Déconnecte le client et régénère l'identifiant de session (anti-fixation). */
     public static function deconnecterClient(): void
     {
         unset($_SESSION['client_id']);
@@ -224,12 +226,14 @@ final class Auth
         ];
     }
 
+    /** Enregistre l'administrateur connecté après régénération d'ID anti-fixation (SEC-04). */
     public static function connecterAdmin(int $idAdmin): void
     {
         self::regenererId();
         $_SESSION['admin_id'] = $idAdmin;
     }
 
+    /** Ferme la session administrateur en conservant un nouvel identifiant sain. */
     public static function deconnecterAdmin(): void
     {
         unset($_SESSION['admin_id']);
@@ -272,6 +276,7 @@ final class Auth
 
     // ------------------------------------------------------------ divers
 
+    /** Effectue une redirection HTTP 302 immédiate et interrompt le script. */
     public static function rediriger(string $chemin): never
     {
         header('Location: ' . $chemin, true, 302);

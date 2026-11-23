@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>(global)\index — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">(global) · <span>public/index.php</span></div>
+    <h1>index</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — contrôleur frontal (§9.3) : TOUTE requête HTTP passe ici.
+
+Sécurité (SEC-01…) :
+  - en-têtes durcis (X-Frame-Options, CSP sans style inline — style-src
+    limité à &#x27;self&#x27; pour l&#x27;unique feuille public/minishop.css —, session cookie
+    HttpOnly/SameSite) ;
+  - routeur à liste blanche : aucune URL dynamique, aucune inclusion de
+    fichier pilotée par la requête (anti-LFI/RFI) ;
+  - jeton CSRF obligatoire sur chaque POST (SEC-05) ;
+  - les erreurs métier (BusinessError) ne divulguent rien : message humain
+    en flash, redirection ; les erreurs techniques affichent une page 500
+    générique (SEC-03), le détail n&#x27;est visible qu&#x27;en mode DEBUG.
+
+Moteur de données : SQL par défaut via StorageDriver ; le mode JSON reste
+une option explicite pour les démonstrations et tests isolés (voir ADR-0001).
+L&#x27;authentification et la matrice RBAC reposent sur les sessions durcies
+décrites dans ADR-0003.</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (0)</h2>
+    <p class="muted">Aucune méthode publique (point d’entrée ou déclaration).</p>
+  </section>
+</body>
+</html>
