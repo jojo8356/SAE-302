@@ -170,6 +170,7 @@ docs/20-charte-gitlab-revues-croisees.md,Documentation,Présence et non-vide uni
 docs/21-synthese-retours-audit.md,Documentation,Présence et non-vide uniquement
 docs/22-audit-coherence-fichiers.md,Documentation,Présence et non-vide uniquement
 docs/23-audit-uml-diagrammes.md,Documentation,Présence et non-vide uniquement
+docs/24-preparation-soutenance-complete.md,Documentation,Présence et non-vide uniquement
 docs/DA.md,Documentation,Présence et non-vide uniquement
 docs/pv-recette.md,Documentation,Présence et non-vide uniquement
 docs/annexes/annexe-cas-usage.md,Documentation,Présence et non-vide uniquement
@@ -275,38 +276,6 @@ livrables/html/annexe-sql.html,Livrables,Présence et non-vide uniquement
 livrables/html/pv-recette.html,Livrables,Présence et non-vide uniquement
 livrables/html/requetes-sql-a-ecrire.html,Livrables,Présence et non-vide uniquement
 livrables/minishop-soutenance.pptx,Livrables,"Présence, non-vide, intégrité archive ZIP"
-livrables/pdf/01-cahier-des-charges-MiniShop.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/02-document-tests-validation.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/03-support-soutenance.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/04-conception-bd-et-sql.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/05-wbs-projet.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/06-todolist.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/07-note-cybersecurite.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/08-fiche-suivi-commits.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/09-audit-ecarts.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/10-todo-corrections.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/11-strategie-tests.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/12-diaporama-soutenance.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/12-information-juridique.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/13-fiches-recette-uc.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/14-guide-lineserv.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/15-email-recette-lineserv.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/16-audit-code-mort.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/17-audit-global-projet.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/18-politique-conservation.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/19-audit-cahier-des-charges-todolist.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/20-charte-gitlab-revues-croisees.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/21-synthese-retours-audit.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/22-audit-coherence-fichiers.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/DA.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/README.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/annexe-cas-usage.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/annexe-enf.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/annexe-gitlab.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/annexe-php-patterns.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/annexe-sql.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/pv-recette.pdf,Livrables,Présence et non-vide uniquement
-livrables/pdf/requetes-sql-a-ecrire.pdf,Livrables,Présence et non-vide uniquement
 package-lock.json,Configuration et fichiers racine,"Présence, non-vide, structure JSON"
 package.json,Configuration et fichiers racine,"Présence, non-vide, structure JSON"
 phpstan.neon,Configuration et fichiers racine,Présence et non-vide uniquement

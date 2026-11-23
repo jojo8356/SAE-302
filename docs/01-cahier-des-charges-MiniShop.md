@@ -270,7 +270,7 @@ Les colonnes A/B/C sont des **codes de rôle de planification**, pas des personn
 ### 3.4 Conditions d'entrée par acteur (pour la démo et la recette)
 
 - Visiteur : navigateur récent, aucun compte, aucun cookie de session valide.
-- Client : compte créé par `UC-04`, mot de passe ≥ 12 caractères, adresse de livraison renseignée (sinon `UC-07` demande l'adresse à l'étape 5).
+- Client : compte créé par `UC-04`, mot de passe ≥ 8 caractères, adresse de livraison renseignée (sinon `UC-07` demande l'adresse à l'étape 5).
 - Administrateur : compte pré-créé par le script d'installation (le site public n'offre **aucun** moyen de créer un administrateur — SEC-10).
 
 ---
@@ -715,7 +715,7 @@ Pour la traçabilité, le tableau §6.1 associe chaque identifiant à un mécani
 
 | Domaine | Choix | Alternative écartée (pourquoi) |
 |---|---|---|
-| Serveur web | **Apache 2.4** avec un unique `DocumentRoot public/` + `mod_rewrite` | Nginx (parfaitement possible, mais la doc d'installation et les `.htaccess` du sujet visent Apache/LAMP d'IUT) |
+| Serveur web | **Apache 2.4** avec un unique `DocumentRoot public/` + `mod_rewrite` (à la racine du domaine ; aucun déploiement en sous-répertoire exigé) | Nginx (parfaitement possible, mais la doc d'installation cible Apache/LAMP) |
 | Langage | **PHP 8.2+**, extensions `pdo_mysql`, `mbstring`, `json`, `openssl`, `intl` | PHP 7.x (EOL, `password_hash` OK mais enums/fibres/readonly absents → code plus verbeux) |
 | Base | **MySQL 8.0.16+** (CHECK appliqués) — compatible **MariaDB 10.6+** | SQLite (pas de procédures stockées ni de triggers exploitables comme attendu, `CT-03/04` impossibles) |
 | Accès données | **PDO** natif, requêtes préparées, transactions explicites | ORM (abstrairait exactement ce que le sujet veut voir : SQL, PDO, `CALL`) |
@@ -864,7 +864,9 @@ function ouvre_session_client(int $id): void {
 }
 ```
 
-Politique appliquée aux créations et changements de mot de passe : **12 caractères minimum** côté serveur et dans les formulaires. Le dépôt ne contient pas de liste des 10 000 mots de passe courants ni de contrôle documenté contre cette liste ; aucune règle de composition « lettre + chiffre » n’est annoncée. Le limiteur de tentatives après échecs n’est pas implémenté et n’est pas revendiqué. Les mesures effectivement présentes sont le hachage avec `password_hash()`, la vérification par `password_verify()`, les sessions durcies, `HttpOnly`, `SameSite=Lax`, `Secure` en production et la protection CSRF sur les méthodes mutatives. La durée d’inactivité et la durée maximale ne sont pas revendiquées tant qu’elles ne sont pas contrôlées à chaque requête. La déconnexion détruit la session et le panier ; les données sensibles ne doivent pas figurer dans les URL.
+> *Précision d’implémentation (`app/Security/Auth.php`, `RB-13`)* : pour garantir qu’une session client ne puisse jamais être confondue avec une session back-office, le code réel sépare explicitement `$_SESSION['client_id']` (côté boutique) et `$_SESSION['admin_id']` (côté administration), au lieu d’une clé générique unique `user_id`.
+
+Politique appliquée aux créations et changements de mot de passe : **8 caractères minimum** côté serveur et dans les formulaires. Le dépôt ne contient pas de liste des 10 000 mots de passe courants ni de contrôle documenté contre cette liste ; aucune règle de composition « lettre + chiffre » n’est annoncée. Le limiteur de tentatives après échecs n’est pas implémenté et n’est pas revendiqué. Les mesures effectivement présentes sont le hachage avec `password_hash()`, la vérification par `password_verify()`, les sessions durcies, `HttpOnly`, `SameSite=Lax`, `Secure` en production et la protection CSRF sur les méthodes mutatives. La durée d’inactivité et la durée maximale ne sont pas revendiquées tant qu’elles ne sont pas contrôlées à chaque requête. La déconnexion détruit la session et le panier ; les données sensibles ne doivent pas figurer dans les URL.
 
 **Tests :** `S-05` (cookie volé mais IP/agent différents → revalidation), `S-06` (réémission du formulaire sans jeton → refus `403` JSON ou redirection `302` vers `/`), `F-08` (mot de passe erroné et email inconnu produisent des réponses strictement identiques : même texte, même code, temps de réponse comparables).
 
@@ -1019,7 +1021,7 @@ minishop/
 ├── tests/{charge,js,node,perf,php,phpunit,python,security,sql}/
 ├── uploads/                        # ressources suivies par Git
 ├── artefacts/                      # rendus HTML
-└── livrables/{README.md, minishop-soutenance.pptx, docx/, html/, pdf/}
+└── livrables/{README.md, minishop-soutenance.pptx, docx/, html/}
 ```
 
 Les dossiers requis par la WBS (`app/`, `public/`, `sql/`, `tests/`, `docs/`, `scripts/`) contiennent des fichiers suivis, ainsi que `.gitignore` à la racine. `app/Model/Data/` regroupe les types et pilotes de stockage ; les contrôleurs d’administration sont sous `app/Controller/Admin/`. `public/` reste le seul dossier exposé par le serveur Web. SQL/MySQL/PDO est le pilote par défaut ; `data/minishop/` correspond au mode JSON explicitement optionnel. Les fichiers locaux sous `var/` sont ignorés par Git, hormis l’exception prévue pour `var/.gitkeep`.
@@ -1028,7 +1030,7 @@ Les dossiers requis par la WBS (`app/`, `public/`, `sql/`, `tests/`, `docs/`, `s
 
 - **un seul point d'entrée** (`public/index.php`) : toutes les URL passent par lui, ce qui rend possible la vérification systématique de la session, du CSRF et des en-têtes ;
 - table de routes explicite (`GET /catalogue`, `POST /panier/ajouter`, `GET /admin/commandes/{id}`) ; méthodes non autorisées → 405 ; inconnues → 404 rendu par la vue d'erreur ;
-- `.htaccess` : `RewriteRule ^ index.php [QSA,L]`, protection de `/../`, interdiction d'accès à `app/`, `var/`, `sql/`, `docs/` (même si le `DocumentRoot` ne pointe déjà que sur `public/` — redondance volontaire, `SEC-11`).
+- réécriture des URL non-fichiers vers `public/index.php` (le `DocumentRoot` pointe directement sur `public/`, sans exigence de déploiement en sous-répertoire).
 
 ### 9.4 Objets, dépendances et conventions de conception PHP
 
