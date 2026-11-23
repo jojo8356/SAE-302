@@ -25,6 +25,7 @@ use RuntimeException;
  */
 final class SqlLoader
 {
+    /** Injecte la connexion PDO sur laquelle exécuter les scripts SQL. */
     public function __construct(private readonly PDO $pdo)
     {
     }

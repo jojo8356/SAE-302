@@ -14,6 +14,7 @@ use RuntimeException;
 /** Suppression conservatrice en base active ; ni commandes, ni journaux ni sauvegardes. */
 final class RetentionComptes
 {
+    /** Injecte le store sur lequel appliquer la politique de conservation RGPD. */
     public function __construct(private readonly StoreInterface $store)
     {
     }
@@ -77,6 +78,7 @@ final class RetentionComptes
         return $bilan;
     }
 
+    /** Analyse strictement un horodatage SQL Y-m-d H:i:s en DateTimeImmutable UTC. */
     public static function dateUtc(mixed $valeur): ?DateTimeImmutable
     {
         if (!is_string($valeur) || $valeur === '') {

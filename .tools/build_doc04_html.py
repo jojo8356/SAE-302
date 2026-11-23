@@ -11,6 +11,14 @@ text = MD.read_text(encoding="utf-8")
 
 # images -> base64
 def embed(m):
+    """Encode une image PNG référencée en Markdown vers une URI data base64.
+
+    Args:
+        m: Objet regex `Match` contenant le texte alternatif et le chemin relatif.
+
+    Returns:
+        Balise image Markdown autonome avec payload base64.
+    """
     alt, path = m.group(1), m.group(2)
     p = (DOCS / path)
     b64 = base64.b64encode(p.read_bytes()).decode()

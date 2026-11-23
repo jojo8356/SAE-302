@@ -64,12 +64,14 @@ final class SqlStore implements StoreInterface, StoredProcedureResultExecutor, S
 
     private int $profondeurTransaction = 0;
 
+    /** Initialise le store SQL, optionnellement avec une connexion PDO injectée. */
     public function __construct(private readonly ?PDO $connexionFournie = null)
     {
     }
 
     // ------------------------------------------------------------ connexion
 
+    /** Retourne l'instance PDO configurée en UTC (lazy init ou connexion injectée). */
     public function pdo(): PDO
     {
         if ($this->pdo instanceof PDO) {
@@ -146,6 +148,7 @@ final class SqlStore implements StoreInterface, StoredProcedureResultExecutor, S
         return array_map(fn (array $ligne): array => $this->normaliser($table, $ligne), $lignes);
     }
 
+    /** Retourne la première ligne correspondant au prédicat PDO, ou null. */
     public function findOne(string $table, array $where = []): ?array
     {
         $lignes = $this->select($table, ['where' => $where, 'limit' => 1]);
@@ -153,6 +156,7 @@ final class SqlStore implements StoreInterface, StoredProcedureResultExecutor, S
         return $lignes[0] ?? null;
     }
 
+    /** Recherche une ligne par sa clé primaire via requête préparée. */
     public function find(string $table, int|string $pk): ?array
     {
         return $this->findOne($table, [[$this->clePrimaire($table), '=', $pk]]);
@@ -176,6 +180,7 @@ final class SqlStore implements StoreInterface, StoredProcedureResultExecutor, S
         return $this->normaliser($table, $ligne);
     }
 
+    /** Compte le nombre de lignes satisfaisant la clause WHERE préparée. */
     public function count(string $table, array $where = []): int
     {
         $def = $this->definition($table);
@@ -190,6 +195,7 @@ final class SqlStore implements StoreInterface, StoredProcedureResultExecutor, S
         return (int) $valeur;
     }
 
+    /** Calcule la somme SQL d'une colonne numérique via COALESCE(SUM(...), 0). */
     public function sum(string $table, string $column, array $where = []): float
     {
         $def = $this->definition($table);
@@ -203,6 +209,7 @@ final class SqlStore implements StoreInterface, StoredProcedureResultExecutor, S
         return (float) $this->executer($sql, $parametres)->fetchColumn();
     }
 
+    /** Vérifie l'existence d'au moins une ligne correspondant au prédicat. */
     public function exists(string $table, array $where = []): bool
     {
         $parametres = [];
@@ -288,6 +295,7 @@ final class SqlStore implements StoreInterface, StoredProcedureResultExecutor, S
         return $this->executer($sql, array_merge($valeurs, $parametresWhere))->rowCount();
     }
 
+    /** Supprime les lignes correspondant au prédicat WHERE (refusé si vide pour éviter un vidage accidentel). */
     public function delete(string $table, array $where): int
     {
         if ($where === []) {
@@ -301,6 +309,7 @@ final class SqlStore implements StoreInterface, StoredProcedureResultExecutor, S
         return $this->executer($sql, $parametres)->rowCount();
     }
 
+    /** Estime le prochain identifiant disponible sur une table SQL. */
     public function nextId(string $table): int
     {
         $pk = $this->clePrimaire($table);
@@ -311,6 +320,7 @@ final class SqlStore implements StoreInterface, StoredProcedureResultExecutor, S
 
     // --------------------------------------------------- transactions / io
 
+    /** Démarre une transaction PDO au premier niveau d'imbrication. */
     public function beginTransaction(): void
     {
         if ($this->profondeurTransaction === 0) {
@@ -319,6 +329,7 @@ final class SqlStore implements StoreInterface, StoredProcedureResultExecutor, S
         ++$this->profondeurTransaction;
     }
 
+    /** Valide la transaction SQL lorsque la profondeur d'imbrication revient à zéro. */
     public function commit(): void
     {
         if ($this->profondeurTransaction <= 0) {
@@ -330,6 +341,7 @@ final class SqlStore implements StoreInterface, StoredProcedureResultExecutor, S
         }
     }
 
+    /** Annule la transaction PDO ouverte en cas d'erreur métier ou SQL. */
     public function rollback(): void
     {
         if ($this->profondeurTransaction <= 0) {
@@ -341,11 +353,13 @@ final class SqlStore implements StoreInterface, StoredProcedureResultExecutor, S
         }
     }
 
+    /** Indique si une transaction SQL est actuellement ouverte dans ce store. */
     public function inTransaction(): bool
     {
         return $this->profondeurTransaction > 0;
     }
 
+    /** Exécute $work dans une transaction SQL avec rollback automatique sur exception (voir ADR-0001). */
     public function transactional(callable $work): mixed
     {
         $this->beginTransaction();

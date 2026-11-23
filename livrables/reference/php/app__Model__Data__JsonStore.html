@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Model\Data\JsonStore — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Model\Data · <span>app/Model/Data/JsonStore.php</span></div>
+    <h1>JsonStore</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — pilote JSON secondaire (StorageDriver::JSON, choisi explicitement).
+
+« Moteur intelligent » : ce pilote reproduit, en opérations JSON natives,
+tout ce que le schéma MySQL du projet attend d&#x27;un SGBD — sans UNE SEULE
+requête SQL. En particulier :
+
+  - TABLES      : une table = un fichier data/minishop/&lt;table&gt;.json,
+                  chargement paresseux, écriture atomique (tmp + rename) ;
+  - SCHEMA      : valeurs par défaut, coercition de types, NOT NULL, ENUM,
+                  UNIQUE, CHECK, FK RESTRICT/CASCADE (cf. Schema) ;
+  - DÉCLENCHEURS: les 16 triggers métier de sql/03 portés en callbacks PHP
+                  (cf. Triggers) — ils sont la dernière barrière, y compris
+                  pour un code applicatif défaillant (défense en profondeur) ;
+  - TRANSACTIONS: verrou coopératif local, écritures différées, rollback
+                  avant commit ; le commit reste atomique par fichier seul.
+  - INDEX       : index PK en table de hachage (accès O(1) par clé) ;
+  - JOURNAL     : piste d&#x27;audit append-only de chaque écriture
+                  (var/journal/db.jsonl, exigence EF-GEN-04) ;
+  - ACTEUR      : setActor() mémorise qui écrit (client/admin/système) pour
+                  la piste d&#x27;audit automatique des statuts (RB-11).
+
+Les lectures (select/findOne/count/sum/exists) évaluent les conditions
+déclaratives ligne à ligne : le volume cible (200 produits, 1 000 commandes,
+cf. ENF-01/02) tient en mémoire et l&#x27;opération reste en O(n) natif. Le pilote
+SQL est le défaut applicatif ; ce moteur reste disponible pour les tests
+portables et les démonstrations sans serveur.
+
+Hors transaction, chaque écriture utilise une transaction implicite. Les
+processus qui modifient les fichiers sans ce store ne respectent pas ce
+verrou. En cas de panne pendant le commit de plusieurs fichiers, une partie
+du commit peut être persistée : ce stockage n&#x27;est pas un SGBD transactionnel.</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (23)</h2>
+    <div class="method" id="m-journalPath">
+  <code>public function journalPath(): string</code>
+  <p> Chemin du journal d&#x27;audit de ce magasin (EF-GEN-04, tests, back-office).</p>
+</div><div class="method" id="m-open">
+  <code>public static function open(string $dataPath): self</code>
+  <p> Ouvre (et le cas échéant initialise) la base JSON d&#x27;un dossier.</p>
+</div><div class="method" id="m-dataPath">
+  <code>public function dataPath(): string</code>
+  <p> Retourne le chemin du dossier contenant les fichiers JSON de ce magasin.</p>
+</div><div class="method" id="m-select">
+  <code>public function select(string $table, array $spec = []): array</code>
+  <p> Sélectionne des lignes selon les filtres, le tri, la pagination et la projection.</p>
+</div><div class="method" id="m-findOne">
+  <code>public function findOne(string $table, array $where = []): ?array</code>
+  <p> Retourne la première ligne correspondant au prédicat, ou null.</p>
+</div><div class="method" id="m-find">
+  <code>public function find(string $table, int|string $pk): ?array</code>
+  <p> Recherche une ligne par sa clé primaire via l&#x27;index en mémoire.</p>
+</div><div class="method" id="m-count">
+  <code>public function count(string $table, array $where = []): int</code>
+  <p> Compte le nombre de lignes satisfaisant le prédicat donné.</p>
+</div><div class="method" id="m-sum">
+  <code>public function sum(string $table, string $column, array $where = []): float</code>
+  <p> Calcule la somme arrondie à 2 décimales d&#x27;une colonne numérique.</p>
+</div><div class="method" id="m-exists">
+  <code>public function exists(string $table, array $where = []): bool</code>
+  <p> Indique si au moins une ligne correspond au prédicat fourni.</p>
+</div><div class="method" id="m-all">
+  <code>public function all(string $table): array</code>
+  <p> Retourne toutes les lignes d&#x27;une table indexées par leur clé primaire.</p>
+</div><div class="method" id="m-insert">
+  <code>public function insert(string $table, array $row): int</code>
+  <p> Insère une ligne en vérifiant contraintes, FK et déclencheurs émulés (voir ADR-0001).</p>
+</div><div class="method" id="m-update">
+  <code>public function update(string $table, array $where, array $changes): int</code>
+  <p> Met à jour les lignes correspondantes avec validation des déclencheurs BEFORE/AFTER.</p>
+</div><div class="method" id="m-delete">
+  <code>public function delete(string $table, array $where): int</code>
+  <p> Supprime les lignes correspondantes en appliquant cascades FK et déclencheurs.</p>
+</div><div class="method" id="m-nextId">
+  <code>public function nextId(string $table): int</code>
+  <p> Retourne le prochain identifiant auto-incrémenté sans consommer le compteur.</p>
+</div><div class="method" id="m-beginTransaction">
+  <code>public function beginTransaction(): void</code>
+  <p> Ouvre une transaction protégée par verrou fichier exclusif (flock LOCK_EX).</p>
+</div><div class="method" id="m-commit">
+  <code>public function commit(): void</code>
+  <p> Valide les tables modifiées sur disque et libère le verrou exclusif.</p>
+</div><div class="method" id="m-rollback">
+  <code>public function rollback(): void</code>
+  <p> Annule la transaction en vidant le cache mémoire sans écriture disque.</p>
+</div><div class="method" id="m-inTransaction">
+  <code>public function inTransaction(): bool</code>
+  <p> Indique si une transaction JSON est actuellement ouverte.</p>
+</div><div class="method" id="m-transactional">
+  <code>public function transactional(callable $work): mixed</code>
+  <p> Exécute $work dans une transaction ; rollback automatique sur exception.</p>
+</div><div class="method" id="m-flush">
+  <code>public function flush(): void</code>
+  <p> Écrit toutes les tables modifiées sur disque (atomique par table).</p>
+</div><div class="method" id="m-setActor">
+  <code>public function setActor(array $actor): void</code>
+  <p> Définit l&#x27;acteur courant (CLIENT, ADMIN ou SYSTEME) pour l&#x27;audit des écritures.</p>
+</div><div class="method" id="m-actor">
+  <code>public function actor(): array</code>
+  <p> Retourne l&#x27;acteur courant enregistré pour la journalisation d&#x27;audit.</p>
+</div><div class="method" id="m-replaceAll">
+  <code>public function replaceAll(string $table, array $rows, ?int $autoIncrement = null): void</code>
+  <p> Force l&#x27;état d&#x27;une table (seed, tests, réinstallation).</p>
+</div>
+  </section>
+</body>
+</html>

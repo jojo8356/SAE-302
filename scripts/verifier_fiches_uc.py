@@ -17,6 +17,12 @@ failures = []
 
 
 def check(label: str, condition: bool) -> None:
+    """Enregistre et affiche le verdict d'un contrôle documentaire.
+
+    Args:
+        label: Libellé descriptif du contrôle vérifié.
+        condition: Résultat booléen du contrôle.
+    """
     global checks
     checks += 1
     print(('✅ ' if condition else '❌ ') + label)
@@ -25,6 +31,15 @@ def check(label: str, condition: bool) -> None:
 
 
 def load(path: Path, encoding: str = 'utf-8') -> str:
+    """Lit un fichier texte en capturant les erreurs d'entrée/sortie.
+
+    Args:
+        path: Chemin vers le fichier à lire.
+        encoding: Encodage attendu (UTF-8 par défaut).
+
+    Returns:
+        Contenu texte du fichier, ou chaîne vide en cas d'échec.
+    """
     try:
         return path.read_text(encoding=encoding)
     except (OSError, UnicodeError) as exc:

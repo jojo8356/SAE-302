@@ -68,6 +68,7 @@ final class Filter
         return [$col, 'like', $pattern];
     }
 
+    /** Exclut les valeurs correspondant au motif SQL LIKE insensible à la casse. */
     public static function notLike(string $col, string $pattern): array
     {
         return [$col, 'not-like', $pattern];

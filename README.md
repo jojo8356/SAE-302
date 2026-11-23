@@ -161,6 +161,8 @@ Un scénario ne doit être marqué comme joué qu’après son exécution réell
 | [Décisions d’architecture (ADR)](docs/adr/adr-index.md) | Justification durable des choix structurants (`adr-0001` à `adr-0004`) |
 | [Documents d’exploitation](docs/exploitation/exploitation-index.md) | Fiche de service, *runbooks* incidents/sauvegardes et modèle de *postmortem* |
 | [Documentation vivante & C4](docs/28-documentation-qui-survit-minishop.md) | Gouvernance Diátaxis, diagrammes C4 (`docs/diagrams/src/c4_*.puml`) et génération PDF |
+| [Référence API PHP](livrables/reference/php/index.html) | Documentation HTML générée depuis les PHPDoc de `app/` et `public/index.php` |
+| [Référence API Python (`pdoc`)](livrables/reference/python/index.html) | Documentation HTML générée depuis les docstrings Google de `scripts/` (`ruff.toml`, `doctest`) |
 
 ## Organisation du dépôt
 

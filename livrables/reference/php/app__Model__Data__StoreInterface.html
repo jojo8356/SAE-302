@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Model\Data\StoreInterface — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Model\Data · <span>app/Model/Data/StoreInterface.php</span></div>
+    <h1>StoreInterface</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — contrat commun des pilotes de gestion des données.
+
+Ce contrat définit la frontière commune des opérations de stockage entre
+les repositories et les pilotes SQL/JSON : chaque méthode correspond à une
+opération relationnelle standard, mais AUCUNE méthode ne reçoit ni ne produit
+du SQL — les filtres sont déclaratifs (tableaux sérialisables). Les capacités
+propres à certains pilotes (procédures stockées, verrous de lignes) sont des
+interfaces séparées : le pilote JSON n&#x27;a pas à les simuler.
+
+---------------------------------------------------------------------------
+Spécification déclarative des filtres (« where »)
+---------------------------------------------------------------------------
+Une condition est un tableau numérique :  [colonne, opérateur, valeur]
+  opérateurs : =  !=  &lt;&gt;  &lt;  &lt;=  &gt;  &gt;=  like  not-like  in  not-in
+               between  null  not-null
+  - « like » est insensible à la casse ET aux accents (comme la collation
+    utf8mb4_unicode_ci du schéma MySQL cible), jokers % et _.
+  - « in » / « not-in » : valeur = tableau de valeurs.
+  - « between » : valeur = [min, max] (bornes incluses).
+  - « null » / « not-null » : pas de valeur.
+
+Un « where » est une liste de conditions combinées par AND implicite :
+  [[&#x27;visible&#x27;, &#x27;=&#x27;, 1], [&#x27;prix_ttc&#x27;, &#x27;between&#x27;, [20, 100]]]
+Des groupes explicites sont possibles :
+  [[&#x27;or&#x27;, [[[&#x27;nom&#x27;,&#x27;like&#x27;,&#x27;%clavier%&#x27;], [[&#x27;reference&#x27;,&#x27;like&#x27;,&#x27;%CLAV%&#x27;]]]]]
+
+JsonStore évalue ces conditions en PHP ; SqlStore traduit les opérateurs
+génériques en clauses SQL préparées. Les parcours métier qui le nécessitent
+peuvent aussi appeler des procédures via les interfaces de capacité.
+
+---------------------------------------------------------------------------
+Spécification des tris (« order »)
+---------------------------------------------------------------------------
+  [[&#x27;colonne&#x27;, &#x27;asc&#x27;|&#x27;desc&#x27;], ...]   — multi-clés, stable.
+
+---------------------------------------------------------------------------
+Cycle de vie et intégrité
+---------------------------------------------------------------------------
+insert()/update()/delete() appliquent le schéma et les déclencheurs métier
+du pilote actif : validation PHP/Triggers pour JsonStore, contraintes et
+triggers SQL pour SqlStore. Les écritures applicatives multi-tables passent
+par beginTransaction()/commit() avec rollback automatique en cas d&#x27;exception
+(ENF-16) ; les procédures SQL qui possèdent leur transaction sont appelées
+sans transaction englobante.</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (18)</h2>
+    <div class="method" id="m-select">
+  <code>public function select(string $table, array $spec = []): array</code>
+  <p>Sélectionne des lignes d&#x27;une table.<br><br>@param string $table Nom de table (ex. &#x27;produit&#x27;) — liste blanche Schema.<br>@param array{where?: array, order?: array, limit?: int, offset?: int, fields?: array} $spec<br>@return list&lt;array&lt;string,mixed&gt;&gt; lignes (tableaux associatifs colonne =&gt; valeur)</p>
+</div><div class="method" id="m-findOne">
+  <code>public function findOne(string $table, array $where = []): ?array</code>
+  <p> Première ligne correspondante, ou null.</p>
+</div><div class="method" id="m-find">
+  <code>public function find(string $table, int|string $pk): ?array</code>
+  <p> Ligne par clé primaire, ou null.</p>
+</div><div class="method" id="m-count">
+  <code>public function count(string $table, array $where = []): int</code>
+  <p> Nombre de lignes correspondantes.</p>
+</div><div class="method" id="m-sum">
+  <code>public function sum(string $table, string $column, array $where = []): float</code>
+  <p> Somme d&#x27;une colonne (0 si aucune ligne).</p>
+</div><div class="method" id="m-exists">
+  <code>public function exists(string $table, array $where = []): bool</code>
+  <p> Teste l&#x27;existence d&#x27;au moins une ligne correspondante.</p>
+</div><div class="method" id="m-all">
+  <code>public function all(string $table): array</code>
+  <p>Toutes les lignes d&#x27;une table, indexées par clé primaire (lecture seule,<br>utile aux jointures hash du pilote JSON). Ne pas muter le retour.<br><br>@return array&lt;int|string, array&lt;string,mixed&gt;&gt;</p>
+</div><div class="method" id="m-insert">
+  <code>public function insert(string $table, array $row): int</code>
+  <p>Insère une ligne ; retourne la clé primaire auto-générée.<br><br>@param array&lt;string,mixed&gt; $row</p>
+</div><div class="method" id="m-update">
+  <code>public function update(string $table, array $where, array $changes): int</code>
+  <p>Met à jour les lignes correspondantes ; retourne le nombre de lignes<br>réellement modifiées (les valeurs identiques ne comptent pas).<br><br>@param array&lt;string,mixed&gt; $changes</p>
+</div><div class="method" id="m-delete">
+  <code>public function delete(string $table, array $where): int</code>
+  <p> Supprime les lignes correspondantes ; retourne le nombre supprimé.</p>
+</div><div class="method" id="m-nextId">
+  <code>public function nextId(string $table): int</code>
+  <p>Prochaine valeur de la clé primaire auto-incrémentée SANS consommer<br>le compteur (usage : numéro lisible CMD2026-000123 avant insertion).</p>
+</div><div class="method" id="m-beginTransaction">
+  <code>public function beginTransaction(): void</code>
+  <p> Ouvre une transaction (imbrication interdite : une seule profondeur).</p>
+</div><div class="method" id="m-commit">
+  <code>public function commit(): void</code>
+  <p> Valide et écrit sur disque les tables modifiées.</p>
+</div><div class="method" id="m-rollback">
+  <code>public function rollback(): void</code>
+  <p> Annule la transaction et restaure l&#x27;état du dernier commit.</p>
+</div><div class="method" id="m-inTransaction">
+  <code>public function inTransaction(): bool</code>
+  <p> Vrai si une transaction est ouverte.</p>
+</div><div class="method" id="m-transactional">
+  <code>public function transactional(callable $work): mixed</code>
+  <p>Exécute $work dans une transaction : commit si tout passe, rollback<br>complet si une exception est levée (atomicité multi-tables).<br><br>@template T<br>@param callable(StoreInterface): T $work<br>@return T</p>
+</div><div class="method" id="m-setActor">
+  <code>public function setActor(array $actor): void</code>
+  <p>Acteur courant (traçabilité des déclencheurs : qui écrit ?).<br><br>@param array{id?: int|null, role?: &#x27;CLIENT&#x27;|&#x27;ADMIN&#x27;|&#x27;SYSTEME&#x27;, nom?: string|null} $actor</p>
+</div><div class="method" id="m-actor">
+  <code>public function actor(): array</code>
+  <p> @return array{id?: int|null, role?: string, nom?: string|null}</p>
+</div>
+  </section>
+</body>
+</html>

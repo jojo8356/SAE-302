@@ -43,6 +43,19 @@ Pour survivre, la documentation est **compilée et vérifiée automatiquement** 
 |---|---|---|---|
 | **Chaîne Java (Diagrammes & Docs)** | **Java 17 (Temurin) + `plantuml.jar`** (`docs/diagrams/render.sh`, job CI `docs` de `.github/workflows/ci.yml`) ; écosystème Java PDF (`AsciidoctorJ PDF` / `Apache FOP`) | Transforme les sources texte `.puml` (UML + C4) en images PNG/SVG reproductibles ; dans les projets Java, `AsciidoctorJ`/`FOP` convertit aussi vers PDF. | Le dépôt est écrit en PHP/Python : `docs/diagrams/render.sh` pilote Java + `plantuml.jar` en CI GitHub. Dans un bac à sable sans JVM ni accès à Maven Central / `release-assets.githubusercontent.com`, les `.puml` restent lisibles en clair et vérifiés dans Git. |
 | **Chaîne Python du dépôt (Livrables multi-formats)** | `scripts/build-docs.sh` + `scripts/md_to_pdf.py` (`fpdf2`), `md_to_html.py`, `md_to_docx.py`, `md_to_pptx.py` | Génère **hors ligne** l’ensemble des **PDF A4**, HTML autonomes (images base64), DOCX et PPTX dans `livrables/` (`README`, `CHANGELOG`, `docs/adr/`, `docs/exploitation/`, `docs/01..28`). | **Actif et exécuté localement :** produit chaque PDF en quelques secondes sans dépendance réseau. |
-| **Contrôles anti-dérive (CI)** | `scripts/verifier_fiches_uc.py`, `tests/python/test_audit_structurel.py`, `tests/security/controles.sh` | Vérifie que 100 % des fichiers suivis sont inventoriés dans `docs/17-inventaire-projet.csv`, que les liens et scénarios UC restent valides et qu’aucune règle de sécurité n’est cassée. | **Actif :** exécuté à chaque évolution avant commit et push. |
+| **Contrôles anti-dérive (CI)** | `scripts/verifier_fiches_uc.py`, `scripts/verifier_doc_code.py`, `ruff.toml` (`select = ["D"]`), `tests/python/test_audit_structurel.py`, `tests/python/test_doc_code.py`, `tests/security/controles.sh` | Vérifie que 100 % des fichiers suivis sont inventoriés, que chaque script Python respecte PEP 257 / Google (`ruff`) et passe `doctest`, et que 100 % des méthodes publiques PHP portent un PHPDoc. | **Actif :** bloquant en local et en CI GitHub Actions. |
 
 *Tableau 2 — Chaînes de publication et de vérification automatisée de la documentation MiniShop.*
+
+---
+
+## 4. Niveau 3 : Documenter le code (commentaires « pourquoi », docstrings et référence générée)
+
+1. **Commentaires qui disent *pourquoi* (et jamais *quoi*) :**
+   - Les commentaires internes expliquent les contraintes externes et les choix d’architecture (ex. `// Voir ADR-0001..0004` dans `SqlStore`, `JsonStore`, `Auth`, `Router`, `public/index.php`, `md_to_pdf.py`) sans paraphraser la syntaxe ni conserver de code mort commenté.
+2. **Docstrings Python (PEP 257 + Google) & `doctest` :**
+   - `ruff.toml` impose `select = ["D"]` et `convention = "google"` (`Args:`, `Returns:`, `Raises:`, `Example:` avec `r"""` dès qu’un antislash apparaît) sur `scripts/*.py` et `.tools/*.py`.
+   - Les modules Python importables embarquent des exemples vérifiables exécutés par `python3 -m doctest` et par `scripts/verifier_doc_code.py`.
+3. **PHPDoc complet & Référence HTML générée :**
+   - Les `113` fichiers PHP (`app/` et `public/index.php`) et leurs `394` méthodes publiques sont documentés par blocs `/** ... */`.
+   - Les références HTML autonomes sont générées directement depuis le code dans `livrables/reference/python/` (`pdoc --docformat google`) et `livrables/reference/php/` (`scripts/verifier_doc_code.py --gen-php-ref`), et liées depuis `README.md`.

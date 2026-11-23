@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Tools\EnvFile — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Tools · <span>app/Tools/EnvFile.php</span></div>
+    <h1>EnvFile</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — écriture maîtrisée du fichier `.env` (outil de développement).
+
+Utilisé par `scripts/db_init.php --switch` et `run.sh --db` pour basculer
+l&#x27;application sur MySQL sans demander au développeur d&#x27;éditer un fichier à
+la main. Le fichier est modifié **ligne à ligne** : les commentaires, l&#x27;ordre
+et les autres clés sont conservés ; une clé absente est ajoutée à la fin.
+
+Le fichier cible suit App\Config\Env (donc `MINISHOP_ENV_FILE` en test) et
+n&#x27;est jamais versionné (`.gitignore`).</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (5)</h2>
+    <div class="method" id="m-chemin">
+  <code>public static function chemin(): string</code>
+  <p> Chemin effectif (celui que lit l&#x27;application).</p>
+</div><div class="method" id="m-initialiser">
+  <code>public static function initialiser(): bool</code>
+  <p>Crée le fichier depuis `.env.example` s&#x27;il manque.<br><br>@return bool vrai si un fichier a été créé</p>
+</div><div class="method" id="m-definir">
+  <code>public static function definir(string $cle, string $valeur): bool</code>
+  <p>Définit (ou ajoute) une clé. Retourne vrai si le fichier a changé.</p>
+</div><div class="method" id="m-valeur">
+  <code>public static function valeur(string $cle): ?string</code>
+  <p> Valeur actuelle d&#x27;une clé dans le fichier (sans les variables d&#x27;environnement).</p>
+</div><div class="method" id="m-definirPlusieurs">
+  <code>public static function definirPlusieurs(array $paires): array</code>
+  <p>Applique plusieurs paires clé → valeur d&#x27;un coup.<br><br>@param array&lt;string,string&gt; $paires<br>@return list&lt;string&gt; clés réellement modifiées</p>
+</div>
+  </section>
+</body>
+</html>

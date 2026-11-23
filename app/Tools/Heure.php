@@ -25,11 +25,13 @@ final class Heure
     /** Format d'un horodatage stocké (schéma DATETIME, inchangé). */
     public const FORMAT_STOCKAGE = 'Y-m-d H:i:s';
 
+    /** Retourne le fuseau horaire de stockage UTC (voir ADR-0001). */
     public static function fuseauStockage(): DateTimeZone
     {
         return new DateTimeZone(self::FUSEAU_STOCKAGE);
     }
 
+    /** Retourne l'objet DateTimeZone de repli pour l'affichage (Europe/Paris). */
     public static function fuseauAffichage(): DateTimeZone
     {
         return new DateTimeZone(self::FUSEAU_AFFICHAGE);

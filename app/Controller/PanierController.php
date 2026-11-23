@@ -19,11 +19,13 @@ final class PanierController extends Controller
 {
     private PanierSession $panier;
 
+    /** Charge le panier courant depuis la session utilisateur. */
     public function __construct()
     {
         $this->panier = PanierSession::charge();
     }
 
+    /** Affiche le détail du panier avec totaux et frais de port calculés côté serveur. */
     public function index(): void
     {
         $this->render('panier/index', ['recap' => $this->panier->recapitulatif()], 'Mon panier');
@@ -56,6 +58,7 @@ final class PanierController extends Controller
         $this->rediriger('/panier');
     }
 
+    /** Retire un article du panier puis redirige vers la page panier. */
     public function retirer(): void
     {
         $this->verifierCsrf();

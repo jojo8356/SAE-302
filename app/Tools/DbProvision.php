@@ -69,11 +69,13 @@ final class DbProvision
         return bin2hex(random_bytes($octets));
     }
 
+    /** Retourne le nom de la base de données cible provisionnée. */
     public function base(): string
     {
         return $this->base;
     }
 
+    /** Retourne le nom du compte SQL dédié provisionné. */
     public function utilisateur(): string
     {
         return $this->utilisateur;

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Config\Database — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Config · <span>app/Config/Database.php</span></div>
+    <h1>Database</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — point d&#x27;accès unique à la couche de données (annexe 17.7 §1).
+
+Database::store() retourne le pilote choisi par l&#x27;énumération
+App\Model\Data\StorageDriver :
+
+  &#x27;storage_driver&#x27; =&gt; &#x27;sql&#x27;   → SqlStore  (pilote principal, MySQL/MariaDB via PDO)
+  &#x27;storage_driver&#x27; =&gt; &#x27;json&#x27;  → JsonStore (option secondaire sans serveur)
+
+La configuration est lue dans cet ordre (le dernier gagne) :
+
+  1. valeurs par défaut ci-dessous ;
+  2. `app/Config/env.php` (compatibilité avec l&#x27;ancien modèle) ;
+  3. fichier **`.env`** à la racine, modèle versionné `.env.example` —
+     c&#x27;est le mode recommandé : copier, éditer, ne jamais committer ;
+  4. variables d&#x27;environnement du processus (CI, conteneur, test ponctuel).
+
+Le pilote SQL est sélectionné par défaut ; configurer la base locale :
+
+  cp .env.example .env
+  # .env : DB_NAME=&quot;minishop&quot;  DB_USER=&quot;minishop&quot;  DB_PASSWORD=&quot;…&quot;
+  #        DB_SOCKET=&quot;&quot; (vide = TCP 127.0.0.1:3306, repli automatique sur la
+  #        socket Unix si le compte n&#x27;accepte que ce mode — cas de root sur Debian)
+  php scripts/db_init.php        # initialise le schéma, 18 procédures, 1 fonction et 16 triggers
+
+Les contrôleurs et les repositories ne connaissent QUE StoreInterface.</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (7)</h2>
+    <div class="method" id="m-store">
+  <code>public static function store(): StoreInterface</code>
+  <p> Retourne le store applicatif (singleton par requête).</p>
+</div><div class="method" id="m-dataPath">
+  <code>public static function dataPath(array $config): string</code>
+  <p> Chemin des données JSON (surchargeable : tests, volumétrie).</p>
+</div><div class="method" id="m-config">
+  <code>public static function config(): array</code>
+  <p> Configuration brute (dev/debug). @return array&lt;string,mixed&gt;</p>
+</div><div class="method" id="m-driver">
+  <code>public static function driver(): string</code>
+  <p> Pilote actif normalisé (&#x27;json&#x27; ou &#x27;sql&#x27;) ; valeur inconnue → défaut SQL.</p>
+</div><div class="method" id="m-fichierConfig">
+  <code>public static function fichierConfig(): ?string</code>
+  <p> Fichier `app/Config/env.php` réellement présent (sinon `null`).</p>
+</div><div class="method" id="m-sources">
+  <code>public static function sources(): array</code>
+  <p> Sources lues par la dernière configuration (diagnostic, `db_init.php --check`).</p>
+</div><div class="method" id="m-reset">
+  <code>public static function reset(): void</code>
+  <p> Réinitialise le singleton (tests, bascule de configuration à chaud).</p>
+</div>
+  </section>
+</body>
+</html>

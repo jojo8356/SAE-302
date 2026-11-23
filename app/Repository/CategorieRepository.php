@@ -18,6 +18,7 @@ use UnexpectedValueException;
 
 final class CategorieRepository
 {
+    /** Injecte le store abstrait (SqlStore ou JsonStore ; voir ADR-0001). */
     public function __construct(private readonly StoreInterface $store)
     {
     }

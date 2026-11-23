@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Controller\ApiController — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Controller · <span>app/Controller/ApiController.php</span></div>
+    <h1>ApiController</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — API interne du panier (EF-CLI-03, §4.5.3 de la DA).
+
+Contrepartie serveur du panier sans rechargement. Trois principes :
+  1. le serveur reste la source unique des prix, du stock et des totaux
+     (EF-GEN-01) : le JSON renvoyé contient les valeurs AFFICHABLES ;
+  2. toute écriture exige le jeton CSRF de la session (SEC-05), même en
+     « fetch » — le jeton est envoyé dans le corps du formulaire ;
+  3. les erreurs métier sont traduites en messages humains (EF-GEN-03)
+     et jamais en trace technique.
+
+Sans JavaScript, les vues continuent d&#x27;utiliser les routes HTML
+(`POST /panier/ajouter`) : ces routes ne sont qu&#x27;une amélioration (ENF-07).</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (5)</h2>
+    <div class="method" id="m-__construct">
+  <code>public function __construct()</code>
+  <p> Charge le panier courant depuis la session utilisateur.</p>
+</div><div class="method" id="m-etat">
+  <code>public function etat(): void</code>
+  <p> État courant du panier (badge, compteurs, total) — lecture seule.</p>
+</div><div class="method" id="m-ajouter">
+  <code>public function ajouter(): void</code>
+  <p> EF-CLI-03 — ajout avec plafonnement au stock serveur (RB-18).</p>
+</div><div class="method" id="m-quantite">
+  <code>public function quantite(): void</code>
+  <p> EF-CLI-04 — modification de quantité (0 = retrait explicite).</p>
+</div><div class="method" id="m-retirer">
+  <code>public function retirer(): void</code>
+  <p> EF-CLI-05 — retrait d&#x27;une ligne.</p>
+</div>
+  </section>
+</body>
+</html>

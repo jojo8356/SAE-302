@@ -224,6 +224,7 @@ footer.doc p { text-align: left; margin: 0; }
 <li><a href="#1-principe-pourquoi-et-pour-qui-documenter-minishop">1. Principe : pourquoi et pour qui documenter MiniShop ?</a></li>
 <li><a href="#2-niveau-1-couverture-complete-dans-chacun-des-fichiers-du-depot">2. Niveau 1 : Couverture complète dans chacun des fichiers du dépôt</a></li>
 <li><a href="#3-niveau-2-chaine-de-generation-outils-java-vs-chaine-python-du-depot">3. Niveau 2 : Chaîne de génération (Outils Java vs Chaîne Python du dépôt)</a></li>
+<li><a href="#4-niveau-3-documenter-le-code-commentaires-pourquoi-docstrings-et-reference-generee">4. Niveau 3 : Documenter le code (commentaires « pourquoi », docstrings et référence générée)</a></li>
 </ul>
 </div>
 </nav>
@@ -311,13 +312,25 @@ footer.doc p { text-align: left; margin: 0; }
 </tr>
 <tr>
 <td><strong>Contrôles anti-dérive (CI)</strong></td>
-<td><code>scripts/verifier_fiches_uc.py</code>, <code>tests/python/test_audit_structurel.py</code>, <code>tests/security/controles.sh</code></td>
-<td>Vérifie que 100 % des fichiers suivis sont inventoriés dans <code>docs/17-inventaire-projet.csv</code>, que les liens et scénarios UC restent valides et qu’aucune règle de sécurité n’est cassée.</td>
-<td><strong>Actif :</strong> exécuté à chaque évolution avant commit et push.</td>
+<td><code>scripts/verifier_fiches_uc.py</code>, <code>scripts/verifier_doc_code.py</code>, <code>ruff.toml</code> (<code>select = ["D"]</code>), <code>tests/python/test_audit_structurel.py</code>, <code>tests/python/test_doc_code.py</code>, <code>tests/security/controles.sh</code></td>
+<td>Vérifie que 100 % des fichiers suivis sont inventoriés, que chaque script Python respecte PEP 257 / Google (<code>ruff</code>) et passe <code>doctest</code>, et que 100 % des méthodes publiques PHP portent un PHPDoc.</td>
+<td><strong>Actif :</strong> bloquant en local et en CI GitHub Actions.</td>
 </tr>
 </tbody>
 </table>
 <p><em>Tableau 2 — Chaînes de publication et de vérification automatisée de la documentation MiniShop.</em></p>
+<hr />
+<h2 id="4-niveau-3-documenter-le-code-commentaires-pourquoi-docstrings-et-reference-generee">4. Niveau 3 : Documenter le code (commentaires « pourquoi », docstrings et référence générée)<a class="headerlink" href="#4-niveau-3-documenter-le-code-commentaires-pourquoi-docstrings-et-reference-generee" title="Permanent link"></a></h2>
+<ol>
+<li><strong>Commentaires qui disent <em>pourquoi</em> (et jamais <em>quoi</em>) :</strong>
+   - Les commentaires internes expliquent les contraintes externes et les choix d’architecture (ex. <code>// Voir ADR-0001..0004</code> dans <code>SqlStore</code>, <code>JsonStore</code>, <code>Auth</code>, <code>Router</code>, <code>public/index.php</code>, <code>md_to_pdf.py</code>) sans paraphraser la syntaxe ni conserver de code mort commenté.</li>
+<li><strong>Docstrings Python (PEP 257 + Google) &amp; <code>doctest</code> :</strong>
+   - <code>ruff.toml</code> impose <code>select = ["D"]</code> et <code>convention = "google"</code> (<code>Args:</code>, <code>Returns:</code>, <code>Raises:</code>, <code>Example:</code> avec <code>r"""</code> dès qu’un antislash apparaît) sur <code>scripts/*.py</code> et <code>.tools/*.py</code>.
+   - Les modules Python importables embarquent des exemples vérifiables exécutés par <code>python3 -m doctest</code> et par <code>scripts/verifier_doc_code.py</code>.</li>
+<li><strong>PHPDoc complet &amp; Référence HTML générée :</strong>
+   - Les <code>113</code> fichiers PHP (<code>app/</code> et <code>public/index.php</code>) et leurs <code>394</code> méthodes publiques sont documentés par blocs <code>/** ... */</code>.
+   - Les références HTML autonomes sont générées directement depuis le code dans <code>livrables/reference/python/</code> (<code>pdoc --docformat google</code>) et <code>livrables/reference/php/</code> (<code>scripts/verifier_doc_code.py --gen-php-ref</code>), et liées depuis <code>README.md</code>.</li>
+</ol>
 <footer class="doc">
   <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/28-documentation-qui-survit-minishop.md</code> · 0 figure(s) intégrée(s).</p>
 </footer>

@@ -20,11 +20,13 @@ final class Router
     /** @var array<string, array<string, array{action: array{0: string, 1: string}, garde: string}>> routes[methode][motif] */
     private array $routes = ['GET' => [], 'POST' => []];
 
+    /** Enregistre une route GET sur liste blanche avec sa garde RBAC (voir ADR-0003). */
     public function get(string $motif, array $action, string $garde = 'public'): void
     {
         $this->routes['GET'][$motif] = ['action' => $action, 'garde' => $garde];
     }
 
+    /** Enregistre une route POST sur liste blanche avec sa garde RBAC (voir ADR-0003). */
     public function post(string $motif, array $action, string $garde = 'public'): void
     {
         $this->routes['POST'][$motif] = ['action' => $action, 'garde' => $garde];

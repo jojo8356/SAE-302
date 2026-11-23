@@ -17,7 +17,9 @@ declare(strict_types=1);
  *     générique (SEC-03), le détail n'est visible qu'en mode DEBUG.
  *
  * Moteur de données : SQL par défaut via StorageDriver ; le mode JSON reste
- * une option explicite pour les démonstrations et tests isolés.
+ * une option explicite pour les démonstrations et tests isolés (voir ADR-0001).
+ * L'authentification et la matrice RBAC reposent sur les sessions durcies
+ * décrites dans ADR-0003.
  */
 
 require_once dirname(__DIR__) . '/app/bootstrap.php';

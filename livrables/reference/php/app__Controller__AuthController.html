@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Controller\AuthController — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Controller · <span>app/Controller/AuthController.php</span></div>
+    <h1>AuthController</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — inscription, connexion, déconnexion (UC-04/05, EF-VIS-06/07).
+
+La comparaison du mot de passe se fait EXCLUSIVEMENT par
+password_verify() (RB-12) ; l&#x27;échec « email inconnu » et « mot de passe
+erroné » produisent le même message (SEC-05) ; l&#x27;identifiant de session
+est régénéré à la connexion (anti-fixation, SEC-04).</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (8)</h2>
+    <div class="method" id="m-formulaireInscription">
+  <code>public function formulaireInscription(): void</code>
+  <p> Affiche le formulaire vierge d&#x27;inscription d&#x27;un nouveau client.</p>
+</div><div class="method" id="m-inscription">
+  <code>public function inscription(): void</code>
+  <p> Traite la soumission du formulaire d&#x27;inscription client et ouvre la session.</p>
+</div><div class="method" id="m-formulaireConnexion">
+  <code>public function formulaireConnexion(): void</code>
+  <p> Affiche le formulaire de connexion de l&#x27;espace client.</p>
+</div><div class="method" id="m-connexion">
+  <code>public function connexion(): void</code>
+  <p> Authentifie un client par bcrypt et régénère l&#x27;identifiant de session (SEC-04).</p>
+</div><div class="method" id="m-deconnexion">
+  <code>public function deconnexion(): void</code>
+  <p> Clôt la session client et redirige vers l&#x27;accueil.</p>
+</div><div class="method" id="m-formulaireConnexionAdmin">
+  <code>public function formulaireConnexionAdmin(): void</code>
+  <p> Affiche le formulaire de connexion du back-office administrateur.</p>
+</div><div class="method" id="m-connexionAdmin">
+  <code>public function connexionAdmin(): void</code>
+  <p> Authentifie un administrateur (GESTIONNAIRE/SUPER) et enregistre l&#x27;acteur en base.</p>
+</div><div class="method" id="m-deconnexionAdmin">
+  <code>public function deconnexionAdmin(): void</code>
+  <p> Clôt la session administrateur et redirige vers l&#x27;accueil public.</p>
+</div>
+  </section>
+</body>
+</html>

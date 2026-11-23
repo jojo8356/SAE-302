@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Model\Data\StorageDriver — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Model\Data · <span>app/Model/Data/StorageDriver.php</span></div>
+    <h1>StorageDriver</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — énumération du pilote de gestion des données.
+
+Le pilote concret est choisi par cette énumération (clé
+« storage_driver » de la configuration). Le mode SQL est le parcours
+applicatif principal ; JSON reste disponible explicitement pour les tests
+portables, les démonstrations sans serveur et les installations isolées.
+
+  - StorageDriver::SQL → App\Model\Data\SqlStore : MySQL/MariaDB via PDO,
+    procédures, transactions et déclencheurs définis dans sql/01→04.
+  - StorageDriver::JSON → App\Model\Data\JsonStore : tables sous forme de
+    fichiers dans data/minishop ; aucune procédure SQL n&#x27;est simulée.
+
+Les deux pilotes partagent StoreInterface. Les capacités SQL spécialisées
+(procédures, fonctions stockées, verrouillage de lignes) sont exposées par
+des interfaces optionnelles, sans imposer une fausse API SQL au pilote JSON.</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (3)</h2>
+    <div class="method" id="m-createStore">
+  <code>public function createStore(): StoreInterface</code>
+  <p> Instancie le pilote correspondant à la valeur de configuration.</p>
+</div><div class="method" id="m-defaultDataPath">
+  <code>public static function defaultDataPath(): string</code>
+  <p> Chemin par défaut des fichiers de données JSON (racine du projet).</p>
+</div><div class="method" id="m-fromConfig">
+  <code>public static function fromConfig(?string $value): self</code>
+  <p> Depuis une chaîne de configuration (&#x27;json&#x27; / &#x27;sql&#x27;), avec repli SQL.</p>
+</div>
+  </section>
+</body>
+</html>

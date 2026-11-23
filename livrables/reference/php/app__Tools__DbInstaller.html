@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Tools\DbInstaller — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Tools · <span>app/Tools/DbInstaller.php</span></div>
+    <h1>DbInstaller</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — installation locale de la base MySQL/MariaDB.
+
+Regroupe en une seule classe ce qu&#x27;un développeur doit faire à la main :
+créer la base si elle manque, y charger `sql/01 → 04` (schéma, 18 procédures,
+16 déclencheurs, jeu de démonstration), puis **vérifier** que les objets
+attendus existent réellement. Utilisé par `scripts/db_init.php` et
+`scripts/load_db.php` (qui reste l&#x27;enveloppe historique).
+
+La configuration vient de `Database::config()` — donc du fichier `.env`
+(modèle `.env.example`) :
+
+  DB_HOST=&quot;127.0.0.1&quot;
+  DB_PORT=&quot;3306&quot;
+  DB_NAME=&quot;minishop&quot;
+  DB_USER=&quot;minishop&quot;
+  DB_PASSWORD=&quot;…&quot;
+  STORAGE_DRIVER=&quot;sql&quot;
+
+Aucune valeur n&#x27;est concaténée dans le SQL (SEC-01) ; le nom de la base est
+validé par une liste blanche (`[A-Za-z0-9_]+`) et n&#x27;est jamais utilisé comme
+paramètre lié (MySQL refuse les marqueurs sur les identifiants).</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (26)</h2>
+    <div class="method" id="m-depuisConfiguration">
+  <code>public static function depuisConfiguration(): self</code>
+  <p> Construit l&#x27;installateur depuis `.env` / l&#x27;environnement.</p>
+</div><div class="method" id="m-depuisVariables">
+  <code>public static function depuisVariables(): self</code>
+  <p> Depuis des variables d&#x27;environnement explicites (compatibilité load_db.php).</p>
+</div><div class="method" id="m-base">
+  <code>public function base(): string</code>
+  <p> Retourne le nom de la base SQL cible.</p>
+</div><div class="method" id="m-hote">
+  <code>public function hote(): string</code>
+  <p> Retourne l&#x27;hôte du serveur MariaDB/MySQL.</p>
+</div><div class="method" id="m-port">
+  <code>public function port(): string</code>
+  <p> Retourne le port TCP du serveur MariaDB/MySQL.</p>
+</div><div class="method" id="m-utilisateur">
+  <code>public function utilisateur(): string</code>
+  <p> Retourne le nom de l&#x27;utilisateur SQL configuré pour l&#x27;installation.</p>
+</div><div class="method" id="m-cible">
+  <code>public function cible(): string</code>
+  <p> Cible lisible : `minishop@127.0.0.1:3306`.</p>
+</div><div class="method" id="m-baseValide">
+  <code>public function baseValide(): bool</code>
+  <p> Le nom de base respecte-t-il la liste blanche ?</p>
+</div><div class="method" id="m-connexion">
+  <code>public function connexion(bool $avecBase = true): PDO</code>
+  <p>Connexion PDO. `$avecBase = false` pour l&#x27;administration du serveur<br>(création / suppression de la base).<br><br>Délègue à `DbConnexion`, qui gère le repli sur la socket Unix quand le<br>compte (root sous Debian/Ubuntu) n&#x27;accepte pas l&#x27;authentification TCP.</p>
+</div><div class="method" id="m-socketUtilisee">
+  <code>public function socketUtilisee(): ?string</code>
+  <p> Socket Unix utilisée par la dernière connexion réussie (`null` = TCP).</p>
+</div><div class="method" id="m-refusIdentifiants">
+  <code>public function refusIdentifiants(): bool</code>
+  <p> Le dernier échec est-il un refus d&#x27;identifiants (root en socket Unix) ?</p>
+</div><div class="method" id="m-derniereErreur">
+  <code>public function derniereErreur(): string</code>
+  <p> Dernière erreur de connexion lisible (`&#x27;&#x27;` si aucune).</p>
+</div><div class="method" id="m-expliquer">
+  <code>public static function expliquer(PDOException $erreur, string $hote, string $port): string</code>
+  <p> Message d&#x27;aide à partir du code d&#x27;erreur MySQL (délégué à DbConnexion).</p>
+</div><div class="method" id="m-baseExiste">
+  <code>public function baseExiste(): bool</code>
+  <p> La base existe-t-elle sur le serveur ?</p>
+</div><div class="method" id="m-creerBase">
+  <code>public function creerBase(): void</code>
+  <p> Crée la base en utf8mb4 (accents et emoji sûrs).</p>
+</div><div class="method" id="m-creerBaseNouvelle">
+  <code>public function creerBaseNouvelle(): void</code>
+  <p> Crée une base uniquement si elle n&#x27;existe pas déjà (échec atomique sinon).</p>
+</div><div class="method" id="m-supprimerBase">
+  <code>public function supprimerBase(): void</code>
+  <p> Supprime la base (mode `--reset`, irréversible).</p>
+</div><div class="method" id="m-serveurJoignable">
+  <code>public function serveurJoignable(): bool</code>
+  <p> Le serveur répond-il ? (diagnostic, sans échouer)</p>
+</div><div class="method" id="m-charger">
+  <code>public function charger(array $fichiers, ?callable $journal = null): array</code>
+  <p>Charge les scripts SQL dans l&#x27;ordre.<br><br>@param list&lt;string&gt; $fichiers chemins absolus<br>@param callable(string,int):void|null $journal reçoit (fichier, nb instructions)<br>@return array&lt;string,int&gt; fichier =&gt; instructions exécutées</p>
+</div><div class="method" id="m-scripts">
+  <code>public static function scripts(bool $avecDemo = true): array</code>
+  <p> Chemin des scripts dans l&#x27;ordre de chargement.</p>
+</div><div class="method" id="m-inventaire">
+  <code>public function inventaire(): array</code>
+  <p>Inventaire de la base (compte réel des objets et des lignes).<br><br>@return array&lt;string,int&gt; `-1` = information indisponible</p>
+</div><div class="method" id="m-versionServeur">
+  <code>public function versionServeur(): string</code>
+  <p> Version annoncée par le serveur (`10.11.6-MariaDB`, `8.0.36`, …).</p>
+</div><div class="method" id="m-versionCompatible">
+  <code>public static function versionCompatible(string $version): bool</code>
+  <p>Le serveur applique-t-il réellement les contraintes `CHECK` ?<br><br>MySQL ne les applique qu&#x27;à partir de 8.0.16 (avant, elles sont parsées<br>puis ignorées : RB-02/RB-03 passeraient silencieusement) ; MariaDB les<br>applique depuis 10.2, mais le projet exige 10.6+ pour les autres objets.</p>
+</div><div class="method" id="m-jeuCaracteres">
+  <code>public function jeuCaracteres(): string</code>
+  <p> Jeu de caractères de la connexion (doit être utf8mb4).</p>
+</div><div class="method" id="m-verifier">
+  <code>public function verifier(array $inventaire, bool $avecDemo = true): array</code>
+  <p>Contrôles de conformité après chargement.<br><br>@param array&lt;string,int&gt; $inventaire résultat de inventaire()<br>@return list&lt;array{controle:string, ok:bool, detail:string}&gt;</p>
+</div><div class="method" id="m-diagnostiquer">
+  <code>public function diagnostiquer(bool $avecBase = true): array</code>
+  <p>Vérification complète : la base est-elle utilisable par l&#x27;application ?<br><br>@return list&lt;array{controle:string, ok:bool, detail:string}&gt;</p>
+</div>
+  </section>
+</body>
+</html>

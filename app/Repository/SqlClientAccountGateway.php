@@ -11,10 +11,12 @@ use UnexpectedValueException;
 /** Stratégie SQL : adapte sp_create_account / sp_get_credentials au port métier. */
 final class SqlClientAccountGateway implements ClientAccountGateway
 {
+    /** Injecte l'exécuteur de procédures stockées MariaDB/MySQL. */
     public function __construct(private readonly StoredProcedureExecutor $procedures)
     {
     }
 
+    /** Crée un compte client via la procédure stockée sp_create_account (voir ADR-0002). */
     public function createAccount(string $nom, string $prenom, string $email, string $hash): int
     {
         $resultat = $this->procedures->callProcedure(
@@ -40,6 +42,7 @@ final class SqlClientAccountGateway implements ClientAccountGateway
         return (int) $idClient;
     }
 
+    /** Récupère l'identifiant, le hash bcrypt et le statut via sp_get_credentials. */
     public function getCredentials(string $email): array
     {
         $resultat = $this->procedures->callProcedure(
@@ -70,6 +73,7 @@ final class SqlClientAccountGateway implements ClientAccountGateway
         ];
     }
 
+    /** Met à jour le profil client via la procédure stockée sp_update_client. */
     public function updateClient(
         int $idClient,
         string $nom,

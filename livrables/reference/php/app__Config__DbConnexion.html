@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Config\DbConnexion — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Config · <span>app/Config/DbConnexion.php</span></div>
+    <h1>DbConnexion</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — ouverture d&#x27;une connexion PDO vers MySQL / MariaDB.
+
+Point d&#x27;entrée UNIQUE : `SqlStore` (pilote applicatif) et `DbInstaller`
+(création de la base) passent tous les deux par ici, ce qui supprime le
+DSN dupliqué qui vivait dans chaque classe.
+
+Le point délicat est l&#x27;authentification de `root` sous Debian/Ubuntu :
+MariaDB et MySQL y créent `root@localhost` avec le greffon `unix_socket`,
+qui **n&#x27;accepte pas** de connexion TCP. PHP, lui, se connecte en TCP
+(`127.0.0.1:3306`), et le serveur répond alors :
+
+  SQLSTATE[HY000] [1698] Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27;
+
+`ouvrir()` traite ce cas précis : si le code d&#x27;erreur est 1698 (ou 1045 sur
+un compte `root` sans mot de passe) et qu&#x27;une socket Unix locale existe, la
+connexion est **réessayée par la socket** — sans rien changer au `.env`.
+Le répertoire de socket peut aussi être imposé explicitement :
+
+  DB_SOCKET=/run/mysqld/mysqld.sock
+
+C&#x27;est le comportement attendu d&#x27;un outil de développement : le cas le plus
+fréquent (poste Debian fraîchement installé) fonctionne sans création de
+compte applicatif, et `DB_SOCKET` reste la porte de sortie explicite.</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (13)</h2>
+    <div class="method" id="m-options">
+  <code>public static function options(): array</code>
+  <p> Options communes à toutes les connexions applicatives.</p>
+</div><div class="method" id="m-ouvrir">
+  <code>public static function ouvrir(?string $base = null, ?array $config = null): PDO</code>
+  <p>Ouvre une connexion : `$base = null` pour l&#x27;administration du serveur<br>(création / suppression de la base, `information_schema`).<br><br>@throws PDOException la dernière erreur rencontrée (message exploitable<br>                     par `expliquer()`)</p>
+</div><div class="method" id="m-imposerFuseauUtc">
+  <code>public static function imposerFuseauUtc(PDO $pdo): void</code>
+  <p> Fixe le fuseau de cette session uniquement, sans dépendre des tables IANA du serveur.</p>
+</div><div class="method" id="m-dsns">
+  <code>public static function dsns(?string $base = null, ?array $config = null): array</code>
+  <p>DSN à essayer, dans l&#x27;ordre : socket imposée, TCP, puis socket locale<br>(repli). Le repli n&#x27;est tenté que sur une erreur d&#x27;authentification.<br><br>@return list&lt;string&gt;</p>
+</div><div class="method" id="m-dsnTcp">
+  <code>public static function dsnTcp(array $config, ?string $base = null): string</code>
+  <p> DSN TCP (`mysql:host=…;port=…;dbname=…;charset=utf8mb4`).</p>
+</div><div class="method" id="m-dsnSocket">
+  <code>public static function dsnSocket(string $socket, ?string $base = null): string</code>
+  <p> DSN par socket Unix (`mysql:unix_socket=…;dbname=…;charset=utf8mb4`).</p>
+</div><div class="method" id="m-socketConfiguree">
+  <code>public static function socketConfiguree(?array $config = null): ?string</code>
+  <p> Socket explicitement demandée par `DB_SOCKET`, si elle existe vraiment.</p>
+</div><div class="method" id="m-socketLocale">
+  <code>public static function socketLocale(?array $config = null): ?string</code>
+  <p> Socket locale détectée (repli `unix_socket`), `null` si serveur distant.</p>
+</div><div class="method" id="m-hoteLocal">
+  <code>public static function hoteLocal(array $config): bool</code>
+  <p> Le serveur visé tourne-t-il sur cette machine ?</p>
+</div><div class="method" id="m-socketUtilisee">
+  <code>public static function socketUtilisee(): ?string</code>
+  <p> Socket utilisée par la dernière connexion réussie (`null` = TCP).</p>
+</div><div class="method" id="m-reinitialiser">
+  <code>public static function reinitialiser(): void</code>
+  <p> Réinitialise la trace (tests, bascule de configuration).</p>
+</div><div class="method" id="m-expliquer">
+  <code>public static function expliquer(PDOException $erreur, string $hote, string $port): string</code>
+  <p>Traduit une erreur PDO en conseil actionnable.<br><br>`$hote` / `$port` sont fournis par l&#x27;appelant car le DSN peut avoir<br>basculé sur une socket entre-temps.</p>
+</div><div class="method" id="m-utilisateurSysteme">
+  <code>public static function utilisateurSysteme(): string</code>
+  <p> Utilisateur du SYSTÈME sous lequel tourne PHP (comparé par unix_socket).</p>
+</div>
+  </section>
+</body>
+</html>

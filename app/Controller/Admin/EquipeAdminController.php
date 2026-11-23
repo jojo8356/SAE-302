@@ -18,6 +18,7 @@ use App\Security\Auth;
 
 final class EquipeAdminController extends Controller
 {
+    /** Affiche la liste des comptes administrateurs (accès réservé au rôle SUPER). */
     public function index(): void
     {
         Auth::exigeSuper();
@@ -26,6 +27,7 @@ final class EquipeAdminController extends Controller
         $this->render('admin/equipe', ['admins' => $admins, 'erreurs' => []], 'Back-office — équipe');
     }
 
+    /** Crée un compte administrateur (GESTIONNAIRE ou SUPER) avec hachage bcrypt. */
     public function creer(): void
     {
         $this->verifierCsrf();

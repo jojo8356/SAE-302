@@ -21,6 +21,7 @@ namespace App\Model\Data;
 
 final class Views
 {
+    /** Injecte le store abstrait utilisé pour calculer les vues métier. */
     public function __construct(private readonly StoreInterface $store)
     {
     }

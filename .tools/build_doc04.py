@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-"""Assemble le livrable n°3 autonome « Conception de la base de données et SQL — MiniShop »
-   à partir du CDC §12 (source) et de l'annexe SQL (scripts verbatim)."""
+"""Assemble le livrable n°3 autonome Conception BD et SQL — MiniShop.
+
+Construit `docs/04-conception-bd-et-sql.md` depuis le CDC §12 et l'annexe SQL.
+"""
 import re, pathlib, base64
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -22,6 +24,14 @@ while sec and sec[-1].strip() in ("", "---"):
     sec.pop()
 
 def find(prefix):
+    """Retourne l'indice de la première ligne du extrait commençant par prefix.
+
+    Args:
+        prefix: Préfixe de titre Markdown recherché dans `sec`.
+
+    Returns:
+        Indice entier de la ligne correspondante.
+    """
     return next(i for i, l in enumerate(sec) if l.startswith(prefix))
 
 idx = {
@@ -52,6 +62,16 @@ block = {
 }
 
 def ren(lines, old, new):
+    """Remplace le préfixe de la première ligne d'une section extraite.
+
+    Args:
+        lines: Liste des lignes de la section.
+        old: Préfixe attendu en tête de `lines[0]`.
+        new: Nouveau préfixe de remplacement.
+
+    Returns:
+        La liste modifiée avec le nouveau titre.
+    """
     assert lines[0].startswith(old), f"titre inattendu : {lines[0]!r}"
     lines[0] = new + lines[0][len(old):]
     return lines
@@ -182,7 +202,16 @@ doc = doc.replace("](docs/diagrams/", "](diagrams/")
 import shutil
 SQLDIR = ROOT / "sql"
 
-def nlines(p): return len(p.read_text(encoding="utf-8").splitlines())
+def nlines(p):
+    """Compte le nombre de lignes d'un fichier UTF-8.
+
+    Args:
+        p: Chemin `Path` vers le fichier cible.
+
+    Returns:
+        Nombre entier de lignes du fichier.
+    """
+    return len(p.read_text(encoding="utf-8").splitlines())
 
 fichiers = [
  ("[`sql/01_minishop_schema.sql`](../sql/01_minishop_schema.sql)",

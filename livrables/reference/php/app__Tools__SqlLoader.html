@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Tools\SqlLoader — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Tools · <span>app/Tools/SqlLoader.php</span></div>
+    <h1>SqlLoader</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — chargeur de scripts SQL (portable, sans client `mysql`).
+
+Pourquoi ne pas appeler `mysql &lt; sql/01…` en shell ? Parce qu&#x27;un projet
+noté n&#x27;a pas le droit de dépendre d&#x27;un binaire présent sur une seule
+machine : CI Linux, poste Windows, conteneur Alpine n&#x27;ont pas tous le même
+client. Ce chargeur lit les fichiers `sql/*.sql`, découpe les instructions
+en respectant `DELIMITER $$` (indispensable pour les procédures et les
+déclencheurs) et les exécute par PDO.
+
+Il est utilisé par :
+  - scripts/load_db.php  (chargement d&#x27;une base de dev / de test) ;
+  - scripts/gen_volumes_cli.php --load (avant une campagne de mesure) ;
+  - App\Tools\SqlLoader::compteObjets() (vérification des objets créés).</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (5)</h2>
+    <div class="method" id="m-__construct">
+  <code>public function __construct(private readonly PDO $pdo)</code>
+  <p> Injecte la connexion PDO sur laquelle exécuter les scripts SQL.</p>
+</div><div class="method" id="m-chargerFichiers">
+  <code>public function chargerFichiers(array $fichiers, bool $ignorerBases = false): int</code>
+  <p> Charge un ou plusieurs fichiers dans l&#x27;ordre fourni.</p>
+</div><div class="method" id="m-chargerFichier">
+  <code>public function chargerFichier(string $fichier, bool $ignorerBases = false): int</code>
+  <p>Charge un fichier SQL et retourne le nombre d&#x27;instructions exécutées.<br><br>$ignorerBases = true : on saute `CREATE/DROP DATABASE` et `USE`, car la<br>connexion PDO pointe déjà sur la base voulue (le fichier 01 est écrit<br>pour le client `mysql`, où il doit créer `minishop` lui-même).</p>
+</div><div class="method" id="m-decouper">
+  <code>public static function decouper(string $script): array</code>
+  <p>Découpe un script SQL en instructions exécutables par PDO.<br><br>Gère :<br>  - les commentaires `-- …`, `# …` et `/* … *\/` **y compris indentés**<br>    et en fin de ligne (MySQL : `--` suivi d&#x27;un blanc) ;<br>  - les chaînes &#x27;…&#x27; et &quot;…&quot; (avec `\\` et le doublement `&#x27;&#x27;`), les<br>    identifiants `…` — les `;` qu&#x27;ils contiennent sont ignorés ;<br>  - `DELIMITER xx` / `DELIMITER ;` (corps de procédures et de triggers).<br><br>Le bug corrigé ici mérite d&#x27;être raconté : la première version ne<br>reconnaissait un commentaire qu&#x27;en **colonne 0**. Or ces fichiers<br>contiennent des commentaires indentés (`  -- c&#x27;est l&#x27;interet de …`).<br>L&#x27;apostrophe de « l&#x27;interet » faisait donc basculer le lecteur en mode<br>chaîne : le délimiteur `$$` n&#x27;était plus vu, plusieurs procédures<br>étaient recollées en une seule instruction, et MariaDB répondait<br>« syntax error near &#x27;$$&#x27; ». Le symptôme désignait MariaDB alors que la<br>faute était dans ce fichier.<br><br>@return list&lt;string&gt;</p>
+</div><div class="method" id="m-compteObjets">
+  <code>public function compteObjets(): array</code>
+  <p>Vérifie que le schéma, les procédures, les fonctions, les déclencheurs<br>et les vues attendus existent réellement (preuve du point 3 de l&#x27;audit).<br><br>@return array{tables:int, procedures:int, fonctions:int, triggers:int, vues:int, details:array&lt;string,int&gt;}</p>
+</div>
+  </section>
+</body>
+</html>

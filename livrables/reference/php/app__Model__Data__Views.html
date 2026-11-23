@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Model\Data\Views — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Model\Data · <span>app/Model/Data/Views.php</span></div>
+    <h1>Views</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — les 3 vues du schéma (sql/01) portées en opérations JSON.
+
+  v_etat_stock        : produit + état dérivé (RUPTURE / TRES_BAS / DISPONIBLE)
+  v_catalogue         : produits visibles + catégorie + état (RB-19)
+  v_commandes_client  : commandes + client + nombre de lignes
+
+Ces opérations fournissent l&#x27;équivalent applicatif des vues SQL au pilote
+JSON. Les règles utiles (état de stock, visibilité et agrégats) restent
+alignées sur les définitions de sql/01_minishop_schema.sql.
+
+Techniquement, pour le pilote JSON : jointures par table de hachage (index
+pk du store), zéro SQL — uniquement des opérations de tableaux natifs.</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (5)</h2>
+    <div class="method" id="m-__construct">
+  <code>public function __construct(private readonly StoreInterface $store)</code>
+  <p> Injecte le store abstrait utilisé pour calculer les vues métier.</p>
+</div><div class="method" id="m-etatStock">
+  <code>public static function etatStock(array $produit): string</code>
+  <p> État de stock dérivé d&#x27;un produit (règle de la vue v_etat_stock).</p>
+</div><div class="method" id="m-etatStocks">
+  <code>public function etatStocks(): array</code>
+  <p>v_etat_stock — l&#x27;état du stock de tous les produits.<br><br>@return list&lt;array&lt;string,mixed&gt;&gt;</p>
+</div><div class="method" id="m-catalogue">
+  <code>public function catalogue(array $spec = []): array</code>
+  <p>v_catalogue — produits visibles (RB-19) enrichis de leur catégorie.<br><br>@param array{where?: array, order?: array, limit?: int, offset?: int} $spec<br>@return list&lt;array&lt;string,mixed&gt;&gt;</p>
+</div><div class="method" id="m-commandesClient">
+  <code>public function commandesClient(array $spec = []): array</code>
+  <p>v_commandes_client — commandes enrichies (client, nombre de lignes).<br><br>@param array{where?: array, order?: array, limit?: int, offset?: int} $spec<br>@return list&lt;array&lt;string,mixed&gt;&gt;</p>
+</div>
+  </section>
+</body>
+</html>

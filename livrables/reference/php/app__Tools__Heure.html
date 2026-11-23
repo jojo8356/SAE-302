@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Tools\Heure — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Tools · <span>app/Tools/Heure.php</span></div>
+    <h1>Heure</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">Horodatages en UTC à l&#x27;écriture ; repli serveur Europe/Paris.
+Le navigateur affiche les dates selon les préférences personnelles.
+Aucun changement de configuration ne modifie les dates stockées. Les anciennes
+dates SQL de provenance inconnue doivent être examinées avant conversion.</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (14)</h2>
+    <div class="method" id="m-fuseauStockage">
+  <code>public static function fuseauStockage(): DateTimeZone</code>
+  <p> Retourne le fuseau horaire de stockage UTC (voir ADR-0001).</p>
+</div><div class="method" id="m-fuseauAffichage">
+  <code>public static function fuseauAffichage(): DateTimeZone</code>
+  <p> Retourne l&#x27;objet DateTimeZone de repli pour l&#x27;affichage (Europe/Paris).</p>
+</div><div class="method" id="m-maintenantUtc">
+  <code>public static function maintenantUtc(): DateTimeImmutable</code>
+  <p> Instant courant, en UTC.</p>
+</div><div class="method" id="m-maintenant">
+  <code>public static function maintenant(): DateTimeImmutable</code>
+  <p> Instant courant, dans le fuseau d’affichage.</p>
+</div><div class="method" id="m-horodatageStockage">
+  <code>public static function horodatageStockage(?DateTimeImmutable $instant = null): string</code>
+  <p>Horodatage à ÉCRIRE en base pour un instant donné (maintenant par<br>défaut) : sa représentation UTC au format de stockage.</p>
+</div><div class="method" id="m-instantDepuisStockage">
+  <code>public static function instantDepuisStockage(?string $valeur): ?DateTimeImmutable</code>
+  <p>Lit un horodatage stocké et retourne l&#x27;instant correspondant,<br>exprimé dans le fuseau d&#x27;affichage.<br><br>Formes acceptées :<br>  - « Y-m-d H:i:s » ou « Y-m-d » nus : lus comme de l&#x27;UTC<br>    (convention de stockage n° 1) ;<br>  - forme ISO 8601 portant son fuseau (« …T…+02:00 », « …Z ») :<br>    l&#x27;instant est celui décrit, puis converti dans le fuseau d’affichage.<br>Retourne null si la valeur est vide ou illisible.</p>
+</div><div class="method" id="m-formater">
+  <code>public static function formater(?string $valeur, bool $avecHeure = false): string</code>
+  <p>Formate un horodatage stocké pour l&#x27;affichage français :<br>« 15/01/2026 » ou, avec l&#x27;heure, « 15/01/2026 19h15 » (heure<br>configurée). Valeur absente ou illisible → « — » (contrat historique<br>du helper date_fr()).</p>
+</div><div class="method" id="m-formaterInstant">
+  <code>public static function formaterInstant(DateTimeImmutable $instant, bool $avecHeure = false): string</code>
+  <p> Formate un instant quelconque dans le fuseau d’affichage.</p>
+</div><div class="method" id="m-decalage">
+  <code>public static function decalage(?DateTimeImmutable $instant = null): string</code>
+  <p>Décalage de Paris par rapport à UTC pour un instant donné<br>(maintenant par défaut) : « UTC+1 » l&#x27;hiver, « UTC+2 » l&#x27;été.</p>
+</div><div class="method" id="m-estHeureAvancee">
+  <code>public static function estHeureAvancee(?DateTimeImmutable $instant = null): bool</code>
+  <p> Paris observe-t-il l&#x27;heure avancée (CEST) à cet instant ?</p>
+</div><div class="method" id="m-libelleFuseau">
+  <code>public static function libelleFuseau(?DateTimeImmutable $instant = null): string</code>
+  <p>Libellé du fuseau d&#x27;affichage pour un instant, ex. :<br>« Europe/Paris (UTC+2, heure d&#x27;été) » / « (UTC+1, heure d&#x27;hiver) ».</p>
+</div><div class="method" id="m-borneJourUtc">
+  <code>public static function borneJourUtc(string $jour, bool $lendemain = false): ?string</code>
+  <p> Minuit du jour affiché, ou du lendemain, converti en UTC pour les filtres.</p>
+</div><div class="method" id="m-borneTransmise">
+  <code>public static function borneTransmise(string $jour, string $borne, bool $lendemain = false): ?string</code>
+  <p> Borne calculée par le navigateur, contrôlée sans enregistrer son fuseau.</p>
+</div><div class="method" id="m-anneeCivile">
+  <code>public static function anneeCivile(): int</code>
+  <p> Année civile à Paris (numérotation des commandes CMD{année}-…).</p>
+</div>
+  </section>
+</body>
+</html>

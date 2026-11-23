@@ -18,6 +18,7 @@ use App\Security\Auth;
 
 final class StockAdminController extends Controller
 {
+    /** Affiche les états de stock triés par criticité et filtrables par niveau d'alerte. */
     public function index(): void
     {
         Auth::exigeAdmin();

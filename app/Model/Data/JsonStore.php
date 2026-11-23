@@ -97,6 +97,7 @@ final class JsonStore implements StoreInterface, StockMovementAuditor
         return new self($dataPath);
     }
 
+    /** Retourne le chemin du dossier contenant les fichiers JSON de ce magasin. */
     public function dataPath(): string
     {
         return $this->dataPath;
@@ -104,6 +105,7 @@ final class JsonStore implements StoreInterface, StockMovementAuditor
 
     // ============================================================= lecture
 
+    /** Sélectionne des lignes selon les filtres, le tri, la pagination et la projection. */
     public function select(string $table, array $spec = []): array
     {
         $rows = $this->rowsOf($table);
@@ -138,6 +140,7 @@ final class JsonStore implements StoreInterface, StockMovementAuditor
         return $result;
     }
 
+    /** Retourne la première ligne correspondant au prédicat, ou null. */
     public function findOne(string $table, array $where = []): ?array
     {
         $rows = $this->select($table, ['where' => $where, 'limit' => 1]);
@@ -145,6 +148,7 @@ final class JsonStore implements StoreInterface, StockMovementAuditor
         return $rows[0] ?? null;
     }
 
+    /** Recherche une ligne par sa clé primaire via l'index en mémoire. */
     public function find(string $table, int|string $pk): ?array
     {
         Schema::table($table); // Vérifie la liste blanche, même sans résultat.
@@ -161,11 +165,13 @@ final class JsonStore implements StoreInterface, StockMovementAuditor
         return null;
     }
 
+    /** Compte le nombre de lignes satisfaisant le prédicat donné. */
     public function count(string $table, array $where = []): int
     {
         return count($this->select($table, ['where' => $where]));
     }
 
+    /** Calcule la somme arrondie à 2 décimales d'une colonne numérique. */
     public function sum(string $table, string $column, array $where = []): float
     {
         $total = 0.0;
@@ -179,11 +185,13 @@ final class JsonStore implements StoreInterface, StockMovementAuditor
         return round($total, 2);
     }
 
+    /** Indique si au moins une ligne correspond au prédicat fourni. */
     public function exists(string $table, array $where = []): bool
     {
         return $this->findOne($table, $where) !== null;
     }
 
+    /** Retourne toutes les lignes d'une table indexées par leur clé primaire. */
     public function all(string $table): array
     {
         $def = Schema::table($table);
@@ -198,6 +206,7 @@ final class JsonStore implements StoreInterface, StockMovementAuditor
 
     // ============================================================ écriture
 
+    /** Insère une ligne en vérifiant contraintes, FK et déclencheurs émulés (voir ADR-0001). */
     public function insert(string $table, array $row): int
     {
         if (!$this->transaction) {
@@ -239,6 +248,7 @@ final class JsonStore implements StoreInterface, StockMovementAuditor
         return (int) $new[$pk];
     }
 
+    /** Met à jour les lignes correspondantes avec validation des déclencheurs BEFORE/AFTER. */
     public function update(string $table, array $where, array $changes): int
     {
         if (!$this->transaction) {
@@ -279,6 +289,7 @@ final class JsonStore implements StoreInterface, StockMovementAuditor
         return $changed;
     }
 
+    /** Supprime les lignes correspondantes en appliquant cascades FK et déclencheurs. */
     public function delete(string $table, array $where): int
     {
         if (!$this->transaction) {
@@ -324,6 +335,7 @@ final class JsonStore implements StoreInterface, StockMovementAuditor
         return $deleted;
     }
 
+    /** Retourne le prochain identifiant auto-incrémenté sans consommer le compteur. */
     public function nextId(string $table): int
     {
         Schema::table($table);
@@ -333,6 +345,7 @@ final class JsonStore implements StoreInterface, StockMovementAuditor
 
     // ======================================================== transactions
 
+    /** Ouvre une transaction protégée par verrou fichier exclusif (flock LOCK_EX). */
     public function beginTransaction(): void
     {
         if ($this->transaction) {
@@ -353,6 +366,7 @@ final class JsonStore implements StoreInterface, StockMovementAuditor
         $this->transaction = true;
     }
 
+    /** Valide les tables modifiées sur disque et libère le verrou exclusif. */
     public function commit(): void
     {
         if (!$this->transaction) {
@@ -367,6 +381,7 @@ final class JsonStore implements StoreInterface, StockMovementAuditor
         }
     }
 
+    /** Annule la transaction en vidant le cache mémoire sans écriture disque. */
     public function rollback(): void
     {
         if (!$this->transaction) {
@@ -394,6 +409,7 @@ final class JsonStore implements StoreInterface, StockMovementAuditor
         $this->verrou = null;
     }
 
+    /** Indique si une transaction JSON est actuellement ouverte. */
     public function inTransaction(): bool
     {
         return $this->transaction;
@@ -424,6 +440,7 @@ final class JsonStore implements StoreInterface, StockMovementAuditor
         }
     }
 
+    /** Enregistre un mouvement de stock daté UTC dans stock_movement_history. */
     public function logStockMovement(
         int $idProduit,
         int $stockAvant,
@@ -458,6 +475,7 @@ final class JsonStore implements StoreInterface, StockMovementAuditor
         ]);
     }
 
+    /** Définit l'acteur courant (CLIENT, ADMIN ou SYSTEME) pour l'audit des écritures. */
     public function setActor(array $actor): void
     {
         $role = 'SYSTEME';
@@ -471,6 +489,7 @@ final class JsonStore implements StoreInterface, StockMovementAuditor
         ];
     }
 
+    /** Retourne l'acteur courant enregistré pour la journalisation d'audit. */
     public function actor(): array
     {
         return $this->actor;

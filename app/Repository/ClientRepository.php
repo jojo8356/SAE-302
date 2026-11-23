@@ -24,6 +24,7 @@ final class ClientRepository
 {
     private readonly ClientAccountGateway $accountGateway;
 
+    /** Initialise le dépôt client avec passerelle SQL ou magasin abstrait. */
     public function __construct(
         private readonly StoreInterface $store,
         ?ClientAccountGateway $accountGateway = null,

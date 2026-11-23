@@ -27,6 +27,7 @@ final class ApiController extends Controller
 {
     private PanierSession $panier;
 
+    /** Charge le panier courant depuis la session utilisateur. */
     public function __construct()
     {
         $this->panier = PanierSession::charge();

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>App\Security\Auth — Référence PHP MiniShop</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1.2rem; color: #1f2937; line-height: 1.55; }
+    header { border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    .ns { color: #6b7280; font-size: .9rem; font-family: monospace; }
+    .doc { background: #f8fafc; border-left: 4px solid #2563eb; padding: .9rem 1.1rem; white-space: pre-wrap; }
+    .method { border: 1px solid #e5e7eb; border-radius: 6px; padding: .85rem 1rem; margin: .85rem 0; }
+    .method code { display: block; font-weight: 600; color: #0f172a; background: #f1f5f9; padding: .35rem .5rem; border-radius: 4px; overflow-x: auto; }
+    .muted { color: #6b7280; font-style: italic; }
+    a { color: #1d4ed8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav><a href="index.html">← Index de la référence PHP</a> · <a href="../python/index.html">Référence Python (pdoc)</a></nav>
+  <header>
+    <div class="ns">App\Security · <span>app/Security/Auth.php</span></div>
+    <h1>Auth</h1>
+  </header>
+  <section>
+    <h2>Description</h2>
+    <div class="doc">MiniShop — authentification &amp; sessions durcies (§8.4, SEC-04/05, RB-12/13).
+
+Deux espaces STRICTEMENT séparés (RB-13) :
+  - client   : $_SESSION[&#x27;client_id&#x27;]  (front-office, espace client)
+  - admin    : $_SESSION[&#x27;admin_id&#x27;]   (back-office, rôle SUPER|GESTIONNAIRE)
+Un client ne voit jamais le back-office ; un admin ne gère jamais un compte
+client. Les deux sessions peuvent coexister dans le même navigateur.
+
+Durcissements (SEC-04) : cookie HttpOnly + SameSite=Lax, régénération de
+l&#x27;identifiant de session à chaque élévation de privilège (anti-fixation,
+test S-04), messages d&#x27;erreur volontairement identiques pour « email
+inconnu » et « mot de passe erroné » (SEC-05).
+
+NOTE RUNTIME DE DÉVELOPPEMENT — le bac à sable exécute l&#x27;application sous
+PHP-WASM, dont le module de session est défaillant : il verrouille le
+PREMIER identifiant de session du processus et l&#x27;ignore ensuite (tous les
+visiteurs partageraient une même session). Sur ce SAPI uniquement
+(PHP_SAPI === &#x27;wasm&#x27;), demarrer() bascule sur un pool de sessions géré en
+mémoire du processus, indexé par le cookie — comportement strictement
+équivalent pour l&#x27;application. Sur tout serveur PHP normal (FPM, Apache,
+php -S, CLI), c&#x27;est l&#x27;API session native qui est utilisée.</div>
+  </section>
+  <section>
+    <h2>Méthodes publiques (12)</h2>
+    <div class="method" id="m-demarrer">
+  <code>public static function demarrer(): void</code>
+  <p> Démarre la session PHP durcie (HttpOnly, SameSite=Lax, use_strict_mode ; voir ADR-0003).</p>
+</div><div class="method" id="m-client">
+  <code>public static function client(): ?array</code>
+  <p> @return array{id: int, nom: string, prenom: string, email: string}|null</p>
+</div><div class="method" id="m-connecterClient">
+  <code>public static function connecterClient(int $idClient): void</code>
+  <p> Connecte un client (après password_verify côté contrôleur).</p>
+</div><div class="method" id="m-deconnecterClient">
+  <code>public static function deconnecterClient(): void</code>
+  <p> Déconnecte le client et régénère l&#x27;identifiant de session (anti-fixation).</p>
+</div><div class="method" id="m-exigeClient">
+  <code>public static function exigeClient(): array</code>
+  <p> Garde de route : exiger un client connecté (redirige vers /connexion).</p>
+</div><div class="method" id="m-admin">
+  <code>public static function admin(): ?array</code>
+  <p> @return array{id: int, nom: string, prenom: string, email: string, role: string}|null</p>
+</div><div class="method" id="m-connecterAdmin">
+  <code>public static function connecterAdmin(int $idAdmin): void</code>
+  <p> Enregistre l&#x27;administrateur connecté après régénération d&#x27;ID anti-fixation (SEC-04).</p>
+</div><div class="method" id="m-deconnecterAdmin">
+  <code>public static function deconnecterAdmin(): void</code>
+  <p> Ferme la session administrateur en conservant un nouvel identifiant sain.</p>
+</div><div class="method" id="m-exigeAdmin">
+  <code>public static function exigeAdmin(): array</code>
+  <p> Garde de route : exiger un administrateur connecté (RB-13).</p>
+</div><div class="method" id="m-exigeSuper">
+  <code>public static function exigeSuper(): array</code>
+  <p> Garde de route : exiger le rôle SUPER (gestion des comptes admin, RB-13).</p>
+</div><div class="method" id="m-verifierAdmin">
+  <code>public static function verifierAdmin(string $email, string $motDePasse): ?array</code>
+  <p> Vérifie les identifiants admin (comparaison à temps constant, RB-12).</p>
+</div><div class="method" id="m-rediriger">
+  <code>public static function rediriger(string $chemin): never</code>
+  <p> Effectue une redirection HTTP 302 immédiate et interrompt le script.</p>
+</div>
+  </section>
+</body>
+</html>

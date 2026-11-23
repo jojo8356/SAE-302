@@ -38,6 +38,20 @@ RACINE = Path(__file__).resolve().parent.parent
 
 
 def decouper(markdown: str) -> list[dict[str, object]]:
+    r"""Découpe un fichier Markdown en diapositives séparées par ``---``.
+
+    Args:
+        markdown: Contenu brut du support de diapositives.
+
+    Returns:
+        Liste de dictionnaires décrivant chaque diapositive (titre, sous-titre,
+        puces, message et image optionnelle).
+
+    Example:
+        >>> slides = decouper("# Titre\n- Point 1\n---\n# Suite\n- Point 2")
+        >>> [s["titre"] for s in slides]
+        ['Titre', 'Suite']
+    """
     blocs = re.split(r"(?m)^\s*---\s*$", markdown)
     diapositives: list[dict[str, object]] = []
     for bloc in blocs:
@@ -80,12 +94,32 @@ def decouper(markdown: str) -> list[dict[str, object]]:
 
 
 def nettoyer(texte: str) -> str:
+    """Supprime le marquage Markdown inline (gras, italique, code) d'un texte.
+
+    Args:
+        texte: Chaîne pouvant contenir ``**gras**``, ``*italique*`` ou ```code```.
+
+    Returns:
+        Texte brut prêt pour l'injection dans une zone PowerPoint.
+
+    Example:
+        >>> nettoyer("Test **MiniShop** avec `PHP` et *SQL*")
+        'Test MiniShop avec PHP et SQL'
+    """
     texte = re.sub(r"\*\*(.+?)\*\*", r"\1", texte)
     texte = re.sub(r"`([^`]+)`", r"\1", texte)
     return re.sub(r"(?<![\w*])\*([^*\n]+)\*(?![\w*])", r"\1", texte)
 
 
 def construire(diapositives: list[dict[str, object]]) -> Presentation:
+    """Construit une présentation PowerPoint 16:9 à partir des diapositives extraites.
+
+    Args:
+        diapositives: Liste de diapositives structurées produite par ``decouper``.
+
+    Returns:
+        Objet ``Presentation`` prêt à être enregistré via ``.save()``.
+    """
     presentation = Presentation()
     presentation.slide_width = Inches(13.333)
     presentation.slide_height = Inches(7.5)
@@ -238,6 +272,14 @@ def construire(diapositives: list[dict[str, object]]) -> Presentation:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Point d'entrée CLI pour générer le diaporama PowerPoint depuis Markdown.
+
+    Args:
+        argv: Arguments de ligne de commande optionnels.
+
+    Returns:
+        Code de sortie 0 en cas de succès, 2 si la source est absente ou vide.
+    """
     analyseur = argparse.ArgumentParser(description="Markdown → PPTX académique (SAÉ 302 — MiniShop).")
     analyseur.add_argument("source", type=Path)
     analyseur.add_argument("--out", type=Path, default=Path("dist/minishop-soutenance.pptx"))
