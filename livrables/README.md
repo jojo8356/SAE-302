@@ -39,6 +39,7 @@ Les mêmes fichiers existent dans `dist/` (répertoire généré, hors Git, cf. 
 - **24-preparation-soutenance-complete** — [HTML](html/24-preparation-soutenance-complete.html) · [PDF](pdf/24-preparation-soutenance-complete.pdf) · [Word](docx/24-preparation-soutenance-complete.docx)
 - **25-bilan-de-projet-methode-et-modele** — [HTML](html/25-bilan-de-projet-methode-et-modele.html) · [PDF](pdf/25-bilan-de-projet-methode-et-modele.pdf) · [Word](docx/25-bilan-de-projet-methode-et-modele.docx)
 - **26-transition-exploitation-maintenance-build-to-run** — [HTML](html/26-transition-exploitation-maintenance-build-to-run.html) · [PDF](pdf/26-transition-exploitation-maintenance-build-to-run.pdf) · [Word](docx/26-transition-exploitation-maintenance-build-to-run.docx)
+- **27-rapport-mise-en-production-minishop** — [HTML](html/27-rapport-mise-en-production-minishop.html) · [PDF](pdf/27-rapport-mise-en-production-minishop.pdf) · [Word](docx/27-rapport-mise-en-production-minishop.docx)
 - **DA** — [HTML](html/DA.html) · [PDF](pdf/DA.pdf) · [Word](docx/DA.docx)
 - **README** — [HTML](html/README.html) · [PDF](pdf/README.pdf) · [Word](docx/README.docx)
 - **annexe-cas-usage** — [HTML](html/annexe-cas-usage.html) · [PDF](pdf/annexe-cas-usage.pdf) · [Word](docx/annexe-cas-usage.docx)
