@@ -66,8 +66,10 @@
 | `COMMANDE` | demande d'achat enregistrée d'un client | `id_commande` (+ `numero` candidat) | adresse de livraison, statut, montant total, commentaire, dates |
 | `LIGNE_COMMANDE` | un produit acheté en quantité dans une commande, **au prix du moment** | `id_ligne` | quantité, prix unitaire, total |
 | `ORDER_STATUS_HISTORY` | trace inaltérable des changements de statut | `id` | ancien/nouveau statut, auteur, rôle, commentaire, horodatage |
+| `PARAMETRE` | paramètres métier sans redéploiement (`frais_port`, `franchise_port`, `tva_defaut`, `conservation_compte`) | `cle` | valeur, unité, commentaire (`comment`), date de modification |
+| `STOCK_MOVEMENT_HISTORY` | snapshot d'audit des ajustements manuels de stock (survit à la suppression du produit) | `id_mouvement` | produit (id, référence, nom), mode (`SET`/`DELTA`), quantité, stocks avant/après, motif, auteur, rôle, horodatage |
 
-Associations : `PASSER` (CLIENT↔COMMANDE), `COMPORTER` (COMMANDE↔LIGNE_COMMANDE), `ETRE VENDU DANS` (PRODUIT↔LIGNE_COMMANDE), `CLASSER` (CATEGORIE↔PRODUIT), `SUIVRE`/`GERER` (ADMINISTRATEUR↔COMMANDE/PRODUIT), `ETRE TRACÉE DANS` (COMMANDE↔ORDER_STATUS_HISTORY).
+Associations : `PASSER` (CLIENT↔COMMANDE), `COMPORTER` (COMMANDE↔LIGNE_COMMANDE), `ETRE VENDU DANS` (PRODUIT↔LIGNE_COMMANDE), `CLASSER` (CATEGORIE↔PRODUIT), `ETRE TRACÉE DANS` (COMMANDE↔ORDER_STATUS_HISTORY), `AUDITER` (PRODUIT↔STOCK_MOVEMENT_HISTORY sans FK), `PARAMETRER` (PARAMETRE↔PRODUIT/COMMANDE).
 
 #### 12.1.3 Cardinalités, avec justification ligne à ligne
 
@@ -105,7 +107,7 @@ PRODUIT(id_produit PK, reference UK, nom, slug UK, description, prix_ht, tva, pr
         id_categorie FK → CATEGORIE)            -- RB-07 (NOT NULL), RB-16 (prix_ttc calculé)
 
 COMMANDE(id_commande PK, numero UK, adresse_livraison, statut, frais_port, montant_total,
-         commentaire, date_commande, date_modification, id_client FK → CLIENT)  -- RB-10, RB-20
+         montant_avant_annulation, commentaire, date_commande, date_modification, id_client FK → CLIENT)  -- RB-10, RB-20
 
 LIGNE_COMMANDE(id_ligne PK, quantite, prix_unitaire, total_ligne,
                id_commande FK → COMMANDE (CASCADE), id_produit FK → PRODUIT (RESTRICT))
@@ -113,17 +115,20 @@ LIGNE_COMMANDE(id_ligne PK, quantite, prix_unitaire, total_ligne,
 ORDER_STATUS_HISTORY(id PK, old_status, new_status, changed_by, changed_by_role,
                      commentaire, changed_at, order_id FK → COMMANDE)
 
-PARAMETRE(cle PK, valeur, description, maj_le)   -- 4 lignes livrées : frais_port = 4.90,
-     franchise_port = 80.00, tva_standard = 20.00, seuil_alerte_defaut = 5
+STOCK_MOVEMENT_HISTORY(id_mouvement PK, id_produit, reference_produit, nom_produit, mode_mouvement,
+                       quantite, stock_avant, stock_apres, motif, changed_by, changed_by_role, changed_at)
+
+PARAMETRE(cle PK, valeur, unite, comment, date_modification)   -- 4 lignes livrées : frais_port = 4.90,
+     franchise_port = 80.00, tva_defaut = 20.00, conservation_compte = 24
      -- les règles chiffrées vivent ICI, pas dans une constante PHP recopiée (RB-20)
 ```
 
 **Trois vues** complètent le modèle logique — elles factorisent une règle pour qu'elle ne soit jamais réécrite
-(en complément des 8 tables métier et de la table technique d’audit du stock, soit 9 tables SQL) :
+(avec les 9 tables SQL : 8 entités métier + `stock_movement_history`) :
 
 | Vue | Contenu | Règle qu'elle factorise | Test |
 |---|---|---|---|
-| `v_etat_stock` | `id_produit`, référence, nom, stock, seuil, **état** (`RUPTURE` / `STOCK_FAIBLE` / `OK`) | `RB-04` + `RB-05` : un seul endroit décide de l'état du stock | `T-27` |
+| `v_etat_stock` | `id_produit`, référence, nom, stock, seuil, **état** (`RUPTURE` / `TRES_BAS` / `DISPONIBLE`) | `RB-03` + `EF-ADM-05` : un seul endroit décide de l'état du stock | `T-27` |
 | `v_catalogue` | produits `visible = 1` + catégorie + état du stock | `RB-19` : la visibilité est appliquée **par la vue**, pas par chaque requête | `T-27` |
 | `v_commandes_client` | commande + client + nombre de lignes + `frais_port` + total | lecture du compte d'un client, sans jamais recompter à la main | `T-27` |
 
