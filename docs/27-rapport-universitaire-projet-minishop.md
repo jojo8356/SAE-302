@@ -79,12 +79,14 @@ Les campagnes automatisées exécutées sur machine virtuelle Debian 13 (PHP `8.
     - 4.2.1 Benchmark des 5 acteurs français du e-commerce et positionnement
     - 4.2.2 Palette WCAG 2.1 AA, typographie sourcée (`Lato` / `SIL OFL 1.1`) et grille
     - 4.2.3 Iconographie (`Lucide` / `ISC`), photographie à 2 niveaux, 12 composants, UTC et i18n
+    - 4.2.4 Parcours UX anti-désorientation (« ne jamais être perdu ») et conformité aux lois européennes
   - 4.3 Stratégie de tests complète en pyramide (`docs/11`) et exigences `ENF-01` à `ENF-22`
     - 4.3.1 La pyramide des tests à 9 étages et sa justification méthodologique
     - 4.3.2 Protocoles d’isolation SQL, contrats statiques, couverture honnête et garde de verdict
-  - 4.4 Campagne VM Debian 13 et mesures complètes de performances (`tests/perf/dernieres_mesures.txt`)
+  - 4.4 Campagne VM Debian 13, mesures de performances et limites physiques mono-serveur
     - 4.4.1 Bilan des suites automatisées et mesures détaillées SQL (`EXPLAIN`) et HTTP (`p95 = 6 ms`)
     - 4.4.2 Mise en perspective des mesures VM face aux piles concurrentes
+    - 4.4.3 Limite physique d’utilisateurs simultanés en mono-serveur et architecture de scaling sourcée
   - 4.5 Analyse critique des biais, limites du prototype et risques résiduels
 - **Chapitre 5 — Exploitation (*Build → Run*), conformité légale, RGPD, gouvernance GitLab et barème**
   - 5.1 Prérequis d’hébergement, procédure de déploiement, retour arrière et MCO
@@ -98,17 +100,13 @@ Les campagnes automatisées exécutées sur machine virtuelle Debian 13 (PHP `8.
 - **Chapitre 6 — Feuille de route d’industrialisation : vers une *marketplace* professionnelle, intelligente et automatisée (modèle « Amazon »)**
   - 6.1 Passage à l’échelle industrielle : paiement PSP, cache distribué, recherche et observabilité
   - 6.2 Évolution du modèle 3FN vers une *Marketplace* multi-vendeurs (*Seller Central* et *Buy Box*)
-  - 6.3 Moteur de recommandation hybride (analyse du panier, filtrage collaboratif et sémantique)
-  - 6.4 Automatisation du back-office vendeur, réapprovisionnement prédictif et logistique
-  - 6.5 Trajectoire de migration incrémentale en 4 paliers (*Strangler Fig Pattern*)
+  - 6.3 Gestion des fournisseurs, fiches fournisseurs et commandes d’approvisionnement back-office
+  - 6.4 Moteur de recommandation hybride (analyse du panier, filtrage collaboratif et sémantique)
+  - 6.5 Automatisation du back-office vendeur, réapprovisionnement prédictif et logistique
+  - 6.6 Trajectoire de migration incrémentale en 4 paliers (*Strangler Fig Pattern*)
 - **Conclusion générale et perspectives**
 - **Bibliographie et webographie**
-- **Annexes**
-  - Annexe A — Fiches synthétiques des 14 cas d’utilisation (`UC-01` à `UC-14`)
-  - Annexe B — Cartographie des 15 contrôleurs PHP et politiques d’accès
-  - Annexe C — Répertoire complet des 9 tables, 3 vues, 1 fonction, 18 procédures et 16 triggers SQL
-  - Annexe D — Synthèse des 29 scénarios SQL (`T-01` à `T-29`) et des 10 scénarios offensifs (`S-01` à `S-10`)
-  - Annexe E — Requêtes SQL de preuve de non-contradiction des redondances
+- **Annexes** — A : Fiches des 14 `UC` (`UC-01` à `UC-14`) · B : 15 contrôleurs PHP · C : 9 tables, 3 vues, 1 fonction, 18 procédures, 16 triggers · D : 29 scénarios SQL + 10 offensifs · E : Preuves SQL des redondances
 
 \newpage
 
@@ -151,22 +149,28 @@ Les campagnes automatisées exécutées sur machine virtuelle Debian 13 (PHP `8.
 - **Tableau 19** — Benchmark ergonomique des 5 concurrents et positionnement (`docs/DA.md`)
 - **Tableau 20** — Palette chromotypographique et ratios de contraste WCAG 2.1 AA
 - **Tableau 21** — Les 12 composants UI, règles WCAG 2.1 AA et microcopy éditoriale
-- **Tableau 22** — Synthèse des exigences non fonctionnelles (`ENF-01` à `ENF-22`)
-- **Tableau 23** — Pyramide de validation complète à 9 étages (`docs/11-strategie-tests.md`)
-- **Tableau 24** — Bilan chiffré des campagnes de tests automatisés et VM Debian 13
-- **Tableau 25** — Mesures SQL détaillées (`minishop_perf`) et analyse des plans `EXPLAIN`
-- **Tableau 26** — Mesures HTTP détaillées par route (`N = 200` requêtes/URL, `ENF-01`)
-- **Tableau 27** — Mise en perspective des mesures VM face aux piles alternatives
-- **Tableau 28** — Cadre légal e-commerce français (LCEN, Consommation, CNIL)
-- **Tableau 29** — Audit technique des cookies, du `localStorage` et des journaux
-- **Tableau 30** — Politique de conservation RGPD et limites assumées (`docs/18`)
-- **Tableau 31** — Les 7 points bloquants avant toute mise en vente commerciale réelle (`docs/12`)
-- **Tableau 32** — Contrôle de conformité face aux livrables et pénalités du barème
-- **Tableau 33** — Briques d’industrialisation pour une plateforme de production
-- **Tableau 34** — Extension du modèle 3FN vers une *Marketplace* multi-vendeurs
-- **Tableau 35** — Architecture du moteur de recommandation hybride (V1 à V3)
-- **Tableau 36** — Automatisations back-office vendeur, logistique et anti-fraude
-- **Tableau 37** — Plan de migration incrémental en 4 paliers (MiniShop → *Marketplace*)
+- **Tableau 22** — Parcours UX anti-désorientation et conformité aux directives européennes
+
+\newpage
+
+- **Tableau 23** — Synthèse des exigences non fonctionnelles (`ENF-01` à `ENF-22`)
+- **Tableau 24** — Pyramide de validation complète à 9 étages (`docs/11-strategie-tests.md`)
+- **Tableau 25** — Bilan chiffré des campagnes de tests automatisés et VM Debian 13
+- **Tableau 26** — Mesures SQL détaillées (`minishop_perf`) et analyse des plans `EXPLAIN`
+- **Tableau 27** — Mesures HTTP détaillées par route (`N = 200` requêtes/URL, `ENF-01`)
+- **Tableau 28** — Mise en perspective des mesures VM face aux piles alternatives
+- **Tableau 29** — Capacité physique mono-serveur et leviers d’optimisation/scaling
+- **Tableau 30** — Cadre légal e-commerce français (LCEN, Consommation, CNIL)
+- **Tableau 31** — Audit technique des cookies, du `localStorage` et des journaux
+- **Tableau 32** — Politique de conservation RGPD et limites assumées (`docs/18`)
+- **Tableau 33** — Les 7 points bloquants avant toute mise en vente commerciale réelle (`docs/12`)
+- **Tableau 34** — Contrôle de conformité face aux livrables et pénalités du barème
+- **Tableau 35** — Briques d’industrialisation pour une plateforme de production
+- **Tableau 36** — Extension du modèle 3FN vers une *Marketplace* multi-vendeurs
+- **Tableau 37** — Gestion back-office des fiches fournisseurs et commandes d’approvisionnement
+- **Tableau 38** — Architecture du moteur de recommandation hybride (V1 à V3)
+- **Tableau 39** — Automatisations back-office vendeur, logistique et anti-fraude
+- **Tableau 40** — Plan de migration incrémental en 4 paliers (MiniShop → *Marketplace*)
 
 \newpage
 
@@ -856,6 +860,27 @@ Conçue avant l’écriture de `public/css/app.css` et vérifiée automatiquemen
 
 En complément, la traduction intégrale **FR / EN** (`public/js/i18n-en.js`, vérifiée sur `48` vues et `45` messages métier) et le choix du fuseau horaire (stockage serveur strictement **UTC** via `app/Tools/Heure.php`, projection navigateur selon `localStorage` et `public/js/tz-lookup.js` sans envoi GPS) assurent l’accessibilité linguistique et temporelle (`ENF-07`).
 
+#### 4.2.4 Parcours UX anti-désorientation (« ne jamais être perdu ») et conformité aux lois européennes
+
+L’ergonomie d’une boutique en ligne ne vise pas uniquement l’esthétique : elle doit garantir que l’utilisateur **sache à tout moment où il se trouve, ce qu’il peut faire ensuite et combien il paiera réellement**, tout en respectant le droit européen de la consommation et du numérique :
+
+1. **Architecture anti-désorientation (« ne jamais être perdu ») :**
+   - *Repères permanents :* l’en-tête collant (`64 px`) affiche en continu le logo d’accueil, les rubriques principales, la barre de recherche et le badge panier mis à jour sans rechargement (`aria-live="polite"`), tandis que le back-office utilise une barre latérale dédiée clairement distincte de la boutique.
+   - *Zéro cul-de-sac (états vides guidés) :* aucun écran ne renvoie un tableau vide ou un message sec ; chaque état vide (panier vide, recherche infructueuse, historique sans commande) affiche une phrase explicative et un lien d’action direct vers le catalogue ou la réinitialisation des filtres.
+   - *Mémoire d’état et gestion douce des erreurs :* les filtres de recherche et de tri sont encodés dans l’URL (`ENF-05`), les pastilles de filtres actifs sont retirables en un clic, les saisies de formulaire sont conservées après rejet serveur (`ENF-06`) et `ui.js` place automatiquement le focus sur le champ en erreur.
+   - *Fluidité et réversibilité :* tout le tunnel fonctionne sans JavaScript (`ENF-07`), le paiement et l’annulation exigent une confirmation explicite en 2 étapes, et l’utilisateur bascule à tout instant en anglais ou dans son fuseau local (`/preferences`).
+
+2. **Conformité UX aux directives et règlements européens :**
+
+| Texte européen de référence | Exigence UX imposée | Traduction concrète dans MiniShop |
+|---|---|---|
+| **Directive 2011/83/UE (Droits des consommateurs, art. 5 §1 e & art. 8 §2)** | Clarté totale du prix TTC, de la TVA et des frais supplémentaires *avant* engagement ; bouton explicite d’obligation de paiement | Affichage permanent du TTC + HT + TVA (`RB-16`), calcul préalable des frais de port (`4,90 €` / gratuit `>= 80 €`, `ENF-14`), et récapitulatif complet avant confirmation (`sp_compute_shipping`). |
+| **Règlement (UE) 2022/2065 (DSA, art. 25 — *Dark patterns*) & RGPD art. 7 / 12** | Interdiction des interfaces trompeuses (faux comptes à rebours, urgence factice, cases pré-cochées, consentement asymétrique) | Refus explicite des faux compteurs (`docs/DA.md`), stock réel affiché sans pression artificielle, couleur rouge réservée aux erreurs/ruptures, et absence de bandeau cookie trompeur. |
+| **Directive (UE) 2023/2673 (Rétractation en ligne — 19 juin 2026)** | Bouton/fonctionnalité directe, visible et gratuite pour exercer la rétractation à distance avec confirmation et accusé durable | Page informative + modèle `R. 221-1` présents (`/retractation`) ; l’implémentation du bouton en ligne « confirmer la rétractation » est inscrite en **point bloquant n° 3** avant ouverture commerciale (Tableau 33). |
+| **Directive (UE) 2019/882 (*European Accessibility Act*) & Norme EN 301 549** | Accessibilité numérique des services e-commerce (perceptible, utilisable, compréhensible, robuste — WCAG 2.1 AA) | Contrastes calculés `>= 5,2:1`, navigation intégrale au clavier + lien d’évitement, cibles tactiles `>= 44×44 px`, zoom `200 %` (`rem`), annonces `aria-live`, et `alt=""` sur vignettes redondantes. |
+
+*Tableau 22 — Synthèse des mécanismes UX anti-désorientation et de leur conformité aux directives européennes.*
+
 \newpage
 
 ### 4.3 Stratégie de tests complète en pyramide (`docs/11`) et exigences `ENF-01` à `ENF-22`
@@ -870,7 +895,7 @@ En complément, la traduction intégrale **FR / EN** (`public/js/i18n-en.js`, v�
 | `ENF-11/12` | Sécurité hashes & réponse IDOR `404` neutre | `0` clair, `404` sur ID étranger | `11/11` `controles.sh` + `105/105` HTTP SQL |
 | `ENF-14/16` | Affichage TTC + port avant validation & atomicité | Transactions `ROLLBACK` intégral | Validés (`T-28`, `T-29`, `8/8` concurrence HTTP) |
 
-*Tableau 22 — Synthèse des exigences non fonctionnelles clés (`docs/annexes/annexe-enf.md`).*
+*Tableau 23 — Synthèse des exigences non fonctionnelles clés (`docs/annexes/annexe-enf.md`).*
 
 #### 4.3.1 La pyramide des tests à 9 étages et sa justification méthodologique
 
@@ -889,7 +914,7 @@ Comme l’explique `docs/11-strategie-tests.md`, nous avons volontairement écar
 | **7** | Performance & volumétrie | `scripts/run_perf_vm.sh` → `gen_volumes_cli.php` + `mesurer_sql.sh` + `mesurer.sh` | SQL **p95 <= 20,6 ms**, HTTP **p95 = 6 ms**, `0` erreur | VM locale (`cb0f814`) |
 | **8** | Recette manuelle humaine | `docs/13-fiches-recette-uc.md`, `docs/13-suivi-recette-uc.csv` | **164** scénarios + **36** couples = **200 lignes `NON JOUÉ`** | Campagne humaine restante |
 
-*Tableau 23 — Pyramide de validation complète à 9 étages (`docs/11-strategie-tests.md`).*
+*Tableau 24 — Pyramide de validation complète à 9 étages (`docs/11-strategie-tests.md`).*
 
 #### 4.3.2 Protocoles d’isolation SQL, contrats statiques, couverture honnête et garde de verdict
 
@@ -900,7 +925,7 @@ Comme l’explique `docs/11-strategie-tests.md`, nous avons volontairement écar
 
 \newpage
 
-### 4.4 Campagne VM Debian 13 et mesures complètes de performances (`tests/perf/dernieres_mesures.txt`)
+### 4.4 Campagne VM Debian 13, mesures de performances et limites physiques mono-serveur
 
 #### 4.4.1 Bilan des suites automatisées et mesures détaillées SQL (`EXPLAIN`) et HTTP (`p95 = 6 ms`)
 
@@ -916,9 +941,9 @@ La campagne exécutée sur **VM Debian 13** (PHP `8.4.27`, MariaDB `11.8.6`, com
 | **E2E JSON & i18n (`run_tests.php`, `preferences_test.mjs`)** | Parité `JsonStore` + `48` vues FR/EN & `45` messages métier | **338 / 338 assertions** + **48 vues** | **VALIDÉ** |
 | **Sécurité statique & Audits (`controles.sh`, `verifier_fiches_uc.py`)** | 11 points OWASP/ANSSI + 14 UC / 164 scénarios / 36 couples | **11 / 11** + **46 / 46** + **22 / 22** Python | **CONFORME** |
 
-*Tableau 24 — Synthèse chiffrée des campagnes de validation automatisées.*
+*Tableau 25 — Synthèse chiffrée des campagnes de validation automatisées.*
 
-La campagne de performance dédiée (`bash scripts/run_perf_vm.sh`, commit `cb0f814`, `tests/perf/dernieres_mesures.txt`) a été conduite sur la base isolée `minishop_perf` peuplée à **`236` produits**, **`1 004` commandes**, **`1 916` lignes de commande** et **`1 998` traces de statut** (au-delà de la volumétrie cible `ENF-02` de `200` produits / `1 000` commandes). Les Tableaux 25 et 26 en restituent l’intégralité :
+La campagne de performance dédiée (`bash scripts/run_perf_vm.sh`, commit `cb0f814`, `tests/perf/dernieres_mesures.txt`) a été conduite sur la base isolée `minishop_perf` peuplée à **`236` produits**, **`1 004` commandes**, **`1 916` lignes de commande** et **`1 998` traces de statut** (au-delà de la volumétrie cible `ENF-02` de `200` produits / `1 000` commandes). Les Tableaux 26 et 27 en restituent l’intégralité :
 
 | Requête SGBD évaluée (`100` itérations) | Moyenne (ms) | p95 (ms) | Plan `EXPLAIN` complet & Verdict |
 |---|---:|---:|---|
@@ -929,7 +954,7 @@ La campagne de performance dédiée (`bash scripts/run_perf_vm.sh`, commit `cb0f
 | **Vue `v_etat_stock` (1 page)** | `19,8` | `20,6` | **OK (`< 500 ms`)** |
 | **Écriture transactionnelle (`sp_create_order` + `sp_add_order_line` + `sp_confirm_order`)** | **`44,0`** | — | Verrou `SELECT ... FOR UPDATE` + triggers snapshot/stock/audit + calcul port (`CMD2026-001005 · 215,88 EUR · port 0,00`, nettoyée après mesure) |
 
-*Tableau 25 — Mesures SQL détaillées (`minishop_perf`, `100` itérations) et plans `EXPLAIN` (`tests/perf/dernieres_mesures.txt`).*
+*Tableau 26 — Mesures SQL détaillées (`minishop_perf`, `100` itérations) et plans `EXPLAIN` (`tests/perf/dernieres_mesures.txt`).*
 
 | Route HTTP évaluée (`N = 200` requêtes/URL) | Moyenne (ms) | Médiane (ms) | p95 (ms) | Code HTTP |
 |---|---:|---:|---:|---:|
@@ -941,7 +966,7 @@ La campagne de performance dédiée (`bash scripts/run_perf_vm.sh`, commit `cb0f
 | `/panier` | `1,3` | `1,2` | `1,5` | `200` |
 | **Verdict global `ENF-01`** | — | — | **`6,0 ms` global** | **0 réponse inattendue — CONFORME (`< 500 ms`)** |
 
-*Tableau 26 — Mesures HTTP détaillées par route sur `http://127.0.0.1:18080` (`N = 200` req./URL).*
+*Tableau 27 — Mesures HTTP détaillées par route sur `http://127.0.0.1:18080` (`N = 200` req./URL).*
 
 #### 4.4.2 Mise en perspective des mesures VM face aux piles concurrentes
 
@@ -953,7 +978,32 @@ La campagne de performance dédiée (`bash scripts/run_perf_vm.sh`, commit `cb0f
 | **Transaction complète de commande (`sp_create_order` + lignes + `sp_confirm_order`)** | **44,0 ms** en moyenne incluant verrou `FOR UPDATE`, snapshot tarifaire, calcul de port et insertion d’audit | Plusieurs allers-retours applicatifs + requêtes ORM supplémentaires si l’on ne déporte pas la logique en procédure stockée | Sur SQLite : contention globale de fichier ; sur NoSQL : nécessité de transactions distribuées ou risque de désynchronisation du stock |
 | **Contention critique (`20` acheteurs simultanés pour `12` unités)** | **8/8 scénarios réussis**, **`0` survente** : le verrou InnoDB ligne par ligne sérialise exactement les `12` premiers achats | Risque classique de *race condition* si l’ORM lit puis met à jour le stock en PHP sans verrou `FOR UPDATE` explicite | Échecs `SQLITE_BUSY` fréquents ou risque de stock négatif sans opérateur atomique strict |
 
-*Tableau 27 — Mise en perspective des résultats expérimentaux de la VM Debian 13 face aux piles alternatives.*
+*Tableau 28 — Mise en perspective des résultats expérimentaux de la VM Debian 13 face aux piles alternatives.*
+
+#### 4.4.3 Limite physique d’utilisateurs simultanés en mono-serveur et architecture de scaling sourcée
+
+Conformément à `ENF-03`, MiniShop est aujourd’hui dimensionné comme une application **mono-serveur** (un hôte exécutant conjointement Apache/PHP et MariaDB, typiquement un VPS `2`–`4` vCPU / `2`–`4` Go RAM ou un hébergement mutualisé type *LineServ*). Il est donc essentiel de quantifier la **limite physique immédiate** d’utilisateurs concurrents avant saturation, puis d’identifier les leviers d’optimisation et de *scaling* validés par la documentation officielle des composants :
+
+1. **Modélisation de la limite physique immédiate en mono-serveur :**
+   - *Plafond de workers PHP (`pm.max_children` / `MaxRequestWorkers`) :* chaque processus PHP 8.2+ sans framework consomme typiquement **`25` à `40 Mo`** de RAM résidente (selon la documentation PHP-FPM, `pm.max_children = RAM_allouée_PHP / mémoire_moyenne_processus`). Sur un mono-serveur de `4 Go` dont `1,5 Go` reste dédié à PHP (le reste étant partagé entre l’OS, Apache et `innodb_buffer_pool_size` MariaDB), le plafond physique se situe autour de **`40` à `60` requêtes PHP simultanées actives** (et plus restrictif encore sur mutualisé académique).
+   - *Débit maximal vs utilisateurs actifs (loi de Little : `L = λ × W`) :* avec nos latences mesurées (`6 ms` p95 sur lecture catalogue, `44 ms` sur commande transactionnelle), `50` workers PHP saturés représentent théoriquement plusieurs milliers de requêtes/s en lecture pure — **mais trois goulots d’étranglement physiques réduisent fortement cette capacité réelle sous charge mixte** :
+     1. **Verrouillage exclusif des sessions fichiers PHP (`session.save_handler = files`) :** selon le manuel officiel PHP (*Session Handling*), `session_start()` pose un verrou exclusif (`flock`) sur le fichier de session jusqu’à la fin du script, **sérialisant** toutes les requêtes AJAX ou onglets parallèles d’un même utilisateur.
+     2. **Connexions et contention InnoDB (`max_connections = 151` par défaut) :** sur MariaDB, les connexions PDO non persistées restent limitées par `max_connections` (et `innodb_buffer_pool_size` limité sur petit serveur) ; surtout, lors d’une vente flash sur un même article populaire, le verrou ligne `SELECT ... FOR UPDATE` sur `produit(id_produit)` **sérialise les transactions concurrentes d’achat sur ce SKU** (`1 / 0,044 s ≈ 22` validations/s sur ce seul article), ce qui garantit `0` survente (`8/8`) mais crée une file d’attente au-delà de quelques dizaines d’acheteurs simultanés sur la même référence.
+     3. **Absence de cache HTTP/applicatif et balayage `commande(statut)` :** le `type=ALL` relevé par `EXPLAIN` (Tableau 26) commence à peser sur le CPU SQL au-delà de `50 000` commandes (`ENF-02`).
+
+   En ordre de grandeur réaliste pour un mono-serveur modeste non caché (`2`–`4` vCPU, `4` Go RAM), la plateforme absorbe confortablement la cible `ENF-02` (`10` à `50` utilisateurs actifs simultanés, soit **~`40`–`60` requêtes HTTP dynamiques strictement parallèles** et **`~20`–`25` validations/s** sur un même produit chaud) avant d’observer une montée en file d’attente des workers PHP ou des verrous MariaDB.
+
+2. **Stratégie complète d’optimisation et de passage à l’échelle (*Scaling* vertical puis horizontal) :**
+
+| Niveau d’optimisation | Mécanisme technique & Paramétrage | Source technique officielle | Effet mesurable sur la capacité |
+|---|---|---|---|
+| **1. Runtime Web & PHP** | Passer d’Apache `mpm_prefork` à **`mpm_event` + `PHP-FPM`** ; activer **`OPcache`** + **`opcache.preload`** (`app/bootstrap.php`, dépôts, routeur) | *Apache HTTP Server MPM Event Docs* ; *PHP Manual — OPcache & PHP-FPM* | Supprime la copie de l’interpréteur PHP sur les fichiers statiques (`CSS`/`JS`/`JPG`), réduit la RAM/connexion et élimine la recompilation par requête. |
+| **2. Sessions & Cache applicatif** | Remplacer `files` par **Redis (`session.save_handler = redis`)** + cache des pages catalogue et vues `v_catalogue` / `v_etat_stock` (TTL court + invalidation sur écriture admin) | *Redis Official Docs — Session Store & Caching* ; *phpredis* | Supprime le verrouillage disque `flock`, autorise plusieurs frontaux PHP sans état (*stateless*) et absorbe `> 90 %` du trafic de lecture hors MariaDB. |
+| **3. SGBD MariaDB & Index** | Allouer **`innodb_buffer_pool_size`** (`50–70 %` RAM sur nœud SQL dédié) ; ajouter `INDEX idx_commande_statut (statut)` ; déployer **MariaDB Primary + Read Replicas** | *MariaDB Knowledge Base — InnoDB Buffer Pool & Replication* | Garde les index et tables chaudes en RAM, élimine le `type=ALL` du back-office et déporte les lectures (`sp_search_products`, `sp_revenue_report`) sur les réplicas. |
+| **4. Répartition de charge & CDN** | Placer **NGINX / HAProxy** (*load balancer* L7) devant un pool horizontal de nœuds PHP-FPM + **CDN / cache périphérique** pour `/img/`, `/css/`, `/fonts/` | *NGINX HTTP Load Balancing Docs* ; *Cloudflare / MDN HTTP Caching* | Découpe la bande passante statique du serveur applicatif et permet d’ajouter des frontaux PHP à la demande derrière une VIP. |
+| **5. Découplage asynchrone** | Déporter factures PDF, e-mails, notifications et réassort vers des **files de messages** (Redis Streams / RabbitMQ + workers CLI) | *RabbitMQ / Redis Streams Architecture Docs* | Réduit le temps d’exécution des requêtes PHP critiques (`sp_confirm_order`), libérant immédiatement les workers FPM. |
+
+*Tableau 29 — Limites physiques mono-serveur (`ENF-03`) et plan d’optimisation/scaling appuyé sur les documentations officielles.*
 
 ### 4.5 Analyse critique des biais, limites du prototype et risques résiduels
 
@@ -995,7 +1045,7 @@ Huit pages dédiées (`app/View/home/`) traduisent les obligations précontractu
 | **Données personnelles (RGPD)** | RGPD chap. III (art. 12–23), CNIL transparence et durées | `/confidentialite` (`confidentialite.php`) : décrit factuellement les traitements observés dans le code, les durées proposées et les éléments restant à fixer par un futur responsable de traitement. |
 | **Cookies & autres traceurs** | Lignes directrices CNIL & FAQ cookies | `/cookies` (`cookies.php`) : détaille le cookie de session strictement nécessaire et le `localStorage` de préférences ; **aucun bandeau de consentement factice** tant qu’aucun traceur marketing/analytics n’est présent. |
 
-*Tableau 28 — Cadre légal e-commerce français et traduction dans les pages réglementaires de MiniShop (`docs/12-information-juridique.md`).*
+*Tableau 30 — Cadre légal e-commerce français et traduction dans les pages réglementaires de MiniShop (`docs/12-information-juridique.md`).*
 
 #### 5.2.2 Audit technique des cookies, du stockage local et minimisation des journaux
 
@@ -1008,7 +1058,7 @@ L’inspection statique des scripts PHP/JavaScript et des vues (`docs/12` § 2) 
 | **`localStorage` (`minishop.preferences.v1`)** (`public/js/preferences.js`) | Langue (`fr`/`en`) et fuseau horaire choisis par l’utilisateur | Stockage local sur demande explicite ; `tz-lookup.js` déduit le fuseau localement après clic sans transmettre ni sauvegarder les coordonnées GPS. Aucun pixel tiers ni SDK analytics détecté. | Refaire un inventaire réseau complet sur l’instance hébergée réelle ; ajouter un bandeau conforme si un traceur non exempté est intégré. |
 | **Journaux JSON & Contact** (`var/journal/db.jsonl`, `var/log/contact.jsonl`) | Audit JSON et messages `/contact` (`<= 2 000` car.) | `NettoyageJournaux::ajouter` écrit sous verrou avec `chmod 0600` ; les nouvelles entrées `client`/`administrateur` dans `db.jsonl` **omettent nom, e-mail et `mot_de_passe_hash`** (minimisation). | Traiter les anciennes entrées historiques déjà écrites ; mettre en place un serveur SMTP réel pour `/contact` (aujourd’hui journalisé localement sans envoi d’e-mail). |
 
-*Tableau 29 — Audit technique des traceurs, cookies et minimisation des données (`docs/12-information-juridique.md`).*
+*Tableau 31 — Audit technique des traceurs, cookies et minimisation des données (`docs/12-information-juridique.md`).*
 
 \newpage
 
@@ -1025,7 +1075,7 @@ Conformément à l’article 5 du RGPD (limitation de conservation), à l’arti
 | **Sauvegardes locales dédiées** | **30 jours** minimum (2 plus récentes conservées) | `db_init.php --nettoyage sauvegardes` | Exige `NETTOYAGE_SAUVEGARDES` (`0700` hors webroot), fichier marqueur `.minishop-sauvegardes` contenant `MINISHOP_BACKUPS_V1`, format strict `minishop-AAAAMMJJThhmmssZ-<32hex>.backup`. |
 | **Extractions chiffrées ponctuelles** | Sur durée justifiée + **12 mois** pour `acces.jsonl` | `scripts/archive_restreinte.php` | Boîtes scellées **libsodium** (clé publique sur serveur, clé privée **hors serveur** sur machine de confiance), plafond `8 Mio`, journal local `acces.jsonl` (UID + SHA-256). *Limite :* chiffre et détecte la corruption mais n’authentifie pas l’auteur et ne purge pas automatiquement à échéance. |
 
-*Tableau 30 — Politique de conservation RGPD, maintenance CLI et archivage chiffré libsodium (`docs/18-politique-conservation.md`).*
+*Tableau 32 — Politique de conservation RGPD, maintenance CLI et archivage chiffré libsodium (`docs/18-politique-conservation.md`).*
 
 **Verrou opérationnel strict contre la suppression accidentelle :** toute exécution réelle via `php scripts/db_init.php --nettoyage <catégorie>` exige **simultanément** les deux options `--executer --validation-absence-gel`, attestant que le responsable a vérifié l’absence de demande de droits, d’obligation légale ou de gel contentieux sur les éléments visés (et ne recrée jamais la base, contrairement à `--yes`).
 
@@ -1043,7 +1093,7 @@ Dans une démarche d’ingénierie responsable, l’audit juridique établit exp
 | **6** | **Sécurité d’hébergement réel** | Non testé derrière proxy mutualisé *LineServ* | Imposer TLS + `Secure`, supprimer `mesurer.php` / `gen_volumes.php`, vérifier permissions fichiers hors `public/`, sauvegardes et supervision. |
 | **7** | **Audit d’accessibilité réel** | Tests CSS automatisés uniquement | Réaliser un audit manuel complet RGAA / WCAG 2.1 AA avec lecteurs d’écran et navigateurs multiples. |
 
-*Tableau 31 — Synthèse des 7 points bloquants à lever avant toute exploitation commerciale réelle.*
+*Tableau 33 — Synthèse des 7 points bloquants à lever avant toute exploitation commerciale réelle.*
 
 ### 5.3 Analyse des écarts vis-à-vis du cahier des charges initial et bilan réflexif
 
@@ -1069,7 +1119,7 @@ Le dépôt comporte un `README.md` complet (présentation, architecture, install
 | **iv. Soutenance + questions (15 min)** | **10** | Trame, timing et réponses aux questions du jury | **Prêt :** diaporama `12` slides, démo chronométrée 4 min, terminal SQL préparé, 20 Q/R (`docs/03` & `docs/24`). |
 | **v. Contribution régulière GitLab & README** | **10** | Historique commits binôme, `README.md`, accès `Reporter` enseignant | **Prévu :** `README.md` complet, historique Git tracé, charte `docs/20` (vérification finale sur le dépôt GitLab IUT avant soutenance). |
 
-*Tableau 32 — Contrôle complet de conformité au barème officiel et d’absence de pénalité.*
+*Tableau 34 — Contrôle complet de conformité au barème officiel et d’absence de pénalité.*
 
 \newpage
 
@@ -1089,7 +1139,7 @@ La première étape consiste à transformer le prototype académique mono-serveu
 | **Base de données & Scalabilité** | Instance unique MariaDB `11.8.6` | Topologie **Primary + Read Replicas** (écritures `sp_*` sur le primaire, lectures `v_catalogue` et analytique sur les réplicas), index `commande(statut)`, sauvegardes continues PITR (*Point-In-Time Recovery*) | Séparation du trafic de consultation (90 %+) et du trafic transactionnel critique |
 | **Sécurité avancée & Observabilité** | Bcrypt, CSRF, PDO, journaux fichiers simples | MFA TOTP obligatoire pour `SUPER` (OWASP ASVS V4.3.1), secrets en coffre-fort (Vault/KMS), logs structurés JSON avec `X-Request-Id`, traces **OpenTelemetry**, alertes Prometheus/Grafana | Détection proactive des anomalies, audit légal corrélé de bout en bout |
 
-*Tableau 33 — Briques d’industrialisation requises pour transformer MiniShop en système de production.*
+*Tableau 35 — Briques d’industrialisation requises pour transformer MiniShop en système de production.*
 
 ### 6.2 Évolution du modèle 3FN vers une *Marketplace* multi-vendeurs (*Seller Central* et *Buy Box*)
 
@@ -1119,7 +1169,7 @@ CREATE TABLE offre_vendeur (
 ) ENGINE=InnoDB;
 ```
 
-Le Tableau 34 synthétise l’impact architectural de cette extension sur nos règles existantes :
+Le Tableau 36 synthétise l’impact architectural de cette extension sur nos règles existantes :
 
 | Composant MiniShop | Évolution vers le modèle *Marketplace* multi-vendeurs | Préservation des garanties existantes |
 |---|---|---|
@@ -1128,11 +1178,77 @@ Le Tableau 34 synthétise l’impact architectural de cette extension sur nos r�
 | **Flux financier & Séquestre** | Intégration de paiements scindés (*Stripe Connect* / *Adyen for Platforms*) : encaissement sur compte de cantonnement, prélèvement automatique de la commission (`taux_commission`) et virement au vendeur à confirmation de livraison (`LIVREE`). | Aucune détention illicite de fonds pour compte de tiers (conformité DSP2). |
 | **Cloisonnement RBAC & Anti-IDOR** | Ajout d’un troisième espace dédié `/vendeur/*` protégé par `Auth::exigeVendeur()` et filtrage systématique `WHERE id_vendeur = ?` sur produits, stocks et sous-commandes. | Généralisation directe de la garde IDOR actuelle (`SEC-08`, `ENF-12`). |
 
-*Tableau 34 — Extension du modèle relationnel 3FN et de la sécurité vers une marketplace multi-vendeurs.*
+*Tableau 36 — Extension du modèle relationnel 3FN et de la sécurité vers une marketplace multi-vendeurs.*
+
+### 6.3 Gestion des fournisseurs, fiches fournisseurs et commandes d’approvisionnement back-office
+
+Dans la version académique actuelle, les entrées de stock proviennent exclusivement d’ajustements manuels saisis dans `/admin/stocks` (`sp_adjust_stock` avec motif `REASSORT`), sans référentiel fournisseur ni suivi des achats amont. Pour industrialiser l’approvisionnement en back-office à l’échelle d’une centrale d’achat ou d’un distributeur, il est indispensable de modéliser proprement les **fournisseurs**, leurs **catalogues multi-sources** et les **commandes fournisseurs (Bons de Commande Fournisseur — BCF)** en respectant strictement notre normalisation 3FN et notre piste d’audit `stock_movement_history`.
+
+#### 6.3.1 Extension du modèle 3FN aux fournisseurs et réceptions
+
+```sql
+-- Extension 3FN de la base MiniShop pour l'approvisionnement amont :
+CREATE TABLE fournisseur (
+  id_fournisseur        INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  code_fournisseur      VARCHAR(30)  NOT NULL UNIQUE,
+  raison_sociale        VARCHAR(150) NOT NULL,
+  siret                 CHAR(14)     NULL,
+  email_commandes       VARCHAR(180) NOT NULL,
+  delai_moyen_jours     SMALLINT UNSIGNED NOT NULL DEFAULT 5,
+  conditions_paiement   VARCHAR(80)  NOT NULL DEFAULT 'NET_30',
+  actif                 TINYINT(1)   NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE catalogue_fournisseur (
+  id_fournisseur        INT UNSIGNED NOT NULL,
+  id_produit            INT UNSIGNED NOT NULL,
+  sku_fournisseur       VARCHAR(60)  NOT NULL,
+  prix_achat_ht         DECIMAL(10,2) NOT NULL CHECK (prix_achat_ht > 0),
+  moq_quantite_min      INT UNSIGNED NOT NULL DEFAULT 1,
+  priorite_rang         TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  PRIMARY KEY (id_fournisseur, id_produit),
+  FOREIGN KEY (id_fournisseur) REFERENCES fournisseur(id_fournisseur) ON DELETE RESTRICT,
+  FOREIGN KEY (id_produit)     REFERENCES produit(id_produit)         ON DELETE RESTRICT
+) ENGINE=InnoDB;
+
+CREATE TABLE bon_commande_fournisseur (
+  id_bcf                INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  numero_bcf            VARCHAR(25)  NOT NULL UNIQUE,   -- ex. BCF2026-000142
+  id_fournisseur        INT UNSIGNED NOT NULL,
+  statut                ENUM('BROUILLON','ENVOYEE','CONFIRMEE','RECEPTIONNEE_PARTIELLE',
+                             'RECEPTIONNEE_TOTALE','CLOTUREE','ANNULEE') NOT NULL DEFAULT 'BROUILLON',
+  date_livraison_prevue DATE NULL,
+  montant_total_ht      DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+  cree_par              VARCHAR(120) NOT NULL,
+  FOREIGN KEY (id_fournisseur) REFERENCES fournisseur(id_fournisseur) ON DELETE RESTRICT
+) ENGINE=InnoDB;
+
+CREATE TABLE ligne_bcf (
+  id_ligne_bcf          INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  id_bcf                INT UNSIGNED NOT NULL,
+  id_produit            INT UNSIGNED NOT NULL,
+  quantite_commandee    INT UNSIGNED NOT NULL CHECK (quantite_commandee > 0),
+  quantite_recue        INT UNSIGNED NOT NULL DEFAULT 0,
+  prix_achat_unitaire   DECIMAL(10,2) NOT NULL CHECK (prix_achat_unitaire > 0), -- snapshot achat
+  FOREIGN KEY (id_bcf)     REFERENCES bon_commande_fournisseur(id_bcf) ON DELETE CASCADE,
+  FOREIGN KEY (id_produit) REFERENCES produit(id_produit)              ON DELETE RESTRICT
+) ENGINE=InnoDB;
+```
+
+#### 6.3.2 Pilotage des fiches fournisseurs et cycle des commandes en back-office (`/admin/*`)
+
+| Module back-office à ajouter | Fonctionnalités opérationnelles pour le gestionnaire | Intégration transactionnelle avec le cœur MiniShop |
+|---|---|---|
+| **Fiches fournisseurs (`/admin/fournisseurs`)** | Coordonnées commerciales/comptables, conditions de règlement (`NET_30`, `COMPTANT`), catalogue des produits rattachés avec `sku_fournisseur`, coût d’achat HT, **MOQ** (quantité minimale de commande) et rang de préférence (`priorite_rang = 1` principal, `2` secours). | Le calcul de marge réelle (`produit.prix_ht - catalogue_fournisseur.prix_achat_ht`) alimente directement le garde-fou anti-vente à perte et les tableaux de bord CA. |
+| **Évaluation & Fiabilité (Scorecard)** | Suivi automatique du délai réel de réception par rapport à `date_livraison_prevue` (taux **OTIF** — *On-Time In-Full*), taux de colis non conformes et alertes en cas de dépendance à un fournisseur unique. | Alimente l’algorithme du point de commande dynamique `S_cmd` (Tableau 39) avec le délai réel `L_fournisseur` plutôt qu’une estimation fixe. |
+| **Génération des commandes fournisseur (`/admin/approvisionnements`)** | Création manuelle ou **pré-remplissage automatique** des brouillons `BROUILLON` dès qu’un produit passe en `TRES_BAS` ou `RUPTURE` dans `v_etat_stock`, respectant automatiquement le MOQ et le fournisseur de rang 1 ; validation CSRF par `GESTIONNAIRE`/`SUPER`, génération PDF et envoi e-mail/EDI (`ENVOYEE`). | `ligne_bcf.prix_achat_unitaire` fige par *snapshot* le prix d’achat négocié au moment de l’émission du BCF (exactement comme `RB-06` côté vente client). |
+| **Réception physique & Mise en stock atomique** | Interface de réception partielle ou totale (saisie ou scan code-barres de `quantite_recue`, gestion des écarts/avaries) faisant évoluer le BCF vers `RECEPTIONNEE_PARTIELLE` puis `RECEPTIONNEE_TOTALE` et `CLOTUREE`. | Une procédure `sp_receive_supplier_order` verrouille `ligne_bcf` (`FOR UPDATE`), contrôle `quantite_recue <= quantite_commandee`, puis appelle **`sp_adjust_stock(..., 'DELTA', +qte_recue, 'REASSORT_FOURNISSEUR', ...)`** : le stock est incrémenté atomiquement et **chaque réception est tracée dans `stock_movement_history`**. |
+
+*Tableau 37 — Gestion back-office des fiches fournisseurs et du cycle complet des commandes d’approvisionnement.*
 
 \newpage
 
-### 6.3 Moteur de recommandation hybride (analyse du panier, filtrage collaboratif et sémantique)
+### 6.4 Moteur de recommandation hybride (analyse du panier, filtrage collaboratif et sémantique)
 
 Un levier décisif de croissance d’Amazon repose sur la personnalisation (« *Les clients ayant acheté cet article ont également acheté…* »). Notre modèle normalisé `ligne_commande` permet déjà de déployer une **V1 immédiatement opérationnelle** sans infrastructure d’apprentissage automatique complexe, puis d’évoluer par paliers vers un moteur hybride complet :
 
@@ -1168,9 +1284,9 @@ HAVING co_achats >= 3
 | **V2 — Filtrage collaboratif & Contenu** | Factorisation matricielle implicite (**ALS / BPR**) sur vues, paniers et achats + **vecteurs sémantiques (*embeddings*)** sur `nom`, `description` et `categorie` (index `pgvector` ou Qdrant) | Résout le **démarrage à froid** (*cold start*) pour un produit neuf jamais commandé ou un nouveau client sans historique | Évaluation hors ligne par validation croisée temporelle (**Precision@10**, **Recall@10**, **NDCG@10**) |
 | **V3 — Re-classement temps réel** | Modèle de classement contextuel (*Learning to Rank* léger) combinant affinité, **marge**, **stock disponible (`RB-18`)** et délai vendeur | Évite de recommander un article en rupture ou à faible qualité de service ; maximise la satisfaction et le panier moyen | **A/B testing** contrôlé ; conformité RGPD (consentement préalable, droit d’opposition au profilage art. 21 RGPD) |
 
-*Tableau 35 — Architecture incrémentale du moteur de recommandation hybride.*
+*Tableau 38 — Architecture incrémentale du moteur de recommandation hybride.*
 
-### 6.4 Automatisation du back-office vendeur, réapprovisionnement prédictif et logistique
+### 6.5 Automatisation du back-office vendeur, réapprovisionnement prédictif et logistique
 
 Dans un back-office artisanal (et encore en partie dans MiniShop V1), l’administrateur doit surveiller manuellement `v_etat_stock`, saisir les ajustements `sp_adjust_stock` et faire évoluer manuellement les statuts `EN_PREPARATION -> EXPEDIEE -> LIVREE`. Pour passer à une exploitation professionnelle fluide pour des dizaines ou centaines de vendeurs, les opérations répétitives doivent être automatisées autour d’une **file de tâches asynchrones** (*Message Queue* : Redis Streams ou RabbitMQ + *workers* PHP CLI) :
 
@@ -1183,22 +1299,22 @@ Dans un back-office artisanal (et encore en partie dans MiniShop V1), l’admini
 | **Tarification encadrée (*Repricing*)** | Modification manuelle du `prix_ht` | Règles de réajustement automatique face aux offres concurrentes de la *Buy Box*, strictement bornées par un plancher de rentabilité (`prix_ht >= cout_achat * (1 + marge_min)`) | Compétitivité continue sans jamais provoquer de vente à perte (`RB-02` étendue) |
 | **Modération & Anti-fraude** | Contrôle humain a posteriori | Règles automatisées bloquant : hausse brutale de prix suspecte, pic d’annulations vendeur (`> 5 %`), commande atypique (score de risque avant expédition) et alertes RGPD automatisées | Protection des acheteurs et préservation de la réputation de la plateforme |
 
-*Tableau 36 — Catalogue des automatisations du back-office vendeur et de la chaîne logistique.*
+*Tableau 39 — Catalogue des automatisations du back-office vendeur et de la chaîne logistique.*
 
 \newpage
 
-### 6.5 Trajectoire de migration incrémentale en 4 paliers (*Strangler Fig Pattern*)
+### 6.6 Trajectoire de migration incrémentale en 4 paliers (*Strangler Fig Pattern*)
 
 L’erreur classique d’une montée en charge consiste à vouloir tout réécrire d’un bloc (*Big Bang*). Grâce au contrat `StoreInterface`, à la centralisation des règles métier en dépôts PHP et à la séparation nette des couches MVC, l’évolution vers une plateforme de type Amazon doit suivre une **trajectoire incrémentale en 4 paliers** où chaque phase reste pleinement déployable et testable :
 
 | Palier | Horizon / Objectif | Chantiers techniques prioritaires | Prérequis validé avant passage au palier suivant |
 |---|---|---|---|
 | **Palier 1 — Socle Production Mono-Boutique** | Court terme (mise en ligne commerciale réelle) | PSP (Stripe/Paybox) + webhooks idempotents ; SMTP transactionnel ; MFA `SUPER` ; Redis sessions + *rate limiting* ; index `commande(statut)` ; campagne Playwright + *LineServ* | 0 anomalie critique sur recette humaine (`200` scénarios) et test de charge ciblé |
-| **Palier 2 — Automatisation Back-Office & Recommandation V1** | Moyen terme (productivité opérationnelle) | File asynchrone (*workers* CLI) pour factures Factur-X, étiquettes transporteur, webhooks de suivi et réapprovisionnement prédictif ; recommandation SQL co-achats (Tableau 35) | Mesure de réduction du temps de traitement commande et hausse du panier moyen par A/B test |
-| **Palier 3 — Ouverture *Marketplace* Multi-Vendeurs** | Croissance catalogue (*Seller Central*) | Tables `vendeur`, `offre_vendeur`, `sous_commande_vendeur` (Tableau 34) ; portail `/vendeur/*` isolé ; flux séquestre *Split Payment* ; élection de *Buy Box* et import massif | Audits IDOR multi-tenant et réconciliation comptable automatisée à 100 % |
+| **Palier 2 — Automatisation Back-Office, Fournisseurs & Recommandation V1** | Moyen terme (productivité opérationnelle) | File asynchrone (*workers* CLI) pour factures Factur-X, étiquettes transporteur, webhooks de suivi ; tables `fournisseur` / `bon_commande_fournisseur` + réapprovisionnement prédictif (Tableau 37) ; recommandation SQL co-achats (Tableau 38) | Mesure de réduction du temps de traitement commande/réassort et hausse du panier moyen par A/B test |
+| **Palier 3 — Ouverture *Marketplace* Multi-Vendeurs** | Croissance catalogue (*Seller Central*) | Tables `vendeur`, `offre_vendeur`, `sous_commande_vendeur` (Tableau 36) ; portail `/vendeur/*` isolé ; flux séquestre *Split Payment* ; élection de *Buy Box* et import massif | Audits IDOR multi-tenant et réconciliation comptable automatisée à 100 % |
 | **Palier 4 — Recherche Sémantique, IA & Haute Disponibilité** | Grande échelle | Meilisearch/OpenSearch ; recommandation hybride (ALS + *embeddings*) ; *Repricing* borné ; réplicas MariaDB en lecture ; architecture multi-nœuds avec traces OpenTelemetry | SLA `>= 99,9 %`, latence `p95 < 100 ms` sous charge `100x` supérieure à `ENF-02` |
 
-*Tableau 37 — Plan de migration incrémental en 4 paliers vers une plateforme e-commerce professionnelle.*
+*Tableau 40 — Plan de migration incrémental en 4 paliers vers une plateforme e-commerce professionnelle.*
 
 Cette approche progressive préserve intégralement les garanties transactionnelles prouvées dans les chapitres précédents — verrouillage des stocks sans survente, immuabilité financière des commandes et traçabilité d’audit — tout en levant méthodiquement chaque limite du prototype académique.
 
@@ -1228,14 +1344,15 @@ Conscients de la frontière qui sépare une maquette académique d’une platefo
 - **[5] Object Management Group (OMG).** *OMG Unified Modeling Language (UML), Version 2.5.1*. 2017. Disponible sur : `https://www.omg.org/spec/UML/`.
 - **[6] CNIL & Légifrance.** *Référentiel activités commerciales*, *Lignes directrices cookies et traceurs*, *Code de la consommation* (`L. 221-21`, `D. 221-5`, `R. 221-1`, `D. 211-2`) et *Code de commerce* (`L. 123-22`), 2024–2026. Disponibles sur : `https://www.cnil.fr/` et `https://www.legifrance.gouv.fr/`.
 
-### Documentation technique des technologies employées
-- **[7] The PHP Group.** *PHP Manual — PDO, Password Hashing (`password_hash`), Session Security*. Disponible sur : `https://www.php.net/manual/fr/`.
-- **[8] MariaDB Foundation & Oracle Corp.** *MariaDB 10.6+ / MySQL 8.0 Reference Manual — InnoDB Locking Reads (`SELECT ... FOR UPDATE`), Stored Routines and Triggers*. Disponible sur : `https://mariadb.com/kb/` et `https://dev.mysql.com/doc/`.
-- **[9] Mozilla Foundation (MDN Web Docs) & W3C.** *Content Security Policy (CSP), X-Frame-Options, SameSite Cookies* et *WCAG 2.1 Level AA*. Disponible sur : `https://developer.mozilla.org/` et `https://www.w3.org/TR/WCAG21/`.
+### Documentation technique des technologies employées et sources de scaling
+- **[7] The PHP Group.** *PHP Manual — PDO, Password Hashing (`password_hash`), Session Security (`session.save_handler`), PHP-FPM (`pm.max_children`) & OPcache Preloading*. Disponible sur : `https://www.php.net/manual/fr/`.
+- **[8] MariaDB Foundation & Oracle Corp.** *MariaDB 10.6+ / MySQL 8.0 Reference Manual — InnoDB Buffer Pool, `max_connections`, Locking Reads (`SELECT ... FOR UPDATE`), Replication, Stored Routines and Triggers*. Disponible sur : `https://mariadb.com/kb/` et `https://dev.mysql.com/doc/`.
+- **[9] Apache Software Foundation, NGINX & Redis Ltd.** *Apache HTTP Server `mpm_event` Documentation* (`https://httpd.apache.org/docs/`), *NGINX HTTP Load Balancing* (`https://nginx.org/en/docs/`) et *Redis Official Documentation — Session Store & Caching* (`https://redis.io/docs/`).
+- **[10] Union européenne, Mozilla Foundation (MDN) & W3C.** *Directives 2011/83/UE (consommateurs), (UE) 2023/2673 (rétractation en ligne), (UE) 2019/882 (European Accessibility Act)*, *Règlement (UE) 2022/2065 (DSA)*, *Norme EN 301 549* et *WCAG 2.1 AA* (`https://eur-lex.europa.eu/` et `https://www.w3.org/TR/WCAG21/`).
 
 ### Ressources graphiques, licences et corpus documentaire interne
-- **[10]** Lucide Contributors & Cole Bemis (Feather). *Lucide Icons* (licence **ISC**, SVG inline dans `app/Security/xss.php`) ; Google Fonts / Łukasz Dziedzic, *Lato Regular* (licence **SIL OFL 1.1**, glyphe `U+20AC` `public/fonts/minishop-euro.woff2`, `public/fonts/OFL.txt`).
-- **[11]** Polsinelli J., Gouiaa C., *Architecture logicielle (`ARCHITECTURE.md`)*, *Cahier des charges (`docs/01`)*, *Document de tests et validation (`docs/02`)*, *Support de soutenance (`docs/03`)*, *Conception BD et SQL (`docs/04`)*, *Note cybersécurité (`docs/07`)*, *Stratégie de tests (`docs/11`)*, *Information juridique e-commerce (`docs/12`)*, *Politique de conservation (`docs/18`)*, *Audit UML (`docs/23`)*, *Direction artistique (`docs/DA.md`)*, *Procès-verbal de recette (`docs/pv-recette.md`)* et *Mesures de performance (`tests/perf/dernieres_mesures.txt`)*, Université Côte d’Azur, 2026.
+- **[11]** Lucide Contributors & Cole Bemis (Feather). *Lucide Icons* (licence **ISC**, SVG inline dans `app/Security/xss.php`) ; Google Fonts / Łukasz Dziedzic, *Lato Regular* (licence **SIL OFL 1.1**, glyphe `U+20AC` `public/fonts/minishop-euro.woff2`, `public/fonts/OFL.txt`).
+- **[12]** Polsinelli J., Gouiaa C., *Corpus documentaire interne MiniShop* : *Architecture logicielle* (`ARCHITECTURE.md`), *Cahier des charges* (`docs/01`), *Document de tests et validation* (`docs/02`), *Support de soutenance* (`docs/03`), *Conception BD et SQL* (`docs/04`), *Note cybersécurité* (`docs/07`), *Stratégie de tests* (`docs/11`), *Information juridique e-commerce* (`docs/12`), *Politique de conservation* (`docs/18`), *Audit UML* (`docs/23`), *Direction artistique* (`docs/DA.md`), *Procès-verbal de recette* (`docs/pv-recette.md`) et *Mesures de performance* (`tests/perf/dernieres_mesures.txt`), Université Côte d’Azur, 2026.
 
 \newpage
 
