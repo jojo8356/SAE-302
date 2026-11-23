@@ -14,7 +14,7 @@
 | **Auteurs (binôme)** | **Johan Polsinelli** & **Chahd Gouiaa** |
 | **Encadrant pédagogique** | **Mr Thanh-Phuong Nguyen** (`thanh-phuong.nguyen@univ-cotedazur.fr`, accès `Reporter` sur GitLab) |
 | **Année universitaire** | 2025 – 2026 (campagnes de validation VM consignées au 17 novembre 2026) |
-| **Dépôt et référence** | Branche `arena/51cf6db6-sae-302` · PHP 8.2+ / PDO / MySQL 8.0+ / MariaDB 10.6+ / JavaScript natif |
+| **Références** | PHP 8.2+ / PDO / MySQL 8.0+ / MariaDB 10.6+ / JavaScript natif |
 
 ---
 
