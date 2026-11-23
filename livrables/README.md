@@ -37,6 +37,7 @@ Les mêmes fichiers existent dans `dist/` (répertoire généré, hors Git, cf. 
 - **22-audit-coherence-fichiers** — [HTML](html/22-audit-coherence-fichiers.html) · [PDF](pdf/22-audit-coherence-fichiers.pdf) · [Word](docx/22-audit-coherence-fichiers.docx)
 - **23-audit-uml-diagrammes** — [HTML](html/23-audit-uml-diagrammes.html) · [PDF](pdf/23-audit-uml-diagrammes.pdf) · [Word](docx/23-audit-uml-diagrammes.docx)
 - **24-preparation-soutenance-complete** — [HTML](html/24-preparation-soutenance-complete.html) · [PDF](pdf/24-preparation-soutenance-complete.pdf) · [Word](docx/24-preparation-soutenance-complete.docx)
+- **25-bilan-de-projet-methode-et-modele** — [HTML](html/25-bilan-de-projet-methode-et-modele.html) · [PDF](pdf/25-bilan-de-projet-methode-et-modele.pdf) · [Word](docx/25-bilan-de-projet-methode-et-modele.docx)
 - **DA** — [HTML](html/DA.html) · [PDF](pdf/DA.pdf) · [Word](docx/DA.docx)
 - **README** — [HTML](html/README.html) · [PDF](pdf/README.pdf) · [Word](docx/README.docx)
 - **annexe-cas-usage** — [HTML](html/annexe-cas-usage.html) · [PDF](pdf/annexe-cas-usage.pdf) · [Word](docx/annexe-cas-usage.docx)

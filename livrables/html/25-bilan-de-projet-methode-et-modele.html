@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : Guide méthodologique — Rédiger un bilan de projet efficace (avec modèle prêt à l’emploi)">
+<title>Guide méthodologique — Rédiger un bilan de projet efficace (avec modèle prêt à l’emploi) — MiniShop (SAÉ 302)</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
+  color: var(--encre);
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
+}
+pre {
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
+}
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
+}
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
+@media print {
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/25-bilan-de-projet-methode-et-modele.md</code></div>
+</header>
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#1-definition-et-role-du-bilan-de-projet">1. Définition et rôle du bilan de projet</a></li>
+<li><a href="#2-importance-de-la-phase-de-cloture">2. Importance de la phase de clôture</a></li>
+<li><a href="#3-pourquoi-rediger-un-bilan-de-projet">3. Pourquoi rédiger un bilan de projet ?</a></li>
+<li><a href="#4-risques-encourus-en-labsence-de-bilan-de-projet">4. Risques encourus en l’absence de bilan de projet</a><ul>
+<li><a href="#41-maintenir-des-projets-ouverts-sans-fin">4.1 Maintenir des projets ouverts sans fin</a></li>
+<li><a href="#42-exposer-lorganisation-a-des-risques-juridiques-et-financiers">4.2 Exposer l’organisation à des risques juridiques et financiers</a></li>
+<li><a href="#43-perdre-la-capacite-de-capitalisation">4.3 Perdre la capacité de capitalisation</a></li>
+</ul>
+</li>
+<li><a href="#5-a-quel-moment-dresser-le-bilan">5. À quel moment dresser le bilan ?</a></li>
+<li><a href="#6-preparation-de-la-redaction-du-bilan">6. Préparation de la rédaction du bilan</a></li>
+<li><a href="#7-methode-en-9-etapes-pour-rediger-un-bon-bilan">7. Méthode en 9 étapes pour rédiger un bon bilan</a></li>
+<li><a href="#8-conseils-cles-danalyse">8. Conseils clés d’analyse</a><ul>
+<li><a href="#81-analyse-des-ecarts">8.1 Analyse des écarts</a></li>
+<li><a href="#82-analyse-des-risques">8.2 Analyse des risques</a></li>
+<li><a href="#83-ressenti-des-parties-prenantes">8.3 Ressenti des parties prenantes</a></li>
+</ul>
+</li>
+<li><a href="#9-conclusion">9. Conclusion</a></li>
+<li><a href="#10-modele-pret-a-lemploi-template-de-bilan-de-projet">10. Modèle prêt à l’emploi (Template de bilan de projet)</a><ul>
+<li><a href="#101-fiche-didentification-du-projet">10.1 Fiche d’identification du projet</a></li>
+<li><a href="#102-synthese-des-performances-initial-vs-final">10.2 Synthèse des performances (Initial vs Final)</a></li>
+<li><a href="#103-etat-des-livrables-et-passation-vers-lexploitation">10.3 État des livrables et passation vers l’exploitation</a></li>
+<li><a href="#104-analyse-des-risques-et-aleas-rencontres">10.4 Analyse des risques et aléas rencontrés</a></li>
+<li><a href="#105-lecons-apprises-lessons-learned">10.5 Leçons apprises (Lessons Learned)</a></li>
+<li><a href="#106-retours-des-parties-prenantes-et-validation-de-cloture">10.6 Retours des parties prenantes et validation de clôture</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<h1 id="guide-methodologique-rediger-un-bilan-de-projet-efficace-avec-modele-pret-a-lemploi">Guide méthodologique — Rédiger un bilan de projet efficace (avec modèle prêt à l’emploi)<a class="headerlink" href="#guide-methodologique-rediger-un-bilan-de-projet-efficace-avec-modele-pret-a-lemploi" title="Permanent link"></a></h1>
+<blockquote>
+<p><strong>Objet.</strong> Le bilan de projet constitue le document de référence de la phase de clôture. Il sert à évaluer objectivement la performance d’un projet à son terme, à analyser les écarts (périmètre, délais, budget, qualité), à documenter les conséquences imprévues et à capitaliser sur les enseignements positifs comme négatifs.</p>
+</blockquote>
+<hr />
+<h2 id="1-definition-et-role-du-bilan-de-projet">1. Définition et rôle du bilan de projet<a class="headerlink" href="#1-definition-et-role-du-bilan-de-projet" title="Permanent link"></a></h2>
+<p>Un <strong>bilan de projet</strong> est une analyse structurée réalisée lors de la phase de clôture afin d’examiner les réussites, les difficultés rencontrées et les enseignements acquis tout au long du cycle de vie du projet.</p>
+<p>Il s’agit d’une étape indispensable pour <strong>tout projet</strong>, qu’il soit considéré comme une réussite complète ou qu’il ait rencontré des aléas, car elle permet de constituer une base de connaissances réutilisable pour les projets ultérieurs.</p>
+<hr />
+<h2 id="2-importance-de-la-phase-de-cloture">2. Importance de la phase de clôture<a class="headerlink" href="#2-importance-de-la-phase-de-cloture" title="Permanent link"></a></h2>
+<p>Souvent sous-estimée, la phase de clôture revêt une importance déterminante dans le cycle de vie d’un projet :</p>
+<ul>
+<li>vérifier que le projet a satisfait l’ensemble de ses objectifs et validé ses livrables attendus ;</li>
+<li>préparer et sécuriser la <strong>transition vers la phase d’exploitation et de maintenance</strong> (passage du <em>Build</em> au <em>Run</em>) ;</li>
+<li>contrôler le respect des contraintes de <strong>périmètre, délais et budget</strong> (triangle projet) ;</li>
+<li>matérialiser officiellement l’achèvement de l’initiative, un projet étant par définition borné dans le temps avec un début et une fin clairement identifiés.</li>
+</ul>
+<p>Réduire un projet à sa seule phase d’exécution revient à négliger la valeur organisationnelle apportée par l’évaluation finale et le partage structuré des acquis.</p>
+<hr />
+<h2 id="3-pourquoi-rediger-un-bilan-de-projet">3. Pourquoi rédiger un bilan de projet ?<a class="headerlink" href="#3-pourquoi-rediger-un-bilan-de-projet" title="Permanent link"></a></h2>
+<p>Le bilan de projet est le livrable central de la clôture. Il répond à trois finalités majeures :</p>
+<ol>
+<li><strong>Évaluer la performance globale :</strong> confronter les résultats obtenus aux engagements initiaux (cahier des charges, planning, budget).</li>
+<li><strong>Alimenter l’amélioration continue :</strong> documenter de manière factuelle les leçons apprises (<em>lessons learned</em>) et répondre collectivement à deux questions fondamentales :
+   - <em>Qu’est-ce qui a bien fonctionné et doit être capitalisé ?</em>
+   - <em>Qu’est-ce qui a moins bien fonctionné et comment procéder différemment la prochaine fois ?</em></li>
+<li><strong>Faciliter la passation et le dialogue :</strong> recueillir les points de vue de toutes les parties prenantes (équipe projet, commanditaire, exploitation, direction) dans une démarche constructive et tournée vers l’avenir, sans mettre les acteurs en position d’accusés.</li>
+</ol>
+<hr />
+<h2 id="4-risques-encourus-en-labsence-de-bilan-de-projet">4. Risques encourus en l’absence de bilan de projet<a class="headerlink" href="#4-risques-encourus-en-labsence-de-bilan-de-projet" title="Permanent link"></a></h2>
+<p>Omettre ou bâcler la clôture et le bilan expose l’organisation à trois risques principaux :</p>
+<h3 id="41-maintenir-des-projets-ouverts-sans-fin">4.1 Maintenir des projets ouverts sans fin<a class="headerlink" href="#41-maintenir-des-projets-ouverts-sans-fin" title="Permanent link"></a></h3>
+<p>Sans transition formalisée vers l’exploitation, l’équipe projet continue d’être sollicitée indéfiniment pour la maintenance courante alors que ce n’est ni son mandat ni son outillage principal.</p>
+<ul>
+<li><strong>Conséquence :</strong> confusion des responsabilités entre équipe projet et équipe d’exploitation, baisse de qualité du maintien en condition opérationnelle et démobilisation des équipes.</li>
+</ul>
+<h3 id="42-exposer-lorganisation-a-des-risques-juridiques-et-financiers">4.2 Exposer l’organisation à des risques juridiques et financiers<a class="headerlink" href="#42-exposer-lorganisation-a-des-risques-juridiques-et-financiers" title="Permanent link"></a></h3>
+<p>Un projet non clôturé officiellement laisse subsister des engagements ou des manques contractuels :</p>
+<ul>
+<li><strong>Paiements ou contrats non soldés :</strong> par exemple, maintien par oubli d’un contrat de location ou d’abonnement prestataire devenu inutile après livraison ;</li>
+<li><strong>Périmètre incomplet :</strong> découverte tardive, plusieurs mois après la dissolution de l’équipe, de l’absence de livrables documentaires indispensables (plans de recollement, documentation d’exploitation, garanties).</li>
+</ul>
+<h3 id="43-perdre-la-capacite-de-capitalisation">4.3 Perdre la capacité de capitalisation<a class="headerlink" href="#43-perdre-la-capacite-de-capitalisation" title="Permanent link"></a></h3>
+<p>Sans bilan écrit ni archivage structuré :</p>
+<ul>
+<li>les bonnes pratiques ne sont pas diffusées aux autres équipes ;</li>
+<li>les mêmes erreurs tendent à se répéter sur les projets suivants ;</li>
+<li>les besoins ciblés de formation ou d’adaptation méthodologique ne sont pas identifiés.</li>
+</ul>
+<hr />
+<h2 id="5-a-quel-moment-dresser-le-bilan">5. À quel moment dresser le bilan ?<a class="headerlink" href="#5-a-quel-moment-dresser-le-bilan" title="Permanent link"></a></h2>
+<ul>
+<li><strong>En fin de projet (obligatoire) :</strong> durant la phase officielle de clôture, avant la dissolution complète de l’équipe.</li>
+<li><strong>En cours de projet (recommandé) :</strong> sous forme de <strong>bilans intermédiaires</strong> à l’issue de chaque phase majeure ou jalon clé (<em>milestone</em>), afin d’ajuster la trajectoire sans attendre l’échéance finale.</li>
+</ul>
+<hr />
+<h2 id="6-preparation-de-la-redaction-du-bilan">6. Préparation de la rédaction du bilan<a class="headerlink" href="#6-preparation-de-la-redaction-du-bilan" title="Permanent link"></a></h2>
+<p>Une rédaction efficace s’anticipe dès l’initialisation du projet selon trois axes :</p>
+<ol>
+<li><strong>Planifier la charge dédiée :</strong> intégrer le bilan comme une tâche à part entière dans le WBS et le planning initial, et non comme une activité accessoire de dernière minute.</li>
+<li><strong>Impliquer l’équipe et instaurer un climat de transparence :</strong> encourager le retour d’expérience factuel sans jugement sur les personnes, afin d’obtenir un diagnostic fidèle à la réalité.</li>
+<li><strong>Tenir un journal de projet tout au long de l’exécution :</strong> consigner les faits marquants, arbitrages, incidents et solutions apportées facilite la rédaction finale et sécurise la passation en cas de changement d’interlocuteur.</li>
+</ol>
+<hr />
+<h2 id="7-methode-en-9-etapes-pour-rediger-un-bon-bilan">7. Méthode en 9 étapes pour rédiger un bon bilan<a class="headerlink" href="#7-methode-en-9-etapes-pour-rediger-un-bon-bilan" title="Permanent link"></a></h2>
+<table>
+<thead>
+<tr>
+<th>Étape</th>
+<th>Action</th>
+<th>Objectif concret</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. Vérifier le passage en exploitation</strong></td>
+<td>Contrôler le transfert aux utilisateurs et mainteneurs</td>
+<td>Formation dispensée, documentation et outils remis</td>
+</tr>
+<tr>
+<td><strong>2. Analyser les objectifs</strong></td>
+<td>Comparer initial vs final sur Budget, Planning, Périmètre</td>
+<td>Tableau comparatif à 4 colonnes (<em>Initial / Final / Écart / Commentaires</em>)</td>
+</tr>
+<tr>
+<td><strong>3. Obtenir l’acceptation officielle</strong></td>
+<td>Formaliser la fin des travaux auprès du client / maître d’ouvrage</td>
+<td>Signature d’un procès-verbal (PV) de réception</td>
+</tr>
+<tr>
+<td><strong>4. Vérifier et clore les contrats</strong></td>
+<td>Auditer fournisseurs, livrables annexes et accès</td>
+<td>Paiements soldés, garanties reçues, privilèges révoqués</td>
+</tr>
+<tr>
+<td><strong>5. Documenter les leçons apprises</strong></td>
+<td>Recueillir les retours de l’équipe, du client et de la direction</td>
+<td>Synthèse des réussites et axes d’amélioration</td>
+</tr>
+<tr>
+<td><strong>6. Organiser la réunion <em>post-mortem</em></strong></td>
+<td>Parcourir le bilan avec les parties prenantes internes</td>
+<td>Lever les divergences et acter les décisions de suivi</td>
+</tr>
+<tr>
+<td><strong>7. Communiquer les résultats</strong></td>
+<td>Diffuser données quantitatives et qualitatives</td>
+<td>Aligner l’organisation et lancer les actions correctives</td>
+</tr>
+<tr>
+<td><strong>8. Dissoudre l’équipe projet</strong></td>
+<td>Libérer officiellement les ressources allouées</td>
+<td>Clarifier la date de fin et la réaffectation managériale</td>
+</tr>
+<tr>
+<td><strong>9. Célébrer et archiver</strong></td>
+<td>Reconnaître le travail accompli et archiver le dossier</td>
+<td>Préserver le patrimoine documentaire et valoriser l’équipe</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="8-conseils-cles-danalyse">8. Conseils clés d’analyse<a class="headerlink" href="#8-conseils-cles-danalyse" title="Permanent link"></a></h2>
+<h3 id="81-analyse-des-ecarts">8.1 Analyse des écarts<a class="headerlink" href="#81-analyse-des-ecarts" title="Permanent link"></a></h3>
+<p>Chaque écart entre le prévu et le réalisé doit être mesuré et justifié :</p>
+<ul>
+<li><strong>Écarts de périmètre :</strong> vérifier si toute évolution fonctionnelle a suivi un processus formel de demande de changement (<em>change request</em>) avec évaluation préalable des impacts.</li>
+<li><strong>Écarts sur les objectifs :</strong> commenter les résultats atteints partiellement ou dépassés.</li>
+<li><strong>Écarts de délais et de coûts :</strong> identifier les causes racines des retards ou avances (risque non anticipé, dépendance externe) et s’appuyer, si pertinent, sur une <strong>courbe en S</strong> pour visualiser l’évolution cumulée.</li>
+</ul>
+<h3 id="82-analyse-des-risques">8.2 Analyse des risques<a class="headerlink" href="#82-analyse-des-risques" title="Permanent link"></a></h3>
+<ul>
+<li>Réexaminer le registre des risques initiaux et évaluer l’efficacité des plans de mitigation appliqués.</li>
+<li>Recenser les <strong>risques imprévus</strong> survenus en cours de route pour enrichir le référentiel de risques de l’organisation.</li>
+</ul>
+<h3 id="83-ressenti-des-parties-prenantes">8.3 Ressenti des parties prenantes<a class="headerlink" href="#83-ressenti-des-parties-prenantes" title="Permanent link"></a></h3>
+<p>Compléter les indicateurs chiffrés par le recueil synthétique des perceptions :</p>
+<table>
+<thead>
+<tr>
+<th>Partie prenante</th>
+<th>Exemples d’éléments à recueillir</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Équipe projet</strong></td>
+<td>Degré d’autonomie, adéquation des outils, charge de travail</td>
+</tr>
+<tr>
+<td><strong>Commanditaire / Client</strong></td>
+<td>Compréhension du besoin, qualité des livrables, réactivité</td>
+</tr>
+<tr>
+<td><strong>Management / Exploitation</strong></td>
+<td>Impact sur les opérations courantes, disponibilité des ressources</td>
+</tr>
+<tr>
+<td><strong>Commerce / Direction</strong></td>
+<td>Prise en compte des évolutions, valeur métier délivrée</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="9-conclusion">9. Conclusion<a class="headerlink" href="#9-conclusion" title="Permanent link"></a></h2>
+<p>Un bilan de projet rigoureux transforme une fin d’exécution en levier durable de performance. En documentant les écarts, en sécurisant la transition vers l’exploitation et en archivant les retours d’expérience, l’organisation renforce ses compétences collectives et augmente directement les chances de succès de ses projets futurs.</p>
+<hr />
+<h2 id="10-modele-pret-a-lemploi-template-de-bilan-de-projet">10. Modèle prêt à l’emploi (<em>Template</em> de bilan de projet)<a class="headerlink" href="#10-modele-pret-a-lemploi-template-de-bilan-de-projet" title="Permanent link"></a></h2>
+<p>Le modèle ci-dessous peut être copié et adapté à tout projet (technique, organisationnel ou académique tel que MiniShop / SAÉ 302).</p>
+<h3 id="101-fiche-didentification-du-projet">10.1 Fiche d’identification du projet<a class="headerlink" href="#101-fiche-didentification-du-projet" title="Permanent link"></a></h3>
+<table>
+<thead>
+<tr>
+<th>Champ</th>
+<th>À compléter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Nom du projet</strong></td>
+<td><em>[Ex. : MiniShop — Boutique en ligne SAÉ 302]</em></td>
+</tr>
+<tr>
+<td><strong>Chef de projet / Équipe</strong></td>
+<td><em>[Noms et rôles]</em></td>
+</tr>
+<tr>
+<td><strong>Commanditaire / Maître d’ouvrage</strong></td>
+<td><em>[Client / Enseignant référent / Sponsor]</em></td>
+</tr>
+<tr>
+<td><strong>Date de lancement</strong></td>
+<td><em>[JJ/MM/AAAA]</em></td>
+</tr>
+<tr>
+<td><strong>Date de clôture prévue / réelle</strong></td>
+<td><em>[JJ/MM/AAAA (prévue) — JJ/MM/AAAA (réelle)]</em></td>
+</tr>
+<tr>
+<td><strong>Statut de réception (PV)</strong></td>
+<td><em>[Accepté sans réserve / Accepté avec réserves / En attente]</em></td>
+</tr>
+</tbody>
+</table>
+<h3 id="102-synthese-des-performances-initial-vs-final">10.2 Synthèse des performances (Initial vs Final)<a class="headerlink" href="#102-synthese-des-performances-initial-vs-final" title="Permanent link"></a></h3>
+<table>
+<thead>
+<tr>
+<th>Axe d’évaluation</th>
+<th>En début de projet</th>
+<th>En fin de projet</th>
+<th>Écart (<em>Delta</em>)</th>
+<th>Commentaires &amp; justification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Périmètre fonctionnel</strong></td>
+<td><em>[Ex. : 14 UC, 11 RB]</em></td>
+<td><em>[Ex. : 14 UC + extensions]</em></td>
+<td><em>[+X éléments]</em></td>
+<td><em>[Validation demandes de changement]</em></td>
+</tr>
+<tr>
+<td><strong>Planning / Délais</strong></td>
+<td><em>[Ex. : 12 semaines]</em></td>
+<td><em>[Ex. : 12 semaines]</em></td>
+<td><em>[0 / +X jours]</em></td>
+<td><em>[Jalons tenus / cause du décalage]</em></td>
+</tr>
+<tr>
+<td><strong>Charge / Budget</strong></td>
+<td><em>[Ex. : 348 h / X €]</em></td>
+<td><em>[Ex. : 348 h / Y €]</em></td>
+<td><em>[±Z h / ±Z €]</em></td>
+<td><em>[Répartition par lot WBS]</em></td>
+</tr>
+<tr>
+<td><strong>Qualité &amp; tests</strong></td>
+<td><em>[Cible couverture / perf]</em></td>
+<td><em>[Résultats mesurés]</em></td>
+<td><em>[Conforme / Écart]</em></td>
+<td><em>[Référence au PV de recette]</em></td>
+</tr>
+</tbody>
+</table>
+<h3 id="103-etat-des-livrables-et-passation-vers-lexploitation">10.3 État des livrables et passation vers l’exploitation<a class="headerlink" href="#103-etat-des-livrables-et-passation-vers-lexploitation" title="Permanent link"></a></h3>
+<table>
+<thead>
+<tr>
+<th>Livrable / Activité de clôture</th>
+<th>Responsable</th>
+<th>Statut</th>
+<th>Emplacement d’archivage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Application / code source finalisé</td>
+<td><em>[Nom]</em></td>
+<td><code>[ ] Validé</code></td>
+<td><em>[Lien dépôt Git / tag]</em></td>
+</tr>
+<tr>
+<td>Base de données &amp; scripts d’installation</td>
+<td><em>[Nom]</em></td>
+<td><code>[ ] Validé</code></td>
+<td><em>[Chemin / procédure]</em></td>
+</tr>
+<tr>
+<td>Documentation technique &amp; utilisateur</td>
+<td><em>[Nom]</em></td>
+<td><code>[ ] Validé</code></td>
+<td><em>[Chemin <code>docs/</code> / <code>livrables/</code>]</em></td>
+</tr>
+<tr>
+<td>Contrats / accès fournisseurs clôturés</td>
+<td><em>[Nom]</em></td>
+<td><code>[ ] Clôturé</code></td>
+<td><em>[Référence administrative]</em></td>
+</tr>
+<tr>
+<td>Transfert exploitation &amp; maintenance réalisé</td>
+<td><em>[Nom]</em></td>
+<td><code>[ ] Transféré</code></td>
+<td><em>[Date et destinataire]</em></td>
+</tr>
+</tbody>
+</table>
+<h3 id="104-analyse-des-risques-et-aleas-rencontres">10.4 Analyse des risques et aléas rencontrés<a class="headerlink" href="#104-analyse-des-risques-et-aleas-rencontres" title="Permanent link"></a></h3>
+<table>
+<thead>
+<tr>
+<th>Risque / Aléa</th>
+<th>Prévu au départ ?</th>
+<th>Impact constaté</th>
+<th>Mesure appliquée</th>
+<th>Recommandation future</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>[Description]</em></td>
+<td><em>Oui / Non</em></td>
+<td><em>Faible / Moyen / Fort</em></td>
+<td><em>[Action corrective]</em></td>
+<td><em>[Prévention pour projets futurs]</em></td>
+</tr>
+</tbody>
+</table>
+<h3 id="105-lecons-apprises-lessons-learned">10.5 Leçons apprises (<em>Lessons Learned</em>)<a class="headerlink" href="#105-lecons-apprises-lessons-learned" title="Permanent link"></a></h3>
+<ul>
+<li><strong>Points forts à capitaliser :</strong></li>
+<li><em>[Pratique, outil ou méthode ayant apporté un gain mesurable]</em></li>
+<li><strong>Difficultés rencontrées et axes d’amélioration :</strong></li>
+<li><em>[Point de blocage identifié + action concrète proposée pour le prochain projet]</em></li>
+</ul>
+<h3 id="106-retours-des-parties-prenantes-et-validation-de-cloture">10.6 Retours des parties prenantes et validation de clôture<a class="headerlink" href="#106-retours-des-parties-prenantes-et-validation-de-cloture" title="Permanent link"></a></h3>
+<table>
+<thead>
+<tr>
+<th>Partie prenante</th>
+<th>Synthèse du ressenti / avis recueilli</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Équipe projet</strong></td>
+<td><em>[Commentaire]</em></td>
+<td><em>[JJ/MM/AAAA]</em></td>
+</tr>
+<tr>
+<td><strong>Client / Maître d’ouvrage</strong></td>
+<td><em>[Commentaire]</em></td>
+<td><em>[JJ/MM/AAAA]</em></td>
+</tr>
+<tr>
+<td><strong>Exploitation / Support</strong></td>
+<td><em>[Commentaire]</em></td>
+<td><em>[JJ/MM/AAAA]</em></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Décision de clôture officielle :</strong><br />
+- Date de la réunion <em>post-mortem</em> : <em>[JJ/MM/AAAA]</em><br />
+- Visa Chef de projet : <em>____________________</em><br />
+- Visa Commanditaire / Sponsor : <em>____________________</em></p>
+<footer class="doc">
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/25-bilan-de-projet-methode-et-modele.md</code> · 0 figure(s) intégrée(s).</p>
+</footer>
+</main>
+</body>
+</html>
