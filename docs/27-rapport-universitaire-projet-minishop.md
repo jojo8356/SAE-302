@@ -12,7 +12,7 @@
 | **Formation & Unité** | Bachelor Universitaire de Technologie (BUT) Informatique — Situation d’Apprentissage et d’Évaluation **SAÉ 302** |
 | **Intitulé du projet** | **MiniShop** — Site e-commerce transactionnel et back-office d’administration |
 | **Auteurs (binôme)** | **Johan Polsinelli** & **Chahd Gouiaa** |
-| **Encadrante pédagogique** | **Mme Thanh-Phuong Nguyen** (`thanh-phuong.nguyen@univ-cotedazur.fr`, accès `Reporter` sur GitLab) |
+| **Encadrant pédagogique** | **Mr Thanh-Phuong Nguyen** (`thanh-phuong.nguyen@univ-cotedazur.fr`, accès `Reporter` sur GitLab) |
 | **Année universitaire** | 2025 – 2026 (campagnes de validation VM consignées au 17 novembre 2026) |
 | **Dépôt et référence** | Branche `arena/51cf6db6-sae-302` · PHP 8.2+ / PDO / MySQL 8.0+ / MariaDB 10.6+ / JavaScript natif |
 
@@ -20,7 +20,7 @@
 
 ## Remerciements
 
-Nous adressons nos sincères remerciements à **Mme Thanh-Phuong Nguyen**, notre enseignante référente, pour la précision du cahier des charges de cette SAÉ 302, ses conseils sur la modélisation relationnelle et l’architecture transactionnelle, ainsi que son exigence constante en matière de sécurité applicative et de rigueur documentaire.
+Nous adressons nos sincères remerciements à **Mr Thanh-Phuong Nguyen**, notre enseignant référent, pour la précision du cahier des charges de cette SAÉ 302, ses conseils sur la modélisation relationnelle et l’architecture transactionnelle, ainsi que son exigence constante en matière de sécurité applicative et de rigueur documentaire.
 
 Nous remercions également l’ensemble de l’équipe pédagogique du département Informatique de l’IUT de Nice Côte d’Azur pour la qualité des enseignements dispensés en conception de bases de données, SQL avancé, programmation orientée objet PHP, développement Web côté client, cybersécurité et méthodologie de tests, ainsi que pour la mise à disposition des environnements d’hébergement pédagogique.
 
@@ -579,7 +579,7 @@ L’exploitation cible (`STACK.md`, `docs/26-transition-exploitation-maintenance
 
 ### 5.2 Gouvernance GitLab, `README.md` et organisation de la soutenance (15 minutes)
 
-Conformément aux consignes du sujet (p. 8–9), le dépôt comporte un `README.md` complet détaillant présentation, architecture, installation (`./run.sh --db`, `./run.sh`), configuration `.env`, identifiants locaux et répartition du travail entre **Johan Polsinelli** et **Chahd Gouiaa** (sous la supervision de **Mme Thanh-Phuong Nguyen** en rôle `Reporter`). Le support de soutenance de 15 minutes est structuré dans `docs/03-support-soutenance.md`, `docs/12-diaporama-soutenance.md` (`livrables/minishop-soutenance.pptx`, 12 diapositives) et `docs/24-preparation-soutenance-complete.md` (avec script de démonstration en direct sur front-office, back-office et terminal SQL).
+Conformément aux consignes du sujet (p. 8–9), le dépôt comporte un `README.md` complet détaillant présentation, architecture, installation (`./run.sh --db`, `./run.sh`), configuration `.env`, identifiants locaux et répartition du travail entre **Johan Polsinelli** et **Chahd Gouiaa** (sous la supervision de **Mr Thanh-Phuong Nguyen** en rôle `Reporter`). Le support de soutenance de 15 minutes est structuré dans `docs/03-support-soutenance.md`, `docs/12-diaporama-soutenance.md` (`livrables/minishop-soutenance.pptx`, 12 diapositives) et `docs/24-preparation-soutenance-complete.md` (avec script de démonstration en direct sur front-office, back-office et terminal SQL).
 
 ### 5.3 Grille complète de vérification face aux pénalités du sujet officiel SAÉ 302
 
@@ -589,7 +589,7 @@ Conformément aux consignes du sujet (p. 8–9), le dépôt comporte un `README.
 | **ii. Document d’analyse et conception de BD** | **20** | Procédure stockée manquante (`-1`, max `-5`), déclencheur manquant (`-1`, max `-5`), script SQL manquant (`-3`), MCD : entité manquante (`-2`), mauvaise cardinalité (`-1`) | **Conforme :** `9` entités et cardinalités justifiées, MLD 3FN, `sql/01..04` avec données, **18 procédures + 1 fonction** (`>= 5`), **16 triggers** (`>= 5`) + réponse pédagogique complète (`docs/04` & Chap. 3). |
 | **iii. Application Web + 2 documents** | **30** | Non MVC (`-5`), mauvaise requête SQLi (`-2`), procédure manquante (`-1`), trigger manquant (`-1`), fonctionnalité manquante (`-3`), rôle manquant (`-5`), doc tests manquant (`-3`), auth/session manquante (`-3`) | **Conforme :** MVC strict (`15` contrôleurs), PDO préparé (`11/11` sécurité), toutes fonctionnalités Visiteur/Client/Admin, auth + sessions strictes, `docs/02` + `pv-recette.md` (`60/60`, `29/29`, `105/105`, `8/8`). |
 | **iv. Soutenance + questions (15 min)** | **10** | Trame, timing et réponses aux questions du jury | **Prêt :** diaporama `12` slides, démo chronométrée 4 min, terminal SQL préparé, 20 Q/R (`docs/03` & `docs/24`). |
-| **v. Contribution régulière GitLab & README** | **10** | Historique commits binôme, `README.md`, accès `Reporter` enseignante | **Prévu :** `README.md` complet, historique Git tracé, charte `docs/20` (vérification finale sur le dépôt GitLab IUT avant soutenance). |
+| **v. Contribution régulière GitLab & README** | **10** | Historique commits binôme, `README.md`, accès `Reporter` enseignant | **Prévu :** `README.md` complet, historique Git tracé, charte `docs/20` (vérification finale sur le dépôt GitLab IUT avant soutenance). |
 
 *Tableau 16 — Contrôle complet de conformité au barème officiel et d’absence de pénalité.*
 

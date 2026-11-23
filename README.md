@@ -19,7 +19,7 @@ Le groupe de réalisation comprend deux étudiants. Les permissions du dépôt G
 
 La WBS et la todolist utilisent des lettres A/B/C pour les responsabilités de projet et le RACI. Aucune correspondance entre ces lettres et les personnes nommées n’est établie dans ce README. Les permissions GitLab (`Owner`, `Developer`) ne sont pas des rôles RACI. La charte [`docs/20-charte-gitlab-revues-croisees.md`](docs/20-charte-gitlab-revues-croisees.md) décrit le processus de revue attendu ; ce README n’atteste pas que des MR ou des revues croisées ont déjà eu lieu.
 
-**Encadrement** — NGUYEN Thanh-Phuong, enseignante référente, est membre directe du projet GitLab IUT avec le rôle `Reporter` ; elle ne fait pas partie du groupe étudiant.
+**Encadrement** — NGUYEN Thanh-Phuong, enseignant référent, est membre direct du projet GitLab IUT avec le rôle `Reporter` ; il ne fait pas partie du groupe étudiant.
 
 ## Fonctionnalités
 

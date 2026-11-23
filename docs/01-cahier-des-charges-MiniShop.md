@@ -6,7 +6,7 @@
 |---|---|
 | **Projet** | MiniShop (SAE — Service d'Activités Étudiantes) |
 | **Commanditaire / maître d'ouvrage** | Département Informatique — IUT / Université Côte d'Azur |
-| **Référente pédagogique** | Thanh-Phuong Nguyen (`thanh-phuong.nguyen@univ-cotedazur.fr`) |
+| **Référent pédagogique** | Mr Thanh-Phuong Nguyen (`thanh-phuong.nguyen@univ-cotedazur.fr`) |
 | **Maîtrise d'œuvre** | Le sujet prévoit 3 étudiants et tolère 2 ; le README du checkout nomme 2 membres, sans attribuer de rôles RACI |
 | **Version du document** | 1.1 — révision documentaire |
 | **Date initiale** | 21 septembre 2026 |
@@ -140,7 +140,7 @@ Mentions obligatoires du cadre pédagogique : code rendu sous licence de l'étab
 
 | Partie prenante | Rôle dans le projet | Attentes | Livrables qui y répondent |
 |---|---|---|---|
-| Maître d'ouvrage pédagogique (enseignante référente) | valide le périmètre, note | exhaustivité du plan demandé, respect des pénalités, traçabilité GitLab | §1 à §12, §14, §16 |
+| Maître d'ouvrage pédagogique (enseignant référent) | valide le périmètre, note | exhaustivité du plan demandé, respect des pénalités, traçabilité GitLab | §1 à §12, §14, §16 |
 | Client final de MiniShop (personnel de l'entreprise) | usage du back-office | fiabilité du stock, simplicité, historique des commandes | §4.5, §6, §15 |
 | Clients acheteurs | achat en ligne sans mauvaise surprise | catalogue à jour, prix correct, confirmation de commande | §4.2, §4.3, §4.4 |
 | Équipe de réalisation (le sujet prévoit 3 étudiants et tolère 2 ; le README du checkout nomme 2 membres) | conception, développement, tests, soutenance | périmètre clair, estimation de charge par rôle, outillage | §3.3, §13, §14 |
@@ -171,7 +171,7 @@ Le tableau distingue l’exigence du sujet, le livrable présent et l’état d�
 | Application PHP/MySQL/PDO **MVC**, GitLab et document de tests/validation | SQL est le pilote par défaut et JSON reste une option explicite ; le scan statique repère un appel repository pour chacune des 18 procédures, sans prouver l’exécution PDO ni le parcours HTTP complet | `README.md`, `StorageDriver.php`, repositories, `sql/` et `docs/02` | **raccordement statique présent ; aucun parcours complet MySQL/PDO ni conformité globale revendiquée** |
 | Soutenance **15 min** | §17.11 + `docs/03-support-soutenance.md` (déroulé minute par minute) | minutage affiché | **documenté** |
 | Barème 20/20/30/10/10 **et ses pénalités** | §16 : pointage documentaire des pénalités et limites de preuve | §16.1 à §16.3 ; le PDF source n'est pas suivi dans ce checkout | **pointage documentaire présent ; aucune validation pédagogique ou revue étudiante attestée** |
-| Composition du groupe conformément au sujet (3 personnes prévues, 2 tolérées), courriel `Composition SAE` et **URL GitLab partagée** avec l'enseignante | §14.2, annexe 17.7 (§GitLab) | README : deux membres nommés ; `docs/19` rapporte l'attestation de courriel et d'accès, non vérifiée indépendamment | **état externe rapporté, non vérifié par le dépôt ; aucune validation pédagogique inférée** |
+| Composition du groupe conformément au sujet (3 personnes prévues, 2 tolérées), courriel `Composition SAE` et **URL GitLab partagée** avec l'enseignant | §14.2, annexe 17.7 (§GitLab) | README : deux membres nommés ; `docs/19` rapporte l'attestation de courriel et d'accès, non vérifiée indépendamment | **état externe rapporté, non vérifié par le dépôt ; aucune validation pédagogique inférée** |
 
 ---
 
@@ -1529,7 +1529,7 @@ Total estimé : **348 h** sur les 82 tâches de la WBS. Ce total est un effort d
 
 | Semaine | Période de référence | Phase | Jalons / livrables visés (non attestés) | Sorties visées |
 |---|---|---|---|---|
-| S1 | 22 → 28/09 | Initialisation | préparer le dépôt, le README, l'accès de l'enseignante et l'envoi de la composition selon la procédure retenue | arborescence + README v0 |
+| S1 | 22 → 28/09 | Initialisation | préparer le dépôt, le README, l'accès de l'enseignant et l'envoi de la composition selon la procédure retenue | arborescence + README v0 |
 | S2 | 29/09 → 05/10 | Analyse | CDC §1-§4 et §6-§7 prêts pour relecture ; cas d'utilisation listés | revue des pénalités §16.2 à organiser |
 | S3 | 06 → 12/10 | Conception UML | diagrammes de cas, de classes et de séquence à préparer | sources et rendus à vérifier dans `docs/diagrams/` |
 | S4 | 13 → 19/10 | Conception BD | MCD, MLD, normalisation, scripts SQL et seed à examiner | résultat de `load_db.sh` à dater/archiver |
@@ -1565,7 +1565,7 @@ Suivi budgétaire prévu : le temps réel pourrait être comparé à l'estimatio
 
 ### 14.1 Règles de fonctionnement du dépôt
 
-1. **un dépôt par groupe**, URL communiquée à l'enseignante et **accès rapporteur au minimum** demandé ; la composition du groupe est envoyée par courriel (`sujet : Composition SAE`) avant la fin de S1.
+1. **un dépôt par groupe**, URL communiquée à l'enseignant et **accès rapporteur au minimum** demandé ; la composition du groupe est envoyée par courriel (`sujet : Composition SAE`) avant la fin de S1.
 2. `main` protégée ; développement par branches `feat/<id>-<libellé>`, `fix/…`, `docs/…` ; **une MR par lot fonctionnel**, mergée par un autre développeur que l'auteur (auto-merge interdit : c'est aussi ce qui prouve la collaboration).
 3. Messages de commit conventionnels : `feat(panier): contrôle serveur de la disponibilité avant ajout` / `fix(sql): snapshot du prix dans trg_ligne_prix_snapshot` / `docs(cdc): détaille RB-06 et son test`.
 4. Un commit **au moins par personne et par semaine** (sinon l'évaluation individuelle de contribution est mécaniquement faible) ; merges squash **désactivés** pour conserver les commits d'origine.

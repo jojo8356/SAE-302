@@ -315,8 +315,8 @@ footer.doc p { text-align: left; margin: 0; }
 <td><strong>Johan Polsinelli</strong> &amp; <strong>Chahd Gouiaa</strong></td>
 </tr>
 <tr>
-<td><strong>Encadrante pédagogique</strong></td>
-<td><strong>Mme Thanh-Phuong Nguyen</strong> (<code>thanh-phuong.nguyen@univ-cotedazur.fr</code>, accès <code>Reporter</code> sur GitLab)</td>
+<td><strong>Encadrant pédagogique</strong></td>
+<td><strong>Mr Thanh-Phuong Nguyen</strong> (<code>thanh-phuong.nguyen@univ-cotedazur.fr</code>, accès <code>Reporter</code> sur GitLab)</td>
 </tr>
 <tr>
 <td><strong>Année universitaire</strong></td>
@@ -330,7 +330,7 @@ footer.doc p { text-align: left; margin: 0; }
 </table>
 <hr />
 <h2 id="remerciements">Remerciements<a class="headerlink" href="#remerciements" title="Permanent link"></a></h2>
-<p>Nous adressons nos sincères remerciements à <strong>Mme Thanh-Phuong Nguyen</strong>, notre enseignante référente, pour la précision du cahier des charges de cette SAÉ 302, ses conseils sur la modélisation relationnelle et l’architecture transactionnelle, ainsi que son exigence constante en matière de sécurité applicative et de rigueur documentaire.</p>
+<p>Nous adressons nos sincères remerciements à <strong>Mr Thanh-Phuong Nguyen</strong>, notre enseignant référent, pour la précision du cahier des charges de cette SAÉ 302, ses conseils sur la modélisation relationnelle et l’architecture transactionnelle, ainsi que son exigence constante en matière de sécurité applicative et de rigueur documentaire.</p>
 <p>Nous remercions également l’ensemble de l’équipe pédagogique du département Informatique de l’IUT de Nice Côte d’Azur pour la qualité des enseignements dispensés en conception de bases de données, SQL avancé, programmation orientée objet PHP, développement Web côté client, cybersécurité et méthodologie de tests, ainsi que pour la mise à disposition des environnements d’hébergement pédagogique.</p>
 <p>Enfin, nous exprimons notre gratitude aux membres du jury qui consacrent leur temps à l’évaluation de ce mémoire et de la soutenance associée.</p>
 <hr />
@@ -1457,7 +1457,7 @@ footer.doc p { text-align: left; margin: 0; }
 <h3 id="51-prerequis-dhebergement-procedure-de-deploiement-retour-arriere-et-mco">5.1 Prérequis d’hébergement, procédure de déploiement, retour arrière et MCO<a class="headerlink" href="#51-prerequis-dhebergement-procedure-de-deploiement-retour-arriere-et-mco" title="Permanent link"></a></h3>
 <p>L’exploitation cible (<code>STACK.md</code>, <code>docs/26-transition-exploitation-maintenance-build-to-run.md</code>) requiert PHP <strong>8.2+</strong> (<code>json</code>, <code>mbstring</code>, <code>pdo_mysql</code>), MySQL <strong>8.0.16+</strong> ou MariaDB <strong>10.6+</strong>, et Apache 2.4 (<code>DocumentRoot public/</code>, <code>mod_rewrite</code>). Le passage en production impose de configurer <code>.env</code> hors racine Web (<code>APP_ENV=prod</code>, <code>APP_DEBUG=0</code>, <code>STORAGE_DRIVER=sql</code>), de supprimer les scripts utilitaires <code>public/gen_volumes.php</code> et <code>public/mesurer.php</code>, de remplacer les comptes de démonstration du seed, de réaliser un export <code>mysqldump --single-transaction --routines --triggers</code> pré-bascule pour garantir un retour arrière (<em>rollback</em>), et d’encadrer la rétention RGPD (<code>docs/18</code>) via <code>scripts/nettoyage_donnees.php</code>, <code>purger_comptes.php</code> et <code>archive_restreinte.php</code>.</p>
 <h3 id="52-gouvernance-gitlab-readmemd-et-organisation-de-la-soutenance-15-minutes">5.2 Gouvernance GitLab, <code>README.md</code> et organisation de la soutenance (15 minutes)<a class="headerlink" href="#52-gouvernance-gitlab-readmemd-et-organisation-de-la-soutenance-15-minutes" title="Permanent link"></a></h3>
-<p>Conformément aux consignes du sujet (p. 8–9), le dépôt comporte un <code>README.md</code> complet détaillant présentation, architecture, installation (<code>./run.sh --db</code>, <code>./run.sh</code>), configuration <code>.env</code>, identifiants locaux et répartition du travail entre <strong>Johan Polsinelli</strong> et <strong>Chahd Gouiaa</strong> (sous la supervision de <strong>Mme Thanh-Phuong Nguyen</strong> en rôle <code>Reporter</code>). Le support de soutenance de 15 minutes est structuré dans <code>docs/03-support-soutenance.md</code>, <code>docs/12-diaporama-soutenance.md</code> (<code>livrables/minishop-soutenance.pptx</code>, 12 diapositives) et <code>docs/24-preparation-soutenance-complete.md</code> (avec script de démonstration en direct sur front-office, back-office et terminal SQL).</p>
+<p>Conformément aux consignes du sujet (p. 8–9), le dépôt comporte un <code>README.md</code> complet détaillant présentation, architecture, installation (<code>./run.sh --db</code>, <code>./run.sh</code>), configuration <code>.env</code>, identifiants locaux et répartition du travail entre <strong>Johan Polsinelli</strong> et <strong>Chahd Gouiaa</strong> (sous la supervision de <strong>Mr Thanh-Phuong Nguyen</strong> en rôle <code>Reporter</code>). Le support de soutenance de 15 minutes est structuré dans <code>docs/03-support-soutenance.md</code>, <code>docs/12-diaporama-soutenance.md</code> (<code>livrables/minishop-soutenance.pptx</code>, 12 diapositives) et <code>docs/24-preparation-soutenance-complete.md</code> (avec script de démonstration en direct sur front-office, back-office et terminal SQL).</p>
 <h3 id="53-grille-complete-de-verification-face-aux-penalites-du-sujet-officiel-sae-302">5.3 Grille complète de vérification face aux pénalités du sujet officiel SAÉ 302<a class="headerlink" href="#53-grille-complete-de-verification-face-aux-penalites-du-sujet-officiel-sae-302" title="Permanent link"></a></h3>
 <table>
 <thead>
@@ -1496,7 +1496,7 @@ footer.doc p { text-align: left; margin: 0; }
 <tr>
 <td><strong>v. Contribution régulière GitLab &amp; README</strong></td>
 <td style="text-align: right;"><strong>10</strong></td>
-<td>Historique commits binôme, <code>README.md</code>, accès <code>Reporter</code> enseignante</td>
+<td>Historique commits binôme, <code>README.md</code>, accès <code>Reporter</code> enseignant</td>
 <td><strong>Prévu :</strong> <code>README.md</code> complet, historique Git tracé, charte <code>docs/20</code> (vérification finale sur le dépôt GitLab IUT avant soutenance).</td>
 </tr>
 </tbody>

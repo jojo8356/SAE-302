@@ -140,7 +140,7 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme **remon
 
 | ID | Tâche de travail | Rôle(s) de planification | h estimées | Définition de fini | Dépend de |
 |---|---|---|---:|---|---|
-| `D1-L1-01` | Configurer le dépôt GitLab, partager l'accès requis à l'enseignante et consigner la composition déclarée | A | 2 | dépôt lisible et éléments demandés par le sujet tracés ; aucun choix de visibilité/protection supposé | — |
+| `D1-L1-01` | Configurer le dépôt GitLab, partager l'accès requis à l'enseignant et consigner la composition déclarée | A | 2 | dépôt lisible et éléments demandés par le sujet tracés ; aucun choix de visibilité/protection supposé | — |
 | `D1-L1-02` | Squelette du dépôt : arborescence app/ public/ sql/ tests/ docs/ scripts/ + .gitignore | A | 2 | arborescence conforme au CDC §9.2 | 01 |
 | `D1-L1-03` | README v0 : prérequis, installation, membres et permissions GitLab, distincts des rôles RACI A/B/C | A | 3 | README présent ; aucune correspondance nominative entre membres et codes de rôle n'est inventée | 02 |
 | `D1-L1-04` | Grille de conformité au barème (CDC §16) suivie dans une issue GitLab | A | 3 | issue créée : 5 livrables + pénalités suivis | 01 |
