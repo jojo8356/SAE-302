@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""MiniShop — convertit un document Markdown en PDF académique A4 (fpdf2).
+"""MiniShop — convertit un ou plusieurs documents Markdown en PDF académique A4 (fpdf2).
 
+    python3 scripts/md_to_pdf.py docs/27-rapport-universitaire-projet-minishop.md --livrable
     python3 scripts/md_to_pdf.py docs/01-cahier-des-charges-MiniShop.md \
         --out dist/pdf/01-cahier-des-charges-MiniShop.pdf
 
@@ -547,21 +548,31 @@ def convertir(source: Path, sortie: Path, titre: str | None = None) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     analyseur = argparse.ArgumentParser(description="Markdown → PDF académique (SAÉ 302 — MiniShop).")
-    analyseur.add_argument("source", type=Path)
-    analyseur.add_argument("--out", type=Path)
-    analyseur.add_argument("--titre")
+    analyseur.add_argument("sources", nargs="+", type=Path, help="Fichier(s) Markdown source(s)")
+    analyseur.add_argument("--out", type=Path, help="Chemin du PDF cible (pour un seul fichier)")
+    analyseur.add_argument("--livrable", action="store_true",
+                           help="Écrit directement dans livrables/pdf/<nom>.pdf")
+    analyseur.add_argument("--titre", help="Titre courant personnalisé")
     arguments = analyseur.parse_args(argv)
 
-    source = arguments.source if arguments.source.is_absolute() else Path.cwd() / arguments.source
-    if not source.is_file():
-        print(f"✘ source introuvable : {source}", file=sys.stderr)
+    if arguments.out and len(arguments.sources) > 1:
+        print("✘ --out ne s'utilise qu'avec un seul fichier source", file=sys.stderr)
         return 2
-    sortie = arguments.out or source.with_suffix(".pdf")
-    if not sortie.is_absolute():
-        sortie = Path.cwd() / sortie
 
-    pages = convertir(source, sortie, arguments.titre)
-    print(f"✓ {sortie}  ({pages} pages, {sortie.stat().st_size // 1024} Ko)")
+    for entree in arguments.sources:
+        source = entree if entree.is_absolute() else Path.cwd() / entree
+        if not source.is_file():
+            print(f"✘ source introuvable : {source}", file=sys.stderr)
+            return 2
+        if arguments.livrable:
+            sortie = RACINE / "livrables" / "pdf" / f"{source.stem}.pdf"
+        elif arguments.out:
+            sortie = arguments.out if arguments.out.is_absolute() else Path.cwd() / arguments.out
+        else:
+            sortie = source.with_suffix(".pdf")
+
+        pages = convertir(source, sortie, arguments.titre)
+        print(f"✓ {sortie}  ({pages} pages, {sortie.stat().st_size // 1024} Ko)")
     return 0
 
 

@@ -40,18 +40,6 @@ Les campagnes automatisées exécutées sur machine virtuelle Debian 13 (PHP `8.
 
 ---
 
-## Abstract
-
-This academic report presents the complete specification, database engineering, security hardening, implementation, and experimental validation of **MiniShop**, a transactional e-commerce web application with an administrative back-office developed for the SAÉ 302 Computer Science capstone project. Fully addressing all official specification questions and grading requirements, the system integrates relational modeling (Merise and UML 2.5), advanced MySQL/MariaDB SQL, framework-less object-oriented PHP 8.2+, native PDO data access, progressive JavaScript, session management, OWASP web security, stored procedures, triggers, and automated testing.
-
-Our engineering challenge is to enforce strict inventory integrity, invoice price immutability, and defense-in-depth security without relying on third-party frameworks, while preserving persistence portability through a dual `StoreInterface` contract (`SqlStore` via PDO and an isolated `JsonStore` fallback). The relational schema delivers **9 third-normal-form tables** (including two trigger-locked accounting denormalizations), **3 views**, **1 SQL function**, **18 stored procedures** (exceeding the minimum of 5), and **16 triggers** (exceeding the minimum of 5).
-
-Automated test campaigns run on a Debian 13 virtual machine (PHP `8.4.27`, MariaDB `11.8.6`) validate **60/60 verification steps**, **29/29 SQL integrity tests**, **105/105 HTTP SQL end-to-end assertions**, **8/8 concurrency stress tests** with zero overselling (`20` concurrent requests for `12` units), **11/11 static security checks**, and a 95th-percentile HTTP latency of **6.0 ms** (below the `500 ms` threshold). A transparent critical review delineates remaining academic prototype boundaries, notably simulated payments, local contact logging without SMTP, and `200` manual browser scenarios pending execution.
-
-**Keywords:** software engineering, framework-less MVC, 3NF normalization, stored procedures, SQL triggers, OWASP security, experimental verification.
-
----
-
 ## Sommaire
 
 - **Introduction générale**
