@@ -398,13 +398,14 @@ footer.doc p { text-align: left; margin: 0; }
 <li>4.1.2 Contrat <code>StoreInterface</code> : parité et limites entre <code>SqlStore</code> et <code>JsonStore</code></li>
 <li>4.1.3 Lecture architecturale : briques, interfaces, état, plan de contrôle et SPOF</li>
 <li>4.1.4 État et <em>stateless</em> : localisation exacte des 6 formes d’état et externalisation</li>
+<li>4.1.5 Synchrone, asynchrone, cohérence forte/éventuelle, <em>backpressure</em> et idempotence</li>
 </ul>
 </li>
 <li>4.2 Étude complète de design, direction artistique et accessibilité (<code>docs/DA.md</code>)<ul>
 <li>4.2.1 Benchmark des 5 acteurs français du e-commerce et positionnement</li>
 <li>4.2.2 Palette WCAG 2.1 AA, typographie sourcée (<code>Lato</code> / <code>SIL OFL 1.1</code>) et grille</li>
-<li>4.2.3 Iconographie (<code>Lucide</code> / <code>ISC</code>), photographie à 2 niveaux, 12 composants, UTC et i18n</li>
-<li>4.2.4 Parcours UX anti-désorientation (« ne jamais être perdu ») et conformité aux lois européennes</li>
+<li>4.2.3 Iconographie (<code>Lucide</code>), photos, 12 composants, UTC et i18n</li>
+<li>4.2.4 Parcours UX anti-désorientation (« ne jamais être perdu ») et lois européennes</li>
 </ul>
 </li>
 <li>4.3 Stratégie de tests complète en pyramide (<code>docs/11</code>) et exigences <code>ENF-01</code> à <code>ENF-22</code><ul>
@@ -415,7 +416,7 @@ footer.doc p { text-align: left; margin: 0; }
 <li>4.4 Campagne VM Debian 13, mesures de performances et limites physiques mono-serveur<ul>
 <li>4.4.1 Bilan des tests et mesures SQL (<code>EXPLAIN</code>) et HTTP (<code>p95 = 6 ms</code>)</li>
 <li>4.4.2 Mise en perspective des mesures VM face aux piles concurrentes</li>
-<li>4.4.3 Limite physique d’utilisateurs simultanés en mono-serveur et architecture de scaling sourcée</li>
+<li>4.4.3 Limite physique mono-serveur et architecture de scaling sourcée</li>
 </ul>
 </li>
 <li>4.5 Analyse critique des biais, limites du prototype et risques résiduels</li>
@@ -481,32 +482,34 @@ footer.doc p { text-align: left; margin: 0; }
 <li><strong>Tableau 20</strong> — Grille d’état (<em>stateful</em>/<em>stateless</em>), dépendances implicites et SPOF de MiniShop</li>
 <li><strong>Tableau 21</strong> — Cartographie des 6 formes d’état dans le code réel de MiniShop</li>
 <li><strong>Tableau 22</strong> — Compromis d’externalisation de l’état (mono-serveur vs multi-copies)</li>
-<li><strong>Tableau 23</strong> — Benchmark ergonomique des 5 concurrents et positionnement (<code>docs/DA.md</code>)</li>
-<li><strong>Tableau 24</strong> — Palette chromotypographique et ratios de contraste WCAG 2.1 AA</li>
+<li><strong>Tableau 23</strong> — Flux synchrones V1 vs échanges asynchrones V2 et protection anti-cascade</li>
+<li><strong>Tableau 24</strong> — Cohérence forte vs cohérence éventuelle, <em>backpressure</em> et idempotence</li>
+<li><strong>Tableau 25</strong> — Benchmark ergonomique des 5 concurrents et positionnement (<code>docs/DA.md</code>)</li>
+<li><strong>Tableau 26</strong> — Palette chromotypographique et ratios de contraste WCAG 2.1 AA</li>
 </ul>
 <div style="break-before: page;"></div>
 <ul>
-<li><strong>Tableau 25</strong> — Les 12 composants UI, règles WCAG 2.1 AA et microcopy éditoriale</li>
-<li><strong>Tableau 26</strong> — Parcours UX anti-désorientation et conformité aux directives européennes</li>
-<li><strong>Tableau 27</strong> — Synthèse des exigences non fonctionnelles (<code>ENF-01</code> à <code>ENF-22</code>)</li>
-<li><strong>Tableau 28</strong> — Pyramide de validation complète à 9 étages (<code>docs/11-strategie-tests.md</code>)</li>
-<li><strong>Tableau 29</strong> — Bilan chiffré des campagnes de tests automatisés et VM Debian 13</li>
-<li><strong>Tableau 30</strong> — Mesures SQL détaillées (<code>minishop_perf</code>) et analyse des plans <code>EXPLAIN</code></li>
-<li><strong>Tableau 31</strong> — Mesures HTTP détaillées par route (<code>N = 200</code> requêtes/URL, <code>ENF-01</code>)</li>
-<li><strong>Tableau 32</strong> — Mise en perspective des mesures VM face aux piles alternatives</li>
-<li><strong>Tableau 33</strong> — Capacité physique mono-serveur et leviers d’optimisation/scaling</li>
-<li><strong>Tableau 34</strong> — Règle du moindre privilège : permissions par utilisateur et conteneurisation</li>
-<li><strong>Tableau 35</strong> — Cadre légal e-commerce français (LCEN, Consommation, CNIL)</li>
-<li><strong>Tableau 36</strong> — Audit technique des cookies, du <code>localStorage</code> et des journaux</li>
-<li><strong>Tableau 37</strong> — Politique de conservation RGPD et limites assumées (<code>docs/18</code>)</li>
-<li><strong>Tableau 38</strong> — Les 7 points bloquants avant toute mise en vente commerciale réelle (<code>docs/12</code>)</li>
-<li><strong>Tableau 39</strong> — Contrôle de conformité face aux livrables et pénalités du barème</li>
-<li><strong>Tableau 40</strong> — Briques d’industrialisation pour une plateforme de production</li>
-<li><strong>Tableau 41</strong> — Extension du modèle 3FN vers une <em>Marketplace</em> multi-vendeurs</li>
-<li><strong>Tableau 42</strong> — Gestion back-office des fiches fournisseurs et commandes d’approvisionnement</li>
-<li><strong>Tableau 43</strong> — Architecture du moteur de recommandation hybride (V1 à V3)</li>
-<li><strong>Tableau 44</strong> — Automatisations back-office vendeur, logistique et anti-fraude</li>
-<li><strong>Tableau 45</strong> — Plan de migration incrémental en 4 paliers (MiniShop → <em>Marketplace</em>)</li>
+<li><strong>Tableau 27</strong> — Les 12 composants UI, règles WCAG 2.1 AA et microcopy éditoriale</li>
+<li><strong>Tableau 28</strong> — Parcours UX anti-désorientation et conformité aux directives européennes</li>
+<li><strong>Tableau 29</strong> — Synthèse des exigences non fonctionnelles (<code>ENF-01</code> à <code>ENF-22</code>)</li>
+<li><strong>Tableau 30</strong> — Pyramide de validation complète à 9 étages (<code>docs/11-strategie-tests.md</code>)</li>
+<li><strong>Tableau 31</strong> — Bilan chiffré des campagnes de tests automatisés et VM Debian 13</li>
+<li><strong>Tableau 32</strong> — Mesures SQL détaillées (<code>minishop_perf</code>) et analyse des plans <code>EXPLAIN</code></li>
+<li><strong>Tableau 33</strong> — Mesures HTTP détaillées par route (<code>N = 200</code> requêtes/URL, <code>ENF-01</code>)</li>
+<li><strong>Tableau 34</strong> — Mise en perspective des mesures VM face aux piles alternatives</li>
+<li><strong>Tableau 35</strong> — Capacité physique mono-serveur et leviers d’optimisation/scaling</li>
+<li><strong>Tableau 36</strong> — Règle du moindre privilège : permissions par utilisateur et conteneurisation</li>
+<li><strong>Tableau 37</strong> — Cadre légal e-commerce français (LCEN, Consommation, CNIL)</li>
+<li><strong>Tableau 38</strong> — Audit technique des cookies, du <code>localStorage</code> et des journaux</li>
+<li><strong>Tableau 39</strong> — Politique de conservation RGPD et limites assumées (<code>docs/18</code>)</li>
+<li><strong>Tableau 40</strong> — Les 7 points bloquants avant toute mise en vente commerciale réelle (<code>docs/12</code>)</li>
+<li><strong>Tableau 41</strong> — Contrôle de conformité face aux livrables et pénalités du barème</li>
+<li><strong>Tableau 42</strong> — Briques d’industrialisation pour une plateforme de production</li>
+<li><strong>Tableau 43</strong> — Extension du modèle 3FN vers une <em>Marketplace</em> multi-vendeurs</li>
+<li><strong>Tableau 44</strong> — Gestion back-office des fiches fournisseurs et commandes d’approvisionnement</li>
+<li><strong>Tableau 45</strong> — Architecture du moteur de recommandation hybride (V1 à V3)</li>
+<li><strong>Tableau 46</strong> — Automatisations back-office vendeur, logistique et anti-fraude</li>
+<li><strong>Tableau 47</strong> — Plan de migration incrémental en 4 paliers (MiniShop → <em>Marketplace</em>)</li>
 </ul>
 <div style="break-before: page;"></div>
 <h2 id="glossaire-des-sigles-et-acronymes">Glossaire des sigles et acronymes<a class="headerlink" href="#glossaire-des-sigles-et-acronymes" title="Permanent link"></a></h2>
@@ -2074,6 +2077,89 @@ END;
 </tbody>
 </table>
 <p><em>Tableau 22 — Arbitrage architectural : gains et coûts de l’externalisation de l’état pour MiniShop.</em></p>
+<h4 id="415-synchrone-asynchrone-et-coherence-lecture-des-echanges-dans-minishop">4.1.5 Synchrone, asynchrone et cohérence : lecture des échanges dans MiniShop<a class="headerlink" href="#415-synchrone-asynchrone-et-coherence-lecture-des-echanges-dans-minishop" title="Permanent link"></a></h4>
+<p>Le choix entre <strong>appel synchrone</strong> et <strong>échange asynchrone</strong> détermine comment les ralentissements se propagent en cascade, à quel moment une donnée devient visible partout (<strong>cohérence forte</strong> ou <strong>éventuelle</strong>) et quelles garanties doivent porter les consommateurs de messages (<strong>idempotence</strong> et <strong><em>backpressure</em></strong>).</p>
+<ol>
+<li><strong>État des lieux du code V1 : une chaîne 100 % synchrone et ses risques de cascade :</strong>
+   Dans l’implémentation actuelle de MiniShop, <strong>tous les flux applicatifs sont synchrones</strong> (<code>Navigateur → Apache/PHP → MariaDB/JsonStore → PHP → Navigateur</code>). Même les appels JavaScript <code>fetch()</code> de <code>public/js/panier.js</code> (vers <code>ApiController::ajouter()</code> / <code>retirer()</code>) et de <code>public/js/preferences.js</code> (vers <code>/admin</code>) sont asynchrones uniquement pour l’interface navigateur sans rechargement, mais <strong>synchrones côté serveur</strong> : le worker PHP bloque jusqu’à la réponse complète de <code>PanierSession</code> et MariaDB avant de retourner JSON (<code>200</code> ou <code>409</code>).
+   L’audit de <code>app/Config/DbConnexion.php</code> et <code>app/Model/Data/JsonStore.php</code> montre l’absence de garde-fous avancés contre la <strong>panne en cascade</strong> en V1 :
+   - <strong>Délais d’expiration (<em>timeouts</em>) :</strong> <code>DbConnexion::options()</code> ne fixe pas de <code>PDO::ATTR_TIMEOUT</code> explicite et <code>panier.js</code> n’utilise pas d’<code>AbortController</code> ; un blocage SQL ou un verrou coopératif <code>flock($verrou, LOCK_EX)</code> dans <code>JsonStore</code> / <code>NettoyageJournaux</code> retient le worker PHP jusqu’au <code>max_execution_time</code>.
+   - <strong>Nouvelles tentatives (<em>retries</em>) &amp; disjoncteur (<em>circuit breaker</em>) :</strong> un seul basculement maîtrisé existe dans <code>DbConnexion::ouvrir()</code> (repli TCP <code>127.0.0.1:3306</code> → socket Unix sur erreur <code>1698</code>/<code>1045</code>). Il n’y a ni boucle de réessai aveugle (qui amplifierait une surcharge) ni disjoncteur : si MariaDB ralentit (<code>SELECT ... FOR UPDATE</code> sur un <em>hot SKU</em>, § <code>4.4.3</code>), les <code>40</code>–<code>60</code> workers PHP-FPM saturent en cascade jusqu’au <code>502</code>/<code>504</code> du serveur HTTP.</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Flux / Traitement MiniShop</th>
+<th>Mode V1 actuel</th>
+<th>Mode cible V2 (architecture avec <em>broker</em>)</th>
+<th>Protection contre les pannes en cascade</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Navigation catalogue, fiche produit, panier (<code>ApiController</code>)</strong></td>
+<td><strong>Synchrone</strong> (HTML / JSON immédiat)</td>
+<td><strong>Synchrone</strong> (lecture cache Redis + MariaDB)</td>
+<td>Timeouts courts (<code>PDO::ATTR_TIMEOUT = 3 s</code>, <code>AbortController</code>), limitation de débit (<code>429</code>) en amont</td>
+</tr>
+<tr>
+<td><strong>Validation commande &amp; décrément stock (<code>sp_create_order_from_basket</code>)</strong></td>
+<td><strong>Synchrone</strong> (verrou <code>FOR UPDATE</code>)</td>
+<td><strong>Synchrone</strong> (l’utilisateur attend la confirmation immédiate)</td>
+<td>Timeout SQL borné, file d’attente HTTP bornée (<code>503 Retry-After</code>)</td>
+</tr>
+<tr>
+<td><strong>Paiement PSP, e-mails SMTP, PDF Factur-X, indexation recherche, réassort</strong></td>
+<td>Hors périmètre / manuel</td>
+<td><strong>Asynchrone</strong> (<em>Broker</em> <code>Redis Streams</code> ou <code>RabbitMQ</code> + <em>workers</em> PHP CLI)</td>
+<td>Isolation temporelle totale : une panne SMTP ou PDF ne fait jamais échouer la commande</td>
+</tr>
+</tbody>
+</table>
+<p><em>Tableau 23 — Flux synchrones dans le code V1 vs découplage asynchrone cible et garde-fous anti-cascade.</em></p>
+<ol start="2">
+<li><strong>Cohérence forte vs cohérence éventuelle dans les données MiniShop :</strong>
+   Toute donnée du système ne tolère pas la même fraîcheur. La matrice ci-dessous distingue ce qui exige une <strong>cohérence forte</strong> (lecture immédiate de la dernière écriture sur le nœud <em>Primary</em>) de ce qui accepte une <strong>cohérence éventuelle</strong> (<em>eventual consistency</em>, avec retard transitoire de quelques millisecondes à quelques minutes) :</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Donnée ou vue MiniShop</th>
+<th>Cohérence requise</th>
+<th>Justification technique &amp; piège à éviter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Stock (<code>produit.stock</code>), panier, création/annulation commande (<code>sp_create_order_from_basket</code>, <code>sp_cancel_order</code>)</strong></td>
+<td><strong>Forte</strong> (<code>ACID</code>, <em>Primary</em> MariaDB + <code>FOR UPDATE</code>)</td>
+<td>Une lecture périmée sur réplique provoquerait une <strong>survente</strong> (<code>RB-18</code>) ou une double restitution de stock.</td>
+</tr>
+<tr>
+<td><strong>Affichage immédiat après achat (<code>CommandeController::valider</code> → <code>/mes-commandes/{id}</code>)</strong></td>
+<td><strong>Forte</strong> (<em>Read-Your-Own-Writes</em> sur <em>Primary</em>)</td>
+<td>Lire sur une réplique asynchrone juste après <code>INSERT</code> ferait croire au client que sa commande a disparu (<code>404</code>).</td>
+</tr>
+<tr>
+<td><strong>Catalogue public en cache Redis, recherche Meilisearch, <code>v_etat_stock</code> tableau de bord</strong></td>
+<td><strong>Éventuelle</strong> (TTL court ou événement de mise à jour)</td>
+<td>Un décalage de quelques secondes est acceptable ; la vérification finale du stock au <em>checkout</em> reste toujours <strong>forte</strong>.</td>
+</tr>
+<tr>
+<td><strong>Statistiques CA, co-achats (<code>recommandation_produit</code>), factures PDF, notifications</strong></td>
+<td><strong>Éventuelle</strong> (réplique en lecture ou traitement différé)</td>
+<td>Décharge intégralement le nœud transactionnel principal sans risque métier.</td>
+</tr>
+</tbody>
+</table>
+<p><em>Tableau 24 — Arbitrage entre cohérence forte et cohérence éventuelle selon la criticité des données MiniShop.</em></p>
+<ol start="3">
+<li><strong>Backpressure, <em>backlog</em> et idempotence obligatoire des consommateurs :</strong>
+   Introduire un <em>broker</em> au Palier 2 (§ <code>6.5</code>) ne supprime pas les pannes : il les <strong>déplace</strong> vers la file si la consommation ralentit. Pour rendre ce modèle sûr en exploitation, trois règles complètent le socle V1 :
+   - <strong><em>Backpressure</em> et borne de <em>backlog</em> :</strong> borner la capacité des files (<code>MAXLEN</code> Redis Streams ou <code>x-max-length</code> RabbitMQ + <em>Dead Letter Queue</em> pour les messages en échec après <code>N</code> essais), limiter le <code>prefetch_count</code> des <em>workers</em> PHP CLI pour ne pas saturer MariaDB, et retourner <code>429 Too Many Requests</code> / <code>503 Service Unavailable</code> côté frontal lorsque la capacité est atteinte.
+   - <strong>Livraison « au moins une fois » et idempotence :</strong> un <em>worker</em> qui génère une facture ou confirme un webhook PSP peut planter <strong>après</strong> exécution mais <strong>avant</strong> l’accusé de réception (<code>ACK</code>), provoquant un re-traitement. MiniShop applique déjà cette logique côté SGBD via <code>commande.numero</code> unique et la garde <code>statut &lt;&gt; 'ANNULEE'</code> dans <code>sp_cancel_order</code> (<code>test_annulation_concurrente.py</code>) : tout futur consommateur asynchrone devra porter une <strong>clé d’idempotence unique</strong> (<code>event_id</code> en contrainte <code>UNIQUE</code>) et privilégier des transitions d’état idempotentes (<em>« passer de <code>EN_ATTENTE</code> à <code>PAYEE</code> »</em> plutôt que <em>« créditer à nouveau »</em>).
+   - <strong>Ne jamais rendre asynchrone ce que l’utilisateur attend :</strong> la validation de disponibilité stock et l’enregistrement de la commande doivent rester synchrones ; seules les tâches post-validation (e-mail, PDF Factur-X, étiquette, indexation) quittent le chemin critique HTTP.</li>
+</ol>
 <div style="break-before: page;"></div>
 <h3 id="42-etude-complete-de-design-direction-artistique-et-accessibilite-docsdamd">4.2 Étude complète de design, direction artistique et accessibilité (<code>docs/DA.md</code>)<a class="headerlink" href="#42-etude-complete-de-design-direction-artistique-et-accessibilite-docsdamd" title="Permanent link"></a></h3>
 <p>Conçue avant l’écriture de <code>public/css/app.css</code> et vérifiée automatiquement par <code>tests/php/css_contract.php</code> (<code>69</code> assertions), la direction artistique (<code>docs/DA.md</code>) repose sur le positionnement <em>« La précision technique, sans la froideur »</em> et sur l’absence totale de dépendance CDN externe (<code>ENF-20</code>).</p>
@@ -2114,7 +2200,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 23 — Benchmark ergonomique des 5 concurrents français et positionnement de MiniShop (<code>docs/DA.md</code>).</em></p>
+<p><em>Tableau 25 — Benchmark ergonomique des 5 concurrents français et positionnement de MiniShop (<code>docs/DA.md</code>).</em></p>
 <h4 id="422-palette-wcag-21-aa-typographie-sourcee-lato-sil-ofl-11-et-grille">4.2.2 Palette WCAG 2.1 AA, typographie sourcée (<code>Lato</code> / <code>SIL OFL 1.1</code>) et grille<a class="headerlink" href="#422-palette-wcag-21-aa-typographie-sourcee-lato-sil-ofl-11-et-grille" title="Permanent link"></a></h4>
 <table>
 <thead>
@@ -2158,7 +2244,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 24 — Palette chromotypographique complète et ratios de contraste WCAG 2.1 AA.</em></p>
+<p><em>Tableau 26 — Palette chromotypographique complète et ratios de contraste WCAG 2.1 AA.</em></p>
 <ul>
 <li><strong>Typographie et source exacte :</strong> pile système native (<code>system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif</code>) complétée pour le seul glyphe euro (<code>unicode-range: U+20AC</code>) par <code>public/fonts/minishop-euro.woff2</code> (<code>MiniShopEuro</code>), extrait de <strong>Lato Regular</strong> (<code>google/fonts</code>, <code>ofl/lato/Lato-Regular.ttf</code>, blob <code>0f3d0f837d24834b9b5b0a6b735459c56f5e75c3</code>) sous licence <strong>SIL OFL 1.1</strong> (<code>public/fonts/OFL.txt</code>, CSP <code>font-src 'self'</code>). Les prix utilisent <code>font-variant-numeric: tabular-nums</code> (alignement vertical) et l’échelle modulaire <code>1,25</code> (<code>12 / 14 / 16 / 20 / 25 / 31 / 39 px</code>) avec <code>max-width: 68ch</code> sur les textes.</li>
 <li><strong>Grille et responsive :</strong> unité de base <code>8 px</code>, conteneur <code>max-width: 1180px</code>, grille catalogue adaptative <code>1 / 2 / 3</code> colonnes (<code>360 / 640 / 1024 px</code>), tableaux back-office repliés avec attributs <code>data-label</code> sur mobile et feuille dédiée <code>public/css/print.css</code> pour les commandes et CGV.</li>
@@ -2190,7 +2276,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 25 — Synthèse des 12 composants UI, règles WCAG 2.1 AA et discipline éditoriale.</em></p>
+<p><em>Tableau 27 — Synthèse des 12 composants UI, règles WCAG 2.1 AA et discipline éditoriale.</em></p>
 <p>En complément, la traduction intégrale <strong>FR / EN</strong> (<code>public/js/i18n-en.js</code>, vérifiée sur <code>48</code> vues et <code>45</code> messages métier) et le choix du fuseau horaire (stockage serveur strictement <strong>UTC</strong> via <code>app/Tools/Heure.php</code>, projection navigateur selon <code>localStorage</code> et <code>public/js/tz-lookup.js</code> sans envoi GPS) assurent l’accessibilité linguistique et temporelle (<code>ENF-07</code>).</p>
 <h4 id="424-parcours-ux-anti-desorientation-ne-jamais-etre-perdu-et-conformite-aux-lois-europeennes">4.2.4 Parcours UX anti-désorientation (« ne jamais être perdu ») et conformité aux lois européennes<a class="headerlink" href="#424-parcours-ux-anti-desorientation-ne-jamais-etre-perdu-et-conformite-aux-lois-europeennes" title="Permanent link"></a></h4>
 <p>L’ergonomie d’une boutique en ligne ne vise pas uniquement l’esthétique : elle doit garantir que l’utilisateur <strong>sache à tout moment où il se trouve, ce qu’il peut faire ensuite et combien il paiera réellement</strong>, tout en respectant le droit européen de la consommation et du numérique :</p>
@@ -2228,7 +2314,7 @@ END;
 <tr>
 <td><strong>Directive (UE) 2023/2673 (Rétractation en ligne — 19 juin 2026)</strong></td>
 <td>Bouton/fonctionnalité directe, visible et gratuite pour exercer la rétractation à distance avec confirmation et accusé durable</td>
-<td>Page informative + modèle <code>R. 221-1</code> présents (<code>/retractation</code>) ; l’implémentation du bouton en ligne « confirmer la rétractation » est inscrite en <strong>point bloquant n° 3</strong> avant ouverture commerciale (Tableau 38).</td>
+<td>Page informative + modèle <code>R. 221-1</code> présents (<code>/retractation</code>) ; l’implémentation du bouton en ligne « confirmer la rétractation » est inscrite en <strong>point bloquant n° 3</strong> avant ouverture commerciale (Tableau 40).</td>
 </tr>
 <tr>
 <td><strong>Directive (UE) 2019/882 (<em>European Accessibility Act</em>) &amp; Norme EN 301 549</strong></td>
@@ -2237,7 +2323,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 26 — Synthèse des mécanismes UX anti-désorientation et de leur conformité aux directives européennes.</em></p>
+<p><em>Tableau 28 — Synthèse des mécanismes UX anti-désorientation et de leur conformité aux directives européennes.</em></p>
 <div style="break-before: page;"></div>
 <h3 id="43-strategie-de-tests-complete-en-pyramide-docs11-et-exigences-enf-01-a-enf-22">4.3 Stratégie de tests complète en pyramide (<code>docs/11</code>) et exigences <code>ENF-01</code> à <code>ENF-22</code><a class="headerlink" href="#43-strategie-de-tests-complete-en-pyramide-docs11-et-exigences-enf-01-a-enf-22" title="Permanent link"></a></h3>
 <table>
@@ -2294,7 +2380,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 27 — Synthèse des exigences non fonctionnelles clés (<code>docs/annexes/annexe-enf.md</code>).</em></p>
+<p><em>Tableau 29 — Synthèse des exigences non fonctionnelles clés (<code>docs/annexes/annexe-enf.md</code>).</em></p>
 <h4 id="431-la-pyramide-des-tests-a-9-etages-et-sa-justification-methodologique">4.3.1 La pyramide des tests à 9 étages et sa justification méthodologique<a class="headerlink" href="#431-la-pyramide-des-tests-a-9-etages-et-sa-justification-methodologique" title="Permanent link"></a></h4>
 <p>Comme l’explique <code>docs/11-strategie-tests.md</code>, nous avons volontairement écarté une stratégie reposant sur 400 tests unitaires à <code>PDO</code> simulé (qui prouveraient uniquement que PHP passe une chaîne SQL à un bouchon). L’essentiel de la logique critique résidant dans le SGBD (<code>9</code> tables, <code>18</code> procédures, <code>16</code> triggers), la validation est structurée en <strong>pyramide à 9 étages</strong> testant chaque règle là où elle s’exécute réellement :</p>
 <table>
@@ -2380,7 +2466,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 28 — Pyramide de validation complète à 9 étages (<code>docs/11-strategie-tests.md</code>).</em></p>
+<p><em>Tableau 30 — Pyramide de validation complète à 9 étages (<code>docs/11-strategie-tests.md</code>).</em></p>
 <h4 id="432-protocoles-disolation-sql-contrats-statiques-couverture-honnete-et-garde-de-verdict">4.3.2 Protocoles d’isolation SQL, contrats statiques, couverture honnête et garde de verdict<a class="headerlink" href="#432-protocoles-disolation-sql-contrats-statiques-couverture-honnete-et-garde-de-verdict" title="Permanent link"></a></h4>
 <ul>
 <li><strong>Isolation de <code>sql_integration.php</code> :</strong> conçu comme une enveloppe mince autour du harnais SQL de référence <code>tests/sql/run_tests.sh</code> (évitant la divergence entre deux jeux de tests), ce script crée une base jetable <code>minishop_test</code>, rejoue <code>fixture.sql</code> avant chaque scénario, <strong>refuse par défaut toute base déjà existante</strong> (<code>--reinitialiser-base-existante</code> requis) et <strong>interdit formellement de cibler <code>DB_NAME</code> applicatif</strong>.</li>
@@ -2446,7 +2532,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 29 — Synthèse chiffrée des campagnes de validation automatisées.</em></p>
+<p><em>Tableau 31 — Synthèse chiffrée des campagnes de validation automatisées.</em></p>
 <p>La campagne de performance dédiée (<code>bash scripts/run_perf_vm.sh</code>, commit <code>cb0f814</code>, <code>tests/perf/dernieres_mesures.txt</code>) a été conduite sur la base isolée <code>minishop_perf</code> peuplée à <strong><code>236</code> produits</strong>, <strong><code>1 004</code> commandes</strong>, <strong><code>1 916</code> lignes de commande</strong> et <strong><code>1 998</code> traces de statut</strong> (au-delà de la volumétrie cible <code>ENF-02</code> de <code>200</code> produits / <code>1 000</code> commandes). Les Tableaux 26 et 27 en restituent l’intégralité :</p>
 <table>
 <thead>
@@ -2496,7 +2582,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 30 — Mesures SQL détaillées (<code>minishop_perf</code>, <code>100</code> itérations) et plans <code>EXPLAIN</code> (<code>tests/perf/dernieres_mesures.txt</code>).</em></p>
+<p><em>Tableau 32 — Mesures SQL détaillées (<code>minishop_perf</code>, <code>100</code> itérations) et plans <code>EXPLAIN</code> (<code>tests/perf/dernieres_mesures.txt</code>).</em></p>
 <table>
 <thead>
 <tr>
@@ -2559,7 +2645,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 31 — Mesures HTTP détaillées par route sur <code>http://127.0.0.1:18080</code> (<code>N = 200</code> req./URL).</em></p>
+<p><em>Tableau 33 — Mesures HTTP détaillées par route sur <code>http://127.0.0.1:18080</code> (<code>N = 200</code> req./URL).</em></p>
 <h4 id="442-mise-en-perspective-des-mesures-vm-face-aux-piles-concurrentes">4.4.2 Mise en perspective des mesures VM face aux piles concurrentes<a class="headerlink" href="#442-mise-en-perspective-des-mesures-vm-face-aux-piles-concurrentes" title="Permanent link"></a></h4>
 <p>À la lumière des mesures observées sur notre VM Debian 13 (PHP <code>8.4.27</code> + MariaDB <code>11.8.6</code>), il convient de situer précisément le comportement de MiniShop par rapport aux autres architectures évoquées au Chapitre 1 (<code>Tableaux 6 à 8</code>) :</p>
 <table>
@@ -2592,7 +2678,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 32 — Mise en perspective des résultats expérimentaux de la VM Debian 13 face aux piles alternatives.</em></p>
+<p><em>Tableau 34 — Mise en perspective des résultats expérimentaux de la VM Debian 13 face aux piles alternatives.</em></p>
 <h4 id="443-limite-physique-dutilisateurs-simultanes-en-mono-serveur-et-architecture-de-scaling-sourcee">4.4.3 Limite physique d’utilisateurs simultanés en mono-serveur et architecture de scaling sourcée<a class="headerlink" href="#443-limite-physique-dutilisateurs-simultanes-en-mono-serveur-et-architecture-de-scaling-sourcee" title="Permanent link"></a></h4>
 <p>Conformément à <code>ENF-03</code>, MiniShop est aujourd’hui dimensionné comme une application <strong>mono-serveur</strong> (un hôte exécutant conjointement Apache/PHP et MariaDB, typiquement un VPS <code>2</code>–<code>4</code> vCPU / <code>2</code>–<code>4</code> Go RAM ou un hébergement mutualisé type <em>LineServ</em>). Il est donc essentiel de quantifier la <strong>limite physique immédiate</strong> d’utilisateurs concurrents avant saturation, puis d’identifier les leviers d’optimisation et de <em>scaling</em> validés par la documentation officielle des composants :</p>
 <ol>
@@ -2601,7 +2687,7 @@ END;
    - <em>Débit maximal vs utilisateurs actifs (loi de Little : <code>L = λ × W</code>) :</em> avec nos latences mesurées (<code>6 ms</code> p95 sur lecture catalogue, <code>44 ms</code> sur commande transactionnelle), <code>50</code> workers PHP saturés représentent théoriquement plusieurs milliers de requêtes/s en lecture pure — <strong>mais trois goulots d’étranglement physiques réduisent fortement cette capacité réelle sous charge mixte</strong> :<ol>
 <li><strong>Verrouillage exclusif des sessions fichiers PHP (<code>session.save_handler = files</code>) :</strong> selon le manuel officiel PHP (<em>Session Handling</em>), <code>session_start()</code> pose un verrou exclusif (<code>flock</code>) sur le fichier de session jusqu’à la fin du script, <strong>sérialisant</strong> toutes les requêtes AJAX ou onglets parallèles d’un même utilisateur.</li>
 <li><strong>Connexions et contention InnoDB (<code>max_connections = 151</code> par défaut) :</strong> sur MariaDB, les connexions PDO non persistées restent limitées par <code>max_connections</code> (et <code>innodb_buffer_pool_size</code> limité sur petit serveur) ; surtout, lors d’une vente flash sur un même article populaire, le verrou ligne <code>SELECT ... FOR UPDATE</code> sur <code>produit(id_produit)</code> <strong>sérialise les transactions concurrentes d’achat sur ce SKU</strong> (<code>1 / 0,044 s ≈ 22</code> validations/s sur ce seul article), ce qui garantit <code>0</code> survente (<code>8/8</code>) mais crée une file d’attente au-delà de quelques dizaines d’acheteurs simultanés sur la même référence.</li>
-<li><strong>Absence de cache HTTP/applicatif et balayage <code>commande(statut)</code> :</strong> le <code>type=ALL</code> relevé par <code>EXPLAIN</code> (Tableau 30) commence à peser sur le CPU SQL au-delà de <code>50 000</code> commandes (<code>ENF-02</code>).</li>
+<li><strong>Absence de cache HTTP/applicatif et balayage <code>commande(statut)</code> :</strong> le <code>type=ALL</code> relevé par <code>EXPLAIN</code> (Tableau 32) commence à peser sur le CPU SQL au-delà de <code>50 000</code> commandes (<code>ENF-02</code>).</li>
 </ol>
 </li>
 </ol>
@@ -2651,7 +2737,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 33 — Limites physiques mono-serveur (<code>ENF-03</code>) et plan d’optimisation/scaling appuyé sur les documentations officielles.</em></p>
+<p><em>Tableau 35 — Limites physiques mono-serveur (<code>ENF-03</code>) et plan d’optimisation/scaling appuyé sur les documentations officielles.</em></p>
 <h3 id="45-analyse-critique-des-biais-limites-du-prototype-et-risques-residuels">4.5 Analyse critique des biais, limites du prototype et risques résiduels<a class="headerlink" href="#45-analyse-critique-des-biais-limites-du-prototype-et-risques-residuels" title="Permanent link"></a></h3>
 <p>Dans une démarche scientifique rigoureuse, nous consignons explicitement les limites des résultats obtenus :
 1. <strong>Recette manuelle navigateur en attente :</strong> les <code>200</code> scénarios humains consignés dans <code>docs/13-suivi-recette-uc.csv</code> (<code>164</code> scénarios UC + <code>36</code> transitions <code>RB-11</code>) demeurent au statut <code>NON JOUÉ</code>, et aucun test sur l’hébergement mutualisé <em>LineServ</em> n’est revendiqué sans campagne dédiée.
@@ -2731,7 +2817,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 34 — Règle du moindre privilège : cloisonnement par conteneur d’exécution et isolation logique des données par profil.</em></p>
+<p><em>Tableau 36 — Règle du moindre privilège : cloisonnement par conteneur d’exécution et isolation logique des données par profil.</em></p>
 <div style="break-before: page;"></div>
 <h3 id="52-conformite-juridique-e-commerce-audit-des-traceurs-et-politique-de-conservation-rgpd-docs12-docs18">5.2 Conformité juridique e-commerce, audit des traceurs et politique de conservation RGPD (<code>docs/12</code> &amp; <code>docs/18</code>)<a class="headerlink" href="#52-conformite-juridique-e-commerce-audit-des-traceurs-et-politique-de-conservation-rgpd-docs12-docs18" title="Permanent link"></a></h3>
 <p>Au-delà de la technique pure, un site de vente aux consommateurs en France est soumis à un socle juridique strict (LCEN, Code de la consommation, Code de commerce, RGPD et lignes directrices de la CNIL). L’audit juridique et documentaire consigné dans <code>docs/12-information-juridique.md</code> (état au 23 octobre 2026) et <code>docs/18-politique-conservation.md</code> constitue un <strong>document de travail pédagogique</strong> — et non un avis juridique ni une certification de conformité — permettant d’exposer avec transparence devant le jury ce qui est déjà implémenté dans MiniShop et les prérequis bloquants avant toute ouverture commerciale réelle.</p>
@@ -2783,7 +2869,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 35 — Cadre légal e-commerce français et traduction dans les pages réglementaires de MiniShop (<code>docs/12-information-juridique.md</code>).</em></p>
+<p><em>Tableau 37 — Cadre légal e-commerce français et traduction dans les pages réglementaires de MiniShop (<code>docs/12-information-juridique.md</code>).</em></p>
 <h4 id="522-audit-technique-des-cookies-du-stockage-local-et-minimisation-des-journaux">5.2.2 Audit technique des cookies, du stockage local et minimisation des journaux<a class="headerlink" href="#522-audit-technique-des-cookies-du-stockage-local-et-minimisation-des-journaux" title="Permanent link"></a></h4>
 <p>L’inspection statique des scripts PHP/JavaScript et des vues (<code>docs/12</code> § 2) établit un inventaire exhaustif des traceurs et stockages locaux actifs dans l’application :</p>
 <table>
@@ -2822,7 +2908,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 36 — Audit technique des traceurs, cookies et minimisation des données (<code>docs/12-information-juridique.md</code>).</em></p>
+<p><em>Tableau 38 — Audit technique des traceurs, cookies et minimisation des données (<code>docs/12-information-juridique.md</code>).</em></p>
 <div style="break-before: page;"></div>
 <h4 id="523-politique-de-conservation-rgpd-maintenance-cli-db_initphp-nettoyage-et-archivage-libsodium">5.2.3 Politique de conservation RGPD, maintenance CLI (<code>db_init.php --nettoyage</code>) et archivage libsodium<a class="headerlink" href="#523-politique-de-conservation-rgpd-maintenance-cli-db_initphp-nettoyage-et-archivage-libsodium" title="Permanent link"></a></h4>
 <p>Conformément à l’article 5 du RGPD (limitation de conservation), à l’article 17 (droit à l’effacement) et à l’article <code>L. 123-22</code> du Code de commerce (10 ans pour les seules pièces justificatives comptables concernées — et <strong>non</strong> pour l’intégralité des comptes ou brouillons), <code>docs/18-politique-conservation.md</code> propose une grille de rétention paramétrable (<code>parametre.conservation_compte = 24</code>) assortie d’outils CLI <strong>simulés par défaut</strong> :</p>
@@ -2874,7 +2960,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 37 — Politique de conservation RGPD, maintenance CLI et archivage chiffré libsodium (<code>docs/18-politique-conservation.md</code>).</em></p>
+<p><em>Tableau 39 — Politique de conservation RGPD, maintenance CLI et archivage chiffré libsodium (<code>docs/18-politique-conservation.md</code>).</em></p>
 <p><strong>Verrou opérationnel strict contre la suppression accidentelle :</strong> toute exécution réelle via <code>php scripts/db_init.php --nettoyage &lt;catégorie&gt;</code> exige <strong>simultanément</strong> les deux options <code>--executer --validation-absence-gel</code>, attestant que le responsable a vérifié l’absence de demande de droits, d’obligation légale ou de gel contentieux sur les éléments visés (et ne recrée jamais la base, contrairement à <code>--yes</code>).</p>
 <h4 id="524-les-7-points-bloquants-audites-avant-ouverture-commerciale-reelle-docs12-3">5.2.4 Les 7 points bloquants audités avant ouverture commerciale réelle (<code>docs/12</code> § 3)<a class="headerlink" href="#524-les-7-points-bloquants-audites-avant-ouverture-commerciale-reelle-docs12-3" title="Permanent link"></a></h4>
 <p>Dans une démarche d’ingénierie responsable, l’audit juridique établit explicitement les <strong>sept prérequis bloquants</strong> qui interdisent de mettre la maquette telle quelle en production commerciale :</p>
@@ -2932,7 +3018,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 38 — Synthèse des 7 points bloquants à lever avant toute exploitation commerciale réelle.</em></p>
+<p><em>Tableau 40 — Synthèse des 7 points bloquants à lever avant toute exploitation commerciale réelle.</em></p>
 <h3 id="53-analyse-des-ecarts-vis-a-vis-du-cahier-des-charges-initial-et-bilan-reflexif">5.3 Analyse des écarts vis-à-vis du cahier des charges initial et bilan réflexif<a class="headerlink" href="#53-analyse-des-ecarts-vis-a-vis-du-cahier-des-charges-initial-et-bilan-reflexif" title="Permanent link"></a></h3>
 <p>Quatre évolutions architecturales ou de sécurité ont été apportées et tracées par rapport à la rédaction initiale du CDC :
 - <strong>En-tête <code>X-Frame-Options: DENY</code> vs <code>SAMEORIGIN</code> :</strong> <code>public/index.php</code> et <code>public/.htaccess</code> imposent <code>DENY</code> (et CSP <code>frame-ancestors 'none'</code>) pour une protection maximale contre le <em>clickjacking</em>.
@@ -2985,7 +3071,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 39 — Contrôle complet de conformité au barème officiel et d’absence de pénalité.</em></p>
+<p><em>Tableau 41 — Contrôle complet de conformité au barème officiel et d’absence de pénalité.</em></p>
 <div style="break-before: page;"></div>
 <h2 id="chapitre-6-feuille-de-route-dindustrialisation-vers-une-marketplace-professionnelle-intelligente-et-automatisee-modele-amazon">Chapitre 6 — Feuille de route d’industrialisation : vers une <em>marketplace</em> professionnelle, intelligente et automatisée (modèle « Amazon »)<a class="headerlink" href="#chapitre-6-feuille-de-route-dindustrialisation-vers-une-marketplace-professionnelle-intelligente-et-automatisee-modele-amazon" title="Permanent link"></a></h2>
 <p>Si MiniShop répond pleinement aux exigences académiques et transactionnelles d’une boutique mono-enseigne (<code>200</code> produits, <code>1 000</code> commandes/an selon <code>ENF-02</code>), l’ambition d’un système e-commerce professionnel à grande échelle — inspiré des standards industriels d’une <em>marketplace</em> moderne de type <strong>Amazon</strong> — requiert des évolutions structurelles maîtrisées. Plutôt que de rejeter l’architecture existante, ce chapitre démontre comment le socle conçu (<code>StoreInterface</code>, normalisation 3FN, verrous InnoDB, séparation MVC et audit immuable) constitue une base saine sur laquelle greffer quatre transformations majeures : l’industrialisation de l’infrastructure, l’ouverture multi-vendeurs, la recommandation personnalisée et l’automatisation complète du back-office vendeur.</p>
@@ -3033,7 +3119,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 40 — Briques d’industrialisation requises pour transformer MiniShop en système de production.</em></p>
+<p><em>Tableau 42 — Briques d’industrialisation requises pour transformer MiniShop en système de production.</em></p>
 <h3 id="62-evolution-du-modele-3fn-vers-une-marketplace-multi-vendeurs-seller-central-et-buy-box">6.2 Évolution du modèle 3FN vers une <em>Marketplace</em> multi-vendeurs (<em>Seller Central</em> et <em>Buy Box</em>)<a class="headerlink" href="#62-evolution-du-modele-3fn-vers-une-marketplace-multi-vendeurs-seller-central-et-buy-box" title="Permanent link"></a></h3>
 <p>Le modèle actuel suppose un vendeur unique (l’administrateur de la boutique). Pour évoluer vers une place de marché de type <em>Amazon Seller Central</em>, il convient d’appliquer une distinction fondamentale : <strong>dissocier la fiche produit canonique</strong> (équivalent de l’<em>ASIN</em>, identité technique unique du produit évitant les doublons dans le catalogue) <strong>des offres commerciales portées par les vendeurs tiers</strong> (prix, stock, délai d’expédition, état neuf/reconditionné).</p>
 <pre><code class="language-sql">-- Extension incrémentale 3FN du schéma MiniShop vers le multi-vendeurs :
@@ -3058,7 +3144,7 @@ CREATE TABLE offre_vendeur (
   FOREIGN KEY (id_vendeur) REFERENCES vendeur(id_vendeur) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 </code></pre>
-<p>Le Tableau 41 synthétise l’impact architectural de cette extension sur nos règles existantes :</p>
+<p>Le Tableau 43 synthétise l’impact architectural de cette extension sur nos règles existantes :</p>
 <table>
 <thead>
 <tr>
@@ -3090,7 +3176,7 @@ CREATE TABLE offre_vendeur (
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 41 — Extension du modèle relationnel 3FN et de la sécurité vers une marketplace multi-vendeurs.</em></p>
+<p><em>Tableau 43 — Extension du modèle relationnel 3FN et de la sécurité vers une marketplace multi-vendeurs.</em></p>
 <h3 id="63-gestion-des-fournisseurs-fiches-fournisseurs-et-commandes-dapprovisionnement-back-office">6.3 Gestion des fournisseurs, fiches fournisseurs et commandes d’approvisionnement back-office<a class="headerlink" href="#63-gestion-des-fournisseurs-fiches-fournisseurs-et-commandes-dapprovisionnement-back-office" title="Permanent link"></a></h3>
 <p>Dans la version académique actuelle, les entrées de stock proviennent exclusivement d’ajustements manuels saisis dans <code>/admin/stocks</code> (<code>sp_adjust_stock</code> avec motif <code>REASSORT</code>), sans référentiel fournisseur ni suivi des achats amont. Pour industrialiser l’approvisionnement en back-office à l’échelle d’une centrale d’achat ou d’un distributeur, il est indispensable de modéliser proprement les <strong>fournisseurs</strong>, leurs <strong>catalogues multi-sources</strong> et les <strong>commandes fournisseurs (Bons de Commande Fournisseur — BCF)</strong> en respectant strictement notre normalisation 3FN et notre piste d’audit <code>stock_movement_history</code>.</p>
 <h4 id="631-extension-du-modele-3fn-aux-fournisseurs-et-receptions">6.3.1 Extension du modèle 3FN aux fournisseurs et réceptions<a class="headerlink" href="#631-extension-du-modele-3fn-aux-fournisseurs-et-receptions" title="Permanent link"></a></h4>
@@ -3159,7 +3245,7 @@ CREATE TABLE ligne_bcf (
 <tr>
 <td><strong>Évaluation &amp; Fiabilité (Scorecard)</strong></td>
 <td>Suivi automatique du délai réel de réception par rapport à <code>date_livraison_prevue</code> (taux <strong>OTIF</strong> — <em>On-Time In-Full</em>), taux de colis non conformes et alertes en cas de dépendance à un fournisseur unique.</td>
-<td>Alimente l’algorithme du point de commande dynamique <code>S_cmd</code> (Tableau 44) avec le délai réel <code>L_fournisseur</code> plutôt qu’une estimation fixe.</td>
+<td>Alimente l’algorithme du point de commande dynamique <code>S_cmd</code> (Tableau 46) avec le délai réel <code>L_fournisseur</code> plutôt qu’une estimation fixe.</td>
 </tr>
 <tr>
 <td><strong>Génération des commandes fournisseur (<code>/admin/approvisionnements</code>)</strong></td>
@@ -3173,7 +3259,7 @@ CREATE TABLE ligne_bcf (
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 42 — Gestion back-office des fiches fournisseurs et du cycle complet des commandes d’approvisionnement.</em></p>
+<p><em>Tableau 44 — Gestion back-office des fiches fournisseurs et du cycle complet des commandes d’approvisionnement.</em></p>
 <div style="break-before: page;"></div>
 <h3 id="64-moteur-de-recommandation-hybride-analyse-du-panier-filtrage-collaboratif-et-semantique">6.4 Moteur de recommandation hybride (analyse du panier, filtrage collaboratif et sémantique)<a class="headerlink" href="#64-moteur-de-recommandation-hybride-analyse-du-panier-filtrage-collaboratif-et-semantique" title="Permanent link"></a></h3>
 <p>Un levier décisif de croissance d’Amazon repose sur la personnalisation (« <em>Les clients ayant acheté cet article ont également acheté…</em> »). Notre modèle normalisé <code>ligne_commande</code> permet déjà de déployer une <strong>V1 immédiatement opérationnelle</strong> sans infrastructure d’apprentissage automatique complexe, puis d’évoluer par paliers vers un moteur hybride complet :</p>
@@ -3229,7 +3315,7 @@ HAVING co_achats &gt;= 3
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 43 — Architecture incrémentale du moteur de recommandation hybride.</em></p>
+<p><em>Tableau 45 — Architecture incrémentale du moteur de recommandation hybride.</em></p>
 <h3 id="65-automatisation-du-back-office-vendeur-reapprovisionnement-predictif-et-logistique">6.5 Automatisation du back-office vendeur, réapprovisionnement prédictif et logistique<a class="headerlink" href="#65-automatisation-du-back-office-vendeur-reapprovisionnement-predictif-et-logistique" title="Permanent link"></a></h3>
 <p>Dans un back-office artisanal (et encore en partie dans MiniShop V1), l’administrateur doit surveiller manuellement <code>v_etat_stock</code>, saisir les ajustements <code>sp_adjust_stock</code> et faire évoluer manuellement les statuts <code>EN_PREPARATION -&gt; EXPEDIEE -&gt; LIVREE</code>. Pour passer à une exploitation professionnelle fluide pour des dizaines ou centaines de vendeurs, les opérations répétitives doivent être automatisées autour d’une <strong>file de tâches asynchrones</strong> (<em>Message Queue</em> : Redis Streams ou RabbitMQ + <em>workers</em> PHP CLI) :</p>
 <table>
@@ -3280,7 +3366,7 @@ HAVING co_achats &gt;= 3
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 44 — Catalogue des automatisations du back-office vendeur et de la chaîne logistique.</em></p>
+<p><em>Tableau 46 — Catalogue des automatisations du back-office vendeur et de la chaîne logistique.</em></p>
 <div style="break-before: page;"></div>
 <h3 id="66-trajectoire-de-migration-incrementale-en-4-paliers-strangler-fig-pattern">6.6 Trajectoire de migration incrémentale en 4 paliers (<em>Strangler Fig Pattern</em>)<a class="headerlink" href="#66-trajectoire-de-migration-incrementale-en-4-paliers-strangler-fig-pattern" title="Permanent link"></a></h3>
 <p>L’erreur classique d’une montée en charge consiste à vouloir tout réécrire d’un bloc (<em>Big Bang</em>). Grâce au contrat <code>StoreInterface</code>, à la centralisation des règles métier en dépôts PHP et à la séparation nette des couches MVC, l’évolution vers une plateforme de type Amazon doit suivre une <strong>trajectoire incrémentale en 4 paliers</strong> où chaque phase reste pleinement déployable et testable :</p>
@@ -3303,13 +3389,13 @@ HAVING co_achats &gt;= 3
 <tr>
 <td><strong>Palier 2 — Automatisation Back-Office, Fournisseurs &amp; Recommandation V1</strong></td>
 <td>Moyen terme (productivité opérationnelle)</td>
-<td>File asynchrone (<em>workers</em> CLI) pour factures Factur-X, étiquettes transporteur, webhooks de suivi ; tables <code>fournisseur</code> / <code>bon_commande_fournisseur</code> + réapprovisionnement prédictif (Tableau 42) ; recommandation SQL co-achats (Tableau 43)</td>
+<td>File asynchrone (<em>workers</em> CLI) pour factures Factur-X, étiquettes transporteur, webhooks de suivi ; tables <code>fournisseur</code> / <code>bon_commande_fournisseur</code> + réapprovisionnement prédictif (Tableau 44) ; recommandation SQL co-achats (Tableau 45)</td>
 <td>Mesure de réduction du temps de traitement commande/réassort et hausse du panier moyen par A/B test</td>
 </tr>
 <tr>
 <td><strong>Palier 3 — Ouverture <em>Marketplace</em> Multi-Vendeurs</strong></td>
 <td>Croissance catalogue (<em>Seller Central</em>)</td>
-<td>Tables <code>vendeur</code>, <code>offre_vendeur</code>, <code>sous_commande_vendeur</code> (Tableau 41) ; portail <code>/vendeur/*</code> isolé ; flux séquestre <em>Split Payment</em> ; élection de <em>Buy Box</em> et import massif</td>
+<td>Tables <code>vendeur</code>, <code>offre_vendeur</code>, <code>sous_commande_vendeur</code> (Tableau 43) ; portail <code>/vendeur/*</code> isolé ; flux séquestre <em>Split Payment</em> ; élection de <em>Buy Box</em> et import massif</td>
 <td>Audits IDOR multi-tenant et réconciliation comptable automatisée à 100 %</td>
 </tr>
 <tr>
@@ -3320,7 +3406,7 @@ HAVING co_achats &gt;= 3
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 45 — Plan de migration incrémental en 4 paliers vers une plateforme e-commerce professionnelle.</em></p>
+<p><em>Tableau 47 — Plan de migration incrémental en 4 paliers vers une plateforme e-commerce professionnelle.</em></p>
 <p>Cette approche progressive préserve intégralement les garanties transactionnelles prouvées dans les chapitres précédents — verrouillage des stocks sans survente, immuabilité financière des commandes et traçabilité d’audit — tout en levant méthodiquement chaque limite du prototype académique.</p>
 <div style="break-before: page;"></div>
 <h2 id="conclusion-generale-et-perspectives">Conclusion générale et perspectives<a class="headerlink" href="#conclusion-generale-et-perspectives" title="Permanent link"></a></h2>
