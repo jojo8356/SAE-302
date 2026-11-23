@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : Préparation complète de la soutenance — MiniShop (SAÉ 302)">
+<title>Préparation complète de la soutenance — MiniShop (SAÉ 302) — MiniShop (SAÉ 302)</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
+  color: var(--encre);
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
+}
+pre {
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
+}
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
+}
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
+@media print {
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/24-preparation-soutenance-complete.md</code></div>
+</header>
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#1-format-officiel-attentes-du-jury-et-points-de-vigilance">1. Format officiel, attentes du jury et points de vigilance</a><ul>
+<li><a href="#11-structure-de-levaluation-sujet-officiel-sae-302">1.1 Structure de l’évaluation (sujet officiel SAÉ 302)</a></li>
+<li><a href="#12-points-de-vigilance-critiques-penalites-du-sujet-a-eviter-absolument">1.2 Points de vigilance critiques (pénalités du sujet à éviter absolument)</a></li>
+</ul>
+</li>
+<li><a href="#2-trame-chronometree-de-la-presentation-15-minutes">2. Trame chronométrée de la présentation (15 minutes)</a></li>
+<li><a href="#3-script-pas-a-pas-de-la-demonstration-en-direct-4-minutes">3. Script pas-à-pas de la démonstration en direct (4 minutes)</a><ul>
+<li><a href="#31-preparation-avant-dentrer-en-salle">3.1 Préparation avant d’entrer en salle</a></li>
+<li><a href="#32-scenario-de-demo-chronometre-4-minutes">3.2 Scénario de démo chronométré (4 minutes)</a></li>
+</ul>
+</li>
+<li><a href="#4-fiche-memo-technique-chiffres-exacts-du-depot">4. Fiche mémo technique (chiffres exacts du dépôt)</a><ul>
+<li><a href="#41-base-de-donnees-sql-sql">4.1 Base de données &amp; SQL (sql/)</a></li>
+<li><a href="#42-architecture-applicative-securite-app-public">4.2 Architecture applicative &amp; sécurité (app/, public/)</a></li>
+<li><a href="#43-campagnes-de-tests-automatises">4.3 Campagnes de tests automatisés</a></li>
+</ul>
+</li>
+<li><a href="#5-justifier-proprement-les-choix-et-ecarts-face-au-sujet-officiel">5. Justifier proprement les choix et écarts face au sujet officiel</a></li>
+<li><a href="#6-top-20-des-questions-probables-du-jury-et-reponses-pretes-en-20-s">6. Top 20 des questions probables du jury (et réponses prêtes en 20 s)</a><ul>
+<li><a href="#base-de-donnees-sql">Base de données &amp; SQL</a></li>
+<li><a href="#architecture-mvc-code-php">Architecture MVC &amp; code PHP</a></li>
+<li><a href="#securite">Sécurité</a></li>
+<li><a href="#tests-gitlab-demarche-projet">Tests, GitLab &amp; démarche projet</a></li>
+</ul>
+</li>
+<li><a href="#7-check-list-finale-j1-et-h30-min">7. Check-list finale (J−1 et H−30 min)</a><ul>
+<li><a href="#la-veille-j1">La veille (J−1)</a></li>
+<li><a href="#30-minutes-avant-la-soutenance-h30-min">30 minutes avant la soutenance (H−30 min)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<h1 id="preparation-complete-de-la-soutenance-minishop-sae-302">Préparation complète de la soutenance — MiniShop (SAÉ 302)<a class="headerlink" href="#preparation-complete-de-la-soutenance-minishop-sae-302" title="Permanent link"></a></h1>
+<blockquote>
+<p>Document de préparation opérationnelle pour la soutenance de <strong>15 minutes + questions</strong> devant le jury (Université Côte d'Azur — BUT2 Informatique).<br />
+Ce document complète <a href="03-support-soutenance.html"><code>03-support-soutenance.md</code></a> et <a href="12-diaporama-soutenance.html"><code>12-diaporama-soutenance.md</code></a> avec : le barème officiel, le déroulé minuté, le script pas-à-pas de la démo en direct, les chiffres exacts vérifiés dans le dépôt, les justifications des choix face au sujet officiel et 20 questions-réponses du jury.</p>
+</blockquote>
+<hr />
+<h2 id="1-format-officiel-attentes-du-jury-et-points-de-vigilance">1. Format officiel, attentes du jury et points de vigilance<a class="headerlink" href="#1-format-officiel-attentes-du-jury-et-points-de-vigilance" title="Permanent link"></a></h2>
+<h3 id="11-structure-de-levaluation-sujet-officiel-sae-302">1.1 Structure de l’évaluation (sujet officiel SAÉ 302)<a class="headerlink" href="#11-structure-de-levaluation-sujet-officiel-sae-302" title="Permanent link"></a></h3>
+<table>
+<thead>
+<tr>
+<th>Bloc</th>
+<th>Attentes principales du jury</th>
+<th>Preuves à montrer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>i. Cahier des charges &amp; conception</strong></td>
+<td>Problème initial, acteurs (<code>Visiteur</code>, <code>Client</code>, <code>Administrateur</code>), 14 UC minimum, 11 règles métier (<code>RB-01</code>…<code>RB-11</code> + extensions), sécurité (<code>SEC-01</code>…<code>SEC-14</code>), architecture MVC</td>
+<td><code>docs/01-cahier-des-charges-MiniShop.md</code>, diagrammes UML (<code>docs/diagrams/</code>)</td>
+</tr>
+<tr>
+<td><strong>ii. Modélisation BD &amp; SQL</strong></td>
+<td>MCD (cardinalités justifiées), MLD en 3FN (dénormalisations contrôlées justifiées), scripts reproductibles, <strong>≥ 5 procédures stockées</strong> et <strong>≥ 5 triggers</strong>, requêtes d’analyse</td>
+<td><code>docs/04-conception-bd-et-sql.md</code>, <code>sql/01</code>…<code>04</code>, terminal <code>mysql</code></td>
+</tr>
+<tr>
+<td><strong>iii. Application Web &amp; sécurité</strong></td>
+<td>MVC PHP natif (<code>declare(strict_types=1)</code>), PDO préparé (<code>ATTR_EMULATE_PREPARES =&gt; false</code>), <code>password_hash</code>/<code>password_verify</code>, protection CSRF, contrôle IDOR, séparation front/back-office, accessibilité/responsive</td>
+<td>Code <code>app/</code>, démo navigateur en direct, <code>tests/security/controles.sh</code> (<code>11/11</code>)</td>
+</tr>
+<tr>
+<td><strong>iv. Tests, GitLab &amp; soutenance (15 min)</strong></td>
+<td>Stratégie &amp; exécution des tests (unitaires, intégration SQL, E2E, concurrence, perf), dépôt <strong>GitLab IUT</strong> propre (commits des deux membres, README complet, accès <code>Reporter</code> de l’enseignante), clarté de la démo et réponses aux questions</td>
+<td>GitLab IUT (<code>git shortlog -sne</code>), <code>docs/pv-recette.md</code>, <code>tests/perf/dernieres_mesures.txt</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="12-points-de-vigilance-critiques-penalites-du-sujet-a-eviter-absolument">1.2 Points de vigilance critiques (pénalités du sujet à éviter absolument)<a class="headerlink" href="#12-points-de-vigilance-critiques-penalites-du-sujet-a-eviter-absolument" title="Permanent link"></a></h3>
+<ol>
+<li><strong>Dépôt GitLab IUT à jour :</strong> fusionner les dernières branches/corrections sur le dépôt GitLab IUT avant la soutenance, vérifier que <code>NGUYEN Thanh-Phuong</code> est membre <code>Reporter</code> et que le <code>README.md</code> contient présentation, installation, technologies et répartition des tâches (<strong>Johan Polsinelli</strong> / <strong>Chahd Gouiaa</strong>).</li>
+<li><strong>Ne jamais réutiliser de mots de passe en clair, secrets ou <code>.env</code> dans Git.</strong></li>
+<li><strong>Ne jamais présenter une donnée simulée ou un document non exécuté comme un test réel :</strong> distinguer clairement les tests automatisés exécutés (<code>11/11</code> sécurité, <code>29/29</code> intégration SQL, <code>105/105</code> HTTP SQL E2E, <code>8/8</code> concurrence HTTP, <code>46/46</code> fiches UC) des campagnes manuelles notées <code>NON JOUÉ</code> (<code>docs/13-suivi-recette-uc.csv</code>).</li>
+<li><strong>Démonstration fluide sans bidouillage en séance :</strong> base chargée proprement à l’avance, deux fenêtres prêtes (front-office + back-office) et terminal SQL déjà ouvert.</li>
+</ol>
+<hr />
+<h2 id="2-trame-chronometree-de-la-presentation-15-minutes">2. Trame chronométrée de la présentation (15 minutes)<a class="headerlink" href="#2-trame-chronometree-de-la-presentation-15-minutes" title="Permanent link"></a></h2>
+<blockquote>
+<p>L’équipe comporte deux étudiants (<strong>Johan Polsinelli</strong> et <strong>Chahd Gouiaa</strong>). Les rôles <code>Binôme 1</code> / <code>Binôme 2</code> ci-dessous servent de répartition équilibrée (~7 min 30 chacun) et peuvent être inversés selon votre aisance.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Temps</th>
+<th>Intervenant</th>
+<th>Thème</th>
+<th>Support / Écran affiché</th>
+<th>Messages clés à placer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>0:00 – 1:30</strong></td>
+<td>Binôme 1</td>
+<td>Contexte, objectifs &amp; périmètre</td>
+<td>Diapos 1–2 + <code>usecase_minishop.png</code></td>
+<td>Problème initial (tableur partagé sans stock ni historique) → MiniShop (3 acteurs, 14 UC + extensions, périmètre maquette sans paiement réel).</td>
+</tr>
+<tr>
+<td><strong>1:30 – 3:30</strong></td>
+<td>Binôme 2</td>
+<td>Modélisation BD (MCD → MLD → 3FN)</td>
+<td>Diapo 3 + <code>mcd_minishop.png</code>, <code>mld_minishop.png</code></td>
+<td>9 tables en 3FN ; <strong>2 dénormalisations verrouillées</strong> (<code>produit.prix_ttc</code>, <code>commande.montant_total</code> + <code>ligne_commande.total_ligne</code>) pour figer la facturation.</td>
+</tr>
+<tr>
+<td><strong>3:30 – 5:30</strong></td>
+<td>Binôme 2</td>
+<td>SQL avancé : procédures &amp; triggers</td>
+<td>Diapo 4 + <code>sql/02_minishop_procedures.sql</code>, <code>sql/03_minishop_triggers.sql</code></td>
+<td><strong>18 procédures</strong>, <strong>1 fonction</strong>, <strong>16 triggers</strong>, <strong>3 vues</strong>. Atomicité transactionnelle + <code>SELECT ... FOR UPDATE</code> contre la survente (<code>RB-06</code>, <code>RB-07</code>).</td>
+</tr>
+<tr>
+<td><strong>5:30 – 7:30</strong></td>
+<td>Binôme 1</td>
+<td>Architecture MVC &amp; sécurité</td>
+<td>Diapos 5–6 + <code>architecture_mvc.png</code>, <code>app/Security/Auth.php</code>, <code>Csrf.php</code></td>
+<td>Front controller unique (<code>public/index.php</code>), PDO natif (<code>EMULATE_PREPARES = false</code>), <code>password_hash</code>/<code>verify</code>, CSRF <code>hash_equals</code>, IDOR (404), séparation <code>client_id</code>/<code>admin_id</code>.</td>
+</tr>
+<tr>
+<td><strong>7:30 – 11:30</strong></td>
+<td>Binôme 1 &amp; 2</td>
+<td><strong>Démonstration en direct (4 min)</strong></td>
+<td>Navigateurs (Front + Back-office) + Terminal SQL</td>
+<td>Parcours complet : catalogue/filtre → panier → commande → annulation client en 2 étapes → back-office (stock delta, changement de statut) → preuve SQL (<code>stock_movement_history</code>, <code>order_status_history</code>).</td>
+</tr>
+<tr>
+<td><strong>11:30 – 13:30</strong></td>
+<td>Binôme 2</td>
+<td>Tests, concurrence &amp; performances</td>
+<td>Diapos 7–8 + <code>docs/pv-recette.md</code>, <code>tests/perf/dernieres_mesures.txt</code></td>
+<td><code>11/11</code> sécurité, <code>29/29</code> SQL, <code>105/105</code> E2E HTTP SQL, <code>8/8</code> concurrence (20 clients / 12 unités sans survente), HTTP p95 = <code>6 ms</code> sous 236 produits / 1 004 commandes.</td>
+</tr>
+<tr>
+<td><strong>13:30 – 15:00</strong></td>
+<td>Binôme 1</td>
+<td>Organisation GitLab, limites &amp; bilan</td>
+<td>Diapos 9–12 + <code>git shortlog -sne</code></td>
+<td>Travail en binôme sur GitLab, choix d’architecture (mode SQL défaut + mode JSON portable), évolutions futures (paiement réel, remises, panier persistant).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-script-pas-a-pas-de-la-demonstration-en-direct-4-minutes">3. Script pas-à-pas de la démonstration en direct (4 minutes)<a class="headerlink" href="#3-script-pas-a-pas-de-la-demonstration-en-direct-4-minutes" title="Permanent link"></a></h2>
+<h3 id="31-preparation-avant-dentrer-en-salle">3.1 Préparation avant d’entrer en salle<a class="headerlink" href="#31-preparation-avant-dentrer-en-salle" title="Permanent link"></a></h3>
+<p>Dans un terminal, depuis la racine du dépôt :</p>
+<pre><code class="language-bash">cp -n .env.example .env
+./run.sh --db
+./run.sh
+</code></pre>
+<ul>
+<li>Vérifier que l’application répond sur <strong><code>http://localhost:8000/</code></strong>.</li>
+<li>Ouvrir <strong>deux fenêtres navigateur distinctes</strong> (ou une fenêtre normale + une fenêtre navigation privée) pour éviter tout mélange de cookies :</li>
+<li><strong>Fenêtre 1 (Front-office / Client)</strong> : <code>http://localhost:8000/</code></li>
+<li><strong>Fenêtre 2 (Back-office / Admin)</strong> : <code>http://localhost:8000/admin/connexion</code></li>
+<li>Ouvrir un <strong>2e onglet de terminal</strong> connecté à MySQL/MariaDB prêt à exécuter les requêtes de preuve :</li>
+</ul>
+<pre><code class="language-bash">mysql -u &lt;utilisateur&gt; -p minishop
+</code></pre>
+<blockquote>
+<p><strong>Plan B hors ligne (si le serveur SQL tombe en salle) :</strong> basculer <code>STORAGE_DRIVER=json</code> dans <code>.env</code> et relancer <code>./run.sh</code>. Les parcours front-office, panier, commandes et back-office fonctionnent intégralement à l’identique grâce au contrat commun <code>DataStore</code>.</p>
+</blockquote>
+<h3 id="32-scenario-de-demo-chronometre-4-minutes">3.2 Scénario de démo chronométré (4 minutes)<a class="headerlink" href="#32-scenario-de-demo-chronometre-4-minutes" title="Permanent link"></a></h3>
+<ol>
+<li><strong>Catalogue &amp; recherche (<code>0:45</code>) — Fenêtre 1 (Visiteur) :</strong>
+   - Montrer l’accueil (<code>/</code>), les catégories et les nouveautés.
+   - Aller sur <code>/catalogue</code>, filtrer par catégorie + tri + recherche texte.
+   - Ouvrir une fiche produit (<code>/produit/{id}</code>) : montrer le prix TTC, la disponibilité serveur (<code>stock_actuel</code>) et ajouter une quantité au panier (<code>POST /panier/ajouter</code>).</li>
+<li><strong>Panier &amp; commande client (<code>1:15</code>) — Fenêtre 1 (Client) :</strong>
+   - Aller sur <code>/panier</code>, modifier une quantité (montrer le plafonnement côté serveur si quantité &gt; stock).
+   - Cliquer sur valider la commande (<code>/connexion</code> puis <code>/commander</code>) avec un compte client du seed (<code>alice@example.com</code>, identifiants locaux dans <code>tests/php/http_sql_e2e.php</code>).
+   - Montrer le calcul serveur des frais de port (<code>sp_compute_shipping</code>) et du total TTC avant confirmation, puis valider.
+   - Aller sur <code>/mes-commandes</code>, ouvrir le détail de la commande créée, puis montrer <strong>l’annulation en 2 étapes</strong> (page de confirmation dédiée + conservation de la ligne en historique, statut <code>ANNULEE</code>).</li>
+<li><strong>Back-office (<code>1:15</code>) — Fenêtre 2 (Admin <code>SUPER</code>) :</strong>
+   - Se connecter sur <code>/admin/connexion</code> (<code>admin@minishop.fr</code>).
+   - Sur <code>/admin</code> (tableau de bord) : commenter les indicateurs (<code>CA total</code> vs <code>CA du jour</code> en fuseau local, alertes de stock bas).
+   - Aller sur <code>/admin/stocks</code> : montrer le mode par défaut <strong>« Ajouter / retirer » (<code>DELTA</code>)</strong> sur un produit et justifier le motif obligatoire (<code>REASSORT</code>, <code>CORRECTION</code>, etc.).
+   - Aller sur <code>/admin/commandes</code> : filtrer et faire évoluer une commande <code>EN_PREPARATION</code> → <code>EXPEDIEE</code> (montrer le changement d’état dans la piste d’audit).</li>
+<li><strong>Preuve directe en base de données (<code>0:45</code>) — Terminal SQL :</strong></li>
+</ol>
+<pre><code class="language-sql">SHOW PROCEDURE STATUS WHERE Db = DATABASE();
+SHOW TRIGGERS;
+SELECT * FROM v_etat_stock LIMIT 5;
+SELECT id_commande, ancien_statut, nouveau_statut, date_changement
+  FROM order_status_history
+ ORDER BY id_historique DESC LIMIT 5;
+SELECT id_mouvement, id_produit, delta_quantite, motif, date_mouvement
+  FROM stock_movement_history
+ ORDER BY id_mouvement DESC LIMIT 5;
+CALL sp_revenue_report('2026-01-01 00:00:00', '2026-12-31 23:59:59');
+</code></pre>
+<hr />
+<h2 id="4-fiche-memo-technique-chiffres-exacts-du-depot">4. Fiche mémo technique (chiffres exacts du dépôt)<a class="headerlink" href="#4-fiche-memo-technique-chiffres-exacts-du-depot" title="Permanent link"></a></h2>
+<p>À garder sous les yeux pendant les questions techniques :</p>
+<h3 id="41-base-de-donnees-sql-sql">4.1 Base de données &amp; SQL (<code>sql/</code>)<a class="headerlink" href="#41-base-de-donnees-sql-sql" title="Permanent link"></a></h3>
+<table>
+<thead>
+<tr>
+<th>Élément</th>
+<th>Quantité réelle</th>
+<th>Détails précis à citer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Tables</strong></td>
+<td><strong>9</strong></td>
+<td><code>administrateur</code>, <code>client</code>, <code>categorie</code>, <code>produit</code>, <code>commande</code>, <code>ligne_commande</code>, <code>order_status_history</code>, <code>stock_movement_history</code>, <code>parametre</code></td>
+</tr>
+<tr>
+<td><strong>Vues SQL</strong></td>
+<td><strong>3</strong></td>
+<td><code>v_etat_stock</code>, <code>v_catalogue</code>, <code>v_commandes_client</code></td>
+</tr>
+<tr>
+<td><strong>Procédures stockées</strong></td>
+<td><strong>18</strong></td>
+<td><code>sp_compute_shipping</code>, <code>sp_create_account</code>, <code>sp_get_credentials</code>, <code>sp_update_client</code>, <code>sp_search_products</code>, <code>sp_save_product</code>, <code>sp_delete_product</code>, <code>sp_adjust_stock</code>, <code>sp_save_category</code>, <code>sp_delete_category</code>, <code>sp_create_order</code>, <code>sp_add_order_line</code>, <code>sp_create_order_from_basket</code>, <code>sp_confirm_order</code>, <code>sp_update_order_status</code>, <code>sp_cancel_order</code>, <code>sp_cancel_order_admin</code>, <code>sp_revenue_report</code></td>
+</tr>
+<tr>
+<td><strong>Fonction SQL</strong></td>
+<td><strong>1</strong></td>
+<td><code>fn_param</code></td>
+</tr>
+<tr>
+<td><strong>Déclencheurs (triggers)</strong></td>
+<td><strong>16</strong></td>
+<td>Contrôle/décrément/restauration/immutabilité/snapshot des lignes (<code>trg_ligne_*</code>), calcul TTC &amp; règles produits (<code>trg_produit_*</code>), slugs &amp; suppression catégories (<code>trg_categorie_*</code>), transitions/historique commandes (<code>trg_commande_*</code>, <code>trg_history_*</code>)</td>
+</tr>
+<tr>
+<td><strong>Données de base</strong></td>
+<td><code>sql/01</code> + <code>sql/04</code></td>
+<td>4 catégories, 36 produits, 3 clients seed, 1 admin <code>SUPER</code> seed (+ commandes de démo dans <code>04</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42-architecture-applicative-securite-app-public">4.2 Architecture applicative &amp; sécurité (<code>app/</code>, <code>public/</code>)<a class="headerlink" href="#42-architecture-applicative-securite-app-public" title="Permanent link"></a></h3>
+<ul>
+<li><strong>Point d’entrée unique :</strong> <code>public/index.php</code> (routeur explicite avec contrôle de méthode HTTP → <code>405</code> / <code>404</code>, gestionnaire d’exceptions centralisé, en-têtes de sécurité).</li>
+<li><strong>Contrôleurs front-office :</strong> <code>HomeController</code>, <code>CatalogueController</code>, <code>PanierController</code>, <code>AuthController</code>, <code>CompteController</code>, <code>CommandeController</code>.</li>
+<li><strong>Contrôleurs back-office (<code>app/Controller/Admin/</code>) :</strong> <code>DashboardController</code>, <code>ProduitAdminController</code>, <code>CategorieAdminController</code>, <code>StockAdminController</code>, <code>CommandeAdminController</code>, <code>EquipeAdminController</code>, <code>ParametreAdminController</code>.</li>
+<li><strong>Sécurité vérifiée (<code>tests/security/controles.sh</code> — 11/11 conformes) :</strong>
+  1. <strong>SQLi (<code>SEC-01</code>) :</strong> 100 % requêtes préparées PDO (<code>ATTR_EMULATE_PREPARES =&gt; false</code>, <code>ERRMODE_EXCEPTION</code>).
+  2. <strong>XSS (<code>SEC-02</code>) :</strong> échappement systématique via <code>e()</code> (<code>htmlspecialchars(..., ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')</code>) + en-tête <code>Content-Security-Policy</code>.
+  3. <strong>Mots de passe (<code>SEC-04</code> / <code>RB-12</code>) :</strong> hachage <code>password_hash(..., PASSWORD_BCRYPT)</code> et vérification <code>password_verify()</code>, 8 caractères minimum côté serveur et HTML, messages identiques en cas d’échec de connexion.
+  4. <strong>Sessions (<code>SEC-05</code>) :</strong> <code>session_regenerate_id(true)</code> à la connexion et déconnexion, cookies <code>HttpOnly</code>, <code>SameSite=Lax</code>, <code>Secure</code> en HTTPS, séparation <code>$_SESSION['client_id']</code> / <code>$_SESSION['admin_id']</code>.
+  5. <strong>CSRF (<code>SEC-06</code>) :</strong> jeton aléatoire 32 octets (<code>bin2hex(random_bytes(32))</code>) vérifié en temps constant via <code>hash_equals()</code> sur toutes les routes mutatives.
+  6. <strong>IDOR (<code>SEC-07</code> / <code>SEC-08</code>) :</strong> filtrage systématique <code>WHERE id_commande = ? AND id_client = ?</code> (ou contrôle dans <code>sp_confirm_order</code> / <code>sp_cancel_order</code>) → <code>404</code> neutre en cas de tentative d’accès croisé.
+  7. <strong>RBAC Back-office (<code>SEC-10</code> / <code>RB-13</code>) :</strong> <code>Auth::exigeAdmin()</code> sur toutes les routes <code>/admin/*</code> et <code>Auth::exigeSuper()</code> sur <code>/admin/equipe*</code> et <code>/admin/parametres*</code> (<code>403</code> pour un <code>GESTIONNAIRE</code>).
+  8. <strong>En-têtes HTTP (<code>SEC-11</code>) :</strong> <code>X-Frame-Options: DENY</code>, <code>X-Content-Type-Options: nosniff</code>, <code>Referrer-Policy</code>, <code>Permissions-Policy</code>, <code>CSP</code>.</li>
+</ul>
+<h3 id="43-campagnes-de-tests-automatises">4.3 Campagnes de tests automatisés<a class="headerlink" href="#43-campagnes-de-tests-automatises" title="Permanent link"></a></h3>
+<table>
+<thead>
+<tr>
+<th>Suite</th>
+<th>Outil / Fichier</th>
+<th>Dernier résultat consigné</th>
+<th>Ce qu’elle prouve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Contrôles de sécurité statiques</strong></td>
+<td><code>bash tests/security/controles.sh</code></td>
+<td><strong>11/11</strong> (exécutable à tout moment)</td>
+<td>PDO préparé, <code>e()</code>, bcrypt, IDOR, CSRF, sessions, gardes admin, absence de secrets</td>
+</tr>
+<tr>
+<td><strong>Cohérence documentation / UC</strong></td>
+<td><code>python3 scripts/verifier_fiches_uc.py</code></td>
+<td><strong>46/46</strong></td>
+<td>Cohérence des 14 UC, scénarios et tableaux de couverture</td>
+</tr>
+<tr>
+<td><strong>Audit structurel &amp; inventaire</strong></td>
+<td><code>python3 -m unittest discover -s tests/python</code></td>
+<td>Complet</td>
+<td>Inventaire <code>docs/17-inventaire-projet.csv</code>, syntaxe Python/Shell/JSON/XML</td>
+</tr>
+<tr>
+<td><strong>Intégration SQL (MySQL 8 &amp; MariaDB 11.8)</strong></td>
+<td><code>tests/php/sql_integration.php</code></td>
+<td><strong>29/29</strong> (<code>docs/pv-recette.md</code>)</td>
+<td>Contraintes <code>CHECK</code>, triggers <code>T-01…T-29</code>, procédures, rollbacks</td>
+</tr>
+<tr>
+<td><strong>E2E HTTP complet sur SQL</strong></td>
+<td><code>tests/php/http_sql_e2e.php</code></td>
+<td><strong>105/105</strong> (<code>docs/pv-recette.md</code>)</td>
+<td>Parcours complets client &amp; admin via HTTP + PDO</td>
+</tr>
+<tr>
+<td><strong>Concurrence anti-survente</strong></td>
+<td><code>tests/php/concurrence_http.php</code></td>
+<td><strong>8/8</strong> (20 acteurs / 12 unités)</td>
+<td>Zéro stock négatif sous requêtes concurrentes</td>
+</tr>
+<tr>
+<td><strong>Performances (volumétrie cible)</strong></td>
+<td><code>scripts/run_perf_vm.sh</code></td>
+<td>HTTP p95 = <strong>6 ms</strong>, SQL p95 ≤ <strong>20,6 ms</strong></td>
+<td>Tenue de charge sur 236 produits et 1 004 commandes</td>
+</tr>
+<tr>
+<td><strong>CI GitHub Actions</strong></td>
+<td><code>.github/workflows/ci.yml</code></td>
+<td>Multi-jobs (PHP 8.2/8.5, MySQL 8, MariaDB 11.8, WASM, Playwright)</td>
+<td>Non-régression continue à chaque push</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-justifier-proprement-les-choix-et-ecarts-face-au-sujet-officiel">5. Justifier proprement les choix et écarts face au sujet officiel<a class="headerlink" href="#5-justifier-proprement-les-choix-et-ecarts-face-au-sujet-officiel" title="Permanent link"></a></h2>
+<p>Si le jury compare mot à mot <code>sujetSAE.pdf</code> avec le dépôt, voici les <strong>6 points précis</strong> à expliquer calmement et avec assurance :</p>
+<table>
+<thead>
+<tr>
+<th>Point du sujet officiel</th>
+<th>Ce qui a été implémenté</th>
+<th>Pourquoi ce choix est meilleur / conforme</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Exemple de session <code>$_SESSION['user_id']</code> (p. 5 du sujet)</td>
+<td><code>$_SESSION['client_id']</code> et <code>$_SESSION['admin_id']</code> dans <code>app/Security/Auth.php</code></td>
+<td><strong>Défense en profondeur (<code>RB-13</code>)</strong> : un client connecté ne peut jamais être confondu avec un administrateur, même dans une même session navigateur.</td>
+</tr>
+<tr>
+<td>Nom indicatif <code>sp_add_order_item</code> (p. 7 du sujet)</td>
+<td><code>sp_add_order_line</code> + <code>sp_create_order_from_basket</code> (<code>sql/02_minishop_procedures.sql</code>)</td>
+<td>Cohérent avec le nom français de la table <code>ligne_commande</code> ; <code>sp_create_order</code> et <code>sp_update_order_status</code> gardent les noms exacts du sujet.</td>
+</tr>
+<tr>
+<td>Statut initial de commande</td>
+<td>État interne <code>BROUILLON</code> puis confirmation → <code>EN_PREPARATION</code></td>
+<td>Permet de respecter <code>RB-04</code> (aucune commande validée sans ligne) ; un <code>BROUILLON</code> est refusé côté admin (<code>COMMANDE_NON_TRAITABLE</code>).</td>
+</tr>
+<tr>
+<td>Rôle administrateur unique dans le sujet</td>
+<td>Deux rôles : <code>SUPER</code> et <code>GESTIONNAIRE</code></td>
+<td>Principe du <strong>moindre privilège</strong> (OWASP ASVS / ANSSI) : seul <code>SUPER</code> crée/bloque des admins ou modifie les paramètres globaux.</td>
+</tr>
+<tr>
+<td>Dénormalisation vs 3FN stricte</td>
+<td><code>produit.prix_ttc</code>, <code>commande.montant_total</code>, <code>ligne_commande.total_ligne</code></td>
+<td>Recommandation métier e-commerce : un changement de prix catalogue ou de TVA ne doit <strong>jamais</strong> modifier rétroactivement une facture passée ; ces colonnes sont verrouillées par triggers.</td>
+</tr>
+<tr>
+<td>Formulaire de contact &amp; paiement</td>
+<td>Stockage local dans <code>var/log/contact.jsonl</code>, paiement/livraison simulés</td>
+<td>Respect strict du périmètre pédagogique (<code>sujetSAE.pdf</code> : « paiement factice, sans vraie transaction bancaire »), documenté dans <code>README.md</code> et <code>/mentions-legales</code>.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-top-20-des-questions-probables-du-jury-et-reponses-pretes-en-20-s">6. Top 20 des questions probables du jury (et réponses prêtes en 20 s)<a class="headerlink" href="#6-top-20-des-questions-probables-du-jury-et-reponses-pretes-en-20-s" title="Permanent link"></a></h2>
+<h3 id="base-de-donnees-sql">Base de données &amp; SQL<a class="headerlink" href="#base-de-donnees-sql" title="Permanent link"></a></h3>
+<ol>
+<li><strong>Pourquoi des procédures stockées plutôt que tout gérer en PHP ?</strong><br />
+   Elles garantissent l’atomicité transactionnelle (<code>START TRANSACTION</code> / <code>COMMIT</code> / <code>ROLLBACK</code>), posent les verrous <code>SELECT ... FOR UPDATE</code> au plus près des données pour empêcher la survente, réduisent les allers-retours réseau et imposent les mêmes invariants même si une autre application appelle la base.</li>
+<li><strong>Comment empêchez-vous qu’une commande vende plus de stock que disponible si deux clients cliquent en même temps ?</strong><br />
+   Dans <code>sp_add_order_line</code> / <code>sp_create_order_from_basket</code>, la lecture du produit utilise <code>SELECT ... FOR UPDATE</code> à l’intérieur d’une transaction, puis le trigger <code>trg_ligne_controle_insert</code> et la contrainte <code>CHECK (stock_actuel &gt;= 0)</code> valident la cohérence. Validé par <code>concurrence_http.php</code> (20 clients concurrents sur 12 unités : 0 survente).</li>
+<li><strong>Pourquoi garder <code>total_ligne</code> et <code>montant_total</code> en base alors qu’on peut les recalculer ?</strong><br />
+   C’est une dénormalisation volontaire et <strong>verrouillée par trigger</strong> (<code>trg_ligne_prix_snapshot</code>, <code>trg_ligne_immutable</code>) : si le prix HT ou la TVA du produit change demain, les commandes historiques conservent exactement le montant payé le jour de l’achat.</li>
+<li><strong>Pourquoi un trigger pour <code>order_status_history</code> plutôt qu’un <code>INSERT</code> dans la procédure ?</strong><br />
+   Pour garantir la traçabilité même lors d’une mise à jour SQL directe (maintenance, reprise). Les triggers <code>trg_history_creation</code> et <code>trg_history_statut</code> assurent l’unicité et l’ordre chronologique de la piste d’audit.</li>
+<li><strong>Que se passe-t-il si on tente un <code>UPDATE</code> direct <code>SET stock_actuel = -5</code> en SQL ?</strong><br />
+   Il est bloqué au niveau SGBD par la contrainte <code>CHECK</code> et les triggers de contrôle (<code>trg_produit_regles</code>), testés dans <code>tests/php/sql_integration.php</code> (<code>T-02</code>, <code>T-03</code>).</li>
+<li><strong>Pourquoi vérifiez-vous le mot de passe en PHP (<code>password_verify</code>) et pas dans la procédure SQL ?</strong><br />
+   Le sel et le coût bcrypt sont encapsulés dans le hash généré par PHP ; seule la fonction <code>password_verify()</code> compare en temps constant. La procédure <code>sp_get_credentials</code> ne renvoie donc que le hash et l’état du compte, et la vérification reste côté PHP.</li>
+<li><strong>Que se passe-t-il si on supprime une catégorie qui contient des produits, ou un produit déjà commandé ?</strong><br />
+   Les clés étrangères (<code>ON DELETE RESTRICT</code>) et les triggers <code>trg_categorie_delete</code> / <code>trg_produit_delete</code> bloquent la suppression pour préserver l’historique comptable. En pratique, l’administrateur masque un produit (<code>visible = 0</code>) au lieu de le supprimer.</li>
+<li><strong>Pourquoi une double gestion de pilote (<code>SQL</code> par défaut et <code>JSON</code> secondaire) ?</strong><br />
+   Le pilote SQL/PDO est le moteur principal conforme au sujet ; l’interface commune <code>DataStore</code> permet d’exécuter le même code applicatif sur un magasin JSON en environnement isolé (tests WASM sans serveur MySQL ou plan B de démonstration).</li>
+</ol>
+<h3 id="architecture-mvc-code-php">Architecture MVC &amp; code PHP<a class="headerlink" href="#architecture-mvc-code-php" title="Permanent link"></a></h3>
+<ol start="9">
+<li><strong>Comment fonctionne votre architecture MVC ? Qui fait quoi ?</strong><br />
+<code>public/index.php</code> reçoit toutes les requêtes, résout la route, appelle le contrôleur (<code>app/Controller/</code>), qui valide les entrées/CSRF/droits, délègue l’accès données aux <code>Repository</code> (<code>app/Repository/</code>) et passe uniquement les données préparées à la vue (<code>app/View/</code>).</li>
+<li><strong>Pourquoi <code>declare(strict_types=1);</code> dans chaque fichier PHP ?</strong><br />
+    Pour éviter les conversions silencieuses de types (par exemple entre chaînes issues de <code>$_POST</code> et entiers d’identifiants) et détecter les erreurs dès l’exécution ou l’analyse statique.</li>
+<li><strong>Où sont gérés les prix et stocks lors de la validation du panier ? Faites-vous confiance au formulaire ?</strong><br />
+    Jamais. Le navigateur n’envoie que <code>id_produit</code> et <code>quantite</code>. Tous les prix, taux de TVA, stocks et frais de port sont relus et recalculés côté serveur (<code>PanierSession</code>, <code>CommandeRepository</code>, procédures SQL).</li>
+<li><strong>Pourquoi les administrateurs sont-ils dans une table séparée <code>administrateur</code> plutôt que dans <code>client</code> ?</strong><br />
+    Le cycle de vie, les attributs (adresse postale vs rôle <code>SUPER</code>/<code>GESTIONNAIRE</code>) et la surface d’attaque sont distincts : aucune route d’inscription publique ne peut écrire dans <code>administrateur</code> (<code>SEC-10</code>).</li>
+</ol>
+<h3 id="securite">Sécurité<a class="headerlink" href="#securite" title="Permanent link"></a></h3>
+<ol start="13">
+<li><strong>Comment prouvez-vous l’absence d’injection SQL ?</strong><br />
+    Toutes les requêtes passent par <code>PDO::prepare()</code> + <code>execute()</code> avec <code>ATTR_EMULATE_PREPARES =&gt; false</code> (vérifié statiquement par <code>tests/security/controles.sh</code> et testé dynamiquement en E2E). Aucune concaténation SQL de variable utilisateur n’existe dans <code>app/</code>.</li>
+<li><strong>Comment évitez-vous qu’un client consulte la commande d’un autre en changeant l’URL (<code>/commande/25</code>) ?</strong><br />
+<code>CommandeController</code> exige d’abord <code>Auth::exigeClient()</code>, puis filtre toujours par <code>id_client = $session['id']</code> dans la requête / procédure (<code>sp_confirm_order</code>, <code>sp_cancel_order</code>). Si la commande n’appartient pas au client, le serveur renvoie <strong>404</strong> (et non 403) pour ne pas révéler l’existence de l’ID.</li>
+<li><strong>Comment fonctionne votre protection CSRF ?</strong><br />
+    Chaque session génère un jeton de 32 octets aléatoires (<code>Csrf::jeton()</code>). Chaque formulaire <code>POST</code> inclut ce jeton, et <code>Csrf::verifier()</code> compare avec <code>hash_equals()</code> avant toute écriture métier.</li>
+<li><strong>Pourquoi vos cookies de session ont-ils <code>HttpOnly</code>, <code>SameSite=Lax</code> et <code>Secure</code> ?</strong><br />
+<code>HttpOnly</code> empêche le vol du cookie via JavaScript en cas de XSS ; <code>SameSite=Lax</code> limite l’envoi du cookie depuis des sites tiers (CSRF) ; <code>Secure</code> impose HTTPS dès que le site est servi en TLS.</li>
+</ol>
+<h3 id="tests-gitlab-demarche-projet">Tests, GitLab &amp; démarche projet<a class="headerlink" href="#tests-gitlab-demarche-projet" title="Permanent link"></a></h3>
+<ol start="17">
+<li><strong>Comment avez-vous testé le site sans base MySQL dans certains jobs CI ?</strong><br />
+    Les jobs SQL tournent réellement sur MySQL 8.0 et MariaDB 11.8 (<code>29/29</code> + <code>105/105</code>). En complément, les tests isolés (routeur, régressions UI, Playwright, WASM) utilisent le pilote JSON sur des répertoires temporaires jetables.</li>
+<li><strong>Pourquoi distingue-t-on le « CA du jour » du « CA total » sur le tableau de bord ?</strong><br />
+    Pour donner une lecture opérationnelle immédiate à l’administrateur tout en tenant compte du fuseau horaire local (<code>App\Tools\Heure</code>), alors que les dates sont stockées de manière uniforme côté serveur.</li>
+<li><strong>Quelle est votre politique d’annulation de commande et pourquoi en 2 étapes ?</strong><br />
+    Tant que la commande est <code>EN_PREPARATION</code> (avant expédition), l’annulation restaure automatiquement le stock via le workflow SQL (<code>sp_cancel_order</code> / <code>sp_cancel_order_admin</code>) tout en conservant la commande et ses lignes pour l’audit. La page intermédiaire de confirmation évite toute annulation accidentelle en un clic.</li>
+<li><strong>Quelles seraient les prochaines étapes si le projet passait en production réelle ?</strong><br />
+    Intégrer un prestataire de paiement (webhook signé + idempotence), l’envoi réel d’e-mails transactionnels (confirmation, contact), la gestion des remises/codes promo historisés et la double authentification (<code>MFA</code>) pour le rôle <code>SUPER</code>.</li>
+</ol>
+<hr />
+<h2 id="7-check-list-finale-j1-et-h30-min">7. Check-list finale (J−1 et H−30 min)<a class="headerlink" href="#7-check-list-finale-j1-et-h30-min" title="Permanent link"></a></h2>
+<h3 id="la-veille-j1">La veille (J−1)<a class="headerlink" href="#la-veille-j1" title="Permanent link"></a></h3>
+<ul>
+<li>[ ] Dernière version fusionnée et poussée sur le <strong>GitLab IUT</strong> (pas uniquement sur GitHub).</li>
+<li>[ ] Vérifier sur GitLab IUT : rôle <code>Reporter</code> actif pour l’enseignante référente, <code>README.md</code> lisible à la racine, <code>git shortlog -sne</code> montrant bien les commits des membres du groupe.</li>
+<li>[ ] Vérifier que les tests rapides passent localement :</li>
+<li><code>bash tests/security/controles.sh</code> (<code>11/11</code>)</li>
+<li><code>python3 scripts/verifier_fiches_uc.py</code> (<code>46/46</code>)</li>
+<li><code>python3 -m unittest discover -s tests/python</code> (sans erreur)</li>
+<li>[ ] Diaporama exporté (<code>livrables/minishop-soutenance.pptx</code> ou PDF généré localement) testable hors connexion.</li>
+</ul>
+<h3 id="30-minutes-avant-la-soutenance-h30-min">30 minutes avant la soutenance (H−30 min)<a class="headerlink" href="#30-minutes-avant-la-soutenance-h30-min" title="Permanent link"></a></h3>
+<ul>
+<li>[ ] Base locale réinitialisée proprement (<code>./run.sh --db</code>) puis serveur démarré (<code>./run.sh</code>).</li>
+<li>[ ] Onglet 1 prêt sur <code>http://localhost:8000/</code> (navigation privée / visiteur).</li>
+<li>[ ] Onglet 2 prêt sur <code>http://localhost:8000/admin/connexion</code>.</li>
+<li>[ ] Terminal prêt avec les requêtes SQL de preuve (<code>SHOW PROCEDURE STATUS</code>, <code>SHOW TRIGGERS</code>, <code>v_etat_stock</code>, <code>stock_movement_history</code>, <code>order_status_history</code>).</li>
+<li>[ ] Chrono réglé sur <strong>15 minutes</strong> (alerte silencieuse à 7 min et à 13 min).</li>
+</ul>
+<footer class="doc">
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/24-preparation-soutenance-complete.md</code> · 0 figure(s) intégrée(s).</p>
+</footer>
+</main>
+</body>
+</html>

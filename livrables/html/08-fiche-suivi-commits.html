@@ -3,91 +3,222 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light dark">
-<meta name="description" content="SAÉ 302 — MiniShop : 08 — Fiche de suivi des commits (rejeu vers un nouveau GitLab)#">
-<title>08 — Fiche de suivi des commits (rejeu vers un nouveau GitLab)# — MiniShop</title>
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : 08 — Fiche de suivi des commits (rejeu vers un nouveau GitLab)">
+<title>08 — Fiche de suivi des commits (rejeu vers un nouveau GitLab) — MiniShop (SAÉ 302)</title>
 <style>
 :root {
   --encre: #0f172a;
   --encre-douce: #475569;
-  --papier: #fbfaf7;
-  --carte: #ffffff;
-  --trait: #e2e8f0;
-  --accent: #1d4ed8;
-  --accent-clair: #dbeafe;
-  --code: #f1f5f9;
-  --mesure: 72ch;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
-    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
-    --accent-clair: #1e3a8a; --code: #16223a;
-  }
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
 }
 * { box-sizing: border-box; }
 html { font-size: 100%; -webkit-text-size-adjust: 100%; }
 body {
-  margin: 0 auto;
-  padding: 2.5rem 1.25rem 5rem;
-  max-width: calc(var(--mesure) + 6rem);
-  background: var(--papier);
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
   color: var(--encre);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
-  font-size: 1rem;
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
   line-height: 1.65;
   text-rendering: optimizeLegibility;
 }
-h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
-h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
-h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
-h3 { font-size: 1.15rem; }
-h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
-p, li { max-width: var(--mesure); }
-a { color: var(--accent); text-underline-offset: 0.15em; }
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
 a:hover { text-decoration-thickness: 2px; }
 code {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
 }
 pre {
-  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
-  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
 }
-pre code { background: none; padding: 0; font-size: inherit; }
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
 blockquote {
-  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
-  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
 }
-blockquote p { margin: 0.35rem 0; }
-table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
-caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
-th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
-thead th { background: var(--accent-clair); }
-tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
-img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
-hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
-ul, ol { padding-left: 1.4rem; }
-li { margin: 0.25rem 0; }
-li input[type="checkbox"] { margin-right: 0.4rem; }
-.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
-.toc > ul { list-style: none; padding-left: 0; }
-.toc ul ul { padding-left: 1rem; }
-footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
 @media print {
-  :root { --papier: #fff; --carte: #fff; }
-  @page { size: A4; margin: 18mm 16mm; }
-  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
   h1, h2, h3 { break-after: avoid; }
   table, pre, img, blockquote { break-inside: avoid; }
   a { color: inherit; text-decoration: none; }
-  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
   .toc { break-after: page; }
 }
 </style>
 </head>
 <body>
 <main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/08-fiche-suivi-commits.md</code></div>
+</header>
 <nav class="toc" aria-label="Sommaire"><div class="toc">
 <ul>
 <li><a href="#1-mode-demploi-express">1. Mode d'emploi express</a></li>
@@ -135,7 +266,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </ul>
 </div>
 </nav>
-<h1 id="08-fiche-de-suivi-des-commits-rejeu-vers-un-nouveau-gitlab">08 — Fiche de suivi des commits (rejeu vers un nouveau GitLab)<a class="headerlink" href="#08-fiche-de-suivi-des-commits-rejeu-vers-un-nouveau-gitlab" title="Permanent link">#</a></h1>
+<h1 id="08-fiche-de-suivi-des-commits-rejeu-vers-un-nouveau-gitlab">08 — Fiche de suivi des commits (rejeu vers un nouveau GitLab)<a class="headerlink" href="#08-fiche-de-suivi-des-commits-rejeu-vers-un-nouveau-gitlab" title="Permanent link"></a></h1>
 <blockquote>
 <p><strong>Objet.</strong> Décrire un scénario synthétique de rejeu du projet sur un <strong>nouveau dépôt GitLab</strong>,
 avec 32 commits proposés, des messages prêts à copier-coller et un périmètre de fichiers.
@@ -144,7 +275,7 @@ La fiche et <code>scripts/rejeu_gitlab.py</code> partagent le même plan ; le mo
 ne doit pas être utilisé sans demande explicite et vérification préalable de sa compatibilité.</p>
 <p><strong>Note de portée (actualisée au 17/11/2026).</strong> Les entrées É5 (86 tâches) et É27 (GitLab CI) décrivent un périmètre historique ; la WBS courante compte <strong>82 tâches (348 h)</strong> et la CI GitLab a été retirée. Le scénario proposé ne comporte plus d’automatisation de mise en ligne. Aucune exécution de ce rejeu n’est revendiquée.</p>
 </blockquote>
-<h2 id="1-mode-demploi-express">1. Mode d'emploi express<a class="headerlink" href="#1-mode-demploi-express" title="Permanent link">#</a></h2>
+<h2 id="1-mode-demploi-express">1. Mode d'emploi express<a class="headerlink" href="#1-mode-demploi-express" title="Permanent link"></a></h2>
 <pre><code class="language-bash"># 1) Créer sur GitLab le projet vide « minishop-sae » (NE PAS cocher « Initialize with a README »)
 # 2) Depuis ce dépôt, reconstruire l'historique dans une copie isolée :
 python3 scripts/rejeu_gitlab.py --dest ../minishop-sae \
@@ -159,7 +290,7 @@ git push -u origin main --tags
 contrôle que l'arbre final est identique, fichier pour fichier.</p>
 <p>Le rejeu manuel (copier-coller des <code>git add</code> + messages ci-dessous) est bien sûr
 possible : c'est le §3.</p>
-<h2 id="2-tableau-de-synthese-les-32-commits">2. Tableau de synthèse — les 32 commits<a class="headerlink" href="#2-tableau-de-synthese-les-32-commits" title="Permanent link">#</a></h2>
+<h2 id="2-tableau-de-synthese-les-32-commits">2. Tableau de synthèse — les 32 commits<a class="headerlink" href="#2-tableau-de-synthese-les-32-commits" title="Permanent link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -364,8 +495,8 @@ possible : c'est le §3.</p>
 </tr>
 </tbody>
 </table>
-<h2 id="3-detail-des-commits-a-rejouer-dans-lordre">3. Détail des commits (à rejouer dans l'ordre)<a class="headerlink" href="#3-detail-des-commits-a-rejouer-dans-lordre" title="Permanent link">#</a></h2>
-<h3 id="e0-choredepot-socle-gitlab-gitignore-et-charte-de-collaboration-annexe-179">É0 — chore(depôt): socle GitLab — .gitignore et charte de collaboration (annexe 17.9)<a class="headerlink" href="#e0-choredepot-socle-gitlab-gitignore-et-charte-de-collaboration-annexe-179" title="Permanent link">#</a></h3>
+<h2 id="3-detail-des-commits-a-rejouer-dans-lordre">3. Détail des commits (à rejouer dans l'ordre)<a class="headerlink" href="#3-detail-des-commits-a-rejouer-dans-lordre" title="Permanent link"></a></h2>
+<h3 id="e0-choredepot-socle-gitlab-gitignore-et-charte-de-collaboration-annexe-179">É0 — chore(depôt): socle GitLab — .gitignore et charte de collaboration (annexe 17.9)<a class="headerlink" href="#e0-choredepot-socle-gitlab-gitignore-et-charte-de-collaboration-annexe-179" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> Le dépôt démarre avec ses règles du jeu : ce qui est versionné, ce qui ne le sera jamais (secrets, journaux, sorties régénérables), et la charte de collaboration GitLab (MR, branches protégées, jalons).</p>
 <pre><code class="language-bash">git add .gitignore \
         docs/annexes/annexe-gitlab.md
@@ -377,7 +508,7 @@ Règles d'exclusion du dépôt (§14.1 du cahier des charges) : secrets (env.php
 La charte GitLab fixe le cadre : dépôt privé, composition par courriel, main protégée sans push direct, MR obligatoires avec squash désactivé (les commits individuels font partie de la note), tags de jalons v0-cadrage → v5-rendu.
 MESSAGE
 </code></pre>
-<h3 id="e1-docscadrage-cahier-des-charges-minishop-et-cas-dutilisation">É1 — docs(cadrage): cahier des charges MiniShop et cas d'utilisation<a class="headerlink" href="#e1-docscadrage-cahier-des-charges-minishop-et-cas-dutilisation" title="Permanent link">#</a></h3>
+<h3 id="e1-docscadrage-cahier-des-charges-minishop-et-cas-dutilisation">É1 — docs(cadrage): cahier des charges MiniShop et cas d'utilisation<a class="headerlink" href="#e1-docscadrage-cahier-des-charges-minishop-et-cas-dutilisation" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> Le document fondateur du projet : périmètre, exigences, règles de gestion numérotées (RB-xx) et contraintes qui serviront de fil rouge à tout le reste (SQL, moteur, application, tests).</p>
 <pre><code class="language-bash">git add docs/01-cahier-des-charges-MiniShop.md \
         docs/annexes/annexe-cas-usage.md \
@@ -391,7 +522,7 @@ Diagrammes de cas d'utilisation : vue globale, détail commande, scénarios comm
 MESSAGE
 </code></pre>
 <p><strong>Jalon.</strong> <code>git tag -a v0-cadrage -m "Cadrage fonctionnel (cahier des charges, cas d'utilisation)"</code></p>
-<h3 id="e2-docsbd-conception-de-la-base-mcd-mld-normalisation-requetes-a-ecrire">É2 — docs(bd): conception de la base — MCD, MLD, normalisation, requêtes à écrire<a class="headerlink" href="#e2-docsbd-conception-de-la-base-mcd-mld-normalisation-requetes-a-ecrire" title="Permanent link">#</a></h3>
+<h3 id="e2-docsbd-conception-de-la-base-mcd-mld-normalisation-requetes-a-ecrire">É2 — docs(bd): conception de la base — MCD, MLD, normalisation, requêtes à écrire<a class="headerlink" href="#e2-docsbd-conception-de-la-base-mcd-mld-normalisation-requetes-a-ecrire" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> La base de données est conçue avant d'être écrite : MCD, MLD, dictionnaire, normalisation. Les requêtes « à écrire » préparent les livrables d'exécution SQL.</p>
 <pre><code class="language-bash">git add docs/04-conception-bd-et-sql.md \
         docs/annexes/annexe-sql.md \
@@ -406,7 +537,7 @@ Livrable n°3 autonome : dictionnaire de données, MCD et MLD (8 tables), normal
 Requêtes SQL « à écrire » (exercices du rendu) et annexe 17.4/17.5/17.6 décrivant les 4 scripts SQL livrés, le harnais de tests et le protocole de mesure.
 MESSAGE
 </code></pre>
-<h3 id="e3-docsconception-uml-applicatif-architecture-mvc-classes-etats-sequences">É3 — docs(conception): UML applicatif — architecture MVC, classes, états, séquences<a class="headerlink" href="#e3-docsconception-uml-applicatif-architecture-mvc-classes-etats-sequences" title="Permanent link">#</a></h3>
+<h3 id="e3-docsconception-uml-applicatif-architecture-mvc-classes-etats-sequences">É3 — docs(conception): UML applicatif — architecture MVC, classes, états, séquences<a class="headerlink" href="#e3-docsconception-uml-applicatif-architecture-mvc-classes-etats-sequences" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> La conception applicative reprend la structure MVC et le cycle de vie des commandes qui seront implémentés à l'identique en PHP.</p>
 <pre><code class="language-bash">git add docs/diagrams/architecture_mvc.png \
         docs/diagrams/diagramme_classes.png \
@@ -422,7 +553,7 @@ Architecture MVC en couches (contrôleurs → dépôts → moteur de données), 
 MESSAGE
 </code></pre>
 <p><strong>Jalon.</strong> <code>git tag -a v1-mcd -m "Conception complète (MCD, MLD, UML, plan de validation, organisation)"</code></p>
-<h3 id="e4-docstests-plan-de-validation-t-01t-29-et-exigences-non-fonctionnelles">É4 — docs(tests): plan de validation T-01…T-29 et exigences non fonctionnelles<a class="headerlink" href="#e4-docstests-plan-de-validation-t-01t-29-et-exigences-non-fonctionnelles" title="Permanent link">#</a></h3>
+<h3 id="e4-docstests-plan-de-validation-t-01t-29-et-exigences-non-fonctionnelles">É4 — docs(tests): plan de validation T-01…T-29 et exigences non fonctionnelles<a class="headerlink" href="#e4-docstests-plan-de-validation-t-01t-29-et-exigences-non-fonctionnelles" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> Le plan de validation précède le code : chaque test T-xx sera rejoué en SQL puis en PHP, avec le même oracle.</p>
 <pre><code class="language-bash">git add docs/02-document-tests-validation.md \
         docs/annexes/annexe-enf.md
@@ -434,7 +565,7 @@ Document de tests et de validation : 29 tests boîte noire mappés aux règles R
 Annexe ENF : exigences non fonctionnelles (ENF-01 p95 &lt; 500 ms, volumétrie, sécurité, ergonomie) et protocoles de vérification associés.
 MESSAGE
 </code></pre>
-<h3 id="e5-docsorganisation-wbs-6-divisions-16-lots-86-taches-todolist-et-chaine-tools">É5 — docs(organisation): WBS (6 divisions, 16 lots, 86 tâches), todolist et chaîne .tools<a class="headerlink" href="#e5-docsorganisation-wbs-6-divisions-16-lots-86-taches-todolist-et-chaine-tools" title="Permanent link">#</a></h3>
+<h3 id="e5-docsorganisation-wbs-6-divisions-16-lots-86-taches-todolist-et-chaine-tools">É5 — docs(organisation): WBS (6 divisions, 16 lots, 86 tâches), todolist et chaîne .tools<a class="headerlink" href="#e5-docsorganisation-wbs-6-divisions-16-lots-86-taches-todolist-et-chaine-tools" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> L'organisation du projet : découpage WBS, suivi de todolist et la chaîne de génération des documents (une seule source de données).</p>
 <pre><code class="language-bash">git add docs/05-wbs-projet.md \
         docs/06-todolist.md \
@@ -447,7 +578,7 @@ WBS complet : charges bottom-up, plan de charge, Gantt et chemin critique ; todo
 Chaîne .tools : les documents officiels et les artefacts HTML du rendu sont générés depuis une source de données unique (scripts Python internes, hors périmètre du barème, d'où le dossier caché).
 MESSAGE
 </code></pre>
-<h3 id="e6-featsql-schema-mysql-8-8-tables-innodb-contraintes-cles-etrangeres-index">É6 — feat(sql): schéma MySQL 8 — 8 tables InnoDB, contraintes, clés étrangères, index<a class="headerlink" href="#e6-featsql-schema-mysql-8-8-tables-innodb-contraintes-cles-etrangeres-index" title="Permanent link">#</a></h3>
+<h3 id="e6-featsql-schema-mysql-8-8-tables-innodb-contraintes-cles-etrangeres-index">É6 — feat(sql): schéma MySQL 8 — 8 tables InnoDB, contraintes, clés étrangères, index<a class="headerlink" href="#e6-featsql-schema-mysql-8-8-tables-innodb-contraintes-cles-etrangeres-index" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> Le premier script SQL : la structure — 8 tables, contraintes CHECK, clés étrangères et index. Les règles RB-01 à RB-06 sont garanties par le schéma lui-même.</p>
 <pre><code class="language-bash">git add sql/01_minishop_schema.sql
 git commit -F- &lt;&lt;'MESSAGE'
@@ -458,7 +589,7 @@ DDL complet : produit, categorie, client, administrateur, commande, ligne_comman
 Règles de gestion portées par le schéma : prix &gt; 0, quantité &gt; 0, hash obligatoire (RB-01…RB-06), clés étrangères avec règles de suppression, index de recherche et d'unicité (référence et slug produit, email client).
 MESSAGE
 </code></pre>
-<h3 id="e7-featsql-17-procedures-stockees-1-fonction-regles-metier-cote-serveur">É7 — feat(sql): 17 procédures stockées + 1 fonction (règles métier côté serveur)<a class="headerlink" href="#e7-featsql-17-procedures-stockees-1-fonction-regles-metier-cote-serveur" title="Permanent link">#</a></h3>
+<h3 id="e7-featsql-17-procedures-stockees-1-fonction-regles-metier-cote-serveur">É7 — feat(sql): 17 procédures stockées + 1 fonction (règles métier côté serveur)<a class="headerlink" href="#e7-featsql-17-procedures-stockees-1-fonction-regles-metier-cote-serveur" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> Les procédures stockées concentrent les règles métier côté serveur : impossible de contourner le contrôle de stock, les transitions d'état ou le calcul du montant.</p>
 <pre><code class="language-bash">git add sql/02_minishop_procedures.sql
 git commit -F- &lt;&lt;'MESSAGE'
@@ -469,7 +600,7 @@ Commander_produit, ajuster_stock, annuler_commande, changer_statut, purger, rech
 Gestion des erreurs par SIGNAL SQLSTATE avec codes métier (même vocabulaire que le futur moteur PHP : STOCK_INSUFFISANT, TRANSITION_INTERDITE, …).
 MESSAGE
 </code></pre>
-<h3 id="e8-featsql-16-declencheurs-transitions-rb-11-coherence-stock-historique">É8 — feat(sql): 16 déclencheurs — transitions RB-11, cohérence stock, historique<a class="headerlink" href="#e8-featsql-16-declencheurs-transitions-rb-11-coherence-stock-historique" title="Permanent link">#</a></h3>
+<h3 id="e8-featsql-16-declencheurs-transitions-rb-11-coherence-stock-historique">É8 — feat(sql): 16 déclencheurs — transitions RB-11, cohérence stock, historique<a class="headerlink" href="#e8-featsql-16-declencheurs-transitions-rb-11-coherence-stock-historique" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> Les déclencheurs verrouillent les invariants : même un UPDATE sauvage ne peut pas casser une règle de gestion, et tout changement d'état est historisé.</p>
 <pre><code class="language-bash">git add sql/03_minishop_triggers.sql
 git commit -F- &lt;&lt;'MESSAGE'
@@ -480,7 +611,7 @@ BEFORE/AFTER INSERT/UPDATE/DELETE : garde-fous anti-contournement des procédure
 trg_history_statut et trg_history_creation : chaque changement de statut est tracé dans order_status_history (EF-ADM-08).
 MESSAGE
 </code></pre>
-<h3 id="e9-featsql-jeu-de-demonstration-commandes-creees-via-les-procedures-triggers-actifs">É9 — feat(sql): jeu de démonstration — commandes créées via les procédures (triggers actifs)<a class="headerlink" href="#e9-featsql-jeu-de-demonstration-commandes-creees-via-les-procedures-triggers-actifs" title="Permanent link">#</a></h3>
+<h3 id="e9-featsql-jeu-de-demonstration-commandes-creees-via-les-procedures-triggers-actifs">É9 — feat(sql): jeu de démonstration — commandes créées via les procédures (triggers actifs)<a class="headerlink" href="#e9-featsql-jeu-de-demonstration-commandes-creees-via-les-procedures-triggers-actifs" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> Le jeu de démo MySQL : il prouve que les procédures et triggers coopèrent — les données sont créées « pour de vrai », pas insérées en contournant les règles.</p>
 <pre><code class="language-bash">git add sql/04_minishop_demo.sql
 git commit -F- &lt;&lt;'MESSAGE'
@@ -489,7 +620,7 @@ feat(sql): jeu de démonstration — commandes créées via les procédures (tri
 Données de démonstration réalistes : les commandes sont insérées par les procédures stockées, donc tous les déclencheurs s'exécutent (décrément de stock, historique, cohérence des montants).
 MESSAGE
 </code></pre>
-<h3 id="e10-testsql-harnais-de-tests-t-01t-29-protocole-de-mesure-enf-01">É10 — test(sql): harnais de tests T-01…T-29 + protocole de mesure ENF-01<a class="headerlink" href="#e10-testsql-harnais-de-tests-t-01t-29-protocole-de-mesure-enf-01" title="Permanent link">#</a></h3>
+<h3 id="e10-testsql-harnais-de-tests-t-01t-29-protocole-de-mesure-enf-01">É10 — test(sql): harnais de tests T-01…T-29 + protocole de mesure ENF-01<a class="headerlink" href="#e10-testsql-harnais-de-tests-t-01t-29-protocole-de-mesure-enf-01" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> Le harnais SQL exécute le plan de validation : 29 tests rejouables en une commande, plus le protocole de performance.</p>
 <pre><code class="language-bash">git add tests/sql/* \
         tests/perf/* \
@@ -503,7 +634,7 @@ Chaque test rejoue une règle de gestion du document de validation ; tests/perf/
 MESSAGE
 </code></pre>
 <p><strong>Contrôle après ce commit.</strong> Sur une machine MySQL locale : <code>bash scripts/run_sql_tests.sh</code> → 29/29 conformes.</p>
-<h3 id="e11-docspreuves-requetes-soumises-et-captures-dexecution-sql-uploads">É11 — docs(preuves): requêtes soumises et captures d'exécution SQL (uploads/)<a class="headerlink" href="#e11-docspreuves-requetes-soumises-et-captures-dexecution-sql-uploads" title="Permanent link">#</a></h3>
+<h3 id="e11-docspreuves-requetes-soumises-et-captures-dexecution-sql-uploads">É11 — docs(preuves): requêtes soumises et captures d'exécution SQL (uploads/)<a class="headerlink" href="#e11-docspreuves-requetes-soumises-et-captures-dexecution-sql-uploads" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> Les preuves d'exécution : scripts soumis au serveur et captures du harnais vert. C'est la pièce à conviction du livrable SQL.</p>
 <pre><code class="language-bash">git add uploads/*
 git commit -F- &lt;&lt;'MESSAGE'
@@ -513,7 +644,7 @@ Les 4 scripts SQL tels qu'exécutés et les captures du harnais complet (29/29 c
 MESSAGE
 </code></pre>
 <p><strong>Jalon.</strong> <code>git tag -a v2-base -m "Base MySQL livrée (schéma, procédures, triggers, tests, preuves)"</code></p>
-<h3 id="e12-featmoteur-socle-du-moteur-json-contrat-de-magasin-filtres-schema-erreurs">É12 — feat(moteur): socle du moteur JSON — contrat de magasin, filtres, schéma, erreurs<a class="headerlink" href="#e12-featmoteur-socle-du-moteur-json-contrat-de-magasin-filtres-schema-erreurs" title="Permanent link">#</a></h3>
+<h3 id="e12-featmoteur-socle-du-moteur-json-contrat-de-magasin-filtres-schema-erreurs">É12 — feat(moteur): socle du moteur JSON — contrat de magasin, filtres, schéma, erreurs<a class="headerlink" href="#e12-featmoteur-socle-du-moteur-json-contrat-de-magasin-filtres-schema-erreurs" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> Le contrat du « moteur intelligent de données JSON utilisé comme du SQL » : l'interface de magasin, le langage de filtres, le schéma des tables et les erreurs métier — sans dépendance runtime.</p>
 <pre><code class="language-bash">git add app/Model/Data/StoreInterface.php \
         app/Model/Data/Errors.php \
@@ -536,7 +667,7 @@ Filter (eq, neq, like, between, in, sort, and/or…), Schema (tables, colonnes, 
 Annexe 17.7 : patterns PHP/PDO/sécurité de référence repris par l'application.
 MESSAGE
 </code></pre>
-<h3 id="e13-featmoteur-magasin-json-transactions-triggers-contraintes-vues-journal">É13 — feat(moteur): magasin JSON — transactions, triggers, contraintes, vues, journal<a class="headerlink" href="#e13-featmoteur-magasin-json-transactions-triggers-contraintes-vues-journal" title="Permanent link">#</a></h3>
+<h3 id="e13-featmoteur-magasin-json-transactions-triggers-contraintes-vues-journal">É13 — feat(moteur): magasin JSON — transactions, triggers, contraintes, vues, journal<a class="headerlink" href="#e13-featmoteur-magasin-json-transactions-triggers-contraintes-vues-journal" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> Le cœur du projet : un magasin JSON qui se comporte comme une base — transactions, déclencheurs, contraintes, journal d'audit — pilotable par la même API que le SQL.</p>
 <pre><code class="language-bash">git add app/Model/Data/JsonTable.php \
         app/Model/Data/JsonStore.php \
@@ -554,7 +685,7 @@ Sémantiques SQL reproduites : 16 triggers BEFORE/AFTER équivalents (matrice de
 Journal d'audit JSONL (EF-GEN-04), vues calculées (état des stocks, chiffre d'affaires) et SqlStore : la bascule PDO/MySQL garde la même interface pour la production.
 MESSAGE
 </code></pre>
-<h3 id="e14-featseed-jeu-de-donnees-reproductible-admin-clients-12-produits-parametres">É14 — feat(seed): jeu de données reproductible (admin, clients, 12 produits, paramètres)<a class="headerlink" href="#e14-featseed-jeu-de-donnees-reproductible-admin-clients-12-produits-parametres" title="Permanent link">#</a></h3>
+<h3 id="e14-featseed-jeu-de-donnees-reproductible-admin-clients-12-produits-parametres">É14 — feat(seed): jeu de données reproductible (admin, clients, 12 produits, paramètres)<a class="headerlink" href="#e14-featseed-jeu-de-donnees-reproductible-admin-clients-12-produits-parametres" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> Les données de démonstration, toujours créées à travers le moteur : le seed est la première preuve que le moteur applique les règles.</p>
 <pre><code class="language-bash">git add app/Model/Data/Seed.php \
         scripts/seed.php \
@@ -567,7 +698,7 @@ Seed::force reconstruit les 8 tables PAR le moteur (donc avec triggers et journa
 scripts/seed.php : re-seed en une commande (reset explicite, équivalent TRUNCATE des scripts SQL).
 MESSAGE
 </code></pre>
-<h3 id="e15-featapp-socle-mvc-bootstrap-routeur-config-gabarit-securite">É15 — feat(app): socle MVC — bootstrap, routeur, config, gabarit, sécurité<a class="headerlink" href="#e15-featapp-socle-mvc-bootstrap-routeur-config-gabarit-securite" title="Permanent link">#</a></h3>
+<h3 id="e15-featapp-socle-mvc-bootstrap-routeur-config-gabarit-securite">É15 — feat(app): socle MVC — bootstrap, routeur, config, gabarit, sécurité<a class="headerlink" href="#e15-featapp-socle-mvc-bootstrap-routeur-config-gabarit-securite" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> Le socle de l'application : routage, configuration, gabarit commun et la couche sécurité (sessions, CSRF, échappement) présente dès la première page.</p>
 <pre><code class="language-bash">git add app/bootstrap.php \
         app/Router.php \
@@ -586,7 +717,7 @@ Sécurité transversale : Auth (sessions régénérées, anti-fixation), Csrf (j
 layout.php et pages d'erreur 403/404/500.
 MESSAGE
 </code></pre>
-<h3 id="e16-featboutique-accueil-catalogue-pagine-et-filtrable-fiche-produit">É16 — feat(boutique): accueil, catalogue paginé et filtrable, fiche produit<a class="headerlink" href="#e16-featboutique-accueil-catalogue-pagine-et-filtrable-fiche-produit" title="Permanent link">#</a></h3>
+<h3 id="e16-featboutique-accueil-catalogue-pagine-et-filtrable-fiche-produit">É16 — feat(boutique): accueil, catalogue paginé et filtrable, fiche produit<a class="headerlink" href="#e16-featboutique-accueil-catalogue-pagine-et-filtrable-fiche-produit" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> La vitrine : pages statiques de présentation et le catalogue complet (recherche, filtres, tris, pagination) avec la règle RB-19 garantie côté serveur.</p>
 <pre><code class="language-bash">git add app/Controller/HomeController.php \
         app/Controller/CatalogueController.php \
@@ -600,7 +731,7 @@ HomeController (accueil, catégories, à propos, CGV, mentions légales) et Cata
 RB-19 : les produits invisibles n'apparaissent jamais au catalogue ; les filtres actifs se conservent dans l'URL.
 MESSAGE
 </code></pre>
-<h3 id="e17-featclient-panier-serveur-commandes-compte-connexioninscription">É17 — feat(client): panier serveur, commandes, compte, connexion/inscription<a class="headerlink" href="#e17-featclient-panier-serveur-commandes-compte-connexioninscription" title="Permanent link">#</a></h3>
+<h3 id="e17-featclient-panier-serveur-commandes-compte-connexioninscription">É17 — feat(client): panier serveur, commandes, compte, connexion/inscription<a class="headerlink" href="#e17-featclient-panier-serveur-commandes-compte-connexioninscription" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> Le parcours client complet : panier contrôlé côté serveur, commande avec fraix de port figés, compte, inscription et connexion sécurisées.</p>
 <pre><code class="language-bash">git add app/Model/PanierSession.php \
         app/Controller/PanierController.php \
@@ -620,7 +751,7 @@ AuthController : inscription (password_hash), connexion, message d'erreur identi
 MESSAGE
 </code></pre>
 <p><strong>Jalon.</strong> <code>git tag -a v3-front -m "Application client (moteur, boutique, panier, commandes, compte)"</code></p>
-<h3 id="e18-featapp-couche-depots-produits-categories-clients-commandes-parametres">É18 — feat(app): couche dépôts — produits, catégories, clients, commandes, paramètres<a class="headerlink" href="#e18-featapp-couche-depots-produits-categories-clients-commandes-parametres" title="Permanent link">#</a></h3>
+<h3 id="e18-featapp-couche-depots-produits-categories-clients-commandes-parametres">É18 — feat(app): couche dépôts — produits, catégories, clients, commandes, paramètres<a class="headerlink" href="#e18-featapp-couche-depots-produits-categories-clients-commandes-parametres" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> La couche dépôts isole l'accès aux données : c'est elle qui encode les règles d'accès (visibilité, suppression logique, numérotation des commandes).</p>
 <pre><code class="language-bash">git add app/Repository/*
 git commit -F- &lt;&lt;'MESSAGE'
@@ -629,7 +760,7 @@ feat(app): couche dépôts — produits, catégories, clients, commandes, param�
 Les contrôleurs ne touchent jamais le moteur directement : ProduitRepository (recherche TTC, stock, suppression logique), CategorieRepository, ClientRepository (statut du compte), CommandeRepository (numéro CMD-{AAAA}-{id:6}, statuts, rapport de chiffre d'affaires), ParametreRepository (port, TVA).
 MESSAGE
 </code></pre>
-<h3 id="e19-featadmin-back-office-complet-produits-categories-commandes-stocks-equipe">É19 — feat(admin): back-office complet — produits, catégories, commandes, stocks, équipe<a class="headerlink" href="#e19-featadmin-back-office-complet-produits-categories-commandes-stocks-equipe" title="Permanent link">#</a></h3>
+<h3 id="e19-featadmin-back-office-complet-produits-categories-commandes-stocks-equipe">É19 — feat(admin): back-office complet — produits, catégories, commandes, stocks, équipe<a class="headerlink" href="#e19-featadmin-back-office-complet-produits-categories-commandes-stocks-equipe" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> Le back-office : toutes les opérations d'administration, avec la séparation des rôles SUPER/gestionnaire et les mêmes règles métier que le SQL.</p>
 <pre><code class="language-bash">git add app/Controller/Admin/* \
         app/View/admin/*
@@ -642,7 +773,7 @@ RB-13 : seul un admin SUPER gère les comptes ; un compte client ne peut jamais 
 MESSAGE
 </code></pre>
 <p><strong>Jalon.</strong> <code>git tag -a v4-back -m "Back-office complet (produits, catégories, commandes, stocks, équipe)"</code></p>
-<h3 id="e20-featweb-front-controller-et-reecriture-durl">É20 — feat(web): front controller et réécriture d'URL<a class="headerlink" href="#e20-featweb-front-controller-et-reecriture-durl" title="Permanent link">#</a></h3>
+<h3 id="e20-featweb-front-controller-et-reecriture-durl">É20 — feat(web): front controller et réécriture d'URL<a class="headerlink" href="#e20-featweb-front-controller-et-reecriture-durl" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> Le point d'entrée unique du Web : toutes les URL dynamiques passent par le routeur et les fichiers statiques sont servis par le serveur Web.</p>
 <pre><code class="language-bash">git add public/index.php \
         public/.htaccess
@@ -652,7 +783,7 @@ feat(web): front controller et réécriture d'URL
 public/index.php : déclaration des routes et démarrage de l'application ; .htaccess : les requêtes dynamiques passent par index.php, les fichiers statiques sont servis directement.
 MESSAGE
 </code></pre>
-<h3 id="e21-buildsandbox-runtime-php-82-wasm-serveur-http-et-chaine-de-tests-npm">É21 — build(sandbox): runtime PHP 8.2-WASM, serveur HTTP et chaîne de tests npm<a class="headerlink" href="#e21-buildsandbox-runtime-php-82-wasm-serveur-http-et-chaine-de-tests-npm" title="Permanent link">#</a></h3>
+<h3 id="e21-buildsandbox-runtime-php-82-wasm-serveur-http-et-chaine-de-tests-npm">É21 — build(sandbox): runtime PHP 8.2-WASM, serveur HTTP et chaîne de tests npm<a class="headerlink" href="#e21-buildsandbox-runtime-php-82-wasm-serveur-http-et-chaine-de-tests-npm" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> L'outillage de développement : exécuter et servir le PHP dans une sandbox Node, et lancer toutes les suites en une commande. Aucune dépendance runtime pour l'application.</p>
 <pre><code class="language-bash">git add scripts/wasm_lib.mjs \
         scripts/wasm_run.mjs \
@@ -669,7 +800,7 @@ run-all-tests.mjs + package.json : npm run serve / test / test:units / test:feat
 MESSAGE
 </code></pre>
 <p><strong>Contrôle après ce commit.</strong> Après <code>npm install</code> : <code>npm run serve</code> puis http://localhost:8080/ (le re-seed se fait par <code>node scripts/wasm_run.mjs scripts/seed.php</code>).</p>
-<h3 id="e22-buildperf-volumetrie-et-mesure-enf-01-gen_volumes-mesurer">É22 — build(perf): volumétrie et mesure ENF-01 (gen_volumes, mesurer)<a class="headerlink" href="#e22-buildperf-volumetrie-et-mesure-enf-01-gen_volumes-mesurer" title="Permanent link">#</a></h3>
+<h3 id="e22-buildperf-volumetrie-et-mesure-enf-01-gen_volumes-mesurer">É22 — build(perf): volumétrie et mesure ENF-01 (gen_volumes, mesurer)<a class="headerlink" href="#e22-buildperf-volumetrie-et-mesure-enf-01-gen_volumes-mesurer" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> Les outils de mesure de performance exigés par ENF-01 : générer du volume, mesurer, obtenir un verdict automatique (p95 &lt; 500 ms).</p>
 <pre><code class="language-bash">git add app/Tools/* \
         scripts/gen_volumes.php \
@@ -682,7 +813,7 @@ build(perf): volumétrie et mesure ENF-01 (gen_volumes, mesurer)
 Générateur de jeux volumétriques (100 k+ lignes) pour MySQL et pour le moteur JSON, page de mesure p50/p95/max avec verdict ENF-01 automatique, et utilitaires (rendu PDF des documents).
 MESSAGE
 </code></pre>
-<h3 id="e23-testphp-moteur-engine_smoke-et-regles-de-gestion-t-01t-29-en-php">É23 — test(php): moteur (engine_smoke) et règles de gestion T-01…T-29 en PHP<a class="headerlink" href="#e23-testphp-moteur-engine_smoke-et-regles-de-gestion-t-01t-29-en-php" title="Permanent link">#</a></h3>
+<h3 id="e23-testphp-moteur-engine_smoke-et-regles-de-gestion-t-01t-29-en-php">É23 — test(php): moteur (engine_smoke) et règles de gestion T-01…T-29 en PHP<a class="headerlink" href="#e23-testphp-moteur-engine_smoke-et-regles-de-gestion-t-01t-29-en-php" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> La première suite PHP vérifie le moteur seul, puis rejoue les 29 tests du plan de validation directement contre le moteur JSON.</p>
 <pre><code class="language-bash">git add tests/php/engine_smoke.php \
         tests/php/run_tests.php
@@ -695,7 +826,7 @@ run_tests : les 29 règles de gestion rejouées sur le moteur (application court
 MESSAGE
 </code></pre>
 <p><strong>Contrôle après ce commit.</strong> <code>npm run test</code> → 29/29 conformes.</p>
-<h3 id="e24-testphp-98-tests-unitaires-108-fonctionnels-et-e2e-155-verifications">É24 — test(php): 98 tests unitaires, 108 fonctionnels et E2E 155 vérifications<a class="headerlink" href="#e24-testphp-98-tests-unitaires-108-fonctionnels-et-e2e-155-verifications" title="Permanent link">#</a></h3>
+<h3 id="e24-testphp-98-tests-unitaires-108-fonctionnels-et-e2e-155-verifications">É24 — test(php): 98 tests unitaires, 108 fonctionnels et E2E 155 vérifications<a class="headerlink" href="#e24-testphp-98-tests-unitaires-108-fonctionnels-et-e2e-155-verifications" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> Les suites qui couvrent l'application entière : unitaires, fonctionnels et un E2E qui rejoue aussi les attaques de la note cybersécurité.</p>
 <pre><code class="language-bash">git add tests/php/unit_tests.php \
         tests/php/features_test.php \
@@ -709,7 +840,7 @@ wasm-e2e : navigateur simulé — inscription, connexion, panier, commande payé
 MESSAGE
 </code></pre>
 <p><strong>Contrôle après ce commit.</strong> <code>npm run test:units</code>, <code>npm run test:features</code>, <code>npm run test:e2e</code> (le re-seed est automatique).</p>
-<h3 id="e25-buildqualite-linter-strict-types-declare_strict_types-phpstan-l9-zero-ternaire">É25 — build(qualité): linter strict types — declare_strict_types, PHPStan L9, zéro ternaire<a class="headerlink" href="#e25-buildqualite-linter-strict-types-declare_strict_types-phpstan-l9-zero-ternaire" title="Permanent link">#</a></h3>
+<h3 id="e25-buildqualite-linter-strict-types-declare_strict_types-phpstan-l9-zero-ternaire">É25 — build(qualité): linter strict types — declare_strict_types, PHPStan L9, zéro ternaire<a class="headerlink" href="#e25-buildqualite-linter-strict-types-declare_strict_types-phpstan-l9-zero-ternaire" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> Le linter maison garantit dans la sandbox les mêmes exigences que php-cs-fixer + PHPStan level 9, plus la règle de style « pas de ternaire ».</p>
 <pre><code class="language-bash">git add scripts/strict_types_lint.php
 git commit -F- &lt;&lt;'MESSAGE'
@@ -723,7 +854,7 @@ Branché en tête de npm run test:all : 0 violation sur les 79 fichiers PHP du l
 MESSAGE
 </code></pre>
 <p><strong>Contrôle après ce commit.</strong> <code>npm run lint:types</code> → 0 violation / 79 fichiers.</p>
-<h3 id="e26-buildqualite-configuration-composer-php-cs-fixer-et-phpstan-strict-require-dev">É26 — build(qualité): configuration Composer — php-cs-fixer et PHPStan strict (require-dev)<a class="headerlink" href="#e26-buildqualite-configuration-composer-php-cs-fixer-et-phpstan-strict-require-dev" title="Permanent link">#</a></h3>
+<h3 id="e26-buildqualite-configuration-composer-php-cs-fixer-et-phpstan-strict-require-dev">É26 — build(qualité): configuration Composer — php-cs-fixer et PHPStan strict (require-dev)<a class="headerlink" href="#e26-buildqualite-configuration-composer-php-cs-fixer-et-phpstan-strict-require-dev" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> L'équivalent « machine normale » du linter sandbox : Composer installe php-cs-fixer et PHPStan, les mêmes règles s'appliquent au vrai environnement.</p>
 <pre><code class="language-bash">git add composer.json \
         phpstan.neon \
@@ -737,7 +868,7 @@ Outils en require-dev uniquement : l'application n'a aucune dépendance runtime.
 MESSAGE
 </code></pre>
 <p><strong>Contrôle après ce commit.</strong> Sur une machine avec Composer : <code>composer cs:check</code> et <code>composer lint:types</code>.</p>
-<h3 id="e27-ci-chaine-gitlab-ci-6-jobs-miroir-github-actions-ct-09">É27 — ci: chaîne GitLab CI (6 jobs) + miroir GitHub Actions (CT-09)<a class="headerlink" href="#e27-ci-chaine-gitlab-ci-6-jobs-miroir-github-actions-ct-09" title="Permanent link">#</a></h3>
+<h3 id="e27-ci-chaine-gitlab-ci-6-jobs-miroir-github-actions-ct-09">É27 — ci: chaîne GitLab CI (6 jobs) + miroir GitHub Actions (CT-09)<a class="headerlink" href="#e27-ci-chaine-gitlab-ci-6-jobs-miroir-github-actions-ct-09" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> L'intégration continue exigée par la contrainte CT-09 : chaque push rejoue syntaxe, SQL, tests PHP et génération des documents — côté GitLab pour la notation.</p>
 <pre><code class="language-bash">git add .gitlab-ci.yml \
         .github/*
@@ -749,7 +880,7 @@ Jobs : syntaxe PHP, schéma rejouable, 29 tests SQL, tests PHP (moteur + règles
 Cible de notation : GitLab CI (ce fichier). Le workflow GitHub Actions est le miroir de développement, maintenu synchrone.
 MESSAGE
 </code></pre>
-<h3 id="e28-docssecurite-note-cybersecurite-s-01s-10-sec-01sec-13">É28 — docs(sécurité): note cybersécurité — S-01…S-10 / SEC-01…SEC-13<a class="headerlink" href="#e28-docssecurite-note-cybersecurite-s-01s-10-sec-01sec-13" title="Permanent link">#</a></h3>
+<h3 id="e28-docssecurite-note-cybersecurite-s-01s-10-sec-01sec-13">É28 — docs(sécurité): note cybersécurité — S-01…S-10 / SEC-01…SEC-13<a class="headerlink" href="#e28-docssecurite-note-cybersecurite-s-01s-10-sec-01sec-13" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> La source de vérité sécurité : chaque attaque, sa correction dans le code, et ce qui reste hors périmètre — assumé explicitement.</p>
 <pre><code class="language-bash">git add docs/07-note-cybersecurite.md
 git commit -F- &lt;&lt;'MESSAGE'
@@ -758,7 +889,7 @@ docs(sécurité): note cybersécurité — S-01…S-10 / SEC-01…SEC-13
 Pour chaque faille testée : attaque rejouée par la suite E2E, correction apportée (échappement, équivalent requêtes préparées, CSRF, sessions, IDOR, en-têtes de sécurité) et limites assumées (S-09 force brute : throttle esquissé, non livré).
 MESSAGE
 </code></pre>
-<h3 id="e29-docssoutenance-support-de-presentation-et-artefacts-html-du-rendu">É29 — docs(soutenance): support de présentation et artefacts HTML du rendu<a class="headerlink" href="#e29-docssoutenance-support-de-presentation-et-artefacts-html-du-rendu" title="Permanent link">#</a></h3>
+<h3 id="e29-docssoutenance-support-de-presentation-et-artefacts-html-du-rendu">É29 — docs(soutenance): support de présentation et artefacts HTML du rendu<a class="headerlink" href="#e29-docssoutenance-support-de-presentation-et-artefacts-html-du-rendu" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> Le support de soutenance et les rendus HTML « imprimables » des 6 documents officiels.</p>
 <pre><code class="language-bash">git add docs/03-support-soutenance.md \
         artefacts/*
@@ -768,7 +899,7 @@ docs(soutenance): support de présentation et artefacts HTML du rendu
 Support de soutenance (démo guidée, pièges rencontrés, bilan) et rendus HTML des documents officiels (générés depuis docs/, sources de vérité).
 MESSAGE
 </code></pre>
-<h3 id="e30-docs-readme-vue-densemble-installation-tests-qualite-securite">É30 — docs: README — vue d'ensemble, installation, tests, qualité, sécurité<a class="headerlink" href="#e30-docs-readme-vue-densemble-installation-tests-qualite-securite" title="Permanent link">#</a></h3>
+<h3 id="e30-docs-readme-vue-densemble-installation-tests-qualite-securite">É30 — docs: README — vue d'ensemble, installation, tests, qualité, sécurité<a class="headerlink" href="#e30-docs-readme-vue-densemble-installation-tests-qualite-securite" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> La porte d'entrée du dépôt : quoi installer, quoi lancer, où trouver chaque livrable.</p>
 <pre><code class="language-bash">git add README.md
 git commit -F- &lt;&lt;'MESSAGE'
@@ -777,7 +908,7 @@ docs: README — vue d'ensemble, installation, tests, qualité, sécurité
 Prise en main en 5 commandes, tableau des suites de tests (toutes vertes), politique de qualité (linter strict types, zéro ternaire), comptes de démonstration et correspondance documents ↔ exigences.
 MESSAGE
 </code></pre>
-<h3 id="e31-docsgit-fiche-de-suivi-des-commits-et-script-de-rejeu-vers-un-nouveau-gitlab">É31 — docs(git): fiche de suivi des commits et script de rejeu vers un nouveau GitLab<a class="headerlink" href="#e31-docsgit-fiche-de-suivi-des-commits-et-script-de-rejeu-vers-un-nouveau-gitlab" title="Permanent link">#</a></h3>
+<h3 id="e31-docsgit-fiche-de-suivi-des-commits-et-script-de-rejeu-vers-un-nouveau-gitlab">É31 — docs(git): fiche de suivi des commits et script de rejeu vers un nouveau GitLab<a class="headerlink" href="#e31-docsgit-fiche-de-suivi-des-commits-et-script-de-rejeu-vers-un-nouveau-gitlab" title="Permanent link"></a></h3>
 <p><strong>Contenu.</strong> La fiche de suivi elle-même + son automate : reconstituer ce dépôt, commit par commit, sur un nouveau GitLab.</p>
 <pre><code class="language-bash">git add docs/08-fiche-suivi-commits.md \
         scripts/rejeu_gitlab.py
@@ -790,7 +921,7 @@ scripts/rejeu_gitlab.py : rejoue automatiquement tout le plan dans une copie iso
 MESSAGE
 </code></pre>
 <p><strong>Jalon.</strong> <code>git tag -a v5-rendu -m "Rendu final (outillage, tests complets, qualité, CI, documents)"</code></p>
-<h2 id="4-jalons-tags-cf-charte-annexe-179">4. Jalons (tags) — cf. charte annexe 17.9<a class="headerlink" href="#4-jalons-tags-cf-charte-annexe-179" title="Permanent link">#</a></h2>
+<h2 id="4-jalons-tags-cf-charte-annexe-179">4. Jalons (tags) — cf. charte annexe 17.9<a class="headerlink" href="#4-jalons-tags-cf-charte-annexe-179" title="Permanent link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -832,7 +963,7 @@ MESSAGE
 </tr>
 </tbody>
 </table>
-<h2 id="5-historique-dorigine-tracabilite">5. Historique d'origine (traçabilité)<a class="headerlink" href="#5-historique-dorigine-tracabilite" title="Permanent link">#</a></h2>
+<h2 id="5-historique-dorigine-tracabilite">5. Historique d'origine (traçabilité)<a class="headerlink" href="#5-historique-dorigine-tracabilite" title="Permanent link"></a></h2>
 <p>Le dépôt d'origine (<code>github.com/jojo8356/SAE-302</code>, branche principale) contient un
 historique condensé par fusion de demandes de tirage. Correspondance :</p>
 <table>
@@ -878,7 +1009,7 @@ historique condensé par fusion de demandes de tirage. Correspondance :</p>
 </table>
 <p>Les étapes É25/É26 livrent le code <strong>dans son état final</strong> (déjà sans ternaire) :
 l'historique du nouveau dépôt est propre, sans aller-retour de refactoring.</p>
-<h2 id="6-fichiers-exclus-du-rejeu">6. Fichiers exclus du rejeu<a class="headerlink" href="#6-fichiers-exclus-du-rejeu" title="Permanent link">#</a></h2>
+<h2 id="6-fichiers-exclus-du-rejeu">6. Fichiers exclus du rejeu<a class="headerlink" href="#6-fichiers-exclus-du-rejeu" title="Permanent link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -905,7 +1036,7 @@ l'historique du nouveau dépôt est propre, sans aller-retour de refactoring.</p
 </tr>
 </tbody>
 </table>
-<h2 id="7-apres-le-push-la-charte-annexe-179-en-5-reglages">7. Après le push : la charte annexe 17.9 en 5 réglages<a class="headerlink" href="#7-apres-le-push-la-charte-annexe-179-en-5-reglages" title="Permanent link">#</a></h2>
+<h2 id="7-apres-le-push-la-charte-annexe-179-en-5-reglages">7. Après le push : la charte annexe 17.9 en 5 réglages<a class="headerlink" href="#7-apres-le-push-la-charte-annexe-179-en-5-reglages" title="Permanent link"></a></h2>
 <ol>
 <li>Dépôt <strong>privé</strong> ; inviter l'équipe (Developer) et l'enseignante (Reporter).</li>
 <li>Protéger <code>main</code> : <strong>pas de push direct</strong>, MR obligatoires.</li>
@@ -913,15 +1044,14 @@ l'historique du nouveau dépôt est propre, sans aller-retour de refactoring.</p
 <li>Activer « Delete source branch » et les pipelines (<code>.gitlab-ci.yml</code> est déjà dans É27).</li>
 <li>Vérifier que les 6 tags de jalons sont bien poussés (<code>git push --tags</code>).</li>
 </ol>
-<h2 id="8-verification-finale-du-depot-reconstitue">8. Vérification finale du dépôt reconstitué<a class="headerlink" href="#8-verification-finale-du-depot-reconstitue" title="Permanent link">#</a></h2>
+<h2 id="8-verification-finale-du-depot-reconstitue">8. Vérification finale du dépôt reconstitué<a class="headerlink" href="#8-verification-finale-du-depot-reconstitue" title="Permanent link"></a></h2>
 <pre><code class="language-bash">npm install            # outillage sandbox (aucune dépendance runtime pour l'app)
 node scripts/wasm_run.mjs scripts/seed.php   # re-seed des données de démo
 npm run test:all       # lint 0/79 · moteur · 29/29 · 98/98 · 108/108 · E2E 155/155
 </code></pre>
 <p>Tout doit être vert : le nouveau dépôt est fonctionnellement identique à l'original.</p>
 <footer class="doc">
-  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/08-fiche-suivi-commits.md</code>
-  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/08-fiche-suivi-commits.md</code> · 0 figure(s) intégrée(s).</p>
 </footer>
 </main>
 </body>

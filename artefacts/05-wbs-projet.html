@@ -1,54 +1,257 @@
-<!DOCTYPE html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MiniShop — WBS : divisions, lots et tâches de travail</title><style>
-:root { --ink:#1a2332; --accent:#7c2d12; --accent2:#b91c1c; --soft:#fefce8; --line:#e2d9c8; --code:#fdf6e3; }
-* { box-sizing:border-box; }
-body { font-family:Georgia,'Times New Roman',serif; color:var(--ink); background:#faf8f3;
-       max-width:980px; margin:0 auto; padding:48px 56px; line-height:1.62; font-size:16px; }
-h1,h2,h3,h4 { font-family:'Segoe UI',system-ui,sans-serif; color:var(--accent); line-height:1.25; }
-h1 { font-size:2.0em; border-bottom:3px solid var(--accent); padding-bottom:.35em; margin-top:1.2em; }
-h2 { font-size:1.5em; border-bottom:1px solid var(--line); padding-bottom:.25em; margin-top:2em; }
-h3 { font-size:1.2em; margin-top:1.6em; color:#9a3412; }
-h4 { font-size:1.05em; color:#a16207; }
-table { border-collapse:collapse; width:100%; margin:1em 0; font-family:'Segoe UI',system-ui,sans-serif; font-size:.86em; }
-th { background:#7c2d12; color:#fff; text-align:left; padding:7px 9px; }
-td { border:1px solid var(--line); padding:6px 9px; vertical-align:top; background:#fff; }
-tr:nth-child(even) td { background:#fdfaf3; }
-code { font-family:'JetBrains Mono',Consolas,monospace; font-size:.88em; background:var(--soft);
-       border:1px solid #f0e6c8; border-radius:3px; padding:1px 4px; }
-pre { background:var(--code); border:1px solid var(--line); border-left:4px solid var(--accent2);
-      border-radius:4px; padding:14px 16px; overflow-x:auto; line-height:1.45; }
-pre code { background:none; border:none; padding:0; font-size:.84em; }
-blockquote { border-left:4px solid #ca8a04; background:var(--soft); margin:1em 0; padding:.6em 1.1em; color:#713f12; }
-img { max-width:100%; border:1px solid var(--line); border-radius:6px; margin:8px 0; }
-hr { border:none; border-top:1px solid var(--line); margin:2.2em 0; }
-a { color:var(--accent2); }
-@media print { body { background:#fff; padding:0; } pre,table { page-break-inside:auto; } }
-
-.wbswrap { overflow-x:auto; }
-ul.wbstree, ul.wbstree ul { list-style:none; margin:0; padding-left:0; }
-ul.wbstree ul { padding-left:26px; }
-ul.wbstree li { position:relative; padding:5px 0 5px 16px; }
-ul.wbstree li::before { content:""; position:absolute; left:0; top:0; bottom:0; border-left:2px solid #d8c9a6; }
-ul.wbstree li::after { content:""; position:absolute; left:0; top:19px; width:12px; border-top:2px solid #d8c9a6; }
-ul.wbstree li:last-child::before { height:19px; }
-ul.wbstree > li::before { border-left:none; }
-.node { display:inline-block; padding:4px 12px; border-radius:5px; font-family:'Segoe UI',system-ui,sans-serif; font-size:.86em; }
-.node.n1 { background:#1a2332; color:#fff; font-weight:bold; font-size:.95em; }
-.node.ndiv { color:#fff; font-weight:bold; }
-.node.nlot { background:#fff; border:1px solid #e2d9c8; }
-.node.nlot i { color:#7a6a4f; font-style:normal; }
-table.gantt { font-size:.8em; }
-table.gantt th { text-align:center; padding:5px 4px; }
-table.gantt td { padding:0; height:22px; }
-table.gantt td.on { opacity:.85; }
-table.gantt td.off { background:#f7f2e8 !important; }
-table.gantt td.lot { padding:2px 8px; }
-table.gantt td.h { text-align:right; padding:2px 8px; }
-table.gantt tr.tot td { background:#f0e6d2 !important; font-weight:bold; }
-</style></head>
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : MiniShop — WBS (Work Breakdown Structure) : divisions, lots et tâches de travail">
+<title>MiniShop — WBS (Work Breakdown Structure) : divisions, lots et tâches de travail — MiniShop (SAÉ 302)</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
+  color: var(--encre);
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
+}
+pre {
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
+}
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
+}
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
+@media print {
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
 <body>
-<h1>MiniShop — WBS (Work Breakdown Structure) : divisions, lots et tâches de travail</h1>
+<main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/05-wbs-projet.md</code></div>
+</header>
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#1-objet-et-methode">1. Objet et méthode</a></li>
+<li><a href="#2-niveau-1-le-projet">2. Niveau 1 — le projet</a></li>
+<li><a href="#3-niveau-2-les-6-divisions-du-projet">3. Niveau 2 — les 6 divisions du projet</a><ul>
+<li><a href="#arborescence-wbs-niveaux-1-3">Arborescence WBS (niveaux 1 → 3)</a></li>
+</ul>
+</li>
+<li><a href="#4-niveau-3-les-16-lots">4. Niveau 3 — les 16 lots</a></li>
+<li><a href="#5-niveau-4-les-taches-de-travail-division-par-division">5. Niveau 4 — les tâches de travail, division par division</a><ul>
+<li><a href="#d1-pilotage-depot-gitlab-collaboration-17-h-roles-a-bareme-v-contribution-gitlab-readme-10-pts-individuel">D1 — Pilotage, dépôt GitLab &amp; collaboration (17 h · rôles A · barème v — contribution GitLab + README (10 pts, individuel))</a></li>
+<li><a href="#d2-document-de-specification-du-systeme-54-h-roles-a-c-bareme-i-20-points">D2 — Document de spécification du système (54 h · rôles A + C · barème i — 20 points)</a></li>
+<li><a href="#d3-conception-de-la-base-de-donnees-sql-98-h-roles-b-bareme-ii-20-points">D3 — Conception de la base de données &amp; SQL (98 h · rôles B · barème ii — 20 points)</a></li>
+<li><a href="#d4-application-web-php-mysql-pdo-146-h-roles-a-c-bareme-iii-30-points-avec-d5">D4 — Application Web PHP / MySQL / PDO (146 h · rôles A + C · barème iii — 30 points (avec D5))</a></li>
+<li><a href="#d5-tests-validation-document-de-tests-24-h-roles-b-a-bareme-iii-3-pts-si-le-document-manque">D5 — Tests &amp; validation (document de tests) (24 h · rôles B + A · barème iii — −3 pts si le document manque)</a></li>
+<li><a href="#d6-soutenance-15-min-questions-9-h-roles-a-b-bareme-iv-10-points">D6 — Soutenance (15 min + questions) (9 h · rôles A + B · barème iv — 10 points)</a></li>
+</ul>
+</li>
+<li><a href="#6-estimation-bottom-up-synthese-et-equilibre-des-charges">6. Estimation bottom-up : synthèse et équilibre des charges</a><ul>
+<li><a href="#61-remontee-des-charges">6.1 Remontée des charges</a></li>
+<li><a href="#62-estimation-par-role-de-planification-pas-une-capacite-individuelle">6.2 Estimation par rôle de planification (pas une capacité individuelle)</a></li>
+<li><a href="#63-planification-hebdomadaire-par-role">6.3 Planification hebdomadaire par rôle</a></li>
+</ul>
+</li>
+<li><a href="#7-gantt-12-semaines">7. Gantt (12 semaines)</a></li>
+<li><a href="#8-dependances-et-chemin-critique">8. Dépendances et chemin critique</a></li>
+<li><a href="#9-couts-le-seul-budget-rare-du-projet-le-temps">9. Coûts (le seul « budget » rare du projet : le temps)</a></li>
+<li><a href="#10-exploitation-dans-gitlab-la-wbs-devient-le-tableau-du-projet">10. Exploitation dans GitLab (la WBS devient le tableau du projet)</a></li>
+<li><a href="#11-gouvernance-definition-de-termine-et-replanification">11. Gouvernance : définition de « terminé » et replanification</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="minishop-wbs-work-breakdown-structure-divisions-lots-et-taches-de-travail">MiniShop — WBS (Work Breakdown Structure) : divisions, lots et tâches de travail<a class="headerlink" href="#minishop-wbs-work-breakdown-structure-divisions-lots-et-taches-de-travail" title="Permanent link"></a></h1>
 <p><strong>Structure de découpage du projet MiniShop selon la méthode WBS/OTP : 4 niveaux (projet → divisions → lots → tâches),
 estimation <em>bottom-up</em> de chaque tâche, répartition indicative par rôle A/B/C, Gantt, chemin critique et coûts.</strong></p>
 <table>
@@ -93,8 +296,8 @@ estimation <em>bottom-up</em> de chaque tâche, répartition indicative par rôl
 </tr>
 </tbody>
 </table>
-<hr>
-<h2>1. Objet et méthode</h2>
+<hr />
+<h2 id="1-objet-et-methode">1. Objet et méthode<a class="headerlink" href="#1-objet-et-methode" title="Permanent link"></a></h2>
 <p>La <strong>Work Breakdown Structure</strong> (structure de découpage de projet, ou organigramme des tâches) hiérarchise le travail en 4 niveaux :</p>
 <table>
 <thead>
@@ -137,8 +340,8 @@ C'est l'inverse d'une estimation globale « au doigt mouillé » : chaque heure 
 (cf. §10), ce qui relie la WBS au barème ; la trace de contribution réelle reste distincte des rôles A/B/C.</p>
 <p><strong>Note de version</strong> — le livrable GitLab CI (2 h) avait déjà été retiré du périmètre. La présente révision retire aussi, sans remplacement, le déploiement de démonstration et sa validation staging (3 h) ;
 les 348 h sont une estimation de planification pour 82 tâches, sans capacité d'équipe, affectation nominative ou heures réalisées établies. Aucun déploiement réel n'est revendiqué.</p>
-<hr>
-<h2>2. Niveau 1 — le projet</h2>
+<hr />
+<h2 id="2-niveau-1-le-projet">2. Niveau 1 — le projet<a class="headerlink" href="#2-niveau-1-le-projet" title="Permanent link"></a></h2>
 <p><strong>MiniShop</strong> : un site e-commerce (catalogue, panier, commandes) + un back-office (produits, catégories, stocks, commandes)
 en <strong>PHP 8 / MySQL (PDO) / MVC 3 couches</strong>, avec procédures stockées et déclencheurs, livré avec son dossier de
 spécification, sa base conçue et normalisée (3FN), son application à tester et à valider, et une soutenance de 15 minutes.</p>
@@ -148,8 +351,8 @@ ce qui suppose : 3 types de diagrammes UML présents, sécurité traitée (SQLi,
 20 identifiants de règles métier décrits (11 classés par convention comme issus du sujet + 9 compléments), script SQL reproductible, ≥ 5 procédures, ≥ 5 déclencheurs, application MVC et README ; ces éléments sont des critères à vérifier, pas un état validé.
 document de tests et dépôt GitLab avec contribution régulière.</p>
 </blockquote>
-<hr>
-<h2>3. Niveau 2 — les 6 divisions du projet</h2>
+<hr />
+<h2 id="3-niveau-2-les-6-divisions-du-projet">3. Niveau 2 — les 6 divisions du projet<a class="headerlink" href="#3-niveau-2-les-6-divisions-du-projet" title="Permanent link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -220,38 +423,8 @@ document de tests et dépôt GitLab avec contribution régulière.</p>
 </tr>
 </tbody>
 </table>
-<h3>Arborescence WBS (niveaux 1 → 3)</h3>
-<div class="wbswrap"><ul class="wbstree">
-<li><span class="node n1">MiniShop — 348 h estimées · rôles A/B/C · S1→S12</span><ul>
-<li><span class="node ndiv" style="background:#64748b">D1 · Pilotage, dépôt GitLab & collaboration · 17 h · A</span><ul>
-<li><span class="node nlot"><b>L1</b> Cadrage, relecture du sujet, grille de conformité, squelette du dépôt, README <i>(14 h · A · S1)</i></span></li>
-<li><span class="node nlot"><b>L15</b> README final et préparation du rendu <i>(3 h · A · S11)</i></span></li>
-</ul></li>
-<li><span class="node ndiv" style="background:#7c2d12">D2 · Document de spécification du système · 54 h · A + C</span><ul>
-<li><span class="node nlot"><b>L2</b> CDC : présentation, objectifs, acteurs, fonctionnalités <i>(26 h · A + C · S1/S2)</i></span></li>
-<li><span class="node nlot"><b>L3</b> Diagrammes UML (cas, classes, séquences) + règles métier formalisées <i>(28 h · B + C · S2/S3)</i></span></li>
-</ul></li>
-<li><span class="node ndiv" style="background:#b45309">D3 · Conception de la base de données & SQL · 98 h · B</span><ul>
-<li><span class="node nlot"><b>L4</b> MCD → MLD → normalisation, jeu de données <i>(28 h · B (+ relecture A) · S3)</i></span></li>
-<li><span class="node nlot"><b>L5</b> Script SQL complet (DDL, vues, index, seed) <i>(20 h · B · S4)</i></span></li>
-<li><span class="node nlot"><b>L6</b> 18 procédures stockées + 1 fonction + tests SQL associés <i>(30 h · B (+ tests A) · S5)</i></span></li>
-<li><span class="node nlot"><b>L7</b> 16 déclencheurs + tests SQL associés <i>(20 h · B (+ tests A) · S5/S6)</i></span></li>
-</ul></li>
-<li><span class="node ndiv" style="background:#15803d">D4 · Application Web PHP / MySQL / PDO · 146 h · A + C</span><ul>
-<li><span class="node nlot"><b>L8</b> Socle applicatif : front controller, routeur, PDO, Database, vues de base <i>(22 h · A · S6)</i></span></li>
-<li><span class="node nlot"><b>L9</b> Front-office : catalogue, recherche, fiche, inscription, connexion <i>(32 h · C · S7)</i></span></li>
-<li><span class="node nlot"><b>L10</b> Panier + commande (session, PanierController, CommandeController) <i>(28 h · A + C · S8)</i></span></li>
-<li><span class="node nlot"><b>L11</b> Back-office : produits, catégories, stocks, commandes, statuts, indicateurs <i>(30 h · A + C · S9)</i></span></li>
-<li><span class="node nlot"><b>L12</b> Durcissement sécurité (CSRF, échappement, autorisation, en-têtes, journaux) <i>(20 h · C · S9/S10)</i></span></li>
-<li><span class="node nlot"><b>L13</b> JavaScript client (panier, filtres, validation live, accessibilité) <i>(14 h · C · S10)</i></span></li>
-</ul></li>
-<li><span class="node ndiv" style="background:#b91c1c">D5 · Tests & validation (document de tests) · 24 h · B + A</span><ul>
-<li><span class="node nlot"><b>L14</b> Tests & validation : harnais, 29 tests SQL, cas fonctionnels, plan de recette, doc <i>(24 h · B + A · S10/S11)</i></span></li>
-</ul></li>
-<li><span class="node ndiv" style="background:#6d28d9">D6 · Soutenance (15 min + questions) · 9 h · A + B</span><ul>
-<li><span class="node nlot"><b>L16</b> Soutenance : support, trame et questions anticipées <i>(9 h · A + B · S12)</i></span></li>
-</ul></li>
-</ul></li></ul></div>
+<h3 id="arborescence-wbs-niveaux-1-3">Arborescence WBS (niveaux 1 → 3)<a class="headerlink" href="#arborescence-wbs-niveaux-1-3" title="Permanent link"></a></h3>
+<!--ARBRE_WBS-->
 
 <pre><code class="language-text">MiniShop — 348 h estimées · rôles A/B/C · 12 semaines de référence (S1→S12)
 │
@@ -280,8 +453,8 @@ document de tests et dépôt GitLab avec contribution régulière.</p>
 </code></pre>
 <p><em>Niveau 1 = le projet ; niveau 2 = les 6 divisions (structure des livrables, « PBS ») ; niveau 3 = les lots ;
 le niveau 4 — le travail lui-même — est détaillé section 5.</em></p>
-<hr>
-<h2>4. Niveau 3 — les 16 lots</h2>
+<hr />
+<h2 id="4-niveau-3-les-16-lots">4. Niveau 3 — les 16 lots<a class="headerlink" href="#4-niveau-3-les-16-lots" title="Permanent link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -432,13 +605,13 @@ le niveau 4 — le travail lui-même — est détaillé section 5.</em></p>
 </tr>
 </tbody>
 </table>
-<hr>
-<h2>5. Niveau 4 — les tâches de travail, division par division</h2>
+<hr />
+<h2 id="5-niveau-4-les-taches-de-travail-division-par-division">5. Niveau 4 — les tâches de travail, division par division<a class="headerlink" href="#5-niveau-4-les-taches-de-travail-division-par-division" title="Permanent link"></a></h2>
 <p><em>Lecture : chaque table liste les tâches du lot, leur rôle de planification (A/B/C), la charge estimée en heures,
 la <strong>définition de fini</strong> (livrable observable) et les dépendances (tâches ou lots préalables).
 La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong>remonte</strong> — rien n'est ajouté au niveau lot qui ne vienne d'une tâche.</em></p>
-<h3>D1 — Pilotage, dépôt GitLab &amp; collaboration (17 h · rôles A · barème v — contribution GitLab + README (10 pts, individuel))</h3>
-<h4>Lot L1 — Cadrage, relecture du sujet, grille de conformité, squelette du dépôt, README (14 h · A · S1)</h4>
+<h3 id="d1-pilotage-depot-gitlab-collaboration-17-h-roles-a-bareme-v-contribution-gitlab-readme-10-pts-individuel">D1 — Pilotage, dépôt GitLab &amp; collaboration (17 h · rôles A · barème v — contribution GitLab + README (10 pts, individuel))<a class="headerlink" href="#d1-pilotage-depot-gitlab-collaboration-17-h-roles-a-bareme-v-contribution-gitlab-readme-10-pts-individuel" title="Permanent link"></a></h3>
+<h4 id="lot-l1-cadrage-relecture-du-sujet-grille-de-conformite-squelette-du-depot-readme-14-h-a-s1">Lot L1 — Cadrage, relecture du sujet, grille de conformité, squelette du dépôt, README (14 h · A · S1)<a class="headerlink" href="#lot-l1-cadrage-relecture-du-sujet-grille-de-conformite-squelette-du-depot-readme-14-h-a-s1" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -509,7 +682,7 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 </tr>
 </tbody>
 </table>
-<h4>Lot L15 — README final et préparation du rendu (3 h · A · S11)</h4>
+<h4 id="lot-l15-readme-final-et-preparation-du-rendu-3-h-a-s11">Lot L15 — README final et préparation du rendu (3 h · A · S11)<a class="headerlink" href="#lot-l15-readme-final-et-preparation-du-rendu-3-h-a-s11" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -540,8 +713,8 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 </tr>
 </tbody>
 </table>
-<h3>D2 — Document de spécification du système (54 h · rôles A + C · barème i — 20 points)</h3>
-<h4>Lot L2 — CDC : présentation, objectifs, acteurs, fonctionnalités (26 h · A + C · S1/S2)</h4>
+<h3 id="d2-document-de-specification-du-systeme-54-h-roles-a-c-bareme-i-20-points">D2 — Document de spécification du système (54 h · rôles A + C · barème i — 20 points)<a class="headerlink" href="#d2-document-de-specification-du-systeme-54-h-roles-a-c-bareme-i-20-points" title="Permanent link"></a></h3>
+<h4 id="lot-l2-cdc-presentation-objectifs-acteurs-fonctionnalites-26-h-a-c-s1s2">Lot L2 — CDC : présentation, objectifs, acteurs, fonctionnalités (26 h · A + C · S1/S2)<a class="headerlink" href="#lot-l2-cdc-presentation-objectifs-acteurs-fonctionnalites-26-h-a-c-s1s2" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -612,7 +785,7 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 </tr>
 </tbody>
 </table>
-<h4>Lot L3 — Diagrammes UML (cas, classes, séquences) + règles métier formalisées (28 h · B + C · S2/S3)</h4>
+<h4 id="lot-l3-diagrammes-uml-cas-classes-sequences-regles-metier-formalisees-28-h-b-c-s2s3">Lot L3 — Diagrammes UML (cas, classes, séquences) + règles métier formalisées (28 h · B + C · S2/S3)<a class="headerlink" href="#lot-l3-diagrammes-uml-cas-classes-sequences-regles-metier-formalisees-28-h-b-c-s2s3" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -683,8 +856,8 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 </tr>
 </tbody>
 </table>
-<h3>D3 — Conception de la base de données &amp; SQL (98 h · rôles B · barème ii — 20 points)</h3>
-<h4>Lot L4 — MCD → MLD → normalisation, jeu de données (28 h · B (+ relecture A) · S3)</h4>
+<h3 id="d3-conception-de-la-base-de-donnees-sql-98-h-roles-b-bareme-ii-20-points">D3 — Conception de la base de données &amp; SQL (98 h · rôles B · barème ii — 20 points)<a class="headerlink" href="#d3-conception-de-la-base-de-donnees-sql-98-h-roles-b-bareme-ii-20-points" title="Permanent link"></a></h3>
+<h4 id="lot-l4-mcd-mld-normalisation-jeu-de-donnees-28-h-b-relecture-a-s3">Lot L4 — MCD → MLD → normalisation, jeu de données (28 h · B (+ relecture A) · S3)<a class="headerlink" href="#lot-l4-mcd-mld-normalisation-jeu-de-donnees-28-h-b-relecture-a-s3" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -755,7 +928,7 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 </tr>
 </tbody>
 </table>
-<h4>Lot L5 — Script SQL complet (DDL, vues, index, seed) (20 h · B · S4)</h4>
+<h4 id="lot-l5-script-sql-complet-ddl-vues-index-seed-20-h-b-s4">Lot L5 — Script SQL complet (DDL, vues, index, seed) (20 h · B · S4)<a class="headerlink" href="#lot-l5-script-sql-complet-ddl-vues-index-seed-20-h-b-s4" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -818,7 +991,7 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 </tr>
 </tbody>
 </table>
-<h4>Lot L6 — 18 procédures stockées + 1 fonction + tests SQL associés (30 h · B (+ tests A) · S5)</h4>
+<h4 id="lot-l6-18-procedures-stockees-1-fonction-tests-sql-associes-30-h-b-tests-a-s5">Lot L6 — 18 procédures stockées + 1 fonction + tests SQL associés (30 h · B (+ tests A) · S5)<a class="headerlink" href="#lot-l6-18-procedures-stockees-1-fonction-tests-sql-associes-30-h-b-tests-a-s5" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -897,7 +1070,7 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 </tr>
 </tbody>
 </table>
-<h4>Lot L7 — 16 déclencheurs + tests SQL associés (20 h · B (+ tests A) · S5/S6)</h4>
+<h4 id="lot-l7-16-declencheurs-tests-sql-associes-20-h-b-tests-a-s5s6">Lot L7 — 16 déclencheurs + tests SQL associés (20 h · B (+ tests A) · S5/S6)<a class="headerlink" href="#lot-l7-16-declencheurs-tests-sql-associes-20-h-b-tests-a-s5s6" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -960,8 +1133,8 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 </tr>
 </tbody>
 </table>
-<h3>D4 — Application Web PHP / MySQL / PDO (146 h · rôles A + C · barème iii — 30 points (avec D5))</h3>
-<h4>Lot L8 — Socle applicatif : front controller, routeur, PDO, Database, vues de base (22 h · A · S6)</h4>
+<h3 id="d4-application-web-php-mysql-pdo-146-h-roles-a-c-bareme-iii-30-points-avec-d5">D4 — Application Web PHP / MySQL / PDO (146 h · rôles A + C · barème iii — 30 points (avec D5))<a class="headerlink" href="#d4-application-web-php-mysql-pdo-146-h-roles-a-c-bareme-iii-30-points-avec-d5" title="Permanent link"></a></h3>
+<h4 id="lot-l8-socle-applicatif-front-controller-routeur-pdo-database-vues-de-base-22-h-a-s6">Lot L8 — Socle applicatif : front controller, routeur, PDO, Database, vues de base (22 h · A · S6)<a class="headerlink" href="#lot-l8-socle-applicatif-front-controller-routeur-pdo-database-vues-de-base-22-h-a-s6" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1024,7 +1197,7 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 </tr>
 </tbody>
 </table>
-<h4>Lot L9 — Front-office : catalogue, recherche, fiche, inscription, connexion (32 h · C · S7)</h4>
+<h4 id="lot-l9-front-office-catalogue-recherche-fiche-inscription-connexion-32-h-c-s7">Lot L9 — Front-office : catalogue, recherche, fiche, inscription, connexion (32 h · C · S7)<a class="headerlink" href="#lot-l9-front-office-catalogue-recherche-fiche-inscription-connexion-32-h-c-s7" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1095,7 +1268,7 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 </tr>
 </tbody>
 </table>
-<h4>Lot L10 — Panier + commande (session, PanierController, CommandeController) (28 h · A + C · S8)</h4>
+<h4 id="lot-l10-panier-commande-session-paniercontroller-commandecontroller-28-h-a-c-s8">Lot L10 — Panier + commande (session, PanierController, CommandeController) (28 h · A + C · S8)<a class="headerlink" href="#lot-l10-panier-commande-session-paniercontroller-commandecontroller-28-h-a-c-s8" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1166,7 +1339,7 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 </tr>
 </tbody>
 </table>
-<h4>Lot L11 — Back-office : produits, catégories, stocks, commandes, statuts, indicateurs (30 h · A + C · S9)</h4>
+<h4 id="lot-l11-back-office-produits-categories-stocks-commandes-statuts-indicateurs-30-h-a-c-s9">Lot L11 — Back-office : produits, catégories, stocks, commandes, statuts, indicateurs (30 h · A + C · S9)<a class="headerlink" href="#lot-l11-back-office-produits-categories-stocks-commandes-statuts-indicateurs-30-h-a-c-s9" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1237,7 +1410,7 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 </tr>
 </tbody>
 </table>
-<h4>Lot L12 — Durcissement sécurité (CSRF, échappement, autorisation, en-têtes, journaux) (20 h · C · S9/S10)</h4>
+<h4 id="lot-l12-durcissement-securite-csrf-echappement-autorisation-en-tetes-journaux-20-h-c-s9s10">Lot L12 — Durcissement sécurité (CSRF, échappement, autorisation, en-têtes, journaux) (20 h · C · S9/S10)<a class="headerlink" href="#lot-l12-durcissement-securite-csrf-echappement-autorisation-en-tetes-journaux-20-h-c-s9s10" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1300,7 +1473,7 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 </tr>
 </tbody>
 </table>
-<h4>Lot L13 — JavaScript client (panier, filtres, validation live, accessibilité) (14 h · C · S10)</h4>
+<h4 id="lot-l13-javascript-client-panier-filtres-validation-live-accessibilite-14-h-c-s10">Lot L13 — JavaScript client (panier, filtres, validation live, accessibilité) (14 h · C · S10)<a class="headerlink" href="#lot-l13-javascript-client-panier-filtres-validation-live-accessibilite-14-h-c-s10" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1355,8 +1528,8 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 </tr>
 </tbody>
 </table>
-<h3>D5 — Tests &amp; validation (document de tests) (24 h · rôles B + A · barème iii — −3 pts si le document manque)</h3>
-<h4>Lot L14 — Tests &amp; validation : harnais, 29 tests SQL, cas fonctionnels, plan de recette, doc (24 h · B + A · S10/S11)</h4>
+<h3 id="d5-tests-validation-document-de-tests-24-h-roles-b-a-bareme-iii-3-pts-si-le-document-manque">D5 — Tests &amp; validation (document de tests) (24 h · rôles B + A · barème iii — −3 pts si le document manque)<a class="headerlink" href="#d5-tests-validation-document-de-tests-24-h-roles-b-a-bareme-iii-3-pts-si-le-document-manque" title="Permanent link"></a></h3>
+<h4 id="lot-l14-tests-validation-harnais-29-tests-sql-cas-fonctionnels-plan-de-recette-doc-24-h-b-a-s10s11">Lot L14 — Tests &amp; validation : harnais, 29 tests SQL, cas fonctionnels, plan de recette, doc (24 h · B + A · S10/S11)<a class="headerlink" href="#lot-l14-tests-validation-harnais-29-tests-sql-cas-fonctionnels-plan-de-recette-doc-24-h-b-a-s10s11" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1427,8 +1600,8 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 </tr>
 </tbody>
 </table>
-<h3>D6 — Soutenance (15 min + questions) (9 h · rôles A + B · barème iv — 10 points)</h3>
-<h4>Lot L16 — Soutenance : support, trame et questions anticipées (9 h · A + B · S12)</h4>
+<h3 id="d6-soutenance-15-min-questions-9-h-roles-a-b-bareme-iv-10-points">D6 — Soutenance (15 min + questions) (9 h · rôles A + B · barème iv — 10 points)<a class="headerlink" href="#d6-soutenance-15-min-questions-9-h-roles-a-b-bareme-iv-10-points" title="Permanent link"></a></h3>
+<h4 id="lot-l16-soutenance-support-trame-et-questions-anticipees-9-h-a-b-s12">Lot L16 — Soutenance : support, trame et questions anticipées (9 h · A + B · S12)<a class="headerlink" href="#lot-l16-soutenance-support-trame-et-questions-anticipees-9-h-a-b-s12" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1467,9 +1640,9 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 </tr>
 </tbody>
 </table>
-<hr>
-<h2>6. Estimation bottom-up : synthèse et équilibre des charges</h2>
-<h3>6.1 Remontée des charges</h3>
+<hr />
+<h2 id="6-estimation-bottom-up-synthese-et-equilibre-des-charges">6. Estimation bottom-up : synthèse et équilibre des charges<a class="headerlink" href="#6-estimation-bottom-up-synthese-et-equilibre-des-charges" title="Permanent link"></a></h2>
+<h3 id="61-remontee-des-charges">6.1 Remontée des charges<a class="headerlink" href="#61-remontee-des-charges" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -1501,7 +1674,7 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 </tr>
 </tbody>
 </table>
-<h3>6.2 Estimation par rôle de planification (pas une capacité individuelle)</h3>
+<h3 id="62-estimation-par-role-de-planification-pas-une-capacite-individuelle">6.2 Estimation par rôle de planification (pas une capacité individuelle)<a class="headerlink" href="#62-estimation-par-role-de-planification-pas-une-capacite-individuelle" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -1539,7 +1712,7 @@ La ligne de sous-total de chaque lot redonne la charge du lot : la somme <strong
 </tbody>
 </table>
 <p>Les codes A/B/C répartissent les estimations entre fonctions de planification ; une même personne peut porter plusieurs rôles. Ils ne décrivent ni les personnes, ni la contribution réelle, ni la disponibilité de l'équipe.</p>
-<h3>6.3 Planification hebdomadaire par rôle</h3>
+<h3 id="63-planification-hebdomadaire-par-role">6.3 Planification hebdomadaire par rôle<a class="headerlink" href="#63-planification-hebdomadaire-par-role" title="Permanent link"></a></h3>
 <p><em>Les charges des lots pluri-hebdomadaires (L2, L3, L7, L12, L14) sont réparties également sur leurs semaines.
 Valeurs arrondies à l'heure.</em></p>
 <table>
@@ -1630,247 +1803,9 @@ Valeurs arrondies à l'heure.</em></p>
 </table>
 <p><strong>Pics du scénario de planification par rôle</strong> : S3 (B ≈ 32 h, lot L4 MCD/MLD), S5 (B ≈ 30 h, procédures), S7 (C = 32 h, front-office), S9 (charge agrégée d'environ 40 h). Ces valeurs ne sont ni des horaires individuels ni des disponibilités confirmées.
 Le calendrier et les charges hebdomadaires sont une base de discussion ; les replanifier après confirmation des disponibilités, sans déduire de capacité à partir du nombre de membres.</p>
-<hr>
-<h2>7. Gantt (12 semaines)</h2>
-<table class="gantt"><tr><th>Lot</th>
-<th>S1</th>
-<th>S2</th>
-<th>S3</th>
-<th>S4</th>
-<th>S5</th>
-<th>S6</th>
-<th>S7</th>
-<th>S8</th>
-<th>S9</th>
-<th>S10</th>
-<th>S11</th>
-<th>S12</th>
-<th>h estimées</th><th>Rôles</th></tr>
-<tr><td class="lot" style="border-left:5px solid #64748b"><b>L1</b></td>
-<td class="on" style="background:#64748b"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="h">14</td><td>A</td></tr>
-<tr><td class="lot" style="border-left:5px solid #7c2d12"><b>L2</b></td>
-<td class="on" style="background:#7c2d12"></td>
-<td class="on" style="background:#7c2d12"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="h">26</td><td>A + C</td></tr>
-<tr><td class="lot" style="border-left:5px solid #7c2d12"><b>L3</b></td>
-<td class="off"></td>
-<td class="on" style="background:#7c2d12"></td>
-<td class="on" style="background:#7c2d12"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="h">28</td><td>B + C</td></tr>
-<tr><td class="lot" style="border-left:5px solid #b45309"><b>L4</b></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="on" style="background:#b45309"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="h">28</td><td>B (+ relecture A)</td></tr>
-<tr><td class="lot" style="border-left:5px solid #b45309"><b>L5</b></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="on" style="background:#b45309"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="h">20</td><td>B</td></tr>
-<tr><td class="lot" style="border-left:5px solid #b45309"><b>L6</b></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="on" style="background:#b45309"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="h">30</td><td>B (+ tests A)</td></tr>
-<tr><td class="lot" style="border-left:5px solid #b45309"><b>L7</b></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="on" style="background:#b45309"></td>
-<td class="on" style="background:#b45309"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="h">20</td><td>B (+ tests A)</td></tr>
-<tr><td class="lot" style="border-left:5px solid #15803d"><b>L8</b></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="on" style="background:#15803d"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="h">22</td><td>A</td></tr>
-<tr><td class="lot" style="border-left:5px solid #15803d"><b>L9</b></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="on" style="background:#15803d"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="h">32</td><td>C</td></tr>
-<tr><td class="lot" style="border-left:5px solid #15803d"><b>L10</b></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="on" style="background:#15803d"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="h">28</td><td>A + C</td></tr>
-<tr><td class="lot" style="border-left:5px solid #15803d"><b>L11</b></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="on" style="background:#15803d"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="h">30</td><td>A + C</td></tr>
-<tr><td class="lot" style="border-left:5px solid #15803d"><b>L12</b></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="on" style="background:#15803d"></td>
-<td class="on" style="background:#15803d"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="h">20</td><td>C</td></tr>
-<tr><td class="lot" style="border-left:5px solid #15803d"><b>L13</b></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="on" style="background:#15803d"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="h">14</td><td>C</td></tr>
-<tr><td class="lot" style="border-left:5px solid #b91c1c"><b>L14</b></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="on" style="background:#b91c1c"></td>
-<td class="on" style="background:#b91c1c"></td>
-<td class="off"></td>
-<td class="h">24</td><td>B + A</td></tr>
-<tr><td class="lot" style="border-left:5px solid #64748b"><b>L15</b></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="on" style="background:#64748b"></td>
-<td class="off"></td>
-<td class="h">3</td><td>A</td></tr>
-<tr><td class="lot" style="border-left:5px solid #6d28d9"><b>L16</b></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="off"></td>
-<td class="on" style="background:#6d28d9"></td>
-<td class="h">9</td><td>A + B</td></tr>
-<tr class="tot"><td><b>Total</b></td><td class="off"></td><td class="off"></td><td class="off"></td><td class="off"></td><td class="off"></td><td class="off"></td><td class="off"></td><td class="off"></td><td class="off"></td><td class="off"></td><td class="off"></td><td class="off"></td><td class="h"><b>348</b></td><td>A+B+C</td></tr></table>
+<hr />
+<h2 id="7-gantt-12-semaines">7. Gantt (12 semaines)<a class="headerlink" href="#7-gantt-12-semaines" title="Permanent link"></a></h2>
+<!--GANTT_HTML-->
 
 <pre><code class="language-text">Lot |  S1  |  S2  |  S3  |  S4  |  S5  |  S6  |  S7  |  S8  |  S9  | S10  | S11  | S12 
 ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ----
@@ -1894,8 +1829,8 @@ L16  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |   ·  |  
 <p>Jalons intermédiaires (CDC §13.4) : <strong>J1</strong> fin S2 (CDC validé) · <strong>J2 bis</strong> fin S3 (3 types de diagrammes livrés) ·
 <strong>J3</strong> fin S7 (parcours visiteur complet) · <strong>J4</strong> fin S9 (back-office + sécurité) · <strong>J5</strong> fin S10 (recette exécutée) · <strong>J6</strong> S12 (soutenance).
 Trois dates sont figées par le calendrier pédagogique : S2, S10, S12.</p>
-<hr>
-<h2>8. Dépendances et chemin critique</h2>
+<hr />
+<h2 id="8-dependances-et-chemin-critique">8. Dépendances et chemin critique<a class="headerlink" href="#8-dependances-et-chemin-critique" title="Permanent link"></a></h2>
 <pre><code class="language-text">L1 ── L2 ── L3 ── L4 ── L5 ── L6 ── L7 ── L8 ── L9 ── L10 ── L11 ── L12 ── L14 ── L15 ── L16
  └─────────────── parallèle : D2 (UML) / D3 (BD) dès S2 ───────────────┘        │
                                      L8 (socle) peut démarrer dès que L2-L3 sont posés ←──────┘
@@ -1914,8 +1849,8 @@ Trois dates sont figées par le calendrier pédagogique : S2, S10, S12.</p>
   la semaine suivante ; L12/L13 ont une semaine de marge avant J5.</li>
 <li><strong>Hors chemin critique</strong> : L13 (JS) peut être réduite (repli : validation live du panier seulement) sans toucher au barème.</li>
 </ul>
-<hr>
-<h2>9. Coûts (le seul « budget » rare du projet : le temps)</h2>
+<hr />
+<h2 id="9-couts-le-seul-budget-rare-du-projet-le-temps">9. Coûts (le seul « budget » rare du projet : le temps)<a class="headerlink" href="#9-couts-le-seul-budget-rare-du-projet-le-temps" title="Permanent link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -1943,8 +1878,8 @@ Trois dates sont figées par le calendrier pédagogique : S2, S10, S12.</p>
 </tbody>
 </table>
 <p>Cette WBS propose un suivi des estimations par lot ; aucun relevé d'heures ni pointage hebdomadaire n'est attesté dans ce dépôt.</p>
-<hr>
-<h2>10. Exploitation dans GitLab (la WBS devient le tableau du projet)</h2>
+<hr />
+<h2 id="10-exploitation-dans-gitlab-la-wbs-devient-le-tableau-du-projet">10. Exploitation dans GitLab (la WBS devient le tableau du projet)<a class="headerlink" href="#10-exploitation-dans-gitlab-la-wbs-devient-le-tableau-du-projet" title="Permanent link"></a></h2>
 <ol>
 <li><strong>Une issue par tâche de niveau 4</strong> : titre <code>[(D3-L6-04)] sp_create_order, sp_add_order_line…</code> ;
    description = définition de fini + dépendances ; 82 issues à suivre au total (bulk import CSV).</li>
@@ -1954,15 +1889,20 @@ Trois dates sont figées par le calendrier pédagogique : S2, S10, S12.</p>
    les contrôles GitHub Actions doivent être verts sur le commit vérifié ; aucun pipeline GitLab n'est revendiqué.</li>
 <li><strong>Contribution GitLab</strong> (barème v) : consulter l'historique du dépôt IUT et le rapprocher de la composition réellement confirmée ; aucun nombre d'auteurs ni contribution individuelle n'est déduit des codes A/B/C.</li>
 </ol>
-<hr>
-<h2>11. Gouvernance : définition de « terminé » et replanification</h2>
+<hr />
+<h2 id="11-gouvernance-definition-de-termine-et-replanification">11. Gouvernance : définition de « terminé » et replanification<a class="headerlink" href="#11-gouvernance-definition-de-termine-et-replanification" title="Permanent link"></a></h2>
 <p><strong>Une tâche de niveau 4 est fermée lorsque sa définition de fini est observée</strong> (colonne dédiée au §5) et que les preuves annoncées correspondent réellement au livrable.
 Pour un changement traité par MR, consigner la revue croisée et, lorsqu'applicable, le statut CI du commit ; ces éléments ne sont pas inférés de la seule présence de la charte ou des modèles.
 Le critère documentaire de <code>D1-L1-05</code> porte uniquement sur la charte versionnée et les modèles de MR ; il ne certifie pas l'usage effectif des MR ni des revues croisées.
 La CI automatisée du dépôt est GitHub Actions (<code>.github/workflows/ci.yml</code>) ; elle ne constitue pas une preuve de pipeline GitLab IUT.
 La documentation liée (CDC, conception, tests, README) est mise à jour avec le livrable concerné.</p>
 <p><strong>Replanification de l'équipe</strong> — le README nomme deux membres alors que la WBS répartit 348 h entre trois rôles A/B/C. Aucun rôle n'est attribué à une personne sans confirmation. Le nombre de membres ne déclenche aucun retrait automatique d'exigences ; une répartition révisée exige une décision explicite de l'équipe.</p>
-<hr>
+<hr />
 <p><em>WBS MiniShop v1.2 — document généré depuis la même source de données que le CDC §13.3 ;
 méthode : structure de découpage en 4 niveaux, estimation bottom-up, plan de charge, Gantt, chemin critique.</em></p>
-</body></html>
+<footer class="doc">
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/05-wbs-projet.md</code> · 0 figure(s) intégrée(s).</p>
+</footer>
+</main>
+</body>
+</html>

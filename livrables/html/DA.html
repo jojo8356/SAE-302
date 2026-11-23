@@ -3,91 +3,222 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light dark">
-<meta name="description" content="SAÉ 302 — MiniShop : DA — Direction artistique MiniShop#">
-<title>DA — Direction artistique MiniShop# — MiniShop</title>
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : DA — Direction artistique MiniShop">
+<title>DA — Direction artistique MiniShop — MiniShop (SAÉ 302)</title>
 <style>
 :root {
   --encre: #0f172a;
   --encre-douce: #475569;
-  --papier: #fbfaf7;
-  --carte: #ffffff;
-  --trait: #e2e8f0;
-  --accent: #1d4ed8;
-  --accent-clair: #dbeafe;
-  --code: #f1f5f9;
-  --mesure: 72ch;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
-    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
-    --accent-clair: #1e3a8a; --code: #16223a;
-  }
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
 }
 * { box-sizing: border-box; }
 html { font-size: 100%; -webkit-text-size-adjust: 100%; }
 body {
-  margin: 0 auto;
-  padding: 2.5rem 1.25rem 5rem;
-  max-width: calc(var(--mesure) + 6rem);
-  background: var(--papier);
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
   color: var(--encre);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
-  font-size: 1rem;
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
   line-height: 1.65;
   text-rendering: optimizeLegibility;
 }
-h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
-h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
-h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
-h3 { font-size: 1.15rem; }
-h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
-p, li { max-width: var(--mesure); }
-a { color: var(--accent); text-underline-offset: 0.15em; }
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
 a:hover { text-decoration-thickness: 2px; }
 code {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
 }
 pre {
-  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
-  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
 }
-pre code { background: none; padding: 0; font-size: inherit; }
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
 blockquote {
-  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
-  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
 }
-blockquote p { margin: 0.35rem 0; }
-table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
-caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
-th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
-thead th { background: var(--accent-clair); }
-tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
-img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
-hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
-ul, ol { padding-left: 1.4rem; }
-li { margin: 0.25rem 0; }
-li input[type="checkbox"] { margin-right: 0.4rem; }
-.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
-.toc > ul { list-style: none; padding-left: 0; }
-.toc ul ul { padding-left: 1rem; }
-footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
 @media print {
-  :root { --papier: #fff; --carte: #fff; }
-  @page { size: A4; margin: 18mm 16mm; }
-  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
   h1, h2, h3 { break-after: avoid; }
   table, pre, img, blockquote { break-inside: avoid; }
   a { color: inherit; text-decoration: none; }
-  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
   .toc { break-after: page; }
 }
 </style>
 </head>
 <body>
 <main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/DA.md</code></div>
+</header>
 <nav class="toc" aria-label="Sommaire"><div class="toc">
 <ul>
 <li><a href="#1-methode">1. Méthode</a></li>
@@ -135,7 +266,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </ul>
 </div>
 </nav>
-<h1 id="da-direction-artistique-minishop">DA — Direction artistique MiniShop<a class="headerlink" href="#da-direction-artistique-minishop" title="Permanent link">#</a></h1>
+<h1 id="da-direction-artistique-minishop">DA — Direction artistique MiniShop<a class="headerlink" href="#da-direction-artistique-minishop" title="Permanent link"></a></h1>
 <blockquote>
 <p><strong>Version 1.0 — 23/10/2026.</strong> Document de conception visuelle du front-office et du back-office.
 Il précède l'implémentation (<code>public/css/app.css</code>) et la <strong>valide</strong> : chaque décision ci-dessous
@@ -145,7 +276,7 @@ correspond à un token ou un composant du code, et au test <code>tests/php/css_c
 aucune CDN) pour rester conforme à <code>ENF-20</code> (« aucune dépendance runtime hors PHP/MySQL/Apache »).</p>
 </blockquote>
 <hr />
-<h2 id="1-methode">1. Méthode<a class="headerlink" href="#1-methode" title="Permanent link">#</a></h2>
+<h2 id="1-methode">1. Méthode<a class="headerlink" href="#1-methode" title="Permanent link"></a></h2>
 <ol>
 <li><strong>Benchmark</strong> de 5 acteurs français du e-commerce high-tech (Amazon, Cdiscount, Fnac, Boulanger, Back Market).</li>
 <li><strong>Grille d'analyse</strong> en 10 critères : hiérarchie visuelle, densité, navigation, fiche produit, panier,
@@ -157,8 +288,8 @@ aucune CDN) pour rester conforme à <code>ENF-20</code> (« aucune dépendance r
 <p>Le benchmark porte sur des <strong>patterns observables</strong> (structures, hiérarchies, comportements), pas sur des
 captures : aucune marque, logo ou ressource de ces sites n'est réutilisée.</p>
 <hr />
-<h2 id="2-benchmark-5-concurrents">2. Benchmark — 5 concurrents<a class="headerlink" href="#2-benchmark-5-concurrents" title="Permanent link">#</a></h2>
-<h3 id="21-amazonfr-la-reference-de-la-densite">2.1 Amazon.fr — la référence de la densité<a class="headerlink" href="#21-amazonfr-la-reference-de-la-densite" title="Permanent link">#</a></h3>
+<h2 id="2-benchmark-5-concurrents">2. Benchmark — 5 concurrents<a class="headerlink" href="#2-benchmark-5-concurrents" title="Permanent link"></a></h2>
+<h3 id="21-amazonfr-la-reference-de-la-densite">2.1 Amazon.fr — la référence de la densité<a class="headerlink" href="#21-amazonfr-la-reference-de-la-densite" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -192,7 +323,7 @@ captures : aucune marque, logo ou ressource de ces sites n'est réutilisée.</p>
 <p><strong>On reprend</strong> : la <em>buy box</em> (prix + disponibilité + quantité + CTA dans un même cadre), la date/le délai
 de livraison, les badges de réassurance.
 <strong>On refuse</strong> : la densité publicitaire, l'empilement de carrousels, les faux compteurs d'urgence.</p>
-<h3 id="22-cdiscountcom-le-prix-comme-argument-central">2.2 Cdiscount.com — le prix comme argument central<a class="headerlink" href="#22-cdiscountcom-le-prix-comme-argument-central" title="Permanent link">#</a></h3>
+<h3 id="22-cdiscountcom-le-prix-comme-argument-central">2.2 Cdiscount.com — le prix comme argument central<a class="headerlink" href="#22-cdiscountcom-le-prix-comme-argument-central" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -225,7 +356,7 @@ de livraison, les badges de réassurance.
 </table>
 <p><strong>On reprend</strong> : la lisibilité du prix TTC et du taux de TVA, le contraste prix / reste.
 <strong>On refuse</strong> : l'usage du rouge pour un prix (le rouge est réservé aux <strong>erreurs</strong> dans notre système).</p>
-<h3 id="23-fnaccom-leditorialisation">2.3 Fnac.com — l'éditorialisation<a class="headerlink" href="#23-fnaccom-leditorialisation" title="Permanent link">#</a></h3>
+<h3 id="23-fnaccom-leditorialisation">2.3 Fnac.com — l'éditorialisation<a class="headerlink" href="#23-fnaccom-leditorialisation" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -258,7 +389,7 @@ de livraison, les badges de réassurance.
 </table>
 <p><strong>On reprend</strong> : le <strong>rythme</strong> (alternance sections pleine largeur / grilles) et la hiérarchie de titres
 claire ; la double famille typographique est écartée (dépendance à une police web).</p>
-<h3 id="24-boulangercom-la-recherche-produit-outillee">2.4 Boulanger.com — la recherche produit outillée<a class="headerlink" href="#24-boulangercom-la-recherche-produit-outillee" title="Permanent link">#</a></h3>
+<h3 id="24-boulangercom-la-recherche-produit-outillee">2.4 Boulanger.com — la recherche produit outillée<a class="headerlink" href="#24-boulangercom-la-recherche-produit-outillee" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -292,7 +423,7 @@ claire ; la double famille typographique est écartée (dépendance à une polic
 <p><strong>On reprend</strong> : les <strong>filtres à facettes avec état dans l'URL</strong>, les pastilles de filtres actifs, la carte
 produit homogène (hauteur fixe du bloc titre).
 <strong>On refuse</strong> : la comparaison multi-produits et le sélecteur de magasin (hors périmètre §11.2).</p>
-<h3 id="25-back-market-la-confiance-par-le-design">2.5 Back Market — la confiance par le design<a class="headerlink" href="#25-back-market-la-confiance-par-le-design" title="Permanent link">#</a></h3>
+<h3 id="25-back-market-la-confiance-par-le-design">2.5 Back Market — la confiance par le design<a class="headerlink" href="#25-back-market-la-confiance-par-le-design" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -326,7 +457,7 @@ produit homogène (hauteur fixe du bloc titre).
 <p><strong>On reprend</strong> : la <strong>restriction chromatique</strong> (une couleur de marque + un accent d'action), le CTA sombre
 ou très contrasté, la respiration, les cibles tactiles ≥ 44 px.</p>
 <hr />
-<h2 id="3-synthese-comparative">3. Synthèse comparative<a class="headerlink" href="#3-synthese-comparative" title="Permanent link">#</a></h2>
+<h2 id="3-synthese-comparative">3. Synthèse comparative<a class="headerlink" href="#3-synthese-comparative" title="Permanent link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -429,7 +560,7 @@ cohérence (prix TTC, stock réel, règles métier) doit être <strong>plus lisi
 Nous choisissons donc : <strong>peu d'éléments, très contrastés, hiérarchisés, accessibles</strong>, avec un
 back-office au même niveau de soin que la boutique — c'est rare et c'est un argument de soutenance.</p>
 <hr />
-<h2 id="4-positionnement">4. Positionnement<a class="headerlink" href="#4-positionnement" title="Permanent link">#</a></h2>
+<h2 id="4-positionnement">4. Positionnement<a class="headerlink" href="#4-positionnement" title="Permanent link"></a></h2>
 <blockquote>
 <p><strong>« La précision technique, sans la froideur. »</strong></p>
 </blockquote>
@@ -443,7 +574,7 @@ back-office au même niveau de soin que la boutique — c'est rare et c'est un a
    back-office utilise la même grammaire en version dense.</li>
 </ol>
 <hr />
-<h2 id="5-palette">5. Palette<a class="headerlink" href="#5-palette" title="Permanent link">#</a></h2>
+<h2 id="5-palette">5. Palette<a class="headerlink" href="#5-palette" title="Permanent link"></a></h2>
 <p>Contrastes calculés selon WCAG 2.1 (ratio <code>(L1+0.05)/(L2+0.05)</code>), vérifiés par <code>tests/php/css_contract.php</code>.</p>
 <table>
 <thead>
@@ -545,7 +676,7 @@ back-office au même niveau de soin que la boutique — c'est rare et c'est un a
 <li>Aucune couleur n'est porteuse d'information seule : chaque badge a un <strong>libellé texte</strong> (daltonisme).</li>
 </ul>
 <hr />
-<h2 id="6-typographie">6. Typographie<a class="headerlink" href="#6-typographie" title="Permanent link">#</a></h2>
+<h2 id="6-typographie">6. Typographie<a class="headerlink" href="#6-typographie" title="Permanent link"></a></h2>
 <ul>
 <li><strong>Texte système</strong> : pile <code>system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif</code>.
   Le caractère <strong>€</strong> utilise seul le glyphe de Lato Regular, adapté et renommé <code>MiniShopEuro</code>,
@@ -609,7 +740,7 @@ back-office au même niveau de soin que la boutique — c'est rare et c'est un a
 <li>Interlignage : 1,5 pour le texte, 1,15 pour les titres.</li>
 </ul>
 <hr />
-<h2 id="7-grille-espacement-formes">7. Grille, espacement, formes<a class="headerlink" href="#7-grille-espacement-formes" title="Permanent link">#</a></h2>
+<h2 id="7-grille-espacement-formes">7. Grille, espacement, formes<a class="headerlink" href="#7-grille-espacement-formes" title="Permanent link"></a></h2>
 <ul>
 <li><strong>Unité de base 8 px</strong>, échelle : 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64.</li>
 <li>Conteneur : <code>max-width: 1180px</code>, gouttières 16 px mobile, 24 px tablette, 32 px desktop.</li>
@@ -619,7 +750,7 @@ back-office au même niveau de soin que la boutique — c'est rare et c'est un a
 <li>Bordures : 1 px <code>--bordure</code> ; jamais de bordure décorative colorée en dehors des états.</li>
 </ul>
 <hr />
-<h2 id="8-composants-12">8. Composants (12)<a class="headerlink" href="#8-composants-12" title="Permanent link">#</a></h2>
+<h2 id="8-composants-12">8. Composants (12)<a class="headerlink" href="#8-composants-12" title="Permanent link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -692,7 +823,7 @@ back-office au même niveau de soin que la boutique — c'est rare et c'est un a
 </tbody>
 </table>
 <hr />
-<h2 id="9-accessibilite-wcag-21-aa">9. Accessibilité (WCAG 2.1 AA)<a class="headerlink" href="#9-accessibilite-wcag-21-aa" title="Permanent link">#</a></h2>
+<h2 id="9-accessibilite-wcag-21-aa">9. Accessibilité (WCAG 2.1 AA)<a class="headerlink" href="#9-accessibilite-wcag-21-aa" title="Permanent link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -757,7 +888,7 @@ back-office au même niveau de soin que la boutique — c'est rare et c'est un a
 <p><strong>Décision assumée</strong> : pas de mode sombre en v1 (coût de test doublé pour un gain nul en soutenance) ;
 les tokens sont prêts (<code>[data-theme="dark"]</code> documenté) si la suite du projet le demande.</p>
 <hr />
-<h2 id="10-iconographie-et-imagerie">10. Iconographie et imagerie<a class="headerlink" href="#10-iconographie-et-imagerie" title="Permanent link">#</a></h2>
+<h2 id="10-iconographie-et-imagerie">10. Iconographie et imagerie<a class="headerlink" href="#10-iconographie-et-imagerie" title="Permanent link"></a></h2>
 <ul>
 <li><strong>Icônes : jeu Lucide, inliné</strong> (gabarit 24 × 24, <code>stroke-width</code> 1,75 px, <code>currentColor</code>).
   Tracés utilisés : <code>panier</code>, <code>recherche</code>, <code>coche</code>, <code>alerte</code>, <code>croix</code>, <code>camion</code>, <code>cadenas</code>,
@@ -813,7 +944,7 @@ les tokens sont prêts (<code>[data-theme="dark"]</code> documenté) si la suite
     douce, 16/9 ou 4/3, ≤ 250 Ko) sous peine de casser la cohérence du hero.</li>
 </ul>
 <hr />
-<h2 id="11-regles-editoriales-microcopy">11. Règles éditoriales (microcopy)<a class="headerlink" href="#11-regles-editoriales-microcopy" title="Permanent link">#</a></h2>
+<h2 id="11-regles-editoriales-microcopy">11. Règles éditoriales (microcopy)<a class="headerlink" href="#11-regles-editoriales-microcopy" title="Permanent link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -857,7 +988,7 @@ les tokens sont prêts (<code>[data-theme="dark"]</code> documenté) si la suite
 </table>
 <p>Ton : <strong>direct, factuel, sans urgence artificielle</strong>. Tutoiement interdit, vouvoiement systématique.</p>
 <hr />
-<h2 id="12-mise-en-uvre">12. Mise en œuvre<a class="headerlink" href="#12-mise-en-uvre" title="Permanent link">#</a></h2>
+<h2 id="12-mise-en-uvre">12. Mise en œuvre<a class="headerlink" href="#12-mise-en-uvre" title="Permanent link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -911,7 +1042,7 @@ les tokens sont prêts (<code>[data-theme="dark"]</code> documenté) si la suite
 #  ✓ focus-visible défini
 </code></pre>
 <hr />
-<h2 id="13-ce-que-la-da-ne-fait-pas-bornes">13. Ce que la DA ne fait pas (bornes)<a class="headerlink" href="#13-ce-que-la-da-ne-fait-pas-bornes" title="Permanent link">#</a></h2>
+<h2 id="13-ce-que-la-da-ne-fait-pas-bornes">13. Ce que la DA ne fait pas (bornes)<a class="headerlink" href="#13-ce-que-la-da-ne-fait-pas-bornes" title="Permanent link"></a></h2>
 <ul>
 <li>pas de thème sombre, pas de personnalisation par utilisateur ;</li>
 <li>pas de photos produit (jeu de démo sans médias) ;</li>
@@ -921,20 +1052,20 @@ les tokens sont prêts (<code>[data-theme="dark"]</code> documenté) si la suite
 <li>pas de CDN de polices : la pile système et le glyphe euro local fonctionnent hors ligne.</li>
 </ul>
 <hr />
-<h2 id="14-responsive-et-adaptation-continue">14. Responsive et adaptation continue<a class="headerlink" href="#14-responsive-et-adaptation-continue" title="Permanent link">#</a></h2>
+<h2 id="14-responsive-et-adaptation-continue">14. Responsive et adaptation continue<a class="headerlink" href="#14-responsive-et-adaptation-continue" title="Permanent link"></a></h2>
 <blockquote>
 <p>Ajout demandé après la première revue : « aucun argument contre le design ».
 Cette section documente la stratégie, les paliers et les preuves — elle est
 vérifiée automatiquement par <code>tests/php/responsive_contract.php</code> (47 contrôles).</p>
 </blockquote>
-<h3 id="141-principe-fluide-dabord-paliers-pour-la-composition">14.1 Principe : fluide d'abord, paliers pour la composition<a class="headerlink" href="#141-principe-fluide-dabord-paliers-pour-la-composition" title="Permanent link">#</a></h3>
+<h3 id="141-principe-fluide-dabord-paliers-pour-la-composition">14.1 Principe : fluide d'abord, paliers pour la composition<a class="headerlink" href="#141-principe-fluide-dabord-paliers-pour-la-composition" title="Permanent link"></a></h3>
 <p>La mise en page ne « saute » pas d'un écran à l'autre : elle se dilate. Les
 tailles de titres, les gouttières et les espacements verticaux utilisent
 <code>clamp(min, préféré, max)</code>, la largeur utile <code>min(100% - 2 × gouttière, 1280px)</code>.
 Les points de rupture ne servent qu'aux <strong>changements de composition</strong> —
 c'est la règle que suivent Stripe, GOV.UK ou Material 3, et elle évite le
 « responsive à trois tailles figées » qui casse sur les formats pliables.</p>
-<h3 id="142-paliers">14.2 Paliers<a class="headerlink" href="#142-paliers" title="Permanent link">#</a></h3>
+<h3 id="142-paliers">14.2 Paliers<a class="headerlink" href="#142-paliers" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -991,7 +1122,7 @@ c'est la règle que suivent Stripe, GOV.UK ou Material 3, et elle évite le
 </tr>
 </tbody>
 </table>
-<h3 id="143-techniques-appliquees-et-pourquoi">14.3 Techniques appliquées (et pourquoi)<a class="headerlink" href="#143-techniques-appliquees-et-pourquoi" title="Permanent link">#</a></h3>
+<h3 id="143-techniques-appliquees-et-pourquoi">14.3 Techniques appliquées (et pourquoi)<a class="headerlink" href="#143-techniques-appliquees-et-pourquoi" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -1068,7 +1199,7 @@ c'est la règle que suivent Stripe, GOV.UK ou Material 3, et elle évite le
 </tr>
 </tbody>
 </table>
-<h3 id="144-matrice-de-validation">14.4 Matrice de validation<a class="headerlink" href="#144-matrice-de-validation" title="Permanent link">#</a></h3>
+<h3 id="144-matrice-de-validation">14.4 Matrice de validation<a class="headerlink" href="#144-matrice-de-validation" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -1115,7 +1246,7 @@ c'est la règle que suivent Stripe, GOV.UK ou Material 3, et elle évite le
 </tr>
 </tbody>
 </table>
-<h3 id="145-sources-et-regles-appliquees">14.5 Sources et règles appliquées<a class="headerlink" href="#145-sources-et-regles-appliquees" title="Permanent link">#</a></h3>
+<h3 id="145-sources-et-regles-appliquees">14.5 Sources et règles appliquées<a class="headerlink" href="#145-sources-et-regles-appliquees" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -1149,7 +1280,7 @@ c'est la règle que suivent Stripe, GOV.UK ou Material 3, et elle évite le
 <p>Les paliers GOV.UK (40 em / 48 em / 64 em) ont servi de référence ; nous
 utilisons 25 / 35 / 40 / 45 / 64 / 87,5 em parce que le catalogue a besoin
 d'un palier supplémentaire pour le passage en cartes du panier.</p>
-<h3 id="146-limites-assumees">14.6 Limites assumées<a class="headerlink" href="#146-limites-assumees" title="Permanent link">#</a></h3>
+<h3 id="146-limites-assumees">14.6 Limites assumées<a class="headerlink" href="#146-limites-assumees" title="Permanent link"></a></h3>
 <ul>
 <li>Aucun navigateur n'est installé dans l'environnement de production des
   livrables : la validation est <strong>statique</strong> (contrat de 47 vérifications) plus
@@ -1158,10 +1289,10 @@ d'un palier supplémentaire pour le passage en cartes du panier.</p>
 <li>Pas de <code>:has()</code> ni de <code>color-mix()</code> indispensables : les rares usages de
   <code>color-mix()</code> ont un repli par couleur littérale dans la même règle.</li>
 </ul>
-<h2 id="12-pages-dinformation-et-confiance-etude-prealable-date-portee-28102026-apres-la-coupure-du-2310-contenu-a-confirmer">12. Pages d'information et confiance — étude préalable (date portée : 28/10/2026, après la coupure du 23/10 ; contenu à confirmer)<a class="headerlink" href="#12-pages-dinformation-et-confiance-etude-prealable-date-portee-28102026-apres-la-coupure-du-2310-contenu-a-confirmer" title="Permanent link">#</a></h2>
+<h2 id="12-pages-dinformation-et-confiance-etude-prealable-date-portee-28102026-apres-la-coupure-du-2310-contenu-a-confirmer">12. Pages d'information et confiance — étude préalable (date portée : 28/10/2026, après la coupure du 23/10 ; contenu à confirmer)<a class="headerlink" href="#12-pages-dinformation-et-confiance-etude-prealable-date-portee-28102026-apres-la-coupure-du-2310-contenu-a-confirmer" title="Permanent link"></a></h2>
 <p>Les pages juridiques de <a href="https://www.boulanger.com/evenement/conditions-generales-vente-boulanger">Boulanger</a> séparent l'identification, les conditions de vente et les informations de livraison/retour ; celles de <a href="https://www.fnac.com/Help/cgv-fnac-marketplace">Fnac</a> et <a href="https://www.backmarket.fr/fr-fr/legal/terms-of-use">Back Market</a> distinguent en outre les rôles des vendeurs de marketplace. MiniShop est une <strong>maquette de vente directe</strong>, non une marketplace : on reprend la navigation identifiable, les titres explicites et la séparation des sujets, pas leurs clauses ni leurs obligations propres aux plateformes. Les éléments juridiques et les limites sont étudiés dans <code>docs/12-information-juridique.md</code>.</p>
 <p><strong>Décisions avant réalisation :</strong> pied de page organisé en rubriques courtes, lien direct vers la rétractation ; pages centrées et de largeur de lecture limitée, hiérarchie H1/H2, encadrés visibles pour le statut de maquette et le texte réglementaire, liens soulignés, retours à la ligne et marges adaptables, pas de tableau à défilement imposé. Aucun bandeau de choix décoratif pour les seuls traceurs nécessaires. La disposition doit fonctionner au clavier et à 320 px sans défilement horizontal ; les principes de <a href="https://www.w3.org/WAI/WCAG21/Understanding/reflow.html">reflow WCAG</a> et de <a href="https://design-system.service.gov.uk/styles/layout/">mise en page GOV.UK</a> guident le choix. Les contrôles statiques ne remplacent pas un audit d'accessibilité ni un rendu navigateur réel.</p>
-<h2 id="15-date-des-derniers-ajouts-decision-prealable">15. Date des derniers ajouts — décision préalable<a class="headerlink" href="#15-date-des-derniers-ajouts-decision-prealable" title="Permanent link">#</a></h2>
+<h2 id="15-date-des-derniers-ajouts-decision-prealable">15. Date des derniers ajouts — décision préalable<a class="headerlink" href="#15-date-des-derniers-ajouts-decision-prealable" title="Permanent link"></a></h2>
 <p>Le benchmark des cartes d'Amazon, Fnac, Boulanger et Back Market (§2–3) privilégie
 la hiérarchie image → nom → prix → disponibilité → action ; il ne démontre pas que
 ces sites affichent une heure de création sur leurs cartes. Pour le besoin propre à
@@ -1172,7 +1303,7 @@ compréhensible aux outils ; si elle manque ou n'est pas valide, afficher un rep
 explicite sans date inventée. L'alignement reste fluide et le texte peut revenir à
 la ligne sur mobile, conformément aux principes de reflow W3C et de mise en page
 GOV.UK documentés en §14.5. Aucune nouvelle image ni icône n'est nécessaire.</p>
-<h2 id="16-lisibilite-du-pied-de-page-correction-de-contraste">16. Lisibilité du pied de page — correction de contraste<a class="headerlink" href="#16-lisibilite-du-pied-de-page-correction-de-contraste" title="Permanent link">#</a></h2>
+<h2 id="16-lisibilite-du-pied-de-page-correction-de-contraste">16. Lisibilité du pied de page — correction de contraste<a class="headerlink" href="#16-lisibilite-du-pied-de-page-correction-de-contraste" title="Permanent link"></a></h2>
 <p>La comparaison des enseignes et des systèmes de design (§2 et §14) retient une
 hiérarchie discrète mais lisible pour les informations secondaires. La capture
 WAVE fournie pour le catalogue signale un texte du pied de page trop peu contrasté.
@@ -1186,7 +1317,7 @@ Le calcul des couleurs déclarées donne <code>#475569</code> sur <code>#0f172a<
 avant correction et <code>#cbd5e1</code> sur <code>#0f172a</code> = 12,02:1 après correction.
 C’est un contrôle statique, pas une analyse de rendu : confirmer le résultat
 sur le navigateur et la page réellement déployés.</p>
-<h2 id="17-cartes-produit-liens-et-titres-accessibles">17. Cartes produit : liens et titres accessibles<a class="headerlink" href="#17-cartes-produit-liens-et-titres-accessibles" title="Permanent link">#</a></h2>
+<h2 id="17-cartes-produit-liens-et-titres-accessibles">17. Cartes produit : liens et titres accessibles<a class="headerlink" href="#17-cartes-produit-liens-et-titres-accessibles" title="Permanent link"></a></h2>
 <p>L’étude concurrentielle des cartes (§2.3 et §2.4) et les principes de clarté
 de la charte conservent le nom comme véritable titre, le prix distinct et une
 action visible « Voir la fiche ». Lorsqu’un titre et un bouton conduisent tous
@@ -1205,32 +1336,31 @@ et son poids <code>800</code> ; les grands paragraphes en gras peuvent déclench
 transformer artificiellement en titre pour supprimer l’alerte. Un élément a été
 identifié, pas nécessairement tous les autres : les vérifier individuellement et
 refaire WAVE après déploiement ; aucun rendu réel n’a été exécuté ici.</p>
-<h3 id="alternatives-des-visuels-produit">Alternatives des visuels produit<a class="headerlink" href="#alternatives-des-visuels-produit" title="Permanent link">#</a></h3>
+<h3 id="alternatives-des-visuels-produit">Alternatives des visuels produit<a class="headerlink" href="#alternatives-des-visuels-produit" title="Permanent link"></a></h3>
 <p>Les cartes conservent une image décorative (<code>alt=""</code>), le nom étant déjà visible. La fiche choisit explicitement une alternative informative qui identifie le visuel comme indicatif. Ce libellé reprend le nom, sans inventer de détail sur la photographie ; une véritable description visuelle doit être fournie et vérifiée si l’image véhicule une information supplémentaire. Le choix entre les deux stratégies se fait à l’exécution, pas par le compilateur PHP.</p>
-<h3 id="complement-filtres-de-prix">Complément — filtres de prix<a class="headerlink" href="#complement-filtres-de-prix" title="Permanent link">#</a></h3>
+<h3 id="complement-filtres-de-prix">Complément — filtres de prix<a class="headerlink" href="#complement-filtres-de-prix" title="Permanent link"></a></h3>
 <p>Dans la continuité des filtres à facettes observés chez Boulanger (§2.4), les bornes
 de prix forment un groupe unique : deux champs côte à côte si l’espace le permet,
 puis empilés sur les écrans les plus étroits. Les libellés restent visibles et
 les champs ne doivent pas provoquer de défilement horizontal. L’implémentation
 est dans <code>.filtres-prix</code> et le rendu reste à vérifier sur les appareils réels.</p>
-<h2 id="20-etude-ciblee-tableaux-administrateur-sur-mobile">20. Étude ciblée — tableaux administrateur sur mobile<a class="headerlink" href="#20-etude-ciblee-tableaux-administrateur-sur-mobile" title="Permanent link">#</a></h2>
+<h2 id="20-etude-ciblee-tableaux-administrateur-sur-mobile">20. Étude ciblée — tableaux administrateur sur mobile<a class="headerlink" href="#20-etude-ciblee-tableaux-administrateur-sur-mobile" title="Permanent link"></a></h2>
 <p><strong>Étude avant implémentation.</strong> Le <a href="https://ui.shadcn.com/docs/components/base/table">composant Table de shadcn/ui</a> conserve un vrai tableau dans une zone défilante ; sa <a href="https://ui.shadcn.com/docs/typeset">documentation Typeset</a> distingue le retour à la ligne et le défilement horizontal contenu. Le <a href="https://designsystem.digital.gov/components/table/">design system USWDS</a> recommande le tableau défilant pour comparer de nombreuses colonnes chiffrées, et les lignes empilées avec <code>data-label</code> identique à l'en-tête pour des fiches descriptives. Le <a href="https://www.w3.org/WAI/WCAG21/Understanding/reflow.html">W3C</a> prévoit une exception pour le tableau bidimensionnel, pas pour le débordement du reste de la page.</p>
 <p><strong>Décision MiniShop.</strong> Garder les tableaux HTML et leurs en-têtes sur grand écran ; sur mobile, présenter chaque enregistrement comme une fiche, chaque libellé au-dessus de sa valeur, sans imposer une ligne unique. Les noms, montants, statuts, liens et actions restent visibles, sans troncature ; les mots très longs peuvent se couper, les contrôles restent utilisables. Pour les tableaux qui doivent rester comparatifs, conserver la région défilante bornée et accessible au clavier. Reprendre les principes, pas installer React/shadcn ni copier leurs composants : le projet reste PHP/CSS autonome. Vérifier à 320, 375 et 1440 px, avec textes longs et JavaScript désactivé ; les tests automatisés ne remplacent pas une revue sur appareils et lecteurs d'écran.</p>
-<h3 id="preferences-de-fuseau-etude-avant-realisation">Préférences de fuseau (étude avant réalisation)<a class="headerlink" href="#preferences-de-fuseau-etude-avant-realisation" title="Permanent link">#</a></h3>
+<h3 id="preferences-de-fuseau-etude-avant-realisation">Préférences de fuseau (étude avant réalisation)<a class="headerlink" href="#preferences-de-fuseau-etude-avant-realisation" title="Permanent link"></a></h3>
 <ul>
 <li><a href="https://www.smashingmagazine.com/2022/05/designing-better-language-selector/">Smashing Magazine, sélecteurs de langue et région</a> : séparer langue et localisation, proposer une préférence modifiable, accessible au clavier et retrouvable en pied de page.</li>
 <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API">MDN, Geolocation API</a> : accès explicite et uniquement en contexte sécurisé ; traiter refus et indisponibilité sans bloquer le choix manuel.</li>
 <li>Décision : préférences personnelles communes aux visiteurs et à l'administration, choix de fuseau IANA manuel ou détection volontaire, retour d'état clair, bouton de réinitialisation et formulaire lisible à 320 px. Stockage du seul choix dans le navigateur ; pas de coordonnées ni de préférence en base. Pour les calculs de jours côté serveur, seules des bornes UTC nécessaires aux requêtes sont transmises. Le fuseau doit rester IANA (pas uniquement un UTC±n actuel), afin de respecter les changements d'heure des dates passées et futures.</li>
 <li>Le choix anglais traduit désormais l’ensemble de l’interface (navigation, boutique, panier, validation, espace client, pages d’information et pages légales, back-office complet et messages dynamiques) et signale honnêtement que les données libres issues du catalogue ou saisies en base conservent leur langue d’enregistrement. La géolocalisation utilise la bibliothèque locale <code>@photostructure/tz-lookup</code> 11.8.0 (CC0), approximative près des frontières ; le navigateur calcule les heures via <code>Intl</code>.</li>
 </ul>
-<h3 id="traduction-bilingue-fren-et-independance-linguistique-du-css">Traduction bilingue FR/EN et indépendance linguistique du CSS<a class="headerlink" href="#traduction-bilingue-fren-et-independance-linguistique-du-css" title="Permanent link">#</a></h3>
+<h3 id="traduction-bilingue-fren-et-independance-linguistique-du-css">Traduction bilingue FR/EN et indépendance linguistique du CSS<a class="headerlink" href="#traduction-bilingue-fren-et-independance-linguistique-du-css" title="Permanent link"></a></h3>
 <ul>
 <li><a href="https://www.w3.org/WAI/WCAG21/Techniques/html/H57">WCAG 2.1 — Technique H57 (SC 3.1.1 Language of Page)</a> et SC 3.1.2 : l’attribut <code>lang</code> de <code>&lt;html&gt;</code> est synchronisé avec la langue active (<code>fr</code> ou <code>en</code>), et les options du sélecteur de langue portent leur propre attribut <code>lang</code> (<code>Français</code> / <code>English</code>).</li>
 <li><a href="https://www.w3.org/International/articles/article-text-size">W3C Internationalization — Text size in translation</a> et <a href="https://designsystem.digital.gov/components/table/">USWDS Table</a> : les conteneurs flexibles/empilés absorbent la variation de longueur FR/EN à 320 px sans débordement horizontal, les étiquettes mobiles <code>td::before { content: attr(data-label); }</code> restent synchronisées avec les en-têtes <code>thead th</code> traduits, et la cellule principale du panier cible la classe structurelle <code>.tableau-panier td.produit</code> en plus de <code>[data-label="Produit"]</code> pour conserver son empilement pleine largeur lorsque <code>data-label</code> devient <code>"Product"</code>.</li>
 </ul>
 <footer class="doc">
-  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/DA.md</code>
-  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/DA.md</code> · 0 figure(s) intégrée(s).</p>
 </footer>
 </main>
 </body>

@@ -1,22 +1,64 @@
 @startuml seq_ajout_panier
-title Séquence — ajouter au panier (UC-06, EF-CLI-03, RB-18)
+title Séquence 3 — ajouter au panier (UC-06, EF-CLI-03, RB-18)
+
+autonumber
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam defaultFontName "DejaVu Sans"
+skinparam ArrowColor #0F294A
+skinparam ParticipantBackgroundColor #FFFFFF
+skinparam ParticipantBorderColor #1E3A5F
+skinparam ActorBackgroundColor #FFFFFF
+skinparam ActorBorderColor #1E3A5F
+skinparam DatabaseBackgroundColor #F1F5F9
+skinparam DatabaseBorderColor #0F294A
+skinparam NoteBackgroundColor #F8FAFC
+skinparam NoteBorderColor #1E3A5F
+skinparam SequenceLifeLineBorderColor #334155
+
 actor Client
 participant "panier.js" as JS
 participant "ApiController" as API
 participant "PanierSession" as PS
-participant "ProduitRepository" as PR
-Client -> JS : clic « Ajouter »
-JS -> API : POST /api/panier/ajouter (JSON + jeton CSRF)
-API -> API : Csrf::verifier()
-API -> PR : disponibilité (stock serveur)
-PR --> API : stock
-alt stock insuffisant
-  API --> JS : 409 {code: STOCK_INSUFFISANT, reste: N}
-  JS --> Client : message serveur affiché, bouton grisé
-else ajouté
-  API -> PS : ajouter(id, quantite plafonnée)
-  API --> JS : 200 {nombre_articles, total_ttc}
-  JS --> Client : badge mis à jour (aria-live), total recalculé
+database "Store / SQL" as DB
+
+Client -> JS : clic « Ajouter » (submit form[data-panier])
+activate JS
+JS -> API : POST /api/panier/ajouter\n(x-www-form-urlencoded : id_produit, quantite, _csrf)
+activate API
+
+API -> API : exigerPoste() + Csrf::estValide()
+
+alt jeton CSRF invalide
+  API --> JS : 403 {ok: false, code: 'CSRF_INVALIDE', message}
+  JS --> Client : erreur annoncée dans #zone-annonces
+  ||8||
+else jeton CSRF valide
+  API -> PS : ajouter(id_produit, quantite) : int
+  activate PS
+  PS -> DB : find('produit', id_produit)
+  activate DB
+  DB --> PS : produit (stock, visible, prix_ttc)
+  deactivate DB
+
+  alt quantite <= 0 ou produit introuvable / masqué
+    PS --> API : throw BusinessError
+    API --> JS : 409 {ok: false, code, message, nombre_articles}
+    JS --> Client : erreur dans #zone-annonces, bouton désactivé
+    ||8||
+  else ajouté (quantité plafonnée à min(demande, stock))
+    PS --> API : quantite_retenue
+    deactivate PS
+    API -> PS : recapitulatif() : array
+    activate PS
+    PS --> API : {sous_total, frais_port, total}
+    deactivate PS
+    API --> JS : 200 {ok: true, message, nombre_articles,\nsous_total, frais_port, total_ttc, lien_panier}
+    JS --> Client : badge et total_ttc mis à jour (aria-live)
+  end
 end
+deactivate API
+deactivate JS
+
 note right of API : aucun prix ni stock calculé côté navigateur (EF-GEN-01)
 @enduml

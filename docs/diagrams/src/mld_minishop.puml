@@ -1,58 +1,157 @@
 @startuml mld_minishop
-title MLD — MiniShop (clés, index, contraintes)
-skinparam classAttributeIconSize 0
-class categorie {
-  id_categorie : INT UNSIGNED <<PK>>
-  nom : VARCHAR(100) UNIQUE
-  slug : VARCHAR(120) UNIQUE
+title MLD — MiniShop (9 tables, clés, index et contraintes d'intégrité, §12.2)
+
+hide circle
+hide methods
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam defaultFontName "DejaVu Sans"
+skinparam linetype ortho
+skinparam ArrowColor #0F294A
+skinparam ClassBackgroundColor #FFFFFF
+skinparam EntityBackgroundColor #FFFFFF
+skinparam ClassBorderColor #0F294A
+skinparam EntityBorderColor #0F294A
+skinparam ClassHeaderBackgroundColor #F1F5F9
+skinparam EntityHeaderBackgroundColor #F1F5F9
+skinparam NoteBackgroundColor #F8FAFC
+skinparam NoteBorderColor #1E3A5F
+
+entity "administrateur" as ADM {
+  * id_admin : INT UNSIGNED <<PK>>
+  --
+  nom : VARCHAR(100) <<NOT NULL>>
+  prenom : VARCHAR(100) <<NOT NULL>>
+  email : VARCHAR(190) <<UK>>
+  mot_de_passe_hash : CHAR(60) <<NOT NULL>>
+  role : ENUM('SUPER','GESTIONNAIRE')
+  actif : TINYINT(1) CHECK IN (0,1)
+  date_creation : DATETIME
+  derniere_connexion : DATETIME
+}
+
+entity "categorie" as CAT {
+  * id_categorie : INT UNSIGNED <<PK>>
+  --
+  nom : VARCHAR(100) <<UK>>
+  slug : VARCHAR(120) <<UK>>
+  description : VARCHAR(500)
+}
+
+entity "produit" as PRO {
+  * id_produit : INT UNSIGNED <<PK>>
+  --
+  reference : VARCHAR(30) <<UK>>
+  nom : VARCHAR(150) <<NOT NULL>>
+  slug : VARCHAR(180) <<UK>>
   description : TEXT
-}
-class produit {
-  id_produit : INT UNSIGNED <<PK>>
-  reference : VARCHAR(40) UNIQUE
-  nom : VARCHAR(150)
-  slug : VARCHAR(160) UNIQUE
   prix_ht : DECIMAL(10,2) CHECK > 0
-  tva : DECIMAL(5,2) CHECK >= 0
-  prix_ttc : DECIMAL(10,2) -- dénormalisation protégée par trigger
+  tva : DECIMAL(5,2)
+  prix_ttc : DECIMAL(10,2)
   stock : INT CHECK >= 0
+  stock_initial : INT
   seuil_alerte : INT
-  id_categorie : <<FK>> categorie
-  visible : TINYINT
+  * id_categorie : INT UNSIGNED <<FK>>
+  visible : TINYINT(1) CHECK IN (0,1)
+  image_url : VARCHAR(255)
+  date_creation : DATETIME
+  date_modification : DATETIME
 }
-class client {
-  id_client : INT UNSIGNED <<PK>>
-  email : VARCHAR(190) UNIQUE
-  mot_de_passe_hash : CHAR(60)
-  actif : TINYINT
+
+entity "stock_movement_history" as SMH {
+  * id_mouvement : BIGINT UNSIGNED <<PK>>
+  --
+  id_produit : INT UNSIGNED <<NOT NULL>>
+  reference_produit : VARCHAR(30)
+  nom_produit : VARCHAR(150)
+  mode_mouvement : ENUM('SET','DELTA')
+  quantite : INT
+  stock_avant : INT CHECK >= 0
+  stock_apres : INT CHECK >= 0
+  motif : VARCHAR(200)
+  changed_by : INT UNSIGNED
+  changed_by_role : ENUM('CLIENT','ADMIN','SYSTEME')
+  changed_at : DATETIME
 }
-class commande {
-  id_commande : INT UNSIGNED <<PK>>
-  numero : VARCHAR(20) UNIQUE
-  statut : ENUM(BROUILLON, PAYEE, EN_PREPARATION, EXPEDIEE, LIVREE, ANNULEE, RETOURNEE)
-  montant_total : DECIMAL(10,2)
+
+entity "parametre" as PAR {
+  * cle : VARCHAR(50) <<PK>>
+  --
+  valeur : VARCHAR(100) <<NOT NULL>>
+  unite : VARCHAR(10)
+  comment : VARCHAR(255)
+  date_modification : DATETIME
+}
+
+entity "client" as CLI {
+  * id_client : INT UNSIGNED <<PK>>
+  --
+  nom : VARCHAR(100) <<NOT NULL>>
+  prenom : VARCHAR(100) <<NOT NULL>>
+  email : VARCHAR(190) <<UK>>
+  mot_de_passe_hash : CHAR(60) <<NOT NULL>>
+  telephone : VARCHAR(20)
+  adresse_livraison : VARCHAR(255)
+  code_postal : VARCHAR(10)
+  ville : VARCHAR(100)
+  actif : TINYINT(1) CHECK IN (0,1)
+  date_creation : DATETIME
+  derniere_connexion : DATETIME
+}
+
+entity "commande" as COM {
+  * id_commande : INT UNSIGNED <<PK>>
+  --
+  numero : VARCHAR(20) <<UK>>
+  * id_client : INT UNSIGNED <<FK>>
+  adresse_livraison : VARCHAR(255) <<NOT NULL>>
+  statut : ENUM('BROUILLON','EN_PREPARATION','PAYEE','EXPEDIEE','LIVREE','ANNULEE')
+  montant_total : DECIMAL(10,2) CHECK >= 0
   frais_port : DECIMAL(10,2) CHECK >= 0
-  id_client : <<FK>> client
+  montant_avant_annulation : DECIMAL(10,2)
+  commentaire : VARCHAR(500)
+  date_commande : DATETIME
+  date_modification : DATETIME
 }
-class ligne_commande {
-  id_ligne : INT UNSIGNED <<PK>>
-  id_commande : <<FK>> commande ON DELETE CASCADE
-  id_produit : <<FK>> produit ON DELETE RESTRICT
+
+entity "ligne_commande" as LIG {
+  * id_ligne : BIGINT UNSIGNED <<PK>>
+  --
+  * id_commande : INT UNSIGNED <<FK ON DELETE CASCADE>>
+  * id_produit : INT UNSIGNED <<FK ON DELETE RESTRICT>>
   quantite : INT CHECK > 0
-  prix_unitaire : DECIMAL(10,2)
+  prix_unitaire : DECIMAL(10,2) CHECK > 0
   total_ligne : DECIMAL(10,2)
 }
-class order_status_history {
-  id : BIGINT <<PK>>
-  order_id : <<FK>> commande
-  old_status / new_status : VARCHAR(20)
+
+entity "order_status_history" as HIS {
+  * id : BIGINT UNSIGNED <<PK>>
+  --
+  * order_id : INT UNSIGNED <<FK ON DELETE CASCADE>>
+  old_status : VARCHAR(20)
+  new_status : VARCHAR(20) <<NOT NULL>>
+  changed_by : INT UNSIGNED
+  changed_by_role : ENUM('CLIENT','ADMIN','SYSTEME')
+  commentaire : VARCHAR(500)
   changed_at : DATETIME
-  changed_by : VARCHAR(120)
 }
-categorie "1" -- "0..*" produit
-client "1" -- "0..*" commande
-commande "1" -- "1..*" ligne_commande
-produit "1" -- "0..*" ligne_commande
-commande "1" -- "0..*" order_status_history
-note bottom of produit : idx_catalogue(id_categorie, visible)\nidx_recherche(nom)\nprix_ttc recalculé par trg_produit_ttc
+
+CAT ||--o{ PRO : "ON UPDATE CASCADE\nON DELETE RESTRICT"
+CLI ||--o{ COM : "ON UPDATE CASCADE\nON DELETE RESTRICT"
+COM ||--o{ LIG : "ON DELETE CASCADE"
+PRO ||--o{ LIG : "ON DELETE RESTRICT"
+COM ||--o{ HIS : "ON DELETE CASCADE"
+
+note bottom of PRO
+  Index : ft_produit_recherche (nom, description) FULLTEXT,
+  idx_produit_categorie (id_categorie), idx_produit_visible (visible, stock).
+  prix_ttc calculé par trg_produit_ttc / trg_produit_ttc_update.
+  Vues : v_etat_stock, v_catalogue, v_commandes_client.
+end note
+
+note bottom of COM
+  Index : idx_commande_client, idx_commande_statut.
+  ligne_commande : idx_ligne_commande, idx_ligne_produit.
+  stock_movement_history : idx_stock_movement_product (audit sans FK).
+end note
 @enduml

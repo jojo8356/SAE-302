@@ -1,31 +1,49 @@
 @startuml cas_utilisation_commandes
-title MiniShop — cas d'utilisation du back-office
+title MiniShop — cas d'utilisation du back-office (RB-13)
+
 left to right direction
-actor "Gestionnaire" as G
-actor "Super administrateur" as S
-rectangle "Back-office" {
-  usecase "Gérer les produits" as P
-  usecase "Gérer les catégories" as K
-  usecase "Ajuster le stock" as ST
-  usecase "Consulter les alertes" as AL
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam defaultFontName "DejaVu Sans"
+skinparam packageStyle rectangle
+skinparam ArrowColor #0F294A
+skinparam ActorBackgroundColor #FFFFFF
+skinparam ActorBorderColor #1E3A5F
+skinparam UsecaseBackgroundColor #FFFFFF
+skinparam UsecaseBorderColor #1E3A5F
+
+actor "Gestionnaire\n(GESTIONNAIRE)" as G
+actor "Super administrateur\n(SUPER)" as S
+S --|> G
+
+rectangle "Back-office (/admin/*)" {
+  usecase "Se connecter au back-office" as AUTH
+  usecase "Consulter le tableau de bord\n(indicateurs)" as IN
+  usecase "Gérer les produits\n(sp_save_product)" as P
+  usecase "Gérer les catégories\n(sp_save_category)" as K
+  usecase "Ajuster le stock\n(sp_adjust_stock)" as ST
+  usecase "Consulter les alertes\n(v_etat_stock)" as AL
   usecase "Consulter les commandes" as CO
-  usecase "Changer le statut" as CH
-  usecase "Consulter la piste d'audit" as AU
-  usecase "Consulter les indicateurs" as IN
-  usecase "Gérer les paramètres" as PA
-  usecase "Gérer les comptes d'équipe" as EQ
+  usecase "Changer le statut\n(sp_update_order_status)" as CH
+  usecase "Annuler une commande\n(sp_cancel_order_admin)" as AN
+  usecase "Consulter la piste d'audit\n(order_status_history)" as AU
+  usecase "Gérer les paramètres\n(/admin/parametres)" as PA
+  usecase "Gérer les comptes d'équipe\n(/admin/equipe)" as EQ
 }
+
+G --> AUTH
+G --> IN
 G --> P
 G --> K
 G --> ST
 G --> AL
 G --> CO
 G --> CH
-G --> AU
-G --> IN
-S --> G
-S --> PA
+G --> PA
+
 S --> EQ
-CH ..> AU : trace automatique (trigger)
-ST ..> AL : recalcul du seuil
+
+CH ..> AU : <<include>>\n[trg_history_statut]
+AN ..> CH : <<extend>>\n[motif obligatoire]
+ST ..> AL : <<include>>\n[recalcul seuil]
 @enduml

@@ -4,7 +4,7 @@ Document n° 4 du rendu (barème iv : soutenance + questions, 10 points). Le pla
 
 ## 1. Matériel à préparer
 
-- support `docs/03-support-soutenance.md` exporté en PDF (12 diapositives, une par minute) ;
+- support `docs/12-diaporama-soutenance.md` (et diaporama exporté `livrables/minishop-soutenance.pptx`, 12 diapositives) ; guide complet de préparation dans [`24-preparation-soutenance-complete.md`](24-preparation-soutenance-complete.md) ;
 - configuration prête : `.env` (copié depuis `.env.example`), base créée par `./run.sh --db`
 - poste prêt : `./run.sh` lancé (équivalent : `php -S 127.0.0.1:8000 -t public scripts/dev-router.php`), base **rejouée à froid** (`./scripts/load_db.sh`),
   deux navigateurs ouverts (front-office en navigation privée côté client, back-office à côté) ;
@@ -19,7 +19,7 @@ Document n° 4 du rendu (barème iv : soutenance + questions, 10 points). Le pla
 |---:|---|---|---|---|
 | 0-1 | A | Contexte de l'entreprise, problème du tableur partagé, ce que MiniShop doit changer ; acteurs | 1 slide (état actuel + 3 acteurs) | §1.1, §3 |
 | 1-2 | A | Périmètre strict (in/out), objectifs mesurables, règle anti-dérive | table §13.1 / §2.3 | §2, §11.2 |
-| 2-4 | B | **Modélisation** : MCD (8 entités), 3 cardinalités défendues, MLD, normalisation (3FN, 2 dénormalisations protégées) | `mcd_minishop.png`, tableau §12.1.3 | §12.1-§12.3 |
+| 2-4 | B | **Modélisation** : MCD (9 entités : 8 métier + `stock_movement_history`), 3 cardinalités défendues, MLD, normalisation (3FN, 2 dénormalisations protégées) | `mcd_minishop.png`, tableau §12.1.3 | §12.1-§12.3 |
 | 4-6 | rôle de planification B | **SQL** : présenter le schéma, les scripts et les requêtes prévues ; un chargement ou résultat ne peut être annoncé qu’après run daté sur base temporaire isolée | fichiers SQL et protocole | §12.4, §12.3.5 |
 | 6-8 | rôle de planification B | **Procédures stockées** : présenter SQL comme pilote par défaut, les appels des repositories aux 18 procédures et leur validation sur VM Debian 13 (`docs/pv-recette.md`, `29/29` SQL, `105/105` HTTP SQL) | schéma, repositories, code SQL et `docs/pv-recette.md` | §7.1, §12.5 |
 | 8-9 | rôle de planification B | **Triggers** : expliquer les règles exécutées par la base lors des écritures SQL correspondantes ; `T-03` et l’ensemble `T-01…T-29` ont été validés sur base temporaire isolée le 17/11/2026 (`29/29`) | script SQL, `T-03` et `docs/pv-recette.md` | §12.6 |

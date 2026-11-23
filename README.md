@@ -150,6 +150,8 @@ Un scénario ne doit être marqué comme joué qu’après son exécution réell
 | [Architecture logicielle](ARCHITECTURE.md) | Couches, parcours HTTP, règles métier, persistance, sécurité, tests et limites |
 | [Stack technique](STACK.md) | Langages, prérequis, bibliothèques et outils par contexte d’utilisation |
 | [Conception de la base](docs/04-conception-bd-et-sql.md) | Modèle de données et choix SQL |
+| [Audit des schémas UML](docs/23-audit-uml-diagrammes.md) | Fidélité des 14 diagrammes UML face au code |
+| [Préparation de la soutenance](docs/24-preparation-soutenance-complete.md) | Plan minuté, démo en direct, justifications et 20 Q/R jury |
 | [Stratégie de tests](docs/11-strategie-tests.md) | Périmètre et limites des tests automatisés |
 | [Étude de design](docs/DA.md) | Analyse concurrentielle et direction visuelle |
 | [Sécurité](docs/07-note-cybersecurite.md) | Mesures mises en place et limites connues |

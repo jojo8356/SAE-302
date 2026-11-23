@@ -1,20 +1,15 @@
 #!/usr/bin/env python3
-"""MiniShop — construit le diaporama de soutenance (PPTX) depuis un Markdown.
+"""MiniShop — construit le diaporama de soutenance académique (PPTX 16:9).
 
     python3 scripts/md_to_pptx.py docs/12-diaporama-soutenance.md \
         --out dist/minishop-soutenance.pptx
 
-Format du fichier source (une diapositive par bloc, séparées par `---`) :
-
-    # Titre de la diapositive
-    ## Sous-titre (facultatif)
-    - point clé
-    - autre point
-    ![légende](docs/diagrams/architecture_mvc.png)
-    > message à retenir (encadré)
-
-Rendu : 16:9, bandeau d'accent bleu, pied de page « SAÉ 302 · MiniShop »
-avec numérotation, texte à taille adaptative (jamais moins de 16 pt).
+Présentation sobre et structurée (« format très droit ») :
+* fond blanc pur, bandeau supérieur et barre gauche bleu marine (#0F294A) ;
+* sur-titre institutionnel Université Côte d'Azur · BUT Informatique ;
+* police Serif (Georgia) pour les titres/messages et Sans-Serif (Calibri)
+  pour les points clés ;
+* encadré de synthèse droit avec barre latérale marine.
 """
 
 from __future__ import annotations
@@ -33,16 +28,16 @@ except ImportError:  # pragma: no cover
     print("✘ module Python « python-pptx » absent : pip install python-pptx", file=sys.stderr)
     raise SystemExit(2)
 
-ACCENT = RGBColor(0x1D, 0x4E, 0xD8)
+MARINE = RGBColor(0x0F, 0x29, 0x4A)
 ENCRE = RGBColor(0x0F, 0x17, 0x2A)
 DOUX = RGBColor(0x47, 0x55, 0x69)
-FOND = RGBColor(0xFB, 0xFA, 0xF7)
+FOND_ENCADRE = RGBColor(0xF1, 0xF5, 0xF9)
+FILET = RGBColor(0xCB, 0xD5, 0xE1)
 BLANC = RGBColor(0xFF, 0xFF, 0xFF)
 RACINE = Path(__file__).resolve().parent.parent
 
 
 def decouper(markdown: str) -> list[dict[str, object]]:
-    """Découpe le Markdown en diapositives (séparateur : ligne `---`)."""
     blocs = re.split(r"(?m)^\s*---\s*$", markdown)
     diapositives: list[dict[str, object]] = []
     for bloc in blocs:
@@ -97,63 +92,84 @@ def construire(diapositives: list[dict[str, object]]) -> Presentation:
     largeur = presentation.slide_width
 
     for numero, diapositive in enumerate(diapositives, start=1):
-        slide = presentation.slides.add_slide(presentation.slide_layouts[6])  # vierge
+        slide = presentation.slides.add_slide(presentation.slide_layouts[6])
 
-        # fond
+        # Fond blanc pur
         fond = slide.shapes.add_shape(1, 0, 0, largeur, presentation.slide_height)
         fond.fill.solid()
-        fond.fill.fore_color.rgb = FOND
+        fond.fill.fore_color.rgb = BLANC
         fond.line.fill.background()
         fond.shadow.inherit = False
 
-        # bandeau d'accent
-        bandeau = slide.shapes.add_shape(1, 0, 0, Inches(0.22), presentation.slide_height)
-        bandeau.fill.solid()
-        bandeau.fill.fore_color.rgb = ACCENT
-        bandeau.line.fill.background()
-        bandeau.shadow.inherit = False
+        # Bandeau supérieur droit + barre gauche sobre
+        bandeau_haut = slide.shapes.add_shape(1, 0, 0, largeur, Inches(0.08))
+        bandeau_haut.fill.solid()
+        bandeau_haut.fill.fore_color.rgb = MARINE
+        bandeau_haut.line.fill.background()
+        bandeau_haut.shadow.inherit = False
 
-        # titre
-        zone_titre = slide.shapes.add_textbox(Inches(0.9), Inches(0.55), Inches(11.6), Inches(1.15))
+        bandeau_gauche = slide.shapes.add_shape(1, 0, 0, Inches(0.14), presentation.slide_height)
+        bandeau_gauche.fill.solid()
+        bandeau_gauche.fill.fore_color.rgb = MARINE
+        bandeau_gauche.line.fill.background()
+        bandeau_gauche.shadow.inherit = False
+
+        # Sur-titre institutionnel
+        kicker = slide.shapes.add_textbox(Inches(0.85), Inches(0.28), Inches(11.6), Inches(0.28))
+        r_k = kicker.text_frame.paragraphs[0].add_run()
+        r_k.text = "UNIVERSITÉ CÔTE D'AZUR  ·  IUT DE NICE  ·  BUT INFORMATIQUE  ·  SAÉ 302"
+        r_k.font.size = Pt(9.5)
+        r_k.font.bold = True
+        r_k.font.color.rgb = MARINE
+        r_k.font.name = "Calibri"
+
+        # Titre principal
+        zone_titre = slide.shapes.add_textbox(Inches(0.85), Inches(0.58), Inches(11.6), Inches(0.9))
         cadre = zone_titre.text_frame
         cadre.word_wrap = True
-        paragraphe = cadre.paragraphs[0]
-        run = paragraphe.add_run()
+        run = cadre.paragraphs[0].add_run()
         run.text = nettoyer(str(diapositive["titre"]))
-        run.font.size = Pt(34 if numero > 1 else 40)
+        run.font.size = Pt(30 if numero > 1 else 36)
         run.font.bold = True
-        run.font.color.rgb = ENCRE
-        run.font.name = "Calibri"
+        run.font.color.rgb = MARINE
+        run.font.name = "Georgia"
+
+        # Filet sous titre
+        filet_titre = slide.shapes.add_shape(1, Inches(0.85), Inches(1.42), Inches(11.6), Inches(0.02))
+        filet_titre.fill.solid()
+        filet_titre.fill.fore_color.rgb = MARINE
+        filet_titre.line.fill.background()
+        filet_titre.shadow.inherit = False
 
         sous_titre = str(diapositive.get("sous_titre") or "")
         if sous_titre:
-            zone_sous_titre = slide.shapes.add_textbox(Inches(0.9), Inches(1.55), Inches(11.6), Inches(0.6))
+            zone_sous_titre = slide.shapes.add_textbox(Inches(0.85), Inches(1.52), Inches(11.6), Inches(0.5))
             cadre = zone_sous_titre.text_frame
             cadre.word_wrap = True
             run = cadre.paragraphs[0].add_run()
             run.text = nettoyer(sous_titre)
-            run.font.size = Pt(18)
+            run.font.size = Pt(16)
             run.font.italic = True
             run.font.color.rgb = DOUX
-            run.font.name = "Calibri"
+            run.font.name = "Georgia"
 
         puces = diapositive["puces"] or []
         image = diapositive.get("image")
-        largeur_texte = Inches(6.4) if image else Inches(11.4)
+        largeur_texte = Inches(6.5) if image else Inches(11.6)
 
         if puces:
-            hauteur = Inches(4.6 if not diapositive.get("message") else 3.9)
-            zone = slide.shapes.add_textbox(Inches(0.9), Inches(2.25), largeur_texte, hauteur)
+            hauteur = Inches(4.4 if not diapositive.get("message") else 3.75)
+            zone = slide.shapes.add_textbox(Inches(0.85), Inches(2.15), largeur_texte, hauteur)
             cadre = zone.text_frame
             cadre.word_wrap = True
-            taille = 22 if len(puces) <= 4 else 19 if len(puces) <= 6 else 17
+            taille = 20 if len(puces) <= 4 else 17.5 if len(puces) <= 6 else 16
             for index, (niveau, texte) in enumerate(puces):
                 paragraphe = cadre.paragraphs[0] if index == 0 else cadre.add_paragraph()
                 paragraphe.level = min(int(niveau), 4)
                 paragraphe.space_after = Pt(8 if niveau == 0 else 4)
                 run = paragraphe.add_run()
-                run.text = ("• " if niveau == 0 else "– ") + nettoyer(texte)
-                run.font.size = Pt(taille - 2 * int(niveau))
+                run.text = ("▪  " if niveau == 0 else "–  ") + nettoyer(texte)
+                run.font.size = Pt(taille - 1.5 * int(niveau))
                 run.font.color.rgb = ENCRE if niveau == 0 else DOUX
                 run.font.name = "Calibri"
 
@@ -161,46 +177,68 @@ def construire(diapositives: list[dict[str, object]]) -> Presentation:
             cible = (RACINE / str(image)).resolve()
             if cible.is_file():
                 try:
-                    slide.shapes.add_picture(str(cible), Inches(7.7), Inches(2.15), width=Inches(5.0))
-                except Exception as erreur:  # image illisible : on continue
+                    slide.shapes.add_picture(str(cible), Inches(7.65), Inches(2.1), width=Inches(4.9))
+                except Exception as erreur:
                     print(f"  ⚠ image ignorée ({cible.name}) : {erreur}", file=sys.stderr)
             else:
                 print(f"  ⚠ image introuvable : {image}", file=sys.stderr)
 
         message = str(diapositive.get("message") or "")
         if message:
-            encadre = slide.shapes.add_shape(1, Inches(0.9), Inches(6.05), Inches(11.5), Inches(0.75))
+            encadre = slide.shapes.add_shape(1, Inches(0.85), Inches(6.02), Inches(11.6), Inches(0.75))
             encadre.fill.solid()
-            encadre.fill.fore_color.rgb = RGBColor(0xDB, 0xEA, 0xFE)
-            encadre.line.fill.background()
+            encadre.fill.fore_color.rgb = FOND_ENCADRE
+            encadre.line.color.rgb = FILET
             encadre.shadow.inherit = False
+
+            barre = slide.shapes.add_shape(1, Inches(0.85), Inches(6.02), Inches(0.08), Inches(0.75))
+            barre.fill.solid()
+            barre.fill.fore_color.rgb = MARINE
+            barre.line.fill.background()
+            barre.shadow.inherit = False
+
             cadre = encadre.text_frame
             cadre.word_wrap = True
-            cadre.margin_top = Emu(0)
+            cadre.margin_left = Inches(0.22)
+            cadre.margin_top = Emu(45720)
             paragraphe = cadre.paragraphs[0]
             paragraphe.alignment = PP_ALIGN.LEFT
             run = paragraphe.add_run()
             run.text = nettoyer(message)
-            run.font.size = Pt(16)
+            run.font.size = Pt(14.5)
             run.font.bold = True
-            run.font.color.rgb = RGBColor(0x1E, 0x3A, 0x8A)
+            run.font.color.rgb = MARINE
             run.font.name = "Calibri"
 
-        # pied de page
-        pied = slide.shapes.add_textbox(Inches(0.9), Inches(6.95), Inches(11.6), Inches(0.35))
-        cadre = pied.text_frame
-        paragraphe = cadre.paragraphs[0]
-        run = paragraphe.add_run()
-        run.text = f"SAÉ 302 · MiniShop · {numero}/{len(diapositives)}"
-        run.font.size = Pt(11)
-        run.font.color.rgb = DOUX
-        run.font.name = "Calibri"
+        # Filet bas + pied de page
+        filet_bas = slide.shapes.add_shape(1, Inches(0.85), Inches(6.9), Inches(11.6), Inches(0.015))
+        filet_bas.fill.solid()
+        filet_bas.fill.fore_color.rgb = FILET
+        filet_bas.line.fill.background()
+        filet_bas.shadow.inherit = False
+
+        pied = slide.shapes.add_textbox(Inches(0.85), Inches(6.95), Inches(8.6), Inches(0.35))
+        run_p = pied.text_frame.paragraphs[0].add_run()
+        run_p.text = "SAÉ 302 · MiniShop · Johan Polsinelli & Chahd Gouiaa"
+        run_p.font.size = Pt(10.5)
+        run_p.font.color.rgb = DOUX
+        run_p.font.name = "Calibri"
+
+        num = slide.shapes.add_textbox(Inches(9.6), Inches(6.95), Inches(2.85), Inches(0.35))
+        p_n = num.text_frame.paragraphs[0]
+        p_n.alignment = PP_ALIGN.RIGHT
+        run_n = p_n.add_run()
+        run_n.text = f"Diapositive {numero} / {len(diapositives)}"
+        run_n.font.size = Pt(10.5)
+        run_n.font.bold = True
+        run_n.font.color.rgb = MARINE
+        run_n.font.name = "Calibri"
 
     return presentation
 
 
 def main(argv: list[str] | None = None) -> int:
-    analyseur = argparse.ArgumentParser(description="Markdown → PPTX (SAÉ 302 — MiniShop).")
+    analyseur = argparse.ArgumentParser(description="Markdown → PPTX académique (SAÉ 302 — MiniShop).")
     analyseur.add_argument("source", type=Path)
     analyseur.add_argument("--out", type=Path, default=Path("dist/minishop-soutenance.pptx"))
     arguments = analyseur.parse_args(argv)

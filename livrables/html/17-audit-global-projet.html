@@ -3,91 +3,222 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light dark">
-<meta name="description" content="SAÉ 302 — MiniShop : Rapport d’audit global du projet#">
-<title>Rapport d’audit global du projet# — MiniShop</title>
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : Rapport d’audit global du projet">
+<title>Rapport d’audit global du projet — MiniShop (SAÉ 302)</title>
 <style>
 :root {
   --encre: #0f172a;
   --encre-douce: #475569;
-  --papier: #fbfaf7;
-  --carte: #ffffff;
-  --trait: #e2e8f0;
-  --accent: #1d4ed8;
-  --accent-clair: #dbeafe;
-  --code: #f1f5f9;
-  --mesure: 72ch;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
-    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
-    --accent-clair: #1e3a8a; --code: #16223a;
-  }
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
 }
 * { box-sizing: border-box; }
 html { font-size: 100%; -webkit-text-size-adjust: 100%; }
 body {
-  margin: 0 auto;
-  padding: 2.5rem 1.25rem 5rem;
-  max-width: calc(var(--mesure) + 6rem);
-  background: var(--papier);
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
   color: var(--encre);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
-  font-size: 1rem;
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
   line-height: 1.65;
   text-rendering: optimizeLegibility;
 }
-h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
-h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
-h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
-h3 { font-size: 1.15rem; }
-h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
-p, li { max-width: var(--mesure); }
-a { color: var(--accent); text-underline-offset: 0.15em; }
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
 a:hover { text-decoration-thickness: 2px; }
 code {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
 }
 pre {
-  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
-  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
 }
-pre code { background: none; padding: 0; font-size: inherit; }
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
 blockquote {
-  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
-  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
 }
-blockquote p { margin: 0.35rem 0; }
-table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
-caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
-th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
-thead th { background: var(--accent-clair); }
-tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
-img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
-hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
-ul, ol { padding-left: 1.4rem; }
-li { margin: 0.25rem 0; }
-li input[type="checkbox"] { margin-right: 0.4rem; }
-.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
-.toc > ul { list-style: none; padding-left: 0; }
-.toc ul ul { padding-left: 1rem; }
-footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
 @media print {
-  :root { --papier: #fff; --carte: #fff; }
-  @page { size: A4; margin: 18mm 16mm; }
-  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
   h1, h2, h3 { break-after: avoid; }
   table, pre, img, blockquote { break-inside: avoid; }
   a { color: inherit; text-decoration: none; }
-  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
   .toc { break-after: page; }
 }
 </style>
 </head>
 <body>
 <main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/17-audit-global-projet.md</code></div>
+</header>
 <nav class="toc" aria-label="Sommaire"><div class="toc">
 <ul>
 <li><a href="#addendum-final-etat-verifie-le-17-novembre-2026-vm-debian-13-branche-arenab5a4074b-sae-302">Addendum final — état vérifié le 17 novembre 2026 (VM Debian 13, branche arena/b5a4074b-sae-302)</a></li>
@@ -104,10 +235,10 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </ul>
 </div>
 </nav>
-<h1 id="rapport-daudit-global-du-projet">Rapport d’audit global du projet<a class="headerlink" href="#rapport-daudit-global-du-projet" title="Permanent link">#</a></h1>
+<h1 id="rapport-daudit-global-du-projet">Rapport d’audit global du projet<a class="headerlink" href="#rapport-daudit-global-du-projet" title="Permanent link"></a></h1>
 <p><strong>Date portée par le rapport :</strong> 28 octobre 2026, postérieure à la coupure documentaire du 23/10/2026 ; les affirmations d’audit/tests/CI de cette archive ne sont donc pas retenues comme preuves acquises à cette coupure. <strong>Périmètre du CSV d’inventaire :</strong> chemins versionnés indiqués par l’archive, pas la copie locale ni les fichiers ignorés de l’utilisateur. <a href="17-inventaire-projet.csv">Inventaire</a> · <a href="16-audit-code-mort.html">Revue initiale du code potentiellement inutilisé</a> · <a href="10-todo-corrections.html">Todolist</a>.</p>
 <p>Le rapport d’archive porte un décompte historique de <strong>532 chemins versionnés</strong> après retrait d’éléments hors périmètre. Depuis, le CSV <code>docs/17-inventaire-projet.csv</code> a été synchronisé avec les <strong>542 chemins suivis dans l’index courant</strong> ; le contrôle structurel vérifie cette égalité, la présence et la non-vacuité, sans certifier le contenu. Les deux nombres se rapportent donc à des états différents ; le rapport daté du 28/10/2026 reste postérieur à la coupure documentaire du 23/10 et n’est pas une preuve d’audit acquise à cette date.</p>
-<h2 id="addendum-final-etat-verifie-le-17-novembre-2026-vm-debian-13-branche-arenab5a4074b-sae-302">Addendum final — état vérifié le 17 novembre 2026 (VM Debian 13, branche <code>arena/b5a4074b-sae-302</code>)<a class="headerlink" href="#addendum-final-etat-verifie-le-17-novembre-2026-vm-debian-13-branche-arenab5a4074b-sae-302" title="Permanent link">#</a></h2>
+<h2 id="addendum-final-etat-verifie-le-17-novembre-2026-vm-debian-13-branche-arenab5a4074b-sae-302">Addendum final — état vérifié le 17 novembre 2026 (VM Debian 13, branche <code>arena/b5a4074b-sae-302</code>)<a class="headerlink" href="#addendum-final-etat-verifie-le-17-novembre-2026-vm-debian-13-branche-arenab5a4074b-sae-302" title="Permanent link"></a></h2>
 <p>Cet addendum présente l’état consolidé après les validations exécutées sur VM Debian 13 native (<strong>PHP 8.4.27 cli</strong>, <strong>MariaDB 11.8.6</strong>) et la clôture de l’audit documentaire :</p>
 <ul>
 <li><strong>Campagne complète (<code>f9b614f</code>, <code>docs/pv-recette.md</code>) :</strong> <code>php scripts/generer_pv.php</code> a terminé avec le code <strong>0</strong>, <strong>60 / 60 étapes vertes</strong> et <strong>0 warning PHP</strong> (<code>logs/pv-2026-11-17-114957.log</code>), incluant <code>sql_integration.php</code> (<strong>29/29</strong>), <code>http_sql_e2e.php</code> (<strong>105/105</strong>), <code>concurrence_http.php</code> (<strong>8/8</strong>, 20 acteurs / 12 unités), <code>e2e_isolation.mjs</code> (<strong>338/338</strong>), <code>preferences_test.mjs</code> (<strong>48</strong> vues FR/EN), PHPUnit (<strong>57/57</strong>), linter strict (<strong>171</strong> fichiers, <strong>0</strong> violation) et sécurité statique (<strong>11/11</strong>). <code>docs/pv-recette.md</code> porte la décision favorable et les visas nominatifs de <strong>Johan Polsinelli</strong> et <strong>Chahd Gouiaa</strong> (<code>D5-L14-05</code> <code>OK</code>).</li>
@@ -117,7 +248,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </ul>
 <p>Les paragraphes qui suivent restent l’archive de l’audit antérieur et ses vérifications historiques ; ils ne remplacent pas l’état courant ci-dessus.</p>
 <p>Cet audit combine un inventaire automatisé de tout le dépôt et une revue manuelle ciblée sur les anomalies et risques découverts. Il <strong>ne démontre pas l’absence de tous les défauts</strong> et n’est pas une lecture fonctionnelle ligne par ligne de chaque livrable. L’inventaire indique des contrôles de structure, pas une certification du contenu.</p>
-<h2 id="constats-corriges">Constats corrigés<a class="headerlink" href="#constats-corriges" title="Permanent link">#</a></h2>
+<h2 id="constats-corriges">Constats corrigés<a class="headerlink" href="#constats-corriges" title="Permanent link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -189,14 +320,14 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 </tbody>
 </table>
-<h3 id="alternatives-dimage-et-aide-cli">Alternatives d’image et aide CLI<a class="headerlink" href="#alternatives-dimage-et-aide-cli" title="Permanent link">#</a></h3>
+<h3 id="alternatives-dimage-et-aide-cli">Alternatives d’image et aide CLI<a class="headerlink" href="#alternatives-dimage-et-aide-cli" title="Permanent link"></a></h3>
 <p><code>visuel_produit($url, $alternative, $largeur, $hauteur)</code> reçoit une <code>AlternativeImage</code> : utiliser <code>new \App\View\Image\AlternativeDecorative()</code> pour une image décorative ou <code>new \App\View\Image\AlternativeInformative($description)</code> pour une image informative. La description est obligatoire et échappée. Les anciennes signatures avec le nom en deuxième position doivent être adaptées ; les cartes conservent <code>alt=""</code>. La fiche identifie le visuel comme indicatif, mais ne décrit pas son apparence. Le choix de la stratégie est explicite à l’exécution.</p>
 <p><code>php scripts/aide.php --help</code> est une aide CLI en lecture seule. L’option <code>--comptes-demo</code> affiche les accès initiaux du seed JSON : ne l’utiliser que pour un développement local isolé ; ne jamais publier, capturer ni joindre sa sortie à un ticket, et ne jamais s’en servir sur LineServ. Le script refuse l’accès HTTP et ne vérifie ni n’initialise la base. Pour la recette LineServ, utiliser uniquement un compte de test autorisé dont l’accès est transmis séparément par canal privé.</p>
-<h3 id="accesseur-de-code-derreur-sql-supprime">Accesseur de code d’erreur SQL supprimé<a class="headerlink" href="#accesseur-de-code-derreur-sql-supprime" title="Permanent link">#</a></h3>
+<h3 id="accesseur-de-code-derreur-sql-supprime">Accesseur de code d’erreur SQL supprimé<a class="headerlink" href="#accesseur-de-code-derreur-sql-supprime" title="Permanent link"></a></h3>
 <p><code>DbInstaller::codeDerniereErreur()</code> a été retirée sur demande. Le code privé reste exploité par <code>refusIdentifiants()</code> et par les diagnostics d’installation. Un test sans serveur injecte les codes 1045, 1698, 2002 et 0 pour vérifier leur classement ; il ne simule pas une connexion PDO réelle. <a href="https://github.com/jojo8356/SAE-302/actions/runs/40838583689">CI du commit <code>4860daa</code> verte</a>, y compris PHP natif 8.2/8.5 et MySQL 8 jetable. La méthode était publique : les appels externes éventuels doivent être adaptés.</p>
-<h3 id="accesseur-de-verification-env-supprime">Accesseur de vérification <code>.env</code> supprimé<a class="headerlink" href="#accesseur-de-verification-env-supprime" title="Permanent link">#</a></h3>
+<h3 id="accesseur-de-verification-env-supprime">Accesseur de vérification <code>.env</code> supprimé<a class="headerlink" href="#accesseur-de-verification-env-supprime" title="Permanent link"></a></h3>
 <p><code>EnvFile::existe()</code> a été retirée sur demande. <code>initialiser()</code> vérifie toujours elle-même l’existence du fichier avant toute écriture. Des tests utilisent un fichier temporaire pour contrôler création et non-écrasement. <a href="https://github.com/jojo8356/SAE-302/actions/runs/40843062586">CI du commit <code>690a2fe</code> verte</a>, dont PHP natif 8.2/8.5 et MySQL 8 jetable. Les appels externes à la méthode supprimée doivent être adaptés. Le scanner ne relève plus de candidat dans son périmètre, ce qui ne prouve pas l’absence de code inutilisé.</p>
-<h2 id="couverture-par-famille">Couverture par famille<a class="headerlink" href="#couverture-par-famille" title="Permanent link">#</a></h2>
+<h2 id="couverture-par-famille">Couverture par famille<a class="headerlink" href="#couverture-par-famille" title="Permanent link"></a></h2>
 <ul>
 <li><code>app/</code>, <code>public/</code> : inventaire détaillé des 145 fichiers dans <code>docs/16-audit-code-mort.md</code>, revue ciblée des 11 candidats, contrats PHP, sécurité, parcours HTTP WASM. Le rendu visuel réel et tous les chemins ne sont pas démontrés.</li>
 <li><code>scripts/</code>, <code>tests/</code>, CI et configuration racine : examen ciblé des runners, du provisionnement, de l’E2E, des tests SQL et des garde-fous Git ; syntaxe des scripts couverte par les contrôles ci-dessous. Certains outils d’installation, sauvegarde, capture et performance peuvent modifier des données : usage sur environnement isolé, après lecture de leurs options.</li>
@@ -204,19 +335,19 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li><code>data/</code>, <code>uploads/</code>, ressources : fichiers inventoriés, JSON et SVG analysés structurellement. Les données de démo ne doivent pas être utilisées comme comptes actifs en production. Aucun contenu de compte n’est reproduit ici ; fichiers locaux ignorés et non suivis hors périmètre.</li>
 <li><code>docs/</code>, <code>livrables/</code>, <code>artefacts/</code>, <code>.tools/</code>, <code>.gitlab/</code> : inventaire et contrôles de structure applicables, documentation des risques et rapports mis à jour. Les documents bureautiques sont testés comme archives ZIP, <strong>pas</strong> relus intégralement ni validés par affichage ; PDF, images, diagrammes et livrables ne sont pas tous contrôlés visuellement.</li>
 </ul>
-<h2 id="validation-ci">Validation CI<a class="headerlink" href="#validation-ci" title="Permanent link">#</a></h2>
+<h2 id="validation-ci">Validation CI<a class="headerlink" href="#validation-ci" title="Permanent link"></a></h2>
 <p><a href="https://github.com/jojo8356/SAE-302/actions/runs/40759093253">CI GitHub historique du commit <code>796aada</code></a> : succès des suites isolées en PHP natif 8.2 et 8.5, des contrôles de sécurité, du véritable PHPUnit, des 303 contrôles E2E WASM et de MySQL 8 isolé (29 scénarios, intégration et garde-fous). Le contrôle de style reste non bloquant. Cette validation est antérieure au branchement de la page 403 ; la CI du nouveau commit doit être vérifiée séparément. Elle ne couvre ni MariaDB ni navigateur réel.</p>
 <p><strong>Page 403 — validation du commit <code>01cc0fa</code> :</strong> <a href="https://github.com/jojo8356/SAE-302/actions/runs/40773408401">CI verte</a>, y compris les parcours HTTP natifs sur PHP 8.2 et 8.5, l’E2E WASM isolé, PHPUnit, sécurité et MySQL 8 jetable. Le test natif utilise un serveur et des données temporaires ; le rendu dans un navigateur et sur LineServ reste à vérifier.</p>
 <p><strong>Suppression de <code>withStore</code> — validation du commit <code>839e311</code> :</strong> <a href="https://github.com/jojo8356/SAE-302/actions/runs/40775475513">CI verte</a>, dont PHPUnit natif, suites PHP 8.2/8.5, E2E WASM et MySQL 8 jetable. La migration éventuelle des appels extérieurs reste à la charge de leurs utilisateurs.</p>
 <p><strong>Aide CLI et alternatives d’image — validation du commit <code>30b4c8a</code> :</strong> <a href="https://github.com/jojo8356/SAE-302/actions/runs/40835999534">CI verte</a> en PHP natif 8.2/8.5, avec tests CLI en copie jetable et refus HTTP, PHPUnit, sécurité, E2E WASM et MySQL 8 jetable. Le rendu et la pertinence des descriptions restent à valider sur navigateur et contenus réels.</p>
-<h2 id="controles-automatises-disponibles">Contrôles automatisés disponibles<a class="headerlink" href="#controles-automatises-disponibles" title="Permanent link">#</a></h2>
+<h2 id="controles-automatises-disponibles">Contrôles automatisés disponibles<a class="headerlink" href="#controles-automatises-disponibles" title="Permanent link"></a></h2>
 <p><code>tests/python/test_audit_structurel.py</code> prend la liste <code>git ls-files</code> et vérifie présence/non-vide, synchronisation de l’inventaire CSV, compilation Python sans exécution, analyse JSON, XML et SVG, intégrité interne ZIP des formats bureautiques, <code>bash -n</code> et <code>node --check</code> si présents. Il ne vérifie ni le comportement ni la qualité visuelle, et n’ouvre pas les fichiers ignorés. Les scripts PHP sont analysés séparément par <code>scripts/verifier_deprecations.py</code> et la CI.</p>
 <ul>
 <li>Sandbox &amp; VM : les suites PHP-WASM 8.2 isolées et la campagne complète sur VM Debian 13 des 16–17/11/2026 (<code>f9b614f</code>, <code>docs/pv-recette.md</code>, <code>60/60</code> étapes, <code>0</code> warning PHP) sont vertes.</li>
 <li>E2E : l’archive rapporte 303 contrôles pour un parcours E2E et 309 pour des contrôles de contrat HTTP ; dans la campagne courante (<code>f9b614f</code>), l’E2E JSON isolé vérifie <strong>338/338</strong> assertions et <code>http_sql_e2e.php</code> vérifie <strong>105/105</strong> assertions sous MariaDB/PDO (<code>concurrence_http.php</code> <strong>8/8</strong>). Security scan : les 10 contrôles d’archive sont distincts des 11 contrôles statiques locaux (<code>tests/security/controles.sh</code>, <strong>11/11</strong>).</li>
 <li>Navigateur humain, WAVE et LineServ : <strong>non joués</strong> (les 200 entrées de recette manuelle restent <code>NON JOUÉ</code>). Les anciennes campagnes ou mesures datées antérieurement restent historiques.</li>
 </ul>
-<h2 id="risques-restants-et-auto-evaluation">Risques restants et auto-évaluation<a class="headerlink" href="#risques-restants-et-auto-evaluation" title="Permanent link">#</a></h2>
+<h2 id="risques-restants-et-auto-evaluation">Risques restants et auto-évaluation<a class="headerlink" href="#risques-restants-et-auto-evaluation" title="Permanent link"></a></h2>
 <ol>
 <li>La page 403 est branchée pour le refus SUPER ; l’intégration navigateur réelle reste à vérifier. La suppression de <code>withStore</code> est une rupture pour les usages externes éventuels : remplacer <code>$depot-&gt;withStore($store)</code> par <code>CommandeRepository::for($store)</code>. <code>dsnUtilise</code>, <code>codeDerniereErreur</code> et <code>EnvFile::existe</code> ont été supprimées et la signature de <code>visuel_produit</code> a changé : les appels externes doivent être adaptés. La fiche identifie le visuel comme indicatif ; ce libellé ne décrit pas ses caractéristiques visuelles et doit être revu avec les contenus réels.</li>
 <li>L’option SQL de réinitialisation détruit volontairement sa cible. La comparaison avec <code>DB_NAME</code> ne protège pas les autres bases, alias, droits ou concurrents ; le harnais shell SQL direct ne possède pas cette protection. Utiliser exclusivement un serveur jetable et sauvegarder.</li>
@@ -226,8 +357,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </ol>
 <p><strong>Auto-évaluation :</strong> points forts : corrections étayées par régressions isolées et nouveaux garde-fous bloquants ; faiblesses : revue manuelle ciblée plutôt qu’exhaustive, SQL et navigateur non disponibles localement, pas de garantie sur les environnements externes. À compléter par une recette réelle sur serveur MariaDB jetable puis sur l’hébergement cible.</p>
 <footer class="doc">
-  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/17-audit-global-projet.md</code>
-  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/17-audit-global-projet.md</code> · 0 figure(s) intégrée(s).</p>
 </footer>
 </main>
 </body>

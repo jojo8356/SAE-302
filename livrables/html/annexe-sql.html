@@ -3,91 +3,222 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light dark">
-<meta name="description" content="SAÉ 302 — MiniShop : Annexe 17.4/17.5/17.6 — Extraits explicatifs des scripts SQL#">
-<title>Annexe 17.4/17.5/17.6 — Extraits explicatifs des scripts SQL# — MiniShop</title>
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : Annexe 17.4/17.5/17.6 — Extraits explicatifs des scripts SQL">
+<title>Annexe 17.4/17.5/17.6 — Extraits explicatifs des scripts SQL — MiniShop (SAÉ 302)</title>
 <style>
 :root {
   --encre: #0f172a;
   --encre-douce: #475569;
-  --papier: #fbfaf7;
-  --carte: #ffffff;
-  --trait: #e2e8f0;
-  --accent: #1d4ed8;
-  --accent-clair: #dbeafe;
-  --code: #f1f5f9;
-  --mesure: 72ch;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
-    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
-    --accent-clair: #1e3a8a; --code: #16223a;
-  }
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
 }
 * { box-sizing: border-box; }
 html { font-size: 100%; -webkit-text-size-adjust: 100%; }
 body {
-  margin: 0 auto;
-  padding: 2.5rem 1.25rem 5rem;
-  max-width: calc(var(--mesure) + 6rem);
-  background: var(--papier);
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
   color: var(--encre);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
-  font-size: 1rem;
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
   line-height: 1.65;
   text-rendering: optimizeLegibility;
 }
-h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
-h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
-h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
-h3 { font-size: 1.15rem; }
-h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
-p, li { max-width: var(--mesure); }
-a { color: var(--accent); text-underline-offset: 0.15em; }
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
 a:hover { text-decoration-thickness: 2px; }
 code {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
 }
 pre {
-  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
-  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
 }
-pre code { background: none; padding: 0; font-size: inherit; }
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
 blockquote {
-  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
-  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
 }
-blockquote p { margin: 0.35rem 0; }
-table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
-caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
-th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
-thead th { background: var(--accent-clair); }
-tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
-img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
-hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
-ul, ol { padding-left: 1.4rem; }
-li { margin: 0.25rem 0; }
-li input[type="checkbox"] { margin-right: 0.4rem; }
-.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
-.toc > ul { list-style: none; padding-left: 0; }
-.toc ul ul { padding-left: 1rem; }
-footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
 @media print {
-  :root { --papier: #fff; --carte: #fff; }
-  @page { size: A4; margin: 18mm 16mm; }
-  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
   h1, h2, h3 { break-after: avoid; }
   table, pre, img, blockquote { break-inside: avoid; }
   a { color: inherit; text-decoration: none; }
-  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
   .toc { break-after: page; }
 }
 </style>
 </head>
 <body>
 <main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/annexes/annexe-sql.md</code></div>
+</header>
 <nav class="toc" aria-label="Sommaire"><div class="toc">
 <ul>
 <li><a href="#a-script-de-creation-et-de-peuplement-sql01_minishop_schemasql">A. Script de création et de peuplement — sql/01_minishop_schema.sql</a></li>
@@ -104,7 +235,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </ul>
 </div>
 </nav>
-<h1 id="annexe-174175176-extraits-explicatifs-des-scripts-sql">Annexe 17.4/17.5/17.6 — Extraits explicatifs des scripts SQL<a class="headerlink" href="#annexe-174175176-extraits-explicatifs-des-scripts-sql" title="Permanent link">#</a></h1>
+<h1 id="annexe-174175176-extraits-explicatifs-des-scripts-sql">Annexe 17.4/17.5/17.6 — Extraits explicatifs des scripts SQL<a class="headerlink" href="#annexe-174175176-extraits-explicatifs-des-scripts-sql" title="Permanent link"></a></h1>
 <p>Sources canoniques : <code>sql/01_minishop_schema.sql</code> (DDL + données), <code>sql/02_minishop_procedures.sql</code>
 (<strong>18 procédures + 1 fonction</strong> dans l’état vérifié le 17/11/2026), <code>sql/03_minishop_triggers.sql</code>
 (16 déclencheurs), <code>sql/04_minishop_demo.sql</code> (commandes de démonstration créées <strong>par les procédures</strong>),
@@ -114,7 +245,7 @@ I : fichiers hors dépôt.)</p>
 <blockquote>
 <p><strong>Limite importante :</strong> les blocs ci-dessous proviennent d’une photographie antérieure des scripts ; ils sont expurgés, abrégés, non exhaustifs et non exécutables. Certains comptages internes (notamment 8 tables et 17 procédures) décrivent cet extrait historique, pas les sources actuelles. Pour l’état courant, consulter <code>docs/04-conception-bd-et-sql.md</code> et exécuter/relire uniquement les fichiers canoniques de <code>sql/</code>. Les identifiants, hashes et coordonnées de démonstration sont expurgés ; l’annexe n’est pas un export restaurable.</p>
 </blockquote>
-<h2 id="a-script-de-creation-et-de-peuplement-sql01_minishop_schemasql">A. Script de création et de peuplement — <code>sql/01_minishop_schema.sql</code><a class="headerlink" href="#a-script-de-creation-et-de-peuplement-sql01_minishop_schemasql" title="Permanent link">#</a></h2>
+<h2 id="a-script-de-creation-et-de-peuplement-sql01_minishop_schemasql">A. Script de création et de peuplement — <code>sql/01_minishop_schema.sql</code><a class="headerlink" href="#a-script-de-creation-et-de-peuplement-sql01_minishop_schemasql" title="Permanent link"></a></h2>
 <p><em>(Extrait abrégé et expurgé des valeurs de comptes et de coordonnées ; non exécutable.)</em></p>
 <pre><code class="language-sql">-- =====================================================================
 -- MiniShop — 01 : script de création de la base de données (DDL + données)
@@ -425,7 +556,7 @@ SELECT o.id_commande, o.numero, o.statut, o.montant_total, o.frais_port, o.adres
 -- afin que les triggers fassent réellement sonner le dispositif.
 -- =====================================================================
 </code></pre>
-<h2 id="b-procedures-stockees-sql02_minishop_proceduressql">B. Procédures stockées — <code>sql/02_minishop_procedures.sql</code><a class="headerlink" href="#b-procedures-stockees-sql02_minishop_proceduressql" title="Permanent link">#</a></h2>
+<h2 id="b-procedures-stockees-sql02_minishop_proceduressql">B. Procédures stockées — <code>sql/02_minishop_procedures.sql</code><a class="headerlink" href="#b-procedures-stockees-sql02_minishop_proceduressql" title="Permanent link"></a></h2>
 <p><em>(837 lignes, copié verbatim depuis le dépôt.)</em></p>
 <pre><code class="language-sql">-- =====================================================================
 -- MiniShop — 02 : procédures stockées (17 procédures + 1 fonction, minimum demandé : 5)
@@ -1265,7 +1396,7 @@ BEGIN
    LIMIT 5;
 END $$
 </code></pre>
-<h2 id="c-declencheurs-sql03_minishop_triggerssql">C. Déclencheurs — <code>sql/03_minishop_triggers.sql</code><a class="headerlink" href="#c-declencheurs-sql03_minishop_triggerssql" title="Permanent link">#</a></h2>
+<h2 id="c-declencheurs-sql03_minishop_triggerssql">C. Déclencheurs — <code>sql/03_minishop_triggers.sql</code><a class="headerlink" href="#c-declencheurs-sql03_minishop_triggerssql" title="Permanent link"></a></h2>
 <p><em>(293 lignes, copié verbatim depuis le dépôt.)</em></p>
 <pre><code class="language-sql">-- =====================================================================
 -- MiniShop — 03 : déclencheurs (16 triggers, minimum demandé : 5)
@@ -1561,7 +1692,7 @@ FOR EACH ROW
 --    ORDER BY EVENT_OBJECT_TABLE, ACTION_TIMING;
 -- =====================================================================
 </code></pre>
-<h2 id="d-commandes-de-demonstration-via-call-sql04_minishop_demosql">D. Commandes de démonstration via <code>CALL</code> — <code>sql/04_minishop_demo.sql</code><a class="headerlink" href="#d-commandes-de-demonstration-via-call-sql04_minishop_demosql" title="Permanent link">#</a></h2>
+<h2 id="d-commandes-de-demonstration-via-call-sql04_minishop_demosql">D. Commandes de démonstration via <code>CALL</code> — <code>sql/04_minishop_demo.sql</code><a class="headerlink" href="#d-commandes-de-demonstration-via-call-sql04_minishop_demosql" title="Permanent link"></a></h2>
 <p><em>(Structure conservée ; les adresses de démonstration sont remplacées par une valeur générique.)</em></p>
 <pre><code class="language-sql">-- =====================================================================
 -- MiniShop — 04 : jeu de données de démonstration (commandes)
@@ -1610,7 +1741,7 @@ SELECT c.numero, cl.email, c.statut, c.montant_total, c.frais_port,
   FROM commande c JOIN client cl ON cl.id_client = c.id_client
  ORDER BY c.id_commande;
 </code></pre>
-<h2 id="e-jeu-de-donnees-des-tests-testssqlfixturesql">E. Jeu de données des tests — <code>tests/sql/fixture.sql</code><a class="headerlink" href="#e-jeu-de-donnees-des-tests-testssqlfixturesql" title="Permanent link">#</a></h2>
+<h2 id="e-jeu-de-donnees-des-tests-testssqlfixturesql">E. Jeu de données des tests — <code>tests/sql/fixture.sql</code><a class="headerlink" href="#e-jeu-de-donnees-des-tests-testssqlfixturesql" title="Permanent link"></a></h2>
 <p><em>(105 lignes, copié verbatim depuis le dépôt.)</em></p>
 <pre><code class="language-text">-- =====================================================================
 -- fixture jouee par le harnais AVANT chaque test : etat deterministe.
@@ -1718,7 +1849,7 @@ UPDATE commande c
                              FROM ligne_commande l WHERE l.id_commande = c.id_commande)
        + c.frais_port;
 </code></pre>
-<h2 id="f-manifeste-des-tests-sql-testssqlmanifesttxt">F. Manifeste des tests SQL — <code>tests/sql/manifest.txt</code><a class="headerlink" href="#f-manifeste-des-tests-sql-testssqlmanifesttxt" title="Permanent link">#</a></h2>
+<h2 id="f-manifeste-des-tests-sql-testssqlmanifesttxt">F. Manifeste des tests SQL — <code>tests/sql/manifest.txt</code><a class="headerlink" href="#f-manifeste-des-tests-sql-testssqlmanifesttxt" title="Permanent link"></a></h2>
 <p><em>(38 lignes, copié verbatim depuis le dépôt.)</em></p>
 <pre><code class="language-text"># =====================================================================
 # MiniShop — manifeste de la suite de tests SQL
@@ -1759,7 +1890,7 @@ T-27|EF-VIS-01|les 3 vues (catalogue, etat de stock, commandes client) existent 
 T-28|ENF-14|frais de port calcules avant validation, figurés a la validation, non saisissables|ERREUR:RB15_MONTANT_CALCULE_INTERDIT|t28_port.sql
 T-29|ENF-16|erreur en cours de commande : rollback integral, aucune donnee partielle|OK|t29_rollback_commande.sql
 </code></pre>
-<h2 id="g-protocole-de-mesure-des-performances-testsperfmesurersh">G. Protocole de mesure des performances — <code>tests/perf/mesurer.sh</code><a class="headerlink" href="#g-protocole-de-mesure-des-performances-testsperfmesurersh" title="Permanent link">#</a></h2>
+<h2 id="g-protocole-de-mesure-des-performances-testsperfmesurersh">G. Protocole de mesure des performances — <code>tests/perf/mesurer.sh</code><a class="headerlink" href="#g-protocole-de-mesure-des-performances-testsperfmesurersh" title="Permanent link"></a></h2>
 <p><em>(19 lignes, copié verbatim depuis le dépôt.)</em></p>
 <pre><code class="language-bash">#!/usr/bin/env bash
 # MiniShop — mesure du temps de reponse d'une URL (ENF-01 : p95 &lt; 500 ms).
@@ -1781,7 +1912,7 @@ sort -n &quot;$ttmp&quot; | awk -v ok=&quot;$ok&quot; -v fail=&quot;$fail&quot; 
 [ $rc -eq 0 ] &amp;&amp; echo &quot;ENF-01 conforme (p95 &lt; 500 ms)&quot; || echo &quot;ENF-01 NON conforme : mesurer la requete (general_log) et verifier les index&quot;
 exit $rc
 </code></pre>
-<h2 id="g2-mesure-des-performances-cote-base-testsperfmesurer_sqlsh">G2. Mesure des performances côté base — <code>tests/perf/mesurer_sql.sh</code><a class="headerlink" href="#g2-mesure-des-performances-cote-base-testsperfmesurer_sqlsh" title="Permanent link">#</a></h2>
+<h2 id="g2-mesure-des-performances-cote-base-testsperfmesurer_sqlsh">G2. Mesure des performances côté base — <code>tests/perf/mesurer_sql.sh</code><a class="headerlink" href="#g2-mesure-des-performances-cote-base-testsperfmesurer_sqlsh" title="Permanent link"></a></h2>
 <p><em>(Extrait expurgé des coordonnées de démonstration ; les valeurs génériques ne sont pas destinées à une exécution.)</em></p>
 <pre><code class="language-bash">#!/usr/bin/env bash
 # MiniShop — mesure des perFORMances **côté base** (ENF-01, ENF-02, CT-01).
@@ -1885,7 +2016,7 @@ echo
 echo &quot;Rappel : ces chiffres mesurent la BASE. La mesure ENF-01 « page &lt; 500 ms (p95) »&quot;
 echo &quot;s'obtient avec tests/perf/mesurer.sh une fois l'application déployée (§15.3 du CDC).&quot;
 </code></pre>
-<h2 id="h-generateur-de-volumetrie-scriptsgen_volumessh">H. Générateur de volumétrie — <code>scripts/gen_volumes.sh</code><a class="headerlink" href="#h-generateur-de-volumetrie-scriptsgen_volumessh" title="Permanent link">#</a></h2>
+<h2 id="h-generateur-de-volumetrie-scriptsgen_volumessh">H. Générateur de volumétrie — <code>scripts/gen_volumes.sh</code><a class="headerlink" href="#h-generateur-de-volumetrie-scriptsgen_volumessh" title="Permanent link"></a></h2>
 <p><em>(104 lignes, copié verbatim depuis le dépôt.)</em></p>
 <pre><code class="language-bash">#!/usr/bin/env bash
 # MiniShop — generateur de volumetrie pour les mesures de performance (ENF-01 / ENF-02).
@@ -1992,9 +2123,9 @@ run -e &quot;SELECT (SELECT COUNT(*) FROM produit)              AS produits,
                (SELECT COALESCE(SUM(l.total_ligne),0) FROM ligne_commande l WHERE l.id_commande=c.id_commande) + c.frais_port) AS montants_incoherents;&quot;
 echo &quot;Mesures : DB=$DB ./tests/perf/mesurer.sh   |   Retour au jeu de demo : bash &quot;$DIR_SCRIPTS/gen_volumes.sh&quot; --purge&quot;
 </code></pre>
-<h2 id="decision-de-perimetre-ci-23-octobre-2026">Décision de périmètre CI (23 octobre 2026)<a class="headerlink" href="#decision-de-perimetre-ci-23-octobre-2026" title="Permanent link">#</a></h2>
+<h2 id="decision-de-perimetre-ci-23-octobre-2026">Décision de périmètre CI (23 octobre 2026)<a class="headerlink" href="#decision-de-perimetre-ci-23-octobre-2026" title="Permanent link"></a></h2>
 <p>La configuration <code>.gitlab-ci.yml</code> a été retirée du projet et du présent cahier des charges. Le workflow conservé est GitHub Actions (<code>.github/workflows/ci.yml</code>) ; son résultat ne constitue pas une preuve de pipeline GitLab. Le contenu détaillé du workflow se trouve dans le fichier versionné, qui reste la source de vérité.</p>
-<h2 id="i-fichiers-hors-depot-gitignore">I. Fichiers hors dépôt — <code>.gitignore</code><a class="headerlink" href="#i-fichiers-hors-depot-gitignore" title="Permanent link">#</a></h2>
+<h2 id="i-fichiers-hors-depot-gitignore">I. Fichiers hors dépôt — <code>.gitignore</code><a class="headerlink" href="#i-fichiers-hors-depot-gitignore" title="Permanent link"></a></h2>
 <p><em>(35 lignes, copié verbatim depuis le dépôt.)</em></p>
 <pre><code class="language-text"># MiniShop — fichiers volontairement hors dépôt.
 # Règle n° 7 du §14.1 du cahier des charges : aucun secret dans GitLab, aucune sortie
@@ -2033,8 +2164,7 @@ tests/sql/out/*
 Thumbs.db
 </code></pre>
 <footer class="doc">
-  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/annexes/annexe-sql.md</code>
-  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/annexes/annexe-sql.md</code> · 0 figure(s) intégrée(s).</p>
 </footer>
 </main>
 </body>

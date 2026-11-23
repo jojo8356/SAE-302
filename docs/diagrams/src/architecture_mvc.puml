@@ -1,36 +1,69 @@
 @startuml architecture_mvc
-title Architecture MVC en 3 couches (§9)
+title Architecture MVC et persistance duale (§9)
+
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam defaultFontName "DejaVu Sans"
 skinparam componentStyle rectangle
-actor "Navigateur" as B
-package "Présentation" {
-  [public/index.php\n(front controller)] as FC
-  [app/Router.php] as R
-  [app/Controller/*] as C
-  [app/View/*] as V
+skinparam linetype ortho
+skinparam ArrowColor #0F294A
+skinparam PackageBackgroundColor #F8FAFC
+skinparam PackageBorderColor #334155
+skinparam ComponentBackgroundColor #FFFFFF
+skinparam ComponentBorderColor #1E3A5F
+skinparam DatabaseBackgroundColor #F1F5F9
+skinparam DatabaseBorderColor #0F294A
+skinparam NoteBackgroundColor #F8FAFC
+skinparam NoteBorderColor #1E3A5F
+
+actor "Navigateur\n(Client / Admin)" as B
+
+package "Couche Présentation (front & back-office)" {
+  [public/index.php\n<<Front Controller>>\nen-têtes CSP / DENY · dispatch] as FC
+  [app/Router.php\n<<Router>>\nliste blanche + gardes RB-13] as R
+  [app/Controller/*\n7 front/API + 7 Admin\\*] as C
+  [app/View/*\nHTML sémantique + Image/*] as V
 }
-package "Métier" {
-  [app/Repository/*] as REP
-  [app/Model/PanierSession] as PS
-  [app/Security/*] as SEC
+
+package "Couche Métier, Sécurité & Services" {
+  [app/Repository/*\n6 dépôts + ClientAccountGateway*] as REP
+  [app/Model/PanierSession\npanier session · plafond RB-18] as PS
+  [app/Security/*\nAuth · Csrf · AccesRefuse · xss] as SEC
+  [app/Service/* & app/Tools/*\nrétention · purge · SQL loader] as SRV
 }
-package "Données" {
-  [StoreInterface] as SI
-  [JsonStore] as JS
-  [SqlStore\n(PDO)] as SQL
-  [data/minishop/*.json] as FS
-  database "MySQL\nprocédures + triggers" as DB
+
+package "Couche Configuration & Persistance" {
+  [app/Config/*\nDatabase · DbConnexion · Env] as CFG
+  interface "StoreInterface\n+ StoredProcedureResultExecutor\n+ RowLockingStore" as SI
+  [app/Model/Data/Views\nv_etat_stock · v_catalogue] as VW
+  [JsonStore\n+ Triggers · Schema · Journal · Filter] as JS
+  [SqlStore\nPDO préparé (EMULATE=false)] as SQL
+  [data/minishop/*.json\n+ var/journal/db.jsonl] as FS
+  database "MySQL / MariaDB\n9 tables · 3 vues · 1 fonction\n18 procédures · 16 triggers" as DB
 }
-B --> FC : HTTP
+
+B --> FC : HTTP(S) HTML / JSON
 FC --> R
 R --> C
-C --> REP
 C --> V
-C --> SEC
+C --> REP
 C --> PS
+C --> SEC
+C --> CFG
+C --> VW
 REP --> SI
+REP --> VW
+PS --> SI
+SRV --> SI
+CFG --> SI
 SI <|.. JS
 SI <|.. SQL
 JS --> FS
 SQL --> DB
-note bottom of SI : le contrôleur ne connaît que l'interface :\nbasculer JSON ⇄ MySQL ne change ni les vues ni les tests
+
+note bottom of SI
+  Inversion de dépendance : contrôleurs et dépôts
+  ne dépendent que de StoreInterface et des interfaces
+  de capacités (basculer SQL ⇄ JSON sans toucher aux vues).
+end note
 @enduml

@@ -1,28 +1,66 @@
 @startuml activite_passer_commande
-title Activité — passer commande
+title Activité — passer une commande (UC-07, swimlanes)
+
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam defaultFontName "DejaVu Sans"
+skinparam ArrowColor #0F294A
+skinparam ActivityBackgroundColor #FFFFFF
+skinparam ActivityBorderColor #1E3A5F
+skinparam ActivityDiamondBackgroundColor #F1F5F9
+skinparam ActivityDiamondBorderColor #0F294A
+skinparam PartitionBackgroundColor #F8FAFC
+skinparam PartitionBorderColor #334155
+
+|Client (Navigateur)|
 start
-:Consulter le catalogue;
+:Consulter le catalogue ou rechercher;
 :Ouvrir une fiche produit;
-if (Produit en stock ?) then (oui)
-  :Ajouter au panier;
+if (Produit visible et stock > 0 ?) then (oui)
+  :Cliquer sur « Ajouter au panier »;
 else (non)
-  :Bouton désactivé, message « rupture »;
+  :Bouton désactivé (rupture);
   stop
 endif
-:Consulter le panier (sous-total HT, TVA, port, total TTC);
-if (Client connecté ?) then (non)
+
+|Contrôleur PHP & Session|
+:PanierSession::ajouter() — plafond au stock serveur (RB-18);
+:Afficher le panier\n(prix TTC, sous-total TTC, frais de port, total TTC);
+
+|Client (Navigateur)|
+if (Client authentifié ?) then (non)
   :Se connecter ou créer un compte;
 else (oui)
 endif
-:Choisir / saisir l'adresse de livraison;
-:Valider la commande;
-if (Stock encore disponible ?) then (oui)
-  :Transaction : création commande + lignes + décrément;
-  :Statut PAYEE + historique;
-  :Afficher numéro et récapitulatif;
-  :Vider le panier;
+:Saisir / confirmer l'adresse de livraison\net cocher ou non paiement_simule;
+:Valider (POST /commande/valider + _csrf);
+
+|Contrôleur PHP & Session|
+:verifierCsrf() + Auth::exigeClient();
+:setActor(CLIENT) + createOrderFromBasket();
+
+|SGBD MySQL (sp_create_order_from_basket)|
+:START TRANSACTION + verrou FOR UPDATE sur le stock;
+if (Panier non vide et stock suffisant ?) then (oui)
+  :Créer commande BROUILLON + lignes (trg_ligne_prix_snapshot);
+  :Décrémenter stock (trg_ligne_decrement_stock) + calculer port (sp_compute_shipping);
+  if (paiement_simule = 1 ?) then (oui)
+    :Passer statut à PAYEE + trg_history_statut;
+  else (non)
+    :Passer statut à EN_PREPARATION + trg_history_statut;
+  endif
+  :COMMIT;
+  |Contrôleur PHP & Session|
+  :PanierSession::vider();
+  :Rediriger 302 /mes-commandes/{id} + flash succès;
 else (non)
-  :Message STOCK_INSUFFISANT, panier conservé;
+  |SGBD MySQL (sp_create_order_from_basket)|
+  :ROLLBACK (aucune modification);
+  |Contrôleur PHP & Session|
+  :Conserver le panier + flash message humain;
+  :Rediriger 302 /panier;
 endif
+
+|Client (Navigateur)|
 stop
 @enduml

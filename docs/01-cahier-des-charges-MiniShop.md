@@ -159,7 +159,7 @@ Le tableau distingue l’exigence du sujet, le livrable présent et l’état d�
 | Diagramme de classes : classes, attributs, méthodes, associations, **cardinalités**, **choix justifiés** | §5.2 + tableau de justification ligne à ligne | `diagramme_classes.png` + §12.8 (7 arbitrages justifiés) | **documenté + rendu** |
 | **≥ 4 diagrammes de séquences** | §5.3 : quatre séquences prévues pour les cas imposés et une séquence bonus de consultation du catalogue ; les diagrammes d’activités et d’états sont d’autres types | 5 sources `seq_*.puml` et 5 rendus correspondant aux cinq séquences listées en §5.3 | **minimum documentaire couvert ; aucune sixième séquence revendiquée** |
 | **20 règles métier** : 11 identifiées comme venant du sujet et 9 compléments | §6.1 : `RB-01`…`RB-11` / `RB-12`…`RB-20` ; la liste des états de RB-11 est un arbitrage documenté | `T-01`…`T-29` sont des identifiants de scénarios, pas 29 règles ni une preuve d’exécution | **classification documentée ; PDF source à joindre pour vérification indépendante** |
-| **MCD** avec entités, associations, cardinalités justifiées | §12.1 | `mcd_minishop.png` (8 entités) | **documenté + rendu** |
+| **MCD** avec entités, associations, cardinalités justifiées | §12.1 | `mcd_minishop.png` (9 entités) | **documenté + rendu** |
 | **MLD**, exemples du sujet (`CLIENT(id_client PK, nom, prenom, email, password, date_creation)`) | §12.2 | même table, `password` → `mot_de_passe_hash` (le sujet interdit le mot de passe en clair) | **documenté** |
 | **Normalisation** : dépendances fonctionnelles, 1FN/2FN/3FN, clés primaires **et** étrangères justifiées, redondances | §12.3.1 → §12.3.5 | 4 requêtes de preuve définies en §12.3.5 ; résultat à rattacher à un run daté | **méthode documentée ; non rejouée dans cette révision** |
 | **Script SQL** traduisant le MLD **avec insertion de données** | §12.4, `sql/01`, `sql/04` | fichiers SQL et `scripts/load_db.sh` présents ; le résultat d'exécution dépend du run et du SHA cités | **scripts présents ; chargement non rejoué dans cette révision** |
@@ -189,7 +189,7 @@ Le tableau distingue l’exigence du sujet, le livrable présent et l’état d�
 
 | Objectif | Critère de réussite **mesurable** |
 |---|---|
-| Modéliser puis normaliser une base relationnelle | MCD avec 8 entités et cardinalités justifiées ; MLD en 3FN démontrée (§12.3) ; 0 anomalie de mise à jour identifiée |
+| Modéliser puis normaliser une base relationnelle | MCD avec 9 entités (dont `PARAMETRE` et `STOCK_MOVEMENT_HISTORY`) et cardinalités justifiées ; MLD en 3FN démontrée (§12.3) ; 0 anomalie de mise à jour identifiée |
 | Traduire le modèle en SQL MySQL complet | `scripts/load_db.sh` s'exécute sans erreur et affiche tables 8, vues 3, fonctions 1, procédures 18, déclencheurs 16, avec données de démonstration |
 | Implémenter 5 règles de gestion dans la base (pas seulement en PHP) | cible : 29 scénarios SQL, dont 15 cas d'écriture directe ; résultats à rattacher à un run daté sur base isolée |
 | Sécuriser une application PHP/PDO réelle | objectif : 0 requête SQL concaténée, 0 mot de passe en clair, 0 affichage non échappé et 0 accès non autorisé ; scénarios offensifs `S-01…S-10` définis ; ce critère n'est pas déclaré atteint ici |
@@ -232,7 +232,7 @@ Ces jalons décrivent le calendrier de référence. Ils n'attestent ni réalisat
 | *SGBD MySQL* (secondaire) | exécute les procédures stockées, déclencheurs, contraintes, transactions | — | comptes applicatifs distincts (§8.6) | garant final des règles de gestion |
 | *Faux client / attaquant* (secondaire, pour l'étude de sécurité uniquement) | utilisateur malveillant : injection SQL, XSS, IDOR, CSRF, force brute | 10 tests offensifs `S-01…S-10` (document de tests) | n'a aucun droit légitime | ses tentatives doivent **échouer**, et l'échec est un livrable |
 
-**Généralisation (à représenter dans le diagramme de cas d'utilisation) :** `Client` et `Administrateur` héritent de `Visiteur` : ils conservent le droit de naviguer dans le catalogue sans être dans l'espace d'administration. C'est ce qui permet à l'administrateur de vérifier qu'un produit masqué n'apparaît bien plus côté client.
+**Généralisation (représentée dans le diagramme de cas d'utilisation) :** `Client` hérite de `Visiteur` côté front-office (`Client --|> Visiteur`). En revanche, conformément à `RB-13`, `Administrateur` dispose d'un espace et d'une session strictement séparés (avec `Super administrateur --|> Administrateur`) : un administrateur qui consulte le site public le fait en tant que simple `Visiteur` anonyme.
 
 ### 3.2 Rôles et périmètre d'autorité
 
@@ -270,7 +270,7 @@ Les colonnes A/B/C sont des **codes de rôle de planification**, pas des personn
 ### 3.4 Conditions d'entrée par acteur (pour la démo et la recette)
 
 - Visiteur : navigateur récent, aucun compte, aucun cookie de session valide.
-- Client : compte créé par `UC-04`, mot de passe ≥ 12 caractères, adresse de livraison renseignée (sinon `UC-07` demande l'adresse à l'étape 5).
+- Client : compte créé par `UC-04`, mot de passe ≥ 8 caractères, adresse de livraison renseignée (sinon `UC-07` demande l'adresse à l'étape 5).
 - Administrateur : compte pré-créé par le script d'installation (le site public n'offre **aucun** moyen de créer un administrateur — SEC-10).
 
 ---
@@ -436,15 +436,15 @@ Résumé : l’annexe 17.3 contient `ENF-01`…`ENF-22` (18 critères principaux
 
 ![Diagramme de cas d'utilisation — vue globale](diagrams/cas_utilisation_global.png)
 
-Lecture : le Visiteur ouvre le système sur la consultation et la création de compte ; le Client et l'Administrateur **héritent** du Visiteur (généralisations en pointillés vers `Visiteur`) ; les cas `include` (authentification, disponibilité du stock, snapshot de prix) factorisent les sous-étapes communes ; `UC-09 Annuler une commande` est un `extend` de la consultation du détail, comme le sujet l'indique (annulation depuis l'historique).
+Lecture : le `Visiteur` ouvre le système sur la consultation, la recherche, le panier et la création de compte ; le `Client` **hérite** du `Visiteur` (généralisation `Client --|> Visiteur`) ; le back-office `Administrateur` est strictement séparé (`RB-13`, avec `SUPER --|> GESTIONNAIRE`) ; les cas `<<include>>` (authentification, panier) factorisent les prérequis communs ; `UC-09 Annuler une commande` est un `<<extend>>` de `UC-08` sous garde `[statut ≤ PAYEE]`, comme le sujet l'indique (annulation depuis l'historique).
 
-#### 5.1.2 Zoom : gestion du catalogue par l'administrateur
+#### 5.1.2 Zoom : parcours visiteur et client
 
-![Cas d'utilisation — gestion du catalogue](diagrams/cas_utilisation_detail.png)
+![Cas d'utilisation — parcours visiteur et client](diagrams/cas_utilisation_detail.png)
 
-#### 5.1.3 Zoom : commandes (client et back-office)
+#### 5.1.3 Zoom : back-office et commandes
 
-![Cas d'utilisation — commandes](diagrams/cas_utilisation_commandes.png)
+![Cas d'utilisation — back-office et commandes](diagrams/cas_utilisation_commandes.png)
 
 #### 5.1.4 Catalogue des 14 cas d'utilisation minimum documentés
 
@@ -579,31 +579,25 @@ Le sujet demande d'en détailler **trois** (et non les 14). Choix justifié : un
 
 Le sujet demande d'identifier les classes, d'en définir attributs et méthodes, les associations, les cardinalités, et de **justifier** les choix. Les éléments demandés sont donc repris sous forme de tableau (le diagramme seul ne suffit pas à montrer la justification) :
 
-| Classe | Stéréotype | Attributs (types) | Méthodes principales | Association et cardinalité | Justification du choix |
+| Classe / Concept | Rôle / Stéréotype | Attributs principaux | Méthodes principales | Association et cardinalité | Justification du choix |
 |---|---|---|---|---|---|
-| `Client` | entité | `id_client:int`, `nom`, `prenom`, `email`, `motDePasseHash`, `telephone?`, `adresseLivraison?`, `actif:bool`, dates | `validerInscription()`, `verifieMotDePasse()`, `changerMotDePasse()`, `informationsCourantes()` | `1 — 0..* Commande` | Le hash n'est **jamais** exposé par un getter public (`RB-12`) ; la comparaison se fait par `password_verify()`, pas par la classe |
-| `Administrateur` | entité | idem + `role:string` | `estSuper()`, `peutGerer(action)` | `1 — 0..* Commande` (suivi), `1 — 0..* Produit` (gestion) | Classe séparée de `Client` : droits, champs et cycle de vie différents (§12.4) |
-| `Categorie` | entité | `id_categorie:int`, `nom`, `slug`, `description?` | `produits(nb,page)`, `estVide()` | `1 — 0..* Produit` | `estVide()` matérialise `RB-14` côté modèle (message d'aide au lieu d'un rejet sec) |
-| `Produit` | entité | `id_produit`, `reference`, `nom`, `slug`, `description?`, `prixHT:float`, `tva:float`, `prixTTC:float`, `stock:int`, `seuilAlerte:int`, `visible:bool` | `estDisponible(qte)`, `etatStock()`, `prixTTCCalcule()` | `1 — 0..* LigneCommande` | `prixTTC` est **en lecture seule** dans la classe : il est produit par le trigger (RB-16), l'objet PHP ne peut pas l'imposer |
-| `Commande` | entité | `id_commande`, `numero`, `id_client`, `adresseLivraison`, `statut`, `montantTotal`, `dateCommande` | `estAnnulable()`, `statutSuivantAutorise(cible)`, `lignes()` | `1 — 1..* LigneCommande` (composition) | pas de setter `montantTotal` public : le total vient de la somme calculée (`RB-15`) |
-| `LigneCommande` | entité | `id_ligne`, `id_commande`, `id_produit`, `quantite:int`, `prixUnitaire:float`, `totalLigne:float` | `estImmuable()` (toujours `true`) | `0..* — 1 Produit` | prix figé à l'achat : aucun `setPrix()` n'existe (`RB-06`, `RB-09`) |
-| `OrderStatusHistory` | entité en lecture seule | `id`, `order_id`, `old_status`, `new_status`, `changed_by`, `changed_at` | `lignesDe(commandeId)` | `0..* — 1 Commande` | écriture **interdite** depuis le code applicatif : seul `trg_history_statut` écrit (§12.6) |
-| `PanierSession` | service objet | `lignes:array`, `sessionKey:string` | `ajouter()`, `modifierQuantite()`, `retirer()`, `total()`, `vide()`, `versJSON()` | `1 — 1 Client` (par session) | classe dédiée : le panier est le seul endroit où le plafond de quantité est appliqué avant la base |
-| `AuthMiddleware`, `Csrf`, `Hasher` | services transverses | — | `authentifie()`, `exigeRole()`, `verifieJeton()`, `hache()`, `verifie()` | — | isoler la sécurité en objets testables, sinon elle est recopiée dans chaque contrôleur |
-| `ClientRepository`, `ProduitRepository`, `CommandeRepository` | accès aux données | `pdo:PDO` | `findByEmail()`, `search()`, `save()`, `createOrder()`, `confirm()`, `cancel()`, `changeStatus()` | — | **seuls** à écrire du SQL ; un repository par aggregate, jamais de SQL dans un contrôleur ou une vue |
-| `Database` | fabrique | — | `pdo():PDO` (singleton) | — | configuration PDO centralisée : `ERRMODE_EXCEPTION`, `ATTR_EMULATE_PREPARES=false`, UTF-8 (`ENF-09`) |
-| `Router`, `Request`, `Response` | microframework | — | `dispatch(Request)`, `param()`, `json()`, `redirect()` | — | 120 lignes suffisent et restent lisibles au jury ; pas de framework externe (référentiel PHP « maison » attendu) |
+| `Router` | routeur liste blanche | `routes:array` | `get()`, `post()`, `resoudre()`, `executer()` | `1 — 1..* Controller` | ~90 lignes lisibles sans framework externe ; liste blanche stricte avec gardes (`public`, `client`, `admin`, `super`) |
+| `Controller` + 14 contrôleurs (`Home`, `Catalogue`, `Auth`, `Compte`, `Panier`, `Commande`, `Api`, 7 `Admin\*`) | présentation / orchestration | — | `render()`, `rediriger()`, `verifierCsrf()`, `flashSucces()`, `flashErreur()` | dépendent des `Repository` et de `PanierSession` | Séparation stricte présentation / accès aux données ; aucune requête SQL directe dans un contrôleur ou une vue |
+| `PanierSession` | modèle de session | `store`, `produits`, `parametres` | `charge()`, `ajouter()`, `modifierQuantite()`, `retirer()`, `vider()`, `recapitulatif()` | `1 — 1 StoreInterface`, `1 — 1 ProduitRepository`, `1 — 1 ParametreRepository` | Panier volatil en session : applique le plafond de stock serveur (`RB-18`) et calcule le port (`RB-20`) avant toute écriture en base |
+| `Auth`, `Csrf`, `AccesRefuse` | sécurité transverse | — | `demarrer()`, `connecterClient()`, `exigeClient()`, `verifierAdmin()`, `exigeAdmin()`, `jeton()`, `estValide()`, `verifier()` | utilisés par `Router` et `Controller` | Isoler sessions durcies (`RB-13`), `password_verify()` (`RB-12`) et jeton CSRF (`SEC-05`) dans des classes testables |
+| `ClientRepository`, `ProduitRepository`, `CategorieRepository`, `CommandeRepository`, `ParametreRepository` | dépôts (repositories) | `store:StoreInterface` (+ `ClientAccountGateway` / `ParametreRepository`) | `find()`, `findVisibleBySlug()`, `searchProducts()`, `createAccount()`, `getCredentials()`, `noteConnexion()`, `createOrderFromBasket()`, `updateOrderStatus()`, `cancelOrder()`, `computeShipping()` | `1 — 1 StoreInterface` | Les dépôts manipulent des tableaux associatifs normalisés par `Schema` (pas de POJO PHP dupliquant le schéma SQL) ; les déclencheurs (`Triggers` PHP ou triggers SQL) protègent `prix_ttc`, les stocks et l'audit |
+| `Database`, `StoreInterface`, `SqlStore`, `JsonStore`, `Triggers`, `Views`, `Schema` | persistance duale & configuration | `pdo:PDO` (dans `SqlStore`) | `store()`, `find()`, `select()`, `insert()`, `update()`, `transactional()`, `setActor()` | `Database 1 — 1 StoreInterface`, `SqlStore` / `JsonStore` réalisent `StoreInterface` | Inversion de dépendance : `SqlStore` (PDO préparé `EMULATE_PREPARES=false`, procédures stockées) et `JsonStore` (mode isolé) partagent le même contrat |
 
-**Cardinalités et justification (extrait des règles du sujet) :**
+**Cardinalités et traduction SQL (extrait des règles du sujet) :**
 
 | Association | Cardinalité | Pourquoi, et traduction SQL |
 |---|---|---|
 | `Client` → `Commande` | `1,1 — 0,*` | « un client peut passer plusieurs commandes », « une commande appartient à un seul client » (`RB-10`) → `commande.id_client` NOT NULL + FK `RESTRICT` (on ne supprime pas un client qui a commandé) |
 | `Categorie` → `Produit` | `1,1 — 0,*` | « un produit appartient à une seule catégorie » (`RB-07`, FK NOT NULL), « une catégorie peut contenir plusieurs produits » (`RB-08`, une catégorie vide est légale) |
-| `Commande` → `LigneCommande` | `1,1 — 1,*` | `RB-04` (au moins une ligne) → FK `CASCADE` : la ligne ne survit pas à sa commande ; composition dans le diagramme |
+| `Commande` → `LigneCommande` | `1,1 — 1,*` | `RB-04` (au moins une ligne à la validation) → FK `CASCADE` : la ligne ne survit pas à sa commande |
 | `Produit` → `LigneCommande` | `1,1 — 0,*` | un produit apparaît dans 0..N lignes ; FK `RESTRICT` → `RB-14` et test T-15 |
-| `Commande` → `OrderStatusHistory` | `1,1 — 0,*` | 0 ligne le temps du brouillon initial non tracé, puis 1 par changement de statut effectif (`RB-11`) |
-| `Client` → `PanierSession` | `1,1 — 0,1` | panier volatil : pas de classe persistante par défaut ; variante V1 ajoute `Panier`/`LignePanier` (§12.8) |
+| `Commande` → `OrderStatusHistory` | `1,1 — 0,*` | 0 ligne au brouillon initial, puis 1 par création/changement de statut (`trg_history_creation` / `trg_history_statut`, `RB-11`) |
+| `Client` → `PanierSession` | `1,1 — 0,1` | panier volatil en session PHP tant que la commande n'est pas validée |
 
 ### 5.3 Diagrammes de séquence
 
@@ -669,7 +663,7 @@ Le tableau §1.7 identifie les onze règles du sujet comme `RB-01`…`RB-11` ; l
 | `RB-10` | Une commande appartient à **un seul client** | `o.id_client` NOT NULL et existant | modèle + FK + trigger | `fk_commande_client … ON DELETE RESTRICT` + `trg_commande_controle_insert` | `T-17` |
 | `RB-11` | Une commande peut avoir les états `BROUILLON`, `EN_PREPARATION`, `PAYEE`, `EXPEDIEE`, `LIVREE`, `ANNULEE`, avec transitions **uniques et tracées** *(le sujet laisse la liste des états **incomplète** — la ligne « Une commande peut avoir les états : » se termine par un deux-points dans le PDF : la liste ci-contre est donc un **arbitrage documenté**, §12.8 V5, et non une reprise du texte)* | machine à états §5.3.7 | contrôleur (liste des transitions) + `sp_update_order_status` + **trigger** + **ENUM** | `statut ENUM(…)` + `trg_commande_transition_statut` + `trg_history_statut`/`trg_history_creation` | `T-12`, `T-13`, `T-22`, F-29 |
 | `RB-12` | *(complément)* Aucun mot de passe n'est stocké en clair ; la vérification est faite par `password_verify()` | `len(hash) ≥ 60 AND hash LIKE '$2y$%'` | modèle + procédure + contrôle d'installation | `sp_create_account` refuse une valeur de moins de 60 caractères (`HASH_MOT_DE_PASSE_INVALIDE`) ; requête de recette `ENF-11` | `T-05`, F-00 |
-| `RB-13` | *(complément)* Séparation stricte des rôles : l'administrateur ne gère pas les comptes clients ; le client n'accède jamais au back-office | `role(session) ⇒ périmètre des routes` | routeur (garde d'accès) + procédure | `RB-13` implémenté par `AuthMiddleware::exigeRole()` ; comptes `administrateur` créés uniquement par l'installation | F-32, S-03 |
+| `RB-13` | *(complément)* Séparation stricte des rôles : l'administrateur ne gère pas les comptes clients ; le client n'accède jamais au back-office | `role(session) ⇒ périmètre des routes` | routeur (garde d'accès) + procédure | `RB-13` implémenté par `Router` (gardes `public`/`client`/`admin`/`super`) et `Auth::exigeClient()` / `exigeAdmin()` / `exigeSuper()` ; comptes `administrateur` créés uniquement par l'installation ou un `SUPER` | F-32, S-03 |
 | `RB-14` | *(complément)* Intégrité référentielle : on ne supprime pas une catégorie occupée ni un produit référencé | `DELETE` refusé si `COUNT(références) > 0` | `sp_delete_category`/`sp_delete_product` + FK + triggers | `CATEGORIE_NON_VIDE…`, `PRODUIT_REFERENCE_INTERDIT_DE_SUPPRIMER` | `T-14`, `T-15`, `T-20` |
 | `RB-15` | *(complément)* Le `montant_total` d'une commande est une **somme calculée**, jamais une saisie | `o.montant_total = Σ l.total_ligne + o.frais_port` | procédure + trigger | `trg_commande_transition_statut` (refus `RB15_MONTANT_CALCULE_INTERDIT`), `trg_commande_controle_insert` (montant forcé à 0) | `T-10`, F-16 |
 | `RB-16` | *(complément)* Le `prix_ttc` d'un produit est **dérivé** : `prix_ttc = ROUND(prix_ht × (1 + tva/100), 2)` | idem | triggers | `trg_produit_ttc`, `trg_produit_ttc_update` | F-22 + requête de cohérence §12.4 |
@@ -721,7 +715,7 @@ Pour la traçabilité, le tableau §6.1 associe chaque identifiant à un mécani
 
 | Domaine | Choix | Alternative écartée (pourquoi) |
 |---|---|---|
-| Serveur web | **Apache 2.4** avec un unique `DocumentRoot public/` + `mod_rewrite` | Nginx (parfaitement possible, mais la doc d'installation et les `.htaccess` du sujet visent Apache/LAMP d'IUT) |
+| Serveur web | **Apache 2.4** avec un unique `DocumentRoot public/` + `mod_rewrite` (à la racine du domaine ; aucun déploiement en sous-répertoire exigé) | Nginx (parfaitement possible, mais la doc d'installation cible Apache/LAMP) |
 | Langage | **PHP 8.2+**, extensions `pdo_mysql`, `mbstring`, `json`, `openssl`, `intl` | PHP 7.x (EOL, `password_hash` OK mais enums/fibres/readonly absents → code plus verbeux) |
 | Base | **MySQL 8.0.16+** (CHECK appliqués) — compatible **MariaDB 10.6+** | SQLite (pas de procédures stockées ni de triggers exploitables comme attendu, `CT-03/04` impossibles) |
 | Accès données | **PDO** natif, requêtes préparées, transactions explicites | ORM (abstrairait exactement ce que le sujet veut voir : SQL, PDO, `CALL`) |
@@ -870,7 +864,9 @@ function ouvre_session_client(int $id): void {
 }
 ```
 
-Politique appliquée aux créations et changements de mot de passe : **12 caractères minimum** côté serveur et dans les formulaires. Le dépôt ne contient pas de liste des 10 000 mots de passe courants ni de contrôle documenté contre cette liste ; aucune règle de composition « lettre + chiffre » n’est annoncée. Le limiteur de tentatives après échecs n’est pas implémenté et n’est pas revendiqué. Les mesures effectivement présentes sont le hachage avec `password_hash()`, la vérification par `password_verify()`, les sessions durcies, `HttpOnly`, `SameSite=Lax`, `Secure` en production et la protection CSRF sur les méthodes mutatives. La durée d’inactivité et la durée maximale ne sont pas revendiquées tant qu’elles ne sont pas contrôlées à chaque requête. La déconnexion détruit la session et le panier ; les données sensibles ne doivent pas figurer dans les URL.
+> *Précision d’implémentation (`app/Security/Auth.php`, `RB-13`)* : pour garantir qu’une session client ne puisse jamais être confondue avec une session back-office, le code réel sépare explicitement `$_SESSION['client_id']` (côté boutique) et `$_SESSION['admin_id']` (côté administration), au lieu d’une clé générique unique `user_id`.
+
+Politique appliquée aux créations et changements de mot de passe : **8 caractères minimum** côté serveur et dans les formulaires. Le dépôt ne contient pas de liste des 10 000 mots de passe courants ni de contrôle documenté contre cette liste ; aucune règle de composition « lettre + chiffre » n’est annoncée. Le limiteur de tentatives après échecs n’est pas implémenté et n’est pas revendiqué. Les mesures effectivement présentes sont le hachage avec `password_hash()`, la vérification par `password_verify()`, les sessions durcies, `HttpOnly`, `SameSite=Lax`, `Secure` en production et la protection CSRF sur les méthodes mutatives. La durée d’inactivité et la durée maximale ne sont pas revendiquées tant qu’elles ne sont pas contrôlées à chaque requête. La déconnexion détruit la session et le panier ; les données sensibles ne doivent pas figurer dans les URL.
 
 **Tests :** `S-05` (cookie volé mais IP/agent différents → revalidation), `S-06` (réémission du formulaire sans jeton → refus `403` JSON ou redirection `302` vers `/`), `F-08` (mot de passe erroné et email inconnu produisent des réponses strictement identiques : même texte, même code, temps de réponse comparables).
 
@@ -957,7 +953,7 @@ conséquence sur MiniShop et le test qui le vérifie.
 
 | Écart | Pourquoi | Ce qui manque pour le combler |
 |---|---|---|
-| Pas de **MFA** sur le back-office (ASVS 4.3.1, ANSSI R36) | dépendance externe (TOTP/SMS), hors du temps du projet et hors des 11 compétences | 1 table `mfa_secret`, 1 écran d'enrôlement, 1 garde dans `AuthMiddleware` |
+| Pas de **MFA** sur le back-office (ASVS 4.3.1, ANSSI R36) | dépendance externe (TOTP/SMS), hors du temps du projet et hors des 11 compétences | 1 table `mfa_secret`, 1 écran d'enrôlement, 1 garde dans `Auth` |
 | Pas de **remboursement** matériel (rétractation → annulation seulement) | aucun paiement réel n'est encaissé (§11.2) | un moyen de paiement, puis `sp_refund_order` et une ligne de statut dédiée |
 | Pas d'**anonymisation à la demande** (RGPD art. 17) | `RB-09` interdit de détruire la commande ; l'anonymisation du client (nom/email en `ANON-x@nominal.local`) reste possible mais n'est pas spécifiée | 1 procédure `sp_anonymize_client` + la liste des tables à toucher, en évolution tracée (§16.3) |
 | Pas de **registre des traitements** / DPA | maquette pédagogique, aucune donnée réelle (§1.5) | hors projet par nature |
@@ -1034,7 +1030,7 @@ Les dossiers requis par la WBS (`app/`, `public/`, `sql/`, `tests/`, `docs/`, `s
 
 - **un seul point d'entrée** (`public/index.php`) : toutes les URL passent par lui, ce qui rend possible la vérification systématique de la session, du CSRF et des en-têtes ;
 - table de routes explicite (`GET /catalogue`, `POST /panier/ajouter`, `GET /admin/commandes/{id}`) ; méthodes non autorisées → 405 ; inconnues → 404 rendu par la vue d'erreur ;
-- `.htaccess` : `RewriteRule ^ index.php [QSA,L]`, protection de `/../`, interdiction d'accès à `app/`, `var/`, `sql/`, `docs/` (même si le `DocumentRoot` ne pointe déjà que sur `public/` — redondance volontaire, `SEC-11`).
+- réécriture des URL non-fichiers vers `public/index.php` (le `DocumentRoot` pointe directement sur `public/`, sans exigence de déploiement en sous-répertoire).
 
 ### 9.4 Objets, dépendances et conventions de conception PHP
 
@@ -1124,8 +1120,10 @@ Cette section est la synthèse lisible du **document de conception de base de do
 | `COMMANDE` | demande d'achat enregistrée d'un client | `id_commande` (+ `numero` candidat) | adresse de livraison, statut, montant total, commentaire, dates |
 | `LIGNE_COMMANDE` | un produit acheté en quantité dans une commande, **au prix du moment** | `id_ligne` | quantité, prix unitaire, total |
 | `ORDER_STATUS_HISTORY` | trace inaltérable des changements de statut | `id` | ancien/nouveau statut, auteur, rôle, commentaire, horodatage |
+| `PARAMETRE` | paramètres métier sans redéploiement (`frais_port`, `franchise_port`, `tva_defaut`, `conservation_compte`) | `cle` | valeur, unité, commentaire (`comment`), date de modification |
+| `STOCK_MOVEMENT_HISTORY` | snapshot d'audit des ajustements manuels de stock (survit à la suppression du produit) | `id_mouvement` | produit (id, référence, nom), mode (`SET`/`DELTA`), quantité, stocks avant/après, motif, auteur, rôle, horodatage |
 
-Associations : `PASSER` (CLIENT↔COMMANDE), `COMPORTER` (COMMANDE↔LIGNE_COMMANDE), `ETRE VENDU DANS` (PRODUIT↔LIGNE_COMMANDE), `CLASSER` (CATEGORIE↔PRODUIT), `SUIVRE`/`GERER` (ADMINISTRATEUR↔COMMANDE/PRODUIT), `ETRE TRACÉE DANS` (COMMANDE↔ORDER_STATUS_HISTORY).
+Associations : `PASSER` (CLIENT↔COMMANDE), `COMPORTER` (COMMANDE↔LIGNE_COMMANDE), `ETRE VENDU DANS` (PRODUIT↔LIGNE_COMMANDE), `CLASSER` (CATEGORIE↔PRODUIT), `ETRE TRACÉE DANS` (COMMANDE↔ORDER_STATUS_HISTORY), `AUDITER` (PRODUIT↔STOCK_MOVEMENT_HISTORY sans FK), `PARAMETRER` (PARAMETRE↔PRODUIT/COMMANDE).
 
 #### 12.1.3 Cardinalités, avec justification ligne à ligne
 
@@ -1162,7 +1160,7 @@ PRODUIT(id_produit PK, reference UK, nom, slug UK, description, prix_ht, tva, pr
         id_categorie FK → CATEGORIE)            -- RB-07 (NOT NULL), RB-16 (prix_ttc calculé)
 
 COMMANDE(id_commande PK, numero UK, adresse_livraison, statut, frais_port, montant_total,
-         commentaire, date_commande, date_modification, id_client FK → CLIENT)  -- RB-10, RB-20
+         montant_avant_annulation, commentaire, date_commande, date_modification, id_client FK → CLIENT)  -- RB-10, RB-20
 
 LIGNE_COMMANDE(id_ligne PK, quantite, prix_unitaire, total_ligne,
                id_commande FK → COMMANDE (CASCADE), id_produit FK → PRODUIT (RESTRICT))
@@ -1170,17 +1168,20 @@ LIGNE_COMMANDE(id_ligne PK, quantite, prix_unitaire, total_ligne,
 ORDER_STATUS_HISTORY(id PK, old_status, new_status, changed_by, changed_by_role,
                      commentaire, changed_at, order_id FK → COMMANDE)
 
-PARAMETRE(cle PK, valeur, description, maj_le)   -- 4 lignes livrées : frais_port = 4.90,
-     franchise_port = 80.00, tva_standard = 20.00, seuil_alerte_defaut = 5
+STOCK_MOVEMENT_HISTORY(id_mouvement PK, id_produit, reference_produit, nom_produit, mode_mouvement,
+                       quantite, stock_avant, stock_apres, motif, changed_by, changed_by_role, changed_at)
+
+PARAMETRE(cle PK, valeur, unite, comment, date_modification)   -- 4 lignes livrées : frais_port = 4.90,
+     franchise_port = 80.00, tva_defaut = 20.00, conservation_compte = 24
      -- les règles chiffrées vivent ICI, pas dans une constante PHP recopiée (RB-20)
 ```
 
 **Trois vues** complètent le modèle logique — elles factorisent une règle pour qu'elle ne soit jamais réécrite
-(en complément des 8 tables métier et de la table technique d’audit du stock, soit 9 tables SQL) :
+(avec les 9 tables SQL : 8 entités métier + `stock_movement_history`) :
 
 | Vue | Contenu | Règle qu'elle factorise | Test |
 |---|---|---|---|
-| `v_etat_stock` | `id_produit`, référence, nom, stock, seuil, **état** (`RUPTURE` / `STOCK_FAIBLE` / `OK`) | `RB-04` + `RB-05` : un seul endroit décide de l'état du stock | `T-27` |
+| `v_etat_stock` | `id_produit`, référence, nom, stock, seuil, **état** (`RUPTURE` / `TRES_BAS` / `DISPONIBLE`) | `RB-03` + `EF-ADM-05` : un seul endroit décide de l'état du stock | `T-27` |
 | `v_catalogue` | produits `visible = 1` + catégorie + état du stock | `RB-19` : la visibilité est appliquée **par la vue**, pas par chaque requête | `T-27` |
 | `v_commandes_client` | commande + client + nombre de lignes + `frais_port` + total | lecture du compte d'un client, sans jamais recompter à la main | `T-27` |
 

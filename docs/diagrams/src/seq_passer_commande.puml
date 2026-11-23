@@ -1,23 +1,66 @@
 @startuml seq_passer_commande
-title Séquence — valider une commande (UC-07, RB-04/05/06/15/18/20, ENF-16)
+title Séquence 4 — valider une commande (UC-07, RB-04/05/06/15/18/20, ENF-16)
+
+autonumber
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam defaultFontName "DejaVu Sans"
+skinparam ArrowColor #0F294A
+skinparam ParticipantBackgroundColor #FFFFFF
+skinparam ParticipantBorderColor #1E3A5F
+skinparam ActorBackgroundColor #FFFFFF
+skinparam ActorBorderColor #1E3A5F
+skinparam DatabaseBackgroundColor #F1F5F9
+skinparam DatabaseBorderColor #0F294A
+skinparam NoteBackgroundColor #F8FAFC
+skinparam NoteBorderColor #1E3A5F
+skinparam SequenceLifeLineBorderColor #334155
+
 actor Client
 participant "CommandeController" as CC
 participant "CommandeRepository" as CR
-database "Base" as DB
-Client -> CC : POST /commande/valider (adresse, _csrf)
-CC -> CC : exigerClient() + Csrf::verifier()
-CC -> CR : confirmerDepuisPanier(client, adresse)
-CR -> DB : BEGIN
-CR -> DB : CALL sp_create_order_from_basket(...)
-DB -> DB : verrou FOR UPDATE sur le stock
-DB -> DB : contrôle de disponibilité (procédure + trigger)
-DB -> DB : décrément du stock, montants calculés, port figé
-CR -> DB : COMMIT
-alt code_retour = OK
-  CR --> CC : numero, montant, id
-  CC --> Client : 302 /mes-commandes/{id} + flash succès
-else STOCK_INSUFFISANT ou panier vide
-  CR -> DB : ROLLBACK
-  CC --> Client : 302 /panier + message traduit
+participant "PanierSession" as PS
+database "Store / MySQL\n(sp_create_order_from_basket)" as DB
+
+Client -> CC : POST /commande/valider (adresse, paiement_simule, _csrf)
+activate CC
+CC -> CC : verifierCsrf() + Auth::exigeClient()
+CC -> DB : setActor({id, role: 'CLIENT', nom})
+CC -> CR : createOrderFromBasket(id_client, adresse, panier, payee)
+activate CR
+
+CR -> DB : CALL sp_create_order_from_basket(\nid_client, adresse, panier_json, payee)
+activate DB
+DB -> DB : START TRANSACTION + INSERT commande (BROUILLON)
+
+loop pour chaque article du panier JSON
+  DB -> DB : SELECT stock FOR UPDATE (verrou de ligne)
+  DB -> DB : INSERT ligne_commande\n[trg_ligne_prix_snapshot + trg_ligne_decrement_stock]
 end
+
+DB -> DB : CALL sp_compute_shipping() + fige frais_port & montant_total (RB-15/20)
+
+alt p_code_retour = 'OK'
+  DB -> DB : UPDATE statut = IF(payee=1, 'PAYEE', 'EN_PREPARATION')\n[trg_history_statut] + COMMIT
+  DB --> CR : {p_id_commande, p_numero, p_montant, 'OK'}
+  deactivate DB
+  CR --> CC : {id_commande, numero, montant}
+  deactivate CR
+  CC -> PS : vider() : void
+  activate PS
+  PS --> CC : ok
+  deactivate PS
+  CC --> Client : 302 Location: /mes-commandes/{id} + flash succès
+  ||8||
+else erreur métier (STOCK_INSUFFISANT ou panier vide)
+  activate DB
+  activate CR
+  DB -> DB : ROLLBACK (aucune commande ni baisse de stock)
+  DB --> CR : p_code_retour != 'OK'
+  deactivate DB
+  CR --> CC : throw BusinessError
+  deactivate CR
+  CC --> Client : 302 Location: /panier + message humain (panier conservé)
+end
+deactivate CC
 @enduml

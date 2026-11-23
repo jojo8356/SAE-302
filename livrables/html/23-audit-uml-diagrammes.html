@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : Audit complet de fidélité des schémas UML (docs/diagrams/) face au code">
+<title>Audit complet de fidélité des schémas UML (docs/diagrams/) face au code — MiniShop (SAÉ 302)</title>
+<style>
+:root {
+  --encre: #0f172a;
+  --encre-douce: #475569;
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
+  color: var(--encre);
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
+a:hover { text-decoration-thickness: 2px; }
+code {
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
+}
+pre {
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
+}
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+blockquote {
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
+}
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
+@media print {
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
+  h1, h2, h3 { break-after: avoid; }
+  table, pre, img, blockquote { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
+  .toc { break-after: page; }
+}
+</style>
+</head>
+<body>
+<main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/23-audit-uml-diagrammes.md</code></div>
+</header>
+<nav class="toc" aria-label="Sommaire"><div class="toc">
+<ul>
+<li><a href="#1-verdict-global">1. Verdict global</a><ul>
+<li><a href="#methode-et-environnement-de-generation-utilises">Méthode et environnement de génération utilisés</a></li>
+</ul>
+</li>
+<li><a href="#2-tableau-synthetique-des-14-diagrammes">2. Tableau synthétique des 14 diagrammes</a></li>
+<li><a href="#3-audit-detaille-diagramme-par-diagramme">3. Audit détaillé diagramme par diagramme</a><ul>
+<li><a href="#31-architecture_mvc-architecture_mvcpuml-vs-architecture_mvcpng">3.1 architecture_mvc (architecture_mvc.puml vs architecture_mvc.png)</a></li>
+<li><a href="#32-diagramme_classes-diagramme_classespuml-vs-diagramme_classespng">3.2 diagramme_classes (diagramme_classes.puml vs diagramme_classes.png)</a></li>
+<li><a href="#33-mcd_minishop-mcd_minishoppuml-vs-mcd_minishoppng">3.3 mcd_minishop (mcd_minishop.puml vs mcd_minishop.png)</a></li>
+<li><a href="#34-mld_minishop-mld_minishoppuml-vs-mld_minishoppng">3.4 mld_minishop (mld_minishop.puml vs mld_minishop.png)</a></li>
+<li><a href="#35-etats_commande-etats_commandepuml-vs-etats_commandepng">3.5 etats_commande (etats_commande.puml vs etats_commande.png)</a></li>
+<li><a href="#36-cas_utilisation_global-cas_utilisation_globalpuml-vs-cas_utilisation_globalpng">3.6 cas_utilisation_global (cas_utilisation_global.puml vs cas_utilisation_global.png)</a></li>
+<li><a href="#37-cas_utilisation_detail-cas_utilisation_detailpuml-vs-cas_utilisation_detailpng">3.7 cas_utilisation_detail (cas_utilisation_detail.puml vs cas_utilisation_detail.png)</a></li>
+<li><a href="#38-cas_utilisation_commandes-cas_utilisation_commandespuml-vs-cas_utilisation_commandespng">3.8 cas_utilisation_commandes (cas_utilisation_commandes.puml vs cas_utilisation_commandes.png)</a></li>
+<li><a href="#39-activite_passer_commande-activite_passer_commandepuml-vs-activite_passer_commandepng">3.9 activite_passer_commande (activite_passer_commande.puml vs activite_passer_commande.png)</a></li>
+<li><a href="#310-seq_authentification-seq_authentificationpuml-vs-seq_authentificationpng">3.10 seq_authentification (seq_authentification.puml vs seq_authentification.png)</a></li>
+<li><a href="#311-seq_consulter_catalogue-seq_consulter_cataloguepuml-vs-seq_consulter_cataloguepng">3.11 seq_consulter_catalogue (seq_consulter_catalogue.puml vs seq_consulter_catalogue.png)</a></li>
+<li><a href="#312-seq_recherche_produit-seq_recherche_produitpuml-vs-seq_recherche_produitpng">3.12 seq_recherche_produit (seq_recherche_produit.puml vs seq_recherche_produit.png)</a></li>
+<li><a href="#313-seq_ajout_panier-seq_ajout_panierpuml-vs-seq_ajout_panierpng">3.13 seq_ajout_panier (seq_ajout_panier.puml vs seq_ajout_panier.png)</a></li>
+<li><a href="#314-seq_passer_commande-seq_passer_commandepuml-vs-seq_passer_commandepng">3.14 seq_passer_commande (seq_passer_commande.puml vs seq_passer_commande.png)</a></li>
+</ul>
+</li>
+<li><a href="#4-plan-daction-recommande-avant-de-regenerer-les-png">4. Plan d’action recommandé avant de régénérer les PNG</a></li>
+<li><a href="#5-suivi-de-resolution-post-audit">5. Suivi de résolution (post-audit)</a></li>
+</ul>
+</div>
+</nav>
+<h1 id="audit-complet-de-fidelite-des-schemas-uml-docsdiagrams-face-au-code">Audit complet de fidélité des schémas UML (<code>docs/diagrams/</code>) face au code<a class="headerlink" href="#audit-complet-de-fidelite-des-schemas-uml-docsdiagrams-face-au-code" title="Permanent link"></a></h1>
+<p><strong>Date de l’audit :</strong> 2026-11-23<br />
+<strong>Révision contrôlée :</strong> <code>3d89cfba</code> (<code>main</code>)<br />
+<strong>Périmètre :</strong> les <strong>14 sources PlantUML</strong> (<code>docs/diagrams/src/*.puml</code>), les <strong>14 PNG générés réellement</strong> depuis ces sources, et les <strong>14 PNG actuellement versionnés</strong> (<code>docs/diagrams/*.png</code>), comparés au code complet (<code>app/</code>, <code>public/</code>, <code>sql/</code>).</p>
+<hr />
+<h2 id="1-verdict-global">1. Verdict global<a class="headerlink" href="#1-verdict-global" title="Permanent link"></a></h2>
+<p><strong>Non : ni les PNG générés depuis <code>docs/diagrams/src/*.puml</code>, ni les PNG actuellement versionnés dans <code>docs/diagrams/*.png</code> ne sont tous fidèles au code complet.</strong></p>
+<p>La génération effective des 14 sources <code>.puml</code> et l’inspection visuelle des <strong>28 images</strong> (14 générées + 14 versionnées) mettent en évidence <strong>trois constats majeurs</strong> :</p>
+<ol>
+<li><strong>Désynchronisation totale <code>.puml</code> ↔ <code>.png</code> versionnés (14 / 14) :</strong><br />
+   Aucun des 14 PNG actuellement commités dans <code>docs/diagrams/</code> ne provient des fichiers <code>docs/diagrams/src/*.puml</code> actuels. Les PNG versionnés viennent d’une génération antérieure (avant l’introduction de <code>StoreInterface</code> / <code>JsonStore</code> / <code>SqlStore</code>, des 7 contrôleurs <code>Admin\*</code>, des 9 tables et des 18 procédures). Le job CI <code>docs (plantuml)</code> régénère les PNG dans un artefact jetable sans mettre à jour le dépôt ; exécuter <code>bash docs/diagrams/render.sh</code> aujourd’hui écraserait donc les 14 images versionnées — avec une <strong>régression grave sur <code>etats_commande.png</code></strong> et un <strong>bug visuel bloquant sur <code>mld_minishop.png</code></strong>.</li>
+<li><strong>Défauts de rendu et d’ergonomie observés après génération de <code>src/*.puml</code> :</strong><br />
+   - <strong><code>mld_minishop</code> :</strong> syntaxe <code>class</code> avec parenthèses SQL (<code>VARCHAR(100)</code>, <code>DECIMAL(10,2)</code>, <code>ENUM(...)</code>) interprétées comme des <strong>méthodes</strong> par PlantUML (chaque table est coupée en deux compartiments attributs/méthodes), et anomalie de rendu faisant apparaître <code>id_client : &lt;&lt;FK&gt;&gt; client</code> jusque dans la table <code>client</code>.
+   - <strong><code>diagramme_classes</code> :</strong> <code>PanierSession</code> flotte hors de tout package ; <code>Parametre</code>, <code>CategorieRepository</code>, <code>ClientRepository</code> et <code>ParametreRepository</code> flottent isolés sans aucune flèche.
+   - <strong><code>cas_utilisation_detail</code> :</strong> <code>Retirer du panier</code> flotte sans aucun lien d’acteur ni relation ; la flèche <code>Valider la commande ..&gt; Se connecter</code> croise le trait <code>Ajouter au panier --&gt; Modifier une quantité</code>.
+   - <strong><code>cas_utilisation_global</code> :</strong> les flèches <code>Visiteur --&gt; UC-05</code> et <code>Visiteur --&gt; UC-06</code> bouclent par le haut en traversant tout le diagramme.
+   - <strong><code>seq_passer_commande</code> :</strong> le libellé <code>[STOCK_INSUFFISANT ou panier vide]</code> du bloc <code>alt</code> chevauche la ligne de séparation et la flèche <code>302 /mes-commandes/{id}</code>.</li>
+<li><strong>Écarts sémantiques avec le code complet dans les deux jeux :</strong><br />
+   Aucun des deux jeux ne respecte intégralement les classes, méthodes, colonnes SQL, index, règles de gestion (<code>RB-*</code>) et transactions réelles du dépôt.</li>
+</ol>
+<h3 id="methode-et-environnement-de-generation-utilises">Méthode et environnement de génération utilisés<a class="headerlink" href="#methode-et-environnement-de-generation-utilises" title="Permanent link"></a></h3>
+<p>Pour cet audit, les 14 fichiers <code>docs/diagrams/src/*.puml</code> ont été compilés réellement hors dépôt (dans <code>/tmp/rendered_all/</code>, sans modifier <code>docs/diagrams/*.png</code> pour préserver le dépôt propre pendant l’audit) via :
+- <strong>Java :</strong> OpenJDK <code>17.0.9+9</code> (<code>jdk4py 17.0.9.2</code>)
+- <strong>PlantUML :</strong> <code>plantuml.jar</code> (<code>1.2019.06</code> via <code>node-plantuml</code>, et syntaxe également validée par le job CI <code>docs (plantuml)</code> sous PlantUML <code>1.2024.0</code> sur la PR précédente)
+- <strong>Graphviz :</strong> <code>dot</code> <code>16.1.0</code> (<code>@hpcc-js/wasm-graphviz</code>)</p>
+<p>Les <strong>14 PNG générés</strong> et les <strong>14 PNG versionnés</strong> ont tous été inspectés visuellement.</p>
+<hr />
+<h2 id="2-tableau-synthetique-des-14-diagrammes">2. Tableau synthétique des 14 diagrammes<a class="headerlink" href="#2-tableau-synthetique-des-14-diagrammes" title="Permanent link"></a></h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Diagramme</th>
+<th><code>.puml</code> après génération (rendu réel + code)</th>
+<th><code>.png</code> actuel (versionné)</th>
+<th>Gravité</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>architecture_mvc</code></td>
+<td><strong>Partiellement fidèle</strong> (rendu propre, mais omet <code>Config/</code>, <code>Service/</code>, <code>Tools/</code>, <code>Controller --&gt; Views</code>)</td>
+<td><strong>Obsolète / faux</strong> (<code>7 tables</code>, <code>16 procédures</code>, <code>AdminController</code>, <code>Hasher</code>, <code>app/Model</code> entités)</td>
+<td>Élevée</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>diagramme_classes</code></td>
+<td><strong>Faux + rendu imparfait</strong> (<code>AdminController</code>, 6 entités PHP inexistantes, <code>JsonStore --&gt; Views</code>, <code>PanierSession</code> hors package, 4 classes isolées)</td>
+<td><strong>Obsolète / faux</strong> (autre diagramme à méthodes fictives <code>-pdo</code>, <code>search()</code>, <code>get()</code>, <code>total()</code>, <code>vide()</code>)</td>
+<td>Critique</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>mcd_minishop</code></td>
+<td><strong>Incomplet</strong> (8 entités au lieu de 9 : manque <code>stock_movement_history</code> ; <code>comment</code> nommé <code>description</code>)</td>
+<td><strong>Cassé visuellement + faux</strong> (boîtes vides <code>CMD</code>/<code>PROD</code>/<code>LIN</code>/<code>HIS</code> détachées, 7 entités, FK fictive admin)</td>
+<td>Critique</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>mld_minishop</code></td>
+<td><strong>Faux + rendu cassé</strong> (<code>RETOURNEE</code> inexistant, 6 tables/9, mauvais index/types, colonnes classées en méthodes, <code>&lt;&lt;FK&gt;&gt; client</code> dupliquée dans <code>client</code>)</td>
+<td><strong>Incomplet / faux</strong> (7 tables/9, relation FK fictive <code>ADMINISTRATEUR</code>–<code>COMMANDE</code>)</td>
+<td>Critique</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>etats_commande</code></td>
+<td><strong>Faux (régression !)</strong> (<code>PAYEE --&gt; EN_PREPARATION</code> inversé, <code>RETOURNEE</code> inexistant, manque <code>EXPEDIEE --&gt; ANNULEE</code> et <code>BROUILLON --&gt; EN_PREPARATION</code>)</td>
+<td><strong>Fidèle</strong> (6 statuts et transitions exactes — seul PNG versionné meilleur que son <code>.puml</code>)</td>
+<td>Critique sur <code>.puml</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>cas_utilisation_global</code></td>
+<td><strong>Partiellement fidèle + rendu chargé</strong> (droits <code>UC05</code>/<code>UC15</code> imprécis, manque <code>/admin/parametres</code>, boucles d’arc en haut)</td>
+<td><strong>Obsolète / confus</strong> (<code>14 cas</code>, <code>Administrateur --|&gt; Visiteur</code>, flèches pleines entre UC)</td>
+<td>Élevée</td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>cas_utilisation_detail</code></td>
+<td><strong>Partiellement fidèle + rendu défectueux</strong> (<code>Retirer du panier</code> sans acteur, flèches croisées, manque <code>/contact</code> et <code>/preferences</code>)</td>
+<td><strong>Hors sujet total</strong> (dessine la gestion admin du catalogue au lieu du parcours visiteur/client)</td>
+<td>Critique</td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>cas_utilisation_commandes</code></td>
+<td><strong>Partiellement fidèle</strong> (nom de fichier trompeur, restreint <code>/admin/parametres</code> à <code>SUPER</code> à tort)</td>
+<td><strong>Incohérent</strong> (flèches <code>&lt;&lt;include&gt;&gt;</code>/<code>&lt;&lt;extend&gt;&gt;</code> inversées)</td>
+<td>Moyenne</td>
+</tr>
+<tr>
+<td>9</td>
+<td><code>activite_passer_commande</code></td>
+<td><strong>Partiellement fidèle</strong> (panier affiché HT/TVA faux, omet <code>EN_PREPARATION</code> et ordre de vidage)</td>
+<td><strong>Partiellement fidèle</strong> (double <code>UPDATE</code> statut, <code>SIGNAL</code> vs <code>p_code_retour</code>, omet <code>+ frais_port</code>)</td>
+<td>Moyenne</td>
+</tr>
+<tr>
+<td>10</td>
+<td><code>seq_authentification</code></td>
+<td><strong>Faux sur un acteur + noms inexacts</strong> (<code>Auth -&gt; Store</code> faux, noms <code>rechercherParEmail</code>/<code>connecter</code>/<code>date_derniere_connexion</code> inexacts, omet <code>COMPTE_BLOQUE</code> et <code>render</code> 200)</td>
+<td><strong>Obsolète / faux</strong> (<code>login.php</code>, <code>AuthMiddleware</code>, anti-brute-force 5 échecs inexistant, <code>user_id</code>)</td>
+<td>Élevée</td>
+</tr>
+<tr>
+<td>11</td>
+<td><code>seq_consulter_catalogue</code></td>
+<td><strong>Globalement fidèle</strong> (rendu propre ; omet <code>CategorieRepository</code> et <code>sp_search_products</code>)</td>
+<td><strong>Hors sujet total</strong> (dessine <code>UC-03</code> fiche produit avec <code>ProduitController::parSlug</code> inexistant)</td>
+<td>Critique sur <code>.png</code></td>
+</tr>
+<tr>
+<td>12</td>
+<td><code>seq_recherche_produit</code></td>
+<td><strong>Partiellement fidèle</strong> (<code>total</code> vs <code>total_trouves</code>, omet <code>sp_search_products</code> et vue partagée)</td>
+<td><strong>Obsolète / faux</strong> (<code>SearchRequest</code>, <code>SearchQuery</code>, <code>par_page &lt;= 60</code> alors que <code>12</code>)</td>
+<td>Élevée</td>
+</tr>
+<tr>
+<td>13</td>
+<td><code>seq_ajout_panier</code></td>
+<td><strong>Faux sur le contrat réel</strong> (JSON vs form-urlencoded, <code>disponible()</code>, <code>409 {reste}</code>, <code>200</code> incomplet)</td>
+<td><strong>Obsolète / faux</strong> (<code>panier/ajouter.php</code>, <code>PanierController</code>, JSON <code>{lignes, total, stockRestant}</code>)</td>
+<td>Élevée</td>
+</tr>
+<tr>
+<td>14</td>
+<td><code>seq_passer_commande</code></td>
+<td><strong>Faux sur la transaction SQL + chevauchement visuel</strong> (<code>BEGIN</code>/<code>COMMIT</code> PHP interdit avec <code>sp_create_order_from_basket</code>, noms faux, texte <code>alt</code> superposé)</td>
+<td><strong>Faux</strong> (<code>$pdo-&gt;beginTransaction()</code>, <code>409</code>/<code>200</code> au lieu de <code>302</code>, omet <code>+ frais_port</code> et <code>p_payee</code>)</td>
+<td>Critique</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-audit-detaille-diagramme-par-diagramme">3. Audit détaillé diagramme par diagramme<a class="headerlink" href="#3-audit-detaille-diagramme-par-diagramme" title="Permanent link"></a></h2>
+<h3 id="31-architecture_mvc-architecture_mvcpuml-vs-architecture_mvcpng">3.1 <code>architecture_mvc</code> (<code>architecture_mvc.puml</code> vs <code>architecture_mvc.png</code>)<a class="headerlink" href="#31-architecture_mvc-architecture_mvcpuml-vs-architecture_mvcpng" title="Permanent link"></a></h3>
+<ul>
+<li><strong>Réalité du code :</strong></li>
+<li><code>public/index.php</code> démarre <code>Auth::demarrer()</code> et enregistre les routes sur <code>App\Router</code>.</li>
+<li><code>app/Controller/</code> contient <code>Controller</code> (abstrait), <code>HomeController</code>, <code>CatalogueController</code>, <code>AuthController</code>, <code>CompteController</code>, <code>PanierController</code>, <code>CommandeController</code>, <code>ApiController</code>, plus <strong>7 contrôleurs d’administration</strong> dans <code>app/Controller/Admin/</code> (<code>DashboardController</code>, <code>ProduitAdminController</code>, <code>CategorieAdminController</code>, <code>StockAdminController</code>, <code>CommandeAdminController</code>, <code>ParametreAdminController</code>, <code>EquipeAdminController</code>).</li>
+<li><code>app/Config/</code> (<code>Database</code>, <code>DbConnexion</code>, <code>Env</code>), <code>app/Service/</code> (<code>RetentionComptes</code>, <code>NettoyageJournaux</code>, <code>NettoyageSauvegardes</code>), <code>app/Tools/</code> (<code>Heure</code>, <code>SqlLoader</code>, <code>DbInstaller</code>, <code>DbProvision</code>, <code>EnvFile</code>, <code>Revision</code>, <code>VolumetryGenerator</code>), <code>app/View/Image/*</code> et <code>app/Security/xss.php</code> complètent l’architecture.</li>
+<li>Les contrôleurs (<code>CatalogueController</code>, <code>StockAdminController</code>, <code>CommandeAdminController</code>, <code>HomeController</code>) importent directement <code>App\Config\Database</code> et <code>App\Model\Data\Views</code>.</li>
+<li>La base MySQL/MariaDB (<code>sql/01</code>–<code>03</code>) compte <strong>9 tables</strong>, <strong>3 vues</strong>, <strong>1 fonction</strong> (<code>fn_param</code>), <strong>18 procédures stockées</strong> et <strong>16 triggers</strong>.</li>
+<li><strong>Constat après génération (<code>.puml</code>) :</strong></li>
+<li>Le rendu généré est lisible et la hiérarchie en 3 couches (<code>Présentation</code> / <code>Métier</code> / <code>Données</code>) autour de <code>StoreInterface</code> (<code>JsonStore</code> / <code>SqlStore</code>) est juste, mais omet <code>app/Config/*</code> (<code>Database</code>), <code>app/Service/*</code>, <code>app/Tools/*</code>, le lien <code>Controller --&gt; Views</code> et les compteurs exacts de la base.</li>
+<li><strong>Écarts dans le <code>.png</code> versionné :</strong></li>
+<li>Montre <code>AdminController</code> (inexistant), <code>app/Model/{Client, Categorie, Produit, Commande, LigneCommande}</code> (classes inexistantes), <code>app/Security/{Csrf, Hasher, Auth}</code> (<code>Hasher</code> n’existe pas), <code>Database (singleton PDO, ATTR_EMULATE_PREPARES = false)</code> sans <code>StoreInterface</code>/<code>JsonStore</code>/<code>SqlStore</code>, et écrit <code>7 tables</code> + <code>16 procédures stockées</code> au lieu de <code>9 tables</code> + <code>18 procédures</code> + <code>1 fonction</code> + <code>3 vues</code>.</li>
+</ul>
+<hr />
+<h3 id="32-diagramme_classes-diagramme_classespuml-vs-diagramme_classespng">3.2 <code>diagramme_classes</code> (<code>diagramme_classes.puml</code> vs <code>diagramme_classes.png</code>)<a class="headerlink" href="#32-diagramme_classes-diagramme_classespuml-vs-diagramme_classespng" title="Permanent link"></a></h3>
+<ul>
+<li><strong>Réalité du code :</strong></li>
+<li>Aucune classe entité (<code>Produit</code>, <code>Categorie</code>, <code>Client</code>, <code>Commande</code>, <code>LigneCommande</code>, <code>Parametre</code>, <code>Administrateur</code>, <code>OrderStatusHistory</code>) n’existe en PHP : les repositories manipulent des tableaux associatifs (<code>array&lt;string,mixed&gt;</code>). Le seul objet de domaine hors couche <code>Data</code> est <code>App\Model\PanierSession</code>.</li>
+<li><code>AdminController</code> n’existe pas : il y a 7 classes concrètes sous <code>App\Controller\Admin\*</code>, plus <code>HomeController</code>, <code>CatalogueController</code>, <code>AuthController</code>, <code>CompteController</code>, <code>PanierController</code>, <code>CommandeController</code>, <code>ApiController</code>, toutes filles de <code>App\Controller\Controller</code>.</li>
+<li><code>ClientRepository</code> délègue les comptes à <code>ClientAccountGateway</code> (<code>ClientAccountGatewayFactory</code> → <code>SqlClientAccountGateway</code> / <code>StoreClientAccountGateway</code>).</li>
+<li><code>SqlStore</code> implémente <code>StoreInterface</code>, <code>StoredProcedureResultExecutor</code>, <code>StoredFunctionExecutor</code>, <code>RowLockingStore</code>.</li>
+<li><code>JsonStore</code> implémente <code>StoreInterface</code> et <code>StockMovementAuditor</code>, et s’appuie sur <code>Triggers</code>, <code>Schema</code>, <code>Journal</code>, <code>Filter</code> — <strong>jamais sur <code>Views</code></strong> (<code>Views</code> est appelé par <code>ProduitRepository</code>, <code>CatalogueController</code>, <code>StockAdminController</code> et <code>CommandeAdminController</code>).</li>
+<li><strong>Constat après génération (<code>.puml</code>) :</strong></li>
+<li>Visuellement : <code>PanierSession</code> est placé <strong>en dehors de tout package</strong>, et <code>Parametre</code>, <code>CategorieRepository</code>, <code>ClientRepository</code>, <code>ParametreRepository</code> flottent isolés sans aucune relation.</li>
+<li>Sémantiquement : déclare 7 classes inexistantes (<code>AdminController</code>, <code>Produit</code>, <code>Categorie</code>, <code>Client</code>, <code>Commande</code>, <code>LigneCommande</code>, <code>Parametre</code>), omet les 7 <code>*AdminController</code>, <code>HomeController</code>, <code>AuthController</code>, <code>CompteController</code>, <code>ApiController</code>, <code>ClientAccountGateway*</code>, <code>StoredProcedure*</code>, <code>Schema</code>, <code>Filter</code>, <code>Database</code>, trace une fausse flèche <code>JsonStore --&gt; Views</code>, et impose <code>Commande "1" *-- "1..*" LigneCommande</code> alors qu’un <code>BROUILLON</code> naît avec <code>0</code> ligne avant <code>addOrderLine()</code>.</li>
+<li><strong>Écarts dans le <code>.png</code> versionné :</strong></li>
+<li>Diagramme différent, avec méthodes et attributs fictifs (<code>-pdo : PDO</code>, <code>ProduitRepository::search()</code>, <code>get()</code>, <code>save(Produit)</code>, <code>hide()</code>, <code>ClientRepository::findByEmail()</code>, <code>update()</code>, <code>CommandeRepository::confirm()</code>, <code>changeStatus()</code>, <code>cancel()</code>, <code>historyOf()</code>, <code>PanierSession::total()</code>, <code>vide()</code>).</li>
+</ul>
+<hr />
+<h3 id="33-mcd_minishop-mcd_minishoppuml-vs-mcd_minishoppng">3.3 <code>mcd_minishop</code> (<code>mcd_minishop.puml</code> vs <code>mcd_minishop.png</code>)<a class="headerlink" href="#33-mcd_minishop-mcd_minishoppuml-vs-mcd_minishoppng" title="Permanent link"></a></h3>
+<ul>
+<li><strong>Réalité SQL (<code>sql/01_minishop_schema.sql</code> et <code>app/Model/Data/Schema.php</code>) :</strong></li>
+<li><strong>9 tables</strong> : <code>administrateur</code>, <code>client</code>, <code>categorie</code>, <code>produit</code>, <code>stock_movement_history</code>, <code>parametre</code>, <code>commande</code>, <code>ligne_commande</code>, <code>order_status_history</code>.</li>
+<li>Colonnes réelles notables manquantes ou renommées :<ul>
+<li><code>administrateur</code> : manque <code>prenom</code>, <code>date_creation</code>, <code>derniere_connexion</code> ;</li>
+<li><code>client</code> : manque <code>telephone</code>, <code>date_creation</code>, <code>derniere_connexion</code> ;</li>
+<li><code>produit</code> : manque <code>description</code>, <code>stock_initial</code>, <code>image_url</code>, <code>date_creation</code>, <code>date_modification</code> ;</li>
+<li><code>parametre</code> : la colonne s’appelle <strong><code>comment</code></strong> (<code>sql/01_minishop_schema.sql:173</code>), pas <code>description</code>, et il manque <code>date_modification</code> ;</li>
+<li><code>commande</code> : manque <code>montant_avant_annulation</code>, <code>commentaire</code>, <code>date_modification</code> ;</li>
+<li><code>order_status_history</code> : manque <code>changed_by_role</code> (<code>ENUM('CLIENT','ADMIN','SYSTEME')</code>) ;</li>
+<li><code>stock_movement_history</code> : <strong>table absente</strong> (<code>id_mouvement</code>, <code>id_produit</code>, <code>reference_produit</code>, <code>nom_produit</code>, <code>mode_mouvement</code>, <code>quantite</code>, <code>stock_avant</code>, <code>stock_apres</code>, <code>motif</code>, <code>changed_by</code>, <code>changed_by_role</code>, <code>changed_at</code>).</li>
+</ul>
+</li>
+<li><strong>Constat après génération (<code>.puml</code>) :</strong></li>
+<li>Le rendu généré est lisible, mais le titre annonce <code>8 entités</code> et omet la 9e table <code>STOCK_MOVEMENT_HISTORY</code>, nomme <code>description</code> au lieu de <code>comment</code> sur <code>PARAMETRE</code>, omet les attributs ci-dessus, et réduit <code>PARAMETRE</code> à <code>TVA par défaut</code> (il gère aussi <code>frais_port</code>, <code>franchise_port</code> et <code>conservation_compte</code>).</li>
+<li><strong>Écarts dans le <code>.png</code> versionné :</strong></li>
+<li><strong>Visuellement cassé</strong> : 4 boîtes vides (<code>CMD</code>, <code>PROD</code>, <code>LIN</code>, <code>HIS</code>) détachées de <code>COMMANDE</code>, <code>PRODUIT</code>, <code>LIGNE_COMMANDE</code>, <code>ORDER_STATUS_HISTORY</code> ; n’a que 7 entités ; trace des associations fictives <code>ADMINISTRATEUR — COMMANDE</code> et <code>ADMINISTRATEUR — PRODUIT</code>.</li>
+</ul>
+<hr />
+<h3 id="34-mld_minishop-mld_minishoppuml-vs-mld_minishoppng">3.4 <code>mld_minishop</code> (<code>mld_minishop.puml</code> vs <code>mld_minishop.png</code>)<a class="headerlink" href="#34-mld_minishop-mld_minishoppuml-vs-mld_minishoppng" title="Permanent link"></a></h3>
+<ul>
+<li><strong>Réalité SQL (<code>sql/01_minishop_schema.sql</code>) :</strong></li>
+<li>9 tables ; <code>commande.statut</code> = <code>ENUM('BROUILLON','EN_PREPARATION','PAYEE','EXPEDIEE','LIVREE','ANNULEE')</code> (6 valeurs).</li>
+<li><code>produit.reference</code> = <code>VARCHAR(30)</code>, <code>produit.slug</code> = <code>VARCHAR(180)</code>, <code>order_status_history.id</code> = <code>BIGINT UNSIGNED</code>.</li>
+<li>Index réels sur <code>produit</code> : <code>ft_produit_recherche (nom, description)</code> (<code>FULLTEXT</code>), <code>idx_produit_categorie (id_categorie)</code>, <code>idx_produit_visible (visible, stock)</code>.</li>
+<li>Triggers prix TTC : <code>trg_produit_ttc</code> (<code>BEFORE INSERT</code>) et <code>trg_produit_ttc_update</code> (<code>BEFORE UPDATE</code>).</li>
+<li><strong>Constat après génération (<code>.puml</code>) :</strong></li>
+<li><strong>Défaut de rendu PlantUML observé :</strong> l’usage de <code>class</code> avec des types contenant des parenthèses (<code>VARCHAR(100)</code>, <code>DECIMAL(10,2)</code>, <code>ENUM(...)</code>) amène PlantUML à classer ces colonnes dans le <strong>compartiment des méthodes</strong> (sous le trait horizontal), et produit une anomalie sur <code>client</code> qui affiche <code>id_client : &lt;&lt;FK&gt;&gt; client</code> dans son propre bloc.</li>
+<li><strong>Erreurs sémantiques :</strong> invente <strong><code>RETOURNEE</code></strong> dans <code>commande.statut</code> ; <strong>omet 3 tables sur 9</strong> (<code>administrateur</code>, <code>parametre</code>, <code>stock_movement_history</code>) ; tailles/types inexacts (<code>VARCHAR(40)</code>/<code>VARCHAR(160)</code>/<code>BIGINT</code>) ; note citant des index inexistants (<code>idx_catalogue</code>, <code>idx_recherche(nom)</code>).</li>
+<li><strong>Écarts dans le <code>.png</code> versionné :</strong></li>
+<li>Omet <code>parametre</code> et <code>stock_movement_history</code> (7 tables sur 9) et trace une fausse relation FK <code>ADMINISTRATEUR 1 -- 0..* COMMANDE (SUIVRE)</code>.</li>
+</ul>
+<hr />
+<h3 id="35-etats_commande-etats_commandepuml-vs-etats_commandepng">3.5 <code>etats_commande</code> (<code>etats_commande.puml</code> vs <code>etats_commande.png</code>)<a class="headerlink" href="#35-etats_commande-etats_commandepuml-vs-etats_commandepng" title="Permanent link"></a></h3>
+<ul>
+<li><strong>Réalité du code (<code>app/Model/Data/Triggers.php:55-64</code> et <code>sql/03_minishop_triggers.sql:211-218</code>) :</strong>
+  <code>text
+  BROUILLON      -&gt; EN_PREPARATION | PAYEE | ANNULEE
+  EN_PREPARATION -&gt; PAYEE | EXPEDIEE | ANNULEE
+  PAYEE          -&gt; EXPEDIEE | ANNULEE
+  EXPEDIEE       -&gt; LIVREE | ANNULEE
+  LIVREE         -&gt; (terminal)
+  ANNULEE        -&gt; (terminal)</code></li>
+<li><strong>Constat après génération (<code>.puml</code> — régression critique) :</strong></li>
+<li>Inverse une transition : dessine <strong><code>PAYEE --&gt; EN_PREPARATION</code></strong> alors que seule <strong><code>EN_PREPARATION --&gt; PAYEE</code></strong> est autorisée (<code>PAYEE --&gt; EN_PREPARATION</code> lève <code>RB11_TRANSITION_STATUT_INTERDITE</code>).</li>
+<li>Omet <strong><code>BROUILLON --&gt; EN_PREPARATION</code></strong> et <strong><code>EXPEDIEE --&gt; ANNULEE</code></strong>.</li>
+<li>Invente un 7e état <strong><code>RETOURNEE</code></strong> (<code>EXPEDIEE --&gt; RETOURNEE</code>, <code>LIVREE --&gt; RETOURNEE</code>, <code>RETOURNEE --&gt; [*]</code>) absent de SQL et de PHP.</li>
+<li><strong>État du <code>.png</code> versionné :</strong></li>
+<li><strong>Fidèle à 100 % à <code>Triggers::TRANSITIONS</code> et <code>trg_commande_transition_statut</code></strong> : 6 statuts, toutes les flèches exactes. Ne pas écraser ce PNG avant de corriger <code>etats_commande.puml</code>.</li>
+</ul>
+<hr />
+<h3 id="36-cas_utilisation_global-cas_utilisation_globalpuml-vs-cas_utilisation_globalpng">3.6 <code>cas_utilisation_global</code> (<code>cas_utilisation_global.puml</code> vs <code>cas_utilisation_global.png</code>)<a class="headerlink" href="#36-cas_utilisation_global-cas_utilisation_globalpuml-vs-cas_utilisation_globalpng" title="Permanent link"></a></h3>
+<ul>
+<li><strong>Constat après génération (<code>.puml</code>) :</strong></li>
+<li>Visuellement : les deux grandes flèches <code>Visiteur --&gt; UC-05</code> et <code>Visiteur --&gt; UC-06</code> contournent le cadre par le haut et croisent le reste du schéma.</li>
+<li>Sémantiquement : <code>Visiteur</code> ne peut pas gérer son compte (routes <code>/compte*</code> gardées <code>'client'</code>) ; <code>Gérer les comptes d'équipe</code> (<code>/admin/equipe</code>, garde <code>'super'</code>) n’est pas un <code>&lt;&lt;extend&gt;&gt;</code> de <code>UC-05</code> ; la gestion des paramètres (<code>/admin/parametres</code>, EF-ADM-11) est absente.</li>
+<li><strong>Écarts dans le <code>.png</code> versionné :</strong></li>
+<li>Annonce <code>14 cas</code> (omet paramètres et équipe), dessine <code>Administrateur --|&gt; Visiteur</code> contraire à <code>RB-13</code>, et présente des flèches pleines entre UC (<code>UC-01 -&gt; UC-06</code>, etc.).</li>
+</ul>
+<hr />
+<h3 id="37-cas_utilisation_detail-cas_utilisation_detailpuml-vs-cas_utilisation_detailpng">3.7 <code>cas_utilisation_detail</code> (<code>cas_utilisation_detail.puml</code> vs <code>cas_utilisation_detail.png</code>)<a class="headerlink" href="#37-cas_utilisation_detail-cas_utilisation_detailpuml-vs-cas_utilisation_detailpng" title="Permanent link"></a></h3>
+<ul>
+<li><strong>Constat après génération (<code>.puml</code>) :</strong></li>
+<li>Visuellement : le cas <strong><code>Retirer du panier</code></strong> flotte dans le cadre sans aucune flèche d’acteur ni relation, et la flèche <code>Valider la commande ..&gt; Se connecter</code> croise <code>Ajouter au panier --&gt; Modifier une quantité</code>.</li>
+<li>Sémantiquement : <code>Modifier une quantité</code> et <code>Retirer du panier</code> sont accessibles aussi au <code>Visiteur</code> (routes <code>/panier/*</code> et <code>/api/panier/*</code> de garde <code>'public'</code>) ; <code>U6 ..&gt; U7</code> et <code>U6 --&gt; U7</code> sont redondants ; manquent <code>/contact</code> et <code>/preferences</code>.</li>
+<li><strong>Écarts dans le <code>.png</code> versionné :</strong></li>
+<li><strong>Hors sujet total :</strong> dessine la gestion du catalogue back-office par <code>Administrateur</code> au lieu du parcours visiteur/client.</li>
+</ul>
+<hr />
+<h3 id="38-cas_utilisation_commandes-cas_utilisation_commandespuml-vs-cas_utilisation_commandespng">3.8 <code>cas_utilisation_commandes</code> (<code>cas_utilisation_commandes.puml</code> vs <code>cas_utilisation_commandes.png</code>)<a class="headerlink" href="#38-cas_utilisation_commandes-cas_utilisation_commandespuml-vs-cas_utilisation_commandespng" title="Permanent link"></a></h3>
+<ul>
+<li><strong>Constat après génération (<code>.puml</code>) :</strong></li>
+<li>Rendu lisible, mais le nom du fichier (<code>cas_utilisation_commandes</code>) ne correspond plus à son périmètre (tout le back-office) et restreint <code>Gérer les paramètres</code> au seul <code>Super administrateur</code>, alors que <code>/admin/parametres</code> porte la garde <code>'admin'</code> (<code>Auth::exigeAdmin()</code>, donc accessible aussi aux <code>GESTIONNAIRE</code> dans <code>public/index.php:129-130</code> et <code>ParametreAdminController.php:40</code>).</li>
+<li><strong>Écarts dans le <code>.png</code> versionné :</strong></li>
+<li>Couvre uniquement les commandes (admin + client), avec des relations <code>&lt;&lt;include&gt;&gt;</code> / <code>&lt;&lt;extend&gt;&gt;</code> inversées (<code>Confirmer la commande ..&gt; Valider le panier : &lt;&lt;include&gt;&gt;</code>, <code>Retirer un produit ..&gt; Consulter le panier : &lt;&lt;extend&gt;&gt;</code>).</li>
+</ul>
+<hr />
+<h3 id="39-activite_passer_commande-activite_passer_commandepuml-vs-activite_passer_commandepng">3.9 <code>activite_passer_commande</code> (<code>activite_passer_commande.puml</code> vs <code>activite_passer_commande.png</code>)<a class="headerlink" href="#39-activite_passer_commande-activite_passer_commandepuml-vs-activite_passer_commandepng" title="Permanent link"></a></h3>
+<ul>
+<li><strong>Constat après génération (<code>.puml</code>) :</strong></li>
+<li>Rendu clair, mais :<ul>
+<li><code>app/View/panier/index.php</code> affiche <code>Prix unitaire TTC</code>, <code>Sous-total (marchandises TTC)</code>, <code>Frais de port</code>, <code>Total TTC</code> (<strong>ni sous-total HT ni TVA détaillés dans le panier</strong>).</li>
+<li>Omet le statut <code>EN_PREPARATION</code> lorsque la case <code>paiement_simule</code> est décochée (<code>app/View/commande/valider.php</code>).</li>
+<li>Place <code>Vider le panier</code> après l’affichage du récapitulatif, alors que <code>CommandeController::valider()</code> appelle <code>$panier-&gt;vider()</code> avant <code>302 /mes-commandes/{id}</code>.</li>
+</ul>
+</li>
+<li><strong>Écarts dans le <code>.png</code> versionné :</strong></li>
+<li>Montre deux <code>UPDATE</code> successifs (<code>EN_PREPARATION</code> puis <code>PAYEE</code>) au lieu de l’unique <code>UPDATE ... IF(IFNULL(p_payee,0)=1, 'PAYEE', 'EN_PREPARATION')</code>, omet <code>+ c.frais_port</code> dans <code>montant_total = SUM(total_ligne)</code>, et confond <code>SIGNAL</code> vs capture <code>v_code = 'STOCK_INSUFFISANT'</code> + <code>OUT p_code_retour</code>.</li>
+</ul>
+<hr />
+<h3 id="310-seq_authentification-seq_authentificationpuml-vs-seq_authentificationpng">3.10 <code>seq_authentification</code> (<code>seq_authentification.puml</code> vs <code>seq_authentification.png</code>)<a class="headerlink" href="#310-seq_authentification-seq_authentificationpuml-vs-seq_authentificationpng" title="Permanent link"></a></h3>
+<ul>
+<li><strong>Constat après génération (<code>.puml</code>) :</strong></li>
+<li><strong>Flèche fausse visible sur le rendu :</strong> <code>Auth -&gt; Store : mise à jour date_derniere_connexion</code> — en réalité <code>Auth</code> ne touche jamais à <code>Store</code>, c’est <strong><code>AuthController</code></strong> qui appelle <code>ClientRepository::noteConnexion()</code> (et la colonne SQL est <code>derniere_connexion</code>).</li>
+<li>Noms inexacts : <code>ClientRepository::getCredentials(email)</code> (noté <code>rechercherParEmail</code>), <code>Auth::connecterClient(id)</code> (noté <code>connecter</code>).</li>
+<li>Omet la branche <code>COMPTE_BLOQUE</code> (message distinct : <code>Ce compte est bloqué. Contactez le support.</code>), la redirection vers <code>$_SESSION['cible_apres_connexion']</code>, et le fait qu’en échec <code>AuthController::connexion()</code> rend <code>200</code> la vue <code>auth/connexion</code> (sans <code>302 /connexion</code>).</li>
+<li><strong>Écarts dans le <code>.png</code> versionné :</strong></li>
+<li>Cite <code>login.php</code>, <code>AuthMiddleware</code>, <code>findByEmail</code>, <code>TokenCSRFInvalide</code>, <code>419</code>/<code>401</code>/<code>403</code>, un anti-brute-force <code>5 échecs / 15 min</code> inexistant, <code>$_SESSION['user_id']</code>/<code>$_SESSION['role']</code> (réel : <code>$_SESSION['client_id']</code>), <code>vue/login.php</code>.</li>
+</ul>
+<hr />
+<h3 id="311-seq_consulter_catalogue-seq_consulter_cataloguepuml-vs-seq_consulter_cataloguepng">3.11 <code>seq_consulter_catalogue</code> (<code>seq_consulter_catalogue.puml</code> vs <code>seq_consulter_catalogue.png</code>)<a class="headerlink" href="#311-seq_consulter_catalogue-seq_consulter_cataloguepuml-vs-seq_consulter_cataloguepng" title="Permanent link"></a></h3>
+<ul>
+<li><strong>Constat après génération (<code>.puml</code>) :</strong></li>
+<li>Rendu propre et flux globalement fidèle à <code>CatalogueController::catalogue()</code> → <code>ProduitRepository::searchProducts($criteres)</code> (<code>par_page = 12</code>) → <code>200 HTML</code> ; omet <code>CategorieRepository::listerAvecCompteur()</code> et l’appel à <code>sp_search_products</code> en mode SQL.</li>
+<li><strong>Écarts dans le <code>.png</code> versionné :</strong></li>
+<li><strong>Hors sujet total :</strong> dessine <code>Séquence 5 (bonus) — Consulter la fiche produit (UC-03)</code> avec <code>ProduitController::parSlug</code> (inexistant — c’est <code>CatalogueController::produit()</code> + <code>ProduitRepository::findVisibleBySlug()</code>).</li>
+</ul>
+<hr />
+<h3 id="312-seq_recherche_produit-seq_recherche_produitpuml-vs-seq_recherche_produitpng">3.12 <code>seq_recherche_produit</code> (<code>seq_recherche_produit.puml</code> vs <code>seq_recherche_produit.png</code>)<a class="headerlink" href="#312-seq_recherche_produit-seq_recherche_produitpuml-vs-seq_recherche_produitpng" title="Permanent link"></a></h3>
+<ul>
+<li><strong>Constat après génération (<code>.puml</code>) :</strong></li>
+<li>La clé retournée par <code>ProduitRepository::searchProducts()</code> est <code>total</code> (<code>total_trouves</code> est la colonne du 2e jeu de résultat de <code>sp_search_products</code>), en mode SQL la requête appelle <code>sp_search_products</code>, et la vue sans résultat reste <code>catalogue/index.php</code>.</li>
+<li><strong>Écarts dans le <code>.png</code> versionné :</strong></li>
+<li>Invente <code>SearchRequest</code>, <code>SearchQuery</code>, <code>CatalogueController::liste()</code>, <code>ProduitRepository::search(query)</code>, <code>taille de page bornée à 60</code> (<code>par_page = 12</code>) et <code>vue/catalogue.php</code>.</li>
+</ul>
+<hr />
+<h3 id="313-seq_ajout_panier-seq_ajout_panierpuml-vs-seq_ajout_panierpng">3.13 <code>seq_ajout_panier</code> (<code>seq_ajout_panier.puml</code> vs <code>seq_ajout_panier.png</code>)<a class="headerlink" href="#313-seq_ajout_panier-seq_ajout_panierpuml-vs-seq_ajout_panierpng" title="Permanent link"></a></h3>
+<ul>
+<li><strong>Réalité du code (<code>public/js/panier.js</code>, <code>app/Controller/ApiController.php</code>, <code>app/Model/PanierSession.php</code>) :</strong></li>
+<li><code>panier.js</code> envoie <code>POST /api/panier/ajouter</code> en <strong><code>application/x-www-form-urlencoded</code></strong> (<code>URLSearchParams(new FormData(formulaire))</code>), pas en JSON.</li>
+<li><code>ApiController::ajouter()</code> appelle <code>exigerPoste()</code> (<code>POST</code> + <code>Csrf::estValide()</code>, sinon <code>403 {ok:false, code:'CSRF_INVALIDE', message}</code>) puis appelle directement <code>PanierSession::ajouter($idProduit, $quantite)</code> — <strong>sans passer par <code>ProduitRepository::disponible()</code></strong>.</li>
+<li><code>PanierSession::ajouter()</code> plafonne silencieusement à <code>(int) $produit['stock']</code> via <code>min($demande, $stock)</code> et ne lève <code>BusinessError</code> que pour quantité <code>&lt;= 0</code> ou produit introuvable/masqué (<code>409 {ok:false, code, message, nombre_articles}</code>).</li>
+<li>En succès (<code>200</code>), le JSON renvoyé est <code>{ok: true, message, nombre_articles, sous_total, frais_port, total_ttc, lien_panier}</code>.</li>
+<li>En erreur (<code>!ok</code>), <code>panier.js</code> annonce le message dans <code>#zone-annonces</code> et désactive le bouton (<code>disabled = true</code>, <code>aria-disabled="true"</code>).</li>
+<li><strong>Constat après génération (<code>.puml</code>) :</strong> montre un envoi JSON, un appel inexistant à <code>ProduitRepository::disponible()</code>, une réponse <code>409 {code: STOCK_INSUFFISANT, reste: N}</code> inexistante, et une réponse <code>200</code> incomplète.</li>
+<li><strong>Écarts dans le <code>.png</code> versionné :</strong> cible <code>panier/ajouter.php</code> + <code>PanierController::ajouter</code> sur <code>POST /panier/ajouter</code>, invente <code>404 {"erreur":"PRODUIT_INTROUVABLE"}</code>, <code>{"erreur":"STOCK_INSUFFISANT","reste":1}</code> et <code>200 {lignes, total, stockRestant}</code>.</li>
+</ul>
+<hr />
+<h3 id="314-seq_passer_commande-seq_passer_commandepuml-vs-seq_passer_commandepng">3.14 <code>seq_passer_commande</code> (<code>seq_passer_commande.puml</code> vs <code>seq_passer_commande.png</code>)<a class="headerlink" href="#314-seq_passer_commande-seq_passer_commandepuml-vs-seq_passer_commandepng" title="Permanent link"></a></h3>
+<ul>
+<li><strong>Réalité du code (<code>app/Controller/CommandeController.php</code>, <code>app/Repository/CommandeRepository.php</code>, <code>sql/02_minishop_procedures.sql</code>) :</strong></li>
+<li><code>CommandeController::valider()</code> appelle <code>verifierCsrf()</code>, <code>Auth::exigeClient()</code>, <code>Database::store()-&gt;setActor(...)</code>, <code>CommandeRepository::createOrderFromBasket($idClient, $adresse, $panier-&gt;pourCommande(), $payee)</code>, puis <code>$panier-&gt;vider()</code> et redirige en <code>302 /mes-commandes/{id}</code> (ou <code>302 /panier</code> sur <code>BusinessError</code>).</li>
+<li>En mode SQL (<code>$this-&gt;store instanceof StoredProcedureExecutor</code>), <code>CommandeRepository::createOrderFromBasket()</code> appelle <code>CALL sp_create_order_from_basket(...)</code> <strong>sans ouvrir de transaction PDO côté PHP</strong> (<code>START TRANSACTION</code> / <code>COMMIT</code> / <code>ROLLBACK</code> sont gérés exclusivement dans la procédure SQL, comme documenté dans <code>ARCHITECTURE.md</code> §3).</li>
+<li><strong>Constat après génération (<code>.puml</code>) :</strong></li>
+<li>Visuellement : <code>[STOCK_INSUFFISANT ou panier vide]</code> chevauche la séparation du bloc <code>alt</code> et la flèche <code>302 /mes-commandes/{id}</code>.</li>
+<li>Sémantiquement : montre <code>BEGIN</code> / <code>COMMIT</code> / <code>ROLLBACK</code> côté PHP autour de <code>sp_create_order_from_basket</code> (faux en mode SQL), utilise des noms inexacts (<code>exigerClient()</code>, <code>confirmerDepuisPanier()</code>), omet <code>p_payee</code> et <code>$panier-&gt;vider()</code>.</li>
+<li><strong>Écarts dans le <code>.png</code> versionné :</strong></li>
+<li>Cumule <code>$pdo-&gt;beginTransaction()</code> + <code>$pdo-&gt;commit()</code> avec <code>START TRANSACTION</code>, <code>creerDepuisPanier</code>, codes <code>409</code>/<code>200</code> au lieu de <code>302</code>, <code>session_unset('panier')</code>, <code>erreur 1644</code> directe et omission de <code>+ frais_port</code>.</li>
+</ul>
+<hr />
+<h2 id="4-plan-daction-recommande-avant-de-regenerer-les-png">4. Plan d’action recommandé avant de régénérer les PNG<a class="headerlink" href="#4-plan-daction-recommande-avant-de-regenerer-les-png" title="Permanent link"></a></h2>
+<ol>
+<li><strong>Corriger en priorité les 5 diagrammes critiques dans <code>docs/diagrams/src/</code> :</strong>
+   - <code>etats_commande.puml</code> : supprimer <code>RETOURNEE</code>, inverser vers <code>EN_PREPARATION --&gt; PAYEE</code>, ajouter <code>BROUILLON --&gt; EN_PREPARATION</code> et <code>EXPEDIEE --&gt; ANNULEE</code>.
+   - <code>mld_minishop.puml</code> : utiliser <code>entity</code> (ou <code>{field}</code>) pour éviter le découpage attributs/méthodes et le bug <code>&lt;&lt;FK&gt;&gt; client</code>, supprimer <code>RETOURNEE</code>, ajouter <code>administrateur</code>, <code>parametre</code>, <code>stock_movement_history</code>, corriger les types (<code>VARCHAR(30)</code>, <code>VARCHAR(180)</code>, <code>BIGINT UNSIGNED</code>) et les vrais noms d’index/triggers.
+   - <code>mcd_minishop.puml</code> : passer à <strong>9 entités</strong> (ajouter <code>STOCK_MOVEMENT_HISTORY</code>), renommer <code>description</code> → <code>comment</code> sur <code>PARAMETRE</code>, compléter les attributs.
+   - <code>diagramme_classes.puml</code> : remplacer <code>AdminController</code> par les 7 contrôleurs <code>Admin\*</code>, retirer les 6 entités PHP inexistantes, placer <code>PanierSession</code> dans le package <code>Modèle</code>, corriger <code>JsonStore --&gt; Views</code> et relier les dépôts isolés.
+   - <code>seq_passer_commande.puml</code> : supprimer <code>BEGIN</code>/<code>COMMIT</code>/<code>ROLLBACK</code> côté PHP en mode SQL (transaction gérée dans <code>sp_create_order_from_basket</code>), corriger <code>Auth::exigeClient()</code>, <code>createOrderFromBasket()</code>, <code>p_payee</code>, <code>$panier-&gt;vider()</code> et aérer le bloc <code>alt</code>.</li>
+<li><strong>Corriger les 9 autres <code>.puml</code></strong> (<code>architecture_mvc</code>, les 3 <code>cas_utilisation_*</code>, <code>activite_passer_commande</code>, <code>seq_authentification</code>, <code>seq_consulter_catalogue</code>, <code>seq_recherche_produit</code>, <code>seq_ajout_panier</code>) selon les écarts relevés au §3 (notamment rattacher <code>Retirer du panier</code> à <code>Visiteur</code> et <code>Client</code>, et déplacer <code>noteConnexion</code> vers <code>AuthController -&gt; ClientRepository -&gt; Store</code>).</li>
+<li><strong>Régénérer les 14 PNG</strong> via <code>bash docs/diagrams/render.sh</code>, vérifier visuellement chacun des 14 rendus, puis committer ensemble <code>docs/diagrams/src/*.puml</code> et <code>docs/diagrams/*.png</code>.</li>
+</ol>
+<hr />
+<h2 id="5-suivi-de-resolution-post-audit">5. Suivi de résolution (post-audit)<a class="headerlink" href="#5-suivi-de-resolution-post-audit" title="Permanent link"></a></h2>
+<p>L’ensemble des 14 sources <code>docs/diagrams/src/*.puml</code> et des 14 images <code>docs/diagrams/*.png</code> a été corrigé et régénéré via <code>docs/diagrams/render.sh</code>, puis inspecté visuellement (14/14 conformes au code <code>app/</code>, <code>public/</code> et <code>sql/</code>, sans anomalie de rendu).</p>
+<footer class="doc">
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/23-audit-uml-diagrammes.md</code> · 0 figure(s) intégrée(s).</p>
+</footer>
+</main>
+</body>
+</html>

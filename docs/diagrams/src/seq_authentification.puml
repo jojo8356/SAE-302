@@ -1,23 +1,68 @@
 @startuml seq_authentification
-title Séquence — connexion client (SEC-04, SEC-05, RB-12)
+title Séquence 1 — connexion client (UC-05, SEC-04, SEC-05, RB-12)
+
+autonumber
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam defaultFontName "DejaVu Sans"
+skinparam ArrowColor #0F294A
+skinparam ParticipantBackgroundColor #FFFFFF
+skinparam ParticipantBorderColor #1E3A5F
+skinparam ActorBackgroundColor #FFFFFF
+skinparam ActorBorderColor #1E3A5F
+skinparam DatabaseBackgroundColor #F1F5F9
+skinparam DatabaseBorderColor #0F294A
+skinparam NoteBackgroundColor #F8FAFC
+skinparam NoteBorderColor #1E3A5F
+skinparam SequenceLifeLineBorderColor #334155
+
 actor Client
 participant "AuthController" as AC
 participant "ClientRepository" as CR
 participant "Auth" as AUTH
-database "Store" as DB
-Client -> AC : POST /connexion (email, mot de passe, _csrf)
-AC -> AC : Csrf::verifier()
-AC -> CR : rechercherParEmail(email)
-CR -> DB : select client (préparé)
-DB --> CR : hash bcrypt + actif
-CR --> AC : client|null
-alt client introuvable ou inactif
-  AC --> Client : 302 /connexion + message générique
-else mot de passe valide
-  AC -> AUTH : connecter(client)
-  AUTH -> AUTH : session_regenerate_id(true)
-  AUTH -> DB : mise à jour date_derniere_connexion
-  AC --> Client : 302 /compte
+database "Store / SQL" as DB
+
+Client -> AC : POST /connexion (email, mot_de_passe, _csrf)
+activate AC
+
+AC -> AC : verifierCsrf()
+AC -> CR : getCredentials(email) : array
+activate CR
+CR -> DB : CALL sp_get_credentials(email)\n(ou select préparé sur client)
+activate DB
+DB --> CR : {id_client, hash, statut}
+deactivate DB
+CR --> AC : identifiants
+deactivate CR
+
+alt statut = 'OK' et password_verify(mot_de_passe, hash)
+  AC -> AUTH : connecterClient(id_client) : void
+  activate AUTH
+  AUTH -> AUTH : session_regenerate_id(true)\n$_SESSION['client_id'] = id_client
+  AUTH --> AC : ok
+  deactivate AUTH
+
+  AC -> CR : noteConnexion(id_client) : void
+  activate CR
+  CR -> DB : UPDATE client SET derniere_connexion = NOW()
+  activate DB
+  DB --> CR : ok
+  deactivate DB
+  CR --> AC : ok
+  deactivate CR
+
+  AC --> Client : 302 Location: cible_apres_connexion (défaut /compte)
+  ||8||
+else statut = 'COMPTE_BLOQUE'
+  AC --> Client : 200 HTML auth/connexion\n(« Ce compte est bloqué. Contactez le support. »)
+  ||8||
+else statut = 'INCONNU' ou mot de passe erroné
+  AC --> Client : 200 HTML auth/connexion\n(« Email ou mot de passe erroné. »)
 end
-note right of AC : message identique dans les deux cas (pas d'énumération de comptes)
+deactivate AC
+
+note right of AC
+  SEC-05 : message identique pour email inconnu
+  et mot de passe erroné (aucune énumération).
+end note
 @enduml

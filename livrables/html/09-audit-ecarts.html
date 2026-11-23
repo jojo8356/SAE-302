@@ -3,91 +3,222 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light dark">
-<meta name="description" content="SAÉ 302 — MiniShop : 09 — Audit des écarts : ce qu&#x27;il manque#">
-<title>09 — Audit des écarts : ce qu&#x27;il manque# — MiniShop</title>
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : 09 — Audit des écarts : ce qu&#x27;il manque">
+<title>09 — Audit des écarts : ce qu&#x27;il manque — MiniShop (SAÉ 302)</title>
 <style>
 :root {
   --encre: #0f172a;
   --encre-douce: #475569;
-  --papier: #fbfaf7;
-  --carte: #ffffff;
-  --trait: #e2e8f0;
-  --accent: #1d4ed8;
-  --accent-clair: #dbeafe;
-  --code: #f1f5f9;
-  --mesure: 72ch;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
-    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
-    --accent-clair: #1e3a8a; --code: #16223a;
-  }
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
 }
 * { box-sizing: border-box; }
 html { font-size: 100%; -webkit-text-size-adjust: 100%; }
 body {
-  margin: 0 auto;
-  padding: 2.5rem 1.25rem 5rem;
-  max-width: calc(var(--mesure) + 6rem);
-  background: var(--papier);
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
   color: var(--encre);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
-  font-size: 1rem;
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
   line-height: 1.65;
   text-rendering: optimizeLegibility;
 }
-h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
-h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
-h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
-h3 { font-size: 1.15rem; }
-h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
-p, li { max-width: var(--mesure); }
-a { color: var(--accent); text-underline-offset: 0.15em; }
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
 a:hover { text-decoration-thickness: 2px; }
 code {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
 }
 pre {
-  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
-  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
 }
-pre code { background: none; padding: 0; font-size: inherit; }
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
 blockquote {
-  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
-  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
 }
-blockquote p { margin: 0.35rem 0; }
-table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
-caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
-th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
-thead th { background: var(--accent-clair); }
-tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
-img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
-hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
-ul, ol { padding-left: 1.4rem; }
-li { margin: 0.25rem 0; }
-li input[type="checkbox"] { margin-right: 0.4rem; }
-.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
-.toc > ul { list-style: none; padding-left: 0; }
-.toc ul ul { padding-left: 1rem; }
-footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
 @media print {
-  :root { --papier: #fff; --carte: #fff; }
-  @page { size: A4; margin: 18mm 16mm; }
-  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
   h1, h2, h3 { break-after: avoid; }
   table, pre, img, blockquote { break-inside: avoid; }
   a { color: inherit; text-decoration: none; }
-  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
   .toc { break-after: page; }
 }
 </style>
 </head>
 <body>
 <main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/09-audit-ecarts.md</code></div>
+</header>
 <nav class="toc" aria-label="Sommaire"><div class="toc">
 <ul>
 <li><a href="#addendum-final-etat-verifie-le-17-novembre-2026-vm-debian-13-branche-arenab5a4074b-sae-302">Addendum final — état vérifié le 17 novembre 2026 (VM Debian 13, branche arena/b5a4074b-sae-302)</a></li>
@@ -105,7 +236,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </ul>
 </div>
 </nav>
-<h1 id="09-audit-des-ecarts-ce-quil-manque">09 — Audit des écarts : ce qu'il manque<a class="headerlink" href="#09-audit-des-ecarts-ce-quil-manque" title="Permanent link">#</a></h1>
+<h1 id="09-audit-des-ecarts-ce-quil-manque">09 — Audit des écarts : ce qu'il manque<a class="headerlink" href="#09-audit-des-ecarts-ce-quil-manque" title="Permanent link"></a></h1>
 <blockquote>
 <p><strong>Objet.</strong> Confronter ce que les documents <strong>promettent</strong> (README, CDC <code>01</code>, doc tests <code>02</code>, WBS <code>05</code>,
 todolist <code>06</code>, annexes, CI) à ce que le dépôt <strong>contient réellement</strong>. Chaque écart ci-dessous est
@@ -115,7 +246,7 @@ vérifiable par la commande citée. Les points sont classés par impact sur le b
 <p><strong>Statut historique.</strong> Les constats ci-dessous décrivent une photographie antérieure et ne constituent pas un audit de l’état actuel du checkout. En particulier, les lignes du §B qui déclarent SQL non raccordé et JSON par défaut sont dépassées : SQL/MySQL/PDO est désormais le pilote par défaut, JSON est une option explicite et le scan statique repère un point d’appel repository pour chacune des 18 procédures. Cela ne prouve pas leur exécution PDO/MySQL ni un parcours HTTP complet. Les anciens nombres de tests et constats des autres sections ne doivent pas être repris comme résultats actuels ; consulter <code>docs/01</code>, <code>docs/02</code>, <code>docs/04</code> et <code>docs/21</code> pour l’état révisé.</p>
 <p><strong>Note de portée (révision du 23/10/2026).</strong> Les références à <code>.gitlab-ci.yml</code>, aux jobs GitLab et à une « cible notée » ci-dessous décrivent l’état antérieur examiné par cet audit. La configuration GitLab CI et son exigence ont depuis été retirées du CDC ; la CI GitHub Actions est distincte et ne prouve pas un pipeline GitLab.</p>
 </blockquote>
-<h2 id="addendum-final-etat-verifie-le-17-novembre-2026-vm-debian-13-branche-arenab5a4074b-sae-302">Addendum final — état vérifié le 17 novembre 2026 (VM Debian 13, branche <code>arena/b5a4074b-sae-302</code>)<a class="headerlink" href="#addendum-final-etat-verifie-le-17-novembre-2026-vm-debian-13-branche-arenab5a4074b-sae-302" title="Permanent link">#</a></h2>
+<h2 id="addendum-final-etat-verifie-le-17-novembre-2026-vm-debian-13-branche-arenab5a4074b-sae-302">Addendum final — état vérifié le 17 novembre 2026 (VM Debian 13, branche <code>arena/b5a4074b-sae-302</code>)<a class="headerlink" href="#addendum-final-etat-verifie-le-17-novembre-2026-vm-debian-13-branche-arenab5a4074b-sae-302" title="Permanent link"></a></h2>
 <p>Cet addendum synthétise l’état final vérifié sur VM Debian 13 native (<strong>PHP 8.4.27 cli</strong>, <strong>MariaDB 11.8.6</strong>) et les clôtures documentaires consignées au 17/11/2026 :</p>
 <table>
 <thead>
@@ -150,7 +281,7 @@ vérifiable par la commande citée. Les points sont classés par impact sur le b
 </table>
 <hr />
 <p>Les sections A→J qui suivent sont conservées comme <strong>audit historique</strong> : leurs diagnostics, nombres de tests et plans de correction décrivent l’état antérieur au 23/10/2026 et ne doivent pas être lus comme le statut actuel.</p>
-<h2 id="0-synthese-historique">0. Synthèse historique<a class="headerlink" href="#0-synthese-historique" title="Permanent link">#</a></h2>
+<h2 id="0-synthese-historique">0. Synthèse historique<a class="headerlink" href="#0-synthese-historique" title="Permanent link"></a></h2>
 <p><strong>Statut vérifié le 23/10/2026</strong> (les détails et les commandes de preuve sont dans <code>10-todo-corrections.md</code>).</p>
 <table>
 <thead>
@@ -225,7 +356,7 @@ vérifiable par la commande citée. Les points sont classés par impact sur le b
 règles 108/108, fonctionnalités OK, design 28/28, PHPUnit 34/34, E2E 185/185 ;
 <code>bash tests/security/controles.sh</code> → 10/10 + auto-test.</p>
 <hr />
-<h2 id="a-fichiers-references-mais-absents-bloquant">A. Fichiers référencés mais absents — 🔴 bloquant<a class="headerlink" href="#a-fichiers-references-mais-absents-bloquant" title="Permanent link">#</a></h2>
+<h2 id="a-fichiers-references-mais-absents-bloquant">A. Fichiers référencés mais absents — 🔴 bloquant<a class="headerlink" href="#a-fichiers-references-mais-absents-bloquant" title="Permanent link"></a></h2>
 <p>Le dépôt <strong>référence 11 fichiers qui n'existent pas</strong>. Trois conséquences immédiates : la procédure
 d'installation du README ne peut pas aboutir, le pipeline GitLab (la cible notée) est rouge, et plusieurs
 affirmations du CDC sont fausses par construction.</p>
@@ -306,7 +437,7 @@ affirmations du CDC sont fausses par construction.</p>
   journal <code>var/journal/db.jsonl</code> n'a donc pas de dossier d'accueil (dégradation silencieuse).</li>
 </ul>
 <hr />
-<h2 id="b-lapplication-ne-tourne-pas-sur-mysqlpdo-ecart-technique-majeur">B. L'application ne tourne pas sur MySQL/PDO — 🔴 écart technique majeur<a class="headerlink" href="#b-lapplication-ne-tourne-pas-sur-mysqlpdo-ecart-technique-majeur" title="Permanent link">#</a></h2>
+<h2 id="b-lapplication-ne-tourne-pas-sur-mysqlpdo-ecart-technique-majeur">B. L'application ne tourne pas sur MySQL/PDO — 🔴 écart technique majeur<a class="headerlink" href="#b-lapplication-ne-tourne-pas-sur-mysqlpdo-ecart-technique-majeur" title="Permanent link"></a></h2>
 <p>C'est <strong>le</strong> point qui coûte le plus de points au barème iii (« Application Web PHP/MySQL/PDO »).</p>
 <table>
 <thead>
@@ -356,7 +487,7 @@ Deux issues : (1) implémenter <code>SqlStore</code> sur PDO puis basculer <code
 et le doc de tests (aujourd'hui le CDC affirme le contraire).</p>
 </blockquote>
 <hr />
-<h2 id="c-interface-ni-css-ni-javascript-ni-images-fort">C. Interface : ni CSS, ni JavaScript, ni images — 🟠 fort<a class="headerlink" href="#c-interface-ni-css-ni-javascript-ni-images-fort" title="Permanent link">#</a></h2>
+<h2 id="c-interface-ni-css-ni-javascript-ni-images-fort">C. Interface : ni CSS, ni JavaScript, ni images — 🟠 fort<a class="headerlink" href="#c-interface-ni-css-ni-javascript-ni-images-fort" title="Permanent link"></a></h2>
 <ul>
 <li><code>app/View/layout.php</code> l'annonce : « gabarit commun (HTML sémantique, <strong>volontairement SANS CSS</strong>) ».</li>
 <li>Aucun <code>fetch</code>, aucun <code>&lt;script&gt;</code>, aucune référence CSS dans les vues (<code>grep -rn "css\|&lt;script\|fetch(" app/View</code> → 0 résultat).</li>
@@ -368,7 +499,7 @@ et le doc de tests (aujourd'hui le CDC affirme le contraire).</p>
 <li><code>ENF-07</code> (« tout fonctionne JS désactivé ») est vrai <strong>par vacuité</strong> : il n'y a pas de JS du tout.</li>
 </ul>
 <hr />
-<h2 id="d-rendus-non-produits-fort">D. Rendus non produits — 🟠 fort<a class="headerlink" href="#d-rendus-non-produits-fort" title="Permanent link">#</a></h2>
+<h2 id="d-rendus-non-produits-fort">D. Rendus non produits — 🟠 fort<a class="headerlink" href="#d-rendus-non-produits-fort" title="Permanent link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -400,7 +531,7 @@ et le doc de tests (aujourd'hui le CDC affirme le contraire).</p>
 </tbody>
 </table>
 <hr />
-<h2 id="e-preuves-et-tracabilite-fort-10-points-individuels">E. Preuves et traçabilité — 🟠 fort (10 points individuels)<a class="headerlink" href="#e-preuves-et-tracabilite-fort-10-points-individuels" title="Permanent link">#</a></h2>
+<h2 id="e-preuves-et-tracabilite-fort-10-points-individuels">E. Preuves et traçabilité — 🟠 fort (10 points individuels)<a class="headerlink" href="#e-preuves-et-tracabilite-fort-10-points-individuels" title="Permanent link"></a></h2>
 <ol>
 <li><strong>Historique Git</strong> : 1 seul commit, auteur unique <code>Jojokes</code>, <strong>aucun tag</strong> (<code>git log --oneline</code> /
    <code>git tag</code>). Le barème v demande une contribution <strong>régulière et individuelle</strong> de 3 personnes :
@@ -419,7 +550,7 @@ et le doc de tests (aujourd'hui le CDC affirme le contraire).</p>
    v « continu » ; §16.4 : « <strong>le code PHP n'est pas encore écrit</strong> ». Faux depuis la livraison de <code>app/</code>.</li>
 </ol>
 <hr />
-<h2 id="f-scripts-de-mesure-et-de-charge-moyen">F. Scripts de mesure et de charge — 🟡 moyen<a class="headerlink" href="#f-scripts-de-mesure-et-de-charge-moyen" title="Permanent link">#</a></h2>
+<h2 id="f-scripts-de-mesure-et-de-charge-moyen">F. Scripts de mesure et de charge — 🟡 moyen<a class="headerlink" href="#f-scripts-de-mesure-et-de-charge-moyen" title="Permanent link"></a></h2>
 <ul>
 <li><strong><code>ENF-01</code> (p95 &lt; 500 ms)</strong> : protocole décrit, mesure <strong>HTTP jamais faite</strong> (<code>tests/perf/mesurer.sh</code>
   absent). Seule la mesure base existe (<code>tests/perf/mesurer_sql.sh</code>, 15–17 ms annoncés).</li>
@@ -432,7 +563,7 @@ et le doc de tests (aujourd'hui le CDC affirme le contraire).</p>
   <code>allow_failure</code>.</li>
 </ul>
 <hr />
-<h2 id="g-ecarts-fonctionnels-petits-mais-reperables-en-demo">G. Écarts fonctionnels (petits, mais repérables en démo) — 🟡<a class="headerlink" href="#g-ecarts-fonctionnels-petits-mais-reperables-en-demo" title="Permanent link">#</a></h2>
+<h2 id="g-ecarts-fonctionnels-petits-mais-reperables-en-demo">G. Écarts fonctionnels (petits, mais repérables en démo) — 🟡<a class="headerlink" href="#g-ecarts-fonctionnels-petits-mais-reperables-en-demo" title="Permanent link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -468,7 +599,7 @@ et le doc de tests (aujourd'hui le CDC affirme le contraire).</p>
 </tbody>
 </table>
 <hr />
-<h2 id="h-incoherences-chiffrees-a-corriger-credibilite-des-documents">H. Incohérences chiffrées à corriger — 🟡 (crédibilité des documents)<a class="headerlink" href="#h-incoherences-chiffrees-a-corriger-credibilite-des-documents" title="Permanent link">#</a></h2>
+<h2 id="h-incoherences-chiffrees-a-corriger-credibilite-des-documents">H. Incohérences chiffrées à corriger — 🟡 (crédibilité des documents)<a class="headerlink" href="#h-incoherences-chiffrees-a-corriger-credibilite-des-documents" title="Permanent link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -536,7 +667,7 @@ et le doc de tests (aujourd'hui le CDC affirme le contraire).</p>
 </tbody>
 </table>
 <hr />
-<h2 id="i-plan-de-correction-propose-par-ordre-de-rentabilite">I. Plan de correction proposé (par ordre de rentabilité)<a class="headerlink" href="#i-plan-de-correction-propose-par-ordre-de-rentabilite" title="Permanent link">#</a></h2>
+<h2 id="i-plan-de-correction-propose-par-ordre-de-rentabilite">I. Plan de correction proposé (par ordre de rentabilité)<a class="headerlink" href="#i-plan-de-correction-propose-par-ordre-de-rentabilite" title="Permanent link"></a></h2>
 <ol>
 <li><strong>Rétablir les 3 scripts critiques</strong> (<code>load_db.sh</code>, <code>run_sql_tests.sh</code>, <code>render.sh</code>) et les brancher sur
    l'existant (<code>scripts/seed.php</code>, <code>tests/sql/run_tests.sh</code>, sources <code>.puml</code> à recréer) → CI GitLab verte,
@@ -556,7 +687,7 @@ et le doc de tests (aujourd'hui le CDC affirme le contraire).</p>
 <li><strong>Petits écarts fonctionnels</strong> : page contact, filtre stocks, écran paramètres. <em>(≈ 0,5 j)</em></li>
 </ol>
 <hr />
-<h2 id="j-ce-qui-est-complet-ne-pas-y-retoucher">J. Ce qui est complet (ne pas y retoucher)<a class="headerlink" href="#j-ce-qui-est-complet-ne-pas-y-retoucher" title="Permanent link">#</a></h2>
+<h2 id="j-ce-qui-est-complet-ne-pas-y-retoucher">J. Ce qui est complet (ne pas y retoucher)<a class="headerlink" href="#j-ce-qui-est-complet-ne-pas-y-retoucher" title="Permanent link"></a></h2>
 <ul>
 <li>Les <strong>5 documents</strong> (<code>01</code>→<code>05</code>) + <code>07</code> + <code>08</code> + les 5 annexes : plan complet, exigences identifiées,
   matrices de traçabilité — c'est la partie la plus solide du dépôt.</li>
@@ -568,8 +699,7 @@ et le doc de tests (aujourd'hui le CDC affirme le contraire).</p>
 <li>Les <strong>deux pipelines</strong> existent (GitLab + GitHub) et sont documentés.</li>
 </ul>
 <footer class="doc">
-  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/09-audit-ecarts.md</code>
-  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/09-audit-ecarts.md</code> · 0 figure(s) intégrée(s).</p>
 </footer>
 </main>
 </body>

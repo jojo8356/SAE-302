@@ -1,57 +1,248 @@
 @startuml diagramme_classes
-title MiniShop — diagramme de classes (couches)
+title MiniShop — diagramme de classes (couches, attributs, méthodes et cardinalités)
+
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam defaultFontName "DejaVu Sans"
 skinparam classAttributeIconSize 0
-package "Contrôleurs" {
-  class Router
-  class Controller
-  class CatalogueController
+skinparam packageStyle rectangle
+skinparam ArrowColor #0F294A
+skinparam ClassBackgroundColor #FFFFFF
+skinparam ClassBorderColor #1E3A5F
+skinparam ClassHeaderBackgroundColor #F1F5F9
+skinparam PackageBackgroundColor #F8FAFC
+skinparam PackageBorderColor #334155
+skinparam NoteBackgroundColor #F8FAFC
+skinparam NoteBorderColor #1E3A5F
+
+package "Présentation & Routage" {
+  class Router {
+    - routes : array
+    + get(motif: string, action: array, garde: string = "public") : void
+    + post(motif: string, action: array, garde: string = "public") : void
+    + resoudre(methode: string, uri: string) : array
+    + executer(match: array) : void
+  }
+
+  abstract class Controller {
+    # render(vue: string, donnees: array, titre: string) : void
+    # rediriger(chemin: string) : never
+    # verifierCsrf() : void
+    # flashSucces(msg: string) : void
+    # flashErreur(msg: string) : void
+  }
+
+  class HomeController
+  class CatalogueController {
+    + catalogue() : void
+    + recherche() : void
+    + produit(slug: string) : void
+  }
+  class AuthController {
+    + inscription() : void
+    + connexion() : void
+    + connexionAdmin() : void
+  }
+  class CompteController
   class PanierController
-  class CommandeController
-  class AdminController
+  class CommandeController {
+    + formulaire() : void
+    + valider() : void
+    + mes() : void
+    + detail(id: string) : void
+    + annuler(id: string) : void
+  }
+  class ApiController {
+    + etat() : void
+    + ajouter() : void
+    + quantite() : void
+    + retirer() : void
+  }
+
+  package "Admin (RB-13)" {
+    class DashboardController
+    class ProduitAdminController
+    class CategorieAdminController
+    class StockAdminController
+    class CommandeAdminController
+    class ParametreAdminController
+    class EquipeAdminController
+  }
 }
-package "Domaine / dépôts" {
-  class Produit
-  class Categorie
-  class Client
-  class Commande
-  class LigneCommande
-  class Parametre
-  class ProduitRepository
-  class CategorieRepository
-  class ClientRepository
-  class CommandeRepository
-  class ParametreRepository
+
+package "Sécurité" {
+  class Auth {
+    + {static} demarrer() : void
+    + {static} connecterClient(id: int) : void
+    + {static} exigeClient() : array
+    + {static} verifierAdmin(email: string, mdp: string) : ?array
+    + {static} exigeAdmin() : array
+  }
+  class Csrf {
+    + {static} jeton() : string
+    + {static} estValide() : bool
+    + {static} verifier() : void
+  }
+  class AccesRefuse
 }
-package "Persistance" {
-  interface StoreInterface
-  class JsonStore
+
+package "Modèle & Dépôts" {
+  class PanierSession {
+    - store : StoreInterface
+    - produits : ProduitRepository
+    - parametres : ParametreRepository
+    + {static} charge() : PanierSession
+    + ajouter(idProduit: int, qte: int) : int
+    + modifierQuantite(idProduit: int, qte: int) : void
+    + retirer(idProduit: int) : void
+    + vider() : void
+    + recapitulatif() : array
+  }
+
+  class ProduitRepository {
+    - store : StoreInterface
+    + find(id: int) : ?array
+    + findVisibleBySlug(slug: string) : ?array
+    + disponible(id: int) : int
+    + searchProducts(criteres: array) : array
+    + saveProduct(donnees: array) : int
+    + adjustStock(...) : array
+  }
+
+  class CategorieRepository {
+    - store : StoreInterface
+    + find(id: int) : ?array
+    + listerAvecCompteur() : array
+    + saveCategory(...) : int
+    + deleteCategory(id: int) : void
+  }
+
+  class ClientRepository {
+    - store : StoreInterface
+    - accountGateway : ClientAccountGateway
+    + createAccount(nom: string, prenom: string, email: string, hash: string) : int
+    + getCredentials(email: string) : array
+    + noteConnexion(idClient: int) : void
+  }
+
+  class CommandeRepository {
+    - store : StoreInterface
+    - parametres : ParametreRepository
+    + createOrderFromBasket(idClient: int, adresse: string, panier: array, payee: bool) : array
+    + updateOrderStatus(...) : void
+    + cancelOrder(idCommande: int, idClient: int) : array
+    + pourClient(idClient: int) : array
+  }
+
+  class ParametreRepository {
+    - store : StoreInterface
+    + fnParam(cle: string, defaut: string) : string
+    + computeShipping(marchandises: float) : array
+    + tous() : array
+  }
+
+  interface ClientAccountGateway
+  class SqlClientAccountGateway
+  class StoreClientAccountGateway
+}
+
+package "Persistance & Configuration" {
+  class Database {
+    + {static} store() : StoreInterface
+    + {static} config() : array
+  }
+
+  interface StoreInterface {
+    + find(table: string, id: int|string) : ?array
+    + select(table: string, spec: array) : array
+    + insert(table: string, row: array) : int
+    + update(table: string, where: array, set: array) : int
+    + transactional(fn: callable) : mixed
+    + setActor(actor: array) : void
+  }
+
+  interface StoredProcedureResultExecutor
+  interface RowLockingStore
+  interface StockMovementAuditor
   class SqlStore
+  class JsonStore
   class Triggers
   class Views
+  class Schema
 }
-package "Sécurité" {
-  class Auth
-  class Csrf
-}
-Router --> Controller
+
+Router "1" --> "1..*" Controller : dispatche
+Router ..> AccesRefuse : lève si rôle insuffisant
+Controller <|-- HomeController
 Controller <|-- CatalogueController
+Controller <|-- AuthController
+Controller <|-- CompteController
 Controller <|-- PanierController
 Controller <|-- CommandeController
-Controller <|-- AdminController
-CatalogueController --> ProduitRepository
-PanierController --> PanierSession
-CommandeController --> CommandeRepository
-AdminController --> ProduitRepository
-CommandeRepository --> StoreInterface
-ProduitRepository --> StoreInterface
-StoreInterface <|.. JsonStore
+Controller <|-- ApiController
+Controller <|-- DashboardController
+Controller <|-- ProduitAdminController
+Controller <|-- CategorieAdminController
+Controller <|-- StockAdminController
+Controller <|-- CommandeAdminController
+Controller <|-- ParametreAdminController
+Controller <|-- EquipeAdminController
+
+Controller ..> Auth
+Controller ..> Csrf
+Controller ..> Database
+
+CatalogueController "1" --> "1" ProduitRepository
+CatalogueController "1" --> "1" CategorieRepository
+CatalogueController ..> Views
+AuthController "1" --> "1" ClientRepository
+CompteController "1" --> "1" ClientRepository
+PanierController "1" --> "1" PanierSession
+ApiController "1" --> "1" PanierSession
+CommandeController "1" --> "1" CommandeRepository
+CommandeController "1" --> "1" ClientRepository
+
+DashboardController ..> Views
+ProduitAdminController --> ProduitRepository
+ProduitAdminController --> CategorieRepository
+CategorieAdminController --> CategorieRepository
+StockAdminController --> ProduitRepository
+StockAdminController ..> Views
+CommandeAdminController --> CommandeRepository
+CommandeAdminController ..> Views
+ParametreAdminController --> ParametreRepository
+EquipeAdminController --> StoreInterface
+
+PanierSession "1" --> "1" StoreInterface
+PanierSession "1" --> "1" ProduitRepository
+PanierSession "1" --> "1" ParametreRepository
+
+ProduitRepository "1" --> "1" StoreInterface
+ProduitRepository ..> Views
+CategorieRepository "1" --> "1" StoreInterface
+CommandeRepository "1" --> "1" StoreInterface
+CommandeRepository "1" --> "1" ParametreRepository
+ParametreRepository "1" --> "1" StoreInterface
+ClientRepository "1" --> "1" StoreInterface
+ClientRepository "1" --> "1" ClientAccountGateway
+
+ClientAccountGateway <|.. SqlClientAccountGateway
+ClientAccountGateway <|.. StoreClientAccountGateway
+
+Database "1" --> "1" StoreInterface : fournit
 StoreInterface <|.. SqlStore
-Commande "1" *-- "1..*" LigneCommande
-Client "1" -- "0..*" Commande
-Categorie "1" -- "0..*" Produit
-Produit "1" -- "0..*" LigneCommande
-JsonStore --> Triggers
-JsonStore --> Views
-Controller --> Auth
-Controller --> Csrf
+StoredProcedureResultExecutor <|.. SqlStore
+RowLockingStore <|.. SqlStore
+
+StoreInterface <|.. JsonStore
+StockMovementAuditor <|.. JsonStore
+JsonStore "1" --> "1" Triggers : applique
+JsonStore "1" --> "1" Schema : valide
+
+note bottom of ProduitRepository
+  Choix d'architecture : pas de classes entités PHP
+  (Produit, Client, Commande…) ; les dépôts échangent
+  des tableaux associatifs normalisés par Schema
+  et protégés par les triggers SQL / PHP.
+end note
 @enduml

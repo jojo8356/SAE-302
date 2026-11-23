@@ -28,7 +28,7 @@
 
 # Architecture
 ## MVC strict, front controller, zéro dépendance
-- `public/` = seul dossier exposé (front controller, CSS, JS, images)
+- `public/` = seul dossier exposé (front controller, `X-Frame-Options: DENY`, CSP, CSS, JS, images)
 - `app/Controller` → `app/Repository` → magasin de données ; `app/View` sans logique
 - Routeur à **liste blanche** : aucune route administrative par convention implicite
 - `StoreInterface` : deux pilotes ; **PDO/MySQL** est le défaut, `JsonStore` reste une option explicite pour les tests portables et démos sans serveur SQL
@@ -38,8 +38,8 @@
 ---
 
 # Modèle de données
-## 8 entités métier, 9 tables SQL, 3 vues, 18 procédures, 16 déclencheurs
-- 8 entités métier : client, administrateur, catégorie, produit, commande, ligne_commande, historique_statut, paramètre ; `stock_movement_history` est une table technique d’audit supplémentaire
+## 9 entités (MCD), 9 tables SQL (MLD), 3 vues, 18 procédures, 16 déclencheurs
+- 9 entités : 8 entités métier (`client`, `administrateur`, `categorie`, `produit`, `commande`, `ligne_commande`, `order_status_history`, `parametre`) + `stock_movement_history` (table d’audit du stock)
 - Contraintes portées par la base : `CHECK`, clés étrangères, unicité, prix ≥ 0, stock ≥ 0
 - Déclencheurs : décrémentation de stock, journal de statut, interdiction de suppression d'un produit commandé
 - Procédures : création de commande transactionnelle, annulation, alertes de stock, purge

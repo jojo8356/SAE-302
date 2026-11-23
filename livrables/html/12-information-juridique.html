@@ -3,91 +3,222 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light dark">
-<meta name="description" content="SAÉ 302 — MiniShop : Information e-commerce et données — audit de MiniShop#">
-<title>Information e-commerce et données — audit de MiniShop# — MiniShop</title>
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : Information e-commerce et données — audit de MiniShop">
+<title>Information e-commerce et données — audit de MiniShop — MiniShop (SAÉ 302)</title>
 <style>
 :root {
   --encre: #0f172a;
   --encre-douce: #475569;
-  --papier: #fbfaf7;
-  --carte: #ffffff;
-  --trait: #e2e8f0;
-  --accent: #1d4ed8;
-  --accent-clair: #dbeafe;
-  --code: #f1f5f9;
-  --mesure: 72ch;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
-    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
-    --accent-clair: #1e3a8a; --code: #16223a;
-  }
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
 }
 * { box-sizing: border-box; }
 html { font-size: 100%; -webkit-text-size-adjust: 100%; }
 body {
-  margin: 0 auto;
-  padding: 2.5rem 1.25rem 5rem;
-  max-width: calc(var(--mesure) + 6rem);
-  background: var(--papier);
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
   color: var(--encre);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
-  font-size: 1rem;
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
   line-height: 1.65;
   text-rendering: optimizeLegibility;
 }
-h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
-h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
-h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
-h3 { font-size: 1.15rem; }
-h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
-p, li { max-width: var(--mesure); }
-a { color: var(--accent); text-underline-offset: 0.15em; }
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
 a:hover { text-decoration-thickness: 2px; }
 code {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
 }
 pre {
-  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
-  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
 }
-pre code { background: none; padding: 0; font-size: inherit; }
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
 blockquote {
-  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
-  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
 }
-blockquote p { margin: 0.35rem 0; }
-table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
-caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
-th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
-thead th { background: var(--accent-clair); }
-tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
-img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
-hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
-ul, ol { padding-left: 1.4rem; }
-li { margin: 0.25rem 0; }
-li input[type="checkbox"] { margin-right: 0.4rem; }
-.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
-.toc > ul { list-style: none; padding-left: 0; }
-.toc ul ul { padding-left: 1rem; }
-footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
 @media print {
-  :root { --papier: #fff; --carte: #fff; }
-  @page { size: A4; margin: 18mm 16mm; }
-  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
   h1, h2, h3 { break-after: avoid; }
   table, pre, img, blockquote { break-inside: avoid; }
   a { color: inherit; text-decoration: none; }
-  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
   .toc { break-after: page; }
 }
 </style>
 </head>
 <body>
 <main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/12-information-juridique.md</code></div>
+</header>
 <nav class="toc" aria-label="Sommaire"><div class="toc">
 <ul>
 <li><a href="#1-sources-et-structure-retenue">1. Sources et structure retenue</a></li>
@@ -97,9 +228,9 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </ul>
 </div>
 </nav>
-<h1 id="information-e-commerce-et-donnees-audit-de-minishop">Information e-commerce et données — audit de MiniShop<a class="headerlink" href="#information-e-commerce-et-donnees-audit-de-minishop" title="Permanent link">#</a></h1>
+<h1 id="information-e-commerce-et-donnees-audit-de-minishop">Information e-commerce et données — audit de MiniShop<a class="headerlink" href="#information-e-commerce-et-donnees-audit-de-minishop" title="Permanent link"></a></h1>
 <p>Recherche et audit du code au <strong>23 octobre 2026</strong>, France, vente de biens à des consommateurs. Document de travail pédagogique, <strong>pas un avis juridique ni une certification de conformité</strong>. Le droit évolue : vérifier les textes, le modèle économique et les informations effectives avec le professionnel avant une mise en ligne commerciale. Les obligations concernent avant tout des <strong>informations et des fonctions</strong> ; toutes n'imposent pas nécessairement une page autonome portant un nom particulier.</p>
-<h2 id="1-sources-et-structure-retenue">1. Sources et structure retenue<a class="headerlink" href="#1-sources-et-structure-retenue" title="Permanent link">#</a></h2>
+<h2 id="1-sources-et-structure-retenue">1. Sources et structure retenue<a class="headerlink" href="#1-sources-et-structure-retenue" title="Permanent link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -147,7 +278,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tbody>
 </table>
 <p><strong>Comparaison sans copie de clauses :</strong> <a href="https://www.boulanger.com/evenement/conditions-generales-vente-boulanger">Boulanger : CGV</a> et <a href="https://www.boulanger.com/evenement/infos-legales">mentions légales</a> séparent notamment vente, informations d'identification et livraison. <a href="https://www.fnac.com/Help/cgv-fnac-marketplace">Fnac Marketplace</a> et <a href="https://www.backmarket.fr/fr-fr/legal/terms-of-use">Back Market</a> distinguent aussi plateforme et vendeurs tiers. MiniShop n'étant pas une place de marché, les obligations propres à l'intermédiation ne sont pas importées par simple analogie. L'étude de <strong>présentation</strong> et ses principes responsive précèdent le CSS dans <code>docs/DA.md</code> §12. <code>/cgu</code> est une page de confort, pas une affirmation qu'une page CGU séparée serait systématiquement obligatoire.</p>
-<h2 id="2-audit-des-donnees-et-des-cookies">2. Audit des données et des cookies<a class="headerlink" href="#2-audit-des-donnees-et-des-cookies" title="Permanent link">#</a></h2>
+<h2 id="2-audit-des-donnees-et-des-cookies">2. Audit des données et des cookies<a class="headerlink" href="#2-audit-des-donnees-et-des-cookies" title="Permanent link"></a></h2>
 <ul>
 <li><code>app/Security/Auth.php</code> démarre <code>MINISHOPSESS</code> pour la session (panier, connexion, jeton CSRF) : <code>HttpOnly</code>, <code>SameSite=Lax</code>, <code>Secure</code> seulement si PHP détecte HTTPS. Les autres paramètres et durées viennent de PHP et du navigateur. Le mode WASM possède une implémentation de session propre au harnais ; ses résultats ne valent pas validation du serveur PHP natif derrière un proxy.</li>
 <li><code>public/mesurer.php</code> crée un autre cookie de session <code>MINISHOPSESSID</code>, <code>HttpOnly</code>, <code>SameSite=Lax</code>, durée session, <strong><code>Secure=false</code></strong>. Outil de développement, non nécessaire à la boutique. Son garde dépend notamment du nom d'hôte ou d'indices locaux : ne pas le considérer comme une barrière de sécurité suffisante. <strong>Exclure <code>mesurer.php</code> et <code>gen_volumes.php</code> du déploiement public</strong>, vérifier les autres outils de développement et supprimer les marqueurs de déverrouillage.</li>
@@ -156,7 +287,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li>Comptes, coordonnées et commandes sont stockés en JSON ou SQL. En mode JSON, les fichiers <code>data/minishop/*.json</code> versionnés servent de jeu d'essai de démonstration et sont créés/mis à jour en clair hors chiffrement applicatif ; en cas d'erreur pendant un commit multi-fichiers JSON, une écriture partielle reste possible (<code>app/View/errors/500.php</code> n'affirme plus qu'aucune donnée n'a été modifiée). Le journal du moteur JSON <code>var/journal/db.jsonl</code> minimise désormais les nouvelles entrées <code>client</code> et <code>administrateur</code> (sans nom, e-mail ni condensat <code>mot_de_passe_hash</code>), mais les commandes, le nom d'acteur administrateur et les entrées historiques peuvent encore contenir des données personnelles. Le contact écrit nom, e-mail, message et date dans <code>var/log/contact.jsonl</code>, sans envoi d'e-mail ; les anciennes entrées sont limitées à 500 caractères, les nouvelles sont complètes jusqu'à 2 000 caractères. L'échec d'écriture est signalé ; aucun délai de réponse n'est garanti. Les nouveaux fichiers contact et journaux passent par <code>NettoyageJournaux::ajouter</code> avec un masque restrictif et un <code>chmod</code> 0600 si possible, mais <strong>cela ne constitue pas un audit de sécurité ni ne corrige les permissions des tables JSON ou des autres journaux serveur</strong>.</li>
 <li><code>conservation_compte=24</code> est la valeur initiale du seed pour les comptes inactifs sans commande, appliquée uniquement si l'exploitant exécute <code>scripts/purger_comptes.php</code> ou la maintenance CLI dédiée. Des rotations manuelles séparées (simulées par défaut, non planifiées) existent pour <code>contact.jsonl</code> (12 mois), le journal JSON (6 mois) et un dossier local dédié de sauvegardes (30 jours), ainsi qu'un outil manuel de copies chiffrées (<code>scripts/archive_restreinte.php</code>) qui ne retire pas la donnée source. Les comptes ayant des commandes, les sessions, les copies d'hébergement et les archives légales nécessitent encore des règles, habilitations et procédures effectives et testées. Le serveur et l'hébergeur peuvent produire d'autres journaux ; accès, sous-traitants, localisation et transferts sont inconnus.</li>
 </ul>
-<h2 id="3-points-bloquants-avant-de-vendre-reellement">3. Points bloquants avant de vendre réellement<a class="headerlink" href="#3-points-bloquants-avant-de-vendre-reellement" title="Permanent link">#</a></h2>
+<h2 id="3-points-bloquants-avant-de-vendre-reellement">3. Points bloquants avant de vendre réellement<a class="headerlink" href="#3-points-bloquants-avant-de-vendre-reellement" title="Permanent link"></a></h2>
 <ul>
 <li>[!] Identifier et publier un vendeur professionnel avant toute exploitation commerciale : dénomination, forme sociale, capital le cas échéant, adresse professionnelle, e-mail et téléphone effectifs, immatriculation RCS/RNE et TVA intracommunautaire, responsable de publication commercial et hébergeur effectif de production (les mentions actuelles ne couvrent que l'édition étudiante non professionnelle et l'hébergement pédagogique visé). Déterminer les mentions supplémentaires liées au statut et aux produits.</li>
 <li>[!] Finaliser les CGV avec le professionnel : moyens de paiement effectifs, conditions et restriction de livraison, délais ou dates, prix et frais, destinataire et frais de retour, traitement des réclamations, coordonnées du vendeur responsable des garanties, médiateur désigné avec adresse et site. Vérifier toutes les informations produit et environnementales applicables aux catégories vendues, et les modalités d'archivage contractuel.</li>
@@ -166,7 +297,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li>[!] Vérifier sur l'hébergement réel : TLS et <code>Secure</code> derrière proxy de confiance, accès stricts aux fichiers hors <code>public/</code>, permissions, chiffrement et sauvegardes, journaux serveur, authentification d'administration et supervision. Désactiver les outils de développement ; ne pas utiliser de données réelles tant que l'ensemble n'est pas prêt.</li>
 <li>[!] Vérifier les exigences d'accessibilité applicables au service et les éventuelles exemptions ; réaliser un audit manuel avec technologies d'assistance, tailles de viewport et navigateur réel. La présence de tests et de CSS responsive ne prouve pas une conformité WCAG/RGAA complète.</li>
 </ul>
-<h2 id="4-verification-et-auto-evaluation">4. Vérification et auto-évaluation<a class="headerlink" href="#4-verification-et-auto-evaluation" title="Permanent link">#</a></h2>
+<h2 id="4-verification-et-auto-evaluation">4. Vérification et auto-évaluation<a class="headerlink" href="#4-verification-et-auto-evaluation" title="Permanent link"></a></h2>
 <ul>
 <li><code>tests/php/information_juridique_test.php</code> vérifie routes et liens du pied, éléments essentiels des textes, absence de promesses trompeuses, lien formulaire et commande, et présence du CSS centré. Ce sont des <strong>contrats de régression</strong>, pas une preuve que le droit est respecté.</li>
 <li>Le parcours HTTP WASM vérifie l'accès public aux huit pages, rendu de l'encadré, modèle et réserve de rétractation, cookie observé, formulaire de contact valide, CSRF, échappement XSS et échec d'écriture. Les journaux du test restent isolés et ne remplacent pas ceux de l'utilisateur.</li>
@@ -174,8 +305,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li><strong>Bilan :</strong> information plus claire, structurée et traçable pour la soutenance ; <strong>non prêt pour une boutique réelle</strong> tant que les blocages précédents et une validation juridique ne sont pas levés. Un contenu légal, même exact à une date donnée, ne remplace jamais les services et processus réels.</li>
 </ul>
 <footer class="doc">
-  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/12-information-juridique.md</code>
-  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/12-information-juridique.md</code> · 0 figure(s) intégrée(s).</p>
 </footer>
 </main>
 </body>
