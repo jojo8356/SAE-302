@@ -269,7 +269,7 @@ footer.doc p { text-align: left; margin: 0; }
 </ul>
 </li>
 <li><a href="#chapitre-5-exploitation-build-run-conformite-legale-rgpd-gouvernance-gitlab-et-bareme">Chapitre 5 — Exploitation (Build → Run), conformité légale, RGPD, gouvernance GitLab et barème</a><ul>
-<li><a href="#51-prerequis-dhebergement-deploiement-mco-moindre-privilege-et-conteneurisation">5.1 Prérequis d’hébergement, déploiement, MCO, moindre privilège et conteneurisation</a></li>
+<li><a href="#51-prerequis-dhebergement-deploiement-mco-moindre-privilege-et-cybersecurite-de-production">5.1 Prérequis d’hébergement, déploiement, MCO, moindre privilège et cybersécurité de production</a></li>
 <li><a href="#52-conformite-juridique-e-commerce-audit-des-traceurs-et-politique-de-conservation-rgpd-docs12-docs18">5.2 Conformité juridique e-commerce, audit des traceurs et politique de conservation RGPD (docs/12 &amp; docs/18)</a></li>
 <li><a href="#53-analyse-des-ecarts-vis-a-vis-du-cahier-des-charges-initial-et-bilan-reflexif">5.3 Analyse des écarts vis-à-vis du cahier des charges initial et bilan réflexif</a></li>
 <li><a href="#54-gouvernance-gitlab-readmemd-soutenance-15-min-et-grille-de-conformite-au-bareme">5.4 Gouvernance GitLab, README.md, soutenance (15 min) et grille de conformité au barème</a></li>
@@ -424,16 +424,19 @@ footer.doc p { text-align: left; margin: 0; }
 </li>
 <li>4.5 Analyse critique des biais, limites du prototype et risques résiduels</li>
 <li><strong>Chapitre 5 — Exploitation (Build → Run), conformité légale, RGPD, gouvernance GitLab et barème</strong></li>
-<li>5.1 Prérequis d’hébergement, déploiement, MCO, moindre privilège et conteneurisation</li>
+<li>5.1 Prérequis d’hébergement, déploiement, MCO, moindre privilège et cybersécurité<ul>
+<li>5.1.3 Bordure cybersécurité en production : CDN, WAF, anti-DDoS et origine</li>
+</ul>
+</li>
 <li>5.2 Conformité juridique e-commerce, audit des traceurs et politique de conservation RGPD (<code>docs/12</code> &amp; <code>docs/18</code>)<ul>
 <li>5.2.1 Cadre légal e-commerce français et traduction dans les pages réglementaires</li>
 <li>5.2.2 Audit technique des cookies, du stockage local et minimisation des journaux</li>
-<li>5.2.3 Politique de conservation RGPD, maintenance CLI (<code>db_init.php --nettoyage</code>) et archivage libsodium</li>
+<li>5.2.3 Politique de conservation RGPD, CLI (<code>--nettoyage</code>) et archivage <code>libsodium</code></li>
 <li>5.2.4 Les 7 points bloquants avant ouverture commerciale (dont rétractation 19 juin 2026)</li>
 </ul>
 </li>
 <li>5.3 Analyse des écarts vis-à-vis du cahier des charges initial et bilan réflexif</li>
-<li>5.4 Gouvernance GitLab, <code>README.md</code>, organisation de soutenance et grille de conformité au barème</li>
+<li>5.4 Gouvernance GitLab, <code>README.md</code>, soutenance et conformité au barème</li>
 <li><strong>Chapitre 6 — Feuille de route d’industrialisation : vers une marketplace professionnelle, intelligente et automatisée (modèle « Amazon »)</strong></li>
 <li>6.1 Industrialisation : PSP, cache distribué, recherche et observabilité</li>
 <li>6.2 Évolution du modèle 3FN vers une <em>Marketplace</em> multi-vendeurs (<em>Seller Central</em> et <em>Buy Box</em>)</li>
@@ -511,17 +514,19 @@ footer.doc p { text-align: left; margin: 0; }
 <li><strong>Tableau 43</strong> — Disponibilité en série/parallèle, durabilité et objectifs RPO/RTO de MiniShop</li>
 <li><strong>Tableau 44</strong> — Latence en percentiles, débit, montée verticale/horizontale et coût d’un neuf</li>
 <li><strong>Tableau 45</strong> — Règle du moindre privilège : permissions par utilisateur et conteneurisation</li>
-<li><strong>Tableau 46</strong> — Cadre légal e-commerce français (LCEN, Consommation, CNIL)</li>
-<li><strong>Tableau 47</strong> — Audit technique des cookies, du <code>localStorage</code> et des journaux</li>
-<li><strong>Tableau 48</strong> — Politique de conservation RGPD et limites assumées (<code>docs/18</code>)</li>
-<li><strong>Tableau 49</strong> — Les 7 points bloquants avant toute mise en vente commerciale réelle (<code>docs/12</code>)</li>
-<li><strong>Tableau 50</strong> — Contrôle de conformité face aux livrables et pénalités du barème</li>
-<li><strong>Tableau 51</strong> — Briques d’industrialisation pour une plateforme de production</li>
-<li><strong>Tableau 52</strong> — Extension du modèle 3FN vers une <em>Marketplace</em> multi-vendeurs</li>
-<li><strong>Tableau 53</strong> — Gestion back-office des fiches fournisseurs et commandes d’approvisionnement</li>
-<li><strong>Tableau 54</strong> — Architecture du moteur de recommandation hybride (V1 à V3)</li>
-<li><strong>Tableau 55</strong> — Automatisations back-office vendeur, logistique et anti-fraude</li>
-<li><strong>Tableau 56</strong> — Plan de migration incrémental en 4 paliers (MiniShop → <em>Marketplace</em>)</li>
+<li><strong>Tableau 46</strong> — Couches de bordure en prod (Anti-DDoS, CDN, WAF) et règles sur notre code</li>
+<li><strong>Tableau 47</strong> — État, sauvegarde, signaux, compromis et parade anti-contournement</li>
+<li><strong>Tableau 48</strong> — Cadre légal e-commerce français (LCEN, Consommation, CNIL)</li>
+<li><strong>Tableau 49</strong> — Audit technique des cookies, du <code>localStorage</code> et des journaux</li>
+<li><strong>Tableau 50</strong> — Politique de conservation RGPD et limites assumées (<code>docs/18</code>)</li>
+<li><strong>Tableau 51</strong> — Les 7 points bloquants avant toute mise en vente commerciale réelle (<code>docs/12</code>)</li>
+<li><strong>Tableau 52</strong> — Contrôle de conformité face aux livrables et pénalités du barème</li>
+<li><strong>Tableau 53</strong> — Briques d’industrialisation pour une plateforme de production</li>
+<li><strong>Tableau 54</strong> — Extension du modèle 3FN vers une <em>Marketplace</em> multi-vendeurs</li>
+<li><strong>Tableau 55</strong> — Gestion back-office des fiches fournisseurs et commandes d’approvisionnement</li>
+<li><strong>Tableau 56</strong> — Architecture du moteur de recommandation hybride (V1 à V3)</li>
+<li><strong>Tableau 57</strong> — Automatisations back-office vendeur, logistique et anti-fraude</li>
+<li><strong>Tableau 58</strong> — Plan de migration incrémental en 4 paliers (MiniShop → <em>Marketplace</em>)</li>
 </ul>
 <div style="break-before: page;"></div>
 <h2 id="glossaire-des-sigles-et-acronymes">Glossaire des sigles et acronymes<a class="headerlink" href="#glossaire-des-sigles-et-acronymes" title="Permanent link"></a></h2>
@@ -2553,7 +2558,7 @@ END;
 <tr>
 <td><strong>Directive (UE) 2023/2673 (Rétractation en ligne — 19 juin 2026)</strong></td>
 <td>Bouton/fonctionnalité directe, visible et gratuite pour exercer la rétractation à distance avec confirmation et accusé durable</td>
-<td>Page informative + modèle <code>R. 221-1</code> présents (<code>/retractation</code>) ; l’implémentation du bouton en ligne « confirmer la rétractation » est inscrite en <strong>point bloquant n° 3</strong> avant ouverture commerciale (Tableau 49).</td>
+<td>Page informative + modèle <code>R. 221-1</code> présents (<code>/retractation</code>) ; l’implémentation du bouton en ligne « confirmer la rétractation » est inscrite en <strong>point bloquant n° 3</strong> avant ouverture commerciale (Tableau 51).</td>
 </tr>
 <tr>
 <td><strong>Directive (UE) 2019/882 (<em>European Accessibility Act</em>) &amp; Norme EN 301 549</strong></td>
@@ -3158,7 +3163,7 @@ END;
 4. <strong>Écarts assumés en maquette (<code>docs/01</code> §8.10) :</strong> paiement et expédition simulés, formulaire de contact journalisé localement sans SMTP, absence d’authentification multifacteur TOTP sur <code>SUPER</code> (recommandée par OWASP ASVS V4.3.1), absence de <em>rate limiting</em> applicatif sur <code>/connexion</code>, et indexation secondaire à prévoir sur <code>commande(statut)</code> au-delà de <code>50 000</code> commandes (<code>EXPLAIN type=ALL</code>).</p>
 <div style="break-before: page;"></div>
 <h2 id="chapitre-5-exploitation-build-run-conformite-legale-rgpd-gouvernance-gitlab-et-bareme">Chapitre 5 — Exploitation (<em>Build → Run</em>), conformité légale, RGPD, gouvernance GitLab et barème<a class="headerlink" href="#chapitre-5-exploitation-build-run-conformite-legale-rgpd-gouvernance-gitlab-et-bareme" title="Permanent link"></a></h2>
-<h3 id="51-prerequis-dhebergement-deploiement-mco-moindre-privilege-et-conteneurisation">5.1 Prérequis d’hébergement, déploiement, MCO, moindre privilège et conteneurisation<a class="headerlink" href="#51-prerequis-dhebergement-deploiement-mco-moindre-privilege-et-conteneurisation" title="Permanent link"></a></h3>
+<h3 id="51-prerequis-dhebergement-deploiement-mco-moindre-privilege-et-cybersecurite-de-production">5.1 Prérequis d’hébergement, déploiement, MCO, moindre privilège et cybersécurité de production<a class="headerlink" href="#51-prerequis-dhebergement-deploiement-mco-moindre-privilege-et-cybersecurite-de-production" title="Permanent link"></a></h3>
 <h4 id="511-prerequis-dhebergement-deploiement-initial-retour-arriere-et-mco">5.1.1 Prérequis d’hébergement, déploiement initial, retour arrière et MCO<a class="headerlink" href="#511-prerequis-dhebergement-deploiement-initial-retour-arriere-et-mco" title="Permanent link"></a></h4>
 <p>L’exploitation cible (<code>STACK.md</code>, <code>docs/26-transition-exploitation-maintenance-build-to-run.md</code>) requiert PHP <strong>8.2+</strong> (<code>json</code>, <code>mbstring</code>, <code>pdo_mysql</code>), MySQL <strong>8.0.16+</strong> ou MariaDB <strong>10.6+</strong>, et Apache 2.4 (<code>DocumentRoot public/</code>, <code>mod_rewrite</code> activé ; le serveur intégré PHP de <code>run.sh</code> étant réservé au développement). Le passage en production impose :
 1. La création d’un fichier <code>.env</code> hors racine Web (<code>APP_ENV=prod</code>, <code>APP_DEBUG=0</code>, <code>STORAGE_DRIVER=sql</code>) avec un utilisateur SQL applicatif aux droits restreints (<code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>, <code>EXECUTE</code>).
@@ -3230,6 +3235,84 @@ END;
 </tbody>
 </table>
 <p><em>Tableau 45 — Règle du moindre privilège : cloisonnement par conteneur d’exécution et isolation logique des données par profil.</em></p>
+<h4 id="513-bordure-de-cybersecurite-pour-la-prochaine-production-cdn-waf-anti-ddos-et-verrouillage-dorigine">5.1.3 Bordure de cybersécurité pour la prochaine production : CDN, WAF, anti-DDoS et verrouillage d’origine<a class="headerlink" href="#513-bordure-de-cybersecurite-pour-la-prochaine-production-cdn-waf-anti-ddos-et-verrouillage-dorigine" title="Permanent link"></a></h4>
+<p>En V1 (<code>ENF-20</code>, <code>public/index.php</code>), MiniShop s’exécute sans aucune ressource externe ni service de bordure : ni CDN (police <code>minishop-euro.woff2</code> et icônes Lucide locales sous CSP <code>'self'</code>), ni pare-feu applicatif (WAF), ni protection anti-DDoS, ni <em>rate-limiting</em> sur <code>/connexion</code> ou <code>/admin/connexion</code> (<code>docs/01</code> § 8.10). Pour la prochaine mise en production exposée sur Internet, il est indispensable d’intercaler trois <strong>services de bordure</strong> devant le point d’entrée (<code>reverse proxy</code> / répartiteur L7), chacun traitant un risque distinct et aucun ne remplaçant les autres :</p>
+<ol>
+<li><strong>Ordre strict de traversée et règles d’intégration avec le code MiniShop (<code>Tableau 46</code>) :</strong>
+   Le trafic entrant traverse impérativement les couches dans l’ordre <strong><code>Utilisateur → Anti-DDoS (L3/L4) → CDN (cache) → WAF (L7) → Point d’entrée (NGINX/HAProxy) → MiniShop</code></strong>, de sorte que chaque couche ne reçoive qu’un trafic déjà nettoyé par la précédente :
+   - <strong>Couche 1 — Anti-DDoS volumétrique (L3/L4) :</strong> absorbe au niveau réseau/transport les inondations SYN/UDP et les amplifications DNS/NTP avant qu’elles ne saturent le lien du serveur. <strong>Limite critique :</strong> l’anti-DDoS réseau inclus chez les hébergeurs ne voit pas les attaques <strong>applicatives L7</strong> — des requêtes HTTPS valides en volume modéré mais coûteuses pour MariaDB (ex. rafales sur <code>GET /recherche?q=...</code>, <code>POST /connexion</code>, ou <code>POST /api/panier/ajouter</code> déclenchant des verrous InnoDB sur les <code>40</code>–<code>60</code> workers PHP). En infrastructure élastique, une attaque L7 non filtrée peut même provoquer un surcoût d’<em>autoscaling</em> sans faire tomber le site.
+   - <strong>Couche 2 — CDN (<em>Content Delivery Network</em>, même origine ou hôte dédié compatible CSP) :</strong> met en cache au plus près du visiteur les ressources statiques de <code>public/</code> (<code>/img/produits/*.jpg</code>, <code>/css/app.css</code>, <code>/css/print.css</code>, <code>/js/*.js</code>, <code>/fonts/minishop-euro.woff2</code>), allégeant l’origine tout en respectant la CSP (<code>img-src 'self'</code>, <code>font-src 'self'</code>) s’il agit en proxy sur <code>minishop.fr</code>. <strong>Règle de sûreté impérative sur notre code :</strong> <strong>ne jamais mettre en cache au CDN les pages HTML contenant un jeton <code>_csrf</code> (<code>Csrf::champ()</code>), un cookie <code>MINISHOPSESS</code> ou des données privées</strong> (<code>/panier</code>, <code>/compte</code>, <code>/mes-commandes</code>, <code>/admin/*</code>, <code>/api/panier*</code>) — faute de quoi un visiteur recevrait le jeton CSRF ou la page d’un autre client ; seuls les statiques versionnés (et éventuellement des fiches catalogue publiques sans session ni formulaire POST) sont cachables.
+   - <strong>Couche 3 — WAF (<em>Web Application Firewall</em>, ex. BunkerWeb, ModSecurity OWASP CRS ou WAF managé + CrowdSec) :</strong> placé <strong>derrière le cache CDN</strong> (afin que les hits statiques du CDN ne consomment ni inspection L7 ni CPU), il inspecte le corps et les en-têtes HTTP (injections SQL, XSS, scans automatisés de <code>.env</code>, <code>.git</code>, <code>wp-login</code>, limitation de débit <code>429</code> sur <code>/connexion</code> et <code>/admin/connexion</code>). <strong>Règles d’exploitation :</strong> (i) un WAF est un <strong>filtre</strong>, jamais un substitut aux requêtes préparées <code>SqlStore</code>, à <code>e()</code>, à <code>Csrf::verifier()</code> ou aux contrôles <code>RB-18</code> ; (ii) déployer d’abord les règles OWASP en <strong>mode observation/comptage</strong> afin d’ajuster les exceptions sur les champs texte libre français (<code>/contact</code>, <code>/recherche</code>, descriptions <code>/admin/produit/*</code>) avant tout passage en blocage (<code>403</code>).</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Couche (dans l’ordre)</th>
+<th>Menace traitée</th>
+<th>Application directe au code MiniShop (<code>public/index.php</code>)</th>
+<th>Ce qu’elle ne protège <strong>PAS</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. Anti-DDoS</strong> (réseau/transport L3–L4)</td>
+<td>Saturation bande passante, SYN flood, amplification DNS/NTP</td>
+<td>Protège la liaison réseau du VPS/cluster avant <code>Apache</code>/<code>NGINX</code></td>
+<td>Requêtes HTTP valides coûteuses (<code>GET /recherche</code>, <code>POST /api/panier/*</code>, brute-force <code>/connexion</code>)</td>
+</tr>
+<tr>
+<td><strong>2. CDN</strong> (cache en bordure)</td>
+<td>Latence géographique et pic de bande passante statique</td>
+<td>Cache <code>/img/</code>, <code>/css/</code>, <code>/js/</code>, <code>/fonts/minishop-euro.woff2</code> ; <strong>exclure</strong> toute page avec <code>_csrf</code> ou <code>MINISHOPSESS</code></td>
+<td>Attaques applicatives non cachées (transmises à l’origine) ; panne CDN = site injoignable via DNS</td>
+</tr>
+<tr>
+<td><strong>3. WAF + CrowdSec</strong> (L7 HTTP)</td>
+<td>SQLi, XSS, bots/scanners (<code>.env</code>, <code>.sql</code>), brute force <code>429</code></td>
+<td>Protège <code>/connexion</code>, <code>/admin/connexion</code>, <code>/contact</code> (après phase <strong>observation</strong> anti-faux-positifs)</td>
+<td>Failles logiques métier (<code>IDOR</code>, erreur de prix/stock <code>RB-18</code>) ou contournement direct de l’IP d’origine</td>
+</tr>
+</tbody>
+</table>
+<p><em>Tableau 46 — Couches de bordure cybersécurité en production (Anti-DDoS, CDN, WAF) et règles d’intégration avec MiniShop.</em></p>
+<ol start="2">
+<li><strong>État, sauvegarde, lecture de l’IP réelle et parade contre le contournement de l’origine (<code>Tableau 47</code>) :</strong>
+   En production, la mise en place d’une bordure crée <strong>trois vulnérabilités ou risques d’exploitation fréquents</strong> à verrouiller explicitement :
+   - <strong>Verrouillage strict de l’adresse d’origine (anti-contournement) :</strong> toute bordure devient purement décorative si l’adresse IP publique du serveur d’origine (<code>front-web</code> / <code>admin-web</code>) reste joignable directement sur <code>80</code>/<code>443</code> (une IP historique reste trouvable dans les archives DNS ou les journaux publics de <em>Certificate Transparency</em>). <strong>Solution obligatoire :</strong> fermer <code>80</code>/<code>443</code> sur le pare-feu de l’origine (<code>nftables</code> / <em>Security Group</em>) à tout Internet et n’autoriser <strong>que</strong> les plages IP officielles du fournisseur CDN/WAF (ou un tunnel privé WireGuard/VPC) couplé à un certificat client <strong>mTLS</strong> (<em>Authenticated Origin Pulls</em>).
+   - <strong>Usurpation d’en-tête IP client et drapeau <code>Secure</code> :</strong> derrière le CDN/WAF, <code>REMOTE_ADDR</code> devient l’IP du nœud de bordure ; l’adresse du visiteur voyage dans <code>X-Forwarded-For</code> / <code>CF-Connecting-IP</code> et le protocole dans <code>X-Forwarded-Proto</code>. Ne faire confiance à ces en-têtes (via <code>mod_remoteip</code> / NGINX <code>set_real_ip_from</code>) <strong>que si <code>REMOTE_ADDR</code> appartient au proxy/CDN autorisé</strong> — sinon un attaquant usurpe <code>X-Forwarded-For</code> pour contourner les limitations <code>/connexion</code> ou fausser les journaux (<code>NettoyageJournaux</code>), ou altère le drapeau <code>Secure</code> de <code>Auth::demarrer()</code> (<code>app/Security/Auth.php:58</code>).
+   - <strong>Dépendance fournisseur et sauvegarde :</strong> le cache CDN est jetable (donnée dérivée, risque = contenu périmé avant invalidation lors d’un déploiement CSS/JS), mais les <strong>règles WAF, exceptions, certificats de bordure et enregistrements DNS</strong> constituent un état critique versionné dans Git.</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Question de la grille</th>
+<th>CDN (bordure cache)</th>
+<th>WAF (pare-feu L7 / BunkerWeb / CrowdSec)</th>
+<th>Anti-DDoS + Verrouillage Origine</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>État porté &amp; Sauvegarde</strong></td>
+<td>Copies en cache (jetables) + config domaines/TTL (Git)</td>
+<td><strong>Règles OWASP, exceptions, listes IP</strong> (versionnées Git)</td>
+<td>Règles <code>nftables</code> / ACL plages bordure + certificats mTLS origine</td>
+</tr>
+<tr>
+<td><strong>Impact s’il tombe</strong></td>
+<td>Origine surchargée ou <strong>site injoignable</strong> si DNS pointe sur le CDN</td>
+<td>Trafic non filtré (<em>fail-open</em>) ou faux blocage (<em>fail-closed</em>)</td>
+<td>Origine subit l’attaque directe ou est contournée si port ouvert</td>
+</tr>
+<tr>
+<td><strong>Signaux &amp; Compromis</strong></td>
+<td>Taux de <em>cache hit</em>, erreurs purge ; gain latence vs contenu périmé</td>
+<td>Requêtes <code>403</code>/<code>429</code>, <strong>faux positifs</strong> sur formulaires (<code>/contact</code>)</td>
+<td>Volume entrant anormal, connexions directes hors bordure bloquées</td>
+</tr>
+</tbody>
+</table>
+<p><em>Tableau 47 — État, sauvegarde, signaux, compromis et verrouillage d’origine des services de bordure.</em></p>
 <div style="break-before: page;"></div>
 <h3 id="52-conformite-juridique-e-commerce-audit-des-traceurs-et-politique-de-conservation-rgpd-docs12-docs18">5.2 Conformité juridique e-commerce, audit des traceurs et politique de conservation RGPD (<code>docs/12</code> &amp; <code>docs/18</code>)<a class="headerlink" href="#52-conformite-juridique-e-commerce-audit-des-traceurs-et-politique-de-conservation-rgpd-docs12-docs18" title="Permanent link"></a></h3>
 <p>Au-delà de la technique pure, un site de vente aux consommateurs en France est soumis à un socle juridique strict (LCEN, Code de la consommation, Code de commerce, RGPD et lignes directrices de la CNIL). L’audit juridique et documentaire consigné dans <code>docs/12-information-juridique.md</code> (état au 23 octobre 2026) et <code>docs/18-politique-conservation.md</code> constitue un <strong>document de travail pédagogique</strong> — et non un avis juridique ni une certification de conformité — permettant d’exposer avec transparence devant le jury ce qui est déjà implémenté dans MiniShop et les prérequis bloquants avant toute ouverture commerciale réelle.</p>
@@ -3281,7 +3364,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 46 — Cadre légal e-commerce français et traduction dans les pages réglementaires de MiniShop (<code>docs/12-information-juridique.md</code>).</em></p>
+<p><em>Tableau 48 — Cadre légal e-commerce français et traduction dans les pages réglementaires de MiniShop (<code>docs/12-information-juridique.md</code>).</em></p>
 <h4 id="522-audit-technique-des-cookies-du-stockage-local-et-minimisation-des-journaux">5.2.2 Audit technique des cookies, du stockage local et minimisation des journaux<a class="headerlink" href="#522-audit-technique-des-cookies-du-stockage-local-et-minimisation-des-journaux" title="Permanent link"></a></h4>
 <p>L’inspection statique des scripts PHP/JavaScript et des vues (<code>docs/12</code> § 2) établit un inventaire exhaustif des traceurs et stockages locaux actifs dans l’application :</p>
 <table>
@@ -3320,7 +3403,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 47 — Audit technique des traceurs, cookies et minimisation des données (<code>docs/12-information-juridique.md</code>).</em></p>
+<p><em>Tableau 49 — Audit technique des traceurs, cookies et minimisation des données (<code>docs/12-information-juridique.md</code>).</em></p>
 <div style="break-before: page;"></div>
 <h4 id="523-politique-de-conservation-rgpd-maintenance-cli-db_initphp-nettoyage-et-archivage-libsodium">5.2.3 Politique de conservation RGPD, maintenance CLI (<code>db_init.php --nettoyage</code>) et archivage libsodium<a class="headerlink" href="#523-politique-de-conservation-rgpd-maintenance-cli-db_initphp-nettoyage-et-archivage-libsodium" title="Permanent link"></a></h4>
 <p>Conformément à l’article 5 du RGPD (limitation de conservation), à l’article 17 (droit à l’effacement) et à l’article <code>L. 123-22</code> du Code de commerce (10 ans pour les seules pièces justificatives comptables concernées — et <strong>non</strong> pour l’intégralité des comptes ou brouillons), <code>docs/18-politique-conservation.md</code> propose une grille de rétention paramétrable (<code>parametre.conservation_compte = 24</code>) assortie d’outils CLI <strong>simulés par défaut</strong> :</p>
@@ -3372,7 +3455,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 48 — Politique de conservation RGPD, maintenance CLI et archivage chiffré libsodium (<code>docs/18-politique-conservation.md</code>).</em></p>
+<p><em>Tableau 50 — Politique de conservation RGPD, maintenance CLI et archivage chiffré libsodium (<code>docs/18-politique-conservation.md</code>).</em></p>
 <p><strong>Verrou opérationnel strict contre la suppression accidentelle :</strong> toute exécution réelle via <code>php scripts/db_init.php --nettoyage &lt;catégorie&gt;</code> exige <strong>simultanément</strong> les deux options <code>--executer --validation-absence-gel</code>, attestant que le responsable a vérifié l’absence de demande de droits, d’obligation légale ou de gel contentieux sur les éléments visés (et ne recrée jamais la base, contrairement à <code>--yes</code>).</p>
 <h4 id="524-les-7-points-bloquants-audites-avant-ouverture-commerciale-reelle-docs12-3">5.2.4 Les 7 points bloquants audités avant ouverture commerciale réelle (<code>docs/12</code> § 3)<a class="headerlink" href="#524-les-7-points-bloquants-audites-avant-ouverture-commerciale-reelle-docs12-3" title="Permanent link"></a></h4>
 <p>Dans une démarche d’ingénierie responsable, l’audit juridique établit explicitement les <strong>sept prérequis bloquants</strong> qui interdisent de mettre la maquette telle quelle en production commerciale :</p>
@@ -3430,7 +3513,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 49 — Synthèse des 7 points bloquants à lever avant toute exploitation commerciale réelle.</em></p>
+<p><em>Tableau 51 — Synthèse des 7 points bloquants à lever avant toute exploitation commerciale réelle.</em></p>
 <h3 id="53-analyse-des-ecarts-vis-a-vis-du-cahier-des-charges-initial-et-bilan-reflexif">5.3 Analyse des écarts vis-à-vis du cahier des charges initial et bilan réflexif<a class="headerlink" href="#53-analyse-des-ecarts-vis-a-vis-du-cahier-des-charges-initial-et-bilan-reflexif" title="Permanent link"></a></h3>
 <p>Quatre évolutions architecturales ou de sécurité ont été apportées et tracées par rapport à la rédaction initiale du CDC :
 - <strong>En-tête <code>X-Frame-Options: DENY</code> vs <code>SAMEORIGIN</code> :</strong> <code>public/index.php</code> et <code>public/.htaccess</code> imposent <code>DENY</code> (et CSP <code>frame-ancestors 'none'</code>) pour une protection maximale contre le <em>clickjacking</em>.
@@ -3483,7 +3566,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 50 — Contrôle complet de conformité au barème officiel et d’absence de pénalité.</em></p>
+<p><em>Tableau 52 — Contrôle complet de conformité au barème officiel et d’absence de pénalité.</em></p>
 <div style="break-before: page;"></div>
 <h2 id="chapitre-6-feuille-de-route-dindustrialisation-vers-une-marketplace-professionnelle-intelligente-et-automatisee-modele-amazon">Chapitre 6 — Feuille de route d’industrialisation : vers une <em>marketplace</em> professionnelle, intelligente et automatisée (modèle « Amazon »)<a class="headerlink" href="#chapitre-6-feuille-de-route-dindustrialisation-vers-une-marketplace-professionnelle-intelligente-et-automatisee-modele-amazon" title="Permanent link"></a></h2>
 <p>Si MiniShop répond pleinement aux exigences académiques et transactionnelles d’une boutique mono-enseigne (<code>200</code> produits, <code>1 000</code> commandes/an selon <code>ENF-02</code>), l’ambition d’un système e-commerce professionnel à grande échelle — inspiré des standards industriels d’une <em>marketplace</em> moderne de type <strong>Amazon</strong> — requiert des évolutions structurelles maîtrisées. Plutôt que de rejeter l’architecture existante, ce chapitre démontre comment le socle conçu (<code>StoreInterface</code>, normalisation 3FN, verrous InnoDB, séparation MVC et audit immuable) constitue une base saine sur laquelle greffer quatre transformations majeures : l’industrialisation de l’infrastructure, l’ouverture multi-vendeurs, la recommandation personnalisée et l’automatisation complète du back-office vendeur.</p>
@@ -3531,7 +3614,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 51 — Briques d’industrialisation requises pour transformer MiniShop en système de production.</em></p>
+<p><em>Tableau 53 — Briques d’industrialisation requises pour transformer MiniShop en système de production.</em></p>
 <h3 id="62-evolution-du-modele-3fn-vers-une-marketplace-multi-vendeurs-seller-central-et-buy-box">6.2 Évolution du modèle 3FN vers une <em>Marketplace</em> multi-vendeurs (<em>Seller Central</em> et <em>Buy Box</em>)<a class="headerlink" href="#62-evolution-du-modele-3fn-vers-une-marketplace-multi-vendeurs-seller-central-et-buy-box" title="Permanent link"></a></h3>
 <p>Le modèle actuel suppose un vendeur unique (l’administrateur de la boutique). Pour évoluer vers une place de marché de type <em>Amazon Seller Central</em>, il convient d’appliquer une distinction fondamentale : <strong>dissocier la fiche produit canonique</strong> (équivalent de l’<em>ASIN</em>, identité technique unique du produit évitant les doublons dans le catalogue) <strong>des offres commerciales portées par les vendeurs tiers</strong> (prix, stock, délai d’expédition, état neuf/reconditionné).</p>
 <pre><code class="language-sql">-- Extension incrémentale 3FN du schéma MiniShop vers le multi-vendeurs :
@@ -3556,7 +3639,7 @@ CREATE TABLE offre_vendeur (
   FOREIGN KEY (id_vendeur) REFERENCES vendeur(id_vendeur) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 </code></pre>
-<p>Le Tableau 52 synthétise l’impact architectural de cette extension sur nos règles existantes :</p>
+<p>Le Tableau 54 synthétise l’impact architectural de cette extension sur nos règles existantes :</p>
 <table>
 <thead>
 <tr>
@@ -3588,7 +3671,7 @@ CREATE TABLE offre_vendeur (
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 52 — Extension du modèle relationnel 3FN et de la sécurité vers une marketplace multi-vendeurs.</em></p>
+<p><em>Tableau 54 — Extension du modèle relationnel 3FN et de la sécurité vers une marketplace multi-vendeurs.</em></p>
 <h3 id="63-gestion-des-fournisseurs-fiches-fournisseurs-et-commandes-dapprovisionnement-back-office">6.3 Gestion des fournisseurs, fiches fournisseurs et commandes d’approvisionnement back-office<a class="headerlink" href="#63-gestion-des-fournisseurs-fiches-fournisseurs-et-commandes-dapprovisionnement-back-office" title="Permanent link"></a></h3>
 <p>Dans la version académique actuelle, les entrées de stock proviennent exclusivement d’ajustements manuels saisis dans <code>/admin/stocks</code> (<code>sp_adjust_stock</code> avec motif <code>REASSORT</code>), sans référentiel fournisseur ni suivi des achats amont. Pour industrialiser l’approvisionnement en back-office à l’échelle d’une centrale d’achat ou d’un distributeur, il est indispensable de modéliser proprement les <strong>fournisseurs</strong>, leurs <strong>catalogues multi-sources</strong> et les <strong>commandes fournisseurs (Bons de Commande Fournisseur — BCF)</strong> en respectant strictement notre normalisation 3FN et notre piste d’audit <code>stock_movement_history</code>.</p>
 <h4 id="631-extension-du-modele-3fn-aux-fournisseurs-et-receptions">6.3.1 Extension du modèle 3FN aux fournisseurs et réceptions<a class="headerlink" href="#631-extension-du-modele-3fn-aux-fournisseurs-et-receptions" title="Permanent link"></a></h4>
@@ -3657,7 +3740,7 @@ CREATE TABLE ligne_bcf (
 <tr>
 <td><strong>Évaluation &amp; Fiabilité (Scorecard)</strong></td>
 <td>Suivi automatique du délai réel de réception par rapport à <code>date_livraison_prevue</code> (taux <strong>OTIF</strong> — <em>On-Time In-Full</em>), taux de colis non conformes et alertes en cas de dépendance à un fournisseur unique.</td>
-<td>Alimente l’algorithme du point de commande dynamique <code>S_cmd</code> (Tableau 55) avec le délai réel <code>L_fournisseur</code> plutôt qu’une estimation fixe.</td>
+<td>Alimente l’algorithme du point de commande dynamique <code>S_cmd</code> (Tableau 57) avec le délai réel <code>L_fournisseur</code> plutôt qu’une estimation fixe.</td>
 </tr>
 <tr>
 <td><strong>Génération des commandes fournisseur (<code>/admin/approvisionnements</code>)</strong></td>
@@ -3671,7 +3754,7 @@ CREATE TABLE ligne_bcf (
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 53 — Gestion back-office des fiches fournisseurs et du cycle complet des commandes d’approvisionnement.</em></p>
+<p><em>Tableau 55 — Gestion back-office des fiches fournisseurs et du cycle complet des commandes d’approvisionnement.</em></p>
 <div style="break-before: page;"></div>
 <h3 id="64-moteur-de-recommandation-hybride-analyse-du-panier-filtrage-collaboratif-et-semantique">6.4 Moteur de recommandation hybride (analyse du panier, filtrage collaboratif et sémantique)<a class="headerlink" href="#64-moteur-de-recommandation-hybride-analyse-du-panier-filtrage-collaboratif-et-semantique" title="Permanent link"></a></h3>
 <p>Un levier décisif de croissance d’Amazon repose sur la personnalisation (« <em>Les clients ayant acheté cet article ont également acheté…</em> »). Notre modèle normalisé <code>ligne_commande</code> permet déjà de déployer une <strong>V1 immédiatement opérationnelle</strong> sans infrastructure d’apprentissage automatique complexe, puis d’évoluer par paliers vers un moteur hybride complet :</p>
@@ -3727,7 +3810,7 @@ HAVING co_achats &gt;= 3
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 54 — Architecture incrémentale du moteur de recommandation hybride.</em></p>
+<p><em>Tableau 56 — Architecture incrémentale du moteur de recommandation hybride.</em></p>
 <h3 id="65-automatisation-du-back-office-vendeur-reapprovisionnement-predictif-et-logistique">6.5 Automatisation du back-office vendeur, réapprovisionnement prédictif et logistique<a class="headerlink" href="#65-automatisation-du-back-office-vendeur-reapprovisionnement-predictif-et-logistique" title="Permanent link"></a></h3>
 <p>Dans un back-office artisanal (et encore en partie dans MiniShop V1), l’administrateur doit surveiller manuellement <code>v_etat_stock</code>, saisir les ajustements <code>sp_adjust_stock</code> et faire évoluer manuellement les statuts <code>EN_PREPARATION -&gt; EXPEDIEE -&gt; LIVREE</code>. Pour passer à une exploitation professionnelle fluide pour des dizaines ou centaines de vendeurs, les opérations répétitives doivent être automatisées autour d’une <strong>file de tâches asynchrones</strong> (<em>Message Queue</em> : Redis Streams ou RabbitMQ + <em>workers</em> PHP CLI) :</p>
 <table>
@@ -3778,7 +3861,7 @@ HAVING co_achats &gt;= 3
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 55 — Catalogue des automatisations du back-office vendeur et de la chaîne logistique.</em></p>
+<p><em>Tableau 57 — Catalogue des automatisations du back-office vendeur et de la chaîne logistique.</em></p>
 <div style="break-before: page;"></div>
 <h3 id="66-trajectoire-de-migration-incrementale-en-4-paliers-strangler-fig-pattern">6.6 Trajectoire de migration incrémentale en 4 paliers (<em>Strangler Fig Pattern</em>)<a class="headerlink" href="#66-trajectoire-de-migration-incrementale-en-4-paliers-strangler-fig-pattern" title="Permanent link"></a></h3>
 <p>L’erreur classique d’une montée en charge consiste à vouloir tout réécrire d’un bloc (<em>Big Bang</em>). Grâce au contrat <code>StoreInterface</code>, à la centralisation des règles métier en dépôts PHP et à la séparation nette des couches MVC, l’évolution vers une plateforme de type Amazon doit suivre une <strong>trajectoire incrémentale en 4 paliers</strong> où chaque phase reste pleinement déployable et testable :</p>
@@ -3801,13 +3884,13 @@ HAVING co_achats &gt;= 3
 <tr>
 <td><strong>Palier 2 — Automatisation Back-Office, Fournisseurs &amp; Recommandation V1</strong></td>
 <td>Moyen terme (productivité opérationnelle)</td>
-<td>File asynchrone (<em>workers</em> CLI) pour factures Factur-X, étiquettes transporteur, webhooks de suivi ; tables <code>fournisseur</code> / <code>bon_commande_fournisseur</code> + réapprovisionnement prédictif (Tableau 53) ; recommandation SQL co-achats (Tableau 54)</td>
+<td>File asynchrone (<em>workers</em> CLI) pour factures Factur-X, étiquettes transporteur, webhooks de suivi ; tables <code>fournisseur</code> / <code>bon_commande_fournisseur</code> + réapprovisionnement prédictif (Tableau 55) ; recommandation SQL co-achats (Tableau 56)</td>
 <td>Mesure de réduction du temps de traitement commande/réassort et hausse du panier moyen par A/B test</td>
 </tr>
 <tr>
 <td><strong>Palier 3 — Ouverture <em>Marketplace</em> Multi-Vendeurs</strong></td>
 <td>Croissance catalogue (<em>Seller Central</em>)</td>
-<td>Tables <code>vendeur</code>, <code>offre_vendeur</code>, <code>sous_commande_vendeur</code> (Tableau 52) ; portail <code>/vendeur/*</code> isolé ; flux séquestre <em>Split Payment</em> ; élection de <em>Buy Box</em> et import massif</td>
+<td>Tables <code>vendeur</code>, <code>offre_vendeur</code>, <code>sous_commande_vendeur</code> (Tableau 54) ; portail <code>/vendeur/*</code> isolé ; flux séquestre <em>Split Payment</em> ; élection de <em>Buy Box</em> et import massif</td>
 <td>Audits IDOR multi-tenant et réconciliation comptable automatisée à 100 %</td>
 </tr>
 <tr>
@@ -3818,7 +3901,7 @@ HAVING co_achats &gt;= 3
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 56 — Plan de migration incrémental en 4 paliers vers une plateforme e-commerce professionnelle.</em></p>
+<p><em>Tableau 58 — Plan de migration incrémental en 4 paliers vers une plateforme e-commerce professionnelle.</em></p>
 <p>Cette approche progressive préserve intégralement les garanties transactionnelles prouvées dans les chapitres précédents — verrouillage des stocks sans survente, immuabilité financière des commandes et traçabilité d’audit — tout en levant méthodiquement chaque limite du prototype académique.</p>
 <div style="break-before: page;"></div>
 <h2 id="conclusion-generale-et-perspectives">Conclusion générale et perspectives<a class="headerlink" href="#conclusion-generale-et-perspectives" title="Permanent link"></a></h2>
