@@ -268,9 +268,9 @@ footer.doc p { text-align: left; margin: 0; }
 <li><a href="#45-analyse-critique-des-biais-limites-du-prototype-et-risques-residuels">4.5 Analyse critique des biais, limites du prototype et risques résiduels</a></li>
 </ul>
 </li>
-<li><a href="#chapitre-5-exploitation-build-run-rgpd-gouvernance-gitlab-et-conformite-au-bareme">Chapitre 5 — Exploitation (Build → Run), RGPD, gouvernance GitLab et conformité au barème</a><ul>
+<li><a href="#chapitre-5-exploitation-build-run-conformite-legale-rgpd-gouvernance-gitlab-et-bareme">Chapitre 5 — Exploitation (Build → Run), conformité légale, RGPD, gouvernance GitLab et barème</a><ul>
 <li><a href="#51-prerequis-dhebergement-procedure-de-deploiement-retour-arriere-et-mco">5.1 Prérequis d’hébergement, procédure de déploiement, retour arrière et MCO</a></li>
-<li><a href="#52-politique-de-conservation-rgpd-purge-cli-et-archivage-chiffre-libsodium">5.2 Politique de conservation RGPD, purge CLI et archivage chiffré libsodium</a></li>
+<li><a href="#52-conformite-juridique-e-commerce-audit-des-traceurs-et-politique-de-conservation-rgpd-docs12-docs18">5.2 Conformité juridique e-commerce, audit des traceurs et politique de conservation RGPD (docs/12 &amp; docs/18)</a></li>
 <li><a href="#53-analyse-des-ecarts-vis-a-vis-du-cahier-des-charges-initial-et-bilan-reflexif">5.3 Analyse des écarts vis-à-vis du cahier des charges initial et bilan réflexif</a></li>
 <li><a href="#54-gouvernance-gitlab-readmemd-soutenance-15-min-et-grille-de-conformite-au-bareme">5.4 Gouvernance GitLab, README.md, soutenance (15 min) et grille de conformité au barème</a></li>
 </ul>
@@ -400,9 +400,15 @@ footer.doc p { text-align: left; margin: 0; }
 <li>4.3 Exigences non fonctionnelles (<code>ENF-01</code> à <code>ENF-22</code>) et stratégie de tests multi-niveaux</li>
 <li>4.4 Résultats expérimentaux sur VM Debian 13, concurrence et performances (<code>ENF-01</code>)</li>
 <li>4.5 Analyse critique des biais, limites du prototype et risques résiduels</li>
-<li><strong>Chapitre 5 — Exploitation (<em>Build → Run</em>), RGPD, gouvernance GitLab et conformité au barème</strong></li>
+<li><strong>Chapitre 5 — Exploitation (<em>Build → Run</em>), conformité légale, RGPD, gouvernance GitLab et barème</strong></li>
 <li>5.1 Prérequis d’hébergement, procédure de déploiement, retour arrière et MCO</li>
-<li>5.2 Politique de conservation RGPD, purge CLI et archivage chiffré libsodium</li>
+<li>5.2 Conformité juridique e-commerce, audit des traceurs et politique de conservation RGPD (<code>docs/12</code> &amp; <code>docs/18</code>)<ul>
+<li>5.2.1 Cadre légal e-commerce français et traduction dans les pages réglementaires</li>
+<li>5.2.2 Audit technique des cookies, du stockage local et minimisation des journaux</li>
+<li>5.2.3 Politique de conservation RGPD, maintenance CLI (<code>db_init.php --nettoyage</code>) et archivage libsodium</li>
+<li>5.2.4 Les 7 points bloquants audités avant ouverture commerciale réelle (dont rétractation du 19 juin 2026)</li>
+</ul>
+</li>
 <li>5.3 Analyse des écarts vis-à-vis du cahier des charges initial et bilan réflexif</li>
 <li>5.4 Gouvernance GitLab, <code>README.md</code>, organisation de soutenance et grille de conformité au barème</li>
 <li><strong>Chapitre 6 — Feuille de route d’industrialisation : vers une <em>marketplace</em> professionnelle, intelligente et automatisée (modèle « Amazon »)</strong></li>
@@ -440,12 +446,12 @@ footer.doc p { text-align: left; margin: 0; }
 <ul>
 <li><strong>Tableau 1</strong> — Matrice des 11 compétences pédagogiques du sujet dans MiniShop</li>
 <li><strong>Tableau 2</strong> — Synthèse des fonctionnalités demandées et livrées par acteur</li>
-<li><strong>Tableau 3</strong> — Les 11 règles métier officielles du cahier des charges et leurs mécanismes d’application</li>
-<li><strong>Tableau 4</strong> — Contraintes techniques (<code>CT-01</code> à <code>CT-12</code>) et état de l’art comparatif du socle PHP</li>
+<li><strong>Tableau 3</strong> — Règles métier officielles (<code>RB-01</code> à <code>RB-11</code>) et extensions (<code>RB-12</code> à <code>RB-20</code>)</li>
+<li><strong>Tableau 4</strong> — Contraintes techniques (<code>CT-01</code> à <code>CT-12</code>) et état de l’art PHP</li>
 <li><strong>Tableau 5</strong> — Comparatif des stratégies d’accès aux données (<code>StoreInterface</code> vs ORM)</li>
 <li><strong>Tableau 6</strong> — Benchmark multicritères : PHP 8.2+ natif face aux autres langages serveur</li>
-<li><strong>Tableau 7</strong> — Benchmark multicritères : MySQL / MariaDB face aux autres moteurs de bases de données</li>
-<li><strong>Tableau 8</strong> — Comparatif technique ciblé MySQL 8.0 vs MariaDB 10.6–11.8 dans le contexte MiniShop</li>
+<li><strong>Tableau 7</strong> — Benchmark multicritères : MySQL / MariaDB face aux autres SGBD</li>
+<li><strong>Tableau 8</strong> — Comparatif technique ciblé MySQL 8.0 vs MariaDB 10.6–11.8</li>
 <li><strong>Tableau 9</strong> — Correspondance des 14 cas d’utilisation minimum du sujet</li>
 <li><strong>Tableau 10</strong> — Réponses techniques aux 5 spécifications de sécurité du sujet</li>
 <li><strong>Tableau 11</strong> — Justification détaillée des cardinalités du MCD</li>
@@ -453,20 +459,23 @@ footer.doc p { text-align: left; margin: 0; }
 <li><strong>Tableau 13</strong> — Vérification formelle 1FN, 2FN et 3FN par relation</li>
 <li><strong>Tableau 14</strong> — Justification des clés primaires (PK), uniques (UK) et étrangères (FK)</li>
 <li><strong>Tableau 15</strong> — Inventaire des redondances maîtrisées et mécanismes de contrôle</li>
-<li><strong>Tableau 16</strong> — Réponse détaillée aux 5 axes de la question pédagogique sur les procédures stockées</li>
-<li><strong>Tableau 17</strong> — Correspondance exacte entre les exemples du sujet et les objets SQL livrés</li>
-<li><strong>Tableau 18</strong> — Benchmark ergonomique et positionnement de la direction artistique MiniShop</li>
+<li><strong>Tableau 16</strong> — Réponse aux 5 axes pédagogiques sur les procédures stockées</li>
+<li><strong>Tableau 17</strong> — Correspondance entre les exemples du sujet et les objets SQL livrés</li>
+<li><strong>Tableau 18</strong> — Benchmark ergonomique et direction artistique MiniShop (<code>docs/DA.md</code>)</li>
 <li><strong>Tableau 19</strong> — Synthèse des exigences non fonctionnelles (<code>ENF-01</code> à <code>ENF-22</code>)</li>
 <li><strong>Tableau 20</strong> — Bilan chiffré des campagnes de tests automatisés et VM Debian 13</li>
 <li><strong>Tableau 21</strong> — Mesures expérimentales de performance SQL et HTTP (<code>ENF-01</code>)</li>
-<li><strong>Tableau 22</strong> — Mise en perspective des mesures VM face aux ordres de grandeur d’autres piles techniques</li>
-<li><strong>Tableau 23</strong> — Politique de conservation RGPD et outils d’exploitation CLI (<code>docs/18</code>)</li>
-<li><strong>Tableau 24</strong> — Contrôle de conformité face aux livrables et pénalités du barème officiel</li>
-<li><strong>Tableau 25</strong> — Briques d’industrialisation requises pour une plateforme e-commerce de production</li>
-<li><strong>Tableau 26</strong> — Extension du modèle 3FN vers une <em>Marketplace</em> multi-vendeurs</li>
-<li><strong>Tableau 27</strong> — Architecture du moteur de recommandation hybride (V1 SQL à V3 Temps réel)</li>
-<li><strong>Tableau 28</strong> — Automatisations back-office vendeur, logistique et détection d’anomalies</li>
-<li><strong>Tableau 29</strong> — Plan de migration incrémental en 4 paliers (de MiniShop V1 à la <em>Marketplace</em>)</li>
+<li><strong>Tableau 22</strong> — Mise en perspective des mesures VM face aux piles alternatives</li>
+<li><strong>Tableau 23</strong> — Cadre légal e-commerce français (LCEN, Consommation, CNIL)</li>
+<li><strong>Tableau 24</strong> — Audit technique des cookies, du <code>localStorage</code> et des journaux</li>
+<li><strong>Tableau 25</strong> — Politique de conservation RGPD et limites assumées (<code>docs/18</code>)</li>
+<li><strong>Tableau 26</strong> — Les 7 points bloquants avant toute mise en vente commerciale réelle (<code>docs/12</code>)</li>
+<li><strong>Tableau 27</strong> — Contrôle de conformité face aux livrables et pénalités du barème</li>
+<li><strong>Tableau 28</strong> — Briques d’industrialisation pour une plateforme de production</li>
+<li><strong>Tableau 29</strong> — Extension du modèle 3FN vers une <em>Marketplace</em> multi-vendeurs</li>
+<li><strong>Tableau 30</strong> — Architecture du moteur de recommandation hybride (V1 à V3)</li>
+<li><strong>Tableau 31</strong> — Automatisations back-office vendeur, logistique et anti-fraude</li>
+<li><strong>Tableau 32</strong> — Plan de migration incrémental en 4 paliers (MiniShop → <em>Marketplace</em>)</li>
 </ul>
 <div style="break-before: page;"></div>
 <h2 id="glossaire-des-sigles-et-acronymes">Glossaire des sigles et acronymes<a class="headerlink" href="#glossaire-des-sigles-et-acronymes" title="Permanent link"></a></h2>
@@ -2007,22 +2016,114 @@ END;
 2. <strong>Biais de mesure locale :</strong> les benchmarks <code>ENF-01</code> (<code>6,0 ms p95</code>) sont mesurés sur boucle locale (<code>127.0.0.1</code>) d’une VM dédiée, excluant la latence réseau WAN et la négociation TLS.
 3. <strong>Écarts assumés en maquette (<code>docs/01</code> §8.10) :</strong> paiement et expédition simulés, formulaire de contact journalisé localement sans SMTP, absence d’authentification multifacteur TOTP sur <code>SUPER</code> (recommandée par OWASP ASVS V4.3.1), absence de <em>rate limiting</em> applicatif sur <code>/connexion</code>, et indexation secondaire à prévoir sur <code>commande(statut)</code> au-delà de <code>50 000</code> commandes (<code>EXPLAIN type=ALL</code>).</p>
 <div style="break-before: page;"></div>
-<h2 id="chapitre-5-exploitation-build-run-rgpd-gouvernance-gitlab-et-conformite-au-bareme">Chapitre 5 — Exploitation (<em>Build → Run</em>), RGPD, gouvernance GitLab et conformité au barème<a class="headerlink" href="#chapitre-5-exploitation-build-run-rgpd-gouvernance-gitlab-et-conformite-au-bareme" title="Permanent link"></a></h2>
+<h2 id="chapitre-5-exploitation-build-run-conformite-legale-rgpd-gouvernance-gitlab-et-bareme">Chapitre 5 — Exploitation (<em>Build → Run</em>), conformité légale, RGPD, gouvernance GitLab et barème<a class="headerlink" href="#chapitre-5-exploitation-build-run-conformite-legale-rgpd-gouvernance-gitlab-et-bareme" title="Permanent link"></a></h2>
 <h3 id="51-prerequis-dhebergement-procedure-de-deploiement-retour-arriere-et-mco">5.1 Prérequis d’hébergement, procédure de déploiement, retour arrière et MCO<a class="headerlink" href="#51-prerequis-dhebergement-procedure-de-deploiement-retour-arriere-et-mco" title="Permanent link"></a></h3>
 <p>L’exploitation cible (<code>STACK.md</code>, <code>docs/26-transition-exploitation-maintenance-build-to-run.md</code>) requiert PHP <strong>8.2+</strong> (<code>json</code>, <code>mbstring</code>, <code>pdo_mysql</code>), MySQL <strong>8.0.16+</strong> ou MariaDB <strong>10.6+</strong>, et Apache 2.4 (<code>DocumentRoot public/</code>, <code>mod_rewrite</code> activé ; le serveur intégré PHP de <code>run.sh</code> étant réservé au développement). Le passage en production impose :
 1. La création d’un fichier <code>.env</code> hors racine Web (<code>APP_ENV=prod</code>, <code>APP_DEBUG=0</code>, <code>STORAGE_DRIVER=sql</code>) avec un utilisateur SQL applicatif aux droits restreints (<code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>, <code>EXECUTE</code>).
 2. La suppression physique des scripts utilitaires <code>public/gen_volumes.php</code> et <code>public/mesurer.php</code> du répertoire public déployé.
 3. Le remplacement des comptes de démonstration du seed par un compte <code>SUPER</code> privé fort.
 4. La réalisation préalable d’une sauvegarde logique complète (<code>mysqldump --single-transaction --routines --triggers</code>) pour garantir un retour arrière (<em>rollback</em>) en moins de <code>15</code> minutes incluant procédures et déclencheurs.</p>
-<h3 id="52-politique-de-conservation-rgpd-purge-cli-et-archivage-chiffre-libsodium">5.2 Politique de conservation RGPD, purge CLI et archivage chiffré libsodium<a class="headerlink" href="#52-politique-de-conservation-rgpd-purge-cli-et-archivage-chiffre-libsodium" title="Permanent link"></a></h3>
-<p>Conformément aux référentiels de la CNIL et au RGPD (<code>docs/18-politique-conservation.md</code>), les durées ne sont pas figées en dur dans le code mais paramétrables (<code>parametre.conservation_compte</code>) et outillées en CLI avec <strong>simulation par défaut</strong> (l’exécution réelle exigeant la double attestation <code>--executer --validation-absence-gel</code>) :</p>
+<div style="break-before: page;"></div>
+<h3 id="52-conformite-juridique-e-commerce-audit-des-traceurs-et-politique-de-conservation-rgpd-docs12-docs18">5.2 Conformité juridique e-commerce, audit des traceurs et politique de conservation RGPD (<code>docs/12</code> &amp; <code>docs/18</code>)<a class="headerlink" href="#52-conformite-juridique-e-commerce-audit-des-traceurs-et-politique-de-conservation-rgpd-docs12-docs18" title="Permanent link"></a></h3>
+<p>Au-delà de la technique pure, un site de vente aux consommateurs en France est soumis à un socle juridique strict (LCEN, Code de la consommation, Code de commerce, RGPD et lignes directrices de la CNIL). L’audit juridique et documentaire consigné dans <code>docs/12-information-juridique.md</code> (état au 23 octobre 2026) et <code>docs/18-politique-conservation.md</code> constitue un <strong>document de travail pédagogique</strong> — et non un avis juridique ni une certification de conformité — permettant d’exposer avec transparence devant le jury ce qui est déjà implémenté dans MiniShop et les prérequis bloquants avant toute ouverture commerciale réelle.</p>
+<h4 id="521-cadre-legal-e-commerce-francais-et-traduction-dans-les-pages-reglementaires">5.2.1 Cadre légal e-commerce français et traduction dans les pages réglementaires<a class="headerlink" href="#521-cadre-legal-e-commerce-francais-et-traduction-dans-les-pages-reglementaires" title="Permanent link"></a></h4>
+<p>Huit pages dédiées (<code>app/View/home/</code>) traduisent les obligations précontractuelles et d’information observées dans les textes officiels français (<code>tests/php/information_juridique_test.php</code> vérifie leur accessibilité et leurs contrats de contenu) :</p>
 <table>
 <thead>
 <tr>
-<th>Catégorie de donnée</th>
-<th>Durée cible proposée</th>
+<th>Obligation légale (France)</th>
+<th>Références juridiques</th>
+<th>Traduction exacte dans MiniShop (<code>app/View/home/</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Identification &amp; Informations précontractuelles</strong></td>
+<td>LCEN art. 6-III-2, DGCCRF e-commerce</td>
+<td><code>/mentions-legales</code> (<code>mentions_legales.php</code>) : édition étudiante non professionnelle (Johan Polsinelli &amp; Chahd Gouiaa, co-direction de publication, e-mails universitaires, hébergement visé IUT Nice Côte d’Azur) ; <code>/cgv</code> (<code>cgv.php</code>) et <code>/cgu</code> (<code>cgu.php</code>) ; total TTC + frais simulés avant confirmation.</td>
+</tr>
+<tr>
+<td><strong>Livraison et retours</strong></td>
+<td>Code de la consommation, fiches DGCCRF</td>
+<td><code>/livraison</code> (<code>livraison.php</code>) : modalités générales de la maquette sans inventer ni transporteur ni délai contractuel fictif.</td>
+</tr>
+<tr>
+<td><strong>Droit de rétractation (14 jours)</strong></td>
+<td>Art. <code>L. 221-21</code>, <code>D. 221-5</code>, modèle <code>R. 221-1</code>, avis type <code>R. 221-3</code></td>
+<td><code>/retractation</code> (<code>retractation.php</code>) : rappel du délai légal de 14 jours à compter de la réception, exceptions légales et formulaire type <code>R. 221-1</code> distinct de l’annulation avant expédition. <strong>Bouton en ligne absent</strong> (voir § 5.2.4).</td>
+</tr>
+<tr>
+<td><strong>Garanties légales</strong></td>
+<td>Art. <code>D. 211-2</code> et annexe partie A (conformité 2 ans &amp; vices cachés)</td>
+<td><code>/garanties</code> (<code>garanties.php</code>) et fragment réutilisable <code>garanties_encadre.php</code> reproductant l’encadré réglementaire officiel dans <code>/cgv</code> (coordonnées du professionnel vendeur à compléter en production).</td>
+</tr>
+<tr>
+<td><strong>Médiation de la consommation</strong></td>
+<td>Fiche DGCCRF médiation</td>
+<td>Mention explicite dans <code>/cgv</code> de la réclamation préalable écrite et de l’obligation de désigner un médiateur agréé avec adresse et site Web — <strong>aucun médiateur fictif inventé</strong> dans la maquette.</td>
+</tr>
+<tr>
+<td><strong>Données personnelles (RGPD)</strong></td>
+<td>RGPD chap. III (art. 12–23), CNIL transparence et durées</td>
+<td><code>/confidentialite</code> (<code>confidentialite.php</code>) : décrit factuellement les traitements observés dans le code, les durées proposées et les éléments restant à fixer par un futur responsable de traitement.</td>
+</tr>
+<tr>
+<td><strong>Cookies &amp; autres traceurs</strong></td>
+<td>Lignes directrices CNIL &amp; FAQ cookies</td>
+<td><code>/cookies</code> (<code>cookies.php</code>) : détaille le cookie de session strictement nécessaire et le <code>localStorage</code> de préférences ; <strong>aucun bandeau de consentement factice</strong> tant qu’aucun traceur marketing/analytics n’est présent.</td>
+</tr>
+</tbody>
+</table>
+<p><em>Tableau 23 — Cadre légal e-commerce français et traduction dans les pages réglementaires de MiniShop (<code>docs/12-information-juridique.md</code>).</em></p>
+<h4 id="522-audit-technique-des-cookies-du-stockage-local-et-minimisation-des-journaux">5.2.2 Audit technique des cookies, du stockage local et minimisation des journaux<a class="headerlink" href="#522-audit-technique-des-cookies-du-stockage-local-et-minimisation-des-journaux" title="Permanent link"></a></h4>
+<p>L’inspection statique des scripts PHP/JavaScript et des vues (<code>docs/12</code> § 2) établit un inventaire exhaustif des traceurs et stockages locaux actifs dans l’application :</p>
+<table>
+<thead>
+<tr>
+<th>Mécanisme / Fichier observé</th>
+<th>Données persistées &amp; Durée</th>
+<th>Attributs de sécurité &amp; Statut CNIL</th>
+<th>Action requise avant mise en production</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Cookie <code>MINISHOPSESS</code></strong> (<code>app/Security/Auth.php</code>)</td>
+<td>Identifiant de session PHP (panier, auth client/admin, jeton CSRF)</td>
+<td><code>HttpOnly</code>, <code>SameSite=Lax</code>, <code>use_strict_mode=1</code>, <code>Secure</code> si HTTPS détecté. <strong>Susceptible d’exemption</strong> CNIL (strictement nécessaire au service demandé).</td>
+<td>Vérifier <code>Secure=true</code> derrière un proxy TLS de confiance (<code>X-Forwarded-Proto</code>).</td>
+</tr>
+<tr>
+<td><strong>Cookie <code>MINISHOPSESSID</code></strong> (<code>public/mesurer.php</code>)</td>
+<td>Session de l’outil de benchmark interne</td>
+<td><code>HttpOnly</code>, <code>SameSite=Lax</code>, <strong><code>Secure=false</code></strong>. Outil de développement uniquement.</td>
+<td><strong>Supprimer impérativement</strong> <code>mesurer.php</code> et <code>gen_volumes.php</code> avant déploiement public.</td>
+</tr>
+<tr>
+<td><strong><code>localStorage</code> (<code>minishop.preferences.v1</code>)</strong> (<code>public/js/preferences.js</code>)</td>
+<td>Langue (<code>fr</code>/<code>en</code>) et fuseau horaire choisis par l’utilisateur</td>
+<td>Stockage local sur demande explicite ; <code>tz-lookup.js</code> déduit le fuseau localement après clic sans transmettre ni sauvegarder les coordonnées GPS. Aucun pixel tiers ni SDK analytics détecté.</td>
+<td>Refaire un inventaire réseau complet sur l’instance hébergée réelle ; ajouter un bandeau conforme si un traceur non exempté est intégré.</td>
+</tr>
+<tr>
+<td><strong>Journaux JSON &amp; Contact</strong> (<code>var/journal/db.jsonl</code>, <code>var/log/contact.jsonl</code>)</td>
+<td>Audit JSON et messages <code>/contact</code> (<code>&lt;= 2 000</code> car.)</td>
+<td><code>NettoyageJournaux::ajouter</code> écrit sous verrou avec <code>chmod 0600</code> ; les nouvelles entrées <code>client</code>/<code>administrateur</code> dans <code>db.jsonl</code> <strong>omettent nom, e-mail et <code>mot_de_passe_hash</code></strong> (minimisation).</td>
+<td>Traiter les anciennes entrées historiques déjà écrites ; mettre en place un serveur SMTP réel pour <code>/contact</code> (aujourd’hui journalisé localement sans envoi d’e-mail).</td>
+</tr>
+</tbody>
+</table>
+<p><em>Tableau 24 — Audit technique des traceurs, cookies et minimisation des données (<code>docs/12-information-juridique.md</code>).</em></p>
+<div style="break-before: page;"></div>
+<h4 id="523-politique-de-conservation-rgpd-maintenance-cli-db_initphp-nettoyage-et-archivage-libsodium">5.2.3 Politique de conservation RGPD, maintenance CLI (<code>db_init.php --nettoyage</code>) et archivage libsodium<a class="headerlink" href="#523-politique-de-conservation-rgpd-maintenance-cli-db_initphp-nettoyage-et-archivage-libsodium" title="Permanent link"></a></h4>
+<p>Conformément à l’article 5 du RGPD (limitation de conservation), à l’article 17 (droit à l’effacement) et à l’article <code>L. 123-22</code> du Code de commerce (10 ans pour les seules pièces justificatives comptables concernées — et <strong>non</strong> pour l’intégralité des comptes ou brouillons), <code>docs/18-politique-conservation.md</code> propose une grille de rétention paramétrable (<code>parametre.conservation_compte = 24</code>) assortie d’outils CLI <strong>simulés par défaut</strong> :</p>
+<table>
+<thead>
+<tr>
+<th>Catégorie de données</th>
+<th>Durée proposée</th>
 <th>Outil CLI dédié (<code>scripts/</code>)</th>
-<th>Précaution d’intégrité</th>
+<th>Règles de sûreté, verrous et limites connues</th>
 </tr>
 </thead>
 <tbody>
@@ -2030,35 +2131,99 @@ END;
 <td><strong>Comptes clients inactifs sans commande</strong></td>
 <td><strong>24 mois</strong> après dernière action</td>
 <td><code>purger_comptes.php</code> / <code>db_init.php --nettoyage comptes</code></td>
-<td>Exclut automatiquement tout compte lié à une commande (<code>RB-09</code>).</td>
+<td>Exclut automatiquement tout compte lié à une commande (<code>RB-09</code>) ; applique une marge de sûreté de 2 jours ; informer la personne avant suppression selon procédure validée.</td>
+</tr>
+<tr>
+<td><strong>Commandes &amp; Comptes avec commandes</strong></td>
+<td>Base active durant relation puis <strong>archive intermédiaire</strong> (10 ans max si pièce comptable <code>L. 123-22</code>)</td>
+<td><em>Non automatisé dans la maquette</em></td>
+<td><strong>Volontairement bloqué :</strong> le trigger <code>trg_commande_delete</code> interdit de supprimer une commande validée et <code>trg_ligne_restore_stock</code> restituerait le stock. Nécessite une future procédure d’anonymisation transactionnelle dédiée respectant les gels contentieux.</td>
 </tr>
 <tr>
 <td><strong>Messages Contact (<code>var/log/contact.jsonl</code>)</strong></td>
-<td><strong>12 mois</strong> après réception</td>
+<td><strong>12 mois</strong> après <code>date</code></td>
 <td><code>db_init.php --nettoyage contact</code></td>
-<td>Rotation sous verrou avec permissions <code>0600</code>.</td>
+<td>Rotation atomique sous <code>flock</code> + <code>chmod 0600</code> (extension POSIX requise) ; les dates invalides ou futures sont conservées ; arrêt sûr si ligne <code>&gt; 1 Mio</code>.</td>
 </tr>
 <tr>
-<td><strong>Journaux JSON applicatifs (<code>db.jsonl</code>)</strong></td>
-<td><strong>6 mois</strong> glissants</td>
+<td><strong>Journaux JSON (<code>var/journal/db.jsonl</code>)</strong></td>
+<td><strong>6 mois</strong> glissants après <code>at</code></td>
 <td><code>db_init.php --nettoyage journaux</code></td>
-<td>Préserve les entrées si gel ou doute signalé.</td>
+<td>Ne couvre pas les journaux serveur Apache/OS ni les copies hébergeur ; nécessite arrêt préalable des anciens travailleurs sans verrou.</td>
 </tr>
 <tr>
 <td><strong>Sauvegardes locales dédiées</strong></td>
-<td><strong>30 jours</strong> minimum (2 récentes gardées)</td>
+<td><strong>30 jours</strong> minimum (2 plus récentes conservées)</td>
 <td><code>db_init.php --nettoyage sauvegardes</code></td>
-<td>Dossier privé <code>0700</code> hors webroot vérifié par <code>.minishop-sauvegardes</code>.</td>
+<td>Exige <code>NETTOYAGE_SAUVEGARDES</code> (<code>0700</code> hors webroot), fichier marqueur <code>.minishop-sauvegardes</code> contenant <code>MINISHOP_BACKUPS_V1</code>, format strict <code>minishop-AAAAMMJJThhmmssZ-&lt;32hex&gt;.backup</code>.</td>
 </tr>
 <tr>
 <td><strong>Extractions chiffrées ponctuelles</strong></td>
-<td>Sur durée justifiée</td>
-<td><code>archive_restreinte.php</code></td>
-<td>Boîtes scellées <strong>libsodium</strong>, plafond <code>8 Mio</code>, journal <code>acces.jsonl</code>.</td>
+<td>Sur durée justifiée + <strong>12 mois</strong> pour <code>acces.jsonl</code></td>
+<td><code>scripts/archive_restreinte.php</code></td>
+<td>Boîtes scellées <strong>libsodium</strong> (clé publique sur serveur, clé privée <strong>hors serveur</strong> sur machine de confiance), plafond <code>8 Mio</code>, journal local <code>acces.jsonl</code> (UID + SHA-256). <em>Limite :</em> chiffre et détecte la corruption mais n’authentifie pas l’auteur et ne purge pas automatiquement à échéance.</td>
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 23 — Politique de conservation des données et outillage CLI (<code>docs/18-politique-conservation.md</code>).</em></p>
+<p><em>Tableau 25 — Politique de conservation RGPD, maintenance CLI et archivage chiffré libsodium (<code>docs/18-politique-conservation.md</code>).</em></p>
+<p><strong>Verrou opérationnel strict contre la suppression accidentelle :</strong> toute exécution réelle via <code>php scripts/db_init.php --nettoyage &lt;catégorie&gt;</code> exige <strong>simultanément</strong> les deux options <code>--executer --validation-absence-gel</code>, attestant que le responsable a vérifié l’absence de demande de droits, d’obligation légale ou de gel contentieux sur les éléments visés (et ne recrée jamais la base, contrairement à <code>--yes</code>).</p>
+<h4 id="524-les-7-points-bloquants-audites-avant-ouverture-commerciale-reelle-docs12-3">5.2.4 Les 7 points bloquants audités avant ouverture commerciale réelle (<code>docs/12</code> § 3)<a class="headerlink" href="#524-les-7-points-bloquants-audites-avant-ouverture-commerciale-reelle-docs12-3" title="Permanent link"></a></h4>
+<p>Dans une démarche d’ingénierie responsable, l’audit juridique établit explicitement les <strong>sept prérequis bloquants</strong> qui interdisent de mettre la maquette telle quelle en production commerciale :</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">N°</th>
+<th>Point bloquant audité (<code>docs/12</code>)</th>
+<th>État constaté dans la maquette MiniShop</th>
+<th>Travaux obligatoires avant mise en vente réelle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;"><strong>1</strong></td>
+<td><strong>Identification du vendeur commercial</strong></td>
+<td>Mentions légales étudiantes non professionnelles</td>
+<td>Publier raison sociale, forme juridique, capital, adresse, téléphone, RCS/RNE, TVA intracommunautaire et hébergeur de production effectif.</td>
+</tr>
+<tr>
+<td style="text-align: right;"><strong>2</strong></td>
+<td><strong>Finalisation des CGV &amp; Médiation</strong></td>
+<td>Clauses génériques et aucun médiateur fictif</td>
+<td>Compléter moyens de paiement, délais réels, modalités de retour, coordonnées du garant et médiateur de la consommation désigné.</td>
+</tr>
+<tr>
+<td style="text-align: right;"><strong>3</strong></td>
+<td><strong>Bouton de rétractation en ligne (19 juin 2026)</strong></td>
+<td><strong>Fonction absente</strong> (<code>L. 221-21</code> &amp; <code>D. 221-5</code> : formulaire gratuit direct « confirmer la rétractation » + accusé sur support durable)</td>
+<td>Concevoir et tester le formulaire accessible sans connexion bloquante, avec preuve d’horodatage durable — une page statique ou l’annulation avant expédition ne suffit pas.</td>
+</tr>
+<tr>
+<td style="text-align: right;"><strong>4</strong></td>
+<td><strong>Paiement réel &amp; Preuve contractuelle</strong></td>
+<td>Bouton et statut <code>PAYEE</code> simulés</td>
+<td>Intégrer PSP conforme, mention explicite « commande avec obligation de paiement », correction avant validation et confirmation durable par e-mail.</td>
+</tr>
+<tr>
+<td style="text-align: right;"><strong>5</strong></td>
+<td><strong>Gouvernance RGPD complète</strong></td>
+<td>Conservation proposée non automatisée (<code>cron</code> absent)</td>
+<td>Désigner responsable de traitement/DPO, traiter les demandes d’accès/effacement (y compris anonymisation des commandes terminées), et vérifier les sous-traitants.</td>
+</tr>
+<tr>
+<td style="text-align: right;"><strong>6</strong></td>
+<td><strong>Sécurité d’hébergement réel</strong></td>
+<td>Non testé derrière proxy mutualisé <em>LineServ</em></td>
+<td>Imposer TLS + <code>Secure</code>, supprimer <code>mesurer.php</code> / <code>gen_volumes.php</code>, vérifier permissions fichiers hors <code>public/</code>, sauvegardes et supervision.</td>
+</tr>
+<tr>
+<td style="text-align: right;"><strong>7</strong></td>
+<td><strong>Audit d’accessibilité réel</strong></td>
+<td>Tests CSS automatisés uniquement</td>
+<td>Réaliser un audit manuel complet RGAA / WCAG 2.1 AA avec lecteurs d’écran et navigateurs multiples.</td>
+</tr>
+</tbody>
+</table>
+<p><em>Tableau 26 — Synthèse des 7 points bloquants à lever avant toute exploitation commerciale réelle.</em></p>
 <h3 id="53-analyse-des-ecarts-vis-a-vis-du-cahier-des-charges-initial-et-bilan-reflexif">5.3 Analyse des écarts vis-à-vis du cahier des charges initial et bilan réflexif<a class="headerlink" href="#53-analyse-des-ecarts-vis-a-vis-du-cahier-des-charges-initial-et-bilan-reflexif" title="Permanent link"></a></h3>
 <p>Quatre évolutions architecturales ou de sécurité ont été apportées et tracées par rapport à la rédaction initiale du CDC :
 - <strong>En-tête <code>X-Frame-Options: DENY</code> vs <code>SAMEORIGIN</code> :</strong> <code>public/index.php</code> et <code>public/.htaccess</code> imposent <code>DENY</code> (et CSP <code>frame-ancestors 'none'</code>) pour une protection maximale contre le <em>clickjacking</em>.
@@ -2111,7 +2276,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 24 — Contrôle complet de conformité au barème officiel et d’absence de pénalité.</em></p>
+<p><em>Tableau 27 — Contrôle complet de conformité au barème officiel et d’absence de pénalité.</em></p>
 <div style="break-before: page;"></div>
 <h2 id="chapitre-6-feuille-de-route-dindustrialisation-vers-une-marketplace-professionnelle-intelligente-et-automatisee-modele-amazon">Chapitre 6 — Feuille de route d’industrialisation : vers une <em>marketplace</em> professionnelle, intelligente et automatisée (modèle « Amazon »)<a class="headerlink" href="#chapitre-6-feuille-de-route-dindustrialisation-vers-une-marketplace-professionnelle-intelligente-et-automatisee-modele-amazon" title="Permanent link"></a></h2>
 <p>Si MiniShop répond pleinement aux exigences académiques et transactionnelles d’une boutique mono-enseigne (<code>200</code> produits, <code>1 000</code> commandes/an selon <code>ENF-02</code>), l’ambition d’un système e-commerce professionnel à grande échelle — inspiré des standards industriels d’une <em>marketplace</em> moderne de type <strong>Amazon</strong> — requiert des évolutions structurelles maîtrisées. Plutôt que de rejeter l’architecture existante, ce chapitre démontre comment le socle conçu (<code>StoreInterface</code>, normalisation 3FN, verrous InnoDB, séparation MVC et audit immuable) constitue une base saine sur laquelle greffer quatre transformations majeures : l’industrialisation de l’infrastructure, l’ouverture multi-vendeurs, la recommandation personnalisée et l’automatisation complète du back-office vendeur.</p>
@@ -2159,7 +2324,7 @@ END;
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 25 — Briques d’industrialisation requises pour transformer MiniShop en système de production.</em></p>
+<p><em>Tableau 28 — Briques d’industrialisation requises pour transformer MiniShop en système de production.</em></p>
 <h3 id="62-evolution-du-modele-3fn-vers-une-marketplace-multi-vendeurs-seller-central-et-buy-box">6.2 Évolution du modèle 3FN vers une <em>Marketplace</em> multi-vendeurs (<em>Seller Central</em> et <em>Buy Box</em>)<a class="headerlink" href="#62-evolution-du-modele-3fn-vers-une-marketplace-multi-vendeurs-seller-central-et-buy-box" title="Permanent link"></a></h3>
 <p>Le modèle actuel suppose un vendeur unique (l’administrateur de la boutique). Pour évoluer vers une place de marché de type <em>Amazon Seller Central</em>, il convient d’appliquer une distinction fondamentale : <strong>dissocier la fiche produit canonique</strong> (équivalent de l’<em>ASIN</em>, identité technique unique du produit évitant les doublons dans le catalogue) <strong>des offres commerciales portées par les vendeurs tiers</strong> (prix, stock, délai d’expédition, état neuf/reconditionné).</p>
 <pre><code class="language-sql">-- Extension incrémentale 3FN du schéma MiniShop vers le multi-vendeurs :
@@ -2184,7 +2349,7 @@ CREATE TABLE offre_vendeur (
   FOREIGN KEY (id_vendeur) REFERENCES vendeur(id_vendeur) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 </code></pre>
-<p>Le Tableau 26 synthétise l’impact architectural de cette extension sur nos règles existantes :</p>
+<p>Le Tableau 29 synthétise l’impact architectural de cette extension sur nos règles existantes :</p>
 <table>
 <thead>
 <tr>
@@ -2216,7 +2381,7 @@ CREATE TABLE offre_vendeur (
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 26 — Extension du modèle relationnel 3FN et de la sécurité vers une marketplace multi-vendeurs.</em></p>
+<p><em>Tableau 29 — Extension du modèle relationnel 3FN et de la sécurité vers une marketplace multi-vendeurs.</em></p>
 <div style="break-before: page;"></div>
 <h3 id="63-moteur-de-recommandation-hybride-analyse-du-panier-filtrage-collaboratif-et-semantique">6.3 Moteur de recommandation hybride (analyse du panier, filtrage collaboratif et sémantique)<a class="headerlink" href="#63-moteur-de-recommandation-hybride-analyse-du-panier-filtrage-collaboratif-et-semantique" title="Permanent link"></a></h3>
 <p>Un levier décisif de croissance d’Amazon repose sur la personnalisation (« <em>Les clients ayant acheté cet article ont également acheté…</em> »). Notre modèle normalisé <code>ligne_commande</code> permet déjà de déployer une <strong>V1 immédiatement opérationnelle</strong> sans infrastructure d’apprentissage automatique complexe, puis d’évoluer par paliers vers un moteur hybride complet :</p>
@@ -2272,7 +2437,7 @@ HAVING co_achats &gt;= 3
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 27 — Architecture incrémentale du moteur de recommandation hybride.</em></p>
+<p><em>Tableau 30 — Architecture incrémentale du moteur de recommandation hybride.</em></p>
 <h3 id="64-automatisation-du-back-office-vendeur-reapprovisionnement-predictif-et-logistique">6.4 Automatisation du back-office vendeur, réapprovisionnement prédictif et logistique<a class="headerlink" href="#64-automatisation-du-back-office-vendeur-reapprovisionnement-predictif-et-logistique" title="Permanent link"></a></h3>
 <p>Dans un back-office artisanal (et encore en partie dans MiniShop V1), l’administrateur doit surveiller manuellement <code>v_etat_stock</code>, saisir les ajustements <code>sp_adjust_stock</code> et faire évoluer manuellement les statuts <code>EN_PREPARATION -&gt; EXPEDIEE -&gt; LIVREE</code>. Pour passer à une exploitation professionnelle fluide pour des dizaines ou centaines de vendeurs, les opérations répétitives doivent être automatisées autour d’une <strong>file de tâches asynchrones</strong> (<em>Message Queue</em> : Redis Streams ou RabbitMQ + <em>workers</em> PHP CLI) :</p>
 <table>
@@ -2323,7 +2488,7 @@ HAVING co_achats &gt;= 3
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 28 — Catalogue des automatisations du back-office vendeur et de la chaîne logistique.</em></p>
+<p><em>Tableau 31 — Catalogue des automatisations du back-office vendeur et de la chaîne logistique.</em></p>
 <div style="break-before: page;"></div>
 <h3 id="65-trajectoire-de-migration-incrementale-en-4-paliers-strangler-fig-pattern">6.5 Trajectoire de migration incrémentale en 4 paliers (<em>Strangler Fig Pattern</em>)<a class="headerlink" href="#65-trajectoire-de-migration-incrementale-en-4-paliers-strangler-fig-pattern" title="Permanent link"></a></h3>
 <p>L’erreur classique d’une montée en charge consiste à vouloir tout réécrire d’un bloc (<em>Big Bang</em>). Grâce au contrat <code>StoreInterface</code>, à la centralisation des règles métier en dépôts PHP et à la séparation nette des couches MVC, l’évolution vers une plateforme de type Amazon doit suivre une <strong>trajectoire incrémentale en 4 paliers</strong> où chaque phase reste pleinement déployable et testable :</p>
@@ -2346,13 +2511,13 @@ HAVING co_achats &gt;= 3
 <tr>
 <td><strong>Palier 2 — Automatisation Back-Office &amp; Recommandation V1</strong></td>
 <td>Moyen terme (productivité opérationnelle)</td>
-<td>File asynchrone (<em>workers</em> CLI) pour factures Factur-X, étiquettes transporteur, webhooks de suivi et réapprovisionnement prédictif ; recommandation SQL co-achats (Tableau 27)</td>
+<td>File asynchrone (<em>workers</em> CLI) pour factures Factur-X, étiquettes transporteur, webhooks de suivi et réapprovisionnement prédictif ; recommandation SQL co-achats (Tableau 30)</td>
 <td>Mesure de réduction du temps de traitement commande et hausse du panier moyen par A/B test</td>
 </tr>
 <tr>
 <td><strong>Palier 3 — Ouverture <em>Marketplace</em> Multi-Vendeurs</strong></td>
 <td>Croissance catalogue (<em>Seller Central</em>)</td>
-<td>Tables <code>vendeur</code>, <code>offre_vendeur</code>, <code>sous_commande_vendeur</code> (Tableau 26) ; portail <code>/vendeur/*</code> isolé ; flux séquestre <em>Split Payment</em> ; élection de <em>Buy Box</em> et import massif</td>
+<td>Tables <code>vendeur</code>, <code>offre_vendeur</code>, <code>sous_commande_vendeur</code> (Tableau 29) ; portail <code>/vendeur/*</code> isolé ; flux séquestre <em>Split Payment</em> ; élection de <em>Buy Box</em> et import massif</td>
 <td>Audits IDOR multi-tenant et réconciliation comptable automatisée à 100 %</td>
 </tr>
 <tr>
@@ -2363,7 +2528,7 @@ HAVING co_achats &gt;= 3
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 29 — Plan de migration incrémental en 4 paliers vers une plateforme e-commerce professionnelle.</em></p>
+<p><em>Tableau 32 — Plan de migration incrémental en 4 paliers vers une plateforme e-commerce professionnelle.</em></p>
 <p>Cette approche progressive préserve intégralement les garanties transactionnelles prouvées dans les chapitres précédents — verrouillage des stocks sans survente, immuabilité financière des commandes et traçabilité d’audit — tout en levant méthodiquement chaque limite du prototype académique.</p>
 <div style="break-before: page;"></div>
 <h2 id="conclusion-generale-et-perspectives">Conclusion générale et perspectives<a class="headerlink" href="#conclusion-generale-et-perspectives" title="Permanent link"></a></h2>
@@ -2385,7 +2550,7 @@ HAVING co_achats &gt;= 3
 <li><strong>[3] OWASP Foundation.</strong> <em>OWASP Top 10:2021 — The Ten Most Critical Web Application Security Risks</em> et <em>Application Security Verification Standard (ASVS) v4.0.3</em>. Disponible sur : <code>https://owasp.org/</code>.</li>
 <li><strong>[4] ANSSI.</strong> <em>Recommandations pour la sécurisation des sites Web</em> et <em>Guide d’hygiène informatique</em>. Paris : SGDSN. Disponible sur : <code>https://cyber.gouv.fr/</code>.</li>
 <li><strong>[5] Object Management Group (OMG).</strong> <em>OMG Unified Modeling Language (UML), Version 2.5.1</em>. 2017. Disponible sur : <code>https://www.omg.org/spec/UML/</code>.</li>
-<li><strong>[6] CNIL.</strong> <em>Référentiel relatif aux traitements de données à caractère personnel mis en œuvre aux fins de gestion des activités commerciales</em> et <em>Guide de la sécurité des données personnelles</em>, 2024. Disponible sur : <code>https://www.cnil.fr/</code>.</li>
+<li><strong>[6] CNIL &amp; Légifrance.</strong> <em>Référentiel activités commerciales</em>, <em>Lignes directrices cookies et traceurs</em>, <em>Code de la consommation</em> (<code>L. 221-21</code>, <code>D. 221-5</code>, <code>R. 221-1</code>, <code>D. 211-2</code>) et <em>Code de commerce</em> (<code>L. 123-22</code>), 2024–2026. Disponibles sur : <code>https://www.cnil.fr/</code> et <code>https://www.legifrance.gouv.fr/</code>.</li>
 </ul>
 <h3 id="documentation-technique-des-technologies-employees">Documentation technique des technologies employées<a class="headerlink" href="#documentation-technique-des-technologies-employees" title="Permanent link"></a></h3>
 <ul>
@@ -2395,7 +2560,7 @@ HAVING co_achats &gt;= 3
 </ul>
 <h3 id="corpus-documentaire-interne-du-projet-minishop-sae-302">Corpus documentaire interne du projet MiniShop (SAÉ 302)<a class="headerlink" href="#corpus-documentaire-interne-du-projet-minishop-sae-302" title="Permanent link"></a></h3>
 <ul>
-<li><strong>[10]</strong> Polsinelli J., Gouiaa C., <em>Cahier des charges (<code>docs/01</code>)</em>, <em>Document de tests et validation (<code>docs/02</code>)</em>, <em>Support de soutenance (<code>docs/03</code>)</em>, <em>Conception BD et SQL (<code>docs/04</code>)</em>, <em>Note cybersécurité (<code>docs/07</code>)</em>, <em>Politique de conservation (<code>docs/18</code>)</em>, <em>Audit UML (<code>docs/23</code>)</em>, <em>Direction artistique (<code>docs/DA.md</code>)</em>, <em>Procès-verbal de recette (<code>docs/pv-recette.md</code>)</em> et <em>Mesures de performance (<code>tests/perf/dernieres_mesures.txt</code>)</em>, Université Côte d’Azur, 2026.</li>
+<li><strong>[10]</strong> Polsinelli J., Gouiaa C., <em>Cahier des charges (<code>docs/01</code>)</em>, <em>Document de tests et validation (<code>docs/02</code>)</em>, <em>Support de soutenance (<code>docs/03</code>)</em>, <em>Conception BD et SQL (<code>docs/04</code>)</em>, <em>Note cybersécurité (<code>docs/07</code>)</em>, <em>Information juridique e-commerce (<code>docs/12</code>)</em>, <em>Politique de conservation (<code>docs/18</code>)</em>, <em>Audit UML (<code>docs/23</code>)</em>, <em>Direction artistique (<code>docs/DA.md</code>)</em>, <em>Procès-verbal de recette (<code>docs/pv-recette.md</code>)</em> et <em>Mesures de performance (<code>tests/perf/dernieres_mesures.txt</code>)</em>, Université Côte d’Azur, 2026.</li>
 </ul>
 <div style="break-before: page;"></div>
 <h2 id="annexes">Annexes<a class="headerlink" href="#annexes" title="Permanent link"></a></h2>
