@@ -1,39 +1,48 @@
 @startuml
 ' =====================================================================
-' MiniShop — Diagramme C4 Niveau 2 : Conteneurs (C4 Containers)
-' Lisible en texte brut dans Git ; compilable en PNG via Java + plantuml.jar
-' (bash docs/diagrams/render.sh)
+' MiniShop — C4 Niveau 2 : Conteneurs (C4 Containers)
+' Conforme c4model.com : applications exécutables et magasins de données
+' réellement présents dans le dépôt MiniShop (ARCHITECTURE.md).
 ' =====================================================================
 !pragma layout smetana
 left to right direction
 skinparam shadowing false
 skinparam roundcorner 8
 
-title MiniShop — C4 Niveau 2 : Conteneurs et frontières de confiance
+title MiniShop — Diagramme C4 Niveau 2 : Conteneurs de MiniShop
 
-actor "Client / Admin" as User
+actor "Visiteur / Client\n[Personne]" as Client #08427B
+actor "Administrateur\n[Personne : GESTIONNAIRE / SUPER]" as Admin #08427B
 
-package "Bordure réseau" {
-  component "Reverse Proxy / WAF\n[Apache / NGINX + TLS]\nEn-têtes CSP, HSTS, rate-limit" as Proxy
+package "Système logiciel : MiniShop" {
+  rectangle "Interface Web Navigateur\n[Conteneur : HTML5 / CSS / JS natif]\npublic/minishop.css, public/js/*.js\nAmélioration panier fetch() et préférences locales" as Browser #438DD5;text:white
+
+  rectangle "Application Web MVC\n[Conteneur : PHP 8.2+ — public/index.php]\nApache (.htaccess) ou scripts/dev-router.php\nRouteur liste blanche, Auth/CSRF, dépôts et vues" as WebApp #438DD5;text:white
+
+  rectangle "Outils CLI d'exploitation\n[Conteneur : PHP CLI — scripts/*.php]\ndb_init.php, purger_comptes.php,\nnettoyage_donnees.php, archive_restreinte.php" as Cli #438DD5;text:white
+
+  database "Base relationnelle\n[Conteneur : MariaDB 10.6+ / MySQL 8.0+]\nsql/01..04 : 9 tables 3FN, 4 vues,\n18 procédures stockées, 16 déclencheurs" as MariaDB #2E6295;text:white
+
+  database "Magasin JSON secondaire\n[Conteneur : Fichiers JSON — data/minishop/]\nMode STORAGE_DRIVER=json avec verrous flock\npour tests isolés et PHP-WASM" as JsonFiles #2E6295;text:white
+
+  database "Journaux et archives locaux\n[Conteneur : Fichiers JSONL / chiffrés — var/]\nvar/journal/{db,contact}.jsonl,\nvar/backups/ chiffrés via libsodium" as VarStorage #2E6295;text:white
 }
 
-package "Plateforme d'exécution (VM KVM / Orchestrateur)" {
-  component "Frontal Web MVC\n[PHP 8.2 — public/index.php]\nRouter, Contrôleurs, Auth, CSRF" as Web
-  component "Tâche de maintenance CLI\n[PHP CLI — scripts/db_init.php]\n--nettoyage RGPD & libsodium" as Cli
-}
+Client --> Browser : "Consulte et interagit avec l'interface (HTTPS)"
+Admin --> Browser : "Administre le back-office (HTTPS)"
+Browser --> WebApp : "Charge les pages HTML et met à jour\nle panier via API interne (HTTP/HTTPS, JSON/HTML)"
+WebApp --> MariaDB : "Exécute requêtes préparées et\nprocédures sp_* via SqlStore (PDO / TCP 3306)"
+WebApp ..> JsonFiles : "Lit et écrit les tables JSON via\nJsonStore si STORAGE_DRIVER=json (I/O + flock)"
+WebApp ..> VarStorage : "Journalise contact et mutations JSON\nen mode append-only (Système de fichiers)"
+Cli --> MariaDB : "Initialise schéma/seed et purge les\ncomptes inactifs RGPD (PDO / TCP 3306)"
+Cli --> VarStorage : "Archive, chiffre (libsodium) et\neffectue la rotation des journaux (I/O)"
 
-package "Services consommés (Données & État)" {
-  database "MariaDB 11.8.6\n[SqlStore — 9 tables, 18 proc., 16 trig.]\nSource de vérité transactionnelle" as DB
-  database "Stockage JSON local\n[JsonStore — data/minishop/]\nMode secondaire isolé / tests" as Json
-  storage "Journaux locaux V1\n[var/journal/db.jsonl, contact.jsonl]\nAudit non bloquant" as Logs
-}
-
-User --> Proxy : "HTTPS (443)\nCookie __Host-MINISHOPSESS"
-Proxy --> Web : "HTTP interne / FastCGI\nX-Forwarded-Proto"
-Web --> DB : "PDO requêtes préparées\net procédures sp_* [TCP 3306]"
-Web ..> Json : "Mode STORAGE_DRIVER=json\n(tests / démo sans SGBD)"
-Web ..> Logs : "Écriture append-only\n(non bloquante)"
-Cli --> DB : "Purge comptes inactifs\n(--nettoyage)"
-Cli --> Logs : "Rotation & archivage\nNettoyageJournaux"
+legend right
+  |= Couleur |= Abstraction C4 |= Signification |
+  | <#08427B> | Personne | Utilisateur humain |
+  | <#438DD5> | Conteneur applicatif | Programme ou script exécutable |
+  | <#2E6295> | Conteneur données | Base relationnelle ou stockage persistant |
+  | Flèche pointillée | Relation conditionnelle | Active selon STORAGE_DRIVER ou trace non bloquante |
+endlegend
 
 @enduml

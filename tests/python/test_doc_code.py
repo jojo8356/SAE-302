@@ -31,3 +31,7 @@ class TestDocumentationCode(unittest.TestCase):
     def test_adr_madr_et_numerotation(self):
         erreurs = verifier_doc_code.verifier_adr(ROOT)
         self.assertEqual(erreurs, [], '\n'.join(erreurs))
+
+    def test_diagrammes_c4_complets_et_fideles_au_code(self):
+        erreurs = verifier_doc_code.verifier_c4(ROOT)
+        self.assertEqual(erreurs, [], '\n'.join(erreurs))

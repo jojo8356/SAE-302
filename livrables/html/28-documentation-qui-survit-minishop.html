@@ -281,7 +281,7 @@ footer.doc p { text-align: left; margin: 0; }
 <li><strong>Décisions d’architecture versionnées</strong> (<code>docs/adr/</code>, format MADR) :
    - <code>0000</code> (adopter les ADR), <code>0001</code> (double persistance <code>SqlStore</code>/<code>JsonStore</code>), <code>0002</code> (procédures stockées &amp; déclencheurs MariaDB), <code>0003</code> (sessions strictes, RBAC et zéro dépendance CDN), <code>0004</code> (<em>Docs-as-Code</em>) et <code>0005</code> (MVC PHP 8.2+ natif sans framework lourd), accompagnés de <code>template.md</code>.</li>
 <li><strong>Schémas C4 et UML écrits en code</strong> (<code>docs/diagrams/src/</code>) :
-   - En complément des <code>14</code> diagrammes UML historiques, deux diagrammes C4 en texte PlantUML (<code>c4_contexte.puml</code> et <code>c4_conteneurs.puml</code>) décrivent le système, ses utilisateurs et ses frontières de confiance tout en restant lisibles sans rendu graphique.</li>
+   - En complément des <code>14</code> diagrammes UML historiques, les <strong>4 niveaux C4</strong> en texte PlantUML (<code>c4_contexte.puml</code>, <code>c4_conteneurs.puml</code>, <code>c4_composants.puml</code> et <code>c4_code.puml</code>) modélisent exactement le code réel du dépôt (sans services fictifs), avec titre, types explicites, flèches verbales/protocoles et légende.</li>
 <li><strong>Documents d’exploitation</strong> (<code>docs/exploitation/</code>) :
    - Fiche de service, <em>runbook</em> incidents (4 scénarios critiques), <em>runbook</em> sauvegarde/restauration (<code>--nettoyage</code> + <code>mysqldump --routines --triggers</code> + <code>libsodium</code>) et modèle de <em>postmortem</em> sans blâme.</li>
 </ol>

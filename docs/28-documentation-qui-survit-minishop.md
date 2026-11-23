@@ -29,7 +29,7 @@ Une documentation absente coûte cher lors d’un incident à 2 h du matin, et u
 3. **Décisions d’architecture versionnées** (`docs/adr/`, format MADR) :
    - `0000` (adopter les ADR), `0001` (double persistance `SqlStore`/`JsonStore`), `0002` (procédures stockées & déclencheurs MariaDB), `0003` (sessions strictes, RBAC et zéro dépendance CDN), `0004` (*Docs-as-Code*) et `0005` (MVC PHP 8.2+ natif sans framework lourd), accompagnés de `template.md`.
 4. **Schémas C4 et UML écrits en code** (`docs/diagrams/src/`) :
-   - En complément des `14` diagrammes UML historiques, deux diagrammes C4 en texte PlantUML (`c4_contexte.puml` et `c4_conteneurs.puml`) décrivent le système, ses utilisateurs et ses frontières de confiance tout en restant lisibles sans rendu graphique.
+   - En complément des `14` diagrammes UML historiques, les **4 niveaux C4** en texte PlantUML (`c4_contexte.puml`, `c4_conteneurs.puml`, `c4_composants.puml` et `c4_code.puml`) modélisent exactement le code réel du dépôt (sans services fictifs), avec titre, types explicites, flèches verbales/protocoles et légende.
 5. **Documents d’exploitation** (`docs/exploitation/`) :
    - Fiche de service, *runbook* incidents (4 scénarios critiques), *runbook* sauvegarde/restauration (`--nettoyage` + `mysqldump --routines --triggers` + `libsodium`) et modèle de *postmortem* sans blâme.
 

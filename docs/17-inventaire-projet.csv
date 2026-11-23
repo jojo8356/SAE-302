@@ -207,6 +207,8 @@ docs/diagrams/seq_passer_commande.png,Documentation,Présence et non-vide unique
 docs/diagrams/seq_recherche_produit.png,Documentation,Présence et non-vide uniquement
 docs/diagrams/src/activite_passer_commande.puml,Documentation,Présence et non-vide uniquement
 docs/diagrams/src/architecture_mvc.puml,Documentation,Présence et non-vide uniquement
+docs/diagrams/src/c4_code.puml,Diagrammes,Présence et non-vide uniquement
+docs/diagrams/src/c4_composants.puml,Diagrammes,Présence et non-vide uniquement
 docs/diagrams/src/c4_conteneurs.puml,Diagrammes et schémas,Présence et non-vide uniquement
 docs/diagrams/src/c4_contexte.puml,Diagrammes et schémas,Présence et non-vide uniquement
 docs/diagrams/src/cas_utilisation_commandes.puml,Documentation,Présence et non-vide uniquement

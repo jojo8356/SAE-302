@@ -283,6 +283,59 @@ def verifier_adr(racine: pathlib.Path = RACINE) -> list[str]:
     return erreurs
 
 
+def verifier_c4(racine: pathlib.Path = RACINE) -> list[str]:
+    """Vérifie la présence et les invariants des 4 diagrammes C4 PlantUML.
+
+    Args:
+        racine: Racine du dépôt contenant ``docs/diagrams/src/``.
+
+    Returns:
+        Liste des anomalies détectées (vide si les 4 niveaux C4 sont conformes).
+    """
+    dossier = racine / "docs" / "diagrams" / "src"
+    erreurs: list[str] = []
+    fichiers_c4 = (
+        "c4_contexte.puml",
+        "c4_conteneurs.puml",
+        "c4_composants.puml",
+        "c4_code.puml",
+    )
+    for nom in fichiers_c4:
+        chemin = dossier / nom
+        if not chemin.is_file():
+            erreurs.append(f"docs/diagrams/src/{nom} manquant")
+            continue
+        contenu = chemin.read_text(encoding="utf-8")
+        if "@startuml" not in contenu or "@enduml" not in contenu:
+            erreurs.append(f"docs/diagrams/src/{nom}: balises @startuml/@enduml requises")
+        if not re.search(r"^\s*title\s+.+", contenu, re.MULTILINE):
+            erreurs.append(f"docs/diagrams/src/{nom}: directive `title` manquante")
+        if "legend" not in contenu:
+            erreurs.append(f"docs/diagrams/src/{nom}: légende (`legend`) manquante")
+        if re.search(r':\s*"Uses"\s*$', contenu, re.MULTILINE):
+            erreurs.append(f"docs/diagrams/src/{nom}: éviter le libellé générique \"Uses\" seul")
+
+    code_puml = dossier / "c4_code.puml"
+    if code_puml.is_file():
+        contenu_code = code_puml.read_text(encoding="utf-8")
+        for classe_attendue, fichier_php in (
+            ("CommandeController", "app/Controller/CommandeController.php"),
+            ("PanierSession", "app/Model/PanierSession.php"),
+            ("CommandeRepository", "app/Repository/CommandeRepository.php"),
+            ("ParametreRepository", "app/Repository/ParametreRepository.php"),
+            ("StoreInterface", "app/Model/Data/StoreInterface.php"),
+            ("SqlStore", "app/Model/Data/SqlStore.php"),
+            ("JsonStore", "app/Model/Data/JsonStore.php"),
+            ("BusinessError", "app/Model/Data/BusinessError.php"),
+        ):
+            if classe_attendue not in contenu_code:
+                erreurs.append(f"docs/diagrams/src/c4_code.puml: classe réelle absente ({classe_attendue})")
+            if not (racine / fichier_php).is_file():
+                erreurs.append(f"{fichier_php} introuvable pour c4_code.puml")
+
+    return erreurs
+
+
 def generer_reference_php(fichiers: list[FichierPhp], sortie: pathlib.Path) -> None:
     """Génère une référence HTML statique à partir des PHPDoc du code PHP.
 
@@ -406,11 +459,12 @@ def main(argv: list[str] | None = None) -> int:
     erreurs_py = verifier_python(RACINE)
     fichiers_php, erreurs_php = verifier_php(RACINE)
     erreurs_adr = verifier_adr(RACINE)
+    erreurs_c4 = verifier_c4(RACINE)
 
     if args.gen_php_ref:
         generer_reference_php(fichiers_php, RACINE / "livrables" / "reference" / "php")
 
-    total_erreurs = erreurs_py + erreurs_php + erreurs_adr
+    total_erreurs = erreurs_py + erreurs_php + erreurs_adr + erreurs_c4
     if total_erreurs:
         for err in total_erreurs:
             print(f"ERREUR: {err}", file=sys.stderr)
@@ -421,8 +475,8 @@ def main(argv: list[str] | None = None) -> int:
     nb_adr = len(list((RACINE / "docs" / "adr").glob("[0-9]*.md")))
     print(
         f"OK — Python (docstrings + {len(MODULES_DOCTEST)} modules doctest), "
-        f"PHP ({len(fichiers_php)} fichiers, {total_methodes} méthodes publiques PHPDoc) "
-        f"et ADR ({nb_adr} fiches MADR) conformes."
+        f"PHP ({len(fichiers_php)} fichiers, {total_methodes} méthodes publiques PHPDoc), "
+        f"ADR ({nb_adr} fiches MADR) et C4 (4 niveaux) conformes."
     )
     return 0
 
