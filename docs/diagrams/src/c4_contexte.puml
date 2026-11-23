@@ -1,8 +1,19 @@
 @startuml
 ' =====================================================================
-' MiniShop — C4 Niveau 1 : Contexte système (C4 System Context)
-' Conforme c4model.com : titre, types explicites, flèches avec verbe +
-' protocole, légende. Fidèle au code V1 (aucun service SaaS externe).
+' Diagramme de contexte du système MiniShop (C4 Niveau 1)
+' Conforme à c4model.com :
+'   - Niveau 1 (public non technique et technique) : personnes + système seul.
+'   - Zéro technologie interne dans les boîtes (ni PHP, ni MariaDB, ni JSON).
+'   - Aucun système externe fictif : paiements/livraisons simulés, contact local.
+'   - Flèches unidirectionnelles avec verbe d'intention et protocole discret.
+'
+' Texte alternatif :
+'   Le diagramme de contexte du système MiniShop montre deux personnes :
+'   le Visiteur / Client, qui consulte le catalogue, gère son panier et passe
+'   commande en HTTPS, et l'Administrateur (Gestionnaire / Super), qui administre
+'   le catalogue, les stocks, les commandes, les paramètres et l'équipe en HTTPS.
+'   Au centre se trouve l'unique boîte du système logiciel Boutique en ligne MiniShop.
+'   Aucun système externe tiers n'est relié au système (maquette autonome hors ligne).
 ' =====================================================================
 !pragma layout smetana
 left to right direction
@@ -10,27 +21,22 @@ skinparam shadowing false
 skinparam roundcorner 8
 skinparam packageStyle rectangle
 
-title MiniShop — Diagramme C4 Niveau 1 : Contexte système
+title Diagramme de contexte du système MiniShop
 
-actor "Visiteur / Client\n[Personne]\nParcourt le catalogue, gère son\npanier, crée un compte et commande" as Client #08427B
-actor "Administrateur\n[Personne : GESTIONNAIRE / SUPER]\nAdministre produits, stocks, commandes,\nparamètres et équipe (SUPER)" as Admin #08427B
+actor "Visiteur / Client\n[Personne]\nParcourt le catalogue, gère son panier,\npasse commande et suit ses achats" as Client #08427B
+actor "Administrateur\n[Personne : Gestionnaire / Super]\nMet à jour le catalogue, les stocks,\nles commandes, les paramètres et l'équipe" as Admin #08427B
 
-rectangle "Boutique MiniShop\n[Système logiciel : PHP 8.2+ MVC & MariaDB]\nCatalogue, panier, commandes, back-office\nRBAC et gestion de rétention RGPD.\nPaiements et livraisons simulés (ENF-20 hors ligne)." as MiniShop #1168BD;text:white
+rectangle "Boutique en ligne MiniShop\n[Système logiciel]\nPropose le catalogue informatique,\nenregistre les commandes et fournit le\nback-office (paiements et envois simulés)" as MiniShop #1168BD;text:white
 
-note bottom of MiniShop
-  Périmètre réel du dépôt (ARCHITECTURE.md §1) :
-  - Aucun PSP externe, aucun serveur SMTP, aucun CDN tiers (ENF-20).
-  - Le formulaire de contact écrit en local dans var/journal/contact.jsonl.
-end note
-
-Client --> MiniShop : "Consulte le catalogue, gère son panier\net passe commande (HTTPS)"
-Admin --> MiniShop : "Gère le catalogue, les stocks,\nles commandes et les paramètres (HTTPS)"
+Client --> MiniShop : "Consulte le catalogue,\ncommande et suit ses achats (HTTPS)"
+Admin --> MiniShop : "Gère le catalogue, les stocks,\nles commandes et l'équipe (HTTPS)"
 
 legend right
   |= Couleur / Forme |= Abstraction C4 |= Signification |
-  | <#08427B> Acteur | Personne | Utilisateur humain (rôle métier) |
-  | <#1168BD> Boîte bleue | Système logiciel | Système modélisé (MiniShop V1) |
-  | Flèche pleine | Relation | Action métier et protocole de transport |
+  | <#08427B> Acteur | Personne | Rôle utilisateur humain |
+  | <#1168BD> Boîte bleue | Système logiciel | Système MiniShop modélisé (boîte unique, sans détail interne) |
+  | Flèche pleine | Relation | Intention métier et protocole discret |
+  Note : aucun système externe tiers dans ce périmètre (paiement simulé, pas de serveur mail ni CDN).
 endlegend
 
 @enduml

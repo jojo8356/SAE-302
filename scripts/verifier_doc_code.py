@@ -315,6 +315,17 @@ def verifier_c4(racine: pathlib.Path = RACINE) -> list[str]:
         if re.search(r':\s*"Uses"\s*$', contenu, re.MULTILINE):
             erreurs.append(f"docs/diagrams/src/{nom}: éviter le libellé générique \"Uses\" seul")
 
+    ctx_puml = dossier / "c4_contexte.puml"
+    if ctx_puml.is_file():
+        lignes_visibles = "\n".join(
+            ligne for ligne in ctx_puml.read_text(encoding="utf-8").splitlines() if not ligne.lstrip().startswith("'")
+        )
+        for techno in ("PHP", "MariaDB", "MySQL", "PDO", "Node.js", "PostgreSQL", "var/journal"):
+            if re.search(rf"\b{re.escape(techno)}\b", lignes_visibles, re.IGNORECASE):
+                erreurs.append(
+                    f"docs/diagrams/src/c4_contexte.puml: éviter la technologie interne `{techno}` au niveau Contexte"
+                )
+
     code_puml = dossier / "c4_code.puml"
     if code_puml.is_file():
         contenu_code = code_puml.read_text(encoding="utf-8")
