@@ -389,7 +389,7 @@ footer.doc p { text-align: left; margin: 0; }
 <li>2.4 Les 4 diagrammes de séquences (authentification, recherche, panier, commande)</li>
 <li>2.5 Réponses détaillées aux 5 spécifications de sécurité du cahier des charges</li>
 <li>2.6 Architecture 3 couches MVC adaptée au système</li>
-<li><strong>Chapitre 3 — Analyse et conception de la base de données (Merise, Normalisation et SQL)</strong></li>
+<li><strong>Chapitre 3 — Analyse et conception de la base de données (Merise, 3FN, SQL)</strong></li>
 <li>3.1 Modèle Conceptuel des Données (MCD) : entités, associations et cardinalités justifiées</li>
 <li>3.2 Modèle Logique des Données (MLD) et vues relationnelles</li>
 <li>3.3 Normalisation complète : DF, 1FN/2FN/3FN, PK/FK et redondances</li>
@@ -451,7 +451,10 @@ footer.doc p { text-align: left; margin: 0; }
 <li>5.3 Analyse des écarts vis-à-vis du cahier des charges initial et bilan réflexif</li>
 <li>5.4 Gouvernance GitLab, <code>README.md</code>, soutenance et conformité au barème</li>
 <li><strong>Chapitre 6 — Industrialisation vers une marketplace automatisée (« Amazon »)</strong></li>
-<li>6.1 Industrialisation : PSP, cache distribué, recherche et observabilité</li>
+<li>6.1 Industrialisation : PSP, cache distribué, recherche et observabilité<ul>
+<li>6.1.1 Pipeline de journaux et observabilité : signaux, <em>watchdog</em> et domaine séparé</li>
+</ul>
+</li>
 <li>6.2 Vers une <em>Marketplace</em> multi-vendeurs (<em>Seller Central</em> et <em>Buy Box</em>)</li>
 <li>6.3 Fournisseurs, fiches fournisseurs et approvisionnements back-office</li>
 <li>6.4 Moteur de recommandation hybride (SQL, collaboratif et sémantique)</li>
@@ -491,7 +494,7 @@ footer.doc p { text-align: left; margin: 0; }
 <li><strong>Tableau 9</strong> — Benchmark des 7 familles de bases de données (stockage, accès, scaling)</li>
 <li><strong>Tableau 10</strong> — Cartographie des 7 familles de bases de données dans MiniShop (V1 à V3)</li>
 <li><strong>Tableau 11</strong> — Benchmark technique des 3 familles de stockage (Bloc, Fichier, Objet)</li>
-<li><strong>Tableau 12</strong> — Affectation de chaque donnée MiniShop (Bloc, Fichier ou Objet) et sauvegardes</li>
+<li><strong>Tableau 12</strong> — Affectation des données MiniShop (Bloc, Fichier ou Objet)</li>
 <li><strong>Tableau 13</strong> — Correspondance des 14 cas d’utilisation minimum du sujet</li>
 <li><strong>Tableau 14</strong> — Réponses techniques aux 5 spécifications de sécurité du sujet</li>
 <li><strong>Tableau 15</strong> — Justification détaillée des cardinalités du MCD</li>
@@ -519,10 +522,10 @@ footer.doc p { text-align: left; margin: 0; }
 <li><strong>Tableau 37</strong> — Plan d’implémentation du cache (HTTP, <em>cache-aside</em>, résilience et métriques)</li>
 <li><strong>Tableau 38</strong> — Limites de la recherche SQL actuelle et apports des 3 bases spécialisées</li>
 <li><strong>Tableau 39</strong> — Implémentation de la recherche, des métriques et du vectoriel dans MiniShop</li>
+<li><strong>Tableau 40</strong> — Files de messages et <em>brokers</em> : utilité, garanties, DLQ et grille</li>
 </ul>
 <div style="break-before: page;"></div>
 <ul>
-<li><strong>Tableau 40</strong> — Files de messages et <em>brokers</em> : utilité, garanties, DLQ et grille</li>
 <li><strong>Tableau 41</strong> — Implémentation : <em>Outbox</em> transactionnelle et <em>workers</em> CLI dans MiniShop</li>
 <li><strong>Tableau 42</strong> — Publication-abonnement et flux rejouables : comparatif file vs journal en MVC</li>
 <li><strong>Tableau 43</strong> — Gestion des flux en DB (MariaDB/Kafka), bus PHP MVC et côté client JS (<code>SSE</code>)</li>
@@ -557,13 +560,14 @@ footer.doc p { text-align: left; margin: 0; }
 <li><strong>Tableau 72</strong> — Les 7 points bloquants avant toute mise en vente commerciale réelle (<code>docs/12</code>)</li>
 <li><strong>Tableau 73</strong> — Contrôle de conformité face aux livrables et pénalités du barème</li>
 <li><strong>Tableau 74</strong> — Briques d’industrialisation pour une plateforme de production</li>
-<li><strong>Tableau 75</strong> — Extension du modèle 3FN vers une <em>Marketplace</em> multi-vendeurs</li>
-<li><strong>Tableau 76</strong> — Gestion back-office des fiches fournisseurs et approvisionnements</li>
-<li><strong>Tableau 77</strong> — Architecture du moteur de recommandation hybride (V1 à V3)</li>
-<li><strong>Tableau 78</strong> — Automatisations back-office vendeur, logistique et anti-fraude</li>
-<li><strong>Tableau 79</strong> — Plan de migration incrémental en 4 paliers (MiniShop → <em>Marketplace</em>)</li>
-<li><strong>Tableau 80</strong> — Les 6 échelles de production idéales de MiniShop selon popularité et charge</li>
-<li><strong>Tableau 81</strong> — Signaux déclencheurs de bascule d’une échelle à l’autre sur notre code</li>
+<li><strong>Tableau 75</strong> — Pipeline de journaux et observabilité en prod : signaux, pannes et RGPD</li>
+<li><strong>Tableau 76</strong> — Extension du modèle 3FN vers une <em>Marketplace</em> multi-vendeurs</li>
+<li><strong>Tableau 77</strong> — Gestion back-office des fiches fournisseurs et approvisionnements</li>
+<li><strong>Tableau 78</strong> — Architecture du moteur de recommandation hybride (V1 à V3)</li>
+<li><strong>Tableau 79</strong> — Automatisations back-office vendeur, logistique et anti-fraude</li>
+<li><strong>Tableau 80</strong> — Plan de migration incrémental en 4 paliers (MiniShop → <em>Marketplace</em>)</li>
+<li><strong>Tableau 81</strong> — Les 6 échelles de production idéales de MiniShop selon popularité et charge</li>
+<li><strong>Tableau 82</strong> — Signaux déclencheurs de bascule d’une échelle à l’autre sur notre code</li>
 </ul>
 <div style="break-before: page;"></div>
 <h2 id="glossaire-des-sigles-et-acronymes">Glossaire des sigles et acronymes<a class="headerlink" href="#glossaire-des-sigles-et-acronymes" title="Permanent link"></a></h2>
@@ -4743,6 +4747,41 @@ public function cacheAside(string $cle, int $ttlBase, callable $source): mixed
 </tbody>
 </table>
 <p><em>Tableau 74 — Briques d’industrialisation requises pour transformer MiniShop en système de production.</em></p>
+<h4 id="611-pipeline-de-journaux-et-observabilite-en-production-du-signal-a-lalerte">6.1.1 Pipeline de journaux et observabilité en production : du signal à l’alerte<a class="headerlink" href="#611-pipeline-de-journaux-et-observabilite-en-production-du-signal-a-lalerte" title="Permanent link"></a></h4>
+<p>En V1, l’observabilité repose sur des fichiers locaux (<code>var/journal/db.jsonl</code> écrit par <code>Journal.php</code>, <code>var/log/contact.jsonl</code> écrit par <code>HomeController::journaliserContact()</code>, <code>error_log</code> PHP, <em>Slow Query Log</em> MariaDB) purgés par <code>NettoyageJournaux</code> (<code>--nettoyage</code>). Lors du passage à l’échelle multi-nœuds, ces journaux locaux deviennent inutilisables (dispersés sur des conteneurs éphémères) et insuffisants pour diagnostiquer un incident en temps réel :</p>
+<ol>
+<li><strong>Les 5 familles de signaux et l’ordre d’enquête en production :</strong>
+   Pendant un incident sur MiniShop, on <strong>détecte</strong> avec les <strong>métriques</strong> et les <strong>alertes</strong> (taux HTTP 5xx, latence <code>p95</code> par route § <code>4.4.1</code>, retard de la file <em>Outbox</em> § <code>4.1.10</code>), on <strong>localise</strong> avec les <strong>traces</strong> distribuées (OpenTelemetry + en-tête <code>X-Request-Id</code> suivant la requête de <code>Router.php</code> vers <code>SqlStore</code>, Redis et le PSP), on <strong>explique</strong> avec les <strong>journaux</strong> structurés JSON (remplaçant les écritures locales de <code>Journal.php</code> et <code>HomeController</code>), et on <strong>optimise</strong> le code coûteux avec les <strong>profils</strong> CPU/mémoire.</li>
+<li><strong>Pipeline non bloquant, panne de l’observabilité, watchdog et domaine séparé</strong> (<code>Tableau 75</code>) :
+   <code>Journal.php</code> pose déjà une règle saine en V1 (<em>« le journal est une exigence de traçabilité, pas une dépendance forte »</em> : si <code>var/</code> n’est pas inscriptible, le magasin continue). En production, ce principe devient une règle d’architecture stricte : PHP émet sur <code>stdout</code>/<code>stderr</code> vers un <strong>collecteur</strong> (<code>OpenTelemetry Collector</code> / <code>Fluent Bit</code>) qui met en tampon et transporte de façon <strong>non bloquante</strong> ; une panne du pipeline d’observabilité laisse donc la boutique servir ses clients (<strong>aveugle</strong>, sans alerte). Pour détecter cette panne silencieuse, un <strong>watchdog</strong> (<em>dead man’s switch</em>) externe surveille un battement permanent et déclenche l’alarme dès son silence. Enfin, le stockage des logs (<code>Loki</code>/<code>ClickHouse</code>), <code>Prometheus</code>/<code>Grafana</code> et le routeur d’alertes doivent vivre <strong>hors du cluster et du domaine de panne de la boutique</strong>, sans dépendre du DNS interne ni de l’IdP <code>sso.minishop.fr</code> (§ <code>4.1.13</code>) en panne.</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Dimension du pipeline logs/observabilité</th>
+<th>État actuel dans MiniShop (V1)</th>
+<th>Cible prod / scale et règle d’exploitation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Collecte non bloquante des logs</strong></td>
+<td><code>Journal::create()</code> (<code>var/journal/db.jsonl</code>) + <code>contact.jsonl</code> + <code>error_log</code> ; non bloquant si disque plein.</td>
+<td>Émission JSON sur <code>stdout</code> (<code>request_id</code>, route, code HTTP, durée) → collecteur tampon <code>OTel</code>/<code>Fluent Bit</code> → <code>Loki</code>/<code>ClickHouse</code>. Jamais d’appel HTTP synchrone bloquant vers les logs.</td>
+</tr>
+<tr>
+<td><strong>Panne &amp; domaine séparé</strong></td>
+<td>Fichiers sur le même serveur que PHP/MariaDB (si la VM tombe, les logs tombent avec).</td>
+<td>Cluster d’observabilité <strong>séparé</strong> (hors domaine de panne boutique), alertes via canal indépendant + <strong>watchdog</strong> externe alertant si les signaux s’arrêtent.</td>
+</tr>
+<tr>
+<td><strong>RGPD, volume &amp; responsabilités</strong></td>
+<td><code>Journal.php</code> minimise <code>client</code>/<code>administrateur</code>, <code>HomeController</code> exclut mot de passe/IP, purge via <code>NettoyageJournaux</code>.</td>
+<td>Zéro secret ni PII inutile dans les logs, échantillonnage des traces/logs verbeux, rétention bornée (<code>15–90 j</code>) ; équipe plateforme = pipeline, équipe appli = seuils et signaux émis.</td>
+</tr>
+</tbody>
+</table>
+<p><em>Tableau 75 — Pipeline de journaux et d’observabilité en production : collecte non bloquante, domaine de panne séparé, watchdog et RGPD.</em></p>
 <h3 id="62-evolution-du-modele-3fn-vers-une-marketplace-multi-vendeurs-seller-central-et-buy-box">6.2 Évolution du modèle 3FN vers une <em>Marketplace</em> multi-vendeurs (<em>Seller Central</em> et <em>Buy Box</em>)<a class="headerlink" href="#62-evolution-du-modele-3fn-vers-une-marketplace-multi-vendeurs-seller-central-et-buy-box" title="Permanent link"></a></h3>
 <p>Le modèle actuel suppose un vendeur unique (l’administrateur de la boutique). Pour évoluer vers une place de marché de type <em>Amazon Seller Central</em>, il convient d’appliquer une distinction fondamentale : <strong>dissocier la fiche produit canonique</strong> (équivalent de l’<em>ASIN</em>, identité technique unique du produit évitant les doublons dans le catalogue) <strong>des offres commerciales portées par les vendeurs tiers</strong> (prix, stock, délai d’expédition, état neuf/reconditionné).</p>
 <pre><code class="language-sql">-- Extension incrémentale 3FN du schéma MiniShop vers le multi-vendeurs :
@@ -4767,7 +4806,7 @@ CREATE TABLE offre_vendeur (
   FOREIGN KEY (id_vendeur) REFERENCES vendeur(id_vendeur) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 </code></pre>
-<p>Le Tableau 75 synthétise l’impact architectural de cette extension sur nos règles existantes :</p>
+<p>Le Tableau 76 synthétise l’impact architectural de cette extension sur nos règles existantes :</p>
 <table>
 <thead>
 <tr>
@@ -4799,7 +4838,7 @@ CREATE TABLE offre_vendeur (
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 75 — Extension du modèle relationnel 3FN et de la sécurité vers une marketplace multi-vendeurs.</em></p>
+<p><em>Tableau 76 — Extension du modèle relationnel 3FN et de la sécurité vers une marketplace multi-vendeurs.</em></p>
 <h3 id="63-gestion-des-fournisseurs-fiches-fournisseurs-et-commandes-dapprovisionnement-back-office">6.3 Gestion des fournisseurs, fiches fournisseurs et commandes d’approvisionnement back-office<a class="headerlink" href="#63-gestion-des-fournisseurs-fiches-fournisseurs-et-commandes-dapprovisionnement-back-office" title="Permanent link"></a></h3>
 <p>Dans la version académique actuelle, les entrées de stock proviennent exclusivement d’ajustements manuels saisis dans <code>/admin/stocks</code> (<code>sp_adjust_stock</code> avec motif <code>REASSORT</code>), sans référentiel fournisseur ni suivi des achats amont. Pour industrialiser l’approvisionnement en back-office à l’échelle d’une centrale d’achat ou d’un distributeur, il est indispensable de modéliser proprement les <strong>fournisseurs</strong>, leurs <strong>catalogues multi-sources</strong> et les <strong>commandes fournisseurs (Bons de Commande Fournisseur — BCF)</strong> en respectant strictement notre normalisation 3FN et notre piste d’audit <code>stock_movement_history</code>.</p>
 <h4 id="631-extension-du-modele-3fn-aux-fournisseurs-et-receptions">6.3.1 Extension du modèle 3FN aux fournisseurs et réceptions<a class="headerlink" href="#631-extension-du-modele-3fn-aux-fournisseurs-et-receptions" title="Permanent link"></a></h4>
@@ -4868,7 +4907,7 @@ CREATE TABLE ligne_bcf (
 <tr>
 <td><strong>Évaluation &amp; Fiabilité (Scorecard)</strong></td>
 <td>Suivi automatique du délai réel de réception par rapport à <code>date_livraison_prevue</code> (taux <strong>OTIF</strong> — <em>On-Time In-Full</em>), taux de colis non conformes et alertes en cas de dépendance à un fournisseur unique.</td>
-<td>Alimente l’algorithme du point de commande dynamique <code>S_cmd</code> (Tableau 78) avec le délai réel <code>L_fournisseur</code> plutôt qu’une estimation fixe.</td>
+<td>Alimente l’algorithme du point de commande dynamique <code>S_cmd</code> (Tableau 79) avec le délai réel <code>L_fournisseur</code> plutôt qu’une estimation fixe.</td>
 </tr>
 <tr>
 <td><strong>Génération des commandes fournisseur (<code>/admin/approvisionnements</code>)</strong></td>
@@ -4882,7 +4921,7 @@ CREATE TABLE ligne_bcf (
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 76 — Gestion back-office des fiches fournisseurs et du cycle complet des commandes d’approvisionnement.</em></p>
+<p><em>Tableau 77 — Gestion back-office des fiches fournisseurs et du cycle complet des commandes d’approvisionnement.</em></p>
 <div style="break-before: page;"></div>
 <h3 id="64-moteur-de-recommandation-hybride-analyse-du-panier-filtrage-collaboratif-et-semantique">6.4 Moteur de recommandation hybride (analyse du panier, filtrage collaboratif et sémantique)<a class="headerlink" href="#64-moteur-de-recommandation-hybride-analyse-du-panier-filtrage-collaboratif-et-semantique" title="Permanent link"></a></h3>
 <p>Un levier décisif de croissance d’Amazon repose sur la personnalisation (« <em>Les clients ayant acheté cet article ont également acheté…</em> »). Notre modèle normalisé <code>ligne_commande</code> permet déjà de déployer une <strong>V1 immédiatement opérationnelle</strong> sans infrastructure d’apprentissage automatique complexe, puis d’évoluer par paliers vers un moteur hybride complet :</p>
@@ -4938,7 +4977,7 @@ HAVING co_achats &gt;= 3
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 77 — Architecture incrémentale du moteur de recommandation hybride.</em></p>
+<p><em>Tableau 78 — Architecture incrémentale du moteur de recommandation hybride.</em></p>
 <h3 id="65-automatisation-du-back-office-vendeur-reapprovisionnement-predictif-et-logistique">6.5 Automatisation du back-office vendeur, réapprovisionnement prédictif et logistique<a class="headerlink" href="#65-automatisation-du-back-office-vendeur-reapprovisionnement-predictif-et-logistique" title="Permanent link"></a></h3>
 <p>Dans un back-office artisanal (et encore en partie dans MiniShop V1), l’administrateur doit surveiller manuellement <code>v_etat_stock</code>, saisir les ajustements <code>sp_adjust_stock</code> et faire évoluer manuellement les statuts <code>EN_PREPARATION -&gt; EXPEDIEE -&gt; LIVREE</code>. Pour passer à une exploitation professionnelle fluide pour des dizaines ou centaines de vendeurs, les opérations répétitives doivent être automatisées autour d’une <strong>file de tâches asynchrones</strong> (<em>Message Queue</em> : Redis Streams ou RabbitMQ + <em>workers</em> PHP CLI) :</p>
 <table>
@@ -4989,7 +5028,7 @@ HAVING co_achats &gt;= 3
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 78 — Catalogue des automatisations du back-office vendeur et de la chaîne logistique.</em></p>
+<p><em>Tableau 79 — Catalogue des automatisations du back-office vendeur et de la chaîne logistique.</em></p>
 <div style="break-before: page;"></div>
 <h3 id="66-trajectoire-de-migration-incrementale-en-4-paliers-strangler-fig-pattern">6.6 Trajectoire de migration incrémentale en 4 paliers (<em>Strangler Fig Pattern</em>)<a class="headerlink" href="#66-trajectoire-de-migration-incrementale-en-4-paliers-strangler-fig-pattern" title="Permanent link"></a></h3>
 <p>L’erreur classique d’une montée en charge consiste à vouloir tout réécrire d’un bloc (<em>Big Bang</em>). Grâce au contrat <code>StoreInterface</code>, à la centralisation des règles métier en dépôts PHP et à la séparation nette des couches MVC, l’évolution vers une plateforme de type Amazon doit suivre une <strong>trajectoire incrémentale en 4 paliers</strong> où chaque phase reste pleinement déployable et testable :</p>
@@ -5012,13 +5051,13 @@ HAVING co_achats &gt;= 3
 <tr>
 <td><strong>Palier 2 — Automatisation Back-Office, Fournisseurs &amp; Recommandation V1</strong></td>
 <td>Moyen terme (productivité opérationnelle)</td>
-<td>File asynchrone (<em>workers</em> CLI) pour factures Factur-X, étiquettes transporteur, webhooks de suivi ; tables <code>fournisseur</code> / <code>bon_commande_fournisseur</code> + réapprovisionnement prédictif (Tableau 76) ; recommandation SQL co-achats (Tableau 77)</td>
+<td>File asynchrone (<em>workers</em> CLI) pour factures Factur-X, étiquettes transporteur, webhooks de suivi ; tables <code>fournisseur</code> / <code>bon_commande_fournisseur</code> + réapprovisionnement prédictif (Tableau 77) ; recommandation SQL co-achats (Tableau 78)</td>
 <td>Mesure de réduction du temps de traitement commande/réassort et hausse du panier moyen par A/B test</td>
 </tr>
 <tr>
 <td><strong>Palier 3 — Ouverture <em>Marketplace</em> Multi-Vendeurs</strong></td>
 <td>Croissance catalogue (<em>Seller Central</em>)</td>
-<td>Tables <code>vendeur</code>, <code>offre_vendeur</code>, <code>sous_commande_vendeur</code> (Tableau 75) ; portail <code>/vendeur/*</code> isolé ; flux séquestre <em>Split Payment</em> ; élection de <em>Buy Box</em> et import massif</td>
+<td>Tables <code>vendeur</code>, <code>offre_vendeur</code>, <code>sous_commande_vendeur</code> (Tableau 76) ; portail <code>/vendeur/*</code> isolé ; flux séquestre <em>Split Payment</em> ; élection de <em>Buy Box</em> et import massif</td>
 <td>Audits IDOR multi-tenant et réconciliation comptable automatisée à 100 %</td>
 </tr>
 <tr>
@@ -5029,11 +5068,11 @@ HAVING co_achats &gt;= 3
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 79 — Plan de migration incrémental en 4 paliers vers une plateforme e-commerce professionnelle.</em></p>
+<p><em>Tableau 80 — Plan de migration incrémental en 4 paliers vers une plateforme e-commerce professionnelle.</em></p>
 <p>Cette approche progressive préserve intégralement les garanties transactionnelles prouvées dans les chapitres précédents — verrouillage des stocks sans survente, immuabilité financière des commandes et traçabilité d’audit — tout en levant méthodiquement chaque limite du prototype académique.</p>
 <h3 id="67-echelles-de-production-ideales-selon-la-popularite-et-les-besoins-de-scaling">6.7 Échelles de production idéales selon la popularité et les besoins de <em>scaling</em><a class="headerlink" href="#67-echelles-de-production-ideales-selon-la-popularite-et-les-besoins-de-scaling" title="Permanent link"></a></h3>
 <p>En synthétisant l’ensemble des chapitres précédents — les <strong>7 familles de bases</strong> (§ <code>1.4.5</code>), les <strong>12 optimisations MariaDB</strong> (§ <code>3.7</code>), l’architecture <strong>stateless/queues/domaines de panne/proxys</strong> (§ <code>4.1.4</code>–<code>4.1.7</code>), la <strong>répartition L4/L7</strong> (§ <code>4.4.3</code>–<code>4.4.4</code>), la <strong>bordure CDN/WAF/anti-DDoS</strong> (§ <code>5.1.3</code>) et le <strong>benchmark VM vs Conteneurs/Micro-VM</strong> (§ <code>5.1.4</code>) — il apparaît qu’<strong>il n’existe pas une infrastructure idéale unique, mais une architecture adaptée à chaque stade de popularité</strong>. Sur-dimensionner dès le premier jour (ex. Kubernetes + sharding pour <code>20</code> clients) gaspille budget et complexité ; sous-dimensionner lors d’un pic viral provoque saturation et coupure.</p>
-<p>Le <code>Tableau 80</code> établit la <strong>trajectoire complète en six échelles de production</strong>, de la machine locale du développeur jusqu’à une <em>Marketplace</em> à trafic massif :</p>
+<p>Le <code>Tableau 81</code> établit la <strong>trajectoire complète en six échelles de production</strong>, de la machine locale du développeur jusqu’à une <em>Marketplace</em> à trafic massif :</p>
 <ol>
 <li><strong>Échelle 0 — Développement local (run.sh / conteneurs poste dev) :</strong> le code tourne sur le portable du développeur (<code>php -S 127.0.0.1:8000</code> + <code>scripts/dev-router.php</code> ou <code>Podman</code>/<code>Docker</code>). Dès que le poste s’éteint, le site disparaît : cette échelle sert uniquement au développement, aux tests unitaires/Playwright et aux démonstrations hors ligne (<code>JsonStore</code>).</li>
 <li><strong>Échelle 1 — Serveur unique tout-en-un (ENF-03, lancement et trafic local, &lt;= 40–60 req. parallèles) :</strong> le site quitte le portable pour <strong>une VM Type 1 KVM dédiée</strong> (ou <em>LineServ</em>, <code>2</code>–<code>4 vCPU</code>, <code>4 Go RAM</code>) allumée <code>24/7</code> exécutant <code>Apache 2.4</code> (<code>mpm_event</code> + <code>PHP-FPM</code> + <code>OPcache</code>), <code>MariaDB 11.8</code> et le <code>cron</code> d’archivage (<code>--nettoyage</code>). Simple et suffisant pour démarrer (<code>p95 = 6,0 ms</code> mesuré), mais <strong>Apache/PHP et MariaDB se disputent la même RAM/CPU</strong> et partagent un <strong>domaine de panne unique</strong> (<code>~99,7 %</code> en série, § <code>4.4.4</code>).</li>
@@ -5099,8 +5138,8 @@ HAVING co_achats &gt;= 3
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 80 — Synthèse des 6 échelles de production idéales pour MiniShop selon la popularité et les besoins de scaling.</em></p>
-<p><strong>Critère d’ingénierie : quand passer d’une échelle à la suivante ?</strong> (<code>Tableau 81</code>)
+<p><em>Tableau 81 — Synthèse des 6 échelles de production idéales pour MiniShop selon la popularité et les besoins de scaling.</em></p>
+<p><strong>Critère d’ingénierie : quand passer d’une échelle à la suivante ?</strong> (<code>Tableau 82</code>)
 Le passage d’un palier au suivant ne doit jamais se faire « à l’intuition », mais uniquement sur franchissement de signaux mesurables observés en supervision (évitant la sur-ingénierie précoce autant que la panne sous charge) :</p>
 <table>
 <thead>
@@ -5133,7 +5172,7 @@ Le passage d’un palier au suivant ne doit jamais se faire « à l’intuition 
 </tr>
 </tbody>
 </table>
-<p><em>Tableau 81 — Matrice des signaux mesurables déclenchant le passage d’une échelle de production à la suivante.</em></p>
+<p><em>Tableau 82 — Matrice des signaux mesurables déclenchant le passage d’une échelle de production à la suivante.</em></p>
 <div style="break-before: page;"></div>
 <h2 id="conclusion-generale-et-perspectives">Conclusion générale et perspectives<a class="headerlink" href="#conclusion-generale-et-perspectives" title="Permanent link"></a></h2>
 <p>À l’issue de cette SAÉ 302, le projet <strong>MiniShop</strong> apporte une réponse complète, mesurée et documentée à la problématique initiale. En concevant une application <strong>PHP 8.2+ sans framework tiers</strong> adossée à une base relationnelle normalisée en <strong>3FN</strong> et protégée par <strong>18 procédures stockées</strong> et <strong>16 déclencheurs</strong>, nous démontrons que la logique transactionnelle critique (prévention de survente sous concurrence, immutabilité des tarifs facturés, traçabilité des statuts et des mouvements de stock) peut être garantie de manière stricte côté SGBD tout en maintenant une architecture MVC lisible, portable (<code>StoreInterface</code>) et performante (<code>6,0 ms</code> au 95e centile en HTTP).</p>

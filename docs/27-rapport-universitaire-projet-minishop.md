@@ -66,7 +66,7 @@ Les campagnes automatisées exécutées sur machine virtuelle Debian 13 (PHP `8.
   - 2.4 Les 4 diagrammes de séquences (authentification, recherche, panier, commande)
   - 2.5 Réponses détaillées aux 5 spécifications de sécurité du cahier des charges
   - 2.6 Architecture 3 couches MVC adaptée au système
-- **Chapitre 3 — Analyse et conception de la base de données (Merise, Normalisation et SQL)**
+- **Chapitre 3 — Analyse et conception de la base de données (Merise, 3FN, SQL)**
   - 3.1 Modèle Conceptuel des Données (MCD) : entités, associations et cardinalités justifiées
   - 3.2 Modèle Logique des Données (MLD) et vues relationnelles
   - 3.3 Normalisation complète : DF, 1FN/2FN/3FN, PK/FK et redondances
@@ -117,6 +117,7 @@ Les campagnes automatisées exécutées sur machine virtuelle Debian 13 (PHP `8.
   - 5.4 Gouvernance GitLab, `README.md`, soutenance et conformité au barème
 - **Chapitre 6 — Industrialisation vers une marketplace automatisée (« Amazon »)**
   - 6.1 Industrialisation : PSP, cache distribué, recherche et observabilité
+    - 6.1.1 Pipeline de journaux et observabilité : signaux, *watchdog* et domaine séparé
   - 6.2 Vers une *Marketplace* multi-vendeurs (*Seller Central* et *Buy Box*)
   - 6.3 Fournisseurs, fiches fournisseurs et approvisionnements back-office
   - 6.4 Moteur de recommandation hybride (SQL, collaboratif et sémantique)
@@ -158,7 +159,7 @@ Les campagnes automatisées exécutées sur machine virtuelle Debian 13 (PHP `8.
 - **Tableau 9** — Benchmark des 7 familles de bases de données (stockage, accès, scaling)
 - **Tableau 10** — Cartographie des 7 familles de bases de données dans MiniShop (V1 à V3)
 - **Tableau 11** — Benchmark technique des 3 familles de stockage (Bloc, Fichier, Objet)
-- **Tableau 12** — Affectation de chaque donnée MiniShop (Bloc, Fichier ou Objet) et sauvegardes
+- **Tableau 12** — Affectation des données MiniShop (Bloc, Fichier ou Objet)
 - **Tableau 13** — Correspondance des 14 cas d’utilisation minimum du sujet
 - **Tableau 14** — Réponses techniques aux 5 spécifications de sécurité du sujet
 - **Tableau 15** — Justification détaillée des cardinalités du MCD
@@ -186,10 +187,10 @@ Les campagnes automatisées exécutées sur machine virtuelle Debian 13 (PHP `8.
 - **Tableau 37** — Plan d’implémentation du cache (HTTP, *cache-aside*, résilience et métriques)
 - **Tableau 38** — Limites de la recherche SQL actuelle et apports des 3 bases spécialisées
 - **Tableau 39** — Implémentation de la recherche, des métriques et du vectoriel dans MiniShop
+- **Tableau 40** — Files de messages et *brokers* : utilité, garanties, DLQ et grille
 
 \newpage
 
-- **Tableau 40** — Files de messages et *brokers* : utilité, garanties, DLQ et grille
 - **Tableau 41** — Implémentation : *Outbox* transactionnelle et *workers* CLI dans MiniShop
 - **Tableau 42** — Publication-abonnement et flux rejouables : comparatif file vs journal en MVC
 - **Tableau 43** — Gestion des flux en DB (MariaDB/Kafka), bus PHP MVC et côté client JS (`SSE`)
@@ -224,13 +225,14 @@ Les campagnes automatisées exécutées sur machine virtuelle Debian 13 (PHP `8.
 - **Tableau 72** — Les 7 points bloquants avant toute mise en vente commerciale réelle (`docs/12`)
 - **Tableau 73** — Contrôle de conformité face aux livrables et pénalités du barème
 - **Tableau 74** — Briques d’industrialisation pour une plateforme de production
-- **Tableau 75** — Extension du modèle 3FN vers une *Marketplace* multi-vendeurs
-- **Tableau 76** — Gestion back-office des fiches fournisseurs et approvisionnements
-- **Tableau 77** — Architecture du moteur de recommandation hybride (V1 à V3)
-- **Tableau 78** — Automatisations back-office vendeur, logistique et anti-fraude
-- **Tableau 79** — Plan de migration incrémental en 4 paliers (MiniShop → *Marketplace*)
-- **Tableau 80** — Les 6 échelles de production idéales de MiniShop selon popularité et charge
-- **Tableau 81** — Signaux déclencheurs de bascule d’une échelle à l’autre sur notre code
+- **Tableau 75** — Pipeline de journaux et observabilité en prod : signaux, pannes et RGPD
+- **Tableau 76** — Extension du modèle 3FN vers une *Marketplace* multi-vendeurs
+- **Tableau 77** — Gestion back-office des fiches fournisseurs et approvisionnements
+- **Tableau 78** — Architecture du moteur de recommandation hybride (V1 à V3)
+- **Tableau 79** — Automatisations back-office vendeur, logistique et anti-fraude
+- **Tableau 80** — Plan de migration incrémental en 4 paliers (MiniShop → *Marketplace*)
+- **Tableau 81** — Les 6 échelles de production idéales de MiniShop selon popularité et charge
+- **Tableau 82** — Signaux déclencheurs de bascule d’une échelle à l’autre sur notre code
 
 \newpage
 
@@ -1932,6 +1934,23 @@ La première étape consiste à transformer le prototype académique mono-serveu
 
 *Tableau 74 — Briques d’industrialisation requises pour transformer MiniShop en système de production.*
 
+#### 6.1.1 Pipeline de journaux et observabilité en production : du signal à l’alerte
+
+En V1, l’observabilité repose sur des fichiers locaux (`var/journal/db.jsonl` écrit par `Journal.php`, `var/log/contact.jsonl` écrit par `HomeController::journaliserContact()`, `error_log` PHP, *Slow Query Log* MariaDB) purgés par `NettoyageJournaux` (`--nettoyage`). Lors du passage à l’échelle multi-nœuds, ces journaux locaux deviennent inutilisables (dispersés sur des conteneurs éphémères) et insuffisants pour diagnostiquer un incident en temps réel :
+
+1. **Les 5 familles de signaux et l’ordre d’enquête en production :**
+   Pendant un incident sur MiniShop, on **détecte** avec les **métriques** et les **alertes** (taux HTTP 5xx, latence `p95` par route § `4.4.1`, retard de la file *Outbox* § `4.1.10`), on **localise** avec les **traces** distribuées (OpenTelemetry + en-tête `X-Request-Id` suivant la requête de `Router.php` vers `SqlStore`, Redis et le PSP), on **explique** avec les **journaux** structurés JSON (remplaçant les écritures locales de `Journal.php` et `HomeController`), et on **optimise** le code coûteux avec les **profils** CPU/mémoire.
+2. **Pipeline non bloquant, panne de l’observabilité, watchdog et domaine séparé** (`Tableau 75`) :
+   `Journal.php` pose déjà une règle saine en V1 (*« le journal est une exigence de traçabilité, pas une dépendance forte »* : si `var/` n’est pas inscriptible, le magasin continue). En production, ce principe devient une règle d’architecture stricte : PHP émet sur `stdout`/`stderr` vers un **collecteur** (`OpenTelemetry Collector` / `Fluent Bit`) qui met en tampon et transporte de façon **non bloquante** ; une panne du pipeline d’observabilité laisse donc la boutique servir ses clients (**aveugle**, sans alerte). Pour détecter cette panne silencieuse, un **watchdog** (*dead man’s switch*) externe surveille un battement permanent et déclenche l’alarme dès son silence. Enfin, le stockage des logs (`Loki`/`ClickHouse`), `Prometheus`/`Grafana` et le routeur d’alertes doivent vivre **hors du cluster et du domaine de panne de la boutique**, sans dépendre du DNS interne ni de l’IdP `sso.minishop.fr` (§ `4.1.13`) en panne.
+
+| Dimension du pipeline logs/observabilité | État actuel dans MiniShop (V1) | Cible prod / scale et règle d’exploitation |
+|---|---|---|
+| **Collecte non bloquante des logs** | `Journal::create()` (`var/journal/db.jsonl`) + `contact.jsonl` + `error_log` ; non bloquant si disque plein. | Émission JSON sur `stdout` (`request_id`, route, code HTTP, durée) → collecteur tampon `OTel`/`Fluent Bit` → `Loki`/`ClickHouse`. Jamais d’appel HTTP synchrone bloquant vers les logs. |
+| **Panne & domaine séparé** | Fichiers sur le même serveur que PHP/MariaDB (si la VM tombe, les logs tombent avec). | Cluster d’observabilité **séparé** (hors domaine de panne boutique), alertes via canal indépendant + **watchdog** externe alertant si les signaux s’arrêtent. |
+| **RGPD, volume & responsabilités** | `Journal.php` minimise `client`/`administrateur`, `HomeController` exclut mot de passe/IP, purge via `NettoyageJournaux`. | Zéro secret ni PII inutile dans les logs, échantillonnage des traces/logs verbeux, rétention bornée (`15–90 j`) ; équipe plateforme = pipeline, équipe appli = seuils et signaux émis. |
+
+*Tableau 75 — Pipeline de journaux et d’observabilité en production : collecte non bloquante, domaine de panne séparé, watchdog et RGPD.*
+
 ### 6.2 Évolution du modèle 3FN vers une *Marketplace* multi-vendeurs (*Seller Central* et *Buy Box*)
 
 Le modèle actuel suppose un vendeur unique (l’administrateur de la boutique). Pour évoluer vers une place de marché de type *Amazon Seller Central*, il convient d’appliquer une distinction fondamentale : **dissocier la fiche produit canonique** (équivalent de l’*ASIN*, identité technique unique du produit évitant les doublons dans le catalogue) **des offres commerciales portées par les vendeurs tiers** (prix, stock, délai d’expédition, état neuf/reconditionné).
@@ -1960,7 +1979,7 @@ CREATE TABLE offre_vendeur (
 ) ENGINE=InnoDB;
 ```
 
-Le Tableau 75 synthétise l’impact architectural de cette extension sur nos règles existantes :
+Le Tableau 76 synthétise l’impact architectural de cette extension sur nos règles existantes :
 
 | Composant MiniShop | Évolution vers le modèle *Marketplace* multi-vendeurs | Préservation des garanties existantes |
 |---|---|---|
@@ -1969,7 +1988,7 @@ Le Tableau 75 synthétise l’impact architectural de cette extension sur nos r�
 | **Flux financier & Séquestre** | Intégration de paiements scindés (*Stripe Connect* / *Adyen for Platforms*) : encaissement sur compte de cantonnement, prélèvement automatique de la commission (`taux_commission`) et virement au vendeur à confirmation de livraison (`LIVREE`). | Aucune détention illicite de fonds pour compte de tiers (conformité DSP2). |
 | **Cloisonnement RBAC & Anti-IDOR** | Ajout d’un troisième espace dédié `/vendeur/*` protégé par `Auth::exigeVendeur()` et filtrage systématique `WHERE id_vendeur = ?` sur produits, stocks et sous-commandes. | Généralisation directe de la garde IDOR actuelle (`SEC-08`, `ENF-12`). |
 
-*Tableau 75 — Extension du modèle relationnel 3FN et de la sécurité vers une marketplace multi-vendeurs.*
+*Tableau 76 — Extension du modèle relationnel 3FN et de la sécurité vers une marketplace multi-vendeurs.*
 
 ### 6.3 Gestion des fournisseurs, fiches fournisseurs et commandes d’approvisionnement back-office
 
@@ -2031,11 +2050,11 @@ CREATE TABLE ligne_bcf (
 | Module back-office à ajouter | Fonctionnalités opérationnelles pour le gestionnaire | Intégration transactionnelle avec le cœur MiniShop |
 |---|---|---|
 | **Fiches fournisseurs (`/admin/fournisseurs`)** | Coordonnées commerciales/comptables, conditions de règlement (`NET_30`, `COMPTANT`), catalogue des produits rattachés avec `sku_fournisseur`, coût d’achat HT, **MOQ** (quantité minimale de commande) et rang de préférence (`priorite_rang = 1` principal, `2` secours). | Le calcul de marge réelle (`produit.prix_ht - catalogue_fournisseur.prix_achat_ht`) alimente directement le garde-fou anti-vente à perte et les tableaux de bord CA. |
-| **Évaluation & Fiabilité (Scorecard)** | Suivi automatique du délai réel de réception par rapport à `date_livraison_prevue` (taux **OTIF** — *On-Time In-Full*), taux de colis non conformes et alertes en cas de dépendance à un fournisseur unique. | Alimente l’algorithme du point de commande dynamique `S_cmd` (Tableau 78) avec le délai réel `L_fournisseur` plutôt qu’une estimation fixe. |
+| **Évaluation & Fiabilité (Scorecard)** | Suivi automatique du délai réel de réception par rapport à `date_livraison_prevue` (taux **OTIF** — *On-Time In-Full*), taux de colis non conformes et alertes en cas de dépendance à un fournisseur unique. | Alimente l’algorithme du point de commande dynamique `S_cmd` (Tableau 79) avec le délai réel `L_fournisseur` plutôt qu’une estimation fixe. |
 | **Génération des commandes fournisseur (`/admin/approvisionnements`)** | Création manuelle ou **pré-remplissage automatique** des brouillons `BROUILLON` dès qu’un produit passe en `TRES_BAS` ou `RUPTURE` dans `v_etat_stock`, respectant automatiquement le MOQ et le fournisseur de rang 1 ; validation CSRF par `GESTIONNAIRE`/`SUPER`, génération PDF et envoi e-mail/EDI (`ENVOYEE`). | `ligne_bcf.prix_achat_unitaire` fige par *snapshot* le prix d’achat négocié au moment de l’émission du BCF (exactement comme `RB-06` côté vente client). |
 | **Réception physique & Mise en stock atomique** | Interface de réception partielle ou totale (saisie ou scan code-barres de `quantite_recue`, gestion des écarts/avaries) faisant évoluer le BCF vers `RECEPTIONNEE_PARTIELLE` puis `RECEPTIONNEE_TOTALE` et `CLOTUREE`. | Une procédure `sp_receive_supplier_order` verrouille `ligne_bcf` (`FOR UPDATE`), contrôle `quantite_recue <= quantite_commandee`, puis appelle **`sp_adjust_stock(..., 'DELTA', +qte_recue, 'REASSORT_FOURNISSEUR', ...)`** : le stock est incrémenté atomiquement et **chaque réception est tracée dans `stock_movement_history`**. |
 
-*Tableau 76 — Gestion back-office des fiches fournisseurs et du cycle complet des commandes d’approvisionnement.*
+*Tableau 77 — Gestion back-office des fiches fournisseurs et du cycle complet des commandes d’approvisionnement.*
 
 \newpage
 
@@ -2075,7 +2094,7 @@ HAVING co_achats >= 3
 | **V2 — Filtrage collaboratif & Contenu** | Factorisation matricielle implicite (**ALS / BPR**) sur vues, paniers et achats + **vecteurs sémantiques (*embeddings*)** sur `nom`, `description` et `categorie` (index `pgvector` ou Qdrant) | Résout le **démarrage à froid** (*cold start*) pour un produit neuf jamais commandé ou un nouveau client sans historique | Évaluation hors ligne par validation croisée temporelle (**Precision@10**, **Recall@10**, **NDCG@10**) |
 | **V3 — Re-classement temps réel** | Modèle de classement contextuel (*Learning to Rank* léger) combinant affinité, **marge**, **stock disponible (`RB-18`)** et délai vendeur | Évite de recommander un article en rupture ou à faible qualité de service ; maximise la satisfaction et le panier moyen | **A/B testing** contrôlé ; conformité RGPD (consentement préalable, droit d’opposition au profilage art. 21 RGPD) |
 
-*Tableau 77 — Architecture incrémentale du moteur de recommandation hybride.*
+*Tableau 78 — Architecture incrémentale du moteur de recommandation hybride.*
 
 ### 6.5 Automatisation du back-office vendeur, réapprovisionnement prédictif et logistique
 
@@ -2090,7 +2109,7 @@ Dans un back-office artisanal (et encore en partie dans MiniShop V1), l’admini
 | **Tarification encadrée (*Repricing*)** | Modification manuelle du `prix_ht` | Règles de réajustement automatique face aux offres concurrentes de la *Buy Box*, strictement bornées par un plancher de rentabilité (`prix_ht >= cout_achat * (1 + marge_min)`) | Compétitivité continue sans jamais provoquer de vente à perte (`RB-02` étendue) |
 | **Modération & Anti-fraude** | Contrôle humain a posteriori | Règles automatisées bloquant : hausse brutale de prix suspecte, pic d’annulations vendeur (`> 5 %`), commande atypique (score de risque avant expédition) et alertes RGPD automatisées | Protection des acheteurs et préservation de la réputation de la plateforme |
 
-*Tableau 78 — Catalogue des automatisations du back-office vendeur et de la chaîne logistique.*
+*Tableau 79 — Catalogue des automatisations du back-office vendeur et de la chaîne logistique.*
 
 \newpage
 
@@ -2101,11 +2120,11 @@ L’erreur classique d’une montée en charge consiste à vouloir tout réécri
 | Palier | Horizon / Objectif | Chantiers techniques prioritaires | Prérequis validé avant passage au palier suivant |
 |---|---|---|---|
 | **Palier 1 — Socle Production Mono-Boutique** | Court terme (mise en ligne commerciale réelle) | PSP (Stripe/Paybox) + webhooks idempotents ; SMTP transactionnel ; MFA `SUPER` ; Redis sessions + *rate limiting* ; index `commande(statut)` ; campagne Playwright + *LineServ* | 0 anomalie critique sur recette humaine (`200` scénarios) et test de charge ciblé |
-| **Palier 2 — Automatisation Back-Office, Fournisseurs & Recommandation V1** | Moyen terme (productivité opérationnelle) | File asynchrone (*workers* CLI) pour factures Factur-X, étiquettes transporteur, webhooks de suivi ; tables `fournisseur` / `bon_commande_fournisseur` + réapprovisionnement prédictif (Tableau 76) ; recommandation SQL co-achats (Tableau 77) | Mesure de réduction du temps de traitement commande/réassort et hausse du panier moyen par A/B test |
-| **Palier 3 — Ouverture *Marketplace* Multi-Vendeurs** | Croissance catalogue (*Seller Central*) | Tables `vendeur`, `offre_vendeur`, `sous_commande_vendeur` (Tableau 75) ; portail `/vendeur/*` isolé ; flux séquestre *Split Payment* ; élection de *Buy Box* et import massif | Audits IDOR multi-tenant et réconciliation comptable automatisée à 100 % |
+| **Palier 2 — Automatisation Back-Office, Fournisseurs & Recommandation V1** | Moyen terme (productivité opérationnelle) | File asynchrone (*workers* CLI) pour factures Factur-X, étiquettes transporteur, webhooks de suivi ; tables `fournisseur` / `bon_commande_fournisseur` + réapprovisionnement prédictif (Tableau 77) ; recommandation SQL co-achats (Tableau 78) | Mesure de réduction du temps de traitement commande/réassort et hausse du panier moyen par A/B test |
+| **Palier 3 — Ouverture *Marketplace* Multi-Vendeurs** | Croissance catalogue (*Seller Central*) | Tables `vendeur`, `offre_vendeur`, `sous_commande_vendeur` (Tableau 76) ; portail `/vendeur/*` isolé ; flux séquestre *Split Payment* ; élection de *Buy Box* et import massif | Audits IDOR multi-tenant et réconciliation comptable automatisée à 100 % |
 | **Palier 4 — Recherche Sémantique, IA & Haute Disponibilité** | Grande échelle | Meilisearch/OpenSearch ; recommandation hybride (ALS + *embeddings*) ; *Repricing* borné ; réplicas MariaDB en lecture ; architecture multi-nœuds avec traces OpenTelemetry | SLA `>= 99,9 %`, latence `p95 < 100 ms` sous charge `100x` supérieure à `ENF-02` |
 
-*Tableau 79 — Plan de migration incrémental en 4 paliers vers une plateforme e-commerce professionnelle.*
+*Tableau 80 — Plan de migration incrémental en 4 paliers vers une plateforme e-commerce professionnelle.*
 
 Cette approche progressive préserve intégralement les garanties transactionnelles prouvées dans les chapitres précédents — verrouillage des stocks sans survente, immuabilité financière des commandes et traçabilité d’audit — tout en levant méthodiquement chaque limite du prototype académique.
 
@@ -2113,7 +2132,7 @@ Cette approche progressive préserve intégralement les garanties transactionnel
 
 En synthétisant l’ensemble des chapitres précédents — les **7 familles de bases** (§ `1.4.5`), les **12 optimisations MariaDB** (§ `3.7`), l’architecture **stateless/queues/domaines de panne/proxys** (§ `4.1.4`–`4.1.7`), la **répartition L4/L7** (§ `4.4.3`–`4.4.4`), la **bordure CDN/WAF/anti-DDoS** (§ `5.1.3`) et le **benchmark VM vs Conteneurs/Micro-VM** (§ `5.1.4`) — il apparaît qu’**il n’existe pas une infrastructure idéale unique, mais une architecture adaptée à chaque stade de popularité**. Sur-dimensionner dès le premier jour (ex. Kubernetes + sharding pour `20` clients) gaspille budget et complexité ; sous-dimensionner lors d’un pic viral provoque saturation et coupure.
 
-Le `Tableau 80` établit la **trajectoire complète en six échelles de production**, de la machine locale du développeur jusqu’à une *Marketplace* à trafic massif :
+Le `Tableau 81` établit la **trajectoire complète en six échelles de production**, de la machine locale du développeur jusqu’à une *Marketplace* à trafic massif :
 
 1. **Échelle 0 — Développement local (run.sh / conteneurs poste dev) :** le code tourne sur le portable du développeur (`php -S 127.0.0.1:8000` + `scripts/dev-router.php` ou `Podman`/`Docker`). Dès que le poste s’éteint, le site disparaît : cette échelle sert uniquement au développement, aux tests unitaires/Playwright et aux démonstrations hors ligne (`JsonStore`).
 2. **Échelle 1 — Serveur unique tout-en-un (ENF-03, lancement et trafic local, <= 40–60 req. parallèles) :** le site quitte le portable pour **une VM Type 1 KVM dédiée** (ou *LineServ*, `2`–`4 vCPU`, `4 Go RAM`) allumée `24/7` exécutant `Apache 2.4` (`mpm_event` + `PHP-FPM` + `OPcache`), `MariaDB 11.8` et le `cron` d’archivage (`--nettoyage`). Simple et suffisant pour démarrer (`p95 = 6,0 ms` mesuré), mais **Apache/PHP et MariaDB se disputent la même RAM/CPU** et partagent un **domaine de panne unique** (`~99,7 %` en série, § `4.4.4`).
@@ -2133,9 +2152,9 @@ Le `Tableau 80` établit la **trajectoire complète en six échelles de producti
 | **4. Trafic viral** (`5k`–`50k+` actifs) | **Cluster multi-AZ** (K8s `Ingress` + Contrôleur ou HAProxy/VRRP × 2+) | **Anti-DDoS → CDN → WAF → DNS multi-IP → ≥ 2 LB L7** (origine verrouillée) | **ProxySQL/MaxScale** + `1 Primary` écritures + `N Read Replicas` + **Prometheus** | `99,9 %`–`99,99 %` (`53 min/an` max) ; écriture mono-Primary |
 | **5. Marketplace massive** (`50k+` actifs, Chap. 6) | Multi-région + **Micro-VM (Firecracker/Kata)** pour code vendeurs | Bordure globale + **Passerelle API (/v1/*)** + *Outbox* / Kafka | **Partitionnement + Sharding** + **ClickHouse** + **Qdrant** + **Neo4j** | Complexité opérationnelle maximale ; équipe SRE/DevOps requise |
 
-*Tableau 80 — Synthèse des 6 échelles de production idéales pour MiniShop selon la popularité et les besoins de scaling.*
+*Tableau 81 — Synthèse des 6 échelles de production idéales pour MiniShop selon la popularité et les besoins de scaling.*
 
-**Critère d’ingénierie : quand passer d’une échelle à la suivante ?** (`Tableau 81`)
+**Critère d’ingénierie : quand passer d’une échelle à la suivante ?** (`Tableau 82`)
 Le passage d’un palier au suivant ne doit jamais se faire « à l’intuition », mais uniquement sur franchissement de signaux mesurables observés en supervision (évitant la sur-ingénierie précoce autant que la panne sous charge) :
 
 | Transition d’échelle | Signal technique mesuré sur MiniShop (Seuil d’alerte) | Action architecturale immédiate (sans refonte globale) |
@@ -2145,7 +2164,7 @@ Le passage d’un palier au suivant ne doit jamais se faire « à l’intuition 
 | **Échelle 3 → 4** (1 LB / 1 BDD → HA + Bordure + Replicas) | `p95` lecture catalogue dégradé (`> 100 ms`), bots/attaques `/connexion`, objectif `>= 99,9 %` | Activer **Anti-DDoS → CDN → WAF** (origine verrouillée § `5.1.3`), doubler le LB (VRRP/DNS) et ajouter `Read Replicas` |
 | **Échelle 4 → 5** (Replicas → Sharding + Polyglotte) | Saturation écritures `Primary` (`FOR UPDATE` > cap SKU/s), catalogue > millions, vendeurs tiers | Partitionner `commande` par année, introduire *sharding*, **ClickHouse/Qdrant/Neo4j** (§ `1.4.5`) et **Micro-VM** |
 
-*Tableau 81 — Matrice des signaux mesurables déclenchant le passage d’une échelle de production à la suivante.*
+*Tableau 82 — Matrice des signaux mesurables déclenchant le passage d’une échelle de production à la suivante.*
 
 \newpage
 
