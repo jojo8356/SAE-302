@@ -85,6 +85,12 @@ Les campagnes automatisées exécutées sur machine virtuelle Debian 13 (PHP `8.
   - 5.2 Politique de conservation RGPD, purge CLI et archivage chiffré libsodium
   - 5.3 Analyse des écarts vis-à-vis du cahier des charges initial et bilan réflexif
   - 5.4 Gouvernance GitLab, `README.md`, organisation de soutenance et grille de conformité au barème
+- **Chapitre 6 — Feuille de route d’industrialisation : vers une *marketplace* professionnelle, intelligente et automatisée (modèle « Amazon »)**
+  - 6.1 Passage à l’échelle industrielle : paiement PSP, cache distribué, recherche et observabilité
+  - 6.2 Évolution du modèle 3FN vers une *Marketplace* multi-vendeurs (*Seller Central* et *Buy Box*)
+  - 6.3 Moteur de recommandation hybride (analyse du panier, filtrage collaboratif et sémantique)
+  - 6.4 Automatisation du back-office vendeur, réapprovisionnement prédictif et logistique
+  - 6.5 Trajectoire de migration incrémentale en 4 paliers (*Strangler Fig Pattern*)
 - **Conclusion générale et perspectives**
 - **Bibliographie et webographie**
 - **Annexes**
@@ -138,6 +144,11 @@ Les campagnes automatisées exécutées sur machine virtuelle Debian 13 (PHP `8.
 - **Tableau 22** — Mise en perspective des mesures VM face aux ordres de grandeur d’autres piles techniques
 - **Tableau 23** — Politique de conservation RGPD et outils d’exploitation CLI (`docs/18`)
 - **Tableau 24** — Contrôle de conformité face aux livrables et pénalités du barème officiel
+- **Tableau 25** — Briques d’industrialisation requises pour une plateforme e-commerce de production
+- **Tableau 26** — Extension du modèle 3FN vers une *Marketplace* multi-vendeurs
+- **Tableau 27** — Architecture du moteur de recommandation hybride (V1 SQL à V3 Temps réel)
+- **Tableau 28** — Automatisations back-office vendeur, logistique et détection d’anomalies
+- **Tableau 29** — Plan de migration incrémental en 4 paliers (de MiniShop V1 à la *Marketplace*)
 
 \newpage
 
@@ -201,6 +212,7 @@ Afin de répondre de manière exhaustive et vérifiable à **toutes les question
 - Le **Chapitre 3** traite intégralement l’analyse et la conception de la base de données : MCD à 9 entités et cardinalités justifiées, MLD et vues, **démonstration complète des 5 points de normalisation (DF, 1FN/2FN/3FN, PK/FK, redondances)**, scripts DDL/données, **18 procédures stockées + réponse détaillée aux 5 axes de la question pédagogique**, et **16 déclencheurs** couvrant *Stock* et *Historique*.
 - Le **Chapitre 4** expose la réalisation applicative, l’ergonomie et la direction artistique (`DA.md`), la couverture des exigences non fonctionnelles (`ENF-01` à `ENF-22`), les campagnes expérimentales sur VM Debian 13 (concurrence, SQL, E2E, `ENF-01` à `6,0 ms p95`) et l’analyse critique des limites.
 - Le **Chapitre 5** présente l’exploitation (*Build → Run*), la politique de conservation RGPD, l’analyse critique des écarts vis-à-vis du CDC initial, la gouvernance GitLab, la préparation de soutenance et la grille complète de conformité au barème officiel.
+- Le **Chapitre 6** projette enfin l’architecture MiniShop vers un système industriel professionnel multi-vendeurs de type *marketplace* (« Amazon »), en détaillant le passage à l’échelle, l’extension 3FN multi-vendeurs, un moteur de recommandation hybride et l’automatisation avancée des tâches vendeurs et logistiques.
 
 \newpage
 
@@ -877,6 +889,137 @@ Le dépôt comporte un `README.md` complet (présentation, architecture, install
 | **v. Contribution régulière GitLab & README** | **10** | Historique commits binôme, `README.md`, accès `Reporter` enseignant | **Prévu :** `README.md` complet, historique Git tracé, charte `docs/20` (vérification finale sur le dépôt GitLab IUT avant soutenance). |
 
 *Tableau 24 — Contrôle complet de conformité au barème officiel et d’absence de pénalité.*
+
+\newpage
+
+## Chapitre 6 — Feuille de route d’industrialisation : vers une *marketplace* professionnelle, intelligente et automatisée (modèle « Amazon »)
+
+Si MiniShop répond pleinement aux exigences académiques et transactionnelles d’une boutique mono-enseigne (`200` produits, `1 000` commandes/an selon `ENF-02`), l’ambition d’un système e-commerce professionnel à grande échelle — inspiré des standards industriels d’une *marketplace* moderne de type **Amazon** — requiert des évolutions structurelles maîtrisées. Plutôt que de rejeter l’architecture existante, ce chapitre démontre comment le socle conçu (`StoreInterface`, normalisation 3FN, verrous InnoDB, séparation MVC et audit immuable) constitue une base saine sur laquelle greffer quatre transformations majeures : l’industrialisation de l’infrastructure, l’ouverture multi-vendeurs, la recommandation personnalisée et l’automatisation complète du back-office vendeur.
+
+### 6.1 Passage à l’échelle industrielle : paiement PSP, cache distribué, recherche et observabilité
+
+La première étape consiste à transformer le prototype académique mono-serveur en une plateforme de production hautement disponible, conforme aux standards bancaires et capable d’absorber des pics de trafic (soldes, *Black Friday*) sans compromettre la cohérence des stocks :
+
+| Domaine critique | État actuel dans MiniShop (V1) | Architecture cible de production professionnelle | Bénéfice mesurable & sécurité |
+|---|---|---|---|
+| **Paiement & Conformité PCI-DSS** | Simulation logique lors de `sp_confirm_order` (aucune donnée CB stockée, `[11/11]`) | Intégration d’un PSP (Stripe / Paybox / Adyen) par redirection ou *Elements* hébergés (SAQ A), clé d’idempotence (`idempotency_key`), webhooks signés HMAC et états `EN_ATTENTE_PAIEMENT -> PAYEE -> REMBOURSEE` | Zéro transit de numéro de carte sur les serveurs applicatifs ; aucune double facturation en cas de réessai réseau |
+| **Sessions & Limitation de débit** | Sessions PHP sur disque local ; pas de *rate limiting* sur `/connexion` | Externalisation des sessions et verrous applicatifs dans **Redis** (cluster), limitation de débit (*sliding window* IP + compte) sur `/connexion`, `/inscription`, `/api/*` | Permet la scalabilité horizontale sur plusieurs nœuds PHP-FPM derrière un répartiteur de charge |
+| **Moteur de recherche & Cache** | `sp_search_products` (index `FULLTEXT` / `LIKE` MariaDB, `20,6 ms` p95) | Indexation asynchrone dans **Meilisearch** ou **OpenSearch/Elasticsearch** (tolérance aux fautes de frappe, facettes dynamiques, synonymes) + cache Redis des pages catalogue chaudes | Maintien d’une latence `< 30 ms` même au-delà du million de références catalogue |
+| **Base de données & Scalabilité** | Instance unique MariaDB `11.8.6` | Topologie **Primary + Read Replicas** (écritures `sp_*` sur le primaire, lectures `v_catalogue` et analytique sur les réplicas), index `commande(statut)`, sauvegardes continues PITR (*Point-In-Time Recovery*) | Séparation du trafic de consultation (90 %+) et du trafic transactionnel critique |
+| **Sécurité avancée & Observabilité** | Bcrypt, CSRF, PDO, journaux fichiers simples | MFA TOTP obligatoire pour `SUPER` (OWASP ASVS V4.3.1), secrets en coffre-fort (Vault/KMS), logs structurés JSON avec `X-Request-Id`, traces **OpenTelemetry**, alertes Prometheus/Grafana | Détection proactive des anomalies, audit légal corrélé de bout en bout |
+
+*Tableau 25 — Briques d’industrialisation requises pour transformer MiniShop en système de production.*
+
+### 6.2 Évolution du modèle 3FN vers une *Marketplace* multi-vendeurs (*Seller Central* et *Buy Box*)
+
+Le modèle actuel suppose un vendeur unique (l’administrateur de la boutique). Pour évoluer vers une place de marché de type *Amazon Seller Central*, il convient d’appliquer une distinction fondamentale : **dissocier la fiche produit canonique** (équivalent de l’*ASIN*, identité technique unique du produit évitant les doublons dans le catalogue) **des offres commerciales portées par les vendeurs tiers** (prix, stock, délai d’expédition, état neuf/reconditionné).
+
+```sql
+-- Extension incrémentale 3FN du schéma MiniShop vers le multi-vendeurs :
+CREATE TABLE vendeur (
+  id_vendeur       INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  raison_sociale   VARCHAR(150) NOT NULL,
+  siret            CHAR(14)     NOT NULL UNIQUE,
+  statut_kyb       ENUM('EN_ATTENTE','VERIFIE','SUSPENDU') NOT NULL DEFAULT 'EN_ATTENTE',
+  taux_commission  DECIMAL(5,2) NOT NULL DEFAULT 12.00,
+  compte_psp_id    VARCHAR(120) NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE offre_vendeur (
+  id_offre         INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  id_produit       INT UNSIGNED NOT NULL,
+  id_vendeur       INT UNSIGNED NOT NULL,
+  prix_ht          DECIMAL(10,2) NOT NULL CHECK (prix_ht > 0),
+  stock            INT NOT NULL DEFAULT 0 CHECK (stock >= 0),
+  delai_exp_heures SMALLINT UNSIGNED NOT NULL DEFAULT 24,
+  est_buy_box      TINYINT(1) NOT NULL DEFAULT 0,
+  FOREIGN KEY (id_produit) REFERENCES produit(id_produit) ON DELETE RESTRICT,
+  FOREIGN KEY (id_vendeur) REFERENCES vendeur(id_vendeur) ON DELETE RESTRICT
+) ENGINE=InnoDB;
+```
+
+Le Tableau 26 synthétise l’impact architectural de cette extension sur nos règles existantes :
+
+| Composant MiniShop | Évolution vers le modèle *Marketplace* multi-vendeurs | Préservation des garanties existantes |
+|---|---|---|
+| **Catalogue & *Buy Box*** | Un algorithme pondéré (`prix_ttc`, `delai_exp_heures`, taux de retour, note vendeur) élit l’offre par défaut (`est_buy_box = 1`) sur la fiche produit, tout en listant les autres vendeurs. | La table `produit` reste la référence canonique unique du catalogue. |
+| **Panier & Ventilation (`Split Order`)** | Si un client achète simultanément deux articles de deux vendeurs distincts, la commande globale (`COMMANDE`) est ventilée en **sous-commandes** (`SOUS_COMMANDE_VENDEUR`), chacune ayant son propre suivi logistique. | La contrainte d’atomicité (`sp_create_order_from_basket`) verrouille par `FOR UPDATE` chaque `offre_vendeur` impliquée ; aucun passage sous zéro n’est possible. |
+| **Flux financier & Séquestre** | Intégration de paiements scindés (*Stripe Connect* / *Adyen for Platforms*) : encaissement sur compte de cantonnement, prélèvement automatique de la commission (`taux_commission`) et virement au vendeur à confirmation de livraison (`LIVREE`). | Aucune détention illicite de fonds pour compte de tiers (conformité DSP2). |
+| **Cloisonnement RBAC & Anti-IDOR** | Ajout d’un troisième espace dédié `/vendeur/*` protégé par `Auth::exigeVendeur()` et filtrage systématique `WHERE id_vendeur = ?` sur produits, stocks et sous-commandes. | Généralisation directe de la garde IDOR actuelle (`SEC-08`, `ENF-12`). |
+
+*Tableau 26 — Extension du modèle relationnel 3FN et de la sécurité vers une marketplace multi-vendeurs.*
+
+\newpage
+
+### 6.3 Moteur de recommandation hybride (analyse du panier, filtrage collaboratif et sémantique)
+
+Un levier décisif de croissance d’Amazon repose sur la personnalisation (« *Les clients ayant acheté cet article ont également acheté…* »). Notre modèle normalisé `ligne_commande` permet déjà de déployer une **V1 immédiatement opérationnelle** sans infrastructure d’apprentissage automatique complexe, puis d’évoluer par paliers vers un moteur hybride complet :
+
+#### Phase 1 — Analyse du panier de la ménagère (*Market Basket Analysis*) directement sur SQL
+À partir des commandes validées (`statut IN ('EN_PREPARATION', 'EXPEDIEE', 'LIVREE')`), on calcule périodiquement (tâche cron nocturne) les paires de produits co-achetés en mesurant trois indicateurs statistiques classiques :
+- **Support** `P(A ∩ B)` : fréquence conjointe des deux articles dans l’ensemble des commandes ;
+- **Confiance** `P(B | A) = P(A ∩ B) / P(A)` : probabilité d’acheter `B` sachant que `A` est dans le panier ;
+- **Lift** `P(B | A) / P(B)` : force réelle de l’association (un *Lift* `> 1` élimine les best-sellers évidents achetés indépendamment).
+
+```sql
+-- Calcul nocturne matérialisé dans recommandation_produit (zéro coût sur le checkout) :
+SELECT l1.id_produit AS produit_source,
+       l2.id_produit AS produit_recommande,
+       COUNT(DISTINCT l1.id_commande) AS co_achats
+  FROM ligne_commande l1
+  JOIN ligne_commande l2
+    ON l1.id_commande = l2.id_commande
+   AND l1.id_produit <> l2.id_produit
+  JOIN commande c ON c.id_commande = l1.id_commande
+  JOIN produit  p ON p.id_produit  = l2.id_produit
+ WHERE c.statut IN ('EN_PREPARATION', 'EXPEDIEE', 'LIVREE')
+   AND p.visible = 1 AND p.stock > 0
+ GROUP BY l1.id_produit, l2.id_produit
+HAVING co_achats >= 3
+ ORDER BY l1.id_produit, co_achats DESC;
+```
+
+#### Phases 2 & 3 — Filtrage collaboratif, *embeddings* sémantiques et évaluation rigoureuse
+
+| Palier moteur | Algorithmes & Données d’entrée | Problème résolu | Métriques d’évaluation & Garde-fous RGPD |
+|---|---|---|---|
+| **V1 — Co-occurrence SQL** | Règles d’association (`Support`, `Confiance`, `Lift`) sur `ligne_commande` | Recommandation produit-à-produit (« Produits complémentaires ») servie en `< 2 ms` depuis table matérialisée ou Redis | Couverture catalogue, taux de clic (CTR) ; aucune donnée personnelle requise (statistiques agrégées) |
+| **V2 — Filtrage collaboratif & Contenu** | Factorisation matricielle implicite (**ALS / BPR**) sur vues, paniers et achats + **vecteurs sémantiques (*embeddings*)** sur `nom`, `description` et `categorie` (index `pgvector` ou Qdrant) | Résout le **démarrage à froid** (*cold start*) pour un produit neuf jamais commandé ou un nouveau client sans historique | Évaluation hors ligne par validation croisée temporelle (**Precision@10**, **Recall@10**, **NDCG@10**) |
+| **V3 — Re-classement temps réel** | Modèle de classement contextuel (*Learning to Rank* léger) combinant affinité, **marge**, **stock disponible (`RB-18`)** et délai vendeur | Évite de recommander un article en rupture ou à faible qualité de service ; maximise la satisfaction et le panier moyen | **A/B testing** contrôlé ; conformité RGPD (consentement préalable, droit d’opposition au profilage art. 21 RGPD) |
+
+*Tableau 27 — Architecture incrémentale du moteur de recommandation hybride.*
+
+### 6.4 Automatisation du back-office vendeur, réapprovisionnement prédictif et logistique
+
+Dans un back-office artisanal (et encore en partie dans MiniShop V1), l’administrateur doit surveiller manuellement `v_etat_stock`, saisir les ajustements `sp_adjust_stock` et faire évoluer manuellement les statuts `EN_PREPARATION -> EXPEDIEE -> LIVREE`. Pour passer à une exploitation professionnelle fluide pour des dizaines ou centaines de vendeurs, les opérations répétitives doivent être automatisées autour d’une **file de tâches asynchrones** (*Message Queue* : Redis Streams ou RabbitMQ + *workers* PHP CLI) :
+
+| Processus back-office | Fonctionnement manuel actuel (V1) | Automatisation professionnelle cible | Impact opérationnel |
+|---|---|---|---|
+| **Réapprovisionnement prédictif** | Seuil statique `seuil_alerte = 3` par produit ; réassort saisi à la main (`DELTA`) | Calcul automatique du point de commande dynamique (`S_cmd = D_moy_30j × L_fournisseur + Z × σ_D × √L`) ; génération automatique de bons de commande fournisseur en brouillon | Réduit simultanément les ruptures de stock (`stock = 0`) et le sur-stockage immobilisant la trésorerie |
+| **Import catalogue & Média** | Création/édition unitaire via formulaire `/admin/produits` | Import asynchrone massif (**CSV / XML / API REST vendeur**) avec validation atomique des contraintes `RB-02`/`RB-07`, redimensionnement automatique d’images (`WebP/AVIF`) et détection de doublons | Permet d’intégrer plusieurs milliers de références sans bloquer le serveur Web |
+| **Facturation & Liasses PDF** | Récapitulatif HTML consultable en ligne | Génération asynchrone à la validation (`PAYEE`) d’une facture PDF horodatée et scellée au format **Factur-X** (hybride PDF/A-3 + XML structuré) archivée en stockage objet S3 | Conformité comptable et fiscale automatique dès la commande validée |
+| **Expédition & Suivi transporteur** | Transition manuelle `EN_PREPARATION -> EXPEDIEE -> LIVREE` par l’admin | Appel API transporteur (Colissimo, Chronopost, Mondial Relay) générant l’étiquette PDF et le n° de suivi ; **webhooks transporteur** déclenchant automatiquement `sp_update_order_status` | Zéro ressaisie manuelle ; traçabilité client temps réel conservée dans `order_status_history` |
+| **Tarification encadrée (*Repricing*)** | Modification manuelle du `prix_ht` | Règles de réajustement automatique face aux offres concurrentes de la *Buy Box*, strictement bornées par un plancher de rentabilité (`prix_ht >= cout_achat * (1 + marge_min)`) | Compétitivité continue sans jamais provoquer de vente à perte (`RB-02` étendue) |
+| **Modération & Anti-fraude** | Contrôle humain a posteriori | Règles automatisées bloquant : hausse brutale de prix suspecte, pic d’annulations vendeur (`> 5 %`), commande atypique (score de risque avant expédition) et alertes RGPD automatisées | Protection des acheteurs et préservation de la réputation de la plateforme |
+
+*Tableau 28 — Catalogue des automatisations du back-office vendeur et de la chaîne logistique.*
+
+\newpage
+
+### 6.5 Trajectoire de migration incrémentale en 4 paliers (*Strangler Fig Pattern*)
+
+L’erreur classique d’une montée en charge consiste à vouloir tout réécrire d’un bloc (*Big Bang*). Grâce au contrat `StoreInterface`, à la centralisation des règles métier en dépôts PHP et à la séparation nette des couches MVC, l’évolution vers une plateforme de type Amazon doit suivre une **trajectoire incrémentale en 4 paliers** où chaque phase reste pleinement déployable et testable :
+
+| Palier | Horizon / Objectif | Chantiers techniques prioritaires | Prérequis validé avant passage au palier suivant |
+|---|---|---|---|
+| **Palier 1 — Socle Production Mono-Boutique** | Court terme (mise en ligne commerciale réelle) | PSP (Stripe/Paybox) + webhooks idempotents ; SMTP transactionnel ; MFA `SUPER` ; Redis sessions + *rate limiting* ; index `commande(statut)` ; campagne Playwright + *LineServ* | 0 anomalie critique sur recette humaine (`200` scénarios) et test de charge ciblé |
+| **Palier 2 — Automatisation Back-Office & Recommandation V1** | Moyen terme (productivité opérationnelle) | File asynchrone (*workers* CLI) pour factures Factur-X, étiquettes transporteur, webhooks de suivi et réapprovisionnement prédictif ; recommandation SQL co-achats (Tableau 27) | Mesure de réduction du temps de traitement commande et hausse du panier moyen par A/B test |
+| **Palier 3 — Ouverture *Marketplace* Multi-Vendeurs** | Croissance catalogue (*Seller Central*) | Tables `vendeur`, `offre_vendeur`, `sous_commande_vendeur` (Tableau 26) ; portail `/vendeur/*` isolé ; flux séquestre *Split Payment* ; élection de *Buy Box* et import massif | Audits IDOR multi-tenant et réconciliation comptable automatisée à 100 % |
+| **Palier 4 — Recherche Sémantique, IA & Haute Disponibilité** | Grande échelle | Meilisearch/OpenSearch ; recommandation hybride (ALS + *embeddings*) ; *Repricing* borné ; réplicas MariaDB en lecture ; architecture multi-nœuds avec traces OpenTelemetry | SLA `>= 99,9 %`, latence `p95 < 100 ms` sous charge `100x` supérieure à `ENF-02` |
+
+*Tableau 29 — Plan de migration incrémental en 4 paliers vers une plateforme e-commerce professionnelle.*
+
+Cette approche progressive préserve intégralement les garanties transactionnelles prouvées dans les chapitres précédents — verrouillage des stocks sans survente, immuabilité financière des commandes et traçabilité d’audit — tout en levant méthodiquement chaque limite du prototype académique.
 
 \newpage
 

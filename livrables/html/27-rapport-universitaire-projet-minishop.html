@@ -275,6 +275,14 @@ footer.doc p { text-align: left; margin: 0; }
 <li><a href="#54-gouvernance-gitlab-readmemd-soutenance-15-min-et-grille-de-conformite-au-bareme">5.4 Gouvernance GitLab, README.md, soutenance (15 min) et grille de conformité au barème</a></li>
 </ul>
 </li>
+<li><a href="#chapitre-6-feuille-de-route-dindustrialisation-vers-une-marketplace-professionnelle-intelligente-et-automatisee-modele-amazon">Chapitre 6 — Feuille de route d’industrialisation : vers une marketplace professionnelle, intelligente et automatisée (modèle « Amazon »)</a><ul>
+<li><a href="#61-passage-a-lechelle-industrielle-paiement-psp-cache-distribue-recherche-et-observabilite">6.1 Passage à l’échelle industrielle : paiement PSP, cache distribué, recherche et observabilité</a></li>
+<li><a href="#62-evolution-du-modele-3fn-vers-une-marketplace-multi-vendeurs-seller-central-et-buy-box">6.2 Évolution du modèle 3FN vers une Marketplace multi-vendeurs (Seller Central et Buy Box)</a></li>
+<li><a href="#63-moteur-de-recommandation-hybride-analyse-du-panier-filtrage-collaboratif-et-semantique">6.3 Moteur de recommandation hybride (analyse du panier, filtrage collaboratif et sémantique)</a></li>
+<li><a href="#64-automatisation-du-back-office-vendeur-reapprovisionnement-predictif-et-logistique">6.4 Automatisation du back-office vendeur, réapprovisionnement prédictif et logistique</a></li>
+<li><a href="#65-trajectoire-de-migration-incrementale-en-4-paliers-strangler-fig-pattern">6.5 Trajectoire de migration incrémentale en 4 paliers (Strangler Fig Pattern)</a></li>
+</ul>
+</li>
 <li><a href="#conclusion-generale-et-perspectives">Conclusion générale et perspectives</a></li>
 <li><a href="#bibliographie-et-webographie">Bibliographie et webographie</a><ul>
 <li><a href="#textes-de-reference-academique-et-cahier-des-charges">Textes de référence académique et cahier des charges</a></li>
@@ -397,6 +405,12 @@ footer.doc p { text-align: left; margin: 0; }
 <li>5.2 Politique de conservation RGPD, purge CLI et archivage chiffré libsodium</li>
 <li>5.3 Analyse des écarts vis-à-vis du cahier des charges initial et bilan réflexif</li>
 <li>5.4 Gouvernance GitLab, <code>README.md</code>, organisation de soutenance et grille de conformité au barème</li>
+<li><strong>Chapitre 6 — Feuille de route d’industrialisation : vers une <em>marketplace</em> professionnelle, intelligente et automatisée (modèle « Amazon »)</strong></li>
+<li>6.1 Passage à l’échelle industrielle : paiement PSP, cache distribué, recherche et observabilité</li>
+<li>6.2 Évolution du modèle 3FN vers une <em>Marketplace</em> multi-vendeurs (<em>Seller Central</em> et <em>Buy Box</em>)</li>
+<li>6.3 Moteur de recommandation hybride (analyse du panier, filtrage collaboratif et sémantique)</li>
+<li>6.4 Automatisation du back-office vendeur, réapprovisionnement prédictif et logistique</li>
+<li>6.5 Trajectoire de migration incrémentale en 4 paliers (<em>Strangler Fig Pattern</em>)</li>
 <li><strong>Conclusion générale et perspectives</strong></li>
 <li><strong>Bibliographie et webographie</strong></li>
 <li><strong>Annexes</strong></li>
@@ -448,6 +462,11 @@ footer.doc p { text-align: left; margin: 0; }
 <li><strong>Tableau 22</strong> — Mise en perspective des mesures VM face aux ordres de grandeur d’autres piles techniques</li>
 <li><strong>Tableau 23</strong> — Politique de conservation RGPD et outils d’exploitation CLI (<code>docs/18</code>)</li>
 <li><strong>Tableau 24</strong> — Contrôle de conformité face aux livrables et pénalités du barème officiel</li>
+<li><strong>Tableau 25</strong> — Briques d’industrialisation requises pour une plateforme e-commerce de production</li>
+<li><strong>Tableau 26</strong> — Extension du modèle 3FN vers une <em>Marketplace</em> multi-vendeurs</li>
+<li><strong>Tableau 27</strong> — Architecture du moteur de recommandation hybride (V1 SQL à V3 Temps réel)</li>
+<li><strong>Tableau 28</strong> — Automatisations back-office vendeur, logistique et détection d’anomalies</li>
+<li><strong>Tableau 29</strong> — Plan de migration incrémental en 4 paliers (de MiniShop V1 à la <em>Marketplace</em>)</li>
 </ul>
 <div style="break-before: page;"></div>
 <h2 id="glossaire-des-sigles-et-acronymes">Glossaire des sigles et acronymes<a class="headerlink" href="#glossaire-des-sigles-et-acronymes" title="Permanent link"></a></h2>
@@ -575,7 +594,8 @@ footer.doc p { text-align: left; margin: 0; }
 - Le <strong>Chapitre 2</strong> développe la modélisation UML 2.5 (cas d’utilisation dont <strong>3 descriptions textuelles détaillées hors « Passer une commande »</strong>, diagramme d’activité, diagramme de classes justifié, <strong>les 4 diagrammes de séquences exigés</strong>), les <strong>5 réponses de sécurité</strong> illustrées par des extraits du code source, ainsi que l’architecture 3 couches MVC.
 - Le <strong>Chapitre 3</strong> traite intégralement l’analyse et la conception de la base de données : MCD à 9 entités et cardinalités justifiées, MLD et vues, <strong>démonstration complète des 5 points de normalisation (DF, 1FN/2FN/3FN, PK/FK, redondances)</strong>, scripts DDL/données, <strong>18 procédures stockées + réponse détaillée aux 5 axes de la question pédagogique</strong>, et <strong>16 déclencheurs</strong> couvrant <em>Stock</em> et <em>Historique</em>.
 - Le <strong>Chapitre 4</strong> expose la réalisation applicative, l’ergonomie et la direction artistique (<code>DA.md</code>), la couverture des exigences non fonctionnelles (<code>ENF-01</code> à <code>ENF-22</code>), les campagnes expérimentales sur VM Debian 13 (concurrence, SQL, E2E, <code>ENF-01</code> à <code>6,0 ms p95</code>) et l’analyse critique des limites.
-- Le <strong>Chapitre 5</strong> présente l’exploitation (<em>Build → Run</em>), la politique de conservation RGPD, l’analyse critique des écarts vis-à-vis du CDC initial, la gouvernance GitLab, la préparation de soutenance et la grille complète de conformité au barème officiel.</p>
+- Le <strong>Chapitre 5</strong> présente l’exploitation (<em>Build → Run</em>), la politique de conservation RGPD, l’analyse critique des écarts vis-à-vis du CDC initial, la gouvernance GitLab, la préparation de soutenance et la grille complète de conformité au barème officiel.
+- Le <strong>Chapitre 6</strong> projette enfin l’architecture MiniShop vers un système industriel professionnel multi-vendeurs de type <em>marketplace</em> (« Amazon »), en détaillant le passage à l’échelle, l’extension 3FN multi-vendeurs, un moteur de recommandation hybride et l’automatisation avancée des tâches vendeurs et logistiques.</p>
 <div style="break-before: page;"></div>
 <h2 id="chapitre-1-specification-du-systeme-contexte-acteurs-fonctionnalites-regles-metier-et-etat-de-lart">Chapitre 1 — Spécification du système : contexte, acteurs, fonctionnalités, règles métier et état de l’art<a class="headerlink" href="#chapitre-1-specification-du-systeme-contexte-acteurs-fonctionnalites-regles-metier-et-etat-de-lart" title="Permanent link"></a></h2>
 <h3 id="11-presentation-du-projet-objectifs-et-les-11-competences-mobilisees">1.1 Présentation du projet, objectifs et les 11 compétences mobilisées<a class="headerlink" href="#11-presentation-du-projet-objectifs-et-les-11-competences-mobilisees" title="Permanent link"></a></h3>
@@ -2092,6 +2112,259 @@ END;
 </tbody>
 </table>
 <p><em>Tableau 24 — Contrôle complet de conformité au barème officiel et d’absence de pénalité.</em></p>
+<div style="break-before: page;"></div>
+<h2 id="chapitre-6-feuille-de-route-dindustrialisation-vers-une-marketplace-professionnelle-intelligente-et-automatisee-modele-amazon">Chapitre 6 — Feuille de route d’industrialisation : vers une <em>marketplace</em> professionnelle, intelligente et automatisée (modèle « Amazon »)<a class="headerlink" href="#chapitre-6-feuille-de-route-dindustrialisation-vers-une-marketplace-professionnelle-intelligente-et-automatisee-modele-amazon" title="Permanent link"></a></h2>
+<p>Si MiniShop répond pleinement aux exigences académiques et transactionnelles d’une boutique mono-enseigne (<code>200</code> produits, <code>1 000</code> commandes/an selon <code>ENF-02</code>), l’ambition d’un système e-commerce professionnel à grande échelle — inspiré des standards industriels d’une <em>marketplace</em> moderne de type <strong>Amazon</strong> — requiert des évolutions structurelles maîtrisées. Plutôt que de rejeter l’architecture existante, ce chapitre démontre comment le socle conçu (<code>StoreInterface</code>, normalisation 3FN, verrous InnoDB, séparation MVC et audit immuable) constitue une base saine sur laquelle greffer quatre transformations majeures : l’industrialisation de l’infrastructure, l’ouverture multi-vendeurs, la recommandation personnalisée et l’automatisation complète du back-office vendeur.</p>
+<h3 id="61-passage-a-lechelle-industrielle-paiement-psp-cache-distribue-recherche-et-observabilite">6.1 Passage à l’échelle industrielle : paiement PSP, cache distribué, recherche et observabilité<a class="headerlink" href="#61-passage-a-lechelle-industrielle-paiement-psp-cache-distribue-recherche-et-observabilite" title="Permanent link"></a></h3>
+<p>La première étape consiste à transformer le prototype académique mono-serveur en une plateforme de production hautement disponible, conforme aux standards bancaires et capable d’absorber des pics de trafic (soldes, <em>Black Friday</em>) sans compromettre la cohérence des stocks :</p>
+<table>
+<thead>
+<tr>
+<th>Domaine critique</th>
+<th>État actuel dans MiniShop (V1)</th>
+<th>Architecture cible de production professionnelle</th>
+<th>Bénéfice mesurable &amp; sécurité</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Paiement &amp; Conformité PCI-DSS</strong></td>
+<td>Simulation logique lors de <code>sp_confirm_order</code> (aucune donnée CB stockée, <code>[11/11]</code>)</td>
+<td>Intégration d’un PSP (Stripe / Paybox / Adyen) par redirection ou <em>Elements</em> hébergés (SAQ A), clé d’idempotence (<code>idempotency_key</code>), webhooks signés HMAC et états <code>EN_ATTENTE_PAIEMENT -&gt; PAYEE -&gt; REMBOURSEE</code></td>
+<td>Zéro transit de numéro de carte sur les serveurs applicatifs ; aucune double facturation en cas de réessai réseau</td>
+</tr>
+<tr>
+<td><strong>Sessions &amp; Limitation de débit</strong></td>
+<td>Sessions PHP sur disque local ; pas de <em>rate limiting</em> sur <code>/connexion</code></td>
+<td>Externalisation des sessions et verrous applicatifs dans <strong>Redis</strong> (cluster), limitation de débit (<em>sliding window</em> IP + compte) sur <code>/connexion</code>, <code>/inscription</code>, <code>/api/*</code></td>
+<td>Permet la scalabilité horizontale sur plusieurs nœuds PHP-FPM derrière un répartiteur de charge</td>
+</tr>
+<tr>
+<td><strong>Moteur de recherche &amp; Cache</strong></td>
+<td><code>sp_search_products</code> (index <code>FULLTEXT</code> / <code>LIKE</code> MariaDB, <code>20,6 ms</code> p95)</td>
+<td>Indexation asynchrone dans <strong>Meilisearch</strong> ou <strong>OpenSearch/Elasticsearch</strong> (tolérance aux fautes de frappe, facettes dynamiques, synonymes) + cache Redis des pages catalogue chaudes</td>
+<td>Maintien d’une latence <code>&lt; 30 ms</code> même au-delà du million de références catalogue</td>
+</tr>
+<tr>
+<td><strong>Base de données &amp; Scalabilité</strong></td>
+<td>Instance unique MariaDB <code>11.8.6</code></td>
+<td>Topologie <strong>Primary + Read Replicas</strong> (écritures <code>sp_*</code> sur le primaire, lectures <code>v_catalogue</code> et analytique sur les réplicas), index <code>commande(statut)</code>, sauvegardes continues PITR (<em>Point-In-Time Recovery</em>)</td>
+<td>Séparation du trafic de consultation (90 %+) et du trafic transactionnel critique</td>
+</tr>
+<tr>
+<td><strong>Sécurité avancée &amp; Observabilité</strong></td>
+<td>Bcrypt, CSRF, PDO, journaux fichiers simples</td>
+<td>MFA TOTP obligatoire pour <code>SUPER</code> (OWASP ASVS V4.3.1), secrets en coffre-fort (Vault/KMS), logs structurés JSON avec <code>X-Request-Id</code>, traces <strong>OpenTelemetry</strong>, alertes Prometheus/Grafana</td>
+<td>Détection proactive des anomalies, audit légal corrélé de bout en bout</td>
+</tr>
+</tbody>
+</table>
+<p><em>Tableau 25 — Briques d’industrialisation requises pour transformer MiniShop en système de production.</em></p>
+<h3 id="62-evolution-du-modele-3fn-vers-une-marketplace-multi-vendeurs-seller-central-et-buy-box">6.2 Évolution du modèle 3FN vers une <em>Marketplace</em> multi-vendeurs (<em>Seller Central</em> et <em>Buy Box</em>)<a class="headerlink" href="#62-evolution-du-modele-3fn-vers-une-marketplace-multi-vendeurs-seller-central-et-buy-box" title="Permanent link"></a></h3>
+<p>Le modèle actuel suppose un vendeur unique (l’administrateur de la boutique). Pour évoluer vers une place de marché de type <em>Amazon Seller Central</em>, il convient d’appliquer une distinction fondamentale : <strong>dissocier la fiche produit canonique</strong> (équivalent de l’<em>ASIN</em>, identité technique unique du produit évitant les doublons dans le catalogue) <strong>des offres commerciales portées par les vendeurs tiers</strong> (prix, stock, délai d’expédition, état neuf/reconditionné).</p>
+<pre><code class="language-sql">-- Extension incrémentale 3FN du schéma MiniShop vers le multi-vendeurs :
+CREATE TABLE vendeur (
+  id_vendeur       INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  raison_sociale   VARCHAR(150) NOT NULL,
+  siret            CHAR(14)     NOT NULL UNIQUE,
+  statut_kyb       ENUM('EN_ATTENTE','VERIFIE','SUSPENDU') NOT NULL DEFAULT 'EN_ATTENTE',
+  taux_commission  DECIMAL(5,2) NOT NULL DEFAULT 12.00,
+  compte_psp_id    VARCHAR(120) NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE offre_vendeur (
+  id_offre         INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  id_produit       INT UNSIGNED NOT NULL,
+  id_vendeur       INT UNSIGNED NOT NULL,
+  prix_ht          DECIMAL(10,2) NOT NULL CHECK (prix_ht &gt; 0),
+  stock            INT NOT NULL DEFAULT 0 CHECK (stock &gt;= 0),
+  delai_exp_heures SMALLINT UNSIGNED NOT NULL DEFAULT 24,
+  est_buy_box      TINYINT(1) NOT NULL DEFAULT 0,
+  FOREIGN KEY (id_produit) REFERENCES produit(id_produit) ON DELETE RESTRICT,
+  FOREIGN KEY (id_vendeur) REFERENCES vendeur(id_vendeur) ON DELETE RESTRICT
+) ENGINE=InnoDB;
+</code></pre>
+<p>Le Tableau 26 synthétise l’impact architectural de cette extension sur nos règles existantes :</p>
+<table>
+<thead>
+<tr>
+<th>Composant MiniShop</th>
+<th>Évolution vers le modèle <em>Marketplace</em> multi-vendeurs</th>
+<th>Préservation des garanties existantes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Catalogue &amp; <em>Buy Box</em></strong></td>
+<td>Un algorithme pondéré (<code>prix_ttc</code>, <code>delai_exp_heures</code>, taux de retour, note vendeur) élit l’offre par défaut (<code>est_buy_box = 1</code>) sur la fiche produit, tout en listant les autres vendeurs.</td>
+<td>La table <code>produit</code> reste la référence canonique unique du catalogue.</td>
+</tr>
+<tr>
+<td><strong>Panier &amp; Ventilation (<code>Split Order</code>)</strong></td>
+<td>Si un client achète simultanément deux articles de deux vendeurs distincts, la commande globale (<code>COMMANDE</code>) est ventilée en <strong>sous-commandes</strong> (<code>SOUS_COMMANDE_VENDEUR</code>), chacune ayant son propre suivi logistique.</td>
+<td>La contrainte d’atomicité (<code>sp_create_order_from_basket</code>) verrouille par <code>FOR UPDATE</code> chaque <code>offre_vendeur</code> impliquée ; aucun passage sous zéro n’est possible.</td>
+</tr>
+<tr>
+<td><strong>Flux financier &amp; Séquestre</strong></td>
+<td>Intégration de paiements scindés (<em>Stripe Connect</em> / <em>Adyen for Platforms</em>) : encaissement sur compte de cantonnement, prélèvement automatique de la commission (<code>taux_commission</code>) et virement au vendeur à confirmation de livraison (<code>LIVREE</code>).</td>
+<td>Aucune détention illicite de fonds pour compte de tiers (conformité DSP2).</td>
+</tr>
+<tr>
+<td><strong>Cloisonnement RBAC &amp; Anti-IDOR</strong></td>
+<td>Ajout d’un troisième espace dédié <code>/vendeur/*</code> protégé par <code>Auth::exigeVendeur()</code> et filtrage systématique <code>WHERE id_vendeur = ?</code> sur produits, stocks et sous-commandes.</td>
+<td>Généralisation directe de la garde IDOR actuelle (<code>SEC-08</code>, <code>ENF-12</code>).</td>
+</tr>
+</tbody>
+</table>
+<p><em>Tableau 26 — Extension du modèle relationnel 3FN et de la sécurité vers une marketplace multi-vendeurs.</em></p>
+<div style="break-before: page;"></div>
+<h3 id="63-moteur-de-recommandation-hybride-analyse-du-panier-filtrage-collaboratif-et-semantique">6.3 Moteur de recommandation hybride (analyse du panier, filtrage collaboratif et sémantique)<a class="headerlink" href="#63-moteur-de-recommandation-hybride-analyse-du-panier-filtrage-collaboratif-et-semantique" title="Permanent link"></a></h3>
+<p>Un levier décisif de croissance d’Amazon repose sur la personnalisation (« <em>Les clients ayant acheté cet article ont également acheté…</em> »). Notre modèle normalisé <code>ligne_commande</code> permet déjà de déployer une <strong>V1 immédiatement opérationnelle</strong> sans infrastructure d’apprentissage automatique complexe, puis d’évoluer par paliers vers un moteur hybride complet :</p>
+<h4 id="phase-1-analyse-du-panier-de-la-menagere-market-basket-analysis-directement-sur-sql">Phase 1 — Analyse du panier de la ménagère (<em>Market Basket Analysis</em>) directement sur SQL<a class="headerlink" href="#phase-1-analyse-du-panier-de-la-menagere-market-basket-analysis-directement-sur-sql" title="Permanent link"></a></h4>
+<p>À partir des commandes validées (<code>statut IN ('EN_PREPARATION', 'EXPEDIEE', 'LIVREE')</code>), on calcule périodiquement (tâche cron nocturne) les paires de produits co-achetés en mesurant trois indicateurs statistiques classiques :
+- <strong>Support</strong> <code>P(A ∩ B)</code> : fréquence conjointe des deux articles dans l’ensemble des commandes ;
+- <strong>Confiance</strong> <code>P(B | A) = P(A ∩ B) / P(A)</code> : probabilité d’acheter <code>B</code> sachant que <code>A</code> est dans le panier ;
+- <strong>Lift</strong> <code>P(B | A) / P(B)</code> : force réelle de l’association (un <em>Lift</em> <code>&gt; 1</code> élimine les best-sellers évidents achetés indépendamment).</p>
+<pre><code class="language-sql">-- Calcul nocturne matérialisé dans recommandation_produit (zéro coût sur le checkout) :
+SELECT l1.id_produit AS produit_source,
+       l2.id_produit AS produit_recommande,
+       COUNT(DISTINCT l1.id_commande) AS co_achats
+  FROM ligne_commande l1
+  JOIN ligne_commande l2
+    ON l1.id_commande = l2.id_commande
+   AND l1.id_produit &lt;&gt; l2.id_produit
+  JOIN commande c ON c.id_commande = l1.id_commande
+  JOIN produit  p ON p.id_produit  = l2.id_produit
+ WHERE c.statut IN ('EN_PREPARATION', 'EXPEDIEE', 'LIVREE')
+   AND p.visible = 1 AND p.stock &gt; 0
+ GROUP BY l1.id_produit, l2.id_produit
+HAVING co_achats &gt;= 3
+ ORDER BY l1.id_produit, co_achats DESC;
+</code></pre>
+<h4 id="phases-2-3-filtrage-collaboratif-embeddings-semantiques-et-evaluation-rigoureuse">Phases 2 &amp; 3 — Filtrage collaboratif, <em>embeddings</em> sémantiques et évaluation rigoureuse<a class="headerlink" href="#phases-2-3-filtrage-collaboratif-embeddings-semantiques-et-evaluation-rigoureuse" title="Permanent link"></a></h4>
+<table>
+<thead>
+<tr>
+<th>Palier moteur</th>
+<th>Algorithmes &amp; Données d’entrée</th>
+<th>Problème résolu</th>
+<th>Métriques d’évaluation &amp; Garde-fous RGPD</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>V1 — Co-occurrence SQL</strong></td>
+<td>Règles d’association (<code>Support</code>, <code>Confiance</code>, <code>Lift</code>) sur <code>ligne_commande</code></td>
+<td>Recommandation produit-à-produit (« Produits complémentaires ») servie en <code>&lt; 2 ms</code> depuis table matérialisée ou Redis</td>
+<td>Couverture catalogue, taux de clic (CTR) ; aucune donnée personnelle requise (statistiques agrégées)</td>
+</tr>
+<tr>
+<td><strong>V2 — Filtrage collaboratif &amp; Contenu</strong></td>
+<td>Factorisation matricielle implicite (<strong>ALS / BPR</strong>) sur vues, paniers et achats + <strong>vecteurs sémantiques (<em>embeddings</em>)</strong> sur <code>nom</code>, <code>description</code> et <code>categorie</code> (index <code>pgvector</code> ou Qdrant)</td>
+<td>Résout le <strong>démarrage à froid</strong> (<em>cold start</em>) pour un produit neuf jamais commandé ou un nouveau client sans historique</td>
+<td>Évaluation hors ligne par validation croisée temporelle (<strong>Precision@10</strong>, <strong>Recall@10</strong>, <strong>NDCG@10</strong>)</td>
+</tr>
+<tr>
+<td><strong>V3 — Re-classement temps réel</strong></td>
+<td>Modèle de classement contextuel (<em>Learning to Rank</em> léger) combinant affinité, <strong>marge</strong>, <strong>stock disponible (<code>RB-18</code>)</strong> et délai vendeur</td>
+<td>Évite de recommander un article en rupture ou à faible qualité de service ; maximise la satisfaction et le panier moyen</td>
+<td><strong>A/B testing</strong> contrôlé ; conformité RGPD (consentement préalable, droit d’opposition au profilage art. 21 RGPD)</td>
+</tr>
+</tbody>
+</table>
+<p><em>Tableau 27 — Architecture incrémentale du moteur de recommandation hybride.</em></p>
+<h3 id="64-automatisation-du-back-office-vendeur-reapprovisionnement-predictif-et-logistique">6.4 Automatisation du back-office vendeur, réapprovisionnement prédictif et logistique<a class="headerlink" href="#64-automatisation-du-back-office-vendeur-reapprovisionnement-predictif-et-logistique" title="Permanent link"></a></h3>
+<p>Dans un back-office artisanal (et encore en partie dans MiniShop V1), l’administrateur doit surveiller manuellement <code>v_etat_stock</code>, saisir les ajustements <code>sp_adjust_stock</code> et faire évoluer manuellement les statuts <code>EN_PREPARATION -&gt; EXPEDIEE -&gt; LIVREE</code>. Pour passer à une exploitation professionnelle fluide pour des dizaines ou centaines de vendeurs, les opérations répétitives doivent être automatisées autour d’une <strong>file de tâches asynchrones</strong> (<em>Message Queue</em> : Redis Streams ou RabbitMQ + <em>workers</em> PHP CLI) :</p>
+<table>
+<thead>
+<tr>
+<th>Processus back-office</th>
+<th>Fonctionnement manuel actuel (V1)</th>
+<th>Automatisation professionnelle cible</th>
+<th>Impact opérationnel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Réapprovisionnement prédictif</strong></td>
+<td>Seuil statique <code>seuil_alerte = 3</code> par produit ; réassort saisi à la main (<code>DELTA</code>)</td>
+<td>Calcul automatique du point de commande dynamique (<code>S_cmd = D_moy_30j × L_fournisseur + Z × σ_D × √L</code>) ; génération automatique de bons de commande fournisseur en brouillon</td>
+<td>Réduit simultanément les ruptures de stock (<code>stock = 0</code>) et le sur-stockage immobilisant la trésorerie</td>
+</tr>
+<tr>
+<td><strong>Import catalogue &amp; Média</strong></td>
+<td>Création/édition unitaire via formulaire <code>/admin/produits</code></td>
+<td>Import asynchrone massif (<strong>CSV / XML / API REST vendeur</strong>) avec validation atomique des contraintes <code>RB-02</code>/<code>RB-07</code>, redimensionnement automatique d’images (<code>WebP/AVIF</code>) et détection de doublons</td>
+<td>Permet d’intégrer plusieurs milliers de références sans bloquer le serveur Web</td>
+</tr>
+<tr>
+<td><strong>Facturation &amp; Liasses PDF</strong></td>
+<td>Récapitulatif HTML consultable en ligne</td>
+<td>Génération asynchrone à la validation (<code>PAYEE</code>) d’une facture PDF horodatée et scellée au format <strong>Factur-X</strong> (hybride PDF/A-3 + XML structuré) archivée en stockage objet S3</td>
+<td>Conformité comptable et fiscale automatique dès la commande validée</td>
+</tr>
+<tr>
+<td><strong>Expédition &amp; Suivi transporteur</strong></td>
+<td>Transition manuelle <code>EN_PREPARATION -&gt; EXPEDIEE -&gt; LIVREE</code> par l’admin</td>
+<td>Appel API transporteur (Colissimo, Chronopost, Mondial Relay) générant l’étiquette PDF et le n° de suivi ; <strong>webhooks transporteur</strong> déclenchant automatiquement <code>sp_update_order_status</code></td>
+<td>Zéro ressaisie manuelle ; traçabilité client temps réel conservée dans <code>order_status_history</code></td>
+</tr>
+<tr>
+<td><strong>Tarification encadrée (<em>Repricing</em>)</strong></td>
+<td>Modification manuelle du <code>prix_ht</code></td>
+<td>Règles de réajustement automatique face aux offres concurrentes de la <em>Buy Box</em>, strictement bornées par un plancher de rentabilité (<code>prix_ht &gt;= cout_achat * (1 + marge_min)</code>)</td>
+<td>Compétitivité continue sans jamais provoquer de vente à perte (<code>RB-02</code> étendue)</td>
+</tr>
+<tr>
+<td><strong>Modération &amp; Anti-fraude</strong></td>
+<td>Contrôle humain a posteriori</td>
+<td>Règles automatisées bloquant : hausse brutale de prix suspecte, pic d’annulations vendeur (<code>&gt; 5 %</code>), commande atypique (score de risque avant expédition) et alertes RGPD automatisées</td>
+<td>Protection des acheteurs et préservation de la réputation de la plateforme</td>
+</tr>
+</tbody>
+</table>
+<p><em>Tableau 28 — Catalogue des automatisations du back-office vendeur et de la chaîne logistique.</em></p>
+<div style="break-before: page;"></div>
+<h3 id="65-trajectoire-de-migration-incrementale-en-4-paliers-strangler-fig-pattern">6.5 Trajectoire de migration incrémentale en 4 paliers (<em>Strangler Fig Pattern</em>)<a class="headerlink" href="#65-trajectoire-de-migration-incrementale-en-4-paliers-strangler-fig-pattern" title="Permanent link"></a></h3>
+<p>L’erreur classique d’une montée en charge consiste à vouloir tout réécrire d’un bloc (<em>Big Bang</em>). Grâce au contrat <code>StoreInterface</code>, à la centralisation des règles métier en dépôts PHP et à la séparation nette des couches MVC, l’évolution vers une plateforme de type Amazon doit suivre une <strong>trajectoire incrémentale en 4 paliers</strong> où chaque phase reste pleinement déployable et testable :</p>
+<table>
+<thead>
+<tr>
+<th>Palier</th>
+<th>Horizon / Objectif</th>
+<th>Chantiers techniques prioritaires</th>
+<th>Prérequis validé avant passage au palier suivant</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Palier 1 — Socle Production Mono-Boutique</strong></td>
+<td>Court terme (mise en ligne commerciale réelle)</td>
+<td>PSP (Stripe/Paybox) + webhooks idempotents ; SMTP transactionnel ; MFA <code>SUPER</code> ; Redis sessions + <em>rate limiting</em> ; index <code>commande(statut)</code> ; campagne Playwright + <em>LineServ</em></td>
+<td>0 anomalie critique sur recette humaine (<code>200</code> scénarios) et test de charge ciblé</td>
+</tr>
+<tr>
+<td><strong>Palier 2 — Automatisation Back-Office &amp; Recommandation V1</strong></td>
+<td>Moyen terme (productivité opérationnelle)</td>
+<td>File asynchrone (<em>workers</em> CLI) pour factures Factur-X, étiquettes transporteur, webhooks de suivi et réapprovisionnement prédictif ; recommandation SQL co-achats (Tableau 27)</td>
+<td>Mesure de réduction du temps de traitement commande et hausse du panier moyen par A/B test</td>
+</tr>
+<tr>
+<td><strong>Palier 3 — Ouverture <em>Marketplace</em> Multi-Vendeurs</strong></td>
+<td>Croissance catalogue (<em>Seller Central</em>)</td>
+<td>Tables <code>vendeur</code>, <code>offre_vendeur</code>, <code>sous_commande_vendeur</code> (Tableau 26) ; portail <code>/vendeur/*</code> isolé ; flux séquestre <em>Split Payment</em> ; élection de <em>Buy Box</em> et import massif</td>
+<td>Audits IDOR multi-tenant et réconciliation comptable automatisée à 100 %</td>
+</tr>
+<tr>
+<td><strong>Palier 4 — Recherche Sémantique, IA &amp; Haute Disponibilité</strong></td>
+<td>Grande échelle</td>
+<td>Meilisearch/OpenSearch ; recommandation hybride (ALS + <em>embeddings</em>) ; <em>Repricing</em> borné ; réplicas MariaDB en lecture ; architecture multi-nœuds avec traces OpenTelemetry</td>
+<td>SLA <code>&gt;= 99,9 %</code>, latence <code>p95 &lt; 100 ms</code> sous charge <code>100x</code> supérieure à <code>ENF-02</code></td>
+</tr>
+</tbody>
+</table>
+<p><em>Tableau 29 — Plan de migration incrémental en 4 paliers vers une plateforme e-commerce professionnelle.</em></p>
+<p>Cette approche progressive préserve intégralement les garanties transactionnelles prouvées dans les chapitres précédents — verrouillage des stocks sans survente, immuabilité financière des commandes et traçabilité d’audit — tout en levant méthodiquement chaque limite du prototype académique.</p>
 <div style="break-before: page;"></div>
 <h2 id="conclusion-generale-et-perspectives">Conclusion générale et perspectives<a class="headerlink" href="#conclusion-generale-et-perspectives" title="Permanent link"></a></h2>
 <p>À l’issue de cette SAÉ 302, le projet <strong>MiniShop</strong> apporte une réponse complète, mesurée et documentée à la problématique initiale. En concevant une application <strong>PHP 8.2+ sans framework tiers</strong> adossée à une base relationnelle normalisée en <strong>3FN</strong> et protégée par <strong>18 procédures stockées</strong> et <strong>16 déclencheurs</strong>, nous démontrons que la logique transactionnelle critique (prévention de survente sous concurrence, immutabilité des tarifs facturés, traçabilité des statuts et des mouvements de stock) peut être garantie de manière stricte côté SGBD tout en maintenant une architecture MVC lisible, portable (<code>StoreInterface</code>) et performante (<code>6,0 ms</code> au 95e centile en HTTP).</p>
