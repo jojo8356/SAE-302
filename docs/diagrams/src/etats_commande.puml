@@ -1,28 +1,44 @@
 @startuml etats_commande
-title Cycle de vie d'une commande (RB-11)
+title Machine à états d'une commande — RB-11 (Triggers::TRANSITIONS)
 
-[*] --> BROUILLON : création (sp_create_order)
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "DejaVu Sans"
+skinparam ArrowColor #334155
+skinparam StateBackgroundColor #FFFFFF
+skinparam StateBorderColor #475569
+skinparam NoteBackgroundColor #FEF9C3
+skinparam NoteBorderColor #CA8A04
 
-BROUILLON --> EN_PREPARATION : validation sans paiement simulé
-BROUILLON --> PAYEE : validation avec paiement simulé
-BROUILLON --> ANNULEE : abandon / annulation
+[*] --> BROUILLON : creation [sp_create_order]
 
-EN_PREPARATION --> PAYEE : paiement confirmé
-EN_PREPARATION --> EXPEDIEE : expédition
-EN_PREPARATION --> ANNULEE : annulation (client ou admin)
+BROUILLON : do / panier convertible, frais_port recalculé
+BROUILLON --> EN_PREPARATION : valider [paiement_simule = 0] / trg_history_statut
+BROUILLON --> PAYEE : valider [paiement_simule = 1] / trg_history_statut
+BROUILLON --> ANNULEE : annuler [client ou abandon] / restitution stock
 
-PAYEE --> EXPEDIEE : expédition
-PAYEE --> ANNULEE : annulation (client ou admin)
+EN_PREPARATION : do / prix et port figés (RB-06, RB-20)
+EN_PREPARATION --> PAYEE : confirmerPaiement [admin] / trg_history_statut
+EN_PREPARATION --> EXPEDIEE : expedier [admin] / trg_history_statut
+EN_PREPARATION --> ANNULEE : annuler [client ou admin] / sp_cancel_order + restitution stock
 
-EXPEDIEE --> LIVREE : livraison confirmée
-EXPEDIEE --> ANNULEE : annulation admin (motif)
+PAYEE : do / règlement simulé enregistré
+PAYEE --> EXPEDIEE : expedier [admin] / trg_history_statut
+PAYEE --> ANNULEE : annuler [client ou admin] / sp_cancel_order + restitution stock
 
-LIVREE --> [*] : état terminal
-ANNULEE --> [*] : état terminal
+EXPEDIEE : do / colis remis au transporteur
+EXPEDIEE --> LIVREE : livrer [admin] / trg_history_statut
+EXPEDIEE --> ANNULEE : annuler [admin, motif] / sp_cancel_order_admin + restitution stock
+
+LIVREE : do / état final immuable
+ANNULEE : do / frais_port = 0, montant_avant_annulation conservé
+
+LIVREE --> [*]
+ANNULEE --> [*]
 
 note bottom of ANNULEE
-  Restitution du stock par trigger / sp_cancel_order,
-  frais_port remis à 0 et montant_avant_annulation conservé (RB-20).
-  Aucune transition sortante depuis LIVREE ou ANNULEE.
+  Toute transition hors matrice est rejetée par
+  trg_commande_transition_statut (SQLSTATE 45000)
+  et Triggers::TRANSITIONS (RB11_TRANSITION_STATUT_INTERDITE).
 end note
 @enduml

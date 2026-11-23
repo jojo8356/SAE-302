@@ -1,7 +1,17 @@
 @startuml mcd_minishop
-title MCD — MiniShop (9 entités)
+title MCD — MiniShop (9 entités et cardinalités justifiées, §12.1)
+
 hide circle
+skinparam shadowing false
+skinparam roundcorner 6
+skinparam defaultFontName "DejaVu Sans"
 skinparam linetype ortho
+skinparam ArrowColor #334155
+skinparam EntityBackgroundColor #FFFFFF
+skinparam EntityBorderColor #475569
+skinparam EntityHeaderBackgroundColor #EEF2FF
+skinparam NoteBackgroundColor #FEF9C3
+skinparam NoteBorderColor #CA8A04
 
 entity "CATEGORIE" as CAT {
   * id_categorie <<PK>>
@@ -122,12 +132,18 @@ entity "ADMINISTRATEUR" as ADM {
   derniere_connexion
 }
 
-CAT ||--o{ PRO : contient
-CLI ||--o{ COM : passe
-COM ||--|{ LIG : "contient (>=1, RB-04)"
-PRO ||--o{ LIG : référence
-COM ||--o{ HIS : trace
-PRO ..o{ SMH : "snapshot audit (sans FK)"
-PAR .. PRO : tva_defaut
-PAR .. COM : frais_port / franchise_port
+CAT ||--o{ PRO : "CLASSER (1,1 — 0,N · RB-07/08)"
+CLI ||--o{ COM : "PASSER (1,1 — 0,N · RB-10)"
+COM ||--|{ LIG : "COMPORTER (1,1 — 1,N · RB-04)"
+PRO ||--o{ LIG : "ETRE VENDU DANS (1,1 — 0,N · RB-06)"
+COM ||--o{ HIS : "ETRE TRACEE DANS (1,1 — 0,N · RB-11)"
+PRO ..o{ SMH : "AUDITER (snapshot sans FK)"
+PAR .. PRO : "tva_defaut"
+PAR .. COM : "frais_port / franchise_port"
+
+note right of ADM
+  Aucune FK vers COMMANDE ou PRODUIT :
+  l'audit trace changed_by + changed_by_role
+  dans les tables d'historique (§12.1.3).
+end note
 @enduml

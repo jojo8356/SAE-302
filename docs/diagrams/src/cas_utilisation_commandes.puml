@@ -1,21 +1,31 @@
 @startuml cas_utilisation_commandes
-title MiniShop — cas d'utilisation du back-office
+title MiniShop — cas d'utilisation du back-office (RB-13)
+
 left to right direction
+skinparam shadowing false
+skinparam roundcorner 6
+skinparam defaultFontName "DejaVu Sans"
 skinparam packageStyle rectangle
+skinparam ArrowColor #334155
+skinparam ActorBackgroundColor #FFFFFF
+skinparam ActorBorderColor #475569
+skinparam UsecaseBackgroundColor #FFFFFF
+skinparam UsecaseBorderColor #475569
 
 actor "Gestionnaire\n(GESTIONNAIRE)" as G
 actor "Super administrateur\n(SUPER)" as S
 S --|> G
 
-rectangle "Back-office (/admin/*, RB-13)" {
+rectangle "Back-office (/admin/*)" {
   usecase "Se connecter au back-office" as AUTH
-  usecase "Consulter les indicateurs\n(tableau de bord)" as IN
-  usecase "Gérer les produits" as P
-  usecase "Gérer les catégories" as K
-  usecase "Ajuster le stock" as ST
+  usecase "Consulter le tableau de bord\n(indicateurs)" as IN
+  usecase "Gérer les produits\n(sp_save_product)" as P
+  usecase "Gérer les catégories\n(sp_save_category)" as K
+  usecase "Ajuster le stock\n(sp_adjust_stock)" as ST
   usecase "Consulter les alertes\n(v_etat_stock)" as AL
   usecase "Consulter les commandes" as CO
-  usecase "Changer le statut" as CH
+  usecase "Changer le statut\n(sp_update_order_status)" as CH
+  usecase "Annuler une commande\n(sp_cancel_order_admin)" as AN
   usecase "Consulter la piste d'audit\n(order_status_history)" as AU
   usecase "Gérer les paramètres\n(/admin/parametres)" as PA
   usecase "Gérer les comptes d'équipe\n(/admin/equipe)" as EQ
@@ -29,11 +39,11 @@ G --> ST
 G --> AL
 G --> CO
 G --> CH
-G --> AU
 G --> PA
 
 S --> EQ
 
-CH ..> AU : trace auto (trigger)
-ST ..> AL : recalcul du seuil
+CH ..> AU : <<include>>\n[trg_history_statut]
+AN ..> CH : <<extend>>\n[motif obligatoire]
+ST ..> AL : <<include>>\n[recalcul seuil]
 @enduml

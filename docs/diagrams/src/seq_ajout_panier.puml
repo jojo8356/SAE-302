@@ -1,34 +1,64 @@
 @startuml seq_ajout_panier
-title Séquence — ajouter au panier (UC-06, EF-CLI-03, RB-18)
+title Séquence 3 — ajouter au panier (UC-06, EF-CLI-03, RB-18)
+
+autonumber
+skinparam shadowing false
+skinparam roundcorner 6
+skinparam defaultFontName "DejaVu Sans"
+skinparam ArrowColor #334155
+skinparam ParticipantBackgroundColor #FFFFFF
+skinparam ParticipantBorderColor #475569
+skinparam ActorBackgroundColor #FFFFFF
+skinparam ActorBorderColor #475569
+skinparam DatabaseBackgroundColor #EEF2FF
+skinparam DatabaseBorderColor #4338CA
+skinparam NoteBackgroundColor #FEF9C3
+skinparam NoteBorderColor #CA8A04
+skinparam SequenceLifeLineBorderColor #64748B
+
 actor Client
 participant "panier.js" as JS
 participant "ApiController" as API
 participant "PanierSession" as PS
-database "Store" as DB
+database "Store / SQL" as DB
 
-Client -> JS : clic « Ajouter » (form[data-panier])
+Client -> JS : clic « Ajouter » (submit form[data-panier])
+activate JS
 JS -> API : POST /api/panier/ajouter\n(x-www-form-urlencoded : id_produit, quantite, _csrf)
+activate API
+
 API -> API : exigerPoste() + Csrf::estValide()
 
 alt jeton CSRF invalide
   API --> JS : 403 {ok: false, code: 'CSRF_INVALIDE', message}
-  JS --> Client : erreur affichée dans #zone-annonces
+  JS --> Client : erreur annoncée dans #zone-annonces
   ||8||
 else jeton CSRF valide
-  API -> PS : ajouter(id_produit, quantite)
+  API -> PS : ajouter(id_produit, quantite) : int
+  activate PS
   PS -> DB : find('produit', id_produit)
+  activate DB
   DB --> PS : produit (stock, visible, prix_ttc)
-  alt quantité <= 0 ou produit introuvable / masqué
+  deactivate DB
+
+  alt quantite <= 0 ou produit introuvable / masqué
     PS --> API : throw BusinessError
     API --> JS : 409 {ok: false, code, message, nombre_articles}
     JS --> Client : erreur dans #zone-annonces, bouton désactivé
+    ||8||
   else ajouté (quantité plafonnée à min(demande, stock))
-    PS --> API : quantité retenue
-    API -> PS : recapitulatif() (sous_total, frais_port, total)
+    PS --> API : quantite_retenue
+    deactivate PS
+    API -> PS : recapitulatif() : array
+    activate PS
+    PS --> API : {sous_total, frais_port, total}
+    deactivate PS
     API --> JS : 200 {ok: true, message, nombre_articles,\nsous_total, frais_port, total_ttc, lien_panier}
     JS --> Client : badge et total_ttc mis à jour (aria-live)
   end
 end
+deactivate API
+deactivate JS
 
 note right of API : aucun prix ni stock calculé côté navigateur (EF-GEN-01)
 @enduml

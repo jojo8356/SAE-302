@@ -1,10 +1,21 @@
 @startuml cas_utilisation_global
-title MiniShop — cas d'utilisation (vue globale)
+title MiniShop — cas d'utilisation (vue globale, §5.1.1)
+
 left to right direction
+skinparam shadowing false
+skinparam roundcorner 6
+skinparam defaultFontName "DejaVu Sans"
 skinparam packageStyle rectangle
+skinparam ArrowColor #334155
+skinparam ActorBackgroundColor #FFFFFF
+skinparam ActorBorderColor #475569
+skinparam UsecaseBackgroundColor #FFFFFF
+skinparam UsecaseBorderColor #475569
 
 actor "Visiteur" as V
 actor "Client" as C
+C --|> V
+
 actor "Administrateur\n(GESTIONNAIRE)" as A
 actor "Super administrateur\n(SUPER)" as S
 S --|> A
@@ -15,15 +26,16 @@ rectangle "MiniShop — Front-office" {
   usecase "UC-03 Consulter une fiche produit" as UC03
   usecase "Contacter / Préférences\n(/contact, /preferences)" as UCINF
   usecase "UC-04 Créer un compte" as UC04
-  usecase "UC-05a Se connecter" as UC05A
-  usecase "UC-05b Gérer son compte\n(/compte)" as UC05B
-  usecase "UC-06 Gérer son panier" as UC06
-  usecase "UC-07 Valider une commande" as UC07
+  usecase "UC-05 Se connecter / déconnecter" as UC05A
+  usecase "UC-06 Gérer le panier" as UC06
+  usecase "UC-05b Gérer son compte (/compte)" as UC05B
+  usecase "UC-07 Passer une commande" as UC07
   usecase "UC-08 Consulter ses commandes" as UC08
   usecase "UC-09 Annuler une commande" as UC09
 }
 
 rectangle "MiniShop — Back-office (RB-13 séparé)" {
+  usecase "Se connecter au back-office" as UCBA
   usecase "UC-10 Gérer les produits" as UC10
   usecase "UC-11 Gérer les catégories" as UC11
   usecase "UC-12 Gérer les stocks" as UC12
@@ -41,19 +53,15 @@ V --> UC04
 V --> UC05A
 V --> UC06
 
-C --> UC01
-C --> UC02
-C --> UC03
 C --> UC05B
-C --> UC06
 C --> UC07
 C --> UC08
-C --> UC09
 
 UC07 ..> UC06 : <<include>>
 UC07 ..> UC05A : <<include>>
-UC09 ..> UC08 : <<include>>
+UC09 ..> UC08 : <<extend>>\n[statut ≤ PAYEE]
 
+A --> UCBA
 A --> UC10
 A --> UC11
 A --> UC12

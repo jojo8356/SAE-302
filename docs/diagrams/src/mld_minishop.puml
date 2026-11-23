@@ -1,16 +1,26 @@
 @startuml mld_minishop
-title MLD — MiniShop (9 tables, clés, index, contraintes)
+title MLD — MiniShop (9 tables, clés, index et contraintes d'intégrité, §12.2)
+
 hide circle
 hide methods
+skinparam shadowing false
+skinparam roundcorner 6
+skinparam defaultFontName "DejaVu Sans"
 skinparam linetype ortho
+skinparam ArrowColor #334155
+skinparam EntityBackgroundColor #FFFFFF
+skinparam EntityBorderColor #475569
+skinparam EntityHeaderBackgroundColor #EEF2FF
+skinparam NoteBackgroundColor #FEF9C3
+skinparam NoteBorderColor #CA8A04
 
 entity "administrateur" as ADM {
   * id_admin : INT UNSIGNED <<PK>>
   --
-  nom : VARCHAR(100)
-  prenom : VARCHAR(100)
-  email : VARCHAR(190) <<UNIQUE>>
-  mot_de_passe_hash : CHAR(60)
+  nom : VARCHAR(100) <<NOT NULL>>
+  prenom : VARCHAR(100) <<NOT NULL>>
+  email : VARCHAR(190) <<UK>>
+  mot_de_passe_hash : CHAR(60) <<NOT NULL>>
   role : ENUM('SUPER','GESTIONNAIRE')
   actif : TINYINT(1) CHECK IN (0,1)
   date_creation : DATETIME
@@ -20,17 +30,17 @@ entity "administrateur" as ADM {
 entity "categorie" as CAT {
   * id_categorie : INT UNSIGNED <<PK>>
   --
-  nom : VARCHAR(100) <<UNIQUE>>
-  slug : VARCHAR(120) <<UNIQUE>>
+  nom : VARCHAR(100) <<UK>>
+  slug : VARCHAR(120) <<UK>>
   description : VARCHAR(500)
 }
 
 entity "produit" as PRO {
   * id_produit : INT UNSIGNED <<PK>>
   --
-  reference : VARCHAR(30) <<UNIQUE>>
-  nom : VARCHAR(150)
-  slug : VARCHAR(180) <<UNIQUE>>
+  reference : VARCHAR(30) <<UK>>
+  nom : VARCHAR(150) <<NOT NULL>>
+  slug : VARCHAR(180) <<UK>>
   description : TEXT
   prix_ht : DECIMAL(10,2) CHECK > 0
   tva : DECIMAL(5,2)
@@ -48,7 +58,7 @@ entity "produit" as PRO {
 entity "stock_movement_history" as SMH {
   * id_mouvement : BIGINT UNSIGNED <<PK>>
   --
-  id_produit : INT UNSIGNED
+  id_produit : INT UNSIGNED <<NOT NULL>>
   reference_produit : VARCHAR(30)
   nom_produit : VARCHAR(150)
   mode_mouvement : ENUM('SET','DELTA')
@@ -64,7 +74,7 @@ entity "stock_movement_history" as SMH {
 entity "parametre" as PAR {
   * cle : VARCHAR(50) <<PK>>
   --
-  valeur : VARCHAR(100)
+  valeur : VARCHAR(100) <<NOT NULL>>
   unite : VARCHAR(10)
   comment : VARCHAR(255)
   date_modification : DATETIME
@@ -73,10 +83,10 @@ entity "parametre" as PAR {
 entity "client" as CLI {
   * id_client : INT UNSIGNED <<PK>>
   --
-  nom : VARCHAR(100)
-  prenom : VARCHAR(100)
-  email : VARCHAR(190) <<UNIQUE>>
-  mot_de_passe_hash : CHAR(60)
+  nom : VARCHAR(100) <<NOT NULL>>
+  prenom : VARCHAR(100) <<NOT NULL>>
+  email : VARCHAR(190) <<UK>>
+  mot_de_passe_hash : CHAR(60) <<NOT NULL>>
   telephone : VARCHAR(20)
   adresse_livraison : VARCHAR(255)
   code_postal : VARCHAR(10)
@@ -89,9 +99,9 @@ entity "client" as CLI {
 entity "commande" as COM {
   * id_commande : INT UNSIGNED <<PK>>
   --
-  numero : VARCHAR(20) <<UNIQUE>>
+  numero : VARCHAR(20) <<UK>>
   * id_client : INT UNSIGNED <<FK>>
-  adresse_livraison : VARCHAR(255)
+  adresse_livraison : VARCHAR(255) <<NOT NULL>>
   statut : ENUM('BROUILLON','EN_PREPARATION','PAYEE','EXPEDIEE','LIVREE','ANNULEE')
   montant_total : DECIMAL(10,2) CHECK >= 0
   frais_port : DECIMAL(10,2) CHECK >= 0
@@ -116,7 +126,7 @@ entity "order_status_history" as HIS {
   --
   * order_id : INT UNSIGNED <<FK ON DELETE CASCADE>>
   old_status : VARCHAR(20)
-  new_status : VARCHAR(20)
+  new_status : VARCHAR(20) <<NOT NULL>>
   changed_by : INT UNSIGNED
   changed_by_role : ENUM('CLIENT','ADMIN','SYSTEME')
   commentaire : VARCHAR(500)
@@ -132,12 +142,13 @@ COM ||--o{ HIS : "ON DELETE CASCADE"
 note bottom of PRO
   Index : ft_produit_recherche (nom, description) FULLTEXT,
   idx_produit_categorie (id_categorie), idx_produit_visible (visible, stock).
-  prix_ttc recalculé par trg_produit_ttc / trg_produit_ttc_update.
+  prix_ttc calculé par trg_produit_ttc / trg_produit_ttc_update.
+  Vues : v_etat_stock, v_catalogue, v_commandes_client.
 end note
 
 note bottom of COM
-  Index : idx_commande_client (id_client), idx_commande_statut (statut).
+  Index : idx_commande_client, idx_commande_statut.
   ligne_commande : idx_ligne_commande, idx_ligne_produit.
-  stock_movement_history : idx_stock_movement_product (sans FK).
+  stock_movement_history : idx_stock_movement_product (audit sans FK).
 end note
 @enduml

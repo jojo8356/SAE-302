@@ -1,21 +1,76 @@
 @startuml seq_consulter_catalogue
-title Séquence — consulter le catalogue (UC-01, EF-VIS-03/05)
+title Séquence 5 (bonus) — consulter le catalogue et la fiche produit (UC-01 / UC-03)
+
+autonumber
+skinparam shadowing false
+skinparam roundcorner 6
+skinparam defaultFontName "DejaVu Sans"
+skinparam ArrowColor #334155
+skinparam ParticipantBackgroundColor #FFFFFF
+skinparam ParticipantBorderColor #475569
+skinparam ActorBackgroundColor #FFFFFF
+skinparam ActorBorderColor #475569
+skinparam DatabaseBackgroundColor #EEF2FF
+skinparam DatabaseBorderColor #4338CA
+skinparam NoteBackgroundColor #FEF9C3
+skinparam NoteBorderColor #CA8A04
+skinparam SequenceLifeLineBorderColor #64748B
+
 actor Visiteur
 participant "CatalogueController" as CC
 participant "CategorieRepository" as CAT
 participant "ProduitRepository" as PR
-database "Store" as DB
+database "Store / SQL" as DB
 
 Visiteur -> CC : GET /catalogue?cat=2&prix_max=500&stock=1&tri=prix_asc&page=2
-CC -> CAT : listerAvecCompteur()
-CAT -> DB : catégories + compteurs produits visibles
+activate CC
+CC -> CAT : listerAvecCompteur() : array
+activate CAT
+CAT -> DB : select categorie + comptage visible = 1
+activate DB
 DB --> CAT : categories
+deactivate DB
+CAT --> CC : categories
+deactivate CAT
+
 CC -> CC : valider filtres (tri liste blanche, bornes, par_page = 12)
-CC -> PR : searchProducts(criteres)
-PR -> DB : CALL sp_search_products(...)\n(ou filtre sur v_catalogue paginé à 12)
+CC -> PR : searchProducts(criteres) : array
+activate PR
+PR -> DB : CALL sp_search_products(...)\n(ou filtre v_catalogue paginé à 12)
+activate DB
 DB --> PR : lignes + total
+deactivate DB
 PR --> CC : resultat{lignes, total, page, par_page, pages}
-CC --> Visiteur : 200 HTML catalogue/index\n(filtres réaffichés, pagination)
+deactivate PR
+
+CC --> Visiteur : 200 HTML catalogue/index (filtres + pagination)
+deactivate CC
+
+opt consultation d'une fiche produit (UC-03, RB-19)
+  Visiteur -> CC : GET /produit/{slug}
+  activate CC
+  CC -> PR : findVisibleBySlug(slug) : ?array
+  activate PR
+  PR -> DB : select produit WHERE slug = ? AND visible = 1
+  activate DB
+  DB --> PR : produit | null
+  deactivate DB
+  PR --> CC : produit | null
+  deactivate PR
+
+  alt produit = null (absent ou masqué)
+    CC --> Visiteur : 404 HTML errors/404
+    ||8||
+  else produit trouvé
+    CC -> CAT : find(id_categorie) : ?array
+    activate CAT
+    CAT --> CC : categorie
+    deactivate CAT
+    CC -> CC : Views::etatStock(produit)
+    CC --> Visiteur : 200 HTML catalogue/produit (prix TTC, TVA, stock)
+  end
+  deactivate CC
+end
 
 note right of CC : filtres invalides ignorés, jamais de 500 (§4.3)
 @enduml

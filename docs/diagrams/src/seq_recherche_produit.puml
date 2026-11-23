@@ -1,22 +1,53 @@
 @startuml seq_recherche_produit
-title Séquence — rechercher un produit (UC-02, RB-19)
+title Séquence 2 — rechercher un produit (UC-02, RB-19, SEC-01/02)
+
+autonumber
+skinparam shadowing false
+skinparam roundcorner 6
+skinparam defaultFontName "DejaVu Sans"
+skinparam ArrowColor #334155
+skinparam ParticipantBackgroundColor #FFFFFF
+skinparam ParticipantBorderColor #475569
+skinparam ActorBackgroundColor #FFFFFF
+skinparam ActorBorderColor #475569
+skinparam DatabaseBackgroundColor #EEF2FF
+skinparam DatabaseBorderColor #4338CA
+skinparam NoteBackgroundColor #FEF9C3
+skinparam NoteBorderColor #CA8A04
+skinparam SequenceLifeLineBorderColor #64748B
+
 actor Visiteur
 participant "CatalogueController" as CC
 participant "CategorieRepository" as CAT
 participant "ProduitRepository" as PR
-database "Store" as DB
+database "Store / SQL" as DB
 
 Visiteur -> CC : GET /recherche?q=clavier
-CC -> CAT : listerAvecCompteur()
-CC -> CC : str('q', 120) + critères
-CC -> PR : searchProducts(criteres)
-PR -> DB : CALL sp_search_products(...)\n(ou LIKE sans accents sur nom, description, reference)
-DB --> PR : produits visibles (visible = 1)
-PR --> CC : resultat{lignes, total, page, par_page, pages}
+activate CC
+CC -> CAT : listerAvecCompteur() : array
+activate CAT
+CAT -> DB : select categorie + comptage visible = 1
+activate DB
+DB --> CAT : categories
+deactivate DB
+CAT --> CC : categories
+deactivate CAT
 
-alt aucun résultat (lignes vide)
+CC -> CC : str('q', 120) + tri liste blanche + par_page = 12
+CC -> PR : searchProducts(criteres) : array
+activate PR
+PR -> DB : CALL sp_search_products(mot_cle, ..., par_page=12)\n(requête préparée, LIKE sans accents sur nom/description/ref)
+activate DB
+DB --> PR : produits visibles + total_trouves
+deactivate DB
+PR --> CC : resultat{lignes, total, page, par_page, pages}
+deactivate PR
+
+alt resultat['lignes'] vide
   CC --> Visiteur : 200 HTML catalogue/index\n(« aucun résultat » + catégories suggérées)
+  ||8||
 else résultats trouvés
   CC --> Visiteur : 200 HTML catalogue/index\n(liste paginée + total)
 end
+deactivate CC
 @enduml
