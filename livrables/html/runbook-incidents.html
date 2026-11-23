@@ -236,15 +236,19 @@ footer.doc p { text-align: left; margin: 0; }
 <hr />
 <h2 id="scenario-1-erreurs-http-500-generalisees-panne-mariadb-ou-identifiants-env">Scénario 1 — Erreurs HTTP 500 généralisées (panne MariaDB ou identifiants <code>.env</code>)<a class="headerlink" href="#scenario-1-erreurs-http-500-generalisees-panne-mariadb-ou-identifiants-env" title="Permanent link"></a></h2>
 <ol>
-<li><strong>Vérifier l’état du service MariaDB</strong> et les connexions actives :
-   <code>bash
-   systemctl status mariadb --no-pager
-   journalctl -u mariadb -n 50 --no-pager</code></li>
+<li><strong>Vérifier l’état du service MariaDB</strong> et les connexions actives :</li>
+</ol>
+<pre><code class="language-bash">systemctl status mariadb --no-pager
+journalctl -u mariadb -n 50 --no-pager
+</code></pre>
+<ol start="2">
 <li><strong>Contrôler la configuration <code>.env</code></strong> (sans jamais afficher les secrets dans un ticket ou un log) : vérifier <code>STORAGE_DRIVER=sql</code>, <code>DB_HOST</code>, <code>DB_PORT</code>, <code>DB_NAME</code> (<code>app/Config/Database.php</code>).</li>
-<li><strong>Vérifier l’espace disque et les verrous InnoDB</strong> :
-   <code>bash
-   df -h /var/lib/mysql /var
-   mariadb -e "SHOW ENGINE INNODB STATUS\G" | head -n 40</code></li>
+<li><strong>Vérifier l’espace disque et les verrous InnoDB</strong> :</li>
+</ol>
+<pre><code class="language-bash">df -h /var/lib/mysql /var
+mariadb -e &quot;SHOW ENGINE INNODB STATUS\G&quot; | head -n 40
+</code></pre>
+<ol start="4">
 <li><strong>Si MariaDB a redémarré :</strong> vérifier le maintien des <code>18</code> procédures et <code>16</code> déclencheurs via <code>php scripts/run-all-tests.php --sans-e2e</code> sur la base de test (jamais sur la base client de production).</li>
 </ol>
 <h2 id="scenario-2-ralentissement-anormal-p95-200-ms">Scénario 2 — Ralentissement anormal (<code>p95 &gt; 200 ms</code>)<a class="headerlink" href="#scenario-2-ralentissement-anormal-p95-200-ms" title="Permanent link"></a></h2>
