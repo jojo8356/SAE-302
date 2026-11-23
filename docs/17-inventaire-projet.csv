@@ -172,6 +172,7 @@ docs/22-audit-coherence-fichiers.md,Documentation,Présence et non-vide uniqueme
 docs/23-audit-uml-diagrammes.md,Documentation,Présence et non-vide uniquement
 docs/24-preparation-soutenance-complete.md,Documentation,Présence et non-vide uniquement
 docs/25-bilan-de-projet-methode-et-modele.md,Documentation,Présence et non-vide uniquement
+docs/26-transition-exploitation-maintenance-build-to-run.md,Documentation,Présence et non-vide uniquement
 docs/DA.md,Documentation,Présence et non-vide uniquement
 docs/annexes/annexe-cas-usage.md,Documentation,Présence et non-vide uniquement
 docs/annexes/annexe-enf.md,Documentation,Présence et non-vide uniquement
@@ -238,6 +239,7 @@ livrables/docx/22-audit-coherence-fichiers.docx,Livrables,"Présence, non-vide, 
 livrables/docx/23-audit-uml-diagrammes.docx,Livrables,Présence et non-vide uniquement
 livrables/docx/24-preparation-soutenance-complete.docx,Livrables,Présence et non-vide uniquement
 livrables/docx/25-bilan-de-projet-methode-et-modele.docx,Livrables,Présence et non-vide uniquement
+livrables/docx/26-transition-exploitation-maintenance-build-to-run.docx,Livrables,Présence et non-vide uniquement
 livrables/docx/DA.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/README.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
 livrables/docx/annexe-cas-usage.docx,Livrables,"Présence, non-vide, intégrité archive ZIP"
@@ -273,6 +275,7 @@ livrables/html/22-audit-coherence-fichiers.html,Livrables,Présence et non-vide 
 livrables/html/23-audit-uml-diagrammes.html,Livrables,Présence et non-vide uniquement
 livrables/html/24-preparation-soutenance-complete.html,Livrables,Présence et non-vide uniquement
 livrables/html/25-bilan-de-projet-methode-et-modele.html,Livrables,Présence et non-vide uniquement
+livrables/html/26-transition-exploitation-maintenance-build-to-run.html,Livrables,Présence et non-vide uniquement
 livrables/html/DA.html,Livrables,Présence et non-vide uniquement
 livrables/html/README.html,Livrables,Présence et non-vide uniquement
 livrables/html/annexe-cas-usage.html,Livrables,Présence et non-vide uniquement
@@ -309,6 +312,7 @@ livrables/pdf/22-audit-coherence-fichiers.pdf,Livrables,Présence et non-vide un
 livrables/pdf/23-audit-uml-diagrammes.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/24-preparation-soutenance-complete.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/25-bilan-de-projet-methode-et-modele.pdf,Livrables,Présence et non-vide uniquement
+livrables/pdf/26-transition-exploitation-maintenance-build-to-run.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/DA.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/README.pdf,Livrables,Présence et non-vide uniquement
 livrables/pdf/annexe-cas-usage.pdf,Livrables,Présence et non-vide uniquement
