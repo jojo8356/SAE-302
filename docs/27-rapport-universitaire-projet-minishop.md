@@ -79,6 +79,7 @@ Les campagnes automatisées exécutées sur machine virtuelle Debian 13 (PHP `8.
     - 4.1.4 État et *stateless* : localisation exacte des 6 formes d’état et externalisation
     - 4.1.5 Synchrone, asynchrone, cohérence forte/éventuelle, *backpressure* et idempotence
     - 4.1.6 Dépendances, domaines de panne, rayon d’impact et frontières de confiance
+    - 4.1.7 Point d’entrée : serveur web, *reverse proxy* et *forward proxy* selon le code
   - 4.2 Étude complète de design, direction artistique et accessibilité (`docs/DA.md`)
     - 4.2.1 Benchmark des 5 acteurs français du e-commerce et positionnement
     - 4.2.2 Palette WCAG 2.1 AA, typographie sourcée (`Lato` / `SIL OFL 1.1`) et grille
@@ -163,31 +164,33 @@ Les campagnes automatisées exécutées sur machine virtuelle Debian 13 (PHP `8.
 \newpage
 
 - **Tableau 27** — Domaines de panne, coût d’évitement SPOF et frontières réseau vs confiance
-- **Tableau 28** — Benchmark ergonomique des 5 concurrents et positionnement (`docs/DA.md`)
-- **Tableau 29** — Palette chromotypographique et ratios de contraste WCAG 2.1 AA
-- **Tableau 30** — Les 12 composants UI, règles WCAG 2.1 AA et microcopy éditoriale
-- **Tableau 31** — Parcours UX anti-désorientation et conformité aux directives européennes
-- **Tableau 32** — Synthèse des exigences non fonctionnelles (`ENF-01` à `ENF-22`)
-- **Tableau 33** — Pyramide de validation complète à 9 étages (`docs/11-strategie-tests.md`)
-- **Tableau 34** — Bilan chiffré des campagnes de tests automatisés et VM Debian 13
-- **Tableau 35** — Mesures SQL détaillées (`minishop_perf`) et analyse des plans `EXPLAIN`
-- **Tableau 36** — Mesures HTTP détaillées par route (`N = 200` requêtes/URL, `ENF-01`)
-- **Tableau 37** — Mise en perspective des mesures VM face aux piles alternatives
-- **Tableau 38** — Capacité physique mono-serveur et leviers d’optimisation/scaling
-- **Tableau 39** — Disponibilité en série/parallèle, durabilité et objectifs RPO/RTO de MiniShop
-- **Tableau 40** — Latence en percentiles, débit, montée verticale/horizontale et coût d’un neuf
-- **Tableau 41** — Règle du moindre privilège : permissions par utilisateur et conteneurisation
-- **Tableau 42** — Cadre légal e-commerce français (LCEN, Consommation, CNIL)
-- **Tableau 43** — Audit technique des cookies, du `localStorage` et des journaux
-- **Tableau 44** — Politique de conservation RGPD et limites assumées (`docs/18`)
-- **Tableau 45** — Les 7 points bloquants avant toute mise en vente commerciale réelle (`docs/12`)
-- **Tableau 46** — Contrôle de conformité face aux livrables et pénalités du barème
-- **Tableau 47** — Briques d’industrialisation pour une plateforme de production
-- **Tableau 48** — Extension du modèle 3FN vers une *Marketplace* multi-vendeurs
-- **Tableau 49** — Gestion back-office des fiches fournisseurs et commandes d’approvisionnement
-- **Tableau 50** — Architecture du moteur de recommandation hybride (V1 à V3)
-- **Tableau 51** — Automatisations back-office vendeur, logistique et anti-fraude
-- **Tableau 52** — Plan de migration incrémental en 4 paliers (MiniShop → *Marketplace*)
+- **Tableau 28** — Serveur web, *reverse proxy* et *forward proxy* selon le sens du trafic
+- **Tableau 29** — État, sauvegarde, signaux `502`/`504` et compromis du point d’entrée MiniShop
+- **Tableau 30** — Benchmark ergonomique des 5 concurrents et positionnement (`docs/DA.md`)
+- **Tableau 31** — Palette chromotypographique et ratios de contraste WCAG 2.1 AA
+- **Tableau 32** — Les 12 composants UI, règles WCAG 2.1 AA et microcopy éditoriale
+- **Tableau 33** — Parcours UX anti-désorientation et conformité aux directives européennes
+- **Tableau 34** — Synthèse des exigences non fonctionnelles (`ENF-01` à `ENF-22`)
+- **Tableau 35** — Pyramide de validation complète à 9 étages (`docs/11-strategie-tests.md`)
+- **Tableau 36** — Bilan chiffré des campagnes de tests automatisés et VM Debian 13
+- **Tableau 37** — Mesures SQL détaillées (`minishop_perf`) et analyse des plans `EXPLAIN`
+- **Tableau 38** — Mesures HTTP détaillées par route (`N = 200` requêtes/URL, `ENF-01`)
+- **Tableau 39** — Mise en perspective des mesures VM face aux piles alternatives
+- **Tableau 40** — Capacité physique mono-serveur et leviers d’optimisation/scaling
+- **Tableau 41** — Disponibilité en série/parallèle, durabilité et objectifs RPO/RTO de MiniShop
+- **Tableau 42** — Latence en percentiles, débit, montée verticale/horizontale et coût d’un neuf
+- **Tableau 43** — Règle du moindre privilège : permissions par utilisateur et conteneurisation
+- **Tableau 44** — Cadre légal e-commerce français (LCEN, Consommation, CNIL)
+- **Tableau 45** — Audit technique des cookies, du `localStorage` et des journaux
+- **Tableau 46** — Politique de conservation RGPD et limites assumées (`docs/18`)
+- **Tableau 47** — Les 7 points bloquants avant toute mise en vente commerciale réelle (`docs/12`)
+- **Tableau 48** — Contrôle de conformité face aux livrables et pénalités du barème
+- **Tableau 49** — Briques d’industrialisation pour une plateforme de production
+- **Tableau 50** — Extension du modèle 3FN vers une *Marketplace* multi-vendeurs
+- **Tableau 51** — Gestion back-office des fiches fournisseurs et commandes d’approvisionnement
+- **Tableau 52** — Architecture du moteur de recommandation hybride (V1 à V3)
+- **Tableau 53** — Automatisations back-office vendeur, logistique et anti-fraude
+- **Tableau 54** — Plan de migration incrémental en 4 paliers (MiniShop → *Marketplace*)
 
 \newpage
 
@@ -951,7 +954,7 @@ Lire une architecture en production consiste à ne plus regarder chaque brique i
 
 *Tableau 25 — Graphe des dépendances (directes, transitives, implicites) et rayon d’impact dans le code de MiniShop.*
 
-   En complément, le cloisonnement entre espace public et `/admin/*` (`RB-13`, puis séparation en 4 conteneurs au Tableau 39) et le découplage asynchrone Palier 2 (§ `6.5`) appliquent les trois leviers classiques de réduction du *blast radius* : **cloisonner** (une panne `cli-maintenance` ou `admin-web` ne touche pas `front-web`), **dégrader plutôt que tomber** (sans cache Redis en V2, les requêtes retombent sur MariaDB ; sans JS, le parcours HTML reste opérationnel), et **découpler** (la panne du worker SMTP retarde un courriel sans jamais bloquer une commande).
+   En complément, le cloisonnement entre espace public et `/admin/*` (`RB-13`, puis séparation en 4 conteneurs au Tableau 41) et le découplage asynchrone Palier 2 (§ `6.5`) appliquent les trois leviers classiques de réduction du *blast radius* : **cloisonner** (une panne `cli-maintenance` ou `admin-web` ne touche pas `front-web`), **dégrader plutôt que tomber** (sans cache Redis en V2, les requêtes retombent sur MariaDB ; sans JS, le parcours HTML reste opérationnel), et **découpler** (la panne du worker SMTP retarde un courriel sans jamais bloquer une commande).
 
 2. **Domaines de panne (*failure domains*) complets, solutions d’ingénierie et frontières réseau vs confiance :**
    Un **domaine de panne** regroupe tout ensemble de composants pouvant tomber simultanément parce qu’ils partagent une même dépendance physique, logicielle, réseau, géographique ou logique. Sur un mono-serveur *LineServ* ou un VPS unique (`ENF-03`), toutes les briques de MiniShop partagent le même domaine de panne. Pour concevoir une architecture de niveau professionnel, l’analyse doit couvrir **les neuf domaines de panne emboîtés ou transverses possibles**, du processus jusqu’au risque humain et logique, avec des remédiations concrètes appliquées à notre pile (`Tableau 26`) :
@@ -984,6 +987,37 @@ Lire une architecture en production consiste à ne plus regarder chaque brique i
 
 *Tableau 27 — Domaines de panne, coût de suppression des SPOF et frontières réseau vs confiance dans MiniShop.*
 
+#### 4.1.7 Point d’entrée de MiniShop : serveur web, *reverse proxy* et *forward proxy* selon le code
+
+Dans l’architecture Web de MiniShop, trois rôles HTTP coexistent ou apparaissent lors du passage en production — **serveur web**, ***reverse proxy*** et ***forward proxy*** — qu’il faut distinguer uniquement par le **sens du trafic** et **qui les appelle**, et non par le nom du logiciel (un même produit comme NGINX pouvant assumer les trois rôles).
+
+1. **Rôles réels dans le code actuel (`V1`) vs architecture de production (`V2`) :**
+   - **Serveur web (V1 dev et Apache) :** en développement (`run.sh`), le serveur intégré PHP (`php -S 127.0.0.1:8000 -t public scripts/dev-router.php`) sert directement les ressources statiques existantes (`return false`) et délègue le routage à `public/index.php` tout en répliquant les blocages de fichiers cachés (`.env`, `.sql`, `.log`). En hébergement cible V1 (`STACK.md`, `public/.htaccess`), **Apache 2.4 (`80`/`443`) + `mod_rewrite`** tient ce rôle : il sert lui-même `public/css/`, `public/img/`, `public/fonts/minishop-euro.woff2`, injecte les en-têtes défensifs (`nosniff`, `DENY`, `Referrer-Policy`) et exécute l’application PHP via `mod_proxy_fcgi` (`PHP-FPM`) ou module Apache.
+   - ***Reverse proxy* (bordure TLS, *LineServ* ou NGINX/HAProxy en V2) :** placé entre Internet et les frontaux PHP-FPM/Apache, il reçoit les requêtes **entrantes** des navigateurs, assure la **terminaison TLS** (`443`), le routage par chemin (`/` → pool `front-web`, `/admin/*` → `admin-web` restreint IP/VPN), la répartition de charge (`§ 4.4.3`), la limitation de débit (`429`) et le masquage des serveurs internes.
+   - **Piège critique vérifié dans notre code (`app/Security/Auth.php:58` & `docs/14-guide-lineserv.md:119`) :** aujourd’hui, `Auth::demarrer()` règle le drapeau `secure` du cookie `MINISHOPSESS` uniquement d’après `$_SERVER['HTTPS']`. Si un *reverse proxy* frontal (NGINX, HAProxy ou frontal *LineServ*) termine le chiffrement TLS et relaie en HTTP clair vers Apache/PHP, `$_SERVER['HTTPS']` reste vide et le cookie perd `Secure` tant que l’on n’adapte pas le proxy et Apache (`X-Forwarded-Proto: https` vérifié exclusivement depuis l’IP du proxy de confiance via `mod_remoteip`, ou variable FastCGI `HTTPS=on`).
+   - ***Forward proxy* (trafic sortant en V2+) :** en V1 (`ENF-20`), MiniShop n’effectue **aucun appel HTTP sortant** à l’exécution (zéro CDN, zéro appel API externe, paiement simulé). Dès l’intégration d’un PSP (Stripe/Paybox), d’un relais SMTP ou d’API transporteurs au Palier 1–2 (`§ 6.1`), placer un **forward proxy** (type Squid / proxy d’egress) devant les conteneurs `front-web` et `cli-maintenance` permet de filtrer les sorties **par nom de domaine autorisé** (`api.stripe.com`, etc.), de journaliser les flux sortants et d’empêcher un conteneur compromis d’exfiltrer des données ou d’effectuer des appels SSRF arbitraires.
+
+| Critère d’analyse | Serveur web (`Apache` / `dev-router.php`) | *Reverse proxy* (`NGINX` / `HAProxy` / frontal TLS) | *Forward proxy* (`Squid` / egress V2+) |
+|---|---|---|---|
+| **Qui l’appelle ?** | Navigateurs / clients HTTP (`80`/`443`, `8000` dev) | Clients externes Internet (`443` HTTPS) | Serveurs internes (`front-web`, `cli-maintenance`) ou postes admin |
+| **Vers où envoie-t-il ?** | Répond lui-même (statiques `public/` + exécution PHP `public/index.php`) | Vers le pool interne `front-web` / `admin-web` | Vers Internet (API PSP Stripe/Paybox, dépôts OS/paquets) |
+| **Ce qu’il protège / cache** | Rien (expose les fichiers autorisés de `public/`) | Cache la topologie et les IP internes des serveurs PHP | Cache l’IP des clients/serveurs internes et bloque les sorties non autorisées |
+| **Fonction dans MiniShop** | `.htaccess`, MIME, static assets, exécution PHP | Terminaison TLS, routage L7 `/admin`, répartition de charge, `429` | Liste blanche de domaines sortants (anti-exfiltration / anti-SSRF) |
+
+*Tableau 28 — Distinction serveur web, reverse proxy et forward proxy selon le sens du trafic dans MiniShop.*
+
+2. **État porté, sauvegarde, pannes (`502`/`504`) et compromis du point d’entrée :**
+   Contrairement à une idée reçue, un *reverse proxy* unique n’est pas « totalement sans état » au sens d’exploitation : il porte des **certificats TLS et clés privées**, ainsi que sa **configuration de routage et de filtrage** (à versionner dans Git et savoir réémettre automatiquement via Let’s Encrypt / ACME ou PKI interne). S’il tombe sans redondance (paire active/passive avec **IP flottante VRRP / Keepalived**), **toute la boutique devient inaccessible** même si PHP et MariaDB sont sains (`SPOF` d’entrée). En exploitation, les codes **`502 Bad Gateway`** et **`504 Gateway Timeout`** émis par NGINX/HAProxy signalent précisément un *reverse proxy* vivant devant un worker `PHP-FPM`/Apache arrêté ou saturé — évitant de chercher la panne côté certificat ou DNS.
+
+| Question de la grille | Serveur web (`Apache` / `PHP-FPM`) | *Reverse proxy* (`NGINX` / `HAProxy`) | *Forward proxy* (`Squid` V2+) |
+|---|---|---|---|
+| **État porté & Sauvegarde** | Code déployé + `.htaccess` (Git) + certificats si sans proxy | **Configuration de routage** (Git) + **certificats/clés TLS** (ACME/coffre) | **Règles ACL de domaines autorisés** (Git) + cache de paquets éventuel |
+| **Impact s’il tombe** | Indisponibilité du nœud (absorbée si pool ≥ `2` frontaux) | **SPOF critique** : toute la boutique est coupée si non doublé par VIP VRRP | Plus d’appels PSP/API externes ni de mises à jour sortantes |
+| **Signaux à surveiller** | Erreurs `5xx`, saturation `pm.max_children`, latence `p95` | Codes **`502`** (backend mort) et **`504`** (timeout PHP/SQL), expiration TLS | Refus de domaine (`403`), volume sortant anormal, latence API externe |
+| **Gain vs Coût d’entrée** | Simple en mono-serveur (`ENF-03`), mais expose directement Apache | Centralise TLS, routage, WAF/rate-limit et autorise ≥ `2` copies PHP | Une brique réseau en plus (saut + latence, risque de coupure si mal configuré) |
+
+*Tableau 29 — État, sauvegarde, lecture des codes 502/504 et compromis d’architecture du point d’entrée.*
+
 \newpage
 
 ### 4.2 Étude complète de design, direction artistique et accessibilité (`docs/DA.md`)
@@ -1000,7 +1034,7 @@ Conçue avant l’écriture de `public/css/app.css` et vérifiée automatiquemen
 | **Boulanger.com** | Les filtres à facettes conservés dans l’URL (`?cat=...&prix_max=...&tri=...`), pastilles actives retirables, cartes homogènes | La comparaison multi-produits et le sélecteur de magasin physique (hors périmètre CDC) |
 | **Back Market** | La sobriété chromatique, le contraste élevé, la respiration visuelle et les cibles tactiles `>= 44 px` | — (*modèle de clarté retenu*, complété par un back-office aussi soigné que la boutique) |
 
-*Tableau 28 — Benchmark ergonomique des 5 concurrents français et positionnement de MiniShop (`docs/DA.md`).*
+*Tableau 30 — Benchmark ergonomique des 5 concurrents français et positionnement de MiniShop (`docs/DA.md`).*
 
 #### 4.2.2 Palette WCAG 2.1 AA, typographie sourcée (`Lato` / `SIL OFL 1.1`) et grille
 
@@ -1012,7 +1046,7 @@ Conçue avant l’écriture de `public/css/app.css` et vérifiée automatiquemen
 | `--accent` / `--accent-fonce` | `#C2410C` / `#9A3412` | **Uniquement l’action d’achat engagée** (1 seul CTA accent par écran) | **5,2:1** / **7,0:1** sur blanc |
 | `--succes` / `--alerte` / `--danger` / `--info` | `#166534` / `#9A3412` / `#991B1B` / `#1E3A8A` | Badges d’état couplés à un fond pastel et **libellé texte obligatoire** (daltonisme) | **6,5:1** / **6,4:1** / **6,8:1** / **8,5:1** |
 
-*Tableau 29 — Palette chromotypographique complète et ratios de contraste WCAG 2.1 AA.*
+*Tableau 31 — Palette chromotypographique complète et ratios de contraste WCAG 2.1 AA.*
 
 - **Typographie et source exacte :** pile système native (`system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`) complétée pour le seul glyphe euro (`unicode-range: U+20AC`) par `public/fonts/minishop-euro.woff2` (`MiniShopEuro`), extrait de **Lato Regular** (`google/fonts`, `ofl/lato/Lato-Regular.ttf`, blob `0f3d0f837d24834b9b5b0a6b735459c56f5e75c3`) sous licence **SIL OFL 1.1** (`public/fonts/OFL.txt`, CSP `font-src 'self'`). Les prix utilisent `font-variant-numeric: tabular-nums` (alignement vertical) et l’échelle modulaire `1,25` (`12 / 14 / 16 / 20 / 25 / 31 / 39 px`) avec `max-width: 68ch` sur les textes.
 - **Grille et responsive :** unité de base `8 px`, conteneur `max-width: 1180px`, grille catalogue adaptative `1 / 2 / 3` colonnes (`360 / 640 / 1024 px`), tableaux back-office repliés avec attributs `data-label` sur mobile et feuille dédiée `public/css/print.css` pour les commandes et CGV.
@@ -1028,7 +1062,7 @@ Conçue avant l’écriture de `public/css/app.css` et vérifiée automatiquemen
 | **10 exigences WCAG 2.1 AA** | Contrastes `>= 5,2:1` et bordures `>= 3:1`, navigation 100 % clavier, lien d’évitement « Aller au contenu », `:focus-visible` `3 px`, `aria-live="polite"` panier, `prefers-reduced-motion` (`0,01 ms`), zoom `200 %` (`rem`), cibles tactiles `>= 44×44 px`. |
 | **Microcopy & Bornes assumées** | Vouvoyement factuel sans fausse urgence (`129,90 € TTC`, `En stock (12)`, jamais `Erreur 1062` ni `Plus que 2 !!!`) ; `~700` lignes de CSS écrites à la main sans Tailwind/Bootstrap ; pas de mode sombre en v1 (tokens documentés). |
 
-*Tableau 30 — Synthèse des 12 composants UI, règles WCAG 2.1 AA et discipline éditoriale.*
+*Tableau 32 — Synthèse des 12 composants UI, règles WCAG 2.1 AA et discipline éditoriale.*
 
 En complément, la traduction intégrale **FR / EN** (`public/js/i18n-en.js`, vérifiée sur `48` vues et `45` messages métier) et le choix du fuseau horaire (stockage serveur strictement **UTC** via `app/Tools/Heure.php`, projection navigateur selon `localStorage` et `public/js/tz-lookup.js` sans envoi GPS) assurent l’accessibilité linguistique et temporelle (`ENF-07`).
 
@@ -1048,10 +1082,10 @@ L’ergonomie d’une boutique en ligne ne vise pas uniquement l’esthétique :
 |---|---|---|
 | **Directive 2011/83/UE (Droits des consommateurs, art. 5 §1 e & art. 8 §2)** | Clarté totale du prix TTC, de la TVA et des frais supplémentaires *avant* engagement ; bouton explicite d’obligation de paiement | Affichage permanent du TTC + HT + TVA (`RB-16`), calcul préalable des frais de port (`4,90 €` / gratuit `>= 80 €`, `ENF-14`), et récapitulatif complet avant confirmation (`sp_compute_shipping`). |
 | **Règlement (UE) 2022/2065 (DSA, art. 25 — *Dark patterns*) & RGPD art. 7 / 12** | Interdiction des interfaces trompeuses (faux comptes à rebours, urgence factice, cases pré-cochées, consentement asymétrique) | Refus explicite des faux compteurs (`docs/DA.md`), stock réel affiché sans pression artificielle, couleur rouge réservée aux erreurs/ruptures, et absence de bandeau cookie trompeur. |
-| **Directive (UE) 2023/2673 (Rétractation en ligne — 19 juin 2026)** | Bouton/fonctionnalité directe, visible et gratuite pour exercer la rétractation à distance avec confirmation et accusé durable | Page informative + modèle `R. 221-1` présents (`/retractation`) ; l’implémentation du bouton en ligne « confirmer la rétractation » est inscrite en **point bloquant n° 3** avant ouverture commerciale (Tableau 45). |
+| **Directive (UE) 2023/2673 (Rétractation en ligne — 19 juin 2026)** | Bouton/fonctionnalité directe, visible et gratuite pour exercer la rétractation à distance avec confirmation et accusé durable | Page informative + modèle `R. 221-1` présents (`/retractation`) ; l’implémentation du bouton en ligne « confirmer la rétractation » est inscrite en **point bloquant n° 3** avant ouverture commerciale (Tableau 47). |
 | **Directive (UE) 2019/882 (*European Accessibility Act*) & Norme EN 301 549** | Accessibilité numérique des services e-commerce (perceptible, utilisable, compréhensible, robuste — WCAG 2.1 AA) | Contrastes calculés `>= 5,2:1`, navigation intégrale au clavier + lien d’évitement, cibles tactiles `>= 44×44 px`, zoom `200 %` (`rem`), annonces `aria-live`, et `alt=""` sur vignettes redondantes. |
 
-*Tableau 31 — Synthèse des mécanismes UX anti-désorientation et de leur conformité aux directives européennes.*
+*Tableau 33 — Synthèse des mécanismes UX anti-désorientation et de leur conformité aux directives européennes.*
 
 \newpage
 
@@ -1067,7 +1101,7 @@ L’ergonomie d’une boutique en ligne ne vise pas uniquement l’esthétique :
 | `ENF-11/12` | Sécurité hashes & réponse IDOR `404` neutre | `0` clair, `404` sur ID étranger | `11/11` `controles.sh` + `105/105` HTTP SQL |
 | `ENF-14/16` | Affichage TTC + port avant validation & atomicité | Transactions `ROLLBACK` intégral | Validés (`T-28`, `T-29`, `8/8` concurrence HTTP) |
 
-*Tableau 32 — Synthèse des exigences non fonctionnelles clés (`docs/annexes/annexe-enf.md`).*
+*Tableau 34 — Synthèse des exigences non fonctionnelles clés (`docs/annexes/annexe-enf.md`).*
 
 #### 4.3.1 La pyramide des tests à 9 étages et sa justification méthodologique
 
@@ -1086,7 +1120,7 @@ Comme l’explique `docs/11-strategie-tests.md`, nous avons volontairement écar
 | **7** | Performance & volumétrie | `scripts/run_perf_vm.sh` → `gen_volumes_cli.php` + `mesurer_sql.sh` + `mesurer.sh` | SQL **p95 <= 20,6 ms**, HTTP **p95 = 6 ms**, `0` erreur | VM locale (`cb0f814`) |
 | **8** | Recette manuelle humaine | `docs/13-fiches-recette-uc.md`, `docs/13-suivi-recette-uc.csv` | **164** scénarios + **36** couples = **200 lignes `NON JOUÉ`** | Campagne humaine restante |
 
-*Tableau 33 — Pyramide de validation complète à 9 étages (`docs/11-strategie-tests.md`).*
+*Tableau 35 — Pyramide de validation complète à 9 étages (`docs/11-strategie-tests.md`).*
 
 #### 4.3.2 Protocoles d’isolation SQL, contrats statiques, couverture honnête et garde de verdict
 
@@ -1113,7 +1147,7 @@ La campagne exécutée sur **VM Debian 13** (PHP `8.4.27`, MariaDB `11.8.6`, com
 | **E2E JSON & i18n (`run_tests.php`, `preferences_test.mjs`)** | Parité `JsonStore` + `48` vues FR/EN & `45` messages métier | **338 / 338 assertions** + **48 vues** | **VALIDÉ** |
 | **Sécurité statique & Audits (`controles.sh`, `verifier_fiches_uc.py`)** | 11 points OWASP/ANSSI + 14 UC / 164 scénarios / 36 couples | **11 / 11** + **46 / 46** + **22 / 22** Python | **CONFORME** |
 
-*Tableau 34 — Synthèse chiffrée des campagnes de validation automatisées.*
+*Tableau 36 — Synthèse chiffrée des campagnes de validation automatisées.*
 
 La campagne de performance dédiée (`bash scripts/run_perf_vm.sh`, commit `cb0f814`, `tests/perf/dernieres_mesures.txt`) a été conduite sur la base isolée `minishop_perf` peuplée à **`236` produits**, **`1 004` commandes**, **`1 916` lignes de commande** et **`1 998` traces de statut** (au-delà de la volumétrie cible `ENF-02` de `200` produits / `1 000` commandes). Les Tableaux 32 et 33 en restituent l’intégralité :
 
@@ -1126,7 +1160,7 @@ La campagne de performance dédiée (`bash scripts/run_perf_vm.sh`, commit `cb0f
 | **Vue `v_etat_stock` (1 page)** | `19,8` | `20,6` | **OK (`< 500 ms`)** |
 | **Écriture transactionnelle (`sp_create_order` + `sp_add_order_line` + `sp_confirm_order`)** | **`44,0`** | — | Verrou `SELECT ... FOR UPDATE` + triggers snapshot/stock/audit + calcul port (`CMD2026-001005 · 215,88 EUR · port 0,00`, nettoyée après mesure) |
 
-*Tableau 35 — Mesures SQL détaillées (`minishop_perf`, `100` itérations) et plans `EXPLAIN` (`tests/perf/dernieres_mesures.txt`).*
+*Tableau 37 — Mesures SQL détaillées (`minishop_perf`, `100` itérations) et plans `EXPLAIN` (`tests/perf/dernieres_mesures.txt`).*
 
 | Route HTTP évaluée (`N = 200` requêtes/URL) | Moyenne (ms) | Médiane (ms) | p95 (ms) | Code HTTP |
 |---|---:|---:|---:|---:|
@@ -1138,7 +1172,7 @@ La campagne de performance dédiée (`bash scripts/run_perf_vm.sh`, commit `cb0f
 | `/panier` | `1,3` | `1,2` | `1,5` | `200` |
 | **Verdict global `ENF-01`** | — | — | **`6,0 ms` global** | **0 réponse inattendue — CONFORME (`< 500 ms`)** |
 
-*Tableau 36 — Mesures HTTP détaillées par route sur `http://127.0.0.1:18080` (`N = 200` req./URL).*
+*Tableau 38 — Mesures HTTP détaillées par route sur `http://127.0.0.1:18080` (`N = 200` req./URL).*
 
 #### 4.4.2 Mise en perspective des mesures VM face aux piles concurrentes
 
@@ -1150,7 +1184,7 @@ La campagne de performance dédiée (`bash scripts/run_perf_vm.sh`, commit `cb0f
 | **Transaction complète de commande (`sp_create_order` + lignes + `sp_confirm_order`)** | **44,0 ms** en moyenne incluant verrou `FOR UPDATE`, snapshot tarifaire, calcul de port et insertion d’audit | Plusieurs allers-retours applicatifs + requêtes ORM supplémentaires si l’on ne déporte pas la logique en procédure stockée | Sur SQLite : contention globale de fichier ; sur NoSQL : nécessité de transactions distribuées ou risque de désynchronisation du stock |
 | **Contention critique (`20` acheteurs simultanés pour `12` unités)** | **8/8 scénarios réussis**, **`0` survente** : le verrou InnoDB ligne par ligne sérialise exactement les `12` premiers achats | Risque classique de *race condition* si l’ORM lit puis met à jour le stock en PHP sans verrou `FOR UPDATE` explicite | Échecs `SQLITE_BUSY` fréquents ou risque de stock négatif sans opérateur atomique strict |
 
-*Tableau 37 — Mise en perspective des résultats expérimentaux de la VM Debian 13 face aux piles alternatives.*
+*Tableau 39 — Mise en perspective des résultats expérimentaux de la VM Debian 13 face aux piles alternatives.*
 
 #### 4.4.3 Limite physique d’utilisateurs simultanés en mono-serveur et architecture de scaling sourcée
 
@@ -1161,7 +1195,7 @@ Conformément à `ENF-03`, MiniShop est aujourd’hui dimensionné comme une app
    - *Débit maximal vs utilisateurs actifs (loi de Little : `L = λ × W`) :* avec nos latences mesurées (`6 ms` p95 sur lecture catalogue, `44 ms` sur commande transactionnelle), `50` workers PHP saturés représentent théoriquement plusieurs milliers de requêtes/s en lecture pure — **mais trois goulots d’étranglement physiques réduisent fortement cette capacité réelle sous charge mixte** :
      1. **Verrouillage exclusif des sessions fichiers PHP (`session.save_handler = files`) :** selon le manuel officiel PHP (*Session Handling*), `session_start()` pose un verrou exclusif (`flock`) sur le fichier de session jusqu’à la fin du script, **sérialisant** toutes les requêtes AJAX ou onglets parallèles d’un même utilisateur.
      2. **Connexions et contention InnoDB (`max_connections = 151` par défaut) :** sur MariaDB, les connexions PDO non persistées restent limitées par `max_connections` (et `innodb_buffer_pool_size` limité sur petit serveur) ; surtout, lors d’une vente flash sur un même article populaire, le verrou ligne `SELECT ... FOR UPDATE` sur `produit(id_produit)` **sérialise les transactions concurrentes d’achat sur ce SKU** (`1 / 0,044 s ≈ 22` validations/s sur ce seul article), ce qui garantit `0` survente (`8/8`) mais crée une file d’attente au-delà de quelques dizaines d’acheteurs simultanés sur la même référence.
-     3. **Absence de cache HTTP/applicatif et balayage `commande(statut)` :** le `type=ALL` relevé par `EXPLAIN` (Tableau 35) commence à peser sur le CPU SQL au-delà de `50 000` commandes (`ENF-02`).
+     3. **Absence de cache HTTP/applicatif et balayage `commande(statut)` :** le `type=ALL` relevé par `EXPLAIN` (Tableau 37) commence à peser sur le CPU SQL au-delà de `50 000` commandes (`ENF-02`).
 
    En ordre de grandeur réaliste pour un mono-serveur modeste non caché (`2`–`4` vCPU, `4` Go RAM), la plateforme absorbe confortablement la cible `ENF-02` (`10` à `50` utilisateurs actifs simultanés, soit **~`40`–`60` requêtes HTTP dynamiques strictement parallèles** et **`~20`–`25` validations/s** sur un même produit chaud) avant d’observer une montée en file d’attente des workers PHP ou des verrous MariaDB.
 
@@ -1175,7 +1209,7 @@ Conformément à `ENF-03`, MiniShop est aujourd’hui dimensionné comme une app
 | **4. Répartition de charge & CDN** | Placer **NGINX / HAProxy** (*load balancer* L7) devant un pool horizontal de nœuds PHP-FPM + **CDN / cache périphérique** pour `/img/`, `/css/`, `/fonts/` | *NGINX HTTP Load Balancing Docs* ; *Cloudflare / MDN HTTP Caching* | Découpe la bande passante statique du serveur applicatif et permet d’ajouter des frontaux PHP à la demande derrière une VIP. |
 | **5. Découplage asynchrone** | Déporter factures PDF, e-mails, notifications et réassort vers des **files de messages** (Redis Streams / RabbitMQ + workers CLI) | *RabbitMQ / Redis Streams Architecture Docs* | Réduit le temps d’exécution des requêtes PHP critiques (`sp_confirm_order`), libérant immédiatement les workers FPM. |
 
-*Tableau 38 — Limites physiques mono-serveur (`ENF-03`) et plan d’optimisation/scaling appuyé sur les documentations officielles.*
+*Tableau 40 — Limites physiques mono-serveur (`ENF-03`) et plan d’optimisation/scaling appuyé sur les documentations officielles.*
 
 #### 4.4.4 Disponibilité, durabilité, RPO/RTO, latence/débit et montée en charge de MiniShop
 
@@ -1196,10 +1230,10 @@ Les mesures précédentes (`p95 = 6,0 ms`, écriture `44 ms`, capacité `40`–`
 | **RPO (perte max tolérée)** | **Non borné / Manuel** (aucun cron de dump actif dans le dépôt) | **`<= 1 h` à `<= 5 min`** (dump quotidien + archivage continu des journaux binaires MariaDB) |
 | **RTO (délai de reprise)** | **`~15 min` théorique** (`mysqldump`), **non prouvé** sur *LineServ* (`ENF-15`) | **`<= 15 min`** (restauration automatisée testée mensuellement) ; **`< 60 s`** avec bascule automatique *Standby* |
 
-*Tableau 39 — Disponibilité en série/parallèle, durabilité et objectifs RPO/RTO mesurés et cibles de MiniShop.*
+*Tableau 41 — Disponibilité en série/parallèle, durabilité et objectifs RPO/RTO mesurés et cibles de MiniShop.*
 
 3. **Latence en percentiles vs débit, montée verticale/horizontale et coût d’un neuf supplémentaire :**
-   - **Pourquoi nous mesurons le `p95` (`ENF-01`) plutôt que la moyenne seule :** sur `minishop_perf`, nos routes HTTP affichent un `p95` global de **`6,0 ms`** (`1,4` à `6,5 ms` par route, Tableau 36) et nos requêtes SQL `20,2` à `20,6 ms` en lecture contre **`44,0 ms`** pour une commande transactionnelle complète (`Tableau 35`). En chaîne synchrone en série, ces latences s’additionnent à chaque appel ; mesurer `p95`/`p99` révèle immédiatement les files d’attente (ex. sérialisation `FOR UPDATE` sur un article chaud à `~22,7` validations/s) qu’une moyenne masquerait.
+   - **Pourquoi nous mesurons le `p95` (`ENF-01`) plutôt que la moyenne seule :** sur `minishop_perf`, nos routes HTTP affichent un `p95` global de **`6,0 ms`** (`1,4` à `6,5 ms` par route, Tableau 38) et nos requêtes SQL `20,2` à `20,6 ms` en lecture contre **`44,0 ms`** pour une commande transactionnelle complète (`Tableau 37`). En chaîne synchrone en série, ces latences s’additionnent à chaque appel ; mesurer `p95`/`p99` révèle immédiatement les files d’attente (ex. sérialisation `FOR UPDATE` sur un article chaud à `~22,7` validations/s) qu’une moyenne masquerait.
    - **Montée verticale vs horizontale et coût du passage `99,9 % → 99,99 %` :**
 
 | Dimension architecturale | Application PHP (`public/index.php`, `Router`) | Base MariaDB (`SqlStore`, `sql/01..03`) | Coût d’un neuf supplémentaire (`99,9 %` → `99,99 %`) |
@@ -1207,7 +1241,7 @@ Les mesures précédentes (`p95 = 6,0 ms`, écriture `44 ms`, capacité `40`–`
 | **Stratégie de montée en charge** | **Horizontale** dès que `MINISHOPSESS` passe sur **Redis** (§ `4.1.4`) : ajout de nœuds *stateless* derrière NGINX | **Verticale en priorité** (CPU, NVMe, `innodb_buffer_pool_size`, index `idx_commande_statut`), puis réplicas en lecture | Passer de `8 h 46` à `53 min` d’arrêt/an exige ≥ `2` zones de panne, une bascule automatique testée et une astreinte + observabilité temps réel |
 | **Plafond & SPOF levé** | Supprime le SPOF applicatif ; limité uniquement par le répartiteur et l’état partagé | Conserve une cohérence forte (`ACID`) sur le nœud *Primary* sans schisme de stock | Réduit les pertes de ventes en pic, au prix d’une complexité accrue (nouveaux modes de panne réseau/bascule) |
 
-*Tableau 40 — Synthèse latence/débit, montée en charge verticale/horizontale et compromis d’un « neuf » de disponibilité supplémentaire.*
+*Tableau 42 — Synthèse latence/débit, montée en charge verticale/horizontale et compromis d’un « neuf » de disponibilité supplémentaire.*
 
 ### 4.5 Analyse critique des biais, limites du prototype et risques résiduels
 
@@ -1258,7 +1292,7 @@ Pour limiter au maximum la surface d’exposition et l’impact d’une éventue
 | **Conteneur `cli-maintenance`** | Tâches planifiées, archivage RGPD (`libsodium`), PDF | **Seul** conteneur détenant les clés de chiffrement d’archive et l’accès au stockage `backup` (absents des conteneurs Web) | Une compromission HTTP ne peut ni lire les sauvegardes ni déchiffrer les archives clients |
 | **Cloisonnement logique par personne** | Données personnelles (PII) et multi-vendeurs (Chap. 6) | Secrets injectés en mémoire (`0400`, hors image Docker) ; colonnes PII isolées par rôle ; filtrage strict `id_vendeur` / *Row-Level Security* | Un préparateur, un catalogueur ou un vendeur A ne peut jamais lire les clients ou marges d’un tiers |
 
-*Tableau 41 — Règle du moindre privilège : cloisonnement par conteneur d’exécution et isolation logique des données par profil.*
+*Tableau 43 — Règle du moindre privilège : cloisonnement par conteneur d’exécution et isolation logique des données par profil.*
 
 \newpage
 
@@ -1280,7 +1314,7 @@ Huit pages dédiées (`app/View/home/`) traduisent les obligations précontractu
 | **Données personnelles (RGPD)** | RGPD chap. III (art. 12–23), CNIL transparence et durées | `/confidentialite` (`confidentialite.php`) : décrit factuellement les traitements observés dans le code, les durées proposées et les éléments restant à fixer par un futur responsable de traitement. |
 | **Cookies & autres traceurs** | Lignes directrices CNIL & FAQ cookies | `/cookies` (`cookies.php`) : détaille le cookie de session strictement nécessaire et le `localStorage` de préférences ; **aucun bandeau de consentement factice** tant qu’aucun traceur marketing/analytics n’est présent. |
 
-*Tableau 42 — Cadre légal e-commerce français et traduction dans les pages réglementaires de MiniShop (`docs/12-information-juridique.md`).*
+*Tableau 44 — Cadre légal e-commerce français et traduction dans les pages réglementaires de MiniShop (`docs/12-information-juridique.md`).*
 
 #### 5.2.2 Audit technique des cookies, du stockage local et minimisation des journaux
 
@@ -1293,7 +1327,7 @@ L’inspection statique des scripts PHP/JavaScript et des vues (`docs/12` § 2) 
 | **`localStorage` (`minishop.preferences.v1`)** (`public/js/preferences.js`) | Langue (`fr`/`en`) et fuseau horaire choisis par l’utilisateur | Stockage local sur demande explicite ; `tz-lookup.js` déduit le fuseau localement après clic sans transmettre ni sauvegarder les coordonnées GPS. Aucun pixel tiers ni SDK analytics détecté. | Refaire un inventaire réseau complet sur l’instance hébergée réelle ; ajouter un bandeau conforme si un traceur non exempté est intégré. |
 | **Journaux JSON & Contact** (`var/journal/db.jsonl`, `var/log/contact.jsonl`) | Audit JSON et messages `/contact` (`<= 2 000` car.) | `NettoyageJournaux::ajouter` écrit sous verrou avec `chmod 0600` ; les nouvelles entrées `client`/`administrateur` dans `db.jsonl` **omettent nom, e-mail et `mot_de_passe_hash`** (minimisation). | Traiter les anciennes entrées historiques déjà écrites ; mettre en place un serveur SMTP réel pour `/contact` (aujourd’hui journalisé localement sans envoi d’e-mail). |
 
-*Tableau 43 — Audit technique des traceurs, cookies et minimisation des données (`docs/12-information-juridique.md`).*
+*Tableau 45 — Audit technique des traceurs, cookies et minimisation des données (`docs/12-information-juridique.md`).*
 
 \newpage
 
@@ -1310,7 +1344,7 @@ Conformément à l’article 5 du RGPD (limitation de conservation), à l’arti
 | **Sauvegardes locales dédiées** | **30 jours** minimum (2 plus récentes conservées) | `db_init.php --nettoyage sauvegardes` | Exige `NETTOYAGE_SAUVEGARDES` (`0700` hors webroot), fichier marqueur `.minishop-sauvegardes` contenant `MINISHOP_BACKUPS_V1`, format strict `minishop-AAAAMMJJThhmmssZ-<32hex>.backup`. |
 | **Extractions chiffrées ponctuelles** | Sur durée justifiée + **12 mois** pour `acces.jsonl` | `scripts/archive_restreinte.php` | Boîtes scellées **libsodium** (clé publique sur serveur, clé privée **hors serveur** sur machine de confiance), plafond `8 Mio`, journal local `acces.jsonl` (UID + SHA-256). *Limite :* chiffre et détecte la corruption mais n’authentifie pas l’auteur et ne purge pas automatiquement à échéance. |
 
-*Tableau 44 — Politique de conservation RGPD, maintenance CLI et archivage chiffré libsodium (`docs/18-politique-conservation.md`).*
+*Tableau 46 — Politique de conservation RGPD, maintenance CLI et archivage chiffré libsodium (`docs/18-politique-conservation.md`).*
 
 **Verrou opérationnel strict contre la suppression accidentelle :** toute exécution réelle via `php scripts/db_init.php --nettoyage <catégorie>` exige **simultanément** les deux options `--executer --validation-absence-gel`, attestant que le responsable a vérifié l’absence de demande de droits, d’obligation légale ou de gel contentieux sur les éléments visés (et ne recrée jamais la base, contrairement à `--yes`).
 
@@ -1328,7 +1362,7 @@ Dans une démarche d’ingénierie responsable, l’audit juridique établit exp
 | **6** | **Sécurité d’hébergement réel** | Non testé derrière proxy mutualisé *LineServ* | Imposer TLS + `Secure`, supprimer `mesurer.php` / `gen_volumes.php`, vérifier permissions fichiers hors `public/`, sauvegardes et supervision. |
 | **7** | **Audit d’accessibilité réel** | Tests CSS automatisés uniquement | Réaliser un audit manuel complet RGAA / WCAG 2.1 AA avec lecteurs d’écran et navigateurs multiples. |
 
-*Tableau 45 — Synthèse des 7 points bloquants à lever avant toute exploitation commerciale réelle.*
+*Tableau 47 — Synthèse des 7 points bloquants à lever avant toute exploitation commerciale réelle.*
 
 ### 5.3 Analyse des écarts vis-à-vis du cahier des charges initial et bilan réflexif
 
@@ -1354,7 +1388,7 @@ Le dépôt comporte un `README.md` complet (présentation, architecture, install
 | **iv. Soutenance + questions (15 min)** | **10** | Trame, timing et réponses aux questions du jury | **Prêt :** diaporama `12` slides, démo chronométrée 4 min, terminal SQL préparé, 20 Q/R (`docs/03` & `docs/24`). |
 | **v. Contribution régulière GitLab & README** | **10** | Historique commits binôme, `README.md`, accès `Reporter` enseignant | **Prévu :** `README.md` complet, historique Git tracé, charte `docs/20` (vérification finale sur le dépôt GitLab IUT avant soutenance). |
 
-*Tableau 46 — Contrôle complet de conformité au barème officiel et d’absence de pénalité.*
+*Tableau 48 — Contrôle complet de conformité au barème officiel et d’absence de pénalité.*
 
 \newpage
 
@@ -1374,7 +1408,7 @@ La première étape consiste à transformer le prototype académique mono-serveu
 | **Base de données & Scalabilité** | Instance unique MariaDB `11.8.6` | Topologie **Primary + Read Replicas** (écritures `sp_*` sur le primaire, lectures `v_catalogue` et analytique sur les réplicas), index `commande(statut)`, sauvegardes continues PITR (*Point-In-Time Recovery*) | Séparation du trafic de consultation (90 %+) et du trafic transactionnel critique |
 | **Sécurité avancée & Observabilité** | Bcrypt, CSRF, PDO, journaux fichiers simples | MFA TOTP obligatoire pour `SUPER` (OWASP ASVS V4.3.1), secrets en coffre-fort (Vault/KMS), logs structurés JSON avec `X-Request-Id`, traces **OpenTelemetry**, alertes Prometheus/Grafana | Détection proactive des anomalies, audit légal corrélé de bout en bout |
 
-*Tableau 47 — Briques d’industrialisation requises pour transformer MiniShop en système de production.*
+*Tableau 49 — Briques d’industrialisation requises pour transformer MiniShop en système de production.*
 
 ### 6.2 Évolution du modèle 3FN vers une *Marketplace* multi-vendeurs (*Seller Central* et *Buy Box*)
 
@@ -1404,7 +1438,7 @@ CREATE TABLE offre_vendeur (
 ) ENGINE=InnoDB;
 ```
 
-Le Tableau 48 synthétise l’impact architectural de cette extension sur nos règles existantes :
+Le Tableau 50 synthétise l’impact architectural de cette extension sur nos règles existantes :
 
 | Composant MiniShop | Évolution vers le modèle *Marketplace* multi-vendeurs | Préservation des garanties existantes |
 |---|---|---|
@@ -1413,7 +1447,7 @@ Le Tableau 48 synthétise l’impact architectural de cette extension sur nos r�
 | **Flux financier & Séquestre** | Intégration de paiements scindés (*Stripe Connect* / *Adyen for Platforms*) : encaissement sur compte de cantonnement, prélèvement automatique de la commission (`taux_commission`) et virement au vendeur à confirmation de livraison (`LIVREE`). | Aucune détention illicite de fonds pour compte de tiers (conformité DSP2). |
 | **Cloisonnement RBAC & Anti-IDOR** | Ajout d’un troisième espace dédié `/vendeur/*` protégé par `Auth::exigeVendeur()` et filtrage systématique `WHERE id_vendeur = ?` sur produits, stocks et sous-commandes. | Généralisation directe de la garde IDOR actuelle (`SEC-08`, `ENF-12`). |
 
-*Tableau 48 — Extension du modèle relationnel 3FN et de la sécurité vers une marketplace multi-vendeurs.*
+*Tableau 50 — Extension du modèle relationnel 3FN et de la sécurité vers une marketplace multi-vendeurs.*
 
 ### 6.3 Gestion des fournisseurs, fiches fournisseurs et commandes d’approvisionnement back-office
 
@@ -1475,11 +1509,11 @@ CREATE TABLE ligne_bcf (
 | Module back-office à ajouter | Fonctionnalités opérationnelles pour le gestionnaire | Intégration transactionnelle avec le cœur MiniShop |
 |---|---|---|
 | **Fiches fournisseurs (`/admin/fournisseurs`)** | Coordonnées commerciales/comptables, conditions de règlement (`NET_30`, `COMPTANT`), catalogue des produits rattachés avec `sku_fournisseur`, coût d’achat HT, **MOQ** (quantité minimale de commande) et rang de préférence (`priorite_rang = 1` principal, `2` secours). | Le calcul de marge réelle (`produit.prix_ht - catalogue_fournisseur.prix_achat_ht`) alimente directement le garde-fou anti-vente à perte et les tableaux de bord CA. |
-| **Évaluation & Fiabilité (Scorecard)** | Suivi automatique du délai réel de réception par rapport à `date_livraison_prevue` (taux **OTIF** — *On-Time In-Full*), taux de colis non conformes et alertes en cas de dépendance à un fournisseur unique. | Alimente l’algorithme du point de commande dynamique `S_cmd` (Tableau 51) avec le délai réel `L_fournisseur` plutôt qu’une estimation fixe. |
+| **Évaluation & Fiabilité (Scorecard)** | Suivi automatique du délai réel de réception par rapport à `date_livraison_prevue` (taux **OTIF** — *On-Time In-Full*), taux de colis non conformes et alertes en cas de dépendance à un fournisseur unique. | Alimente l’algorithme du point de commande dynamique `S_cmd` (Tableau 53) avec le délai réel `L_fournisseur` plutôt qu’une estimation fixe. |
 | **Génération des commandes fournisseur (`/admin/approvisionnements`)** | Création manuelle ou **pré-remplissage automatique** des brouillons `BROUILLON` dès qu’un produit passe en `TRES_BAS` ou `RUPTURE` dans `v_etat_stock`, respectant automatiquement le MOQ et le fournisseur de rang 1 ; validation CSRF par `GESTIONNAIRE`/`SUPER`, génération PDF et envoi e-mail/EDI (`ENVOYEE`). | `ligne_bcf.prix_achat_unitaire` fige par *snapshot* le prix d’achat négocié au moment de l’émission du BCF (exactement comme `RB-06` côté vente client). |
 | **Réception physique & Mise en stock atomique** | Interface de réception partielle ou totale (saisie ou scan code-barres de `quantite_recue`, gestion des écarts/avaries) faisant évoluer le BCF vers `RECEPTIONNEE_PARTIELLE` puis `RECEPTIONNEE_TOTALE` et `CLOTUREE`. | Une procédure `sp_receive_supplier_order` verrouille `ligne_bcf` (`FOR UPDATE`), contrôle `quantite_recue <= quantite_commandee`, puis appelle **`sp_adjust_stock(..., 'DELTA', +qte_recue, 'REASSORT_FOURNISSEUR', ...)`** : le stock est incrémenté atomiquement et **chaque réception est tracée dans `stock_movement_history`**. |
 
-*Tableau 49 — Gestion back-office des fiches fournisseurs et du cycle complet des commandes d’approvisionnement.*
+*Tableau 51 — Gestion back-office des fiches fournisseurs et du cycle complet des commandes d’approvisionnement.*
 
 \newpage
 
@@ -1519,7 +1553,7 @@ HAVING co_achats >= 3
 | **V2 — Filtrage collaboratif & Contenu** | Factorisation matricielle implicite (**ALS / BPR**) sur vues, paniers et achats + **vecteurs sémantiques (*embeddings*)** sur `nom`, `description` et `categorie` (index `pgvector` ou Qdrant) | Résout le **démarrage à froid** (*cold start*) pour un produit neuf jamais commandé ou un nouveau client sans historique | Évaluation hors ligne par validation croisée temporelle (**Precision@10**, **Recall@10**, **NDCG@10**) |
 | **V3 — Re-classement temps réel** | Modèle de classement contextuel (*Learning to Rank* léger) combinant affinité, **marge**, **stock disponible (`RB-18`)** et délai vendeur | Évite de recommander un article en rupture ou à faible qualité de service ; maximise la satisfaction et le panier moyen | **A/B testing** contrôlé ; conformité RGPD (consentement préalable, droit d’opposition au profilage art. 21 RGPD) |
 
-*Tableau 50 — Architecture incrémentale du moteur de recommandation hybride.*
+*Tableau 52 — Architecture incrémentale du moteur de recommandation hybride.*
 
 ### 6.5 Automatisation du back-office vendeur, réapprovisionnement prédictif et logistique
 
@@ -1534,7 +1568,7 @@ Dans un back-office artisanal (et encore en partie dans MiniShop V1), l’admini
 | **Tarification encadrée (*Repricing*)** | Modification manuelle du `prix_ht` | Règles de réajustement automatique face aux offres concurrentes de la *Buy Box*, strictement bornées par un plancher de rentabilité (`prix_ht >= cout_achat * (1 + marge_min)`) | Compétitivité continue sans jamais provoquer de vente à perte (`RB-02` étendue) |
 | **Modération & Anti-fraude** | Contrôle humain a posteriori | Règles automatisées bloquant : hausse brutale de prix suspecte, pic d’annulations vendeur (`> 5 %`), commande atypique (score de risque avant expédition) et alertes RGPD automatisées | Protection des acheteurs et préservation de la réputation de la plateforme |
 
-*Tableau 51 — Catalogue des automatisations du back-office vendeur et de la chaîne logistique.*
+*Tableau 53 — Catalogue des automatisations du back-office vendeur et de la chaîne logistique.*
 
 \newpage
 
@@ -1545,11 +1579,11 @@ L’erreur classique d’une montée en charge consiste à vouloir tout réécri
 | Palier | Horizon / Objectif | Chantiers techniques prioritaires | Prérequis validé avant passage au palier suivant |
 |---|---|---|---|
 | **Palier 1 — Socle Production Mono-Boutique** | Court terme (mise en ligne commerciale réelle) | PSP (Stripe/Paybox) + webhooks idempotents ; SMTP transactionnel ; MFA `SUPER` ; Redis sessions + *rate limiting* ; index `commande(statut)` ; campagne Playwright + *LineServ* | 0 anomalie critique sur recette humaine (`200` scénarios) et test de charge ciblé |
-| **Palier 2 — Automatisation Back-Office, Fournisseurs & Recommandation V1** | Moyen terme (productivité opérationnelle) | File asynchrone (*workers* CLI) pour factures Factur-X, étiquettes transporteur, webhooks de suivi ; tables `fournisseur` / `bon_commande_fournisseur` + réapprovisionnement prédictif (Tableau 49) ; recommandation SQL co-achats (Tableau 50) | Mesure de réduction du temps de traitement commande/réassort et hausse du panier moyen par A/B test |
-| **Palier 3 — Ouverture *Marketplace* Multi-Vendeurs** | Croissance catalogue (*Seller Central*) | Tables `vendeur`, `offre_vendeur`, `sous_commande_vendeur` (Tableau 48) ; portail `/vendeur/*` isolé ; flux séquestre *Split Payment* ; élection de *Buy Box* et import massif | Audits IDOR multi-tenant et réconciliation comptable automatisée à 100 % |
+| **Palier 2 — Automatisation Back-Office, Fournisseurs & Recommandation V1** | Moyen terme (productivité opérationnelle) | File asynchrone (*workers* CLI) pour factures Factur-X, étiquettes transporteur, webhooks de suivi ; tables `fournisseur` / `bon_commande_fournisseur` + réapprovisionnement prédictif (Tableau 51) ; recommandation SQL co-achats (Tableau 52) | Mesure de réduction du temps de traitement commande/réassort et hausse du panier moyen par A/B test |
+| **Palier 3 — Ouverture *Marketplace* Multi-Vendeurs** | Croissance catalogue (*Seller Central*) | Tables `vendeur`, `offre_vendeur`, `sous_commande_vendeur` (Tableau 50) ; portail `/vendeur/*` isolé ; flux séquestre *Split Payment* ; élection de *Buy Box* et import massif | Audits IDOR multi-tenant et réconciliation comptable automatisée à 100 % |
 | **Palier 4 — Recherche Sémantique, IA & Haute Disponibilité** | Grande échelle | Meilisearch/OpenSearch ; recommandation hybride (ALS + *embeddings*) ; *Repricing* borné ; réplicas MariaDB en lecture ; architecture multi-nœuds avec traces OpenTelemetry | SLA `>= 99,9 %`, latence `p95 < 100 ms` sous charge `100x` supérieure à `ENF-02` |
 
-*Tableau 52 — Plan de migration incrémental en 4 paliers vers une plateforme e-commerce professionnelle.*
+*Tableau 54 — Plan de migration incrémental en 4 paliers vers une plateforme e-commerce professionnelle.*
 
 Cette approche progressive préserve intégralement les garanties transactionnelles prouvées dans les chapitres précédents — verrouillage des stocks sans survente, immuabilité financière des commandes et traçabilité d’audit — tout en levant méthodiquement chaque limite du prototype académique.
 
