@@ -477,6 +477,12 @@ def convertir(source: Path, sortie: Path, titre: str | None = None) -> int:
             continue
         vider_citation()
 
+        if re.match(r"^\s*(\\newpage|<!--\s*pagebreak\s*-->)\s*$", brute):
+            pdf.add_page()
+            index += 1
+            numero = 0
+            continue
+
         if re.match(r"^\s*(---|\*\*\*)\s*$", brute):
             pdf.ln(2)
             pdf.set_draw_color(*TRAIT)

@@ -390,6 +390,11 @@ def convertir(source: Path, sortie: Path) -> tuple[int, int]:
             continue
         vider_citation()
 
+        if re.match(r"^\s*(\\newpage|<!--\s*pagebreak\s*-->)\s*$", brute):
+            document.add_page_break()
+            index += 1
+            continue
+
         trouve = re.match(r"^(#{1,4})\s+(.*)$", brute)
         if trouve:
             niveau = len(trouve.group(1))

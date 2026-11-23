@@ -293,6 +293,7 @@ def reecrire_liens(corps: str) -> str:
 def convertir(source: Path, sortie: Path, titre_force: str | None = None) -> dict[str, object]:
     brut = source.read_text(encoding="utf-8")
     brut = brut.replace("- [x] ", "- [OK] ").replace("- [ ] ", "- [ ] ").replace("- [~] ", "- [~] ")
+    brut = re.sub(r"^\s*\\newpage\s*$", '<div style="break-before: page;"></div>', brut, flags=re.M)
     convertisseur = markdown.Markdown(
         extensions=["tables", "fenced_code", "toc", "sane_lists", "attr_list", "md_in_html"],
         extension_configs={"toc": {"permalink": "", "toc_depth": "2-3"}},
