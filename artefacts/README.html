@@ -3,91 +3,222 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light dark">
-<meta name="description" content="SAÉ 302 — MiniShop : MiniShop#">
-<title>MiniShop# — MiniShop</title>
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : MiniShop">
+<title>MiniShop — MiniShop (SAÉ 302)</title>
 <style>
 :root {
   --encre: #0f172a;
   --encre-douce: #475569;
-  --papier: #fbfaf7;
-  --carte: #ffffff;
-  --trait: #e2e8f0;
-  --accent: #1d4ed8;
-  --accent-clair: #dbeafe;
-  --code: #f1f5f9;
-  --mesure: 72ch;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
-    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
-    --accent-clair: #1e3a8a; --code: #16223a;
-  }
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
 }
 * { box-sizing: border-box; }
 html { font-size: 100%; -webkit-text-size-adjust: 100%; }
 body {
-  margin: 0 auto;
-  padding: 2.5rem 1.25rem 5rem;
-  max-width: calc(var(--mesure) + 6rem);
-  background: var(--papier);
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
   color: var(--encre);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
-  font-size: 1rem;
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
   line-height: 1.65;
   text-rendering: optimizeLegibility;
 }
-h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
-h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
-h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
-h3 { font-size: 1.15rem; }
-h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
-p, li { max-width: var(--mesure); }
-a { color: var(--accent); text-underline-offset: 0.15em; }
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
 a:hover { text-decoration-thickness: 2px; }
 code {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
 }
 pre {
-  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
-  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
 }
-pre code { background: none; padding: 0; font-size: inherit; }
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
 blockquote {
-  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
-  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
 }
-blockquote p { margin: 0.35rem 0; }
-table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
-caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
-th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
-thead th { background: var(--accent-clair); }
-tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
-img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
-hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
-ul, ol { padding-left: 1.4rem; }
-li { margin: 0.25rem 0; }
-li input[type="checkbox"] { margin-right: 0.4rem; }
-.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
-.toc > ul { list-style: none; padding-left: 0; }
-.toc ul ul { padding-left: 1rem; }
-footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
 @media print {
-  :root { --papier: #fff; --carte: #fff; }
-  @page { size: A4; margin: 18mm 16mm; }
-  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
   h1, h2, h3 { break-after: avoid; }
   table, pre, img, blockquote { break-inside: avoid; }
   a { color: inherit; text-decoration: none; }
-  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
   .toc { break-after: page; }
 }
 </style>
 </head>
 <body>
 <main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>README.md</code></div>
+</header>
 <nav class="toc" aria-label="Sommaire"><div class="toc">
 <ul>
 <li><a href="#equipe-responsabilites-et-acces">Équipe, responsabilités et accès</a></li>
@@ -112,14 +243,14 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </ul>
 </div>
 </nav>
-<h1 id="minishop">MiniShop<a class="headerlink" href="#minishop" title="Permanent link">#</a></h1>
+<h1 id="minishop">MiniShop<a class="headerlink" href="#minishop" title="Permanent link"></a></h1>
 <p><a href="https://github.com/jojo8356/SAE-302/actions/workflows/ci.yml"><img alt="CI GitHub Actions" src="https://github.com/jojo8356/SAE-302/actions/workflows/ci.yml/badge.svg" /></a></p>
 <blockquote>
 <p><strong>MiniShop</strong> est une application Web de boutique en ligne réalisée dans un cadre pédagogique : catalogue, panier, commandes et back-office. Le projet est développé en <strong>PHP</strong> et utilise MySQL/MariaDB via PDO comme pilote de stockage par défaut ; un mode JSON secondaire reste disponible pour les démonstrations et tests isolés.</p>
 <p><strong>Cadre</strong> — SAE — BUT Informatique (BUT2), Université Côte d'Azur.</p>
 <p><strong>Périmètre : maquette scolaire.</strong> Les paiements et les livraisons sont simulés. Le formulaire de contact n’envoie pas de courriel. Le projet n’est pas destiné à traiter de vraies ventes ni à être déployé tel quel en production.</p>
 </blockquote>
-<h2 id="equipe-responsabilites-et-acces">Équipe, responsabilités et accès<a class="headerlink" href="#equipe-responsabilites-et-acces" title="Permanent link">#</a></h2>
+<h2 id="equipe-responsabilites-et-acces">Équipe, responsabilités et accès<a class="headerlink" href="#equipe-responsabilites-et-acces" title="Permanent link"></a></h2>
 <p>Le groupe de réalisation comprend deux étudiants. Les permissions du dépôt GitLab IUT sont présentées séparément des responsabilités de planification.</p>
 <table>
 <thead>
@@ -139,9 +270,9 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tr>
 </tbody>
 </table>
-<p>La WBS et la todolist utilisent des lettres A/B/C pour les responsabilités de projet et le RACI. Aucune correspondance entre ces lettres et les personnes nommées n’est établie dans ce README. Les permissions GitLab (<code>Owner</code>, <code>Developer</code>) ne sont pas des rôles RACI. La charte <a href="docs/20-charte-gitlab-revues-croisees.html"><code>docs/20-charte-gitlab-revues-croisees.md</code></a> décrit le processus de revue attendu ; ce README n’atteste pas que des MR ou des revues croisées ont déjà eu lieu.</p>
+<p>La WBS et la todolist utilisent des lettres A/B/C pour les responsabilités de projet et le RACI. Aucune correspondance entre ces lettres et les personnes nommées n’est établie dans ce README. Les permissions GitLab (<code>Owner</code>, <code>Developer</code>) ne sont pas des rôles RACI. La charte <a href="20-charte-gitlab-revues-croisees.html"><code>docs/20-charte-gitlab-revues-croisees.md</code></a> décrit le processus de revue attendu ; ce README n’atteste pas que des MR ou des revues croisées ont déjà eu lieu.</p>
 <p><strong>Encadrement</strong> — NGUYEN Thanh-Phuong, enseignante référente, est membre directe du projet GitLab IUT avec le rôle <code>Reporter</code> ; elle ne fait pas partie du groupe étudiant.</p>
-<h2 id="fonctionnalites">Fonctionnalités<a class="headerlink" href="#fonctionnalites" title="Permanent link">#</a></h2>
+<h2 id="fonctionnalites">Fonctionnalités<a class="headerlink" href="#fonctionnalites" title="Permanent link"></a></h2>
 <ul>
 <li><strong>Catalogue public</strong> : catégories, recherche, filtres, fiches produit et gestion du panier.</li>
 <li><strong>Espace client</strong> : inscription, connexion, coordonnées, commandes et annulation selon leur état.</li>
@@ -149,8 +280,8 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <li><strong>Préférences personnelles</strong> : interface en français ou en anglais et fuseau horaire choisi manuellement ou estimé localement à la demande.</li>
 <li><strong>Interface responsive</strong> et pages d’information adaptées au périmètre pédagogique.</li>
 </ul>
-<p>Les décisions d’interface s’appuient sur l’étude de design de <a href="docs/DA.html"><code>docs/DA.md</code></a>. Les contrôles d’accès par rôle, protections CSRF, requêtes préparées et politique CSP sont décrits dans le code et les documents de sécurité.</p>
-<h2 id="technologies-et-donnees">Technologies et données<a class="headerlink" href="#technologies-et-donnees" title="Permanent link">#</a></h2>
+<p>Les décisions d’interface s’appuient sur l’étude de design de <a href="DA.html"><code>docs/DA.md</code></a>. Les contrôles d’accès par rôle, protections CSRF, requêtes préparées et politique CSP sont décrits dans le code et les documents de sécurité.</p>
+<h2 id="technologies-et-donnees">Technologies et données<a class="headerlink" href="#technologies-et-donnees" title="Permanent link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -182,15 +313,15 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tbody>
 </table>
 <p>Le mode SQL est celui utilisé par défaut (<code>STORAGE_DRIVER=sql</code> dans <code>.env.example</code>) : MySQL/MariaDB, PDO et une base initialisée sont donc requis pour démarrer l’application. Pour choisir le mode JSON sans serveur, définir explicitement <code>STORAGE_DRIVER=json</code>. Les secrets et réglages propres à une machine doivent rester dans <code>.env</code>, qui n’est pas destiné à être versionné ; seul le modèle <code>.env.example</code> est suivi par Git. <strong>Node.js et npm ne sont pas nécessaires pour lancer l’application.</strong></p>
-<h2 id="lancer-lapplication-en-local">Lancer l’application en local<a class="headerlink" href="#lancer-lapplication-en-local" title="Permanent link">#</a></h2>
-<h3 id="prerequis">Prérequis<a class="headerlink" href="#prerequis" title="Permanent link">#</a></h3>
+<h2 id="lancer-lapplication-en-local">Lancer l’application en local<a class="headerlink" href="#lancer-lapplication-en-local" title="Permanent link"></a></h2>
+<h3 id="prerequis">Prérequis<a class="headerlink" href="#prerequis" title="Permanent link"></a></h3>
 <ul>
 <li>PHP <strong>8.2+</strong> avec les extensions <code>json</code>, <code>mbstring</code> et <code>pdo_mysql</code> ;</li>
 <li>serveur MySQL <strong>8.0.16+</strong> ou MariaDB <strong>10.6+</strong>, base locale dédiée et accès configuré dans <code>.env</code> ;</li>
 <li>Bash pour <code>run.sh</code>.</li>
 </ul>
 <p>Le SQL est le pilote par défaut. Pour le mode JSON secondaire, définir <code>STORAGE_DRIVER=json</code> dans <code>.env</code> ; ce mode n’exige ni <code>pdo_mysql</code> ni serveur SQL. Python 3 est requis pour lancer l’ensemble des suites PHP avec le runner présenté ci-dessous.</p>
-<h3 id="demarrage-rapide">Démarrage rapide<a class="headerlink" href="#demarrage-rapide" title="Permanent link">#</a></h3>
+<h3 id="demarrage-rapide">Démarrage rapide<a class="headerlink" href="#demarrage-rapide" title="Permanent link"></a></h3>
 <pre><code class="language-bash">git clone https://github.com/jojo8356/SAE-302.git
 cd SAE-302
 cp .env.example .env
@@ -211,9 +342,9 @@ cp .env.example .env
 <li>Préférences : <a href="http://localhost:8000/preferences">http://localhost:8000/preferences</a></li>
 </ul>
 <p>Le serveur PHP intégré est réservé au développement local. Ne pas l’exposer directement à Internet.</p>
-<h3 id="comptes-de-demonstration">Comptes de démonstration<a class="headerlink" href="#comptes-de-demonstration" title="Permanent link">#</a></h3>
+<h3 id="comptes-de-demonstration">Comptes de démonstration<a class="headerlink" href="#comptes-de-demonstration" title="Permanent link"></a></h3>
 <p>Les comptes du seed sont réservés aux environnements locaux isolés. Les adresses, mots de passe et hashes ne sont pas reproduits dans la documentation ni dans les supports. Pour une recette LineServ, utiliser uniquement un compte de test autorisé, avec les accès transmis séparément par canal privé ; ne pas réutiliser les comptes du seed sur une instance de production ou accessible au public.</p>
-<h2 id="configuration-et-pilote-sql-par-defaut">Configuration et pilote SQL par défaut<a class="headerlink" href="#configuration-et-pilote-sql-par-defaut" title="Permanent link">#</a></h2>
+<h2 id="configuration-et-pilote-sql-par-defaut">Configuration et pilote SQL par défaut<a class="headerlink" href="#configuration-et-pilote-sql-par-defaut" title="Permanent link"></a></h2>
 <p>Pour personnaliser la configuration locale, copier le modèle puis modifier <code>.env</code> :</p>
 <pre><code class="language-bash">cp .env.example .env
 </code></pre>
@@ -222,28 +353,28 @@ cp .env.example .env
 <pre><code class="language-bash">./run.sh --db
 ./run.sh
 </code></pre>
-<p>L’installation charge <code>sql/01</code> à <code>sql/04</code>. <code>./run.sh --db</code> peut supprimer une base existante après confirmation ; l’utiliser uniquement sur une cible locale vérifiée et dédiée. Pour activer le mode secondaire sans base, définir <code>STORAGE_DRIVER=json</code> dans <code>.env</code> ; ce mode utilise les fichiers de <code>data/minishop/</code>. Les détails du schéma et les limites des procédures sont dans <a href="docs/04-conception-bd-et-sql.html"><code>docs/04-conception-bd-et-sql.md</code></a>.</p>
-<h2 id="tests">Tests<a class="headerlink" href="#tests" title="Permanent link">#</a></h2>
-<h3 id="suites-locales-sans-serveur-sql-ni-dependances-node">Suites locales sans serveur SQL ni dépendances Node<a class="headerlink" href="#suites-locales-sans-serveur-sql-ni-dependances-node" title="Permanent link">#</a></h3>
+<p>L’installation charge <code>sql/01</code> à <code>sql/04</code>. <code>./run.sh --db</code> peut supprimer une base existante après confirmation ; l’utiliser uniquement sur une cible locale vérifiée et dédiée. Pour activer le mode secondaire sans base, définir <code>STORAGE_DRIVER=json</code> dans <code>.env</code> ; ce mode utilise les fichiers de <code>data/minishop/</code>. Les détails du schéma et les limites des procédures sont dans <a href="04-conception-bd-et-sql.html"><code>docs/04-conception-bd-et-sql.md</code></a>.</p>
+<h2 id="tests">Tests<a class="headerlink" href="#tests" title="Permanent link"></a></h2>
+<h3 id="suites-locales-sans-serveur-sql-ni-dependances-node">Suites locales sans serveur SQL ni dépendances Node<a class="headerlink" href="#suites-locales-sans-serveur-sql-ni-dependances-node" title="Permanent link"></a></h3>
 <p>Avec PHP 8.2+ et Python 3 installés, lancer les suites PHP et les contrôles documentaires sans accéder à une base SQL ni démarrer l’E2E :</p>
 <pre><code class="language-bash">php scripts/run-all-tests.php --sans-sql --sans-e2e
 </code></pre>
 <p>Le runner détaille les suites exécutées et signale explicitement les parties non jouées. Cette commande ne valide ni l’intégration SQL ni les parcours E2E ; ne pas les considérer comme réussis lorsqu’ils sont ignorés.</p>
-<h3 id="campagnes-integrees">Campagnes intégrées<a class="headerlink" href="#campagnes-integrees" title="Permanent link">#</a></h3>
+<h3 id="campagnes-integrees">Campagnes intégrées<a class="headerlink" href="#campagnes-integrees" title="Permanent link"></a></h3>
 <p>Le runner complet est :</p>
 <pre><code class="language-bash">php scripts/run-all-tests.php
 </code></pre>
 <p>L’intégration SQL nécessite un serveur de test isolé : elle crée puis supprime une base dédiée nommée <code>minishop_test</code> par défaut, distincte de <code>DB_NAME</code>. Vérifier la configuration avant le lancement ; ne jamais utiliser une base de développement ou de production. L’E2E PHP-WASM et certains tests JavaScript ne sont exécutés que si leurs outils optionnels sont présents. Vérifier le résumé final du runner pour distinguer les tests <strong>joués</strong>, <strong>non joués</strong> et <strong>en échec</strong>.</p>
 <p>Le workflow automatisé du dépôt est défini dans <a href=".github/workflows/ci.yml"><code>ci.yml</code></a>. Il couvre notamment la syntaxe PHP, les suites de tests, des contrôles de sécurité, SQL sur bases jetables et des vérifications responsive en navigateur. Cette CI GitHub ne constitue pas une preuve de pipeline GitLab IUT.</p>
-<p>Les campagnes automatisées sur VM Debian 13 (PHP 8.4 / MariaDB 11.8.6) et les mesures de performance isolées sont consignées dans <a href="docs/pv-recette.html"><code>docs/pv-recette.md</code></a> (<code>scripts/generer_pv.php</code>, <code>60/60</code> étapes) et <a href="tests/perf/dernieres_mesures.txt"><code>tests/perf/dernieres_mesures.txt</code></a> (<code>scripts/run_perf_vm.sh</code>).</p>
-<h3 id="recette-manuelle">Recette manuelle<a class="headerlink" href="#recette-manuelle" title="Permanent link">#</a></h3>
+<p>Les campagnes automatisées sur VM Debian 13 (PHP 8.4 / MariaDB 11.8.6) et les mesures de performance isolées sont consignées dans <a href="pv-recette.html"><code>docs/pv-recette.md</code></a> (<code>scripts/generer_pv.php</code>, <code>60/60</code> étapes) et <a href="tests/perf/dernieres_mesures.txt"><code>tests/perf/dernieres_mesures.txt</code></a> (<code>scripts/run_perf_vm.sh</code>).</p>
+<h3 id="recette-manuelle">Recette manuelle<a class="headerlink" href="#recette-manuelle" title="Permanent link"></a></h3>
 <ul>
-<li><a href="docs/13-fiches-recette-uc.html"><code>docs/13-fiches-recette-uc.md</code></a> décrit les scénarios et leur déroulement.</li>
+<li><a href="13-fiches-recette-uc.html"><code>docs/13-fiches-recette-uc.md</code></a> décrit les scénarios et leur déroulement.</li>
 <li><a href="docs/13-suivi-recette-uc.csv"><code>docs/13-suivi-recette-uc.csv</code></a> sert à suivre leur exécution.</li>
-<li>La campagne manuelle LineServ, décrite dans <a href="docs/14-guide-lineserv.html"><code>docs/14-guide-lineserv.md</code></a>, vise la base réelle prévue par le protocole ; elle n’a pas été jouée et aucune restauration n’a été effectuée. Les bases jetables de CI restent distinctes.</li>
+<li>La campagne manuelle LineServ, décrite dans <a href="14-guide-lineserv.html"><code>docs/14-guide-lineserv.md</code></a>, vise la base réelle prévue par le protocole ; elle n’a pas été jouée et aucune restauration n’a été effectuée. Les bases jetables de CI restent distinctes.</li>
 </ul>
 <p>Un scénario ne doit être marqué comme joué qu’après son exécution réelle. Les campagnes responsives multi-largeurs sont couvertes par les tests automatisés, pas par la checklist manuelle. Le dépôt ne fournit pas de procédure automatisée de déploiement.</p>
-<h2 id="documentation-du-projet">Documentation du projet<a class="headerlink" href="#documentation-du-projet" title="Permanent link">#</a></h2>
+<h2 id="documentation-du-projet">Documentation du projet<a class="headerlink" href="#documentation-du-projet" title="Permanent link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -253,15 +384,15 @@ cp .env.example .env
 </thead>
 <tbody>
 <tr>
-<td><a href="docs/01-cahier-des-charges-MiniShop.html">Cahier des charges</a></td>
+<td><a href="01-cahier-des-charges-MiniShop.html">Cahier des charges</a></td>
 <td>Besoin, exigences fonctionnelles et règles métier</td>
 </tr>
 <tr>
-<td><a href="docs/02-document-tests-validation.html">Tests et validation</a></td>
+<td><a href="02-document-tests-validation.html">Tests et validation</a></td>
 <td>Stratégie, résultats et protocole de recette</td>
 </tr>
 <tr>
-<td><a href="docs/pv-recette.html">Procès-verbal de recette</a></td>
+<td><a href="pv-recette.html">Procès-verbal de recette</a></td>
 <td>Campagne automatisée complète (<code>60/60</code>), décision et visas nominatifs</td>
 </tr>
 <tr>
@@ -277,32 +408,40 @@ cp .env.example .env
 <td>Langages, prérequis, bibliothèques et outils par contexte d’utilisation</td>
 </tr>
 <tr>
-<td><a href="docs/04-conception-bd-et-sql.html">Conception de la base</a></td>
+<td><a href="04-conception-bd-et-sql.html">Conception de la base</a></td>
 <td>Modèle de données et choix SQL</td>
 </tr>
 <tr>
-<td><a href="docs/11-strategie-tests.html">Stratégie de tests</a></td>
+<td><a href="23-audit-uml-diagrammes.html">Audit des schémas UML</a></td>
+<td>Fidélité des 14 diagrammes UML face au code</td>
+</tr>
+<tr>
+<td><a href="24-preparation-soutenance-complete.html">Préparation de la soutenance</a></td>
+<td>Plan minuté, démo en direct, justifications et 20 Q/R jury</td>
+</tr>
+<tr>
+<td><a href="11-strategie-tests.html">Stratégie de tests</a></td>
 <td>Périmètre et limites des tests automatisés</td>
 </tr>
 <tr>
-<td><a href="docs/DA.html">Étude de design</a></td>
+<td><a href="DA.html">Étude de design</a></td>
 <td>Analyse concurrentielle et direction visuelle</td>
 </tr>
 <tr>
-<td><a href="docs/07-note-cybersecurite.html">Sécurité</a></td>
+<td><a href="07-note-cybersecurite.html">Sécurité</a></td>
 <td>Mesures mises en place et limites connues</td>
 </tr>
 <tr>
-<td><a href="docs/12-information-juridique.html">Informations juridiques</a></td>
+<td><a href="12-information-juridique.html">Informations juridiques</a></td>
 <td>Cadre légal de la maquette pédagogique</td>
 </tr>
 <tr>
-<td><a href="docs/18-politique-conservation.html">Conservation des données</a></td>
+<td><a href="18-politique-conservation.html">Conservation des données</a></td>
 <td>Politique proposée et limites des outils de la maquette</td>
 </tr>
 </tbody>
 </table>
-<h2 id="organisation-du-depot">Organisation du dépôt<a class="headerlink" href="#organisation-du-depot" title="Permanent link">#</a></h2>
+<h2 id="organisation-du-depot">Organisation du dépôt<a class="headerlink" href="#organisation-du-depot" title="Permanent link"></a></h2>
 <pre><code class="language-text">app/          contrôleurs, services, dépôts, sécurité et vues
 public/       point d’entrée HTTP, feuilles CSS, JavaScript et visuels
 data/         données du moteur JSON
@@ -311,11 +450,10 @@ sql/          schéma, procédures, déclencheurs, données de démonstration et
 scripts/      lancement, configuration, tests et outils de développement
 tests/        tests PHP, Python, JavaScript et scénarios SQL
 </code></pre>
-<h2 id="licence-et-reutilisation">Licence et réutilisation<a class="headerlink" href="#licence-et-reutilisation" title="Permanent link">#</a></h2>
+<h2 id="licence-et-reutilisation">Licence et réutilisation<a class="headerlink" href="#licence-et-reutilisation" title="Permanent link"></a></h2>
 <p>MiniShop est un projet pédagogique de SAE en BUT Informatique à l’IUT Nice Côte d’Azur. Le dépôt ne fournit pas de licence libre distincte ; toute réutilisation en dehors du cadre pédagogique doit être autorisée par les ayants droit.</p>
 <footer class="doc">
-  <p>SAÉ 302 — MiniShop · document généré depuis <code>README.md</code>
-  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>README.md</code> · 0 figure(s) intégrée(s).</p>
 </footer>
 </main>
 </body>

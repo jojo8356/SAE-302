@@ -3,91 +3,222 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light dark">
-<meta name="description" content="SAÉ 302 — MiniShop : 11 — Stratégie de tests#">
-<title>11 — Stratégie de tests# — MiniShop</title>
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : 11 — Stratégie de tests">
+<title>11 — Stratégie de tests — MiniShop (SAÉ 302)</title>
 <style>
 :root {
   --encre: #0f172a;
   --encre-douce: #475569;
-  --papier: #fbfaf7;
-  --carte: #ffffff;
-  --trait: #e2e8f0;
-  --accent: #1d4ed8;
-  --accent-clair: #dbeafe;
-  --code: #f1f5f9;
-  --mesure: 72ch;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
-    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
-    --accent-clair: #1e3a8a; --code: #16223a;
-  }
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
 }
 * { box-sizing: border-box; }
 html { font-size: 100%; -webkit-text-size-adjust: 100%; }
 body {
-  margin: 0 auto;
-  padding: 2.5rem 1.25rem 5rem;
-  max-width: calc(var(--mesure) + 6rem);
-  background: var(--papier);
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
   color: var(--encre);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
-  font-size: 1rem;
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
   line-height: 1.65;
   text-rendering: optimizeLegibility;
 }
-h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
-h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
-h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
-h3 { font-size: 1.15rem; }
-h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
-p, li { max-width: var(--mesure); }
-a { color: var(--accent); text-underline-offset: 0.15em; }
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
 a:hover { text-decoration-thickness: 2px; }
 code {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
 }
 pre {
-  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
-  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
 }
-pre code { background: none; padding: 0; font-size: inherit; }
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
 blockquote {
-  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
-  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
 }
-blockquote p { margin: 0.35rem 0; }
-table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
-caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
-th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
-thead th { background: var(--accent-clair); }
-tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
-img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
-hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
-ul, ol { padding-left: 1.4rem; }
-li { margin: 0.25rem 0; }
-li input[type="checkbox"] { margin-right: 0.4rem; }
-.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
-.toc > ul { list-style: none; padding-left: 0; }
-.toc ul ul { padding-left: 1rem; }
-footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
 @media print {
-  :root { --papier: #fff; --carte: #fff; }
-  @page { size: A4; margin: 18mm 16mm; }
-  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
   h1, h2, h3 { break-after: avoid; }
   table, pre, img, blockquote { break-inside: avoid; }
   a { color: inherit; text-decoration: none; }
-  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
   .toc { break-after: page; }
 }
 </style>
 </head>
 <body>
 <main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/11-strategie-tests.md</code></div>
+</header>
 <nav class="toc" aria-label="Sommaire"><div class="toc">
 <ul>
 <li><a href="#1-le-principe-la-pyramide-des-tests-et-son-protocole">1. Le principe : la pyramide des tests et son protocole</a></li>
@@ -112,7 +243,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </ul>
 </div>
 </nav>
-<h1 id="11-strategie-de-tests">11 — Stratégie de tests<a class="headerlink" href="#11-strategie-de-tests" title="Permanent link">#</a></h1>
+<h1 id="11-strategie-de-tests">11 — Stratégie de tests<a class="headerlink" href="#11-strategie-de-tests" title="Permanent link"></a></h1>
 <p>Ce document ne remplace pas le <a href="02-document-tests-validation.html">document de tests et de validation</a> (cas détaillés, registre d'anomalies, PV de recette) : il explique <strong>comment</strong> la vérification est construite, <strong>pourquoi</strong> à ce niveau-là, et <strong>ce qu'elle ne prouve pas</strong>. C'est le document qu'on lit quand on se demande « vos tests, ils servent à quoi ? ».</p>
 <blockquote>
 <p><strong>Portée historique — coupure documentaire 23/10/2026.</strong> Le compte rendu historique du 23/10 (<code>node scripts/run-all-tests.mjs --sans-sql --sans-e2e</code>) excluait explicitement SQL et E2E et ne comportait pas de SHA ; il ne constitue pas une preuve sur l’état courant.</p>
@@ -121,7 +252,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 - <code>bash scripts/run_perf_vm.sh</code> (<code>cb0f814</code>, <code>tests/perf/dernieres_mesures.txt</code>) sur la base isolée <code>minishop_perf</code> (<code>236</code> produits, <code>1 004</code> commandes) a mesuré : SQL (100 it.) <strong>p95 ≤ 20,6 ms</strong>, écriture métier <code>sp_add_order_line</code> <strong>44 ms</strong>, et HTTP (200 it. × 6 parcours) <strong>100 % HTTP 200</strong>, <strong>0 erreur</strong>, <strong>p95 global = 6 ms</strong> (<code>ENF-01 &lt; 500 ms</code> conforme).
 - Les <strong>200 entrées manuelles</strong> de <code>docs/13-suivi-recette-uc.csv</code> restent distinctement <strong><code>NON JOUÉ</code></strong>, et aucun test manuel sur LineServ, déploiement ni validation pédagogique n’est revendiqué.</p>
 </blockquote>
-<h2 id="1-le-principe-la-pyramide-des-tests-et-son-protocole">1. Le principe : la pyramide des tests et son protocole<a class="headerlink" href="#1-le-principe-la-pyramide-des-tests-et-son-protocole" title="Permanent link">#</a></h2>
+<h2 id="1-le-principe-la-pyramide-des-tests-et-son-protocole">1. Le principe : la pyramide des tests et son protocole<a class="headerlink" href="#1-le-principe-la-pyramide-des-tests-et-son-protocole" title="Permanent link"></a></h2>
 <p>La pyramide des tests décrit les niveaux et les protocoles du projet. Les résultats complets sur VM Debian 13 (<code>f9b614f</code> / <code>cb0f814</code>) sont détaillés en §4, dans <code>docs/02</code>, <code>docs/19</code>, <code>docs/pv-recette.md</code> et <code>tests/perf/dernieres_mesures.txt</code>.</p>
 <table>
 <thead>
@@ -208,20 +339,20 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </table>
 <p><strong>Total</strong> : les volumes détaillés figurent ci-dessus ; les scénarios catalogue varient avec le nombre de produits. La matrice catalogue MariaDB reste à jouer.</p>
 <p>Pourquoi cette forme, et pas 400 tests unitaires avec des doublures partout : l'essentiel du sujet est une <strong>base de données</strong> (8 entités métier, 9 tables SQL avec la table technique d’audit, 18 procédures, 16 déclencheurs, 1 fonction, 3 vues). Un test unitaire avec un <code>PDO</code> simulé prouverait seulement que le PHP appelle une chaîne de caractères. La stratégie vise donc à contrôler les règles là où elles vivent : étage 3 sur le moteur, étage 5 sur MariaDB. La présence de ces étages dans le plan ne prouve pas leur exécution ni la conformité du parcours applicatif.</p>
-<h2 id="2-les-trois-natures-de-test-et-ce-quelles-distinguent">2. Les trois natures de test, et ce qu'elles distinguent<a class="headerlink" href="#2-les-trois-natures-de-test-et-ce-quelles-distinguent" title="Permanent link">#</a></h2>
-<h3 id="21-tests-de-regles-etage-3-le-moteur-sans-http">2.1 Tests de règles (étage 3) — le moteur, sans HTTP<a class="headerlink" href="#21-tests-de-regles-etage-3-le-moteur-sans-http" title="Permanent link">#</a></h3>
+<h2 id="2-les-trois-natures-de-test-et-ce-quelles-distinguent">2. Les trois natures de test, et ce qu'elles distinguent<a class="headerlink" href="#2-les-trois-natures-de-test-et-ce-quelles-distinguent" title="Permanent link"></a></h2>
+<h3 id="21-tests-de-regles-etage-3-le-moteur-sans-http">2.1 Tests de règles (étage 3) — le moteur, sans HTTP<a class="headerlink" href="#21-tests-de-regles-etage-3-le-moteur-sans-http" title="Permanent link"></a></h3>
 <p><code>tests/php/run_tests.php</code> exécute les 29 scénarios <code>T-01</code> → <code>T-29</code> du cahier des charges sur <code>app/Model/Data/JsonStore.php</code>, qui réimplémente contraintes, déclencheurs et transactions (<strong>29/29</strong> dans les runs PHP-WASM et VM). Le comportement réel sur le pilote SQL/MySQL/PDO par défaut est validé séparément par l’étage 5 (<code>sql_integration.php</code>, <strong>29/29</strong> sous MariaDB 11.8.6).</p>
 <p><code>tests/php/engine_smoke.php</code> vise à contrôler les hypothèses de cette réimplémentation : API des pilotes (<code>JSON</code> et <code>SQL</code>), absence de connexion sans PDO, absence de concaténation SQL et comportement de <code>LIKE</code>. Ces contrôles exigent un résultat de run daté et rattaché au SHA avant d'être présentés comme réussis.</p>
-<h3 id="22-integration-sql-etage-5-protocole-a-rejouer-pour-etablir-le-resultat">2.2 Intégration SQL (étage 5) — protocole à rejouer pour établir le résultat<a class="headerlink" href="#22-integration-sql-etage-5-protocole-a-rejouer-pour-etablir-le-resultat" title="Permanent link">#</a></h3>
+<h3 id="22-integration-sql-etage-5-protocole-a-rejouer-pour-etablir-le-resultat">2.2 Intégration SQL (étage 5) — protocole à rejouer pour établir le résultat<a class="headerlink" href="#22-integration-sql-etage-5-protocole-a-rejouer-pour-etablir-le-resultat" title="Permanent link"></a></h3>
 <p><code>tests/php/sql_integration.php</code> est conçu comme une <strong>enveloppe mince</strong> autour de <code>tests/sql/run_tests.sh</code> : le protocole crée une base temporaire dédiée <code>minishop_test</code>, y charge <code>sql/01</code> → <code>sql/04</code>, contrôle le repository sur <code>SqlStore</code> et la procédure de recherche, joue les 29 scénarios, puis supprime la base. Lors de la campagne complète sur VM Debian 13 du <strong>17/11/2026</strong> (<code>f9b614f</code>, <code>docs/pv-recette.md</code>), <code>sql_integration.php</code> (<strong>29/29</strong>), <code>http_sql_e2e.php</code> (<strong>105/105</strong>) et <code>concurrence_http.php</code> (<strong>8/8</strong>) ont été exécutés avec le code de sortie <strong>0</strong>.</p>
 <p>Depuis l’audit global, cette enveloppe refuse par défaut une base existante et refuse toujours le nom <code>DB_NAME</code> configuré. <code>--reinitialiser-base-existante</code> autorise explicitement la suppression : serveur de test jetable uniquement. La protection du nom ne détecte pas les bases utilisées par d’autres applications. Le harnais shell appelé directement ne bénéficie pas de ces garde-fous.</p>
 <p>Le mot « mince » est important : réécrire les 29 cas en PHP aurait produit deux jeux de tests qui divergent au premier changement de schéma. Le harnais shell est la référence ; le PHP n'ajoute que l'isolation.</p>
 <p>L'isolation est le point délicat : <code>tests/sql/fixture.sql</code> réinitialise l'état <strong>avant chaque scénario</strong> — lancée sur la base de développement, la campagne effacerait les commandes de démonstration. L'enveloppe refuse le nom de base applicative configuré ; cela ne protège pas les bases des autres applications. <code>--garder</code> permet d'inspecter le résultat.</p>
 <p>Une note d’archive rapporte un refus <code>1044 Access denied</code> lors de la création de <code>minishop_test</code> par un compte applicatif limité à <code>minishop.*</code>. Ce récit n’est pas rattaché ici à un run daté/SHA et n’est pas une preuve de l’environnement actuel. Le protocole décrit une création explicite par <code>php scripts/db_init.php --test-db</code>, sans élargir les droits sur la base applicative ; à vérifier sur serveur jetable avant toute réinitialisation.</p>
 <p>Comportement attendu : sans client <code>mariadb</code>/<code>mysql</code> dans le <code>PATH</code>, ou sans serveur joignable, le harnais annonce <strong>NON JOUÉ</strong> et sort en code 2 (ce qui permet à <code>run-all-tests.mjs --sans-sql --sans-e2e</code> de tourner dans un conteneur dépourvu de MariaDB, tandis que la campagne VM <code>run-all-tests.php</code> joue l’intégralité des suites).</p>
-<h3 id="23-tests-de-bout-en-bout-etage-6-ce-que-lutilisateur-voit">2.3 Tests de bout en bout (étage 6) — ce que l'utilisateur voit<a class="headerlink" href="#23-tests-de-bout-en-bout-etage-6-ce-que-lutilisateur-voit" title="Permanent link">#</a></h3>
+<h3 id="23-tests-de-bout-en-bout-etage-6-ce-que-lutilisateur-voit">2.3 Tests de bout en bout (étage 6) — ce que l'utilisateur voit<a class="headerlink" href="#23-tests-de-bout-en-bout-etage-6-ce-que-lutilisateur-voit" title="Permanent link"></a></h3>
 <p>Sur VM Debian 13 (<code>f9b614f</code>, <code>docs/pv-recette.md</code>), <code>http_sql_e2e.php</code> a validé <strong>105/105</strong> contrôles HTTP de bout en bout sous MariaDB/PDO et <code>concurrence_http.php</code> <strong>8/8</strong> contrôles en parallèle (20 acteurs / 12 unités). Côté PHP-WASM et DOM, <code>tests/node/e2e_isolation.mjs</code> (<strong>338</strong> vérifications sur stockage JSON isolé) et <code>tests/node/preferences_test.mjs</code> (<strong>48</strong> vues FR/EN et <strong>45</strong> messages métier) sont également verts. Ces campagnes automatisées ne remplacent pas une recette humaine navigateur sur LineServ.</p>
-<h2 id="3-les-tests-de-contrat-la-partie-qui-attrape-ce-que-les-autres-laissent-passer">3. Les tests de contrat — la partie qui attrape ce que les autres laissent passer<a class="headerlink" href="#3-les-tests-de-contrat-la-partie-qui-attrape-ce-que-les-autres-laissent-passer" title="Permanent link">#</a></h2>
+<h2 id="3-les-tests-de-contrat-la-partie-qui-attrape-ce-que-les-autres-laissent-passer">3. Les tests de contrat — la partie qui attrape ce que les autres laissent passer<a class="headerlink" href="#3-les-tests-de-contrat-la-partie-qui-attrape-ce-que-les-autres-laissent-passer" title="Permanent link"></a></h2>
 <p>Trois suites sont prévues pour analyser des artefacts <strong>sans exécuter l'application</strong>. Elles visent une catégorie de défaut que ni les tests unitaires ni l'E2E ne ciblent directement : la <strong>cohérence entre deux artefacts écrits séparément</strong>. Leur présence ne signifie pas qu'elles ont été rejouées.</p>
 <table>
 <thead>
@@ -250,7 +381,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tbody>
 </table>
 <p>Ces tests sont <strong>statiques</strong> : ils analysent les fichiers et ne remplacent pas une validation de navigateur. Un scénario Chromium headless (<code>tests/node/responsive_navigateur.mjs</code>, largeurs 320, 375 et 1440 px) est décrit séparément ; aucune exécution CI ou validation multi-largeurs n’est revendiquée ici.</p>
-<h2 id="4-resultats-sur-vm-debian-13-et-executions-en-conteneur-isole">4. Résultats sur VM Debian 13 et exécutions en conteneur isolé<a class="headerlink" href="#4-resultats-sur-vm-debian-13-et-executions-en-conteneur-isole" title="Permanent link">#</a></h2>
+<h2 id="4-resultats-sur-vm-debian-13-et-executions-en-conteneur-isole">4. Résultats sur VM Debian 13 et exécutions en conteneur isolé<a class="headerlink" href="#4-resultats-sur-vm-debian-13-et-executions-en-conteneur-isole" title="Permanent link"></a></h2>
 <p>Dans un conteneur sans PHP CLI ni MariaDB, <code>node scripts/run-all-tests.mjs --sans-sql --sans-e2e</code> exécute les suites PHP-WASM et Python ; sur la VM Debian 13 native (<strong>PHP 8.4.27 cli</strong>, <strong>MariaDB 11.8.6</strong>) aux commits <code>f9b614f</code> et <code>cb0f814</code>, l’ensemble complet de la chaîne a été exécuté (<code>docs/pv-recette.md</code> et <code>tests/perf/dernieres_mesures.txt</code>) :</p>
 <table>
 <thead>
@@ -299,7 +430,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </tbody>
 </table>
 <p>Le contrôle <code>node scripts/wasm_verdict.mjs</code> vérifie en outre <strong>9/9 cas</strong> sur les verdicts de l’adaptateur WASM.</p>
-<h2 id="5-la-couverture-mesuree-honnetement">5. La couverture, mesurée honnêtement<a class="headerlink" href="#5-la-couverture-mesuree-honnetement" title="Permanent link">#</a></h2>
+<h2 id="5-la-couverture-mesuree-honnetement">5. La couverture, mesurée honnêtement<a class="headerlink" href="#5-la-couverture-mesuree-honnetement" title="Permanent link"></a></h2>
 <p><code>scripts/coverage.php</code> ne mesure <strong>pas</strong> la couverture de lignes : elle exigerait Xdebug ou PCOV, c'est-à-dire une dépendance à installer pour noter le projet (contraire à <code>ENF-20</code>). Il mesure ce qui est vérifiable sans rien installer : <strong>quels fichiers de <code>app/</code> sont chargés par au moins une suite</strong>.</p>
 <p>Un fichier jamais chargé n'est pas « mal couvert », il n'est <strong>jamais exécuté</strong> : aucune suite ne peut détecter sa régression. C'est le bon signal pour repérer du code mort.</p>
 <pre><code class="language-bash">php scripts/coverage.php              # tableau par suite + pourcentage
@@ -307,11 +438,11 @@ php scripts/coverage.php --liste      # fichiers jamais chargés
 php scripts/coverage.php --min=80     # échoue sous 80 % (CI)
 </code></pre>
 <p>Ce que cette mesure ne dit pas, et qu'il faut dire à sa place : un fichier chargé n'est pas un fichier correctement exercé ; les vues (<code>app/View</code>) ne sont chargées qu'à l'affichage, donc leur couverture par les suites PHP est structurellement faible — c'est l'E2E qui les exerce, et il n'entre pas dans ce calcul.</p>
-<h2 id="6-le-verdict-du-harnais-et-ses-limites">6. Le verdict du harnais et ses limites<a class="headerlink" href="#6-le-verdict-du-harnais-et-ses-limites" title="Permanent link">#</a></h2>
+<h2 id="6-le-verdict-du-harnais-et-ses-limites">6. Le verdict du harnais et ses limites<a class="headerlink" href="#6-le-verdict-du-harnais-et-ses-limites" title="Permanent link"></a></h2>
 <p>Un dispositif de test qui ne peut pas échouer ne prouve rien. Cette archive rapporte qu’un défaut du verdict PHP-WASM aurait pu traiter des sorties d’échec comme des succès ; ce récit n’est pas rattaché ici à un run daté/SHA.</p>
 <p>Le script <code>scripts/wasm_verdict.mjs</code> décrit un classement à partir de signaux observables : erreur fatale ou de syntaxe PHP → 255 ; marqueur « ❌ » → 1 ; « NON JOUÉ » sans « ✅ » → 2 ; sinon → 0. Le contrôle dédié <code>node scripts/wasm_verdict.mjs</code> vérifie <strong>9/9 cas de verdict</strong>. Côté exécution native, <code>scripts/generer_pv.php</code> enregistre l’intégralité des sorties et codes de retour dans <code>logs/pv-*.log</code> (<code>60/60</code> étapes vertes sur <code>f9b614f</code>).</p>
 <p>Les scénarios de sabotage/restauration de l’orchestrateur décrits dans l’archive restent à rattacher à un run et un SHA avant de les présenter comme résultat.</p>
-<h2 id="7-comment-on-lance-tout">7. Comment on lance tout<a class="headerlink" href="#7-comment-on-lance-tout" title="Permanent link">#</a></h2>
+<h2 id="7-comment-on-lance-tout">7. Comment on lance tout<a class="headerlink" href="#7-comment-on-lance-tout" title="Permanent link"></a></h2>
 <pre><code class="language-bash"># tout, dans l'ordre, arrêt au premier échec
 node scripts/run-all-tests.mjs        # sandbox (PHP-WASM)
 php scripts/run-all-tests.php         # machine avec PHP natif
@@ -324,7 +455,7 @@ php tests/php/run_tests.php
 # L'intégration refuse une base déjà existante par défaut ; voir la section 2.2.
 # Les outils SQL et de performance directs peuvent réinitialiser leurs cibles.
 </code></pre>
-<h2 id="8-auto-evaluation">8. Auto-évaluation<a class="headerlink" href="#8-auto-evaluation" title="Permanent link">#</a></h2>
+<h2 id="8-auto-evaluation">8. Auto-évaluation<a class="headerlink" href="#8-auto-evaluation" title="Permanent link"></a></h2>
 <p><strong>Ce que les preuves établissent (mise à jour du 17/11/2026), avec leurs limites.</strong> La campagne sur VM Debian 13 des <strong>16–17/11/2026</strong> (<code>f9b614f</code> / <code>cb0f814</code>) a validé l’exécution PHP 8.4 native et PDO/MariaDB 11.8.6 : <code>60/60</code> étapes (<code>docs/pv-recette.md</code>, <code>0</code> warning PHP), <code>sql_integration.php</code> (<code>29/29</code>), <code>http_sql_e2e.php</code> (<code>105/105</code>), <code>concurrence_http.php</code> (<code>8/8</code>, 20 acteurs / 12 unités), E2E JSON isolé (<code>338/338</code>), <code>preferences_test.mjs</code> (<code>48</code> vues FR/EN) et performances <code>run_perf_vm.sh</code> (SQL p95 ≤ <code>20,6 ms</code>, HTTP p95 = <code>6 ms</code>, <code>tests/perf/dernieres_mesures.txt</code>).</p>
 <p><strong>Ce qui reste hors périmètre automatique, et qu’on assume.</strong></p>
 <ol>
@@ -336,15 +467,15 @@ php tests/php/run_tests.php
 <li><strong>Recette humaine et cible LineServ distinctes.</strong> Les <strong>200 scénarios manuels</strong> (<code>docs/13-suivi-recette-uc.csv</code>) restent <code>NON JOUÉ</code> ; aucun déploiement sur LineServ ni validation pédagogique n’est revendiqué.</li>
 </ol>
 <p>L’archive mentionne aussi une mesure de 17 ms pour <code>sp_revenue_report</code> (anomalie A-08). Faute de run, SHA, matériel, jeu de données et sortie rattachés ici, cette valeur reste historique et ne vaut pas mesure actuelle.</p>
-<h2 id="information-juridique-mentions-legales-lcen-et-protection-des-donnees">Information juridique, mentions légales LCEN et protection des données<a class="headerlink" href="#information-juridique-mentions-legales-lcen-et-protection-des-donnees" title="Permanent link">#</a></h2>
+<h2 id="information-juridique-mentions-legales-lcen-et-protection-des-donnees">Information juridique, mentions légales LCEN et protection des données<a class="headerlink" href="#information-juridique-mentions-legales-lcen-et-protection-des-donnees" title="Permanent link"></a></h2>
 <p><code>tests/php/information_juridique_test.php</code> et <code>tests/php/mentions_legales_test.php</code> définissent des contrôles automatisés de navigation, contenu, cookies/stockage local, mentions et information précontractuelle (exécutés dans la campagne VM <code>60/60</code> et l’E2E isolé <code>338/338</code>, sans navigateur humain). Ni ces scripts ni les résultats décrits dans <code>docs/02</code> ne constituent un avis juridique ou une validation humaine. Détails et réserves dans <code>docs/12-information-juridique.md</code>.</p>
-<h2 id="dates-utc-fuseau-horaire-local-et-traduction-integrale-fr-en">Dates UTC, fuseau horaire local et traduction intégrale FR ↔ EN<a class="headerlink" href="#dates-utc-fuseau-horaire-local-et-traduction-integrale-fr-en" title="Permanent link">#</a></h2>
+<h2 id="dates-utc-fuseau-horaire-local-et-traduction-integrale-fr-en">Dates UTC, fuseau horaire local et traduction intégrale FR ↔ EN<a class="headerlink" href="#dates-utc-fuseau-horaire-local-et-traduction-integrale-fr-en" title="Permanent link"></a></h2>
 <ul>
 <li>Les suites <code>date_ajout_test.php</code>, <code>heure_test.php</code>, <code>ConservationEtFuseauTest.php</code> et <code>sql_integration.php</code> (<code>29/29</code> sur MariaDB 11.8.6) valident les dates UTC (<code>time_zone = '+00:00'</code>), les conversions d’heure d’hiver/été et la rétention.</li>
 <li><code>tests/node/preferences_test.mjs</code> valide la traduction FR ↔ EN sur 48 vues, 45 messages métier, choix manuel de langue/fuseau, <code>localStorage</code> et tests DOM.</li>
 <li><code>tests/node/responsive_navigateur.mjs</code> définit des contrôles Chromium headless aux largeurs <strong>320, 375 et 1440 px</strong>, avec et sans JavaScript (complémentaires de <code>responsive_contract.php</code> et exécutables en CI lorsque Playwright/Chromium est installé).</li>
 </ul>
-<h2 id="depreciations-php-et-isolation-des-tests">Dépréciations PHP et isolation des tests<a class="headerlink" href="#depreciations-php-et-isolation-des-tests" title="Permanent link">#</a></h2>
+<h2 id="depreciations-php-et-isolation-des-tests">Dépréciations PHP et isolation des tests<a class="headerlink" href="#depreciations-php-et-isolation-des-tests" title="Permanent link"></a></h2>
 <ul>
 <li><code>python3 scripts/verifier_deprecations.py</code> lance <code>php -l</code> sur les fichiers PHP du code applicatif, des scripts et des suites, avec toutes les erreurs affichées. Il relève aussi un <code>Deprecated</code> même si PHP rend le code 0. Syntaxe et dépréciations sont vérifiées avec <strong>le PHP CLI réellement lancé</strong>, pas avec une version théorique. Il n'exécute pas les fichiers ni les dépendances externes.</li>
 <li>Les runners des suites PHP chargent <code>tests/php/deprecations_bootstrap.php</code> : <code>E_DEPRECATED</code> et <code>E_USER_DEPRECATED</code> sont signalés même sous <code>@</code>, et un marqueur fait échouer la suite. Cela ne couvre que le code réellement exécuté et peut être contourné si ce code remplace le gestionnaire d'erreur. Les parcours E2E HTTP et les fichiers exécutés directement hors runner n'y sont pas inclus.</li>
@@ -352,12 +483,12 @@ php tests/php/run_tests.php
 <li>En l'absence de PHP CLI natif, le runner Node/WASM annonce l'analyse de compilation NON JOUÉE. Le garde d'exécution y utilise PHP-WASM 8.2 ; cela ne démontre rien sur les dépréciations apparues dans PHP 8.4/8.5. Rejouer avec le PHP de l'hébergeur et celui du serveur web ; les tests n'analysent ni JavaScript/CSS ni bibliothèques externes.</li>
 <li>Les autotests couvrent notamment un faux compilateur qui renvoie 0 malgré un <code>Deprecated</code>, une erreur de syntaxe, PHP absent, un dossier vide, les liens symboliques, une dépréciation utilisateur masquée et la réécriture du schéma de démo dans une <strong>copie temporaire</strong>. Aucun serveur SQL n'est contacté par ces autotests.</li>
 </ul>
-<h2 id="code-potentiellement-inutilise-et-inventaire-applicatif">Code potentiellement inutilisé et inventaire applicatif<a class="headerlink" href="#code-potentiellement-inutilise-et-inventaire-applicatif" title="Permanent link">#</a></h2>
+<h2 id="code-potentiellement-inutilise-et-inventaire-applicatif">Code potentiellement inutilisé et inventaire applicatif<a class="headerlink" href="#code-potentiellement-inutilise-et-inventaire-applicatif" title="Permanent link"></a></h2>
 <p><code>scripts/code_mort.php</code> inspecte les tokens des PHP de <code>app/</code> et <code>public/</code> ; il cherche des références dans ces dossiers ainsi que dans les scripts et tests PHP. Il signale les paramètres non cités, les variables locales écrites une seule fois et les fonctions/méthodes sans autre mention textuelle. Ces signaux sont <strong>à examiner</strong>, pas des preuves de code mort. Les appels dynamiques, l’héritage, la réflexion, les API externes et certains modes de lecture indirecte rendent l’analyse nécessairement incomplète ; JS/CSS/SQL et variables globales ne sont pas analysés de cette façon.</p>
 <p>La commande normale est conçue pour comparer les candidats au référentiel <code>scripts/code_mort_reference.json</code> ; <code>--rapport</code> affiche les candidats et <code>--json</code> les exporte. Les suites mentionnées dans cette archive visent des cas positifs/négatifs, appels de callback, propriétés et lectures indirectes, ainsi qu’un scénario CLI natif sur copie temporaire ; leur réussite n’est pas établie par cette description. L’inventaire <code>docs/16-audit-code-mort.md</code> documente les fichiers de <code>app/</code> et <code>public/</code>, sans garantir que leur rôle reste correct après toute modification.</p>
-<h2 id="page-403-et-roles-administrateurs">Page 403 et rôles administrateurs<a class="headerlink" href="#page-403-et-roles-administrateurs" title="Permanent link">#</a></h2>
+<h2 id="page-403-et-roles-administrateurs">Page 403 et rôles administrateurs<a class="headerlink" href="#page-403-et-roles-administrateurs" title="Permanent link"></a></h2>
 <p>Le code et les scénarios versionnés assurent un refus HTTP 403 pour un administrateur sans rôle SUPER et une redirection pour un visiteur non connecté ; ces parcours sont validés tant dans l’E2E JSON isolé (<code>338/338</code>) que sous MariaDB/PDO dans <code>http_sql_e2e.php</code> (<code>105/105</code>, <code>docs/pv-recette.md</code>). La vérification manuelle d’un rendu navigateur reste distincte.</p>
-<h2 id="articulation-avec-les-suites-de-tests-manuels-docs13-">Articulation avec les suites de tests manuels (<code>docs/13-*</code>)<a class="headerlink" href="#articulation-avec-les-suites-de-tests-manuels-docs13-" title="Permanent link">#</a></h2>
+<h2 id="articulation-avec-les-suites-de-tests-manuels-docs13-">Articulation avec les suites de tests manuels (<code>docs/13-*</code>)<a class="headerlink" href="#articulation-avec-les-suites-de-tests-manuels-docs13-" title="Permanent link"></a></h2>
 <p>Même avec <strong>15 jobs CI automatisés</strong>, une campagne humaine reste indispensable sur ordinateur pour valider :
 1. les parcours métier complets, la navigation au clavier et les confirmations explicites en deux étapes (avec et sans JavaScript) dans un navigateur réel ;
 2. l'expérience réelle de la boîte de dialogue navigateur de permission de géolocalisation sur <code>/preferences</code> et la qualité linguistique perçue des pages traduites en anglais ;
@@ -365,8 +496,7 @@ php tests/php/run_tests.php
 <p><strong>Périmètre de recette manuelle proposé :</strong> les contrôles responsive multi-largeurs (<code>320/375/768/1440 px</code>, cartes mobiles <code>data-label</code>, portrait/paysage) sont décrits dans les suites automatisées <code>tests/php/responsive_contract.php</code> et <code>tests/node/responsive_navigateur.mjs</code>. Leur présence n’établit pas qu’ils ont été rejoués ; aucune validation humaine exhaustive sur téléphones physiques n’est revendiquée.</p>
 <p>L'ensemble des vérifications humaines retenues est formalisé dans <a href="13-fiches-recette-uc.html"><code>docs/13-fiches-recette-uc.md</code></a> (<strong>164 scénarios</strong> sur <code>UC-01</code> à <code>UC-14</code> et <code>TCX-01</code> à <code>TCX-24</code>, plus les <strong>36 couples</strong> de la matrice <code>RB-11</code>) et son journal <a href="13-suivi-recette-uc.csv"><code>docs/13-suivi-recette-uc.csv</code></a> (<strong>200 lignes</strong> initialisées à <code>NON JOUÉ</code>). L'intégrité structurelle et la synchronisation de ces deux fichiers avec le code (<code>Triggers::TRANSITIONS</code>, routes, fichiers cités et absence de retour des scénarios responsive manuels) sont vérifiées automatiquement par <code>python3 scripts/verifier_fiches_uc.py</code> dans les orchestrateurs de tests et en CI.</p>
 <footer class="doc">
-  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/11-strategie-tests.md</code>
-  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/11-strategie-tests.md</code> · 0 figure(s) intégrée(s).</p>
 </footer>
 </main>
 </body>

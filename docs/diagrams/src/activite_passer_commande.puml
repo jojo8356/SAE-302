@@ -2,15 +2,15 @@
 title Activité — passer une commande (UC-07, swimlanes)
 
 skinparam shadowing false
-skinparam roundcorner 8
+skinparam roundcorner 0
 skinparam defaultFontName "DejaVu Sans"
-skinparam ArrowColor #334155
+skinparam ArrowColor #0F294A
 skinparam ActivityBackgroundColor #FFFFFF
-skinparam ActivityBorderColor #475569
-skinparam ActivityDiamondBackgroundColor #EEF2FF
-skinparam ActivityDiamondBorderColor #4338CA
+skinparam ActivityBorderColor #1E3A5F
+skinparam ActivityDiamondBackgroundColor #F1F5F9
+skinparam ActivityDiamondBorderColor #0F294A
 skinparam PartitionBackgroundColor #F8FAFC
-skinparam PartitionBorderColor #64748B
+skinparam PartitionBorderColor #334155
 
 |Client (Navigateur)|
 start

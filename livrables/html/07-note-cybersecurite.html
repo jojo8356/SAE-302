@@ -3,91 +3,222 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light dark">
-<meta name="description" content="SAÉ 302 — MiniShop : MiniShop — Note de cybersécurité#">
-<title>MiniShop — Note de cybersécurité# — MiniShop</title>
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : MiniShop — Note de cybersécurité">
+<title>MiniShop — Note de cybersécurité — MiniShop (SAÉ 302)</title>
 <style>
 :root {
   --encre: #0f172a;
   --encre-douce: #475569;
-  --papier: #fbfaf7;
-  --carte: #ffffff;
-  --trait: #e2e8f0;
-  --accent: #1d4ed8;
-  --accent-clair: #dbeafe;
-  --code: #f1f5f9;
-  --mesure: 72ch;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
-    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
-    --accent-clair: #1e3a8a; --code: #16223a;
-  }
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
 }
 * { box-sizing: border-box; }
 html { font-size: 100%; -webkit-text-size-adjust: 100%; }
 body {
-  margin: 0 auto;
-  padding: 2.5rem 1.25rem 5rem;
-  max-width: calc(var(--mesure) + 6rem);
-  background: var(--papier);
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
   color: var(--encre);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
-  font-size: 1rem;
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
   line-height: 1.65;
   text-rendering: optimizeLegibility;
 }
-h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
-h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
-h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
-h3 { font-size: 1.15rem; }
-h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
-p, li { max-width: var(--mesure); }
-a { color: var(--accent); text-underline-offset: 0.15em; }
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
 a:hover { text-decoration-thickness: 2px; }
 code {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
 }
 pre {
-  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
-  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
 }
-pre code { background: none; padding: 0; font-size: inherit; }
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
 blockquote {
-  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
-  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
 }
-blockquote p { margin: 0.35rem 0; }
-table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
-caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
-th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
-thead th { background: var(--accent-clair); }
-tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
-img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
-hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
-ul, ol { padding-left: 1.4rem; }
-li { margin: 0.25rem 0; }
-li input[type="checkbox"] { margin-right: 0.4rem; }
-.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
-.toc > ul { list-style: none; padding-left: 0; }
-.toc ul ul { padding-left: 1rem; }
-footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
 @media print {
-  :root { --papier: #fff; --carte: #fff; }
-  @page { size: A4; margin: 18mm 16mm; }
-  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
   h1, h2, h3 { break-after: avoid; }
   table, pre, img, blockquote { break-inside: avoid; }
   a { color: inherit; text-decoration: none; }
-  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
   .toc { break-after: page; }
 }
 </style>
 </head>
 <body>
 <main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/07-note-cybersecurite.md</code></div>
+</header>
 <nav class="toc" aria-label="Sommaire"><div class="toc">
 <ul>
 <li><a href="#1-strategie-defense-en-profondeur-preuve-par-lattaque">1. Stratégie : défense en profondeur, preuve par l'attaque</a></li>
@@ -119,14 +250,14 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </ul>
 </div>
 </nav>
-<h1 id="minishop-note-de-cybersecurite">MiniShop — Note de cybersécurité<a class="headerlink" href="#minishop-note-de-cybersecurite" title="Permanent link">#</a></h1>
+<h1 id="minishop-note-de-cybersecurite">MiniShop — Note de cybersécurité<a class="headerlink" href="#minishop-note-de-cybersecurite" title="Permanent link"></a></h1>
 <blockquote>
 <p><strong>Objet</strong> : scénarios d’attaque, mesures prévues et références de contrôle.
 <strong>Périmètre documentaire</strong> : application MiniShop et exigences SEC-01…SEC-14 ; les références S-01…S-10 sont les scénarios offensifs documentés dans <code>docs/02</code>, tandis que <code>tests/security/controles.sh</code> exécute <strong>11/11 contrôles statiques</strong> (dont <code>S-11</code>/<code>SEC-14</code>).
 <strong>État actualisé (17/11/2026, branche <code>arena/b5a4074b-sae-302</code>) :</strong> la note d’origine du <code>28/09/2026</code> a été complétée par la campagne sur VM Debian 13 (<code>f9b614f</code>, <code>docs/pv-recette.md</code>, <code>60/60</code> étapes vertes dont <code>11/11</code> contrôles statiques de sécurité, <code>105/105</code> HTTP SQL et <code>338/338</code> E2E JSON isolé). Les scénarios offensifs manuels sur LineServ et une recette humaine restent non joués.</p>
 </blockquote>
 <hr />
-<h2 id="1-strategie-defense-en-profondeur-preuve-par-lattaque">1. Stratégie : défense en profondeur, preuve par l'attaque<a class="headerlink" href="#1-strategie-defense-en-profondeur-preuve-par-lattaque" title="Permanent link">#</a></h2>
+<h2 id="1-strategie-defense-en-profondeur-preuve-par-lattaque">1. Stratégie : défense en profondeur, preuve par l'attaque<a class="headerlink" href="#1-strategie-defense-en-profondeur-preuve-par-lattaque" title="Permanent link"></a></h2>
 <p>La conception décrit <strong>quatre lignes de défense indépendantes</strong> que les scénarios E2E (<code>scripts/wasm-e2e.mjs</code>, batteries T6, T12, T13) visent à contrôler. Les 155 vérifications mentionnées dans cette archive ne sont pas des résultats rattachés au SHA examiné :</p>
 <table>
 <thead>
@@ -161,7 +292,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </table>
 <p><strong>Principe directeur</strong> : les mesures de sécurité doivent être éprouvées par des tests et des revues dont les résultats sont conservés. Cette note associe des mesures à des scénarios ; elle ne prouve pas que ceux-ci ont été rejoués sur le working tree examiné.</p>
 <hr />
-<h2 id="2-fondation-structurante-il-ny-a-rien-a-injecter-s-01">2. Fondation structurante : il n'y a rien à injecter (S-01)<a class="headerlink" href="#2-fondation-structurante-il-ny-a-rien-a-injecter-s-01" title="Permanent link">#</a></h2>
+<h2 id="2-fondation-structurante-il-ny-a-rien-a-injecter-s-01">2. Fondation structurante : il n'y a rien à injecter (S-01)<a class="headerlink" href="#2-fondation-structurante-il-ny-a-rien-a-injecter-s-01" title="Permanent link"></a></h2>
 <p>Avant même de parler de filtrage : <strong>l'application n'embarque aucun interpréteur de requêtes</strong>. La couche de données (§ contrainte de projet : « pas de SQL ») est un moteur JSON dont les requêtes sont <em>construites en PHP</em>, jamais <em>écrites en texte</em>.</p>
 <pre><code class="language-php">// app/Model/Data/Filter.php — une condition est un triplet PHP typé, pas une chaîne
 public static function eq(string $col, mixed $value): array
@@ -199,8 +330,8 @@ if (!array_is_list($condition)) {
 </ol>
 <p><strong>Résultats rapportés dans l’archive (non revalidés, E2E T12)</strong> : <code>q=' OR 1=1 --</code> → 200, « 0 produit trouvé », la table <code>client</code> intacte ; <code>q=%'; DROP TABLE produit;--</code> → 200, aucune donnée perdue. <strong>Tests fonctionnels</strong> : tri inconnu (<code>?tri=prix_desc;DROP TABLE produit</code>) → repli sur la liste blanche <code>TRIS = ['nom','prix_asc','prix_desc','nouveaute','stock']</code> sans erreur.</p>
 <hr />
-<h2 id="3-les-10-attaques-du-plan-de-validation-detail-par-faille">3. Les 10 attaques du plan de validation — détail par faille<a class="headerlink" href="#3-les-10-attaques-du-plan-de-validation-detail-par-faille" title="Permanent link">#</a></h2>
-<h3 id="s-01-injection-sqlrequete-neutralisee-par-construction">S-01 — Injection (SQL/requête) — ✅ neutralisée par construction<a class="headerlink" href="#s-01-injection-sqlrequete-neutralisee-par-construction" title="Permanent link">#</a></h3>
+<h2 id="3-les-10-attaques-du-plan-de-validation-detail-par-faille">3. Les 10 attaques du plan de validation — détail par faille<a class="headerlink" href="#3-les-10-attaques-du-plan-de-validation-detail-par-faille" title="Permanent link"></a></h2>
+<h3 id="s-01-injection-sqlrequete-neutralisee-par-construction">S-01 — Injection (SQL/requête) — ✅ neutralisée par construction<a class="headerlink" href="#s-01-injection-sqlrequete-neutralisee-par-construction" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -227,7 +358,7 @@ if (!array_is_list($condition)) {
 </tr>
 </tbody>
 </table>
-<h3 id="s-02-xss-stocke-echappement-systematique-csp">S-02 — XSS stocké — ✅ échappement systématique + CSP<a class="headerlink" href="#s-02-xss-stocke-echappement-systematique-csp" title="Permanent link">#</a></h3>
+<h3 id="s-02-xss-stocke-echappement-systematique-csp">S-02 — XSS stocké — ✅ échappement systématique + CSP<a class="headerlink" href="#s-02-xss-stocke-echappement-systematique-csp" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -271,7 +402,7 @@ function e(mixed $valeur): string
 </tr>
 </tbody>
 </table>
-<h3 id="s-03-idor-acces-aux-ressources-dautrui-controle-dappartenance-systematique">S-03 — IDOR (accès aux ressources d'autrui) — ✅ contrôle d'appartenance systématique<a class="headerlink" href="#s-03-idor-acces-aux-ressources-dautrui-controle-dappartenance-systematique" title="Permanent link">#</a></h3>
+<h3 id="s-03-idor-acces-aux-ressources-dautrui-controle-dappartenance-systematique">S-03 — IDOR (accès aux ressources d'autrui) — ✅ contrôle d'appartenance systématique<a class="headerlink" href="#s-03-idor-acces-aux-ressources-dautrui-controle-dappartenance-systematique" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -313,7 +444,7 @@ if ($idClient !== null &amp;&amp; (int) $commande['id_client'] !== $idClient) {
 </tr>
 </tbody>
 </table>
-<h3 id="s-04-falsification-du-prix-depuis-le-navigateur-le-serveur-fait-foi">S-04 — Falsification du prix depuis le navigateur — ✅ le serveur fait foi<a class="headerlink" href="#s-04-falsification-du-prix-depuis-le-navigateur-le-serveur-fait-foi" title="Permanent link">#</a></h3>
+<h3 id="s-04-falsification-du-prix-depuis-le-navigateur-le-serveur-fait-foi">S-04 — Falsification du prix depuis le navigateur — ✅ le serveur fait foi<a class="headerlink" href="#s-04-falsification-du-prix-depuis-le-navigateur-le-serveur-fait-foi" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -354,7 +485,7 @@ $prixTtc = round((float) $produit['prix_ht'] * (1 + (float) $produit['tva'] / 10
 </tr>
 </tbody>
 </table>
-<h3 id="s-05-vol-fixation-de-session-regeneration-a-chaque-elevation-de-privilege">S-05 — Vol / fixation de session — ✅ régénération à chaque élévation de privilège<a class="headerlink" href="#s-05-vol-fixation-de-session-regeneration-a-chaque-elevation-de-privilege" title="Permanent link">#</a></h3>
+<h3 id="s-05-vol-fixation-de-session-regeneration-a-chaque-elevation-de-privilege">S-05 — Vol / fixation de session — ✅ régénération à chaque élévation de privilège<a class="headerlink" href="#s-05-vol-fixation-de-session-regeneration-a-chaque-elevation-de-privilege" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -407,7 +538,7 @@ public static function connecterClient(int $idClient): void
 </tr>
 </tbody>
 </table>
-<h3 id="s-06-csrf-sur-une-action-mutative-jeton-obligatoire-comparaison-constante">S-06 — CSRF sur une action mutative — ✅ jeton obligatoire, comparaison constante<a class="headerlink" href="#s-06-csrf-sur-une-action-mutative-jeton-obligatoire-comparaison-constante" title="Permanent link">#</a></h3>
+<h3 id="s-06-csrf-sur-une-action-mutative-jeton-obligatoire-comparaison-constante">S-06 — CSRF sur une action mutative — ✅ jeton obligatoire, comparaison constante<a class="headerlink" href="#s-06-csrf-sur-une-action-mutative-jeton-obligatoire-comparaison-constante" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -461,7 +592,7 @@ public static function verifier(): void
 </tr>
 </tbody>
 </table>
-<h3 id="s-07-enumeration-et-exposition-de-surface-liste-blanche-racine-unique-en-tetes-durcis">S-07 — Énumération et exposition de surface — ✅ liste blanche, racine unique, en-têtes durcis<a class="headerlink" href="#s-07-enumeration-et-exposition-de-surface-liste-blanche-racine-unique-en-tetes-durcis" title="Permanent link">#</a></h3>
+<h3 id="s-07-enumeration-et-exposition-de-surface-liste-blanche-racine-unique-en-tetes-durcis">S-07 — Énumération et exposition de surface — ✅ liste blanche, racine unique, en-têtes durcis<a class="headerlink" href="#s-07-enumeration-et-exposition-de-surface-liste-blanche-racine-unique-en-tetes-durcis" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -515,7 +646,7 @@ http_response_code(404); // rien n'a matché → 404, et c'est le SEUL comportem
 </tr>
 </tbody>
 </table>
-<h3 id="s-08-fuite-dinformation-dans-les-messages-derreur-messages-generiques-details-cote-serveur">S-08 — Fuite d'information dans les messages d'erreur — ✅ messages génériques, détails côté serveur<a class="headerlink" href="#s-08-fuite-dinformation-dans-les-messages-derreur-messages-generiques-details-cote-serveur" title="Permanent link">#</a></h3>
+<h3 id="s-08-fuite-dinformation-dans-les-messages-derreur-messages-generiques-details-cote-serveur">S-08 — Fuite d'information dans les messages d'erreur — ✅ messages génériques, détails côté serveur<a class="headerlink" href="#s-08-fuite-dinformation-dans-les-messages-derreur-messages-generiques-details-cote-serveur" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -567,7 +698,7 @@ $erreur = $identifiants['statut'] === 'COMPTE_BLOQUE'
 </tr>
 </tbody>
 </table>
-<h3 id="s-09-force-brute-sur-la-connexion-ecart-assume-correctif-propose">S-09 — Force brute sur la connexion — ⚠️ écart assumé, correctif proposé<a class="headerlink" href="#s-09-force-brute-sur-la-connexion-ecart-assume-correctif-propose" title="Permanent link">#</a></h3>
+<h3 id="s-09-force-brute-sur-la-connexion-ecart-assume-correctif-propose">S-09 — Force brute sur la connexion — ⚠️ écart assumé, correctif proposé<a class="headerlink" href="#s-09-force-brute-sur-la-connexion-ecart-assume-correctif-propose" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -601,7 +732,7 @@ $erreur = $identifiants['statut'] === 'COMPTE_BLOQUE'
 // succès ou changement de mot de passe : purge des lignes de l'email
 </code></pre>
 <p>À défaut de table, un <code>$_SESSION['echecs']</code> protège déjà par session (pas par compte) — la version table est la bonne.</p>
-<h3 id="s-10-elevation-de-privilege-par-le-formulaire-cles-strictes-role-hors-de-portee-de-la-requete">S-10 — Élévation de privilège par le formulaire — ✅ clés strictes, rôle hors de portée de la requête<a class="headerlink" href="#s-10-elevation-de-privilege-par-le-formulaire-cles-strictes-role-hors-de-portee-de-la-requete" title="Permanent link">#</a></h3>
+<h3 id="s-10-elevation-de-privilege-par-le-formulaire-cles-strictes-role-hors-de-portee-de-la-requete">S-10 — Élévation de privilège par le formulaire — ✅ clés strictes, rôle hors de portée de la requête<a class="headerlink" href="#s-10-elevation-de-privilege-par-le-formulaire-cles-strictes-role-hors-de-portee-de-la-requete" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -663,34 +794,34 @@ public static function exigeSuper(): array
 </tbody>
 </table>
 <hr />
-<h2 id="4-mesures-structurelles-transverses">4. Mesures structurelles transverses<a class="headerlink" href="#4-mesures-structurelles-transverses" title="Permanent link">#</a></h2>
-<h3 id="41-mots-de-passe-rb-12-sec-04">4.1 Mots de passe (RB-12, SEC-04)<a class="headerlink" href="#41-mots-de-passe-rb-12-sec-04" title="Permanent link">#</a></h3>
+<h2 id="4-mesures-structurelles-transverses">4. Mesures structurelles transverses<a class="headerlink" href="#4-mesures-structurelles-transverses" title="Permanent link"></a></h2>
+<h3 id="41-mots-de-passe-rb-12-sec-04">4.1 Mots de passe (RB-12, SEC-04)<a class="headerlink" href="#41-mots-de-passe-rb-12-sec-04" title="Permanent link"></a></h3>
 <ul>
 <li>Le code de référence utilise <code>password_hash($mdp, PASSWORD_BCRYPT)</code> ; une vérification E2E du hash est décrite dans l’archive, sans résultat rattaché au SHA de cette révision.</li>
 <li>Comparaison uniquement par <code>password_verify()</code> (temps constant) ; le repository <strong>refuse</strong> un hash qui n'est pas une sortie de <code>password_hash()</code> (<code>HASH_MOT_DE_PASSE_INVALIDE</code>).</li>
 <li>Changement de mot de passe : scénario E2E T8 décrit le refus d’un ancien mot de passe erroné et la révocation après changement ; résultat non revalidé ici.</li>
 <li>Politique : 8 caractères minimum côté serveur (le <code>minlength</code> HTML n'est que du confort).</li>
 </ul>
-<h3 id="42-sessions-et-espaces-separes-sec-05-rb-13">4.2 Sessions et espaces séparés (SEC-05, RB-13)<a class="headerlink" href="#42-sessions-et-espaces-separes-sec-05-rb-13" title="Permanent link">#</a></h3>
+<h3 id="42-sessions-et-espaces-separes-sec-05-rb-13">4.2 Sessions et espaces séparés (SEC-05, RB-13)<a class="headerlink" href="#42-sessions-et-espaces-separes-sec-05-rb-13" title="Permanent link"></a></h3>
 <ul>
 <li>Deux espaces <strong>strictement</strong> cloisonnés : <code>$_SESSION['client_id']</code> (front) et <code>$_SESSION['admin_id']</code> (back) ; un admin n'est pas un client et réciproquement (E2E T6).</li>
 <li><code>session.use_strict_mode=1</code> : un identifiant forgé inconnu crée une session neuve, il n'est pas adopté.</li>
 <li>Régénération à chaque élévation/destruction de privilège (connexion, déconnexion).</li>
 <li>Durée de vie contrôlée par le moteur PHP ; le pool du bac à sable WASM est un artefact de <strong>développement documenté</strong> (en-tête de <code>Auth.php</code>), remplacé par l'API session native sur tout serveur réel.</li>
 </ul>
-<h3 id="43-journal-daudit-ef-gen-04-sec-13">4.3 Journal d'audit (EF-GEN-04, SEC-13)<a class="headerlink" href="#43-journal-daudit-ef-gen-04-sec-13" title="Permanent link">#</a></h3>
+<h3 id="43-journal-daudit-ef-gen-04-sec-13">4.3 Journal d'audit (EF-GEN-04, SEC-13)<a class="headerlink" href="#43-journal-daudit-ef-gen-04-sec-13" title="Permanent link"></a></h3>
 <ul>
 <li>Toute écriture du moteur est tracée en JSONL (<code>var/journal/db.jsonl</code>) : <code>{at, op, table, pk, actor: {id, role, nom}, old, new}</code> — <strong>qui</strong> a fait <strong>quoi</strong>, avec avant/après.</li>
 <li>La piste des statuts de commande (RB-11) est requêtable et affichée au back-office (<code>order_status_history</code>, transition + auteur + commentaire).</li>
 <li>Les nouvelles entrées JSON de comptes client et administrateur sont limitées aux métadonnées de compte : les condensats, noms et e-mails ne figurent plus dans leurs instantanés <code>old/new</code>. Les anciennes entrées, les autres catégories, les noms d’acteurs administrateurs et les journaux ou sauvegardes externes doivent encore être examinés ; aucune suppression rétrospective n’a été effectuée.</li>
 </ul>
-<h3 id="44-validation-des-entrees-en-profondeur-sec-02">4.4 Validation des entrées en profondeur (SEC-02)<a class="headerlink" href="#44-validation-des-entrees-en-profondeur-sec-02" title="Permanent link">#</a></h3>
+<h3 id="44-validation-des-entrees-en-profondeur-sec-02">4.4 Validation des entrées en profondeur (SEC-02)<a class="headerlink" href="#44-validation-des-entrees-en-profondeur-sec-02" title="Permanent link"></a></h3>
 <ul>
 <li>Accesseurs typés bornés dans le contrôleur de base : <code>$this-&gt;int('quantite')</code>, <code>$this-&gt;str('nom', 100)</code>, <code>$this-&gt;float('prix_min')</code>, <code>$this-&gt;bool('cgv')</code> — troncature et transtypage explicites <strong>avant</strong> tout usage.</li>
 <li>Puis contraintes du moteur (schéma) : types, NOT NULL, ENUM (<code>statut</code>), CHECK (<code>prix_ht &gt; 0</code>, <code>stock &gt;= 0</code>, <code>montant_total &gt;= 0</code>), UNIQUE (<code>reference</code>, <code>slug</code>, <code>email</code>, <code>numero</code>), FK (RESTRICT/CASCADE) — contrôles visés par <code>engine_smoke.php</code> et <code>run_tests.php</code>, sans résultat de rejeu revendiqué ici.</li>
 <li>Les montants traversent <code>round(..., 2)</code> et les comparaisons d'égalité monétaire des tests tolèrent <code>0.001</code>.</li>
 </ul>
-<h3 id="45-hygiene-du-code">4.5 Hygiène du code<a class="headerlink" href="#45-hygiene-du-code" title="Permanent link">#</a></h3>
+<h3 id="45-hygiene-du-code">4.5 Hygiène du code<a class="headerlink" href="#45-hygiene-du-code" title="Permanent link"></a></h3>
 <ul>
 <li><code>declare(strict_types=1)</code> dans <strong>100 % des fichiers PHP exécutables</strong> (81/81 ; seul <code>app/Model/Data/Errors.php</code>, pure documentation, n'en a pas besoin) — vérifiable : <code>grep -rL "declare(strict_types=1)" app/ public/ tests/php/ scripts/</code>.</li>
 <li><strong>Zéro dépendance runtime</strong> (pas de Composer dans l'application) : la surface d'attaque par dépendance (supply chain) est nulle.</li>
@@ -698,7 +829,7 @@ public static function exigeSuper(): array
 <li>Une classe par fichier, autoload PSR-4, pas d'<code>eval</code>, pas de <code>include</code> dynamique, pas de fonctions dangereuses (<code>system</code>, <code>exec</code>, <code>shell_exec</code>… — grep nul).</li>
 </ul>
 <hr />
-<h2 id="5-tracabilite-exigence-code-test">5. Traçabilité exigence → code → test<a class="headerlink" href="#5-tracabilite-exigence-code-test" title="Permanent link">#</a></h2>
+<h2 id="5-tracabilite-exigence-code-test">5. Traçabilité exigence → code → test<a class="headerlink" href="#5-tracabilite-exigence-code-test" title="Permanent link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -771,7 +902,7 @@ public static function exigeSuper(): array
 </tbody>
 </table>
 <hr />
-<h2 id="6-limites-assumees-et-pistes-de-durcissement">6. Limites assumées et pistes de durcissement<a class="headerlink" href="#6-limites-assumees-et-pistes-de-durcissement" title="Permanent link">#</a></h2>
+<h2 id="6-limites-assumees-et-pistes-de-durcissement">6. Limites assumées et pistes de durcissement<a class="headerlink" href="#6-limites-assumees-et-pistes-de-durcissement" title="Permanent link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -829,7 +960,7 @@ public static function exigeSuper(): array
 </tbody>
 </table>
 <hr />
-<h2 id="7-annexe-rejouer-les-attaques">7. Annexe — rejouer les attaques<a class="headerlink" href="#7-annexe-rejouer-les-attaques" title="Permanent link">#</a></h2>
+<h2 id="7-annexe-rejouer-les-attaques">7. Annexe — rejouer les attaques<a class="headerlink" href="#7-annexe-rejouer-les-attaques" title="Permanent link"></a></h2>
 <pre><code class="language-bash">php scripts/run-all-tests.php   # suite complète sur machine avec PHP CLI + MariaDB (`f9b614f` : 60/60)
 bash tests/security/controles.sh  # 11/11 contrôles statiques (S-11 / SEC-14 inclus)
 </code></pre>
@@ -845,8 +976,7 @@ bash tests/security/controles.sh  # 11/11 contrôles statiques (S-11 / SEC-14 in
 </code></pre>
 <p><em>Note d’origine rédigée le 28/09/2026 et actualisée au 17/11/2026 (<code>f9b614f</code> / <code>cb0f814</code>) — les extraits et contrôles statiques sont vérifiables dans le dépôt (<code>bash tests/security/controles.sh</code> et <code>php scripts/run-all-tests.php</code>).</em></p>
 <footer class="doc">
-  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/07-note-cybersecurite.md</code>
-  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/07-note-cybersecurite.md</code> · 0 figure(s) intégrée(s).</p>
 </footer>
 </main>
 </body>

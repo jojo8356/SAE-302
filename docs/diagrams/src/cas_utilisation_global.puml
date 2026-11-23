@@ -3,14 +3,14 @@ title MiniShop — cas d'utilisation (vue globale, §5.1.1)
 
 left to right direction
 skinparam shadowing false
-skinparam roundcorner 6
+skinparam roundcorner 0
 skinparam defaultFontName "DejaVu Sans"
 skinparam packageStyle rectangle
-skinparam ArrowColor #334155
+skinparam ArrowColor #0F294A
 skinparam ActorBackgroundColor #FFFFFF
-skinparam ActorBorderColor #475569
+skinparam ActorBorderColor #1E3A5F
 skinparam UsecaseBackgroundColor #FFFFFF
-skinparam UsecaseBorderColor #475569
+skinparam UsecaseBorderColor #1E3A5F
 
 actor "Visiteur" as V
 actor "Client" as C

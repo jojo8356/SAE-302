@@ -3,91 +3,222 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light dark">
-<meta name="description" content="SAÉ 302 — MiniShop : MiniShop — Liste complète des requêtes SQL RESTANT À ÉCRIRE#">
-<title>MiniShop — Liste complète des requêtes SQL RESTANT À ÉCRIRE# — MiniShop</title>
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : MiniShop — Liste complète des requêtes SQL RESTANT À ÉCRIRE">
+<title>MiniShop — Liste complète des requêtes SQL RESTANT À ÉCRIRE — MiniShop (SAÉ 302)</title>
 <style>
 :root {
   --encre: #0f172a;
   --encre-douce: #475569;
-  --papier: #fbfaf7;
-  --carte: #ffffff;
-  --trait: #e2e8f0;
-  --accent: #1d4ed8;
-  --accent-clair: #dbeafe;
-  --code: #f1f5f9;
-  --mesure: 72ch;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
-    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
-    --accent-clair: #1e3a8a; --code: #16223a;
-  }
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
 }
 * { box-sizing: border-box; }
 html { font-size: 100%; -webkit-text-size-adjust: 100%; }
 body {
-  margin: 0 auto;
-  padding: 2.5rem 1.25rem 5rem;
-  max-width: calc(var(--mesure) + 6rem);
-  background: var(--papier);
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
   color: var(--encre);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
-  font-size: 1rem;
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
   line-height: 1.65;
   text-rendering: optimizeLegibility;
 }
-h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
-h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
-h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
-h3 { font-size: 1.15rem; }
-h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
-p, li { max-width: var(--mesure); }
-a { color: var(--accent); text-underline-offset: 0.15em; }
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
 a:hover { text-decoration-thickness: 2px; }
 code {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
 }
 pre {
-  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
-  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
 }
-pre code { background: none; padding: 0; font-size: inherit; }
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
 blockquote {
-  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
-  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
 }
-blockquote p { margin: 0.35rem 0; }
-table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
-caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
-th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
-thead th { background: var(--accent-clair); }
-tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
-img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
-hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
-ul, ol { padding-left: 1.4rem; }
-li { margin: 0.25rem 0; }
-li input[type="checkbox"] { margin-right: 0.4rem; }
-.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
-.toc > ul { list-style: none; padding-left: 0; }
-.toc ul ul { padding-left: 1rem; }
-footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
 @media print {
-  :root { --papier: #fff; --carte: #fff; }
-  @page { size: A4; margin: 18mm 16mm; }
-  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
   h1, h2, h3 { break-after: avoid; }
   table, pre, img, blockquote { break-inside: avoid; }
   a { color: inherit; text-decoration: none; }
-  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
   .toc { break-after: page; }
 }
 </style>
 </head>
 <body>
 <main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/sql-a-ecrire/requetes-sql-a-ecrire.md</code></div>
+</header>
 <nav class="toc" aria-label="Sommaire"><div class="toc">
 <ul>
 <li><a href="#0-ce-qui-est-deja-fait-a-ne-pas-reecrire">0. Ce qui est DÉJÀ FAIT (à ne pas réécrire)</a><ul>
@@ -116,7 +247,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </ul>
 </div>
 </nav>
-<h1 id="minishop-liste-complete-des-requetes-sql-restant-a-ecrire">MiniShop — Liste complète des requêtes SQL RESTANT À ÉCRIRE<a class="headerlink" href="#minishop-liste-complete-des-requetes-sql-restant-a-ecrire" title="Permanent link">#</a></h1>
+<h1 id="minishop-liste-complete-des-requetes-sql-restant-a-ecrire">MiniShop — Liste complète des requêtes SQL RESTANT À ÉCRIRE<a class="headerlink" href="#minishop-liste-complete-des-requetes-sql-restant-a-ecrire" title="Permanent link"></a></h1>
 <p><strong>Projet</strong> : MiniShop (SAÉ 302) — boutique en ligne pédagogique
 <strong>Public</strong> : la personne en charge des requêtes SQL de l'application PHP
 <strong>Version</strong> : 1.0 — 23 septembre 2026
@@ -125,14 +256,14 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 <p><strong>Archive historique, non-todolist.</strong> Ce document décrit une photographie de conception du 23/09/2026 et ne doit pas être utilisé comme liste actuelle de SQL à écrire ni comme inventaire complet. Les sources <code>sql/</code> ont depuis évolué : l’état statique courant compte 9 tables SQL et 18 procédures ; un point d’appel repository est repéré pour chacune. SQL est le pilote applicatif par défaut, JSON reste une option explicite. Cela ne prouve pas l’exécution PDO/MySQL. Voir <code>docs/01</code>, <code>docs/04</code> et <code>docs/21</code> pour l’état actuel.</p>
 </blockquote>
 <hr />
-<h2 id="0-ce-qui-est-deja-fait-a-ne-pas-reecrire">0. Ce qui est DÉJÀ FAIT (à ne pas réécrire)<a class="headerlink" href="#0-ce-qui-est-deja-fait-a-ne-pas-reecrire" title="Permanent link">#</a></h2>
+<h2 id="0-ce-qui-est-deja-fait-a-ne-pas-reecrire">0. Ce qui est DÉJÀ FAIT (à ne pas réécrire)<a class="headerlink" href="#0-ce-qui-est-deja-fait-a-ne-pas-reecrire" title="Permanent link"></a></h2>
 <p>Les objets suivants existent dans <code>sql/</code> et <strong>ne doivent pas être recodés en PHP</strong> — l'application ne fait
 que les appeler ou lire les vues. Toute réimplémentation en PHP des procédures métier est sanctionnée
 (pénalité MVC/SP mentionnée dans la todolist).</p>
-<h3 id="01-tables-8-sql01_minishop_schemasql">0.1 Tables (8) — <code>sql/01_minishop_schema.sql</code><a class="headerlink" href="#01-tables-8-sql01_minishop_schemasql" title="Permanent link">#</a></h3>
+<h3 id="01-tables-8-sql01_minishop_schemasql">0.1 Tables (8) — <code>sql/01_minishop_schema.sql</code><a class="headerlink" href="#01-tables-8-sql01_minishop_schemasql" title="Permanent link"></a></h3>
 <p><code>administrateur</code>, <code>client</code>, <code>categorie</code>, <code>produit</code>, <code>parametre</code>, <code>commande</code>,
 <code>ligne_commande</code>, <code>order_status_history</code>.</p>
-<h3 id="02-vues-3-a-lire-par-select-quand-elles-suffisent">0.2 Vues (3) — à lire par <code>SELECT</code> quand elles suffisent<a class="headerlink" href="#02-vues-3-a-lire-par-select-quand-elles-suffisent" title="Permanent link">#</a></h3>
+<h3 id="02-vues-3-a-lire-par-select-quand-elles-suffisent">0.2 Vues (3) — à lire par <code>SELECT</code> quand elles suffisent<a class="headerlink" href="#02-vues-3-a-lire-par-select-quand-elles-suffisent" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -155,7 +286,7 @@ que les appeler ou lire les vues. Toute réimplémentation en PHP des procédure
 </tr>
 </tbody>
 </table>
-<h3 id="03-procedures-fonction-17-1-a-appeler-par-call">0.3 Procédures / fonction (17 + 1) — à appeler par <code>CALL</code><a class="headerlink" href="#03-procedures-fonction-17-1-a-appeler-par-call" title="Permanent link">#</a></h3>
+<h3 id="03-procedures-fonction-17-1-a-appeler-par-call">0.3 Procédures / fonction (17 + 1) — à appeler par <code>CALL</code><a class="headerlink" href="#03-procedures-fonction-17-1-a-appeler-par-call" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -242,12 +373,12 @@ que les appeler ou lire les vues. Toute réimplémentation en PHP des procédure
 </tr>
 </tbody>
 </table>
-<h3 id="04-triggers-16-sql03_minishop_triggerssql">0.4 Triggers (16) — <code>sql/03_minishop_triggers.sql</code><a class="headerlink" href="#04-triggers-16-sql03_minishop_triggerssql" title="Permanent link">#</a></h3>
+<h3 id="04-triggers-16-sql03_minishop_triggerssql">0.4 Triggers (16) — <code>sql/03_minishop_triggers.sql</code><a class="headerlink" href="#04-triggers-16-sql03_minishop_triggerssql" title="Permanent link"></a></h3>
 <p>Calculent automatiquement <code>prix_ttc</code>, <code>total_ligne</code>, le snapshot <code>prix_unitaire</code>, les décréments/restitutions
 de stock, la matrice de transitions RB-11, la piste <code>order_status_history</code>, les blocages RB-14
 (catégorie occupée, produit commandé), l'interdiction de modifier <code>montant_total</code>/<code>frais_port</code> (RB-15).</p>
 <hr />
-<h2 id="1-regles-communes-a-toutes-les-requetes-ecrites-dans-lapplication">1. Règles communes à TOUTES les requêtes écrites dans l'application<a class="headerlink" href="#1-regles-communes-a-toutes-les-requetes-ecrites-dans-lapplication" title="Permanent link">#</a></h2>
+<h2 id="1-regles-communes-a-toutes-les-requetes-ecrites-dans-lapplication">1. Règles communes à TOUTES les requêtes écrites dans l'application<a class="headerlink" href="#1-regles-communes-a-toutes-les-requetes-ecrites-dans-lapplication" title="Permanent link"></a></h2>
 <p>Avant toute requête, appliquer ces règles (sinon les tests de sécurité S-01…S-08 échoueront) :</p>
 <ol>
 <li><strong>Toujours utiliser PDO avec requêtes préparées</strong> (<code>$pdo-&gt;prepare(...)</code> + <code>execute([...])</code>).
@@ -266,7 +397,7 @@ de stock, la matrice de transitions RB-11, la piste <code>order_status_history</
    d'arrondi float — ne caster ni en <code>(float)</code> ni en <code>(int)</code>.</li>
 </ol>
 <hr />
-<h2 id="2-requetes-a-ecrire-par-module">2. Requêtes à écrire, par module<a class="headerlink" href="#2-requetes-a-ecrire-par-module" title="Permanent link">#</a></h2>
+<h2 id="2-requetes-a-ecrire-par-module">2. Requêtes à écrire, par module<a class="headerlink" href="#2-requetes-a-ecrire-par-module" title="Permanent link"></a></h2>
 <blockquote>
 <p><strong>Légende des colonnes</strong>
 - <strong>Id</strong> : référence EF/SEC/ENF du CDC
@@ -279,8 +410,8 @@ de stock, la matrice de transitions RB-11, la piste <code>order_status_history</
 - <strong>Retour attendu</strong> : colonnes ou lignes que la requête doit fournir à la vue</p>
 </blockquote>
 <hr />
-<h3 id="21-module-commun-layout-en-tete-pages-publiques">2.1 Module Commun (layout, en-tête, pages publiques)<a class="headerlink" href="#21-module-commun-layout-en-tete-pages-publiques" title="Permanent link">#</a></h3>
-<h4 id="q-com-01-lire-un-parametre-metier">Q-COM-01 — Lire un paramètre métier<a class="headerlink" href="#q-com-01-lire-un-parametre-metier" title="Permanent link">#</a></h4>
+<h3 id="21-module-commun-layout-en-tete-pages-publiques">2.1 Module Commun (layout, en-tête, pages publiques)<a class="headerlink" href="#21-module-commun-layout-en-tete-pages-publiques" title="Permanent link"></a></h3>
+<h4 id="q-com-01-lire-un-parametre-metier">Q-COM-01 — Lire un paramètre métier<a class="headerlink" href="#q-com-01-lire-un-parametre-metier" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -328,7 +459,7 @@ de stock, la matrice de transitions RB-11, la piste <code>order_status_history</
 -- ou, pour avoir une valeur par défaut si la clé manque :
 SELECT fn_param(:cle, :defaut) AS valeur;
 </code></pre>
-<h4 id="q-com-02-liste-des-categories-pour-le-menu-principal">Q-COM-02 — Liste des catégories pour le menu principal<a class="headerlink" href="#q-com-02-liste-des-categories-pour-le-menu-principal" title="Permanent link">#</a></h4>
+<h4 id="q-com-02-liste-des-categories-pour-le-menu-principal">Q-COM-02 — Liste des catégories pour le menu principal<a class="headerlink" href="#q-com-02-liste-des-categories-pour-le-menu-principal" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -379,7 +510,7 @@ SELECT fn_param(:cle, :defaut) AS valeur;
  GROUP BY c.id_categorie, c.nom, c.slug
  ORDER BY c.nom ASC;
 </code></pre>
-<h4 id="q-com-03-verifier-quun-administrateur-est-actif-middleware">Q-COM-03 — Vérifier qu'un administrateur est actif (middleware)<a class="headerlink" href="#q-com-03-verifier-quun-administrateur-est-actif-middleware" title="Permanent link">#</a></h4>
+<h4 id="q-com-03-verifier-quun-administrateur-est-actif-middleware">Q-COM-03 — Vérifier qu'un administrateur est actif (middleware)<a class="headerlink" href="#q-com-03-verifier-quun-administrateur-est-actif-middleware" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -423,7 +554,7 @@ SELECT fn_param(:cle, :defaut) AS valeur;
  WHERE id_admin = :id AND actif = 1
  LIMIT 1;
 </code></pre>
-<h4 id="q-com-04-mettre-a-jour-lhorodatage-de-derniere-connexion-client">Q-COM-04 — Mettre à jour l'horodatage de dernière connexion (client)<a class="headerlink" href="#q-com-04-mettre-a-jour-lhorodatage-de-derniere-connexion-client" title="Permanent link">#</a></h4>
+<h4 id="q-com-04-mettre-a-jour-lhorodatage-de-derniere-connexion-client">Q-COM-04 — Mettre à jour l'horodatage de dernière connexion (client)<a class="headerlink" href="#q-com-04-mettre-a-jour-lhorodatage-de-derniere-connexion-client" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -466,7 +597,7 @@ SELECT fn_param(:cle, :defaut) AS valeur;
    SET derniere_connexion = CURRENT_TIMESTAMP
  WHERE id_client = :id;
 </code></pre>
-<h4 id="q-com-05-mettre-a-jour-lhorodatage-de-derniere-connexion-admin">Q-COM-05 — Mettre à jour l'horodatage de dernière connexion (admin)<a class="headerlink" href="#q-com-05-mettre-a-jour-lhorodatage-de-derniere-connexion-admin" title="Permanent link">#</a></h4>
+<h4 id="q-com-05-mettre-a-jour-lhorodatage-de-derniere-connexion-admin">Q-COM-05 — Mettre à jour l'horodatage de dernière connexion (admin)<a class="headerlink" href="#q-com-05-mettre-a-jour-lhorodatage-de-derniere-connexion-admin" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -502,8 +633,8 @@ SELECT fn_param(:cle, :defaut) AS valeur;
  WHERE id_admin = :id;
 </code></pre>
 <hr />
-<h3 id="22-module-visiteur-catalogue-recherche-fiche-produit-uc-01-uc-02-uc-03">2.2 Module Visiteur — Catalogue, recherche, fiche produit (UC-01, UC-02, UC-03)<a class="headerlink" href="#22-module-visiteur-catalogue-recherche-fiche-produit-uc-01-uc-02-uc-03" title="Permanent link">#</a></h3>
-<h4 id="q-vis-01-liste-des-produits-du-catalogue-sans-recherche-ni-filtre">Q-VIS-01 — Liste des produits du catalogue (sans recherche ni filtre)<a class="headerlink" href="#q-vis-01-liste-des-produits-du-catalogue-sans-recherche-ni-filtre" title="Permanent link">#</a></h4>
+<h3 id="22-module-visiteur-catalogue-recherche-fiche-produit-uc-01-uc-02-uc-03">2.2 Module Visiteur — Catalogue, recherche, fiche produit (UC-01, UC-02, UC-03)<a class="headerlink" href="#22-module-visiteur-catalogue-recherche-fiche-produit-uc-01-uc-02-uc-03" title="Permanent link"></a></h3>
+<h4 id="q-vis-01-liste-des-produits-du-catalogue-sans-recherche-ni-filtre">Q-VIS-01 — Liste des produits du catalogue (sans recherche ni filtre)<a class="headerlink" href="#q-vis-01-liste-des-produits-du-catalogue-sans-recherche-ni-filtre" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -560,7 +691,7 @@ SELECT fn_param(:cle, :defaut) AS valeur;
  ORDER BY date_creation DESC -- tri validé par la liste blanche PHP
  LIMIT :limit OFFSET :offset;
 </code></pre>
-<h4 id="q-vis-02-compter-le-nombre-total-de-produits-du-catalogue-pour-pagination">Q-VIS-02 — Compter le nombre total de produits du catalogue (pour pagination)<a class="headerlink" href="#q-vis-02-compter-le-nombre-total-de-produits-du-catalogue-pour-pagination" title="Permanent link">#</a></h4>
+<h4 id="q-vis-02-compter-le-nombre-total-de-produits-du-catalogue-pour-pagination">Q-VIS-02 — Compter le nombre total de produits du catalogue (pour pagination)<a class="headerlink" href="#q-vis-02-compter-le-nombre-total-de-produits-du-catalogue-pour-pagination" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -594,7 +725,7 @@ SELECT fn_param(:cle, :defaut) AS valeur;
 <pre><code class="language-sql">SELECT COUNT(*) AS total FROM v_catalogue;
 -- avec filtres : WHERE id_categorie = :cat AND prix_ttc BETWEEN :min AND :max ...
 </code></pre>
-<h4 id="q-vis-03-catalogue-filtre-trie-categorie-prix-stock">Q-VIS-03 — Catalogue filtré + trié (catégorie, prix, stock)<a class="headerlink" href="#q-vis-03-catalogue-filtre-trie-categorie-prix-stock" title="Permanent link">#</a></h4>
+<h4 id="q-vis-03-catalogue-filtre-trie-categorie-prix-stock">Q-VIS-03 — Catalogue filtré + trié (catégorie, prix, stock)<a class="headerlink" href="#q-vis-03-catalogue-filtre-trie-categorie-prix-stock" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -639,7 +770,7 @@ SELECT fn_param(:cle, :defaut) AS valeur;
 (elle fait exactement ce travail). La requête ci-dessous reste à écrire pour la page <code>/catalogue</code>
 qui n'a pas de terme de recherche, mais elle peut très bien appeler la procédure avec <code>q=NULL</code>.</p>
 </blockquote>
-<h4 id="q-vis-04-recherche-plein-texte">Q-VIS-04 — Recherche plein texte<a class="headerlink" href="#q-vis-04-recherche-plein-texte" title="Permanent link">#</a></h4>
+<h4 id="q-vis-04-recherche-plein-texte">Q-VIS-04 — Recherche plein texte<a class="headerlink" href="#q-vis-04-recherche-plein-texte" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -681,7 +812,7 @@ $rows = $stmt-&gt;fetchAll();
 $stmt-&gt;nextRowset();
 $total = $stmt-&gt;fetchColumn();
 </code></pre>
-<h4 id="q-vis-05-fiche-produit-detaillee">Q-VIS-05 — Fiche produit détaillée<a class="headerlink" href="#q-vis-05-fiche-produit-detaillee" title="Permanent link">#</a></h4>
+<h4 id="q-vis-05-fiche-produit-detaillee">Q-VIS-05 — Fiche produit détaillée<a class="headerlink" href="#q-vis-05-fiche-produit-detaillee" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -727,7 +858,7 @@ $total = $stmt-&gt;fetchColumn();
 <p>Astuce : Si vous avez besoin de la fiche <strong>même quand <code>visible = 0</code></strong> (page d'admin), utiliser directement
 <code>produit</code> JOIN <code>categorie</code> JOIN <code>v_etat_stock</code> sans le filtre <code>visible</code>.</p>
 </blockquote>
-<h4 id="q-vis-06-produits-dune-categorie-pour-lister-une-categorie-seule">Q-VIS-06 — Produits d'une catégorie pour lister une catégorie seule<a class="headerlink" href="#q-vis-06-produits-dune-categorie-pour-lister-une-categorie-seule" title="Permanent link">#</a></h4>
+<h4 id="q-vis-06-produits-dune-categorie-pour-lister-une-categorie-seule">Q-VIS-06 — Produits d'une catégorie pour lister une catégorie seule<a class="headerlink" href="#q-vis-06-produits-dune-categorie-pour-lister-une-categorie-seule" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -754,7 +885,7 @@ $total = $stmt-&gt;fetchColumn();
 </tr>
 </tbody>
 </table>
-<h4 id="q-vis-07-verifier-lexistence-dun-produit-pour-lajout-panier-avant-call">Q-VIS-07 — Vérifier l'existence d'un produit pour l'ajout panier (avant CALL)<a class="headerlink" href="#q-vis-07-verifier-lexistence-dun-produit-pour-lajout-panier-avant-call" title="Permanent link">#</a></h4>
+<h4 id="q-vis-07-verifier-lexistence-dun-produit-pour-lajout-panier-avant-call">Q-VIS-07 — Vérifier l'existence d'un produit pour l'ajout panier (avant CALL)<a class="headerlink" href="#q-vis-07-verifier-lexistence-dun-produit-pour-lajout-panier-avant-call" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -795,8 +926,8 @@ $total = $stmt-&gt;fetchColumn();
  LIMIT 1;
 </code></pre>
 <hr />
-<h3 id="23-module-compte-client-inscription-connexion-profil-uc-04-uc-05">2.3 Module Compte client — inscription, connexion, profil (UC-04, UC-05)<a class="headerlink" href="#23-module-compte-client-inscription-connexion-profil-uc-04-uc-05" title="Permanent link">#</a></h3>
-<h4 id="q-cli-01-creer-un-compte-client">Q-CLI-01 — Créer un compte client<a class="headerlink" href="#q-cli-01-creer-un-compte-client" title="Permanent link">#</a></h4>
+<h3 id="23-module-compte-client-inscription-connexion-profil-uc-04-uc-05">2.3 Module Compte client — inscription, connexion, profil (UC-04, UC-05)<a class="headerlink" href="#23-module-compte-client-inscription-connexion-profil-uc-04-uc-05" title="Permanent link"></a></h3>
+<h4 id="q-cli-01-creer-un-compte-client">Q-CLI-01 — Créer un compte client<a class="headerlink" href="#q-cli-01-creer-un-compte-client" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -831,7 +962,7 @@ $total = $stmt-&gt;fetchColumn();
 </tr>
 </tbody>
 </table>
-<h4 id="q-cli-02-connexion-recuperer-les-identifiants-dun-client">Q-CLI-02 — Connexion : récupérer les identifiants d'un client<a class="headerlink" href="#q-cli-02-connexion-recuperer-les-identifiants-dun-client" title="Permanent link">#</a></h4>
+<h4 id="q-cli-02-connexion-recuperer-les-identifiants-dun-client">Q-CLI-02 — Connexion : récupérer les identifiants d'un client<a class="headerlink" href="#q-cli-02-connexion-recuperer-les-identifiants-dun-client" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -866,7 +997,7 @@ $total = $stmt-&gt;fetchColumn();
 </tr>
 </tbody>
 </table>
-<h4 id="q-cli-03-recuperer-les-informations-dun-client-pour-la-page-mon-compte">Q-CLI-03 — Récupérer les informations d'un client pour la page "Mon compte"<a class="headerlink" href="#q-cli-03-recuperer-les-informations-dun-client-pour-la-page-mon-compte" title="Permanent link">#</a></h4>
+<h4 id="q-cli-03-recuperer-les-informations-dun-client-pour-la-page-mon-compte">Q-CLI-03 — Récupérer les informations d'un client pour la page "Mon compte"<a class="headerlink" href="#q-cli-03-recuperer-les-informations-dun-client-pour-la-page-mon-compte" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -911,7 +1042,7 @@ $total = $stmt-&gt;fetchColumn();
  WHERE id_client = :id
  LIMIT 1;
 </code></pre>
-<h4 id="q-cli-04-modifier-les-informations-dun-client">Q-CLI-04 — Modifier les informations d'un client<a class="headerlink" href="#q-cli-04-modifier-les-informations-dun-client" title="Permanent link">#</a></h4>
+<h4 id="q-cli-04-modifier-les-informations-dun-client">Q-CLI-04 — Modifier les informations d'un client<a class="headerlink" href="#q-cli-04-modifier-les-informations-dun-client" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -942,7 +1073,7 @@ $total = $stmt-&gt;fetchColumn();
 </tr>
 </tbody>
 </table>
-<h4 id="q-cli-05-changer-le-mot-de-passe-dun-client-verification-ancien-mdp">Q-CLI-05 — Changer le mot de passe d'un client (vérification ancien mdp)<a class="headerlink" href="#q-cli-05-changer-le-mot-de-passe-dun-client-verification-ancien-mdp" title="Permanent link">#</a></h4>
+<h4 id="q-cli-05-changer-le-mot-de-passe-dun-client-verification-ancien-mdp">Q-CLI-05 — Changer le mot de passe d'un client (vérification ancien mdp)<a class="headerlink" href="#q-cli-05-changer-le-mot-de-passe-dun-client-verification-ancien-mdp" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -981,13 +1112,13 @@ UPDATE client
  WHERE id_client = :id;
 </code></pre>
 <hr />
-<h3 id="24-module-panier-et-commande-uc-06-uc-07-uc-08-uc-09">2.4 Module Panier et Commande (UC-06, UC-07, UC-08, UC-09)<a class="headerlink" href="#24-module-panier-et-commande-uc-06-uc-07-uc-08-uc-09" title="Permanent link">#</a></h3>
+<h3 id="24-module-panier-et-commande-uc-06-uc-07-uc-08-uc-09">2.4 Module Panier et Commande (UC-06, UC-07, UC-08, UC-09)<a class="headerlink" href="#24-module-panier-et-commande-uc-06-uc-07-uc-08-uc-09" title="Permanent link"></a></h3>
 <p>Le panier vit <strong>en session PHP</strong>, pas en base. Aucun <code>INSERT/UPDATE</code> sur une table "panier".
 Les requêtes SQL de ce module concernent :
 - la lecture des produits du panier pour recalculer les prix <strong>depuis la base</strong> (pas depuis le navigateur),
 - l'appel à la procédure transactionnelle de création de commande,
 - la lecture de l'historique et du détail des commandes.</p>
-<h4 id="q-pan-01-reserver-les-donnees-produits-du-panier-pour-affichagerecalcul">Q-PAN-01 — Réserver les données produits du panier pour affichage/recalcul<a class="headerlink" href="#q-pan-01-reserver-les-donnees-produits-du-panier-pour-affichagerecalcul" title="Permanent link">#</a></h4>
+<h4 id="q-pan-01-reserver-les-donnees-produits-du-panier-pour-affichagerecalcul">Q-PAN-01 — Réserver les données produits du panier pour affichage/recalcul<a class="headerlink" href="#q-pan-01-reserver-les-donnees-produits-du-panier-pour-affichagerecalcul" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1034,7 +1165,7 @@ Les requêtes SQL de ce module concernent :
 <p>PDO ne permet pas de binder directement un tableau : on génère autant de <code>?</code> que d'éléments du panier
 (avec une limite de sécurité à ~100 pour éviter les abus).</p>
 </blockquote>
-<h4 id="q-ord-01-calcul-des-frais-de-port-avant-validation-apercu">Q-ORD-01 — Calcul des frais de port avant validation (aperçu)<a class="headerlink" href="#q-ord-01-calcul-des-frais-de-port-avant-validation-apercu" title="Permanent link">#</a></h4>
+<h4 id="q-ord-01-calcul-des-frais-de-port-avant-validation-apercu">Q-ORD-01 — Calcul des frais de port avant validation (aperçu)<a class="headerlink" href="#q-ord-01-calcul-des-frais-de-port-avant-validation-apercu" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1073,7 +1204,7 @@ Les requêtes SQL de ce module concernent :
                  FROM parametre WHERE cle = 'frais_port')
        END AS frais_port_estime;
 </code></pre>
-<h4 id="q-ord-02-creer-la-commande-depuis-le-panier-transaction-complete">Q-ORD-02 — Créer la commande depuis le panier (transaction complète)<a class="headerlink" href="#q-ord-02-creer-la-commande-depuis-le-panier-transaction-complete" title="Permanent link">#</a></h4>
+<h4 id="q-ord-02-creer-la-commande-depuis-le-panier-transaction-complete">Q-ORD-02 — Créer la commande depuis le panier (transaction complète)<a class="headerlink" href="#q-ord-02-creer-la-commande-depuis-le-panier-transaction-complete" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1120,7 +1251,7 @@ signale les erreurs via <code>@code</code> et l'application décide du rollback 
 vérifient que le stock revient en cas d'erreur). Vérifiez le comportement exact en lisant le
 corps de <code>sp_create_order_from_basket</code> dans <code>sql/02_minishop_procedures.sql</code>.</p>
 </blockquote>
-<h4 id="q-ord-03-historique-des-commandes-dun-client">Q-ORD-03 — Historique des commandes d'un client<a class="headerlink" href="#q-ord-03-historique-des-commandes-dun-client" title="Permanent link">#</a></h4>
+<h4 id="q-ord-03-historique-des-commandes-dun-client">Q-ORD-03 — Historique des commandes d'un client<a class="headerlink" href="#q-ord-03-historique-des-commandes-dun-client" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1170,7 +1301,7 @@ corps de <code>sp_create_order_from_basket</code> dans <code>sql/02_minishop_pro
  ORDER BY date_commande DESC
  LIMIT :limit OFFSET :offset;
 </code></pre>
-<h4 id="q-ord-04-detail-dune-commande-lignes-prix-payes">Q-ORD-04 — Détail d'une commande (lignes + prix payés)<a class="headerlink" href="#q-ord-04-detail-dune-commande-lignes-prix-payes" title="Permanent link">#</a></h4>
+<h4 id="q-ord-04-detail-dune-commande-lignes-prix-payes">Q-ORD-04 — Détail d'une commande (lignes + prix payés)<a class="headerlink" href="#q-ord-04-detail-dune-commande-lignes-prix-payes" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1216,7 +1347,7 @@ SELECT l.id_ligne, l.id_produit, p.nom, p.slug, p.image_url,
  WHERE l.id_commande = :cid
  ORDER BY l.id_ligne ASC;
 </code></pre>
-<h4 id="q-ord-05-historique-des-statuts-piste-daudit-cote-client">Q-ORD-05 — Historique des statuts (piste d'audit) côté client<a class="headerlink" href="#q-ord-05-historique-des-statuts-piste-daudit-cote-client" title="Permanent link">#</a></h4>
+<h4 id="q-ord-05-historique-des-statuts-piste-daudit-cote-client">Q-ORD-05 — Historique des statuts (piste d'audit) côté client<a class="headerlink" href="#q-ord-05-historique-des-statuts-piste-daudit-cote-client" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1248,7 +1379,7 @@ SELECT l.id_ligne, l.id_produit, p.nom, p.slug, p.image_url,
  WHERE order_id = :cid
  ORDER BY changed_at ASC, id ASC;
 </code></pre>
-<h4 id="q-ord-06-annuler-une-commande">Q-ORD-06 — Annuler une commande<a class="headerlink" href="#q-ord-06-annuler-une-commande" title="Permanent link">#</a></h4>
+<h4 id="q-ord-06-annuler-une-commande">Q-ORD-06 — Annuler une commande<a class="headerlink" href="#q-ord-06-annuler-une-commande" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1280,8 +1411,8 @@ SELECT l.id_ligne, l.id_produit, p.nom, p.slug, p.image_url,
 </tbody>
 </table>
 <hr />
-<h3 id="25-module-back-office-produits-categories-stocks-uc-10-uc-11-uc-12">2.5 Module Back-office — Produits, catégories, stocks (UC-10, UC-11, UC-12)<a class="headerlink" href="#25-module-back-office-produits-categories-stocks-uc-10-uc-11-uc-12" title="Permanent link">#</a></h3>
-<h4 id="q-adm-01-lister-les-produits-back-office-y-compris-masques">Q-ADM-01 — Lister les produits (back-office, y compris masqués)<a class="headerlink" href="#q-adm-01-lister-les-produits-back-office-y-compris-masques" title="Permanent link">#</a></h4>
+<h3 id="25-module-back-office-produits-categories-stocks-uc-10-uc-11-uc-12">2.5 Module Back-office — Produits, catégories, stocks (UC-10, UC-11, UC-12)<a class="headerlink" href="#25-module-back-office-produits-categories-stocks-uc-10-uc-11-uc-12" title="Permanent link"></a></h3>
+<h4 id="q-adm-01-lister-les-produits-back-office-y-compris-masques">Q-ADM-01 — Lister les produits (back-office, y compris masqués)<a class="headerlink" href="#q-adm-01-lister-les-produits-back-office-y-compris-masques" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1333,7 +1464,7 @@ SELECT l.id_ligne, l.id_produit, p.nom, p.slug, p.image_url,
  LIMIT :limit OFFSET :offset;
 </code></pre>
 <p>(puis un <code>SELECT COUNT(*)</code> calqué sur les mêmes filtres pour la pagination.)</p>
-<h4 id="q-adm-02-charger-un-produit-pour-le-formulaire-dedition">Q-ADM-02 — Charger un produit pour le formulaire d'édition<a class="headerlink" href="#q-adm-02-charger-un-produit-pour-le-formulaire-dedition" title="Permanent link">#</a></h4>
+<h4 id="q-adm-02-charger-un-produit-pour-le-formulaire-dedition">Q-ADM-02 — Charger un produit pour le formulaire d'édition<a class="headerlink" href="#q-adm-02-charger-un-produit-pour-le-formulaire-dedition" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1366,7 +1497,7 @@ SELECT l.id_ligne, l.id_produit, p.nom, p.slug, p.image_url,
  WHERE p.id_produit = :id
  LIMIT 1;
 </code></pre>
-<h4 id="q-adm-03-creer-modifier-un-produit">Q-ADM-03 — Créer / modifier un produit<a class="headerlink" href="#q-adm-03-creer-modifier-un-produit" title="Permanent link">#</a></h4>
+<h4 id="q-adm-03-creer-modifier-un-produit">Q-ADM-03 — Créer / modifier un produit<a class="headerlink" href="#q-adm-03-creer-modifier-un-produit" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1397,7 +1528,7 @@ SELECT l.id_ligne, l.id_produit, p.nom, p.slug, p.image_url,
 </tr>
 </tbody>
 </table>
-<h4 id="q-adm-04-supprimer-ou-masquer-un-produit">Q-ADM-04 — Supprimer (ou masquer) un produit<a class="headerlink" href="#q-adm-04-supprimer-ou-masquer-un-produit" title="Permanent link">#</a></h4>
+<h4 id="q-adm-04-supprimer-ou-masquer-un-produit">Q-ADM-04 — Supprimer (ou masquer) un produit<a class="headerlink" href="#q-adm-04-supprimer-ou-masquer-un-produit" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1424,7 +1555,7 @@ SELECT l.id_ligne, l.id_produit, p.nom, p.slug, p.image_url,
 </tr>
 </tbody>
 </table>
-<h4 id="q-adm-05-liste-des-categories">Q-ADM-05 — Liste des catégories<a class="headerlink" href="#q-adm-05-liste-des-categories" title="Permanent link">#</a></h4>
+<h4 id="q-adm-05-liste-des-categories">Q-ADM-05 — Liste des catégories<a class="headerlink" href="#q-adm-05-liste-des-categories" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1462,7 +1593,7 @@ SELECT l.id_ligne, l.id_produit, p.nom, p.slug, p.image_url,
  GROUP BY c.id_categorie, c.nom, c.slug, c.description
  ORDER BY c.nom ASC;
 </code></pre>
-<h4 id="q-adm-06-charger-une-categorie-pour-ledition">Q-ADM-06 — Charger une catégorie pour l'édition<a class="headerlink" href="#q-adm-06-charger-une-categorie-pour-ledition" title="Permanent link">#</a></h4>
+<h4 id="q-adm-06-charger-une-categorie-pour-ledition">Q-ADM-06 — Charger une catégorie pour l'édition<a class="headerlink" href="#q-adm-06-charger-une-categorie-pour-ledition" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1489,7 +1620,7 @@ SELECT l.id_ligne, l.id_produit, p.nom, p.slug, p.image_url,
 </tr>
 </tbody>
 </table>
-<h4 id="q-adm-07-creermodifiersupprimer-une-categorie">Q-ADM-07 — Créer/modifier/supprimer une catégorie<a class="headerlink" href="#q-adm-07-creermodifiersupprimer-une-categorie" title="Permanent link">#</a></h4>
+<h4 id="q-adm-07-creermodifiersupprimer-une-categorie">Q-ADM-07 — Créer/modifier/supprimer une catégorie<a class="headerlink" href="#q-adm-07-creermodifiersupprimer-une-categorie" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1516,7 +1647,7 @@ SELECT l.id_ligne, l.id_produit, p.nom, p.slug, p.image_url,
 </tr>
 </tbody>
 </table>
-<h4 id="q-adm-08-liste-des-categories-pour-le-select-du-formulaire-produit">Q-ADM-08 — Liste des catégories pour le <code>&lt;select&gt;</code> du formulaire produit<a class="headerlink" href="#q-adm-08-liste-des-categories-pour-le-select-du-formulaire-produit" title="Permanent link">#</a></h4>
+<h4 id="q-adm-08-liste-des-categories-pour-le-select-du-formulaire-produit">Q-ADM-08 — Liste des catégories pour le <code>&lt;select&gt;</code> du formulaire produit<a class="headerlink" href="#q-adm-08-liste-des-categories-pour-le-select-du-formulaire-produit" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1543,7 +1674,7 @@ SELECT l.id_ligne, l.id_produit, p.nom, p.slug, p.image_url,
 </tr>
 </tbody>
 </table>
-<h4 id="q-adm-09-ajuster-le-stock">Q-ADM-09 — Ajuster le stock<a class="headerlink" href="#q-adm-09-ajuster-le-stock" title="Permanent link">#</a></h4>
+<h4 id="q-adm-09-ajuster-le-stock">Q-ADM-09 — Ajuster le stock<a class="headerlink" href="#q-adm-09-ajuster-le-stock" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1570,7 +1701,7 @@ SELECT l.id_ligne, l.id_produit, p.nom, p.slug, p.image_url,
 </tr>
 </tbody>
 </table>
-<h4 id="q-adm-10-alertes-de-stock-ruptures-et-seuils">Q-ADM-10 — Alertes de stock (ruptures et seuils)<a class="headerlink" href="#q-adm-10-alertes-de-stock-ruptures-et-seuils" title="Permanent link">#</a></h4>
+<h4 id="q-adm-10-alertes-de-stock-ruptures-et-seuils">Q-ADM-10 — Alertes de stock (ruptures et seuils)<a class="headerlink" href="#q-adm-10-alertes-de-stock-ruptures-et-seuils" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1614,8 +1745,8 @@ SELECT l.id_ligne, l.id_produit, p.nom, p.slug, p.image_url,
  ORDER BY FIELD(e.etat, 'RUPTURE','TRES_BAS'), e.stock ASC;
 </code></pre>
 <hr />
-<h3 id="26-module-back-office-commandes-statuts-audit-indicateurs-uc-13-uc-14">2.6 Module Back-office — Commandes, statuts, audit, indicateurs (UC-13, UC-14)<a class="headerlink" href="#26-module-back-office-commandes-statuts-audit-indicateurs-uc-13-uc-14" title="Permanent link">#</a></h3>
-<h4 id="q-adm-11-liste-des-commandes-back-office">Q-ADM-11 — Liste des commandes (back-office)<a class="headerlink" href="#q-adm-11-liste-des-commandes-back-office" title="Permanent link">#</a></h4>
+<h3 id="26-module-back-office-commandes-statuts-audit-indicateurs-uc-13-uc-14">2.6 Module Back-office — Commandes, statuts, audit, indicateurs (UC-13, UC-14)<a class="headerlink" href="#26-module-back-office-commandes-statuts-audit-indicateurs-uc-13-uc-14" title="Permanent link"></a></h3>
+<h4 id="q-adm-11-liste-des-commandes-back-office">Q-ADM-11 — Liste des commandes (back-office)<a class="headerlink" href="#q-adm-11-liste-des-commandes-back-office" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1666,7 +1797,7 @@ SELECT l.id_ligne, l.id_produit, p.nom, p.slug, p.image_url,
  ORDER BY date_commande DESC
  LIMIT :limit OFFSET :offset;
 </code></pre>
-<h4 id="q-adm-12-detail-dune-commande-cote-admin">Q-ADM-12 — Détail d'une commande côté admin<a class="headerlink" href="#q-adm-12-detail-dune-commande-cote-admin" title="Permanent link">#</a></h4>
+<h4 id="q-adm-12-detail-dune-commande-cote-admin">Q-ADM-12 — Détail d'une commande côté admin<a class="headerlink" href="#q-adm-12-detail-dune-commande-cote-admin" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1716,7 +1847,7 @@ SELECT o.*, cl.nom, cl.prenom, cl.email, cl.telephone,
 -- 2. Lignes : identique à Q-ORD-04 (ligne_commande JOIN produit)
 -- 3. Historique : identique à Q-ORD-05 (order_status_history par order_id)
 </code></pre>
-<h4 id="q-adm-13-modifier-le-statut-dune-commande">Q-ADM-13 — Modifier le statut d'une commande<a class="headerlink" href="#q-adm-13-modifier-le-statut-dune-commande" title="Permanent link">#</a></h4>
+<h4 id="q-adm-13-modifier-le-statut-dune-commande">Q-ADM-13 — Modifier le statut d'une commande<a class="headerlink" href="#q-adm-13-modifier-le-statut-dune-commande" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1743,7 +1874,7 @@ SELECT o.*, cl.nom, cl.prenom, cl.email, cl.telephone,
 </tr>
 </tbody>
 </table>
-<h4 id="q-adm-14-piste-daudit-des-statuts-back-office">Q-ADM-14 — Piste d'audit des statuts (back-office)<a class="headerlink" href="#q-adm-14-piste-daudit-des-statuts-back-office" title="Permanent link">#</a></h4>
+<h4 id="q-adm-14-piste-daudit-des-statuts-back-office">Q-ADM-14 — Piste d'audit des statuts (back-office)<a class="headerlink" href="#q-adm-14-piste-daudit-des-statuts-back-office" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1780,7 +1911,7 @@ SELECT o.*, cl.nom, cl.prenom, cl.email, cl.telephone,
  WHERE h.order_id = :cid
  ORDER BY h.changed_at ASC, h.id ASC;
 </code></pre>
-<h4 id="q-adm-15-indicateurs-du-tableau-de-bord">Q-ADM-15 — Indicateurs du tableau de bord<a class="headerlink" href="#q-adm-15-indicateurs-du-tableau-de-bord" title="Permanent link">#</a></h4>
+<h4 id="q-adm-15-indicateurs-du-tableau-de-bord">Q-ADM-15 — Indicateurs du tableau de bord<a class="headerlink" href="#q-adm-15-indicateurs-du-tableau-de-bord" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1831,8 +1962,8 @@ SELECT COALESCE(SUM(montant_total), 0) AS ca_jour
    AND DATE(date_commande) = CURRENT_DATE;
 </code></pre>
 <hr />
-<h3 id="27-module-back-office-gestion-des-comptes-administrateurs-super-only">2.7 Module Back-office — Gestion des comptes administrateurs (SUPER only)<a class="headerlink" href="#27-module-back-office-gestion-des-comptes-administrateurs-super-only" title="Permanent link">#</a></h3>
-<h4 id="q-adm-16-liste-des-administrateurs">Q-ADM-16 — Liste des administrateurs<a class="headerlink" href="#q-adm-16-liste-des-administrateurs" title="Permanent link">#</a></h4>
+<h3 id="27-module-back-office-gestion-des-comptes-administrateurs-super-only">2.7 Module Back-office — Gestion des comptes administrateurs (SUPER only)<a class="headerlink" href="#27-module-back-office-gestion-des-comptes-administrateurs-super-only" title="Permanent link"></a></h3>
+<h4 id="q-adm-16-liste-des-administrateurs">Q-ADM-16 — Liste des administrateurs<a class="headerlink" href="#q-adm-16-liste-des-administrateurs" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1859,7 +1990,7 @@ SELECT COALESCE(SUM(montant_total), 0) AS ca_jour
 </tr>
 </tbody>
 </table>
-<h4 id="q-adm-17-creer-un-administrateur">Q-ADM-17 — Créer un administrateur<a class="headerlink" href="#q-adm-17-creer-un-administrateur" title="Permanent link">#</a></h4>
+<h4 id="q-adm-17-creer-un-administrateur">Q-ADM-17 — Créer un administrateur<a class="headerlink" href="#q-adm-17-creer-un-administrateur" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1889,7 +2020,7 @@ SELECT COALESCE(SUM(montant_total), 0) AS ca_jour
 <pre><code class="language-sql">INSERT INTO administrateur (nom, prenom, email, mot_de_passe_hash, role, actif)
 VALUES (:nom, :prenom, :email, :hash, :role, 1);
 </code></pre>
-<h4 id="q-adm-18-bloquer-debloquer-un-administrateur">Q-ADM-18 — Bloquer / débloquer un administrateur<a class="headerlink" href="#q-adm-18-bloquer-debloquer-un-administrateur" title="Permanent link">#</a></h4>
+<h4 id="q-adm-18-bloquer-debloquer-un-administrateur">Q-ADM-18 — Bloquer / débloquer un administrateur<a class="headerlink" href="#q-adm-18-bloquer-debloquer-un-administrateur" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1916,7 +2047,7 @@ VALUES (:nom, :prenom, :email, :hash, :role, 1);
 </tr>
 </tbody>
 </table>
-<h4 id="q-adm-19-changer-le-role-dun-administrateur">Q-ADM-19 — Changer le rôle d'un administrateur<a class="headerlink" href="#q-adm-19-changer-le-role-dun-administrateur" title="Permanent link">#</a></h4>
+<h4 id="q-adm-19-changer-le-role-dun-administrateur">Q-ADM-19 — Changer le rôle d'un administrateur<a class="headerlink" href="#q-adm-19-changer-le-role-dun-administrateur" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1939,7 +2070,7 @@ VALUES (:nom, :prenom, :email, :hash, :role, 1);
 </tr>
 </tbody>
 </table>
-<h4 id="q-adm-20-connexion-administrateur">Q-ADM-20 — Connexion administrateur<a class="headerlink" href="#q-adm-20-connexion-administrateur" title="Permanent link">#</a></h4>
+<h4 id="q-adm-20-connexion-administrateur">Q-ADM-20 — Connexion administrateur<a class="headerlink" href="#q-adm-20-connexion-administrateur" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1967,10 +2098,10 @@ VALUES (:nom, :prenom, :email, :hash, :role, 1);
 </tbody>
 </table>
 <hr />
-<h3 id="28-module-securite-csrf-journalisation">2.8 Module Sécurité / CSRF / journalisation<a class="headerlink" href="#28-module-securite-csrf-journalisation" title="Permanent link">#</a></h3>
-<h4 id="q-sec-01-lire-un-utilisateur-par-son-token-se-souvenir-de-moi-si-implemente">Q-SEC-01 — Lire un utilisateur par son token "se souvenir de moi" (SI implémenté)<a class="headerlink" href="#q-sec-01-lire-un-utilisateur-par-son-token-se-souvenir-de-moi-si-implemente" title="Permanent link">#</a></h4>
+<h3 id="28-module-securite-csrf-journalisation">2.8 Module Sécurité / CSRF / journalisation<a class="headerlink" href="#28-module-securite-csrf-journalisation" title="Permanent link"></a></h3>
+<h4 id="q-sec-01-lire-un-utilisateur-par-son-token-se-souvenir-de-moi-si-implemente">Q-SEC-01 — Lire un utilisateur par son token "se souvenir de moi" (SI implémenté)<a class="headerlink" href="#q-sec-01-lire-un-utilisateur-par-son-token-se-souvenir-de-moi-si-implemente" title="Permanent link"></a></h4>
 <p>Non prévu par le CDC → à ne pas implémenter.</p>
-<h4 id="q-sec-02-journal-des-rejets-de-regles-optionnel-ef-gen-04">Q-SEC-02 — Journal des rejets de règles (optionnel EF-GEN-04)<a class="headerlink" href="#q-sec-02-journal-des-rejets-de-regles-optionnel-ef-gen-04" title="Permanent link">#</a></h4>
+<h4 id="q-sec-02-journal-des-rejets-de-regles-optionnel-ef-gen-04">Q-SEC-02 — Journal des rejets de règles (optionnel EF-GEN-04)<a class="headerlink" href="#q-sec-02-journal-des-rejets-de-regles-optionnel-ef-gen-04" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1994,8 +2125,8 @@ VALUES (:nom, :prenom, :email, :hash, :role, 1);
 </tbody>
 </table>
 <hr />
-<h3 id="29-installateur-ci-scripts">2.9 Installateur / CI / scripts<a class="headerlink" href="#29-installateur-ci-scripts" title="Permanent link">#</a></h3>
-<h4 id="q-inst-01-verifier-que-la-base-est-bien-initialisee-scriptsdb_initphp">Q-INST-01 — Vérifier que la base est bien initialisée (scripts/db_init.php)<a class="headerlink" href="#q-inst-01-verifier-que-la-base-est-bien-initialisee-scriptsdb_initphp" title="Permanent link">#</a></h4>
+<h3 id="29-installateur-ci-scripts">2.9 Installateur / CI / scripts<a class="headerlink" href="#29-installateur-ci-scripts" title="Permanent link"></a></h3>
+<h4 id="q-inst-01-verifier-que-la-base-est-bien-initialisee-scriptsdb_initphp">Q-INST-01 — Vérifier que la base est bien initialisée (scripts/db_init.php)<a class="headerlink" href="#q-inst-01-verifier-que-la-base-est-bien-initialisee-scriptsdb_initphp" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -2022,7 +2153,7 @@ VALUES (:nom, :prenom, :email, :hash, :role, 1);
 </tr>
 </tbody>
 </table>
-<h4 id="q-inst-02-verifier-que-ladministrateur-de-seed-est-present-ci">Q-INST-02 — Vérifier que l'administrateur de seed est présent (CI)<a class="headerlink" href="#q-inst-02-verifier-que-ladministrateur-de-seed-est-present-ci" title="Permanent link">#</a></h4>
+<h4 id="q-inst-02-verifier-que-ladministrateur-de-seed-est-present-ci">Q-INST-02 — Vérifier que l'administrateur de seed est présent (CI)<a class="headerlink" href="#q-inst-02-verifier-que-ladministrateur-de-seed-est-present-ci" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -2046,7 +2177,7 @@ VALUES (:nom, :prenom, :email, :hash, :role, 1);
 </tbody>
 </table>
 <hr />
-<h2 id="3-recapitulatif-des-requetes-a-ecrire-check-list-pour-la-collegue">3. Récapitulatif des requêtes à écrire (check-list pour la collègue)<a class="headerlink" href="#3-recapitulatif-des-requetes-a-ecrire-check-list-pour-la-collegue" title="Permanent link">#</a></h2>
+<h2 id="3-recapitulatif-des-requetes-a-ecrire-check-list-pour-la-collegue">3. Récapitulatif des requêtes à écrire (check-list pour la collègue)<a class="headerlink" href="#3-recapitulatif-des-requetes-a-ecrire-check-list-pour-la-collegue" title="Permanent link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -2384,7 +2515,7 @@ VALUES (:nom, :prenom, :email, :hash, :role, 1);
 </table>
 <p><strong>Total : 43 requêtes à écrire / appels de procédures à câbler.</strong></p>
 <hr />
-<h2 id="4-bonnes-pratiques-et-pieges-a-eviter">4. Bonnes pratiques et pièges à éviter<a class="headerlink" href="#4-bonnes-pratiques-et-pieges-a-eviter" title="Permanent link">#</a></h2>
+<h2 id="4-bonnes-pratiques-et-pieges-a-eviter">4. Bonnes pratiques et pièges à éviter<a class="headerlink" href="#4-bonnes-pratiques-et-pieges-a-eviter" title="Permanent link"></a></h2>
 <ol>
 <li><strong>Ne jamais réécrire les règles métier en PHP</strong> : <code>frais_port</code>, calcul du TTC, décrément de stock,
    matrice de statuts, suppression logique, tout passe par les procédures et triggers.</li>
@@ -2410,7 +2541,7 @@ VALUES (:nom, :prenom, :email, :hash, :role, 1);
    <code>COMMANDE_INTROUVABLE</code>, <code>RB02_PRIX_DOIT_ETRE_STRICTEMENT_POSITIF</code>).</li>
 </ol>
 <hr />
-<h2 id="5-references">5. Références<a class="headerlink" href="#5-references" title="Permanent link">#</a></h2>
+<h2 id="5-references">5. Références<a class="headerlink" href="#5-references" title="Permanent link"></a></h2>
 <ul>
 <li>Schéma complet : <code>sql/01_minishop_schema.sql</code></li>
 <li>Procédures : <code>sql/02_minishop_procedures.sql</code></li>
@@ -2422,8 +2553,7 @@ VALUES (:nom, :prenom, :email, :hash, :role, 1);
 <li>Tests SQL : <code>tests/sql/</code> (29 tests rejouables via <code>./scripts/run_sql_tests.sh</code>)</li>
 </ul>
 <footer class="doc">
-  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/sql-a-ecrire/requetes-sql-a-ecrire.md</code>
-  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/sql-a-ecrire/requetes-sql-a-ecrire.md</code> · 0 figure(s) intégrée(s).</p>
 </footer>
 </main>
 </body>

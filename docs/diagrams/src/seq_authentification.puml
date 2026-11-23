@@ -3,18 +3,18 @@ title Séquence 1 — connexion client (UC-05, SEC-04, SEC-05, RB-12)
 
 autonumber
 skinparam shadowing false
-skinparam roundcorner 6
+skinparam roundcorner 0
 skinparam defaultFontName "DejaVu Sans"
-skinparam ArrowColor #334155
+skinparam ArrowColor #0F294A
 skinparam ParticipantBackgroundColor #FFFFFF
-skinparam ParticipantBorderColor #475569
+skinparam ParticipantBorderColor #1E3A5F
 skinparam ActorBackgroundColor #FFFFFF
-skinparam ActorBorderColor #475569
-skinparam DatabaseBackgroundColor #EEF2FF
-skinparam DatabaseBorderColor #4338CA
-skinparam NoteBackgroundColor #FEF9C3
-skinparam NoteBorderColor #CA8A04
-skinparam SequenceLifeLineBorderColor #64748B
+skinparam ActorBorderColor #1E3A5F
+skinparam DatabaseBackgroundColor #F1F5F9
+skinparam DatabaseBorderColor #0F294A
+skinparam NoteBackgroundColor #F8FAFC
+skinparam NoteBorderColor #1E3A5F
+skinparam SequenceLifeLineBorderColor #334155
 
 actor Client
 participant "AuthController" as AC

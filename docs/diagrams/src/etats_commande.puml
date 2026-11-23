@@ -2,13 +2,13 @@
 title Machine à états d'une commande — RB-11 (Triggers::TRANSITIONS)
 
 skinparam shadowing false
-skinparam roundcorner 8
+skinparam roundcorner 0
 skinparam defaultFontName "DejaVu Sans"
-skinparam ArrowColor #334155
+skinparam ArrowColor #0F294A
 skinparam StateBackgroundColor #FFFFFF
-skinparam StateBorderColor #475569
-skinparam NoteBackgroundColor #FEF9C3
-skinparam NoteBorderColor #CA8A04
+skinparam StateBorderColor #1E3A5F
+skinparam NoteBackgroundColor #F8FAFC
+skinparam NoteBorderColor #1E3A5F
 
 [*] --> BROUILLON : creation [sp_create_order]
 

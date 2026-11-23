@@ -2,18 +2,18 @@
 title MiniShop — diagramme de classes (couches, attributs, méthodes et cardinalités)
 
 skinparam shadowing false
-skinparam roundcorner 6
+skinparam roundcorner 0
 skinparam defaultFontName "DejaVu Sans"
 skinparam classAttributeIconSize 0
 skinparam packageStyle rectangle
-skinparam ArrowColor #334155
+skinparam ArrowColor #0F294A
 skinparam ClassBackgroundColor #FFFFFF
-skinparam ClassBorderColor #475569
-skinparam ClassHeaderBackgroundColor #EEF2FF
+skinparam ClassBorderColor #1E3A5F
+skinparam ClassHeaderBackgroundColor #F1F5F9
 skinparam PackageBackgroundColor #F8FAFC
-skinparam PackageBorderColor #64748B
-skinparam NoteBackgroundColor #FEF9C3
-skinparam NoteBorderColor #CA8A04
+skinparam PackageBorderColor #334155
+skinparam NoteBackgroundColor #F8FAFC
+skinparam NoteBorderColor #1E3A5F
 
 package "Présentation & Routage" {
   class Router {

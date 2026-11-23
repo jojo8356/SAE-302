@@ -2,24 +2,24 @@
 title Architecture MVC et persistance duale (§9)
 
 skinparam shadowing false
-skinparam roundcorner 6
+skinparam roundcorner 0
 skinparam defaultFontName "DejaVu Sans"
 skinparam componentStyle rectangle
 skinparam linetype ortho
-skinparam ArrowColor #334155
+skinparam ArrowColor #0F294A
 skinparam PackageBackgroundColor #F8FAFC
-skinparam PackageBorderColor #64748B
+skinparam PackageBorderColor #334155
 skinparam ComponentBackgroundColor #FFFFFF
-skinparam ComponentBorderColor #475569
-skinparam DatabaseBackgroundColor #EEF2FF
-skinparam DatabaseBorderColor #4338CA
-skinparam NoteBackgroundColor #FEF9C3
-skinparam NoteBorderColor #CA8A04
+skinparam ComponentBorderColor #1E3A5F
+skinparam DatabaseBackgroundColor #F1F5F9
+skinparam DatabaseBorderColor #0F294A
+skinparam NoteBackgroundColor #F8FAFC
+skinparam NoteBorderColor #1E3A5F
 
 actor "Navigateur\n(Client / Admin)" as B
 
 package "Couche Présentation (front & back-office)" {
-  [public/index.php\n<<Front Controller>>\nen-têtes CSP · dispatch] as FC
+  [public/index.php\n<<Front Controller>>\nen-têtes CSP / DENY · dispatch] as FC
   [app/Router.php\n<<Router>>\nliste blanche + gardes RB-13] as R
   [app/Controller/*\n7 front/API + 7 Admin\\*] as C
   [app/View/*\nHTML sémantique + Image/*] as V

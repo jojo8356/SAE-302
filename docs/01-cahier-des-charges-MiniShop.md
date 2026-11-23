@@ -1021,7 +1021,7 @@ minishop/
 ├── tests/{charge,js,node,perf,php,phpunit,python,security,sql}/
 ├── uploads/                        # ressources suivies par Git
 ├── artefacts/                      # rendus HTML
-└── livrables/{README.md, minishop-soutenance.pptx, docx/, html/}
+└── livrables/{README.md, minishop-soutenance.pptx, docx/, html/, pdf/}
 ```
 
 Les dossiers requis par la WBS (`app/`, `public/`, `sql/`, `tests/`, `docs/`, `scripts/`) contiennent des fichiers suivis, ainsi que `.gitignore` à la racine. `app/Model/Data/` regroupe les types et pilotes de stockage ; les contrôleurs d’administration sont sous `app/Controller/Admin/`. `public/` reste le seul dossier exposé par le serveur Web. SQL/MySQL/PDO est le pilote par défaut ; `data/minishop/` correspond au mode JSON explicitement optionnel. Les fichiers locaux sous `var/` sont ignorés par Git, hormis l’exception prévue pour `var/.gitkeep`.

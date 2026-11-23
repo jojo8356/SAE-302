@@ -3,91 +3,222 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light dark">
-<meta name="description" content="SAÉ 302 — MiniShop : MiniShop — Todolist projet : suivi de base et planification historique#">
-<title>MiniShop — Todolist projet : suivi de base et planification historique# — MiniShop</title>
+<meta name="description" content="Université Côte d'Azur — SAÉ 302 MiniShop : MiniShop — Todolist projet : suivi de base et planification historique">
+<title>MiniShop — Todolist projet : suivi de base et planification historique — MiniShop (SAÉ 302)</title>
 <style>
 :root {
   --encre: #0f172a;
   --encre-douce: #475569;
-  --papier: #fbfaf7;
-  --carte: #ffffff;
-  --trait: #e2e8f0;
-  --accent: #1d4ed8;
-  --accent-clair: #dbeafe;
-  --code: #f1f5f9;
-  --mesure: 72ch;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --encre: #f8fafc; --encre-douce: #cbd5e1; --papier: #0b1220;
-    --carte: #111c2e; --trait: #24344d; --accent: #93c5fd;
-    --accent-clair: #1e3a8a; --code: #16223a;
-  }
+  --marine: #0f294a;
+  --marine-clair: #f1f5f9;
+  --fond-bureau: #e2e8f0;
+  --papier: #ffffff;
+  --trait: #cbd5e1;
+  --trait-fin: #e2e8f0;
+  --code-fond: #f8fafc;
 }
 * { box-sizing: border-box; }
 html { font-size: 100%; -webkit-text-size-adjust: 100%; }
 body {
-  margin: 0 auto;
-  padding: 2.5rem 1.25rem 5rem;
-  max-width: calc(var(--mesure) + 6rem);
-  background: var(--papier);
+  margin: 0;
+  padding: 2rem 1rem 3.5rem;
+  background: var(--fond-bureau);
   color: var(--encre);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
-  font-size: 1rem;
+  font-family: Georgia, "DejaVu Serif", "Liberation Serif", "Times New Roman", serif;
+  font-size: 10.5pt;
   line-height: 1.65;
   text-rendering: optimizeLegibility;
 }
-h1, h2, h3, h4 { line-height: 1.25; margin: 2.2em 0 0.6em; font-weight: 700; }
-h1 { font-size: 2rem; margin-top: 0; letter-spacing: -0.01em; }
-h2 { font-size: 1.4rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--accent-clair); }
-h3 { font-size: 1.15rem; }
-h4 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--encre-douce); }
-p, li { max-width: var(--mesure); }
-a { color: var(--accent); text-underline-offset: 0.15em; }
+main#contenu {
+  margin: 0 auto;
+  max-width: 210mm;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+  padding: 20mm 20mm 22mm;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+header.cartouche {
+  border-bottom: 2px solid var(--marine);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+}
+header.cartouche .institution {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--marine);
+}
+header.cartouche .meta {
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+h1, h2, h3, h4 {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  line-height: 1.25;
+  margin: 1.8em 0 0.55em;
+  font-weight: 700;
+  color: var(--marine);
+  break-after: avoid;
+}
+h1 {
+  font-size: 1.75rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--marine);
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.28rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--trait);
+}
+h3 { font-size: 1.08rem; color: #1e3a5f; }
+h4 {
+  font-size: 0.94rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--encre-douce);
+}
+p {
+  margin: 0 0 0.8rem;
+  text-align: justify;
+  hyphens: auto;
+}
+li {
+  margin: 0.25rem 0;
+  text-align: left;
+}
+a { color: var(--marine); text-decoration: underline; text-underline-offset: 0.16em; }
 a:hover { text-decoration-thickness: 2px; }
 code {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  font-size: 0.9em; background: var(--code); padding: 0.1em 0.35em; border-radius: 4px;
+  font-family: "DejaVu Sans Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--code-fond);
+  border: 1px solid var(--trait-fin);
+  padding: 0.06em 0.3em;
+  border-radius: 0;
 }
 pre {
-  background: var(--code); padding: 1rem 1.1rem; border-radius: 10px;
-  overflow-x: auto; border: 1px solid var(--trait); font-size: 0.85rem; line-height: 1.5;
+  background: var(--code-fond);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.48;
+  margin: 1rem 0 1.2rem;
 }
-pre code { background: none; padding: 0; font-size: inherit; }
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
 blockquote {
-  margin: 1.5rem 0; padding: 0.85rem 1.1rem; border-left: 4px solid var(--accent);
-  background: var(--accent-clair); border-radius: 0 8px 8px 0;
+  margin: 1.2rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  background: #f8fafc;
+  border-radius: 0;
 }
-blockquote p { margin: 0.35rem 0; }
-table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.92rem; }
-caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
-th, td { border: 1px solid var(--trait); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
-thead th { background: var(--accent-clair); }
-tbody tr:nth-child(even) { background: color-mix(in srgb, var(--code) 55%, transparent); }
-img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 8px; }
-hr { border: 0; border-top: 1px solid var(--trait); margin: 2.5rem 0; }
-ul, ol { padding-left: 1.4rem; }
-li { margin: 0.25rem 0; }
-li input[type="checkbox"] { margin-right: 0.4rem; }
-.toc { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 1rem 1.25rem; }
-.toc > ul { list-style: none; padding-left: 0; }
-.toc ul ul { padding-left: 1rem; }
-footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--trait); color: var(--encre-douce); font-size: 0.85rem; }
+blockquote p { margin: 0.3rem 0; text-align: left; }
+/* Style LaTeX booktabs */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.15rem 0 1.35rem;
+  font-size: 0.91rem;
+  border-top: 2px solid var(--marine);
+  border-bottom: 2px solid var(--marine);
+}
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  color: var(--marine);
+  padding-bottom: 0.35rem;
+}
+th, td {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid var(--trait-fin);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  background: var(--marine-clair);
+  color: var(--marine);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--marine);
+}
+tbody tr:nth-child(even) { background: #f8fafc; }
+tbody tr:last-child td { border-bottom: 0; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2rem auto;
+  border: 1px solid var(--trait);
+  border-radius: 0;
+  padding: 4px;
+  background: #ffffff;
+}
+hr { border: 0; border-top: 1px solid var(--trait); margin: 2rem 0; }
+ul, ol { padding-left: 1.4rem; margin: 0.5rem 0 0.9rem; }
+.toc {
+  background: #f8fafc;
+  border: 1px solid var(--trait);
+  border-left: 3px solid var(--marine);
+  border-radius: 0;
+  padding: 0.9rem 1.2rem;
+  margin: 1rem 0 1.6rem;
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.9rem;
+}
+.toc::before {
+  content: "SOMMAIRE";
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--marine);
+  margin-bottom: 0.45rem;
+}
+.toc > ul { list-style: none; padding-left: 0; margin: 0; }
+.toc ul ul { padding-left: 1.1rem; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+footer.doc {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--marine);
+  color: var(--encre-douce);
+  font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+footer.doc p { text-align: left; margin: 0; }
 @media print {
-  :root { --papier: #fff; --carte: #fff; }
-  @page { size: A4; margin: 18mm 16mm; }
-  body { padding: 0; max-width: none; font-size: 10.5pt; background: #fff; }
+  @page { size: A4; margin: 18mm 18mm; }
+  body { padding: 0; background: #ffffff; font-size: 10pt; }
+  main#contenu { max-width: none; border: 0; padding: 0; box-shadow: none; }
   h1, h2, h3 { break-after: avoid; }
   table, pre, img, blockquote { break-inside: avoid; }
   a { color: inherit; text-decoration: none; }
-  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #555; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.82em; color: #475569; }
   .toc { break-after: page; }
 }
 </style>
 </head>
 <body>
 <main id="contenu">
+<header class="cartouche">
+  <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
+  <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/06-todolist.md</code></div>
+</header>
 <nav class="toc" aria-label="Sommaire"><div class="toc">
 <ul>
 <li><a href="#1-statuts-de-laudit-tache-par-tache-et-estimations-historiques-wbs">1. Statuts de l'audit tâche par tâche et estimations historiques WBS</a><ul>
@@ -116,7 +247,7 @@ footer.doc { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--tr
 </ul>
 </div>
 </nav>
-<h1 id="minishop-todolist-projet-suivi-de-base-et-planification-historique">MiniShop — Todolist projet : suivi de base et planification historique<a class="headerlink" href="#minishop-todolist-projet-suivi-de-base-et-planification-historique" title="Permanent link">#</a></h1>
+<h1 id="minishop-todolist-projet-suivi-de-base-et-planification-historique">MiniShop — Todolist projet : suivi de base et planification historique<a class="headerlink" href="#minishop-todolist-projet-suivi-de-base-et-planification-historique" title="Permanent link"></a></h1>
 <p><strong>Périmètre :</strong> 82 tâches de la WBS, dont la charge totale historique est estimée à 348 h. La répartition <code>OK</code>/<code>OK*</code>/<code>PARTIEL</code>/<code>[!]</code> reprend la revue tâche par tâche de <code>docs/19</code> (y compris la campagne VM Debian 13 des 16–17/11/2026).
 <strong>Avertissement temporel :</strong> <code>docs/19</code> intègre les campagnes VM des 16–17/11/2026 (<code>f9b614f</code> / <code>cb0f814</code>), postérieures au socle documentaire initial (23 octobre 2026). Les statuts sont repris comme cartographie à jour de l’audit (<code>docs/19</code>, <code>docs/pv-recette.md</code>, <code>tests/perf/dernieres_mesures.txt</code>), mais aucun run daté après le 23/10 n'est rétroactivement crédité à la coupure du 23/10.
 SQL/MySQL/PDO reste le pilote par défaut ; JSON est une option explicite pour les tests isolés. <strong>D1-L1-01</strong> est <code>OK</code> sur attestation utilisateur et capture fournie du courriel. <strong>D1-L1-02</strong> est <code>OK</code> pour l’arborescence (<code>app/</code>, <code>public/</code>, <code>sql/</code>, <code>tests/</code>, <code>docs/</code>, <code>scripts/</code> et <code>.gitignore</code> suivis dans <code>docs/17-inventaire-projet.csv</code>). <strong>D1-L1-07</strong>, <strong>D2-L2-06</strong> et <strong>D3-L4-06</strong> sont <code>OK</code> sur la base de la synthèse asynchrone (<code>docs/21-synthese-retours-audit.md</code>) et des relectures croisées attestées entre Johan Polsinelli et Chahd Gouiaa.
@@ -161,8 +292,8 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 </tbody>
 </table>
 <hr />
-<h2 id="1-statuts-de-laudit-tache-par-tache-et-estimations-historiques-wbs">1. Statuts de l'audit tâche par tâche et estimations historiques WBS<a class="headerlink" href="#1-statuts-de-laudit-tache-par-tache-et-estimations-historiques-wbs" title="Permanent link">#</a></h2>
-<h3 id="11-repartition-par-division">1.1 Répartition par division<a class="headerlink" href="#11-repartition-par-division" title="Permanent link">#</a></h3>
+<h2 id="1-statuts-de-laudit-tache-par-tache-et-estimations-historiques-wbs">1. Statuts de l'audit tâche par tâche et estimations historiques WBS<a class="headerlink" href="#1-statuts-de-laudit-tache-par-tache-et-estimations-historiques-wbs" title="Permanent link"></a></h2>
+<h3 id="11-repartition-par-division">1.1 Répartition par division<a class="headerlink" href="#11-repartition-par-division" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -241,7 +372,7 @@ La mise en ligne de démonstration et le staging ont été retirés du périmèt
 </tr>
 </tbody>
 </table>
-<h3 id="12-estimations-wbs-par-role-de-planification-abc-aucune-correspondance-nominative-etablie">1.2 Estimations WBS par rôle de planification (A/B/C ; aucune correspondance nominative établie)<a class="headerlink" href="#12-estimations-wbs-par-role-de-planification-abc-aucune-correspondance-nominative-etablie" title="Permanent link">#</a></h3>
+<h3 id="12-estimations-wbs-par-role-de-planification-abc-aucune-correspondance-nominative-etablie">1.2 Estimations WBS par rôle de planification (A/B/C ; aucune correspondance nominative établie)<a class="headerlink" href="#12-estimations-wbs-par-role-de-planification-abc-aucune-correspondance-nominative-etablie" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -283,7 +414,7 @@ Les tâches <code>OK*</code> ne sont ni une certification générale ni une vali
 <strong>D1-L1-01 (<code>OK</code>) :</strong> l’utilisateur atteste l’envoi et a fourni une capture montrant l’objet « Composition SAE », la destinataire affichée, la composition du groupe, l’URL GitLab et le rôle <code>Reporter</code>. La date et le dossier Envoyés ne sont pas visibles ; aucune vérification directe de la boîte ni confirmation de remise n’est revendiquée (voir <code>docs/19</code>).
 <strong>D1-L1-02 (<code>OK</code>) :</strong> l’inventaire <code>arbre-arena.txt</code> fourni par l’utilisateur (542 chemins) correspond exactement, après tri stable, aux chemins de l’arbre Git du commit <code>82a1279fff756531489b470c7a6d946e3510085f</code>. Chacun des six dossiers racine exigés (<code>app/</code>, <code>public/</code>, <code>sql/</code>, <code>tests/</code>, <code>docs/</code>, <code>scripts/</code>) contient des chemins suivis et <code>.gitignore</code> est suivi comme fichier ; ce constat porte sur la structure de ce SHA, pas sur le code fonctionnel ni sur le checkout local <code>e0c554f</code> (voir <code>docs/19</code>).</p>
 <hr />
-<h2 id="2-classification-asynchrone-du-plan-de-base-photographie-du-23092026">2. Classification asynchrone du plan de base — photographie du 23/09/2026<a class="headerlink" href="#2-classification-asynchrone-du-plan-de-base-photographie-du-23092026" title="Permanent link">#</a></h2>
+<h2 id="2-classification-asynchrone-du-plan-de-base-photographie-du-23092026">2. Classification asynchrone du plan de base — photographie du 23/09/2026<a class="headerlink" href="#2-classification-asynchrone-du-plan-de-base-photographie-du-23092026" title="Permanent link"></a></h2>
 <p>Dans le graphe de dépendances de la photographie du 23/09, ces tâches ne dépendent d'aucune tâche restante : elles pouvaient être préparées en parallèle.
 Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évoluer. Vérifier chaque tâche et ses prérequis dans le dépôt avant de la reprendre.</p>
 <table>
@@ -417,7 +548,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 <li><strong>Le rôle A peut prendre en charge les slides</strong> dans le scénario de base ; à réattribuer après confirmation de l'équipe.</li>
 </ol>
 <hr />
-<h2 id="3-taches-dependantes-sequence-de-reference-du-plan-historique-a-revalider">3. Tâches dépendantes — séquence de référence du plan historique (à revalider)<a class="headerlink" href="#3-taches-dependantes-sequence-de-reference-du-plan-historique-a-revalider" title="Permanent link">#</a></h2>
+<h2 id="3-taches-dependantes-sequence-de-reference-du-plan-historique-a-revalider">3. Tâches dépendantes — séquence de référence du plan historique (à revalider)<a class="headerlink" href="#3-taches-dependantes-sequence-de-reference-du-plan-historique-a-revalider" title="Permanent link"></a></h2>
 <p>Dans le graphe de référence, les tâches de cette section attendent leurs dépendances ; la chaîne critique prévue est :</p>
 <blockquote>
 <p><strong>L8 (socle) → L9 (front-office) → L10 (panier/commande) → L11 (back-office) → L12 (sécurité) → L14 (tests) → L15 (rendu) → L16 (soutenance)</strong></p>
@@ -500,7 +631,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h3 id="sous-dependances-internes-a-respecter-les-pieges-classiques">Sous-dépendances internes à respecter (les pièges classiques)<a class="headerlink" href="#sous-dependances-internes-a-respecter-les-pieges-classiques" title="Permanent link">#</a></h3>
+<h3 id="sous-dependances-internes-a-respecter-les-pieges-classiques">Sous-dépendances internes à respecter (les pièges classiques)<a class="headerlink" href="#sous-dependances-internes-a-respecter-les-pieges-classiques" title="Permanent link"></a></h3>
 <ul>
 <li><strong>L10 exige L6 + L7 ✅</strong> (procédures + triggers) : <code>sp_create_order_from_basket</code> ne doit <strong>jamais</strong> être
   réimplémenté en PHP — l'appel de procédure est la frontière (pénalité MVC/SP).</li>
@@ -512,7 +643,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
   de les solder <strong>avant</strong> la fin de L8 : le harnais sera prêt quand l'app arrivera.</li>
 </ul>
 <hr />
-<h2 id="4-graphe-de-dependances-vue-synthetique">4. Graphe de dépendances (vue synthétique)<a class="headerlink" href="#4-graphe-de-dependances-vue-synthetique" title="Permanent link">#</a></h2>
+<h2 id="4-graphe-de-dependances-vue-synthetique">4. Graphe de dépendances (vue synthétique)<a class="headerlink" href="#4-graphe-de-dependances-vue-synthetique" title="Permanent link"></a></h2>
 <pre><code class="language-text"> ASYNC (classification du plan de base)  CHAÎNE DÉPENDANTE (ordre planifié)
  ─────────────────────────────          ─────────────────────────────────
  D1-L1-01 GitLab (2h, photo) ──┐        L8 socle (22h, A) ──┬─&gt; L9 front (32h, C) ──┬─&gt; L10 panier/cmd (28h, A+C)
@@ -525,9 +656,9 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
  D4-L12-05* / L14-04* / L14-06* (préparations)
 </code></pre>
 <hr />
-<h2 id="5-detail-tache-par-tache-82-taches-wbs-statuts-de-laudit-et-actions-restantes">5. Détail tâche par tâche — 82 tâches WBS, statuts de l'audit et actions restantes<a class="headerlink" href="#5-detail-tache-par-tache-82-taches-wbs-statuts-de-laudit-et-actions-restantes" title="Permanent link">#</a></h2>
-<h3 id="d1-pilotage-depot-gitlab-collaboration-7-ok-0-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-17-h-de-reference">D1 — Pilotage, dépôt GitLab &amp; collaboration (7 <code>OK</code>, 0 <code>OK*</code>, 0 <code>PARTIEL</code>, 0 <code>[!]</code> ; 0 h d'estimations WBS initiales à revalider sur 17 h de référence)<a class="headerlink" href="#d1-pilotage-depot-gitlab-collaboration-7-ok-0-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-17-h-de-reference" title="Permanent link">#</a></h3>
-<h4 id="lot-l1-pilotage-depot-charge-wbs-initiale-14-h-estimation-affectee-aux-taches-ouvertes-0-h">✅ Lot L1 — Pilotage &amp; dépôt (charge WBS initiale 14 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l1-pilotage-depot-charge-wbs-initiale-14-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link">#</a></h4>
+<h2 id="5-detail-tache-par-tache-82-taches-wbs-statuts-de-laudit-et-actions-restantes">5. Détail tâche par tâche — 82 tâches WBS, statuts de l'audit et actions restantes<a class="headerlink" href="#5-detail-tache-par-tache-82-taches-wbs-statuts-de-laudit-et-actions-restantes" title="Permanent link"></a></h2>
+<h3 id="d1-pilotage-depot-gitlab-collaboration-7-ok-0-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-17-h-de-reference">D1 — Pilotage, dépôt GitLab &amp; collaboration (7 <code>OK</code>, 0 <code>OK*</code>, 0 <code>PARTIEL</code>, 0 <code>[!]</code> ; 0 h d'estimations WBS initiales à revalider sur 17 h de référence)<a class="headerlink" href="#d1-pilotage-depot-gitlab-collaboration-7-ok-0-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-17-h-de-reference" title="Permanent link"></a></h3>
+<h4 id="lot-l1-pilotage-depot-charge-wbs-initiale-14-h-estimation-affectee-aux-taches-ouvertes-0-h">✅ Lot L1 — Pilotage &amp; dépôt (charge WBS initiale 14 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l1-pilotage-depot-charge-wbs-initiale-14-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -597,7 +728,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h4 id="lot-l15-readme-final-rendu-charge-wbs-initiale-3-h-estimation-affectee-aux-taches-ouvertes-0-h">✅ Lot L15 — README final &amp; rendu (charge WBS initiale 3 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l15-readme-final-rendu-charge-wbs-initiale-3-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link">#</a></h4>
+<h4 id="lot-l15-readme-final-rendu-charge-wbs-initiale-3-h-estimation-affectee-aux-taches-ouvertes-0-h">✅ Lot L15 — README final &amp; rendu (charge WBS initiale 3 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l15-readme-final-rendu-charge-wbs-initiale-3-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -622,8 +753,8 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h3 id="d2-document-de-specification-du-systeme-1-ok-11-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-54-h-de-reference">D2 — Document de spécification du système (1 <code>OK</code>, 11 <code>OK*</code>, 0 <code>PARTIEL</code>, 0 <code>[!]</code> ; 0 h d'estimations WBS initiales à revalider sur 54 h de référence)<a class="headerlink" href="#d2-document-de-specification-du-systeme-1-ok-11-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-54-h-de-reference" title="Permanent link">#</a></h3>
-<h4 id="lot-l2-cdc-specification-charge-wbs-initiale-26-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L2 — CDC : spécification (charge WBS initiale 26 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l2-cdc-specification-charge-wbs-initiale-26-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link">#</a></h4>
+<h3 id="d2-document-de-specification-du-systeme-1-ok-11-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-54-h-de-reference">D2 — Document de spécification du système (1 <code>OK</code>, 11 <code>OK*</code>, 0 <code>PARTIEL</code>, 0 <code>[!]</code> ; 0 h d'estimations WBS initiales à revalider sur 54 h de référence)<a class="headerlink" href="#d2-document-de-specification-du-systeme-1-ok-11-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-54-h-de-reference" title="Permanent link"></a></h3>
+<h4 id="lot-l2-cdc-specification-charge-wbs-initiale-26-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L2 — CDC : spécification (charge WBS initiale 26 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l2-cdc-specification-charge-wbs-initiale-26-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -693,7 +824,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h4 id="lot-l3-diagrammes-uml-regles-charge-wbs-initiale-28-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L3 — Diagrammes UML &amp; règles (charge WBS initiale 28 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l3-diagrammes-uml-regles-charge-wbs-initiale-28-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link">#</a></h4>
+<h4 id="lot-l3-diagrammes-uml-regles-charge-wbs-initiale-28-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L3 — Diagrammes UML &amp; règles (charge WBS initiale 28 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l3-diagrammes-uml-regles-charge-wbs-initiale-28-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -763,8 +894,8 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h3 id="d3-conception-de-la-base-de-donnees-sql-1-ok-22-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-98-h-de-reference">D3 — Conception de la base de données &amp; SQL (1 <code>OK</code>, 22 <code>OK*</code>, 0 <code>PARTIEL</code>, 0 <code>[!]</code> ; 0 h d'estimations WBS initiales à revalider sur 98 h de référence)<a class="headerlink" href="#d3-conception-de-la-base-de-donnees-sql-1-ok-22-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-98-h-de-reference" title="Permanent link">#</a></h3>
-<h4 id="lot-l4-mcdmldnormalisation-charge-wbs-initiale-28-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L4 — MCD/MLD/normalisation (charge WBS initiale 28 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l4-mcdmldnormalisation-charge-wbs-initiale-28-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link">#</a></h4>
+<h3 id="d3-conception-de-la-base-de-donnees-sql-1-ok-22-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-98-h-de-reference">D3 — Conception de la base de données &amp; SQL (1 <code>OK</code>, 22 <code>OK*</code>, 0 <code>PARTIEL</code>, 0 <code>[!]</code> ; 0 h d'estimations WBS initiales à revalider sur 98 h de référence)<a class="headerlink" href="#d3-conception-de-la-base-de-donnees-sql-1-ok-22-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-98-h-de-reference" title="Permanent link"></a></h3>
+<h4 id="lot-l4-mcdmldnormalisation-charge-wbs-initiale-28-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L4 — MCD/MLD/normalisation (charge WBS initiale 28 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l4-mcdmldnormalisation-charge-wbs-initiale-28-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -834,7 +965,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h4 id="lot-l5-script-sql-seed-charge-wbs-initiale-20-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L5 — Script SQL &amp; seed (charge WBS initiale 20 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l5-script-sql-seed-charge-wbs-initiale-20-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link">#</a></h4>
+<h4 id="lot-l5-script-sql-seed-charge-wbs-initiale-20-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L5 — Script SQL &amp; seed (charge WBS initiale 20 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l5-script-sql-seed-charge-wbs-initiale-20-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -895,7 +1026,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h4 id="lot-l6-18-procedures-tests-charge-wbs-initiale-30-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L6 — 18 procédures + tests (charge WBS initiale 30 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l6-18-procedures-tests-charge-wbs-initiale-30-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link">#</a></h4>
+<h4 id="lot-l6-18-procedures-tests-charge-wbs-initiale-30-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L6 — 18 procédures + tests (charge WBS initiale 30 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l6-18-procedures-tests-charge-wbs-initiale-30-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -974,7 +1105,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h4 id="lot-l7-16-declencheurs-tests-charge-wbs-initiale-20-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L7 — 16 déclencheurs + tests (charge WBS initiale 20 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l7-16-declencheurs-tests-charge-wbs-initiale-20-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link">#</a></h4>
+<h4 id="lot-l7-16-declencheurs-tests-charge-wbs-initiale-20-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L7 — 16 déclencheurs + tests (charge WBS initiale 20 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l7-16-declencheurs-tests-charge-wbs-initiale-20-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1035,8 +1166,8 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h3 id="d4-application-web-php-mysql-pdo-21-ok-11-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-146-h-de-reference">D4 — Application Web PHP / MySQL / PDO (21 <code>OK</code>, 11 <code>OK*</code>, 0 <code>PARTIEL</code>, 0 <code>[!]</code> ; 0 h d'estimations WBS initiales à revalider sur 146 h de référence)<a class="headerlink" href="#d4-application-web-php-mysql-pdo-21-ok-11-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-146-h-de-reference" title="Permanent link">#</a></h3>
-<h4 id="lot-l8-socle-applicatif-mvc-charge-wbs-initiale-22-h-estimation-affectee-aux-taches-ouvertes-0-h">✅ Lot L8 — Socle applicatif MVC (charge WBS initiale 22 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l8-socle-applicatif-mvc-charge-wbs-initiale-22-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link">#</a></h4>
+<h3 id="d4-application-web-php-mysql-pdo-21-ok-11-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-146-h-de-reference">D4 — Application Web PHP / MySQL / PDO (21 <code>OK</code>, 11 <code>OK*</code>, 0 <code>PARTIEL</code>, 0 <code>[!]</code> ; 0 h d'estimations WBS initiales à revalider sur 146 h de référence)<a class="headerlink" href="#d4-application-web-php-mysql-pdo-21-ok-11-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-146-h-de-reference" title="Permanent link"></a></h3>
+<h4 id="lot-l8-socle-applicatif-mvc-charge-wbs-initiale-22-h-estimation-affectee-aux-taches-ouvertes-0-h">✅ Lot L8 — Socle applicatif MVC (charge WBS initiale 22 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l8-socle-applicatif-mvc-charge-wbs-initiale-22-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1097,7 +1228,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h4 id="lot-l9-front-office-charge-wbs-initiale-32-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L9 — Front-office (charge WBS initiale 32 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l9-front-office-charge-wbs-initiale-32-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link">#</a></h4>
+<h4 id="lot-l9-front-office-charge-wbs-initiale-32-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L9 — Front-office (charge WBS initiale 32 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l9-front-office-charge-wbs-initiale-32-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1167,7 +1298,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h4 id="lot-l10-panier-commande-charge-wbs-initiale-28-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L10 — Panier &amp; commande (charge WBS initiale 28 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l10-panier-commande-charge-wbs-initiale-28-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link">#</a></h4>
+<h4 id="lot-l10-panier-commande-charge-wbs-initiale-28-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L10 — Panier &amp; commande (charge WBS initiale 28 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l10-panier-commande-charge-wbs-initiale-28-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1237,7 +1368,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h4 id="lot-l11-back-office-charge-wbs-initiale-30-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L11 — Back-office (charge WBS initiale 30 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l11-back-office-charge-wbs-initiale-30-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link">#</a></h4>
+<h4 id="lot-l11-back-office-charge-wbs-initiale-30-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L11 — Back-office (charge WBS initiale 30 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l11-back-office-charge-wbs-initiale-30-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1307,7 +1438,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h4 id="lot-l12-durcissement-securite-charge-wbs-initiale-20-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L12 — Durcissement sécurité (charge WBS initiale 20 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l12-durcissement-securite-charge-wbs-initiale-20-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link">#</a></h4>
+<h4 id="lot-l12-durcissement-securite-charge-wbs-initiale-20-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L12 — Durcissement sécurité (charge WBS initiale 20 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l12-durcissement-securite-charge-wbs-initiale-20-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1368,7 +1499,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h4 id="lot-l13-javascript-client-charge-wbs-initiale-14-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L13 — JavaScript client (charge WBS initiale 14 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l13-javascript-client-charge-wbs-initiale-14-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link">#</a></h4>
+<h4 id="lot-l13-javascript-client-charge-wbs-initiale-14-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L13 — JavaScript client (charge WBS initiale 14 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l13-javascript-client-charge-wbs-initiale-14-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1420,8 +1551,8 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h3 id="d5-tests-validation-4-ok-2-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-24-h-de-reference">D5 — Tests &amp; validation (4 <code>OK</code>, 2 <code>OK*</code>, 0 <code>PARTIEL</code>, 0 <code>[!]</code> ; 0 h d'estimations WBS initiales à revalider sur 24 h de référence)<a class="headerlink" href="#d5-tests-validation-4-ok-2-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-24-h-de-reference" title="Permanent link">#</a></h3>
-<h4 id="lot-l14-tests-validation-charge-wbs-initiale-24-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L14 — Tests &amp; validation (charge WBS initiale 24 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l14-tests-validation-charge-wbs-initiale-24-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link">#</a></h4>
+<h3 id="d5-tests-validation-4-ok-2-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-24-h-de-reference">D5 — Tests &amp; validation (4 <code>OK</code>, 2 <code>OK*</code>, 0 <code>PARTIEL</code>, 0 <code>[!]</code> ; 0 h d'estimations WBS initiales à revalider sur 24 h de référence)<a class="headerlink" href="#d5-tests-validation-4-ok-2-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-24-h-de-reference" title="Permanent link"></a></h3>
+<h4 id="lot-l14-tests-validation-charge-wbs-initiale-24-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L14 — Tests &amp; validation (charge WBS initiale 24 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l14-tests-validation-charge-wbs-initiale-24-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1491,8 +1622,8 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tr>
 </tbody>
 </table>
-<h3 id="d6-soutenance-0-ok-2-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-9-h-de-reference">D6 — Soutenance (0 <code>OK</code>, 2 <code>OK*</code>, 0 <code>PARTIEL</code>, 0 <code>[!]</code> ; 0 h d'estimations WBS initiales à revalider sur 9 h de référence)<a class="headerlink" href="#d6-soutenance-0-ok-2-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-9-h-de-reference" title="Permanent link">#</a></h3>
-<h4 id="lot-l16-soutenance-charge-wbs-initiale-9-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L16 — Soutenance (charge WBS initiale 9 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l16-soutenance-charge-wbs-initiale-9-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link">#</a></h4>
+<h3 id="d6-soutenance-0-ok-2-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-9-h-de-reference">D6 — Soutenance (0 <code>OK</code>, 2 <code>OK*</code>, 0 <code>PARTIEL</code>, 0 <code>[!]</code> ; 0 h d'estimations WBS initiales à revalider sur 9 h de référence)<a class="headerlink" href="#d6-soutenance-0-ok-2-ok-0-partiel-0-0-h-destimations-wbs-initiales-a-revalider-sur-9-h-de-reference" title="Permanent link"></a></h3>
+<h4 id="lot-l16-soutenance-charge-wbs-initiale-9-h-estimation-affectee-aux-taches-ouvertes-0-h">✅* Lot L16 — Soutenance (charge WBS initiale 9 h ; estimation affectée aux tâches ouvertes 0 h)<a class="headerlink" href="#lot-l16-soutenance-charge-wbs-initiale-9-h-estimation-affectee-aux-taches-ouvertes-0-h" title="Permanent link"></a></h4>
 <table>
 <thead>
 <tr>
@@ -1527,7 +1658,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tbody>
 </table>
 <hr />
-<h2 id="6-declencheurs-du-plan-de-base-a-recalibrer">6. Déclencheurs du plan de base (à recalibrer)<a class="headerlink" href="#6-declencheurs-du-plan-de-base-a-recalibrer" title="Permanent link">#</a></h2>
+<h2 id="6-declencheurs-du-plan-de-base-a-recalibrer">6. Déclencheurs du plan de base (à recalibrer)<a class="headerlink" href="#6-declencheurs-du-plan-de-base-a-recalibrer" title="Permanent link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -1579,7 +1710,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 </tbody>
 </table>
 <hr />
-<h2 id="7-exemple-de-plan-s6-de-la-photographie-non-execute-a-replanifier">7. Exemple de plan S6 de la photographie — non exécuté, à replanifier<a class="headerlink" href="#7-exemple-de-plan-s6-de-la-photographie-non-execute-a-replanifier" title="Permanent link">#</a></h2>
+<h2 id="7-exemple-de-plan-s6-de-la-photographie-non-execute-a-replanifier">7. Exemple de plan S6 de la photographie — non exécuté, à replanifier<a class="headerlink" href="#7-exemple-de-plan-s6-de-la-photographie-non-execute-a-replanifier" title="Permanent link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -1625,7 +1756,7 @@ Cette liste ne constitue pas un backlog actuel : plusieurs constats ont pu évol
 <p><strong>Objectif du plan historique : L8 terminé et harnais de tests prêt.</strong> Ce plan n'atteste ni l'exécution des tâches ni des commits et doit être replanifié avant tout usage.
 Dans le scénario historique, L8 devait débloquer la chaîne jusqu'au jalon J6 ; ce calendrier ne doit pas être repris sans replanification.</p>
 <hr />
-<h2 id="8-verifications-executees-sur-vm-debian-13-et-limites-maintenues">8. Vérifications exécutées sur VM Debian 13 et limites maintenues<a class="headerlink" href="#8-verifications-executees-sur-vm-debian-13-et-limites-maintenues" title="Permanent link">#</a></h2>
+<h2 id="8-verifications-executees-sur-vm-debian-13-et-limites-maintenues">8. Vérifications exécutées sur VM Debian 13 et limites maintenues<a class="headerlink" href="#8-verifications-executees-sur-vm-debian-13-et-limites-maintenues" title="Permanent link"></a></h2>
 <p>Sur la VM Debian 13 native (<strong>PHP 8.4.27 cli</strong>, <strong>MariaDB 11.8.6</strong>) de la branche <code>arena/b5a4074b-sae-302</code> :
 - <strong><code>php scripts/generer_pv.php</code> (<code>f9b614f</code>, 17/11/2026) :</strong> <strong>60/60 étapes vertes</strong>, <code>0</code> anomalie, <code>0</code> warning PHP (<code>docs/pv-recette.md</code>), incluant <code>sql_integration.php</code> (<strong>29/29</strong>), <code>http_sql_e2e.php</code> (<strong>105/105</strong>), <code>concurrence_http.php</code> (<strong>8/8</strong>, 20 acteurs / 12 unités), PHPUnit (<strong>57/57</strong>), linter strict (<strong>171</strong> fichiers, <code>0</code> violation) et contrôles statiques de sécurité (<strong>11/11</strong>).
 - <strong><code>tests/node/preferences_test.mjs</code> &amp; <code>tests/node/e2e_isolation.mjs</code> :</strong> <strong>48 vues FR/EN</strong>, <strong>45 messages métier</strong> et <strong>338 vérifications</strong> E2E HTTP JSON isolées réussies.
@@ -1634,8 +1765,7 @@ Dans le scénario historique, L8 devait débloquer la chaîne jusqu'au jalon J6 
 <hr />
 <p><em>Todolist MiniShop v1.8 — socle de planification du 23/10/2026 ; répartition des statuts reprise de la revue tâche par tâche de <code>docs/19</code> (incluant les campagnes VM des 16–17/11/2026 : <code>f9b614f</code> 60/60 dans <code>docs/pv-recette.md</code>, mesures <code>cb0f814</code> dans <code>tests/perf/dernieres_mesures.txt</code>, clôtures <code>D2-L2-06</code>, <code>D3-L4-06</code>, <code>D5-L14-05</code>, <code>D5-L14-06</code>). Aucun événement postérieur au 23/10 n'est attribué rétroactivement à la coupure du 23/10. WBS : 82 tâches et 348 h estimées (34 OK, 48 OK</em>, 0 PARTIEL, 0 [!], 0 h ouverte). D1-L1-01 repose sur l'attestation utilisateur et la capture fournie ; D1-L1-07, D2-L2-06 et D3-L4-06 sur la synthèse asynchrone et les relectures croisées continues attestées entre Johan Polsinelli et Chahd Gouiaa (<code>docs/21</code>). Le registre manuel reste 200 lignes NON JOUÉ ; aucun déploiement LineServ, test manuel navigateur ou validation pédagogique n'est inféré. Les charges A/B/C sont des estimations non nominatives.*</p>
 <footer class="doc">
-  <p>SAÉ 302 — MiniShop · document généré depuis <code>docs/06-todolist.md</code>
-  par <code>scripts/md_to_html.py</code> · aucune ressource externe (0 image(s) intégrée(s)).</p>
+  <p>Université Côte d’Azur · BUT2 Informatique · SAÉ 302 — MiniShop · Source : <code>docs/06-todolist.md</code> · 0 figure(s) intégrée(s).</p>
 </footer>
 </main>
 </body>

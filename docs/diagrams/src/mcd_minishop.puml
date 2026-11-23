@@ -3,15 +3,18 @@ title MCD — MiniShop (9 entités et cardinalités justifiées, §12.1)
 
 hide circle
 skinparam shadowing false
-skinparam roundcorner 6
+skinparam roundcorner 0
 skinparam defaultFontName "DejaVu Sans"
 skinparam linetype ortho
-skinparam ArrowColor #334155
+skinparam ArrowColor #0F294A
+skinparam ClassBackgroundColor #FFFFFF
 skinparam EntityBackgroundColor #FFFFFF
-skinparam EntityBorderColor #475569
-skinparam EntityHeaderBackgroundColor #EEF2FF
-skinparam NoteBackgroundColor #FEF9C3
-skinparam NoteBorderColor #CA8A04
+skinparam ClassBorderColor #0F294A
+skinparam EntityBorderColor #0F294A
+skinparam ClassHeaderBackgroundColor #F1F5F9
+skinparam EntityHeaderBackgroundColor #F1F5F9
+skinparam NoteBackgroundColor #F8FAFC
+skinparam NoteBorderColor #1E3A5F
 
 entity "CATEGORIE" as CAT {
   * id_categorie <<PK>>

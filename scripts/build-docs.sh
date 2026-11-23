@@ -42,10 +42,11 @@ bleu()  { printf '\033[1;34m%s\033[0m\n' "$*"; }
 vert()  { printf '\033[1;32m%s\033[0m\n' "$*"; }
 rouge() { printf '\033[1;31m%s\033[0m\n' "$*" >&2; }
 
-command -v python3 >/dev/null 2>&1 || { rouge "✘ python3 introuvable"; exit 2; }
+PYTHON_BIN="${PYTHON_BIN:-python3}"
+command -v "$PYTHON_BIN" >/dev/null 2>&1 || { rouge "✘ python3 introuvable"; exit 2; }
 
 manquants=""
-python3 - <<'PY' || manquants="1"
+"$PYTHON_BIN" - <<'PY' || manquants="1"
 import importlib, sys
 attendus = {"markdown": "markdown", "fpdf": "fpdf2", "docx": "python-docx", "pptx": "python-pptx"}
 absents = []
@@ -93,7 +94,7 @@ traiter() {
     local dossier
     dossier="$(dirname "$destination")"
     mkdir -p "$dossier"
-    if python3 "scripts/md_to_${format}.py" "$source" --out "$destination" >/dev/null 2>"$SORTIE/.erreur"; then
+    if "$PYTHON_BIN" "scripts/md_to_${format}.py" "$source" --out "$destination" >/dev/null 2>"$SORTIE/.erreur"; then
         local taille
         taille=$(($(wc -c <"$destination") / 1024))
         LIGNES+=("  ✓ ${etiquette} — $(basename "$destination") (${taille} Ko)")
