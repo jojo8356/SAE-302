@@ -25,7 +25,7 @@ package "Système logiciel : MiniShop" {
 
   database "Magasin JSON secondaire\n[Conteneur : Fichiers JSON — data/minishop/]\nMode STORAGE_DRIVER=json avec verrous flock\npour tests isolés et PHP-WASM" as JsonFiles #2E6295;text:white
 
-  database "Journaux et archives locaux\n[Conteneur : Fichiers JSONL / chiffrés — var/]\nvar/journal/{db,contact}.jsonl,\nvar/backups/ chiffrés via libsodium" as VarStorage #2E6295;text:white
+  database "Journaux et archives locaux\n[Conteneur : Fichiers JSONL / chiffrés — var/]\nvar/journal/db.jsonl, var/log/contact.jsonl,\nvar/backups/ chiffrés via libsodium" as VarStorage #2E6295;text:white
 }
 
 Client --> Browser : "Consulte et interagit avec l'interface (HTTPS)"

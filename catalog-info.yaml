@@ -1,0 +1,35 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: minishop
+  title: MiniShop — Boutique en ligne & Back-office
+  description: Application Web e-commerce pédagogique en PHP 8.2+ MVC avec double persistance MariaDB/JSON.
+  annotations:
+    github.com/project-slug: jojo8356/SAE-302
+    backstage.io/techdocs-ref: dir:.
+  links:
+    - url: docs/exploitation/fiche-service-minishop.md
+      title: Service Overview
+      icon: docs
+    - url: docs/exploitation/runbook-incidents.md
+      title: Runbook Incidents
+      icon: alert
+    - url: docs/adr/adr-index.md
+      title: Architecture Decision Records (MADR)
+      icon: catalog
+spec:
+  type: service
+  lifecycle: experimental
+  owner: team-minishop
+  dependsOn:
+    - resource:minishop-mariadb
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: minishop-mariadb
+  title: Base de données MariaDB MiniShop
+  description: Schéma relationnel 3FN (9 tables, 4 vues, 18 procédures stockées, 16 déclencheurs).
+spec:
+  type: database
+  owner: team-minishop

@@ -259,7 +259,7 @@ footer.doc p { text-align: left; margin: 0; }
 <tr>
 <td><strong>Référence</strong> (vérifier un fait exact)</td>
 <td><em>« Quelles routes, tables, procédures et fiches existent ? »</em></td>
-<td><code>CHANGELOG.md</code>, <code>docs/exploitation/fiche-service-minishop.md</code>, <code>docs/04-conception-bd-et-sql.md</code>, <code>docs/13-fiches-recette-uc.md</code>, en-têtes PHPDoc (<code>112/112</code> fichiers <code>app/</code>)</td>
+<td><code>CHANGELOG.md</code>, <code>docs/exploitation/fiche-service-minishop.md</code>, <code>catalog-info.yaml</code>, <code>docs/04-conception-bd-et-sql.md</code>, <code>docs/13-fiches-recette-uc.md</code>, en-têtes PHPDoc (<code>113/113</code> fichiers <code>app/</code> + <code>public/index.php</code>)</td>
 <td>Dev / DBA</td>
 </tr>
 <tr>
@@ -282,8 +282,8 @@ footer.doc p { text-align: left; margin: 0; }
    - <code>0000</code> (adopter les ADR), <code>0001</code> (double persistance <code>SqlStore</code>/<code>JsonStore</code>), <code>0002</code> (procédures stockées &amp; déclencheurs MariaDB), <code>0003</code> (sessions strictes, RBAC et zéro dépendance CDN), <code>0004</code> (<em>Docs-as-Code</em>) et <code>0005</code> (MVC PHP 8.2+ natif sans framework lourd), accompagnés de <code>template.md</code>.</li>
 <li><strong>Schémas C4 et UML écrits en code</strong> (<code>docs/diagrams/src/</code>) :
    - En complément des <code>14</code> diagrammes UML historiques, les <strong>4 niveaux C4</strong> en texte PlantUML (<code>c4_contexte.puml</code>, <code>c4_conteneurs.puml</code>, <code>c4_composants.puml</code> et <code>c4_code.puml</code>) modélisent exactement le code réel du dépôt (sans services fictifs), avec titre, types explicites, flèches verbales/protocoles, légende et texte alternatif (<code>c4_contexte.puml</code> reste sobre et sans détail technologique interne, destiné aussi aux lecteurs non techniques).</li>
-<li><strong>Documents d’exploitation</strong> (<code>docs/exploitation/</code>) :
-   - Fiche de service, <em>runbook</em> incidents (4 scénarios critiques reliés à l’ouverture de postmortem), <em>runbook</em> sauvegarde/restauration (<code>--nettoyage</code> + <code>mysqldump --routines --triggers</code> + <code>libsodium</code>), modèle complet de <em>postmortem blameless</em> (5 pourquoi, actions SMART, métriques) et guide pratique (critères de déclenchement dont <em>near miss</em>, 4 checklists, anti-patterns, <code>scripts/nouveau_postmortem.py</code>, <code>.github/workflows/postmortem-template.yml</code>).</li>
+<li><strong>Documents d’exploitation</strong> (<code>docs/exploitation/</code> &amp; <code>catalog-info.yaml</code>) :
+   - <em>Service Overview</em> complet (<code>fiche-service-minishop.md</code> : identité, schéma Mermaid, dépendances/fallback, données PII/RGPD, opérations, contacts, PR checklist DoD + descripteur Backstage <code>catalog-info.yaml</code>), <em>runbook</em> incidents (4 scénarios critiques reliés à l’ouverture de postmortem), <em>runbook</em> sauvegarde/restauration (<code>--nettoyage</code> + <code>mysqldump --routines --triggers</code> + <code>libsodium</code>), modèle complet et guide pratique de <em>postmortem blameless</em>.</li>
 </ol>
 <hr />
 <h2 id="3-niveau-2-chaine-de-generation-outils-java-vs-chaine-python-du-depot">3. Niveau 2 : Chaîne de génération (Outils Java vs Chaîne Python du dépôt)<a class="headerlink" href="#3-niveau-2-chaine-de-generation-outils-java-vs-chaine-python-du-depot" title="Permanent link"></a></h2>

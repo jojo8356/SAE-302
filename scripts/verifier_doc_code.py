@@ -362,9 +362,32 @@ def verifier_exploitation(racine: pathlib.Path = RACINE) -> list[str]:
 
     modele = dossier / "postmortem-modele.md"
     guide = dossier / "guide-postmortem-blameless.md"
-    for f in (modele, guide):
+    fiche = dossier / "fiche-service-minishop.md"
+    catalog = racine / "catalog-info.yaml"
+    for f in (modele, guide, fiche, catalog):
         if not f.is_file():
             erreurs.append(f"{f.relative_to(racine)} manquant")
+
+    if fiche.is_file():
+        contenu_f = fiche.read_text(encoding="utf-8")
+        for motif in (
+            "Vue d’ensemble",
+            "```mermaid",
+            "Dépendances",
+            "Données et conformité RGPD",
+            "Opérations essentielles",
+            "Liens rapides",
+            "Contacts et escalade",
+            "PR Checklist",
+        ):
+            if motif not in contenu_f:
+                erreurs.append(f"docs/exploitation/fiche-service-minishop.md: rubrique `{motif}` absente")
+
+    if catalog.is_file():
+        contenu_c = catalog.read_text(encoding="utf-8")
+        for motif in ("apiVersion: backstage.io/v1alpha1", "kind: Component", "type: service", "lifecycle:", "owner:", "dependsOn:"):
+            if motif not in contenu_c:
+                erreurs.append(f"catalog-info.yaml: champ Backstage `{motif}` absent")
 
     if modele.is_file():
         contenu_m = modele.read_text(encoding="utf-8")

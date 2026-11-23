@@ -137,6 +137,7 @@ artefacts/04-conception-bd-et-sql.html,Artefacts documentaires,Présence et non-
 artefacts/05-wbs-projet.html,Artefacts documentaires,Présence et non-vide uniquement
 artefacts/06-todolist.html,Artefacts documentaires,Présence et non-vide uniquement
 artefacts/README.html,Artefacts documentaires,Présence et non-vide uniquement
+catalog-info.yaml,Documentation,Présence et non-vide uniquement
 composer.json,Configuration et fichiers racine,"Présence, non-vide, structure JSON"
 data/minishop/administrateur.json,Données de démonstration,"Présence, non-vide, structure JSON"
 data/minishop/categorie.json,Données de démonstration,"Présence, non-vide, structure JSON"

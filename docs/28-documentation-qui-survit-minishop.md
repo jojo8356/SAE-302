@@ -13,7 +13,7 @@ Une documentation absente coûte cher lors d’un incident à 2 h du matin, et u
 |---|---|---|---|
 | **Tutoriel** (découvrir) | *« Comment démarrer MiniShop sur mon poste ? »* | `README.md` (Démarrage rapide `./run.sh --db`), `docs/14-guide-lineserv.md` | Équipe MiniShop |
 | **Guide pratique** (agir sous pression) | *« Comment rétablir MariaDB ou restaurer une sauvegarde ? »* | `docs/exploitation/runbook-incidents.md`, `docs/exploitation/runbook-sauvegarde-restauration.md`, `docs/exploitation/postmortem-modele.md`, `docs/exploitation/guide-postmortem-blameless.md` | Exploitation / SRE |
-| **Référence** (vérifier un fait exact) | *« Quelles routes, tables, procédures et fiches existent ? »* | `CHANGELOG.md`, `docs/exploitation/fiche-service-minishop.md`, `docs/04-conception-bd-et-sql.md`, `docs/13-fiches-recette-uc.md`, en-têtes PHPDoc (`112/112` fichiers `app/`) | Dev / DBA |
+| **Référence** (vérifier un fait exact) | *« Quelles routes, tables, procédures et fiches existent ? »* | `CHANGELOG.md`, `docs/exploitation/fiche-service-minishop.md`, `catalog-info.yaml`, `docs/04-conception-bd-et-sql.md`, `docs/13-fiches-recette-uc.md`, en-têtes PHPDoc (`113/113` fichiers `app/` + `public/index.php`) | Dev / DBA |
 | **Explication** (comprendre pourquoi) | *« Pourquoi SQL + JSON, pourquoi ces ADRs, comment évoluer ? »* | `ARCHITECTURE.md`, `docs/adr/0000..0005`, `docs/diagrams/src/c4_*.puml`, `docs/27-rapport-universitaire-projet-minishop.md` | Architectes |
 
 *Tableau 1 — Cartographie complète de la documentation MiniShop selon les 4 familles Diátaxis.*
@@ -30,8 +30,8 @@ Une documentation absente coûte cher lors d’un incident à 2 h du matin, et u
    - `0000` (adopter les ADR), `0001` (double persistance `SqlStore`/`JsonStore`), `0002` (procédures stockées & déclencheurs MariaDB), `0003` (sessions strictes, RBAC et zéro dépendance CDN), `0004` (*Docs-as-Code*) et `0005` (MVC PHP 8.2+ natif sans framework lourd), accompagnés de `template.md`.
 4. **Schémas C4 et UML écrits en code** (`docs/diagrams/src/`) :
    - En complément des `14` diagrammes UML historiques, les **4 niveaux C4** en texte PlantUML (`c4_contexte.puml`, `c4_conteneurs.puml`, `c4_composants.puml` et `c4_code.puml`) modélisent exactement le code réel du dépôt (sans services fictifs), avec titre, types explicites, flèches verbales/protocoles, légende et texte alternatif (`c4_contexte.puml` reste sobre et sans détail technologique interne, destiné aussi aux lecteurs non techniques).
-5. **Documents d’exploitation** (`docs/exploitation/`) :
-   - Fiche de service, *runbook* incidents (4 scénarios critiques reliés à l’ouverture de postmortem), *runbook* sauvegarde/restauration (`--nettoyage` + `mysqldump --routines --triggers` + `libsodium`), modèle complet de *postmortem blameless* (5 pourquoi, actions SMART, métriques) et guide pratique (critères de déclenchement dont *near miss*, 4 checklists, anti-patterns, `scripts/nouveau_postmortem.py`, `.github/workflows/postmortem-template.yml`).
+5. **Documents d’exploitation** (`docs/exploitation/` & `catalog-info.yaml`) :
+   - *Service Overview* complet (`fiche-service-minishop.md` : identité, schéma Mermaid, dépendances/fallback, données PII/RGPD, opérations, contacts, PR checklist DoD + descripteur Backstage `catalog-info.yaml`), *runbook* incidents (4 scénarios critiques reliés à l’ouverture de postmortem), *runbook* sauvegarde/restauration (`--nettoyage` + `mysqldump --routines --triggers` + `libsodium`), modèle complet et guide pratique de *postmortem blameless*.
 
 ---
 
