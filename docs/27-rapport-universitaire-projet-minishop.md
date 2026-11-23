@@ -54,7 +54,11 @@ Les campagnes automatisées exécutées sur machine virtuelle Debian 13 (PHP `8.
   - 1.1 Présentation du projet, objectifs et les 11 compétences mobilisées
   - 1.2 Acteurs et fonctionnalités demandées (Visiteur, Client, Administrateur)
   - 1.3 Règles métier officielles (`RB-01` à `RB-11`) et extensions (`RB-12` à `RB-20`)
-  - 1.4 Contraintes techniques (`CT-01` à `CT-12`) et état de l’art comparatif
+  - 1.4 Contraintes techniques (`CT-01` à `CT-12`), état de l’art et benchmarks comparatifs (PHP, SGBD et choix de MariaDB)
+    - 1.4.1 Contraintes techniques et comparatif des architectures PHP
+    - 1.4.2 Benchmark comparatif : PHP 8.2+ face aux autres langages serveur
+    - 1.4.3 Benchmark comparatif des SGBD : MySQL / MariaDB face aux autres moteurs
+    - 1.4.4 Pourquoi choisir MariaDB (compatibilité MySQL 8.0) pour MiniShop ?
   - 1.5 Organisation du travail, découpage WBS et gouvernance qualité
 - **Chapitre 2 — Modélisation UML 2.5 et spécifications de sécurité**
   - 2.1 Diagramme de cas d’utilisation et les 14 cas d’utilisation minimum
@@ -115,21 +119,25 @@ Les campagnes automatisées exécutées sur machine virtuelle Debian 13 (PHP `8.
 - **Tableau 3** — Les 11 règles métier officielles du cahier des charges et leurs mécanismes d’application
 - **Tableau 4** — Contraintes techniques (`CT-01` à `CT-12`) et état de l’art comparatif du socle PHP
 - **Tableau 5** — Comparatif des stratégies d’accès aux données (`StoreInterface` vs ORM)
-- **Tableau 6** — Correspondance des 14 cas d’utilisation minimum du sujet
-- **Tableau 7** — Réponses techniques aux 5 spécifications de sécurité du sujet
-- **Tableau 8** — Justification détaillée des cardinalités du MCD
-- **Tableau 9** — Dépendances fonctionnelles (DF) identifiées table par table
-- **Tableau 10** — Vérification formelle 1FN, 2FN et 3FN par relation
-- **Tableau 11** — Justification des clés primaires (PK), uniques (UK) et étrangères (FK)
-- **Tableau 12** — Inventaire des redondances maîtrisées et mécanismes de contrôle
-- **Tableau 13** — Réponse détaillée aux 5 axes de la question pédagogique sur les procédures stockées
-- **Tableau 14** — Correspondance exacte entre les exemples du sujet et les objets SQL livrés
-- **Tableau 15** — Benchmark ergonomique et positionnement de la direction artistique MiniShop
-- **Tableau 16** — Synthèse des exigences non fonctionnelles (`ENF-01` à `ENF-22`)
-- **Tableau 17** — Bilan chiffré des campagnes de tests automatisés et VM Debian 13
-- **Tableau 18** — Mesures expérimentales de performance SQL et HTTP (`ENF-01`)
-- **Tableau 19** — Politique de conservation RGPD et outils d’exploitation CLI (`docs/18`)
-- **Tableau 20** — Contrôle de conformité face aux livrables et pénalités du barème officiel
+- **Tableau 6** — Benchmark multicritères : PHP 8.2+ natif face aux autres langages serveur
+- **Tableau 7** — Benchmark multicritères : MySQL / MariaDB face aux autres moteurs de bases de données
+- **Tableau 8** — Comparatif technique ciblé MySQL 8.0 vs MariaDB 10.6–11.8 dans le contexte MiniShop
+- **Tableau 9** — Correspondance des 14 cas d’utilisation minimum du sujet
+- **Tableau 10** — Réponses techniques aux 5 spécifications de sécurité du sujet
+- **Tableau 11** — Justification détaillée des cardinalités du MCD
+- **Tableau 12** — Dépendances fonctionnelles (DF) identifiées table par table
+- **Tableau 13** — Vérification formelle 1FN, 2FN et 3FN par relation
+- **Tableau 14** — Justification des clés primaires (PK), uniques (UK) et étrangères (FK)
+- **Tableau 15** — Inventaire des redondances maîtrisées et mécanismes de contrôle
+- **Tableau 16** — Réponse détaillée aux 5 axes de la question pédagogique sur les procédures stockées
+- **Tableau 17** — Correspondance exacte entre les exemples du sujet et les objets SQL livrés
+- **Tableau 18** — Benchmark ergonomique et positionnement de la direction artistique MiniShop
+- **Tableau 19** — Synthèse des exigences non fonctionnelles (`ENF-01` à `ENF-22`)
+- **Tableau 20** — Bilan chiffré des campagnes de tests automatisés et VM Debian 13
+- **Tableau 21** — Mesures expérimentales de performance SQL et HTTP (`ENF-01`)
+- **Tableau 22** — Mise en perspective des mesures VM face aux ordres de grandeur d’autres piles techniques
+- **Tableau 23** — Politique de conservation RGPD et outils d’exploitation CLI (`docs/18`)
+- **Tableau 24** — Contrôle de conformité face aux livrables et pénalités du barème officiel
 
 \newpage
 
@@ -257,9 +265,13 @@ Les **11 contraintes spécifiques du métier** inscrites au sujet officiel (p. 2
 
 *Tableau 3 — Réponse détaillée aux 11 contraintes métier officielles et aux règles complémentaires.*
 
-### 1.4 Contraintes techniques (`CT-01` à `CT-12`) et état de l’art comparatif
+### 1.4 Contraintes techniques (`CT-01` à `CT-12`), état de l’art et benchmarks comparatifs
 
-Un jury universitaire ou d’école d’ingénieurs évalue la pertinence des choix technologiques au regard des alternatives de l’état de l’art. Les Tableaux 4 et 5 exposent nos arbitrages multicritères :
+Un jury universitaire ou d’école d’ingénieurs attend que les choix technologiques ne soient pas subis comme une simple contrainte d’énoncé, mais **justifiés face à l’état de l’art**. Cette section expose d’abord les contraintes du socle PHP, puis confronte PHP 8.2+ aux autres langages serveur, MySQL/MariaDB aux autres SGBD, et explicite enfin les raisons techniques et opérationnelles du recours à **MariaDB** en compatibilité **MySQL 8.0**.
+
+#### 1.4.1 Contraintes techniques et comparatif des architectures PHP
+
+Les douze contraintes techniques du cahier des charges (`CT-01` à `CT-12`) imposent notamment PHP `8.2+` sans framework tiers (`CT-01`), PDO exclusif (`CT-02`), MySQL `8.0.16+` / MariaDB `10.6+` (`CT-03`), HTML5/CSS3/JS natif sans dépendance CDN (`CT-04`), routage propre sous `public/` (`CT-05`), séparation stricte front-office / back-office (`CT-06`) et traçabilité complète GitLab (`CT-07` à `CT-12`). Les Tableaux 4 et 5 synthétisent les arbitrages réalisés au sein même de l’écosystème PHP.
 
 | Critère d’évaluation | PHP 8.2+ natif (`declare(strict_types=1)`) — *Choix retenu* | Framework lourd (Symfony 7 / Laravel 11) | Micro-framework (Slim) |
 |---|---|---|---|
@@ -278,9 +290,77 @@ Un jury universitaire ou d’école d’ingénieurs évalue la pertinence des ch
 
 *Tableau 5 — Comparatif des stratégies d’accès aux données (`StoreInterface` vs ORM).*
 
+\newpage
+
+#### 1.4.2 Benchmark comparatif : PHP 8.2+ natif face aux autres langages serveur
+
+Le choix d’un langage côté serveur pour un site e-commerce transactionnel conditionne à la fois la latence par requête, l’isolation mémoire entre clients, la simplicité d’exploitation sur hébergement mutualisé et la facilité de raccordement à un SGBD relationnel. Le Tableau 6 compare **PHP 8.2/8.4** (avec OPcache et typage strict) à cinq écosystèmes concurrents majeurs du développement Web moderne.
+
+| Critère d’ingénierie | **PHP 8.2 / 8.4 (OPcache, sans framework)** — *Retenu* | **Python 3.12 (Django / FastAPI)** | **Node.js 22 / TypeScript (Express / Nest)** | **Java 21 (Spring Boot)** | **Go 1.23 (`net/http`)** |
+|---|---|---|---|---|---|
+| **Modèle d’exécution** | *Shared-nothing* par requête (PHP-FPM + bytecode en mémoire partagée OPcache) | Processus WSGI/ASGI persistants (souvent limités par le GIL sur CPU pur hors *async*) | Boucle d’événements mono-thread (*event loop*) asynchrone | JVM persistante multi-threads avec compilateur JIT C2 | Binaire natif compilé avec goroutines légères |
+| **Empreinte mémoire au repos** | Très faible (~`20`–`40 Mo` par worker FPM, quasi nulle hors pic sous Apache) | Modérée (`60`–`150 Mo` par worker Gunicorn/Uvicorn) | Modérée (`50`–`120 Mo` par instance Node) | Élevée (`250`–`600 Mo` pour une JVM Spring Boot) | Très faible (`15`–`30 Mo` pour tout le serveur) |
+| **Temps de démarrage à froid** | Quasi instantané (ms, OPcache préchargé) | Rapide (quelques centaines de ms) | Rapide (< 500 ms) | Lent (`2` à `8 s` de démarrage contexte IoC) | Quasi instantané (< 50 ms) |
+| **Isolation des fautes & sessions** | Natif : une fuite ou exception fatale dans une requête n’affecte jamais les autres requêtes | Processus partagé : une fuite mémoire ou un état global mal nettoyé pollue le worker | Critique : une exception synchrone non interceptée fait tomber tout le processus Node | Bonne (isolation par thread), mais pile complexe | Bonne, mais gestion manuelle de l’état |
+| **Accès SGBD relationnel** | Natif et standardisé via **PDO** (`ATTR_EMULATE_PREPARES => false`, zéro ORM) | DB-API 2.0 / SQLAlchemy / ORM Django | Pilotes `mysql2` / Prisma / Drizzle (asynchrones) | JDBC + JPA/Hibernate (lourd avec triggers) | `database/sql` natif |
+| **Déploiement hébergement académique (LineServ / Apache)** | **Direct (`100 %` compatible)** : simple dépôt FTP/Git derrière `mod_rewrite` et `.htaccess` | Nécessite un serveur ASGI/WSGI + reverse proxy dédié | Nécessite un daemon Node managé (`pm2` / systemd) + proxy | Nécessite un serveur d’applications ou conteneur dédié | Nécessite l’exécution d’un binaire système et reverse proxy |
+| **Débit / Latence pour CRUD e-commerce I/O-bound** | Très élevé : sur notre VM Debian 13, **p95 = 6,0 ms** en HTTP sans framework | Bon sur FastAPI async, plus lent sur Django ORM lourd | Très bon sur I/O non bloquant, sensible aux calculs CPU | Excellent en régime établi (*warm JVM*) | Excellent (référence sur très haute concurrence) |
+
+*Tableau 6 — Benchmark multicritères comparant PHP 8.2+ sans framework aux principaux langages backend.*
+
+**Analyse critique du comparatif PHP :**
+- **Où PHP 8.2+ sans framework excelle :** sur une architecture orientée requêtes Web transactionnelles classiques (*request-response* HTML + API JSON), le modèle *shared-nothing* garantit une **isolation parfaite entre requêtes** (aucune fuite d’état client entre deux sessions concurrentes) et supprime tout processus daemon applicatif sur l’hébergement cible (*LineServ*). Couplé à l’absence totale de framework tiers, l’application démarre en quelques millisecondes et offre une latence mesurée à **`6,0 ms` au 95e centile** sur VM Debian 13, soit plus de `80` fois sous le seuil `ENF-01` (`500 ms`).
+- **Où d’autres langages surpasseraient PHP :** pour des services temps réel à connexions WebSockets persistantes massives (chat, streaming) ou du calcul intensif / *machine learning*, **Go** ou **Node.js** (pour l’asynchronisme natif) et **Python** (pour l’écosystème scientifique) sont plus adaptés. Pour un e-commerce MVC classique adossé à MariaDB, PHP 8.2+ offre toutefois le meilleur compromis sobriété / performance / déployabilité.
+
+\newpage
+
+#### 1.4.3 Benchmark comparatif des SGBD : MySQL / MariaDB face aux autres moteurs
+
+Le choix du moteur de base de données constitue le cœur de la fiabilité d’un site marchand, car c’est lui qui arbitre la concurrence sur les stocks (`RB-03`, `RB-18`) et la pérennité comptable (`RB-06`, `RB-15`). Le Tableau 7 met en regard **MySQL / MariaDB (InnoDB)** face aux quatre alternatives majeures du marché.
+
+| Critère d’ingénierie | **MySQL 8.0 / MariaDB 10.6–11.8 (InnoDB)** — *Retenu* | **PostgreSQL 16** | **SQLite 3** | **MongoDB 7 (NoSQL Document)** | **Oracle / SQL Server (propriétaires)** |
+|---|---|---|---|---|---|
+| **Conformité ACID & niveau de verrouillage** | **ACID complet** via InnoDB ; verrous fins au **niveau ligne** (`SELECT ... FOR UPDATE`) | **ACID complet** (MVCC strict) ; verrous ligne et contraintes `EXCLUDE` | ACID complet, mais **verrou global sur tout le fichier** lors d’une écriture | Transactions multi-documents plus lourdes et plus lentes en écriture | ACID complet très avancé |
+| **Comportement sous concurrence d’achat (`20` acheteurs / `12` unités)** | Sérialisation fluide ligne par ligne sur `produit(id_produit)` : **`0` survente** mesurée | Excellent (MVCC très robuste sans *gap-lock* parfois piégeux) | Risque élevé d’erreur `SQLITE_BUSY` sous écritures simultanées | Nécessite des transactions répliquées ou `$inc` conditionnels sans FK natives | Excellent |
+| **Intégrité référentielle & normalisation 3FN** | Native (`FOREIGN KEY RESTRICT/CASCADE`, `UNIQUE`, `CHECK` effectifs) | La plus stricte et complète du monde open source (DDL transactionnel inclus) | `PRAGMA foreign_keys = ON` désactivé par défaut si non rappelé | **Aucune clé étrangère** ni jointure relationnelle normalisée native | Complète |
+| **Procédures stockées & triggers** | Standards SQL/PSM (`BEGIN ... END`), matures pour `18` procédures + `16` triggers | PL/pgSQL très puissant (et `CREATE FUNCTION` + `TRIGGER` séparés) | Pas de procédures stockées (triggers limités) | Agrégation / JS côté serveur sans équivalent déclencheur SQL standard | PL/SQL / T-SQL très riches |
+| **Coût de licence & disponibilité universitaire / mutualisée** | **Gratuit, open source**, préinstallé sur `99 %` des hébergements LAMP et VMs IUT | Gratuit, open source (moins courant sur mutualisés PHP basiques) | Embarqué (fichier local uniquement) | Licence SSPL restrictive sur hébergements gérés | Coûts de licence élevés, hors périmètre LAMP pédagogique |
+
+*Tableau 7 — Benchmark multicritères des moteurs de bases de données pour un projet e-commerce.*
+
+**Enseignements clés de ce benchmark SGBD :**
+1. **Rejet du NoSQL (MongoDB) :** dans un contexte e-commerce à forte intégrité comptable (`RB-01` à `RB-20`), l’absence de clés étrangères natives et de normalisation 3FN oblige à réimplémenter manuellement côté PHP les contrôles de cohérence, exactement à l’opposé de la défense en profondeur exigée.
+2. **Rejet de SQLite en production :** bien que rapide en lecture mono-utilisateur, son verrouillage au niveau du fichier entier provoquerait des conflits d’écriture lors de commandes concurrentes, et l’absence de procédures stockées rend impossible le respect de la compétence 9 du sujet.
+3. **Arbitrage MySQL / MariaDB vs PostgreSQL :** PostgreSQL constitue techniquement une alternative remarquable (notamment pour ses DDL transactionnels et ses index partiels). Toutefois, le couple **MySQL 8.0 / MariaDB** s’impose ici en raison de la contrainte explicite `CT-03` du sujet, de son intégration immédiate dans les piles LAMP académiques (*LineServ*) et de son support natif des procédures stockées SQL/PSM appelées via `pdo_mysql`.
+
+#### 1.4.4 Pourquoi choisir MariaDB (compatibilité MySQL 8.0) pour MiniShop ?
+
+Bien que le cahier des charges mentionne historiquement « MySQL », l’équipe a conçu et validé MiniShop pour fonctionner de manière identique sur **MySQL 8.0.16+** et **MariaDB 10.6+** (et déployé concrètement sur **MariaDB 11.8.6** dans notre VM de recette Debian 13, tout en conservant **MySQL 8.0** dans la chaîne d’intégration continue GitHub Actions). Quatre arguments décisifs expliquent l’utilisation de **MariaDB** :
+
+| Axe d’analyse | **MariaDB (`10.6+` / `11.8.6` en VM Debian 13)** | **MySQL (`8.0.16+` en CI GitHub Actions)** | Impact concret pour MiniShop |
+|---|---|---|---|
+| **1. Distribution Linux & hébergement** | SGBD relationnel par défaut dans les dépôts officiels **Debian 12/13**, Ubuntu et sur les hébergements pédagogiques LAMP (`apt install mariadb-server`). | Nécessite souvent l’ajout des dépôts tiers Oracle APT sur Debian récente. | Déploiement reproductible en une commande sur les VM de l’IUT et serveurs académiques. |
+| **2. Gouvernance Open Source** | Licence **GPLv2** intégralement communautaire (MariaDB Foundation) sans fonctionnalités critiques réservées à une édition payante. | Édité par Oracle ; certaines fonctions avancées (Audit, Thread Pool natif) sont réservées à l’édition *Enterprise* payante. | Pérennité académique et industrielle sans verrouillage éditeur (*vendor lock-in*). |
+| **3. Contraintes `CHECK` & moteur InnoDB** | `CHECK` appliqués nativement dès la version **10.2.1** ; moteur Aria/InnoDB optimisé pour les verrous de ligne `FOR UPDATE`. | `CHECK` ignorés avant 8.0.15, appliqués à partir de **8.0.16**. | Nos règles `ck_produit_prix`, `ck_produit_stock` et `ck_ligne_quantite` sont réellement bloquantes sur les deux moteurs. |
+| **4. Vigilances résolues par MiniShop** | Mémorisation stricte de la collation de connexion dans les routines ; syntaxe `SIGNAL SQLSTATE '45000'` identique. | Même comportement sur la collation par défaut (`utf8mb4_0900_ai_ci` vs `utf8mb4_unicode_ci`). | MiniShop force explicitement `SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci` en tête de `sql/01..04` pour éliminer l’erreur `1267 Illegal mix of collations`. |
+
+*Tableau 8 — Comparatif technique ciblé expliquant le choix de MariaDB et sa double compatibilité MySQL 8.0.*
+
+En résumé, **MariaDB** nous permet de bénéficier à la fois de la **compatibilité protocolaire et SQL totale avec MySQL** (même pilote `pdo_mysql`, même syntaxe de procédures et de triggers, validation continue sur les deux moteurs) et d’une **intégration native, libre et performante sous Debian 13**, confirmée par nos `60/60` étapes de recette, `29/29` scénarios SQL et `8/8` tests de concurrence sans survente.
+
+\newpage
+
 ### 1.5 Organisation du travail, découpage WBS et gouvernance qualité
 
-La conduite du projet repose sur un découpage structuré (*Work Breakdown Structure*, `docs/05-wbs-projet.md` et `docs/06-todolist.md`) en cinq lots : (1) cadrage et modélisation des données, (2) socle SQL et triggers, (3) cœur MVC et double persistance, (4) interfaces front/back-office et accessibilité, (5) campagnes de tests, audits et livrables. Sur le plan collaboratif (`docs/20-charte-gitlab-revues-croisees.md`), les évolutions font l’objet de revues croisées entre **Johan Polsinelli** et **Chahd Gouiaa** et d’une intégration continue vérifiant à chaque poussée la syntaxe PHP (`8.2` et `8.5`), l’exécution SQL (MySQL 8 / MariaDB 11.8), les contrôles de sécurité (`11/11`) et la cohérence documentaire (`46/46`).
+La conduite du projet repose sur un découpage structuré (*Work Breakdown Structure*, `docs/05-wbs-projet.md` et `docs/06-todolist.md`) en cinq lots complémentaires exécutés par **Johan Polsinelli** et **Chahd Gouiaa**, sous revue croisée continue (`docs/20-charte-gitlab-revues-croisees.md`) et contrôle automatisé à chaque poussée (syntaxe PHP `8.2` et `8.5`, exécution SQL sur MySQL 8 / MariaDB 11.8, contrôles de sécurité `11/11` et audit documentaire `46/46`) :
+
+| Lot WBS | Périmètre technique principal | Livrables de sortie vérifiés |
+|---|---|---|
+| **Lot 1 — Cadrage & Modélisation** | Analyse CDC, règles `RB-01..20`, `CT-01..12`, UML 2.5, Merise | `docs/01`, `14` diagrammes `docs/diagrams/*.png` |
+| **Lot 2 — Base de données SQL** | DDL 3FN, `18` procédures, `1` fonction, `16` triggers, jeu de démo | `sql/01..04`, `docs/04`, `29/29` tests SQL |
+| **Lot 3 — Cœur MVC & Double persistance** | Routeur blanc, `15` contrôleurs, `StoreInterface`, sécurité OWASP | `app/`, `public/`, `11/11` `controles.sh` |
+| **Lot 4 — Front/Back-office & Ergonomie** | Direction artistique `DA.md`, WCAG 2.1 AA, sans JS (`ENF-07`), i18n/UTC | `app/View/`, `public/css/`, `public/js/` |
+| **Lot 5 — Validation & Exploitation** | Campagne VM Debian 13, concurrence, `ENF-01`, RGPD, soutenance | `docs/pv-recette.md`, `docs/18`, `docs/26`, `docs/27` |
 
 \newpage
 
@@ -288,7 +368,7 @@ La conduite du projet repose sur un découpage structuré (*Work Breakdown Struc
 
 ### 2.1 Diagramme de cas d’utilisation et les 14 cas d’utilisation minimum
 
-Conformément à la liste minimale des **14 cas d’utilisation** exigés en page 3 du sujet officiel, la couverture fonctionnelle de MiniShop est répertoriée dans le Tableau 6, complétée par les diagrammes UML Figure 1 et Figure 2.
+Conformément à la liste minimale des **14 cas d’utilisation** exigés en page 3 du sujet officiel, la couverture fonctionnelle de MiniShop est répertoriée dans le Tableau 9, complétée par les diagrammes UML Figure 1 et Figure 2.
 
 | N° sujet | Cas d’utilisation minimum exigé | ID interne | Acteur principal | Point d’entrée / Preuve |
 |---:|---|---|---|---|
@@ -307,7 +387,7 @@ Conformément à la liste minimale des **14 cas d’utilisation** exigés en pag
 | 13 | Gérer les commandes | `UC-13` | Administrateur | `CommandeAdminController` (`/admin/commandes/*`) |
 | 14 | Modifier le statut d’une commande | `UC-14` | Administrateur | `CommandeAdminController::statut` (`sp_update_order_status`) |
 
-*Tableau 6 — Couverture exhaustive des 14 cas d’utilisation minimum imposés par le sujet (complétés par le tableau de bord, la gestion d’équipe `SUPER` et les paramètres).*
+*Tableau 9 — Couverture exhaustive des 14 cas d’utilisation minimum imposés par le sujet (complétés par le tableau de bord, la gestion d’équipe `SUPER` et les paramètres).*
 
 ![Diagramme de cas d’utilisation du processus de commande](docs/diagrams/cas_utilisation_commandes.png)
 
@@ -419,7 +499,7 @@ Le cahier des charges (p. 4) exige au moins **4 diagrammes de séquences** inté
 
 ### 2.5 Réponses détaillées aux 5 spécifications de sécurité du cahier des charges
 
-Le sujet officiel (p. 4–5) insiste sur cinq vulnérabilités critiques à maîtriser avec PHP/PDO/MySQL. Le Tableau 7 et les extraits de code vérifiés ci-dessous apportent la preuve technique pour chacune d’elles :
+Le sujet officiel (p. 4–5) insiste sur cinq vulnérabilités critiques à maîtriser avec PHP/PDO/MySQL. Le Tableau 10 et les extraits de code vérifiés ci-dessous apportent la preuve technique pour chacune d’elles :
 
 | Exigence du sujet (p. 4–5) | Règle imposée par le professeur | Implémentation exacte dans MiniShop & preuve |
 |---|---|---|
@@ -430,7 +510,7 @@ Le sujet officiel (p. 4–5) insiste sur cinq vulnérabilités critiques à maî
 | **5. Autorisation (IDOR)** | Un client ne doit pas accéder à une commande tierce en modifiant l’ID dans l’URL (`commande.php?id=25`). | `CommandeController` exige `id_client = Auth::clientId()` pour `/mes-commandes/{id}` ; `sp_confirm_order` et `sp_cancel_order` re-vérifient `id_client` côté SQL. Toute tentative tierce renvoie une `404` neutre (`ENF-12`). Vérifié par `[05/11]` & `T-18`. |
 | **Complément CSRF & En-têtes** | Protection des écritures POST et anti-clickjacking. | Jeton CSPRNG (`random_bytes(32)`) vérifié par `hash_equals()` dans `Csrf::verifier()` sur les `12` contrôleurs POST mutatifs (`[07/11]`) ; `X-Frame-Options: DENY` ; zéro inscription admin publique (`[08/11]`). |
 
-*Tableau 7 — Réponses vérifiées aux 5 spécifications de sécurité du sujet officiel.*
+*Tableau 10 — Réponses vérifiées aux 5 spécifications de sécurité du sujet officiel.*
 
 Extrait vérifié du durcissement HTTP et des jetons CSRF dans `public/index.php` et `app/Security/Csrf.php` :
 
@@ -483,7 +563,7 @@ Conformément à la partie 3.A.i du sujet (p. 6), le Modèle Conceptuel des Donn
 | `CLASSER` | `CATEGORIE` `(0,N)` — `PRODUIT` `(1,1)` | Une catégorie peut initialement être vide (`RB-08`) ; chaque produit est classé dans une seule catégorie (`RB-07`). | `id_categorie NOT NULL`, `FK ON DELETE RESTRICT` |
 | `ETRE TRACÉE DANS` | `COMMANDE` `(0,N)` — `ORDER_STATUS_HISTORY` `(1,1)` | Chaque création ou changement d’état de commande génère une entrée d’audit rattachée à cette commande. | `order_id NOT NULL`, `FK ON DELETE CASCADE` |
 
-*Tableau 8 — Justification détaillée des cardinalités du MCD.*
+*Tableau 11 — Justification détaillée des cardinalités du MCD.*
 
 **Refus explicites de conception à défendre devant le jury :**
 - **Séparation physique `CLIENT` vs `ADMINISTRATEUR` :** plutôt qu’une table `UTILISATEUR(role)`, deux tables aux attributs disjoints rendent structurellement impossible la création d’un compte administrateur depuis le formulaire d’inscription public (`SEC-10`).
@@ -518,7 +598,7 @@ Le sujet officiel (p. 6, section 3.A.iii) exige explicitement de traiter cinq po
 | `PARAMETRE` | `cle -> valeur, unite, comment, date_modification` | `cle` est la clé primaire naturelle. |
 | `STOCK_MOVEMENT_HISTORY` | `id_mouvement -> id_produit, reference_produit, nom_produit, mode_mouvement, quantite, stock_avant, stock_apres, motif, changed_by, changed_by_role, changed_at` | Table d’audit en écriture seule. |
 
-*Tableau 9 — Dépendances fonctionnelles identifiées sur les 9 tables.*
+*Tableau 12 — Dépendances fonctionnelles identifiées sur les 9 tables.*
 
 #### 2. Vérification formelle 1FN, 2FN et 3FN
 
@@ -530,7 +610,7 @@ Le sujet officiel (p. 6, section 3.A.iii) exige explicitement de traiter cinq po
 | `COMMANDE` | **OUI** | **OUI** | **3FN (dénormalisation verrouillée)** | `montant_total` est un agrégat des lignes + `frais_port`. Conservé comme montant contractuel facturé et **vérifié par `trg_commande_transition_statut`** (`RB-15`), rendant toute désynchronisation impossible. |
 | `LIGNE_COMMANDE` | **OUI** | **OUI** | **OUI** | Une clé composée `(id_commande, id_produit)` aurait violé la 2FN (dépendance du prix à `id_produit` seul) et interdit deux lignes distinctes du même produit. L’identifiant de substitution `id_ligne` + le snapshot `prix_unitaire` garantissent strictement la 3FN. |
 
-*Tableau 10 — Démonstration de normalisation 1FN / 2FN / 3FN.*
+*Tableau 13 — Démonstration de normalisation 1FN / 2FN / 3FN.*
 
 #### 3. & 4. Justification des clés primaires (PK) et clés étrangères (FK)
 
@@ -543,7 +623,7 @@ Le sujet officiel (p. 6, section 3.A.iii) exige explicitement de traiter cinq po
 | **FK** `ligne_commande.id_produit` | `NOT NULL`, `ON DELETE RESTRICT` | Empêche la suppression physique d’un produit déjà commandé (`RB-14`, `T-15`) ; `sp_delete_product` bascule alors `visible = 0`. | Préserve la cohérence des factures historiques. |
 | **FK** `order_status_history.order_id` | `NOT NULL`, `ON DELETE CASCADE` | L’audit suit la commande (jamais supprimable après validation). | Cohérence de la piste d’audit. |
 
-*Tableau 11 — Justification des clés primaires, uniques et étrangères.*
+*Tableau 14 — Justification des clés primaires, uniques et étrangères.*
 
 #### 5. Redondances identifiées et contrôles de non-contradiction
 
@@ -555,7 +635,7 @@ Le sujet officiel (p. 6, section 3.A.iii) exige explicitement de traiter cinq po
 | `COMMANDE.montant_total` | Agrégat (`SUM(total_ligne) + frais_port`) | Valeur contractuelle figée (`RB-15`) | `trg_commande_transition_statut` + `sp_confirm_order` |
 | `COMMANDE.adresse_livraison` | Copie historique (`CLIENT`) | Conserver l’adresse réelle de livraison même si le client déménage | Figée à la création de la commande |
 
-*Tableau 12 — Inventaire des redondances maîtrisées (vérifiées par les 4 requêtes de l’Annexe E).*
+*Tableau 15 — Inventaire des redondances maîtrisées (vérifiées par les 4 requêtes de l’Annexe E).*
 
 ### 3.4 Script SQL d’installation et jeu de données (`sql/01` à `sql/04`)
 
@@ -607,7 +687,7 @@ Le sujet impose au minimum `5` procédures stockées ; **18 procédures** et **1
 | **4. Réutilisabilité** | `sp_search_products` sert indifféremment le visiteur (`p_admin = 0`) et l’administrateur (`p_admin = 1`) ; `sp_compute_shipping` est invoquée par le panier comme par la confirmation finale sans réécriture. | Divergence progressive des formules d’alerte ou de port entre les différents modules PHP. |
 | **5. Contrôle des accès** | Les procédures d’écriture critique vérifient leurs propres préconditions (`sp_confirm_order` contrôle l’appartenance `id_client`, `sp_delete_category` refuse toute catégorie occupée), formant un second rempart indépendant du code PHP. | La sécurité reposerait exclusivement sur la rigueur de chaque action HTTP appelante. |
 
-*Tableau 13 — Réponse complète aux 5 volets de la question pédagogique sur les procédures stockées.*
+*Tableau 16 — Réponse complète aux 5 volets de la question pédagogique sur les procédures stockées.*
 
 **Nuance critique d’ingénierie (frontière et coûts assumés) :** nous réservons les procédures stockées aux **opérations d’écriture multi-tables et décisions critiques**, tout en conservant les lectures simples en requêtes préparées PDO. Nous assumons également le coût de cette approche : couplage plus fort au dialecte MySQL/MariaDB, débogage moins outillé qu’en PHP et nécessité de maintenir la parité avec le pilote secondaire `JsonStore`.
 
@@ -619,7 +699,7 @@ Le sujet impose au minimum `5` procédures stockées ; **18 procédures** et **1
 | « Trigger 1 — Stock » | `trg_ligne_decrement_stock` + `trg_ligne_controle_insert` + `trg_ligne_restore_stock` | Décrémente à l’insertion, bloque avant négatif et restitue à l’annulation. |
 | « Trigger 2 — Historique » (`ORDER_STATUS_HISTORY`) | `trg_history_statut` (`AFTER UPDATE`) + `trg_history_creation` (`AFTER INSERT`) | Table `order_status_history(id, order_id, old_status, new_status, changed_at, ...)` au format exact du sujet. |
 
-*Tableau 14 — Correspondance nominative entre les exemples du sujet et les objets SQL livrés.*
+*Tableau 17 — Correspondance nominative entre les exemples du sujet et les objets SQL livrés.*
 
 ### 3.6 Déclencheurs (16 livrés) : couverture de « Trigger 1 — Stock » et « Trigger 2 — Historique »
 
@@ -679,7 +759,7 @@ Une étude comparative (`docs/DA.md`) conduite sur 5 acteurs majeurs du e-commer
 | **Repli sans JavaScript** | Rarement garanti | **100 % fonctionnel sans JS** (`ENF-07`) + amélioration progressive AJAX |
 | **Responsive & Accessibilité** | Partiel sur tableaux admin | **`320`–`1440 px`**, tableaux repliés en cartes `data-label`, cibles `>= 44 px`, `aria-live` |
 
-*Tableau 15 — Synthèse du benchmark ergonomique et positionnement de MiniShop (`docs/DA.md`).*
+*Tableau 18 — Synthèse du benchmark ergonomique et positionnement de MiniShop (`docs/DA.md`).*
 
 En complément, l’application propose une traduction complète **FR / EN** (`public/js/i18n-en.js`, mémorisée en `localStorage`) et applique une **gestion déterministe du temps en UTC** (`app/Tools/Heure.php`) : tous les instants sont stockés en UTC côté serveur puis projetés dans le navigateur selon le fuseau choisi par l’utilisateur sur `/preferences` (ou détecté localement par `public/js/tz-lookup.js` sans transmission ni conservation de coordonnées GPS).
 
@@ -695,7 +775,7 @@ En complément, l’application propose une traduction complète **FR / EN** (`p
 | `ENF-11/12` | Sécurité hashes & réponse IDOR `404` neutre | `0` clair, `404` sur ID étranger | `11/11` `controles.sh` + `105/105` HTTP SQL |
 | `ENF-14/16` | Affichage TTC + port avant validation & atomicité | Transactions `ROLLBACK` intégral | Validés (`T-28`, `T-29`, `8/8` concurrence HTTP) |
 
-*Tableau 16 — Synthèse des exigences non fonctionnelles clés (`docs/annexes/annexe-enf.md`).*
+*Tableau 19 — Synthèse des exigences non fonctionnelles clés (`docs/annexes/annexe-enf.md`).*
 
 ### 4.4 Résultats expérimentaux sur VM Debian 13, concurrence et performances (`ENF-01`)
 
@@ -712,7 +792,7 @@ La campagne de recette automatisée exécutée sur **VM Debian 13** (PHP `8.4.27
 | **Sécurité statique (`tests/security/controles.sh`)** | 11 points (SQLi, XSS, secrets, bcrypt, IDOR, session, CSRF, RBAC, `.env`, PCI) | **11 / 11 conformes** | **CONFORME** |
 | **Cohérence UC & audit (`verifier_fiches_uc.py`, `unittest`)** | 14 UC, 164 scénarios, 36 couples `RB-11`, inventaire Git | **46 / 46** UC + **22 / 22** audits Python | **CONFORME** |
 
-*Tableau 17 — Synthèse chiffrée des campagnes de validation automatisées.*
+*Tableau 20 — Synthèse chiffrée des campagnes de validation automatisées.*
 
 Concernant la performance (`ENF-01`), la campagne sur `minishop_perf` (`236` produits, `1 004` commandes, `1 916` lignes, `1 998` traces — commit `cb0f814`, `tests/perf/dernieres_mesures.txt`) confirme des temps de réponse très nettement inférieurs au seuil de `500 ms` :
 
@@ -725,7 +805,19 @@ Concernant la performance (`ENF-01`), la campagne sur `minishop_perf` (`236` pro
 | **SQL écriture métier** | `sp_create_order` + `sp_add_order_line` + `sp_confirm_order` | 44,0 | — | Verrou `FOR UPDATE` + triggers + calcul port |
 | **HTTP (200 req./URL)** | `/`, `/catalogue`, `/catalogue?...`, `/recherche`, `/produit/...`, `/panier` | 1,2 – 6,1 | **6,0 global** | **0 réponse inattendue — CONFORME ENF-01** |
 
-*Tableau 18 — Résultats expérimentaux de performance SGBD et HTTP (`tests/perf/dernieres_mesures.txt`).*
+*Tableau 21 — Résultats expérimentaux de performance SGBD et HTTP (`tests/perf/dernieres_mesures.txt`).*
+
+#### 4.4.2 Mise en perspective des mesures VM face aux piles concurrentes
+
+À la lumière des mesures observées sur notre VM Debian 13 (PHP `8.4.27` + MariaDB `11.8.6`), il convient de situer précisément le comportement de MiniShop par rapport aux autres architectures évoquées au Chapitre 1 (`Tableaux 6 à 8`) :
+
+| Scénario de charge évalué | **Mesure réelle MiniShop (PHP 8.4 + MariaDB 11.8.6)** | **Comportement attendu d’un framework + ORM lourd** | **Comportement attendu avec SQLite ou NoSQL** |
+|---|---|---|---|
+| **Navigation catalogue & fiche produit (`200` req./URL)** | **p95 = 6,0 ms** (`1,2` à `6,1 ms` en moyenne) grâce à l’absence d’ORM, au routeur léger et aux vues SQL pré-jointes | Surcoût d’hydratation d’entités et d’injection de dépendances (généralement `+15` à `+40 ms` à froid/moyenne selon le cache) | SQLite rapide en lecture pure, mais dégradation sévère dès qu’apparaissent des écritures concurrentes |
+| **Transaction complète de commande (`sp_create_order` + lignes + `sp_confirm_order`)** | **44,0 ms** en moyenne incluant verrou `FOR UPDATE`, snapshot tarifaire, calcul de port et insertion d’audit | Plusieurs allers-retours applicatifs + requêtes ORM supplémentaires si l’on ne déporte pas la logique en procédure stockée | Sur SQLite : contention globale de fichier ; sur NoSQL : nécessité de transactions distribuées ou risque de désynchronisation du stock |
+| **Contention critique (`20` acheteurs simultanés pour `12` unités)** | **8/8 scénarios réussis**, **`0` survente** : le verrou InnoDB ligne par ligne sérialise exactement les `12` premiers achats | Risque classique de *race condition* si l’ORM lit puis met à jour le stock en PHP sans verrou `FOR UPDATE` explicite | Échecs `SQLITE_BUSY` fréquents ou risque de stock négatif sans opérateur atomique strict |
+
+*Tableau 22 — Mise en perspective des résultats expérimentaux de la VM Debian 13 face aux piles alternatives.*
 
 ### 4.5 Analyse critique des biais, limites du prototype et risques résiduels
 
@@ -758,7 +850,7 @@ Conformément aux référentiels de la CNIL et au RGPD (`docs/18-politique-conse
 | **Sauvegardes locales dédiées** | **30 jours** minimum (2 récentes gardées) | `db_init.php --nettoyage sauvegardes` | Dossier privé `0700` hors webroot vérifié par `.minishop-sauvegardes`. |
 | **Extractions chiffrées ponctuelles** | Sur durée justifiée | `archive_restreinte.php` | Boîtes scellées **libsodium**, plafond `8 Mio`, journal `acces.jsonl`. |
 
-*Tableau 19 — Politique de conservation des données et outillage CLI (`docs/18-politique-conservation.md`).*
+*Tableau 23 — Politique de conservation des données et outillage CLI (`docs/18-politique-conservation.md`).*
 
 ### 5.3 Analyse des écarts vis-à-vis du cahier des charges initial et bilan réflexif
 
@@ -784,7 +876,7 @@ Le dépôt comporte un `README.md` complet (présentation, architecture, install
 | **iv. Soutenance + questions (15 min)** | **10** | Trame, timing et réponses aux questions du jury | **Prêt :** diaporama `12` slides, démo chronométrée 4 min, terminal SQL préparé, 20 Q/R (`docs/03` & `docs/24`). |
 | **v. Contribution régulière GitLab & README** | **10** | Historique commits binôme, `README.md`, accès `Reporter` enseignant | **Prévu :** `README.md` complet, historique Git tracé, charte `docs/20` (vérification finale sur le dépôt GitLab IUT avant soutenance). |
 
-*Tableau 20 — Contrôle complet de conformité au barème officiel et d’absence de pénalité.*
+*Tableau 24 — Contrôle complet de conformité au barème officiel et d’absence de pénalité.*
 
 \newpage
 
