@@ -1,28 +1,32 @@
 @startuml activite_passer_commande
-title Activité — passer commande
+title Activité — passer commande (UC-07)
 start
-:Consulter le catalogue;
+:Consulter le catalogue ou rechercher;
 :Ouvrir une fiche produit;
-if (Produit en stock ?) then (oui)
-  :Ajouter au panier;
+if (Produit visible et en stock ?) then (oui)
+  :Ajouter au panier (quantité plafonnée au stock, RB-18);
 else (non)
-  :Bouton désactivé, message « rupture »;
+  :Bouton désactivé, mention rupture;
   stop
 endif
-:Consulter le panier (sous-total HT, TVA, port, total TTC);
+:Consulter le panier\n(prix unitaire TTC, sous-total TTC, frais de port, total TTC);
 if (Client connecté ?) then (non)
   :Se connecter ou créer un compte;
 else (oui)
 endif
-:Choisir / saisir l'adresse de livraison;
-:Valider la commande;
-if (Stock encore disponible ?) then (oui)
-  :Transaction : création commande + lignes + décrément;
-  :Statut PAYEE + historique;
-  :Afficher numéro et récapitulatif;
-  :Vider le panier;
+:Saisir / confirmer l'adresse de livraison\net cocher ou non le paiement simulé;
+:Valider la commande (POST /commande/valider + _csrf);
+if (Stock suffisant et panier non vide ?) then (oui)
+  :Transaction SQL (sp_create_order_from_basket)\nverrou FOR UPDATE + lignes + décrément + port figé;
+  if (Paiement simulé coché ?) then (oui)
+    :Statut initial PAYEE + historique;
+  else (non)
+    :Statut initial EN_PREPARATION + historique;
+  endif
+  :Vider le panier (session);
+  :Rediriger 302 /mes-commandes/{id}\n(numéro + récapitulatif + flash succès);
 else (non)
-  :Message STOCK_INSUFFISANT, panier conservé;
+  :Rollback + message traduit (ex. STOCK_INSUFFISANT)\npanier conservé, 302 /panier;
 endif
 stop
 @enduml

@@ -248,3 +248,10 @@ Les **14 PNG générés** et les **14 PNG versionnés** ont tous été inspecté
    - `seq_passer_commande.puml` : supprimer `BEGIN`/`COMMIT`/`ROLLBACK` côté PHP en mode SQL (transaction gérée dans `sp_create_order_from_basket`), corriger `Auth::exigeClient()`, `createOrderFromBasket()`, `p_payee`, `$panier->vider()` et aérer le bloc `alt`.
 2. **Corriger les 9 autres `.puml`** (`architecture_mvc`, les 3 `cas_utilisation_*`, `activite_passer_commande`, `seq_authentification`, `seq_consulter_catalogue`, `seq_recherche_produit`, `seq_ajout_panier`) selon les écarts relevés au §3 (notamment rattacher `Retirer du panier` à `Visiteur` et `Client`, et déplacer `noteConnexion` vers `AuthController -> ClientRepository -> Store`).
 3. **Régénérer les 14 PNG** via `bash docs/diagrams/render.sh`, vérifier visuellement chacun des 14 rendus, puis committer ensemble `docs/diagrams/src/*.puml` et `docs/diagrams/*.png`.
+
+---
+
+## 5. Suivi de résolution (post-audit)
+
+L’ensemble des 14 sources `docs/diagrams/src/*.puml` et des 14 images `docs/diagrams/*.png` a été corrigé et régénéré via `docs/diagrams/render.sh`, puis inspecté visuellement (14/14 conformes au code `app/`, `public/` et `sql/`, sans anomalie de rendu).
+

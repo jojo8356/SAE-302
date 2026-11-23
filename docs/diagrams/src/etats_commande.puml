@@ -1,18 +1,28 @@
 @startuml etats_commande
 title Cycle de vie d'une commande (RB-11)
-[*] --> BROUILLON : création
-BROUILLON --> PAYEE : validation (stock réservé)
-PAYEE --> EN_PREPARATION : préparation
+
+[*] --> BROUILLON : création (sp_create_order)
+
+BROUILLON --> EN_PREPARATION : validation sans paiement simulé
+BROUILLON --> PAYEE : validation avec paiement simulé
+BROUILLON --> ANNULEE : abandon / annulation
+
+EN_PREPARATION --> PAYEE : paiement confirmé
 EN_PREPARATION --> EXPEDIEE : expédition
+EN_PREPARATION --> ANNULEE : annulation (client ou admin)
+
+PAYEE --> EXPEDIEE : expédition
+PAYEE --> ANNULEE : annulation (client ou admin)
+
 EXPEDIEE --> LIVREE : livraison confirmée
-BROUILLON --> ANNULEE : abandon
-PAYEE --> ANNULEE : annulation client ou admin
-EN_PREPARATION --> ANNULEE : annulation admin (motif obligatoire)
-EXPEDIEE --> RETOURNEE : retour reçu
-LIVREE --> RETOURNEE : retour sous 14 jours
-ANNULEE --> [*]
-RETOURNEE --> [*]
-LIVREE --> [*]
-note right of ANNULEE : restitution du stock par trigger, port remis à 0 (RB-20)
-note right of RETOURNEE : transition interdite en sens inverse
+EXPEDIEE --> ANNULEE : annulation admin (motif)
+
+LIVREE --> [*] : état terminal
+ANNULEE --> [*] : état terminal
+
+note bottom of ANNULEE
+  Restitution du stock par trigger / sp_cancel_order,
+  frais_port remis à 0 et montant_avant_annulation conservé (RB-20).
+  Aucune transition sortante depuis LIVREE ou ANNULEE.
+end note
 @enduml

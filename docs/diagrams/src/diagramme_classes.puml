@@ -1,57 +1,131 @@
 @startuml diagramme_classes
-title MiniShop — diagramme de classes (couches)
+title MiniShop — diagramme de classes (couches réelles)
 skinparam classAttributeIconSize 0
-package "Contrôleurs" {
+skinparam packageStyle rectangle
+
+package "Présentation & Routage" {
   class Router
-  class Controller
+  abstract class Controller
+  class HomeController
   class CatalogueController
+  class AuthController
+  class CompteController
   class PanierController
   class CommandeController
-  class AdminController
+  class ApiController
+  package "Admin" {
+    class DashboardController
+    class ProduitAdminController
+    class CategorieAdminController
+    class StockAdminController
+    class CommandeAdminController
+    class ParametreAdminController
+    class EquipeAdminController
+  }
 }
-package "Domaine / dépôts" {
-  class Produit
-  class Categorie
-  class Client
-  class Commande
-  class LigneCommande
-  class Parametre
+
+package "Sécurité" {
+  class Auth
+  class Csrf
+  class AccesRefuse
+}
+
+package "Modèle & Dépôts" {
+  class PanierSession
   class ProduitRepository
   class CategorieRepository
   class ClientRepository
   class CommandeRepository
   class ParametreRepository
+  interface ClientAccountGateway
+  class SqlClientAccountGateway
+  class StoreClientAccountGateway
 }
-package "Persistance" {
+
+package "Persistance & Configuration" {
+  class Database
   interface StoreInterface
-  class JsonStore
+  interface StoredProcedureResultExecutor
+  interface RowLockingStore
+  interface StockMovementAuditor
   class SqlStore
+  class JsonStore
   class Triggers
   class Views
+  class Schema
 }
-package "Sécurité" {
-  class Auth
-  class Csrf
-}
+
 Router --> Controller
+Router ..> AccesRefuse
+Controller <|-- HomeController
 Controller <|-- CatalogueController
+Controller <|-- AuthController
+Controller <|-- CompteController
 Controller <|-- PanierController
 Controller <|-- CommandeController
-Controller <|-- AdminController
-CatalogueController --> ProduitRepository
-PanierController --> PanierSession
-CommandeController --> CommandeRepository
-AdminController --> ProduitRepository
-CommandeRepository --> StoreInterface
-ProduitRepository --> StoreInterface
-StoreInterface <|.. JsonStore
-StoreInterface <|.. SqlStore
-Commande "1" *-- "1..*" LigneCommande
-Client "1" -- "0..*" Commande
-Categorie "1" -- "0..*" Produit
-Produit "1" -- "0..*" LigneCommande
-JsonStore --> Triggers
-JsonStore --> Views
+Controller <|-- ApiController
+Controller <|-- DashboardController
+Controller <|-- ProduitAdminController
+Controller <|-- CategorieAdminController
+Controller <|-- StockAdminController
+Controller <|-- CommandeAdminController
+Controller <|-- ParametreAdminController
+Controller <|-- EquipeAdminController
+
 Controller --> Auth
 Controller --> Csrf
+Controller ..> Database
+
+CatalogueController --> ProduitRepository
+CatalogueController --> CategorieRepository
+CatalogueController --> Views
+AuthController --> ClientRepository
+CompteController --> ClientRepository
+PanierController --> PanierSession
+ApiController --> PanierSession
+CommandeController --> CommandeRepository
+CommandeController --> ClientRepository
+
+DashboardController --> Views
+ProduitAdminController --> ProduitRepository
+ProduitAdminController --> CategorieRepository
+CategorieAdminController --> CategorieRepository
+StockAdminController --> ProduitRepository
+StockAdminController --> Views
+CommandeAdminController --> CommandeRepository
+CommandeAdminController --> Views
+ParametreAdminController --> ParametreRepository
+EquipeAdminController --> StoreInterface
+
+PanierSession --> StoreInterface
+PanierSession --> ProduitRepository
+PanierSession --> ParametreRepository
+
+ProduitRepository --> StoreInterface
+ProduitRepository --> Views
+CategorieRepository --> StoreInterface
+CommandeRepository --> StoreInterface
+CommandeRepository --> ParametreRepository
+ParametreRepository --> StoreInterface
+ClientRepository --> StoreInterface
+ClientRepository --> ClientAccountGateway
+
+ClientAccountGateway <|.. SqlClientAccountGateway
+ClientAccountGateway <|.. StoreClientAccountGateway
+
+Database --> StoreInterface
+StoreInterface <|.. SqlStore
+StoredProcedureResultExecutor <|.. SqlStore
+RowLockingStore <|.. SqlStore
+
+StoreInterface <|.. JsonStore
+StockMovementAuditor <|.. JsonStore
+JsonStore --> Triggers
+JsonStore --> Schema
+
+note bottom of ProduitRepository
+  Aucune classe entité PHP (Produit, Client, Commande…) :
+  les dépôts manipulent des tableaux associatifs validés
+  par Schema et les triggers SQL / PHP.
+end note
 @enduml

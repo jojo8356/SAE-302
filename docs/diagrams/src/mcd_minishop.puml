@@ -1,7 +1,8 @@
 @startuml mcd_minishop
-title MCD — MiniShop (8 entités)
+title MCD — MiniShop (9 entités)
 hide circle
 skinparam linetype ortho
+
 entity "CATEGORIE" as CAT {
   * id_categorie <<PK>>
   --
@@ -9,20 +10,52 @@ entity "CATEGORIE" as CAT {
   slug
   description
 }
+
 entity "PRODUIT" as PRO {
   * id_produit <<PK>>
   --
   reference
   nom
   slug
+  description
   prix_ht
   tva
   prix_ttc
   stock
+  stock_initial
   seuil_alerte
   visible
+  image_url
+  date_creation
+  date_modification
   * id_categorie <<FK>>
 }
+
+entity "STOCK_MOVEMENT_HISTORY" as SMH {
+  * id_mouvement <<PK>>
+  --
+  id_produit
+  reference_produit
+  nom_produit
+  mode_mouvement
+  quantite
+  stock_avant
+  stock_apres
+  motif
+  changed_by
+  changed_by_role
+  changed_at
+}
+
+entity "PARAMETRE" as PAR {
+  * cle <<PK>>
+  --
+  valeur
+  unite
+  comment
+  date_modification
+}
+
 entity "CLIENT" as CLI {
   * id_client <<PK>>
   --
@@ -30,22 +63,30 @@ entity "CLIENT" as CLI {
   prenom
   email
   mot_de_passe_hash
+  telephone
   adresse_livraison
   code_postal
   ville
   actif
+  date_creation
+  derniere_connexion
 }
+
 entity "COMMANDE" as COM {
   * id_commande <<PK>>
   --
   numero
-  date_commande
+  adresse_livraison
   statut
   montant_total
   frais_port
-  adresse_livraison
+  montant_avant_annulation
+  commentaire
+  date_commande
+  date_modification
   * id_client <<FK>>
 }
+
 entity "LIGNE_COMMANDE" as LIG {
   * id_ligne <<PK>>
   --
@@ -55,36 +96,38 @@ entity "LIGNE_COMMANDE" as LIG {
   * id_commande <<FK>>
   * id_produit <<FK>>
 }
+
+entity "ORDER_STATUS_HISTORY" as HIS {
+  * id <<PK>>
+  --
+  * order_id <<FK>>
+  old_status
+  new_status
+  changed_by
+  changed_by_role
+  commentaire
+  changed_at
+}
+
 entity "ADMINISTRATEUR" as ADM {
   * id_admin <<PK>>
   --
   nom
+  prenom
   email
   mot_de_passe_hash
   role
   actif
+  date_creation
+  derniere_connexion
 }
-entity "ORDER_STATUS_HISTORY" as HIS {
-  * id <<PK>>
-  --
-  order_id
-  old_status
-  new_status
-  changed_at
-  changed_by
-  commentaire
-}
-entity "PARAMETRE" as PAR {
-  * cle <<PK>>
-  --
-  valeur
-  unite
-  description
-}
+
 CAT ||--o{ PRO : contient
 CLI ||--o{ COM : passe
-COM ||--|{ LIG : contient
+COM ||--|{ LIG : "contient (>=1, RB-04)"
 PRO ||--o{ LIG : référence
 COM ||--o{ HIS : trace
-PAR .. PRO : TVA par défaut
+PRO ..o{ SMH : "snapshot audit (sans FK)"
+PAR .. PRO : tva_defaut
+PAR .. COM : frais_port / franchise_port
 @enduml

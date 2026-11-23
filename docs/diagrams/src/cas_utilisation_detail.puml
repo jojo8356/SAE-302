@@ -1,15 +1,19 @@
 @startuml cas_utilisation_detail
 title MiniShop — cas d'utilisation détaillés (visiteur et client)
 left to right direction
-actor Visiteur as V
-actor Client as C
-rectangle "Parcours d'achat" {
+skinparam packageStyle rectangle
+
+actor "Visiteur" as V
+actor "Client" as C
+
+rectangle "Parcours front-office" {
   usecase "Consulter le catalogue\n(filtres, tri, pagination)" as U1
   usecase "Rechercher un produit" as U2
   usecase "Consulter une fiche produit" as U3
+  usecase "Contacter le support /\nPréférences" as U14
   usecase "Créer un compte" as U4
   usecase "Se connecter" as U5
-  usecase "Ajouter au panier" as U6
+  usecase "Ajouter au panier\n(plafonné au stock, RB-18)" as U6
   usecase "Modifier une quantité" as U7
   usecase "Retirer du panier" as U8
   usecase "Valider la commande" as U9
@@ -18,19 +22,27 @@ rectangle "Parcours d'achat" {
   usecase "Modifier ses informations" as U12
   usecase "Changer de mot de passe" as U13
 }
+
 V --> U1
 V --> U2
 V --> U3
+V --> U14
 V --> U4
 V --> U5
 V --> U6
+V --> U7
+V --> U8
+
+C --> U6
+C --> U7
+C --> U8
 C --> U9
 C --> U10
 C --> U11
 C --> U12
 C --> U13
+
 U6 ..> U7 : <<extend>> si déjà au panier
-U9 ..> U5 : <<include>> RB-04
+U9 ..> U5 : <<include>>
 U11 ..> U10 : <<include>>
-U6 --> U7 : quantité plafonnée au stock (RB-18)
 @enduml

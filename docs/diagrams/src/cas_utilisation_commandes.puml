@@ -1,20 +1,28 @@
 @startuml cas_utilisation_commandes
 title MiniShop — cas d'utilisation du back-office
 left to right direction
-actor "Gestionnaire" as G
-actor "Super administrateur" as S
-rectangle "Back-office" {
+skinparam packageStyle rectangle
+
+actor "Gestionnaire\n(GESTIONNAIRE)" as G
+actor "Super administrateur\n(SUPER)" as S
+S --|> G
+
+rectangle "Back-office (/admin/*, RB-13)" {
+  usecase "Se connecter au back-office" as AUTH
+  usecase "Consulter les indicateurs\n(tableau de bord)" as IN
   usecase "Gérer les produits" as P
   usecase "Gérer les catégories" as K
   usecase "Ajuster le stock" as ST
-  usecase "Consulter les alertes" as AL
+  usecase "Consulter les alertes\n(v_etat_stock)" as AL
   usecase "Consulter les commandes" as CO
   usecase "Changer le statut" as CH
-  usecase "Consulter la piste d'audit" as AU
-  usecase "Consulter les indicateurs" as IN
-  usecase "Gérer les paramètres" as PA
-  usecase "Gérer les comptes d'équipe" as EQ
+  usecase "Consulter la piste d'audit\n(order_status_history)" as AU
+  usecase "Gérer les paramètres\n(/admin/parametres)" as PA
+  usecase "Gérer les comptes d'équipe\n(/admin/equipe)" as EQ
 }
+
+G --> AUTH
+G --> IN
 G --> P
 G --> K
 G --> ST
@@ -22,10 +30,10 @@ G --> AL
 G --> CO
 G --> CH
 G --> AU
-G --> IN
-S --> G
-S --> PA
+G --> PA
+
 S --> EQ
-CH ..> AU : trace automatique (trigger)
+
+CH ..> AU : trace auto (trigger)
 ST ..> AL : recalcul du seuil
 @enduml

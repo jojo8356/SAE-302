@@ -4,19 +4,31 @@ actor Client
 participant "panier.js" as JS
 participant "ApiController" as API
 participant "PanierSession" as PS
-participant "ProduitRepository" as PR
-Client -> JS : clic « Ajouter »
-JS -> API : POST /api/panier/ajouter (JSON + jeton CSRF)
-API -> API : Csrf::verifier()
-API -> PR : disponibilité (stock serveur)
-PR --> API : stock
-alt stock insuffisant
-  API --> JS : 409 {code: STOCK_INSUFFISANT, reste: N}
-  JS --> Client : message serveur affiché, bouton grisé
-else ajouté
-  API -> PS : ajouter(id, quantite plafonnée)
-  API --> JS : 200 {nombre_articles, total_ttc}
-  JS --> Client : badge mis à jour (aria-live), total recalculé
+database "Store" as DB
+
+Client -> JS : clic « Ajouter » (form[data-panier])
+JS -> API : POST /api/panier/ajouter\n(x-www-form-urlencoded : id_produit, quantite, _csrf)
+API -> API : exigerPoste() + Csrf::estValide()
+
+alt jeton CSRF invalide
+  API --> JS : 403 {ok: false, code: 'CSRF_INVALIDE', message}
+  JS --> Client : erreur affichée dans #zone-annonces
+  ||8||
+else jeton CSRF valide
+  API -> PS : ajouter(id_produit, quantite)
+  PS -> DB : find('produit', id_produit)
+  DB --> PS : produit (stock, visible, prix_ttc)
+  alt quantité <= 0 ou produit introuvable / masqué
+    PS --> API : throw BusinessError
+    API --> JS : 409 {ok: false, code, message, nombre_articles}
+    JS --> Client : erreur dans #zone-annonces, bouton désactivé
+  else ajouté (quantité plafonnée à min(demande, stock))
+    PS --> API : quantité retenue
+    API -> PS : recapitulatif() (sous_total, frais_port, total)
+    API --> JS : 200 {ok: true, message, nombre_articles,\nsous_total, frais_port, total_ttc, lien_panier}
+    JS --> Client : badge et total_ttc mis à jour (aria-live)
+  end
 end
+
 note right of API : aucun prix ni stock calculé côté navigateur (EF-GEN-01)
 @enduml

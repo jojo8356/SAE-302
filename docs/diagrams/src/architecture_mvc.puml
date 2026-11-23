@@ -1,36 +1,56 @@
 @startuml architecture_mvc
-title Architecture MVC en 3 couches (§9)
+title Architecture MVC et persistence duale (§9)
 skinparam componentStyle rectangle
+skinparam linetype ortho
+
 actor "Navigateur" as B
-package "Présentation" {
-  [public/index.php\n(front controller)] as FC
-  [app/Router.php] as R
-  [app/Controller/*] as C
-  [app/View/*] as V
+
+package "Présentation (front & back-office)" {
+  [public/index.php\n(contrôleur frontal)] as FC
+  [app/Router.php\n(liste blanche)] as R
+  [app/Controller/*\n7 front/API + 7 Admin\\*] as C
+  [app/View/*\n(vues + Image/*)] as V
 }
-package "Métier" {
-  [app/Repository/*] as REP
+
+package "Métier, sécurité & services" {
+  [app/Repository/*\n(+ ClientAccountGateway*)] as REP
   [app/Model/PanierSession] as PS
-  [app/Security/*] as SEC
+  [app/Security/*\n(Auth, Csrf, AccesRefuse, xss)] as SEC
+  [app/Service/* & app/Tools/*] as SRV
 }
-package "Données" {
-  [StoreInterface] as SI
-  [JsonStore] as JS
-  [SqlStore\n(PDO)] as SQL
-  [data/minishop/*.json] as FS
-  database "MySQL\nprocédures + triggers" as DB
+
+package "Configuration & données" {
+  [app/Config/*\n(Database, DbConnexion, Env)] as CFG
+  interface "StoreInterface\n(+ StoredProcedure* / RowLocking*)" as SI
+  [app/Model/Data/Views] as VW
+  [JsonStore\n(+ Triggers, Schema, Journal, Filter)] as JS
+  [SqlStore\n(PDO préparé)] as SQL
+  [data/minishop/*.json\n+ var/journal/db.jsonl] as FS
+  database "MySQL / MariaDB\n9 tables · 3 vues · 1 fonction\n18 procédures · 16 triggers" as DB
 }
-B --> FC : HTTP
+
+B --> FC : HTTP(S)
 FC --> R
 R --> C
-C --> REP
 C --> V
-C --> SEC
+C --> REP
 C --> PS
+C --> SEC
+C --> CFG
+C --> VW
 REP --> SI
+REP --> VW
+PS --> SI
+SRV --> SI
+CFG --> SI
 SI <|.. JS
 SI <|.. SQL
 JS --> FS
 SQL --> DB
-note bottom of SI : le contrôleur ne connaît que l'interface :\nbasculer JSON ⇄ MySQL ne change ni les vues ni les tests
+
+note bottom of SI
+  Les contrôleurs et dépôts ne dépendent que de StoreInterface
+  et des interfaces de capacités : basculer SQL ⇄ JSON ne change
+  ni les vues ni la logique métier.
+end note
 @enduml
