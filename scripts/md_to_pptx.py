@@ -211,7 +211,13 @@ def construire(diapositives: list[dict[str, object]]) -> Presentation:
             cible = (RACINE / str(image)).resolve()
             if cible.is_file():
                 try:
-                    slide.shapes.add_picture(str(cible), Inches(7.65), Inches(2.1), width=Inches(4.9))
+                    pic = slide.shapes.add_picture(str(cible), Inches(7.65), Inches(2.1), width=Inches(4.9))
+                    max_h = Inches(3.75)
+                    if pic.height > max_h:
+                        ratio = max_h / pic.height
+                        pic.height = int(max_h)
+                        pic.width = int(pic.width * ratio)
+                        pic.left = int(Inches(7.65) + (Inches(4.9) - pic.width) / 2)
                 except Exception as erreur:
                     print(f"  ⚠ image ignorée ({cible.name}) : {erreur}", file=sys.stderr)
             else:
