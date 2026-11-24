@@ -286,7 +286,7 @@ footer.doc p { text-align: left; margin: 0; }
 <h1 id="securite-applicative">Sécurité applicative<a class="headerlink" href="#securite-applicative" title="Permanent link"></a></h1>
 <ul>
 <li><strong>Sessions et RBAC</strong> : données sensibles protégées par hachage <code>bcrypt</code>, jamais en clair, sessions client et admin isolées et cookie <code>MINISHOPSESS</code> durci</li>
-<li><strong>CSRF</strong> : jeton CSPRNG <code>random_bytes</code> vérifié en temps constant via <code>hash_equals</code> sur formulaires POST et API panier</li>
+<li><strong>CSRF</strong> : jeton vérifié en temps constant via <code>hash_equals</code> sur formulaires POST et API panier</li>
 <li><strong>XSS et en-têtes</strong> : échappement <code>e()</code>, CSP stricte sans script ni style inline, <code>X-Frame-Options: DENY</code> et <code>nosniff</code></li>
 <li><strong>SQL et IDOR</strong> : requêtes préparées PDO sans émulation, identifiants filtrés par <code>Schema</code> et contrôle d'appartenance <code>id_client</code></li>
 <li><strong>Audit statique</strong> : <code>11/11</code> contrôles statiques dans <code>tests/security/controles.sh</code>, rejoués le 17/11/2026</li>
@@ -299,7 +299,7 @@ footer.doc p { text-align: left; margin: 0; }
 <li><strong>60/60 étapes vertes</strong> : campagne globale sans warning PHP via <code>generer_pv.php</code>, incluant <code>43</code> suites PHP, <code>11</code> Python et <code>57/57</code> PHPUnit</li>
 <li><strong>29/29 SQL &amp; JSON</strong> : intégration SQL, HTTP SQL E2E <code>105/105</code>, concurrence HTTP <code>20</code> clients / <code>12</code> unités <code>8/8</code> et sécurité <code>11/11</code></li>
 <li><strong>338/338 E2E WASM</strong> : JSON isolé, traduction FR↔EN sur <code>48</code> états et responsive Playwright de <code>320 px</code> à <code>1536 px</code></li>
-<li><strong>6 ms HTTP p95</strong> : benchmark ENF-01 sur base <code>minishop_perf</code> de <code>236</code> produits / <code>1 004</code> commandes, SQL p95 ≤ <strong>20,6 ms</strong>, <code>0</code> erreur</li>
+<li><strong>6 ms HTTP p95</strong> : benchmark sur base <code>minishop_perf</code> de <code>236</code> produits / <code>1 004</code> commandes, SQL p95 ≤ <strong>20,6 ms</strong>, <code>0</code> erreur</li>
 </ul>
 <!-- layout: kpi-4 -->
 

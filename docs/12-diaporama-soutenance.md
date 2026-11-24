@@ -57,7 +57,7 @@
 
 # Sécurité applicative
 - **Sessions et RBAC** : données sensibles protégées par hachage `bcrypt`, jamais en clair, sessions client et admin isolées et cookie `MINISHOPSESS` durci
-- **CSRF** : jeton CSPRNG `random_bytes` vérifié en temps constant via `hash_equals` sur formulaires POST et API panier
+- **CSRF** : jeton vérifié en temps constant via `hash_equals` sur formulaires POST et API panier
 - **XSS et en-têtes** : échappement `e()`, CSP stricte sans script ni style inline, `X-Frame-Options: DENY` et `nosniff`
 - **SQL et IDOR** : requêtes préparées PDO sans émulation, identifiants filtrés par `Schema` et contrôle d'appartenance `id_client`
 - **Audit statique** : `11/11` contrôles statiques dans `tests/security/controles.sh`, rejoués le 17/11/2026
@@ -69,7 +69,7 @@
 - **60/60 étapes vertes** : campagne globale sans warning PHP via `generer_pv.php`, incluant `43` suites PHP, `11` Python et `57/57` PHPUnit
 - **29/29 SQL & JSON** : intégration SQL, HTTP SQL E2E `105/105`, concurrence HTTP `20` clients / `12` unités `8/8` et sécurité `11/11`
 - **338/338 E2E WASM** : JSON isolé, traduction FR↔EN sur `48` états et responsive Playwright de `320 px` à `1536 px`
-- **6 ms HTTP p95** : benchmark ENF-01 sur base `minishop_perf` de `236` produits / `1 004` commandes, SQL p95 ≤ **20,6 ms**, `0` erreur
+- **6 ms HTTP p95** : benchmark sur base `minishop_perf` de `236` produits / `1 004` commandes, SQL p95 ≤ **20,6 ms**, `0` erreur
 <!-- layout: kpi-4 -->
 
 ---
