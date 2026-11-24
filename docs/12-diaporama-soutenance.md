@@ -23,6 +23,7 @@
 - **Espace client** · CRUD utilisateur, panier et API interne, commande, historique et annulation en 2 étapes
 - **Back-office** · tableau de bord, gestion produits + administrative, équipe
 - **Transverse et CLI** : pages erreurs, journaux locaux, rétention RGPD et rotation des sauvegardes
+<!-- layout: grid-2x2 -->
 <!-- row-images: docs/img/logos/frontoffice.png docs/img/logos/espace_client.png docs/img/logos/backoffice.png docs/img/logos/cli_ops.png -->
 
 ---
@@ -41,6 +42,7 @@
 - **3 vues** `v_etat_stock`, `v_catalogue`, `v_commandes_client` et **1 fonction** `fn_param`
 - **18 procédures** appelées par les repositories : commandes, ajustement de stock, recherche, port et CA
 - **16 déclencheurs** : prix TTC, snapshot de ligne, stock, matrice de statuts, audit et blocage de suppression
+<!-- layout: image-left -->
 ![Modèle logique de données](docs/diagrams/mld_minishop.png)
 
 ---
@@ -60,14 +62,16 @@
 - **XSS et en-têtes** : échappement `e()`, CSP stricte sans script ni style inline, `X-Frame-Options: DENY` et `nosniff`
 - **SQL et IDOR** : requêtes préparées PDO sans émulation, identifiants filtrés par `Schema` et contrôle d'appartenance `id_client`
 - **Audit statique** : `11/11` contrôles statiques dans `tests/security/controles.sh`, rejoués le 17/11/2026
+<!-- layout: bento-sec -->
 
 ---
 
 # Tests automatisés et performances
-- **Campagne globale** : **60/60 étapes vertes** sans warning PHP via `generer_pv.php`, incluant `43` suites PHP, `11` Python et `57/57` PHPUnit
-- **SQL et concurrence** : intégration SQL **29/29**, HTTP SQL E2E **105/105**, concurrence HTTP `20` clients / `12` unités **8/8**, sécurité **11/11**
-- **JS et navigateur** : E2E WASM JSON isolé **338/338**, traduction FR↔EN sur `48` états, responsive Playwright de `320 px` à `1536 px`
-- **Performances ENF-01** sur base `minishop_perf` de `236` produits / `1 004` commandes : SQL p95 ≤ **20,6 ms**, HTTP p95 = **6 ms**, `0` erreur
+- **60/60 étapes vertes** : campagne globale sans warning PHP via `generer_pv.php`, incluant `43` suites PHP, `11` Python et `57/57` PHPUnit
+- **29/29 SQL & JSON** : intégration SQL, HTTP SQL E2E `105/105`, concurrence HTTP `20` clients / `12` unités `8/8` et sécurité `11/11`
+- **338/338 E2E WASM** : JSON isolé, traduction FR↔EN sur `48` états et responsive Playwright de `320 px` à `1536 px`
+- **6 ms HTTP p95** : benchmark ENF-01 sur base `minishop_perf` de `236` produits / `1 004` commandes, SQL p95 ≤ **20,6 ms**, `0` erreur
+<!-- layout: kpi-4 -->
 
 ---
 
@@ -76,6 +80,7 @@
 - **Accessibilité WCAG 2.1 AA** : lien d'évitement, `aria-current="page"`, `aria-live` sur le panier, alternatives d'image typées et cibles ≥ `44 px`
 - **Responsive vérifié** : de **320 px à 1536 px** via contrats CSS, responsive et Playwright, tableaux défilants documentés
 - **JS natif optionnel** : panier AJAX, traduction complète FR↔EN, fuseau horaire `localStorage` et géolocalisation sans tiers
+<!-- layout: pillars-4 -->
 
 ---
 
@@ -84,6 +89,7 @@
 - **Back-office gestionnaire** : changement de statut des commandes et ajustement tracé des stocks
 - **Back-office super-admin** : création produit, paramètres boutique et gestion de l'équipe
 - **Preuve SQL directe** : `v_etat_stock`, `stock_movement_history` et `order_status_history`
+<!-- layout: steps -->
 ![Séquence passer commande](docs/diagrams/seq_passer_commande.png)
 
 ---
@@ -93,6 +99,7 @@
 - **Incidents VM résolus dans le code** : collation `utf8mb4_unicode_ci`, stockage **UTC**, requêtes non bufferisées, garde `--load` et pool de sessions WASM
 - **Arbitrages assumés** : paiement et expédition simulés, contact journalisé localement sans SMTP et installation CLI dédiée
 - **Cible LineServ non testée** : prérequis bloquants documentés pour `RewriteBase /`, séparation hors `www/` et droits SQL/PHP
+<!-- layout: compare-2 -->
 
 ---
 
@@ -101,3 +108,4 @@
 - **Documentation vivante** : `113` fichiers PHP et `394` méthodes PHPDoc, `8` modules Python avec doctests, `6` ADR MADR, `4` C4 et fiche service
 - **Limites maintenues** : `200` scénarios manuels `NON JOUÉ`, aucune recette ni déploiement LineServ attesté
 - **Suites hors périmètre** : adaptateur de préfixe URL pour sous-dossier, paiement signé, envoi SMTP réel et MFA `SUPER`
+<!-- layout: pillars-3 -->
