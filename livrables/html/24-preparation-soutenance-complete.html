@@ -237,9 +237,8 @@ footer.doc p { text-align: left; margin: 0; }
 <li><a href="#diapositive-7-securite-applicative-530-645-binome-1">Diapositive 7 — Sécurité applicative (5:30 – 6:45 · Binôme 1)</a></li>
 <li><a href="#diapositive-8-tests-automatises-et-performances-645-745-binome-2">Diapositive 8 — Tests automatisés et performances (6:45 – 7:45 · Binôme 2)</a></li>
 <li><a href="#diapositive-9-design-system-et-accessibilite-745-830-binome-2">Diapositive 9 — Design system et accessibilité (7:45 – 8:30 · Binôme 2)</a></li>
-<li><a href="#diapositive-10-demonstration-en-direct-830-1230-binome-1-binome-2">Diapositive 10 — Démonstration en direct (8:30 – 12:30 · Binôme 1 &amp; Binôme 2)</a></li>
-<li><a href="#diapositive-11-difficultes-rencontrees-et-arbitrages-1230-1345-binome-1">Diapositive 11 — Difficultés rencontrées et arbitrages (12:30 – 13:45 · Binôme 1)</a></li>
-<li><a href="#diapositive-12-bilan-documentation-et-suites-1345-1500-binome-1">Diapositive 12 — Bilan, documentation et suites (13:45 – 15:00 · Binôme 1)</a></li>
+<li><a href="#diapositive-10-difficultes-rencontrees-et-arbitrages-830-945-binome-1">Diapositive 10 — Difficultés rencontrées et arbitrages (8:30 – 9:45 · Binôme 1)</a></li>
+<li><a href="#diapositive-11-bilan-documentation-et-suites-945-1100-binome-1">Diapositive 11 — Bilan, documentation et suites (9:45 – 11:00 · Binôme 1)</a></li>
 </ul>
 </li>
 <li><a href="#3-script-pas-a-pas-de-la-demonstration-en-direct-4-minutes">3. Script pas-à-pas de la démonstration en direct (4 minutes)</a><ul>
@@ -318,7 +317,7 @@ Ce document complète <a href="03-support-soutenance.html"><code>03-support-sout
 <hr />
 <h2 id="2-trame-chronometree-de-la-presentation-15-minutes">2. Trame chronométrée de la présentation (15 minutes)<a class="headerlink" href="#2-trame-chronometree-de-la-presentation-15-minutes" title="Permanent link"></a></h2>
 <blockquote>
-<p>L’équipe comporte deux étudiants (<strong>Johan Polsinelli</strong> et <strong>Chahd Gouiaa</strong>). Les rôles <code>Binôme 1</code> / <code>Binôme 2</code> ci-dessous répartissent la parole de façon équilibrée autour des <strong>12 diapositives actuelles</strong> (<code>livrables/minishop-soutenance.pptx</code>) et peuvent être inversés selon votre aisance.</p>
+<p>L’équipe comporte deux étudiants (<strong>Johan Polsinelli</strong> et <strong>Chahd Gouiaa</strong>). Les rôles <code>Binôme 1</code> / <code>Binôme 2</code> ci-dessous répartissent la parole de façon équilibrée autour des <strong>11 diapositives actuelles</strong> (<code>livrables/minishop-soutenance.pptx</code>), suivies de la démonstration / présentation du code au moment choisi avec le jury.</p>
 </blockquote>
 <table>
 <thead>
@@ -374,25 +373,25 @@ Ce document complète <a href="03-support-soutenance.html"><code>03-support-sout
 <td><strong>60/60</strong> étapes VM vertes (<code>generer_pv.php</code>), <strong>29/29</strong> SQL/JSON, <strong>105/105</strong> HTTP SQL E2E, <strong>8/8</strong> concurrence, <strong>338/338</strong> E2E WASM, <code>48</code> états FR↔EN, benchmark <code>minishop_perf</code> (<code>236</code> produits / <code>1 004</code> commandes : HTTP p95 = <code>6 ms</code>, SQL p95 ≤ <code>20,6 ms</code>, <code>0</code> erreur) ; design system <code>app.css</code>, WCAG 2.1 AA, responsive <code>320–1536 px</code>.</td>
 </tr>
 <tr>
-<td><strong>8:30 – 12:30</strong></td>
-<td>Binôme 1 &amp; 2</td>
-<td><strong>Démonstration en direct (4 min)</strong></td>
-<td><strong>Diapo 10</strong> (<code>seq_passer_commande.png</code>) + navigateurs + terminal MySQL</td>
-<td>4 étapes : <code>01</code> Front-office/client (<code>/catalogue</code> → panier AJAX → commande → annulation 2 étapes) ; <code>02</code> Back-office gestionnaire (statuts &amp; stocks) ; <code>03</code> Super-admin (produits, paramètres, équipe) ; <code>04</code> Preuve SQL directe.</td>
-</tr>
-<tr>
-<td><strong>12:30 – 15:00</strong></td>
+<td><strong>8:30 – 11:00</strong></td>
 <td>Binôme 1</td>
 <td>Difficultés, bilan &amp; suites</td>
-<td><strong>Diapos 11–12</strong> + <code>git shortlog -sne</code></td>
+<td><strong>Diapos 10–11</strong> + <code>git shortlog -sne</code></td>
 <td>Parité SQL/JSON et incidents VM résolus dans le code, arbitrages assumés et cible LineServ non testée ; WBS <code>82</code> tâches / <code>348 h</code> soldé, documentation vivante (<code>113</code> PHP / <code>394</code> PHPDoc, <code>8</code> Python, <code>6</code> ADR, <code>4</code> C4, fiche service), limites (<code>200</code> manuels <code>NON JOUÉ</code>) et suites hors périmètre.</td>
+</tr>
+<tr>
+<td><strong>11:00 – 15:00</strong></td>
+<td>Binôme 1 &amp; 2</td>
+<td><strong>Démonstration &amp; présentation du code (4 min)</strong></td>
+<td>Navigateurs + terminal MySQL + éditeur</td>
+<td>Parcours client (<code>/catalogue</code> → panier AJAX → commande → annulation 2 étapes), back-office gestionnaire &amp; super-admin, preuve SQL directe (<code>v_etat_stock</code>, <code>stock_movement_history</code>, <code>order_status_history</code>) et présentation ciblée du code.</td>
 </tr>
 </tbody>
 </table>
 <hr />
 <h2 id="21-script-oral-diapositive-par-diapositive-phrases-pretes-a-dire">2.1 Script oral diapositive par diapositive (phrases prêtes à dire)<a class="headerlink" href="#21-script-oral-diapositive-par-diapositive-phrases-pretes-a-dire" title="Permanent link"></a></h2>
 <blockquote>
-<p>Script calibré sur les <strong>12 diapositives</strong> actuelles (<code>livrables/minishop-soutenance.pptx</code>). Chaque bloc tient en <strong>40 à 60 secondes</strong>, en laissant <strong>4 minutes complètes</strong> pour la démonstration en direct sur la diapositive 10.</p>
+<p>Script calibré sur les <strong>11 diapositives</strong> actuelles (<code>livrables/minishop-soutenance.pptx</code>). La présentation des diapositives tient en <strong>~11 minutes</strong>, ce qui laisse <strong>4 minutes complètes</strong> ensuite (ou au moment demandé par le jury) pour la démonstration en direct et la présentation du code.</p>
 </blockquote>
 <h3 id="diapositive-1-minishop-soutenance-sae-302-000-030-binome-1">Diapositive 1 — <em>MiniShop — soutenance SAÉ 302</em> (0:00 – 0:30 · Binôme 1)<a class="headerlink" href="#diapositive-1-minishop-soutenance-sae-302-000-030-binome-1" title="Permanent link"></a></h3>
 <blockquote>
@@ -460,22 +459,14 @@ L’ensemble est vérifié automatiquement par nos <strong>11 contrôles statiqu
 - Un <strong>responsive vérifié</strong> de 320 px à 1536 px par tests Playwright.
 - Et un <strong>JS natif optionnel</strong> pour le panier AJAX, la traduction FR↔EN et la mémorisation locale du fuseau horaire. »</p>
 </blockquote>
-<h3 id="diapositive-10-demonstration-en-direct-830-1230-binome-1-binome-2">Diapositive 10 — <em>Démonstration en direct</em> (8:30 – 12:30 · Binôme 1 &amp; Binôme 2)<a class="headerlink" href="#diapositive-10-demonstration-en-direct-830-1230-binome-1-binome-2" title="Permanent link"></a></h3>
-<blockquote>
-<p>« Nous passons maintenant à la démonstration en direct sur notre environnement local isolé en quatre étapes :<br />
-<strong>01 — Parcours front-office et client</strong> : recherche dans <code>/catalogue</code>, ajout au panier AJAX, validation de commande et annulation en deux étapes.<br />
-<strong>02 — Back-office gestionnaire</strong> : suivi des commandes et ajustement tracé des stocks.<br />
-<strong>03 — Back-office super-admin</strong> : gestion du catalogue, des paramètres boutique et de l’équipe.<br />
-<strong>04 — Preuve SQL directe</strong> dans le terminal sur <code>v_etat_stock</code>, <code>stock_movement_history</code> et <code>order_status_history</code>. »</p>
-</blockquote>
-<h3 id="diapositive-11-difficultes-rencontrees-et-arbitrages-1230-1345-binome-1">Diapositive 11 — <em>Difficultés rencontrées et arbitrages</em> (12:30 – 13:45 · Binôme 1)<a class="headerlink" href="#diapositive-11-difficultes-rencontrees-et-arbitrages-1230-1345-binome-1" title="Permanent link"></a></h3>
+<h3 id="diapositive-10-difficultes-rencontrees-et-arbitrages-830-945-binome-1">Diapositive 10 — <em>Difficultés rencontrées et arbitrages</em> (8:30 – 9:45 · Binôme 1)<a class="headerlink" href="#diapositive-10-difficultes-rencontrees-et-arbitrages-830-945-binome-1" title="Permanent link"></a></h3>
 <blockquote>
 <p>« Ce tableau compare d’un côté les problèmes techniques résolus dans le code — la double implémentation SQL/JSON derrière <code>StoreInterface</code>, ainsi que les incidents détectés en VM comme la collation <code>utf8mb4_unicode_ci</code>, le stockage UTC ou les requêtes non bufferisées — et de l’autre nos arbitrages assumés : paiement et expédition simulés conformément au cahier des charges, contact journalisé localement sans SMTP, et documentation claire des prérequis bloquants de la cible <strong>LineServ</strong>, qui n’a pas été testée directement. »</p>
 </blockquote>
-<h3 id="diapositive-12-bilan-documentation-et-suites-1345-1500-binome-1">Diapositive 12 — <em>Bilan, documentation et suites</em> (13:45 – 15:00 · Binôme 1)<a class="headerlink" href="#diapositive-12-bilan-documentation-et-suites-1345-1500-binome-1" title="Permanent link"></a></h3>
+<h3 id="diapositive-11-bilan-documentation-et-suites-945-1100-binome-1">Diapositive 11 — <em>Bilan, documentation et suites</em> (9:45 – 11:00 · Binôme 1)<a class="headerlink" href="#diapositive-11-bilan-documentation-et-suites-945-1100-binome-1" title="Permanent link"></a></h3>
 <blockquote>
-<p>« Pour conclure, trois acquis majeurs : un <strong>produit validé en VM</strong> à 60/60 étapes avec un pilotage WBS de 82 tâches et 348 heures soldé ; une <strong>documentation vivante et contrôlée</strong> couvrant 113 fichiers PHP, 394 méthodes PHPDoc, 8 modules Python, 6 ADR, 4 niveaux C4 et une fiche de service ; et des <strong>limites assumées avec transparence</strong> — les 200 scénarios manuels restent <code>NON JOUÉ</code> et aucune recette LineServ n’est revendiquée.<br />
-Les suites envisagées hors périmètre concernent l’adaptateur de préfixe d’URL, un paiement signé avec SMTP réel et la double authentification <code>MFA</code> sur le rôle <code>SUPER</code>. Merci de votre attention, nous sommes à votre disposition pour vos questions. »</p>
+<p>« Pour conclure sur le support, trois acquis majeurs : un <strong>produit validé en VM</strong> à 60/60 étapes avec un pilotage WBS de 82 tâches et 348 heures soldé ; une <strong>documentation vivante et contrôlée</strong> couvrant 113 fichiers PHP, 394 méthodes PHPDoc, 8 modules Python, 6 ADR, 4 niveaux C4 et une fiche de service ; et des <strong>limites assumées avec transparence</strong> — les 200 scénarios manuels restent <code>NON JOUÉ</code> et aucune recette LineServ n’est revendiquée.<br />
+Les suites envisagées hors périmètre concernent l’adaptateur de préfixe d’URL, un paiement signé avec SMTP réel et la double authentification <code>MFA</code> sur le rôle <code>SUPER</code>. Nous pouvons maintenant passer à la démonstration de l’application et à la présentation du code. »</p>
 </blockquote>
 <hr />
 <h2 id="3-script-pas-a-pas-de-la-demonstration-en-direct-4-minutes">3. Script pas-à-pas de la démonstration en direct (4 minutes)<a class="headerlink" href="#3-script-pas-a-pas-de-la-demonstration-en-direct-4-minutes" title="Permanent link"></a></h2>

@@ -83,16 +83,6 @@
 
 ---
 
-# Démonstration en direct
-- **Front-office et client** : recherche `/catalogue` → fiche produit → panier AJAX → validation commande → annulation en 2 étapes
-- **Back-office gestionnaire** : changement de statut des commandes et ajustement tracé des stocks
-- **Back-office super-admin** : création produit, paramètres boutique et gestion de l'équipe
-- **Preuve SQL directe** : `v_etat_stock`, `stock_movement_history` et `order_status_history`
-<!-- layout: steps -->
-![Séquence passer commande](docs/diagrams/seq_passer_commande.png)
-
----
-
 # Difficultés rencontrées et arbitrages
 - **Parité SQL / JSON** : double implémentation unifiée derrière `StoreInterface` et vérifiée à `29/29`
 - **Incidents VM résolus dans le code** : collation `utf8mb4_unicode_ci`, stockage **UTC**, requêtes non bufferisées, garde `--load` et pool de sessions WASM

@@ -235,7 +235,7 @@ footer.doc p { text-align: left; margin: 0; }
 <p>Document n° 4 du rendu (barème iv : soutenance + questions, 10 points). Le plan ci-dessous est une <strong>trame chronométrée</strong>, non un compte rendu de répétition. Les repères A/B/C sont des rôles de planification, pas des personnes : aucune attribution nominative ni répartition de parole réelle n’est confirmée. Ils ne désignent pas non plus des permissions GitLab ou les valeurs R/A/C/I du RACI.</p>
 <h2 id="1-materiel-a-preparer">1. Matériel à préparer<a class="headerlink" href="#1-materiel-a-preparer" title="Permanent link"></a></h2>
 <ul>
-<li>support <code>docs/12-diaporama-soutenance.md</code> (et diaporama exporté <code>livrables/minishop-soutenance.pptx</code>, 12 diapositives) ; guide complet de préparation dans <a href="24-preparation-soutenance-complete.html"><code>24-preparation-soutenance-complete.md</code></a> ;</li>
+<li>support <code>docs/12-diaporama-soutenance.md</code> (et diaporama exporté <code>livrables/minishop-soutenance.pptx</code>, 11 diapositives) ; guide complet de préparation dans <a href="24-preparation-soutenance-complete.html"><code>24-preparation-soutenance-complete.md</code></a> ;</li>
 <li>configuration prête : <code>.env</code> (copié depuis <code>.env.example</code>), base créée par <code>./run.sh --db</code></li>
 <li>poste prêt : <code>./run.sh</code> lancé (équivalent : <code>php -S 127.0.0.1:8000 -t public scripts/dev-router.php</code>), base <strong>rejouée à froid</strong> (<code>./scripts/load_db.sh</code>),
   deux navigateurs ouverts (front-office en navigation privée côté client, back-office à côté) ;</li>
@@ -299,18 +299,18 @@ footer.doc p { text-align: left; margin: 0; }
 <td>§15, doc tests</td>
 </tr>
 <tr>
-<td style="text-align: right;">8-12</td>
-<td>C &amp; A</td>
-<td><strong>Démonstration en direct (4 min)</strong> en environnement local isolé sous SQL (<code>./run.sh --db</code> puis <code>./run.sh</code>, sans confondre avec LineServ) : front-office <code>/catalogue</code> → panier AJAX → commande → annulation 2 étapes ; back-office gestionnaire (statuts &amp; stocks) ; super-admin (produits, paramètres, équipe) ; preuve SQL directe (<code>v_etat_stock</code>, <code>stock_movement_history</code>, <code>order_status_history</code>)</td>
-<td>Diapo 10 (<code>seq_passer_commande.png</code>) + navigateurs + terminal MySQL</td>
-<td>§4.2–§4.5, §7.1</td>
-</tr>
-<tr>
-<td style="text-align: right;">12-15</td>
+<td style="text-align: right;">8-11</td>
 <td>A</td>
 <td><strong>Arbitrages, limites &amp; bilan</strong> : parité SQL/JSON et incidents VM résolus, arbitrages assumés, prérequis LineServ non testée, WBS <code>82</code> tâches / <code>348 h</code> soldé, documentation vivante (<code>113</code> PHP / <code>394</code> PHPDoc, <code>8</code> Python, <code>6</code> ADR, <code>4</code> C4, fiche service), suites hors périmètre ; contribution GitLab à vérifier sur le dépôt IUT</td>
-<td>Diapos 11–12 &amp; preuves dépôt</td>
+<td>Diapos 10–11 &amp; preuves dépôt</td>
 <td>§9, §14, §11.2</td>
+</tr>
+<tr>
+<td style="text-align: right;">11-15</td>
+<td>C &amp; A</td>
+<td><strong>Démonstration en direct &amp; revue du code (4 min)</strong> en environnement local isolé sous SQL (<code>./run.sh --db</code> puis <code>./run.sh</code>, sans confondre avec LineServ) : front-office <code>/catalogue</code> → panier AJAX → commande → annulation 2 étapes ; back-office gestionnaire &amp; super-admin ; preuve SQL directe (<code>v_etat_stock</code>, <code>stock_movement_history</code>, <code>order_status_history</code>) et ouverture du code</td>
+<td>Navigateurs + terminal MySQL + éditeur</td>
+<td>§4.2–§4.5, §7.1</td>
 </tr>
 </tbody>
 </table>

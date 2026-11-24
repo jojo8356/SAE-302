@@ -27,7 +27,7 @@
 
 ## 2. Trame chronométrée de la présentation (15 minutes)
 
-> L’équipe comporte deux étudiants (**Johan Polsinelli** et **Chahd Gouiaa**). Les rôles `Binôme 1` / `Binôme 2` ci-dessous répartissent la parole de façon équilibrée autour des **12 diapositives actuelles** (`livrables/minishop-soutenance.pptx`) et peuvent être inversés selon votre aisance.
+> L’équipe comporte deux étudiants (**Johan Polsinelli** et **Chahd Gouiaa**). Les rôles `Binôme 1` / `Binôme 2` ci-dessous répartissent la parole de façon équilibrée autour des **11 diapositives actuelles** (`livrables/minishop-soutenance.pptx`), suivies de la démonstration / présentation du code au moment choisi avec le jury.
 
 | Temps | Intervenant | Thème | Diapositive & support affiché | Messages clés à placer |
 |---|---|---|---|---|
@@ -37,14 +37,14 @@
 | **4:15 – 5:30** | Binôme 2 | Logique métier & parité SQL / JSON | **Diapo 6** (schéma cycle de vie + 3 piliers) | Cycle `BROUILLON → EN_PREPARATION → PAYEE → EXPEDIEE → LIVREE` + branche `ANNULEE` en 2 étapes avec retour stock avant expédition ; panier recalculé serveur ; verrous `SELECT … FOR UPDATE` ; parité SQL / JSON (`Schema`, `Triggers`, `Views`). |
 | **5:30 – 6:45** | Binôme 1 | Sécurité applicative | **Diapo 7** (grille 2×2 + bannière `11/11`) | Données sensibles protégées par hachage `bcrypt` (jamais en clair), sessions client/admin isolées et cookie `MINISHOPSESS` durci, CSRF `hash_equals`, XSS (`e()`, CSP, `X-Frame-Options: DENY`, `nosniff`), PDO sans émulation + `id_client` anti-IDOR ; `11/11` contrôles statiques validés. |
 | **6:45 – 8:30** | Binôme 2 | Tests, performances & accessibilité | **Diapos 8–9** (`docs/pv-recette.md`, `dernieres_mesures.txt`) | **60/60** étapes VM vertes (`generer_pv.php`), **29/29** SQL/JSON, **105/105** HTTP SQL E2E, **8/8** concurrence, **338/338** E2E WASM, `48` états FR↔EN, benchmark `minishop_perf` (`236` produits / `1 004` commandes : HTTP p95 = `6 ms`, SQL p95 ≤ `20,6 ms`, `0` erreur) ; design system `app.css`, WCAG 2.1 AA, responsive `320–1536 px`. |
-| **8:30 – 12:30** | Binôme 1 & 2 | **Démonstration en direct (4 min)** | **Diapo 10** (`seq_passer_commande.png`) + navigateurs + terminal MySQL | 4 étapes : `01` Front-office/client (`/catalogue` → panier AJAX → commande → annulation 2 étapes) ; `02` Back-office gestionnaire (statuts & stocks) ; `03` Super-admin (produits, paramètres, équipe) ; `04` Preuve SQL directe. |
-| **12:30 – 15:00** | Binôme 1 | Difficultés, bilan & suites | **Diapos 11–12** + `git shortlog -sne` | Parité SQL/JSON et incidents VM résolus dans le code, arbitrages assumés et cible LineServ non testée ; WBS `82` tâches / `348 h` soldé, documentation vivante (`113` PHP / `394` PHPDoc, `8` Python, `6` ADR, `4` C4, fiche service), limites (`200` manuels `NON JOUÉ`) et suites hors périmètre. |
+| **8:30 – 11:00** | Binôme 1 | Difficultés, bilan & suites | **Diapos 10–11** + `git shortlog -sne` | Parité SQL/JSON et incidents VM résolus dans le code, arbitrages assumés et cible LineServ non testée ; WBS `82` tâches / `348 h` soldé, documentation vivante (`113` PHP / `394` PHPDoc, `8` Python, `6` ADR, `4` C4, fiche service), limites (`200` manuels `NON JOUÉ`) et suites hors périmètre. |
+| **11:00 – 15:00** | Binôme 1 & 2 | **Démonstration & présentation du code (4 min)** | Navigateurs + terminal MySQL + éditeur | Parcours client (`/catalogue` → panier AJAX → commande → annulation 2 étapes), back-office gestionnaire & super-admin, preuve SQL directe (`v_etat_stock`, `stock_movement_history`, `order_status_history`) et présentation ciblée du code. |
 
 ---
 
 ## 2.1 Script oral diapositive par diapositive (phrases prêtes à dire)
 
-> Script calibré sur les **12 diapositives** actuelles (`livrables/minishop-soutenance.pptx`). Chaque bloc tient en **40 à 60 secondes**, en laissant **4 minutes complètes** pour la démonstration en direct sur la diapositive 10.
+> Script calibré sur les **11 diapositives** actuelles (`livrables/minishop-soutenance.pptx`). La présentation des diapositives tient en **~11 minutes**, ce qui laisse **4 minutes complètes** ensuite (ou au moment demandé par le jury) pour la démonstration en direct et la présentation du code.
 
 ### Diapositive 1 — *MiniShop — soutenance SAÉ 302* (0:00 – 0:30 · Binôme 1)
 > « Bonjour à toutes et à tous. Nous vous présentons **MiniShop**, notre application e-commerce réalisée dans le cadre de la SAÉ 302.  
@@ -103,19 +103,12 @@
 > - Un **responsive vérifié** de 320 px à 1536 px par tests Playwright.
 > - Et un **JS natif optionnel** pour le panier AJAX, la traduction FR↔EN et la mémorisation locale du fuseau horaire. »
 
-### Diapositive 10 — *Démonstration en direct* (8:30 – 12:30 · Binôme 1 & Binôme 2)
-> « Nous passons maintenant à la démonstration en direct sur notre environnement local isolé en quatre étapes :  
-> **01 — Parcours front-office et client** : recherche dans `/catalogue`, ajout au panier AJAX, validation de commande et annulation en deux étapes.  
-> **02 — Back-office gestionnaire** : suivi des commandes et ajustement tracé des stocks.  
-> **03 — Back-office super-admin** : gestion du catalogue, des paramètres boutique et de l’équipe.  
-> **04 — Preuve SQL directe** dans le terminal sur `v_etat_stock`, `stock_movement_history` et `order_status_history`. »
-
-### Diapositive 11 — *Difficultés rencontrées et arbitrages* (12:30 – 13:45 · Binôme 1)
+### Diapositive 10 — *Difficultés rencontrées et arbitrages* (8:30 – 9:45 · Binôme 1)
 > « Ce tableau compare d’un côté les problèmes techniques résolus dans le code — la double implémentation SQL/JSON derrière `StoreInterface`, ainsi que les incidents détectés en VM comme la collation `utf8mb4_unicode_ci`, le stockage UTC ou les requêtes non bufferisées — et de l’autre nos arbitrages assumés : paiement et expédition simulés conformément au cahier des charges, contact journalisé localement sans SMTP, et documentation claire des prérequis bloquants de la cible **LineServ**, qui n’a pas été testée directement. »
 
-### Diapositive 12 — *Bilan, documentation et suites* (13:45 – 15:00 · Binôme 1)
-> « Pour conclure, trois acquis majeurs : un **produit validé en VM** à 60/60 étapes avec un pilotage WBS de 82 tâches et 348 heures soldé ; une **documentation vivante et contrôlée** couvrant 113 fichiers PHP, 394 méthodes PHPDoc, 8 modules Python, 6 ADR, 4 niveaux C4 et une fiche de service ; et des **limites assumées avec transparence** — les 200 scénarios manuels restent `NON JOUÉ` et aucune recette LineServ n’est revendiquée.  
-> Les suites envisagées hors périmètre concernent l’adaptateur de préfixe d’URL, un paiement signé avec SMTP réel et la double authentification `MFA` sur le rôle `SUPER`. Merci de votre attention, nous sommes à votre disposition pour vos questions. »
+### Diapositive 11 — *Bilan, documentation et suites* (9:45 – 11:00 · Binôme 1)
+> « Pour conclure sur le support, trois acquis majeurs : un **produit validé en VM** à 60/60 étapes avec un pilotage WBS de 82 tâches et 348 heures soldé ; une **documentation vivante et contrôlée** couvrant 113 fichiers PHP, 394 méthodes PHPDoc, 8 modules Python, 6 ADR, 4 niveaux C4 et une fiche de service ; et des **limites assumées avec transparence** — les 200 scénarios manuels restent `NON JOUÉ` et aucune recette LineServ n’est revendiquée.  
+> Les suites envisagées hors périmètre concernent l’adaptateur de préfixe d’URL, un paiement signé avec SMTP réel et la double authentification `MFA` sur le rôle `SUPER`. Nous pouvons maintenant passer à la démonstration de l’application et à la présentation du code. »
 
 ---
 

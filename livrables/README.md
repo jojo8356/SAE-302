@@ -8,7 +8,7 @@ Les mêmes fichiers existent dans `dist/` (répertoire généré, hors Git, cf. 
 | HTML autonome | `livrables/html/` | lecture hors ligne, images intégrées en base64 |
 | PDF A4 | `livrables/pdf/` | dépôt et impression |
 | Word | `livrables/docx/` | relecture et annotations |
-| Diaporama | `livrables/minishop-soutenance.pptx` | soutenance (12 diapositives, 16:9) |
+| Diaporama | `livrables/minishop-soutenance.pptx` | soutenance (11 diapositives, 16:9) |
 
 ## Documents
 
