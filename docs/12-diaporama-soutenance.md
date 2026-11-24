@@ -11,9 +11,9 @@
 # Le besoin et les acteurs
 ## Remplacer le suivi manuel par une boutique fiable
 - Catalogue matériel informatique, panier persistant en session, commande suivie et back-office
-- **14 cas d'utilisation** (`UC-01` → `UC-14`), 3 acteurs : **Visiteur/Client**, **Gestionnaire**, **Super-admin**
-- Contraintes respectées : **PHP 8.2+ orienté objet**, **MySQL/MariaDB via PDO**, **sans framework ni CMS**
-- Traçabilité native : mouvements de stock (`stock_movement_history`) et statuts (`order_status_history`)
+- **14 cas d'utilisation**, **3 acteurs**
+- Contraintes respectées : **PHP 8.2+ POO**, **MySQL/MariaDB via PDO**
+- Traçabilité native
 ![Cas d'utilisation global](docs/diagrams/cas_utilisation_global.png)
 > Objectif : une application maintenable, testable et défendable devant le jury, pas une maquette jetable.
 
