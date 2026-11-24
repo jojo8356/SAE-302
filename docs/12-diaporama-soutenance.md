@@ -30,18 +30,19 @@
 
 # Architecture logicielle
 - **`public/` seul dossier exposé** : `index.php`, `.htaccess`, `css/`, `js/`, `img/`, `fonts/`
-- **`app/bootstrap.php`** : autoloader PSR-4 maison, fuseau **UTC**, zéro dépendance Composer en production
-- **`app/Router.php`** : `42` routes GET et `25` routes POST avec gardes `public`, `client`, `admin`, `super`
-- **Chaîne MVC** : `15` contrôleurs → `9` classes Repository → `Database::store()` vers `SqlStore` ou `JsonStore`
+- **`app/bootstrap.php`** : autoloader PSR-4 maison, fuseau, `0` dépendance Composer en prod
+- **`app/Router.php`** : `42` routes GET et `25` routes POST
+- **Chaîne MVC** : contrôleurs → classes Repository → `Database::store()` vers `SqlStore` ou `JsonStore`
+<!-- layout: mvc-flow -->
 ![Architecture MVC](docs/diagrams/architecture_mvc.png)
 
 ---
 
 # Modèle de données et SQL
-- **9 tables 3FN** : `administrateur`, `client`, `categorie`, `produit`, `stock_movement_history`, `parametre`, `commande`, `ligne_commande`, `order_status_history`
-- **3 vues** `v_etat_stock`, `v_catalogue`, `v_commandes_client` et **1 fonction** `fn_param`
-- **18 procédures** appelées par les repositories : commandes, ajustement de stock, recherche, port et CA
-- **16 déclencheurs** : prix TTC, snapshot de ligne, stock, matrice de statuts, audit et blocage de suppression
+- **Tables 3FN** : `administrateur`, `client`, `categorie`, `produit`, `stock_movement_history`, `parametre`, `commande`, `ligne_commande`, `order_status_history`
+- **Vues** `v_etat_stock`, `v_catalogue`, `v_commandes_client` et `1` fonction `fn_param`
+- **Procédures** appelées par les repositories : commandes, ajustement de stock, recherche, port et CA
+- **Déclencheurs** : prix TTC, snapshot de ligne, stock, matrice de statuts, audit et blocage de suppression
 <!-- layout: image-left -->
 ![Modèle logique de données](docs/diagrams/mld_minishop.png)
 

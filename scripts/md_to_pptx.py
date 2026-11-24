@@ -536,6 +536,91 @@ def _dessiner_compare_2(
             r1.font.name = "Calibri"
 
 
+def _dessiner_mvc_flow(slide: object, top_y: float = 4.92) -> None:
+    """Dessine un schéma horizontal propre de la chaîne MVC en bas de diapositive."""
+    zone_h = 1.72
+    _rect(slide, Inches(0.85), Inches(top_y), Inches(11.60), Inches(zone_h), FOND_ENCADRE, FILET)
+    _rect(slide, Inches(0.85), Inches(top_y), Inches(11.60), Inches(0.05), MARINE)
+
+    titre = slide.shapes.add_textbox(Inches(1.05), Inches(top_y + 0.08), Inches(6.50), Inches(0.26))
+    rt = titre.text_frame.paragraphs[0].add_run()
+    rt.text = "ARCHITECTURE MVC  ·  FLUX REQUÊTE → RÉPONSE"
+    rt.font.size = Pt(9.5)
+    rt.font.bold = True
+    rt.font.color.rgb = MARINE
+    rt.font.name = "Calibri"
+
+    etapes = [
+        ("Navigateur", "Requête HTTP", BLANC, MARINE, ENCRE),
+        ("Front Controller", "index.php · Router", MARINE, MARINE, BLANC),
+        ("Contrôleur", "app/Controller/*", ACCENT, ACCENT, BLANC),
+        ("Modèle", "Repository · Store", MARINE, MARINE, BLANC),
+        ("Stockage", "SqlStore / JsonStore", BLANC, MARINE, ENCRE),
+    ]
+    box_w = 1.98
+    box_h = 0.72
+    gap = 0.32
+    start_x = 1.05
+    box_y = top_y + 0.36
+
+    for idx, (nom, detail, bg, fg_title, fg_sub) in enumerate(etapes):
+        bx = start_x + idx * (box_w + gap)
+        border = FILET if bg == BLANC else None
+        card = _rect(slide, Inches(bx), Inches(box_y), Inches(box_w), Inches(box_h), bg, border)
+        if bg == BLANC:
+            _rect(slide, Inches(bx), Inches(box_y), Inches(box_w), Inches(0.05), MARINE)
+        tf = card.text_frame
+        tf.word_wrap = True
+        tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+        p0 = tf.paragraphs[0]
+        p0.alignment = PP_ALIGN.CENTER
+        p0.space_after = Pt(2)
+        r0 = p0.add_run()
+        r0.text = nom
+        r0.font.size = Pt(12.5)
+        r0.font.bold = True
+        r0.font.color.rgb = fg_title if bg == BLANC else BLANC
+        r0.font.name = "Georgia"
+        p1 = tf.add_paragraph()
+        p1.alignment = PP_ALIGN.CENTER
+        r1 = p1.add_run()
+        r1.text = detail
+        r1.font.size = Pt(10.5)
+        r1.font.color.rgb = fg_sub
+        r1.font.name = "Calibri"
+
+        if idx < len(etapes) - 1:
+            ax = bx + box_w + 0.02
+            arrow = slide.shapes.add_textbox(Inches(ax), Inches(box_y + 0.16), Inches(gap - 0.04), Inches(0.40))
+            pa = arrow.text_frame.paragraphs[0]
+            pa.alignment = PP_ALIGN.CENTER
+            ra = pa.add_run()
+            ra.text = "→"
+            ra.font.size = Pt(16)
+            ra.font.bold = True
+            ra.font.color.rgb = ACCENT
+            ra.font.name = "Calibri"
+
+    retour_y = box_y + box_h + 0.14
+    retour = _rect(slide, Inches(1.05), Inches(retour_y), Inches(11.20), Inches(0.36), BLANC, FILET)
+    _rect(slide, Inches(1.05), Inches(retour_y), Inches(0.08), Inches(0.36), ACCENT)
+    tfr = retour.text_frame
+    tfr.vertical_anchor = MSO_ANCHOR.MIDDLE
+    pr = tfr.paragraphs[0]
+    pr.alignment = PP_ALIGN.CENTER
+    r_v0 = pr.add_run()
+    r_v0.text = "Vue  ·  "
+    r_v0.font.size = Pt(11.5)
+    r_v0.font.bold = True
+    r_v0.font.color.rgb = MARINE
+    r_v0.font.name = "Georgia"
+    r_v1 = pr.add_run()
+    r_v1.text = "Contrôleur  →  app/View/ · gabarits HTML échappés  →  Réponse HTTP retournée au navigateur"
+    r_v1.font.size = Pt(11.5)
+    r_v1.font.color.rgb = ENCRE
+    r_v1.font.name = "Calibri"
+
+
 def construire(diapositives: list[dict[str, object]]) -> Presentation:
     """Construit une présentation PowerPoint 16:9 à partir des diapositives extraites.
 
@@ -610,6 +695,21 @@ def construire(diapositives: list[dict[str, object]]) -> Presentation:
             _dessiner_compare_2(slide, puces, top_corps)
         elif layout == "steps":
             _dessiner_steps(slide, puces, top_corps)
+        elif layout == "mvc-flow":
+            zone = slide.shapes.add_textbox(Inches(0.85), Inches(top_corps), Inches(6.50), Inches(2.95))
+            cadre = zone.text_frame
+            cadre.word_wrap = True
+            taille = 18.5 if len(puces) <= 4 else 16.5
+            for index, (niveau, texte) in enumerate(puces):
+                paragraphe = cadre.paragraphs[0] if index == 0 else cadre.add_paragraph()
+                paragraphe.level = min(int(niveau), 4)
+                paragraphe.space_after = Pt(10 if niveau == 0 else 5)
+                run = paragraphe.add_run()
+                run.text = ("▪  " if niveau == 0 else "–  ") + nettoyer(texte)
+                run.font.size = Pt(taille - 1.5 * int(niveau))
+                run.font.color.rgb = ENCRE if niveau == 0 else DOUX
+                run.font.name = "Calibri"
+            _dessiner_mvc_flow(slide, 4.92)
         elif layout == "image-left" and puces:
             zone = slide.shapes.add_textbox(Inches(6.05), Inches(top_corps), Inches(6.40), Inches(4.70))
             cadre = zone.text_frame
@@ -687,7 +787,7 @@ def construire(diapositives: list[dict[str, object]]) -> Presentation:
                     box_left = Inches(0.85 if layout == "image-left" else 7.65)
                     box_w = Inches(4.9)
                     pic = slide.shapes.add_picture(str(cible), box_left, top_img, width=box_w)
-                    max_h = Inches(4.10 if diapositive.get("message") else 4.75)
+                    max_h = Inches(3.00 if layout == "mvc-flow" else (4.10 if diapositive.get("message") else 4.75))
                     if pic.height > max_h:
                         ratio = max_h / pic.height
                         pic.height = int(max_h)
