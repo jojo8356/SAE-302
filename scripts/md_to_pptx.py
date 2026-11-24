@@ -202,13 +202,14 @@ def construire(diapositives: list[dict[str, object]]) -> Presentation:
         image = diapositive.get("image")
         row_images = [str(x) for x in (diapositive.get("row_images") or [])]
         largeur_texte = Inches(6.5) if image else Inches(11.6)
+        top_corps = 2.15 if sous_titre else 1.78
 
         if puces and row_images:
             taille = 20 if len(puces) <= 4 else 17.5
             n_lignes = len(puces)
-            haut_dispo = 4.30 if not diapositive.get("message") else 3.65
+            haut_dispo = (6.65 - top_corps) if not diapositive.get("message") else (5.85 - top_corps)
             pas = haut_dispo / max(n_lignes, 1)
-            y_depart = 2.25
+            y_depart = top_corps
             centre_x_img = Inches(10.80)
             for index, (niveau, texte) in enumerate(puces):
                 centre_y = Inches(y_depart + pas * (index + 0.5))
@@ -244,15 +245,15 @@ def construire(diapositives: list[dict[str, object]]) -> Presentation:
                             height=h_r,
                         )
         elif puces:
-            hauteur = Inches(4.4 if not diapositive.get("message") else 3.75)
-            zone = slide.shapes.add_textbox(Inches(0.85), Inches(2.15), largeur_texte, hauteur)
+            hauteur = Inches(4.65 if not diapositive.get("message") else 3.95)
+            zone = slide.shapes.add_textbox(Inches(0.85), Inches(top_corps), largeur_texte, hauteur)
             cadre = zone.text_frame
             cadre.word_wrap = True
             taille = 20 if len(puces) <= 4 else 17.5 if len(puces) <= 6 else 16
             for index, (niveau, texte) in enumerate(puces):
                 paragraphe = cadre.paragraphs[0] if index == 0 else cadre.add_paragraph()
                 paragraphe.level = min(int(niveau), 4)
-                paragraphe.space_after = Pt(8 if niveau == 0 else 4)
+                paragraphe.space_after = Pt(10 if niveau == 0 else 5)
                 run = paragraphe.add_run()
                 run.text = ("▪  " if niveau == 0 else "–  ") + nettoyer(texte)
                 run.font.size = Pt(taille - 1.5 * int(niveau))
@@ -264,8 +265,9 @@ def construire(diapositives: list[dict[str, object]]) -> Presentation:
             cible = (RACINE / str(image)).resolve()
             if cible.is_file():
                 try:
-                    pic = slide.shapes.add_picture(str(cible), Inches(7.65), Inches(2.1), width=Inches(4.9))
-                    max_h = Inches(3.75)
+                    top_img = Inches(2.1 if sous_titre else 1.75)
+                    pic = slide.shapes.add_picture(str(cible), Inches(7.65), top_img, width=Inches(4.9))
+                    max_h = Inches(4.10 if diapositive.get("message") else 4.75)
                     if pic.height > max_h:
                         ratio = max_h / pic.height
                         pic.height = int(max_h)

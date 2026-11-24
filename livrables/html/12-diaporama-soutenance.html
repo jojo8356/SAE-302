@@ -219,25 +219,7 @@ footer.doc p { text-align: left; margin: 0; }
   <div class="institution">Université Côte d’Azur · IUT de Nice — BUT Informatique (SAÉ 302)</div>
   <div class="meta">Projet MiniShop · Johan Polsinelli &amp; Chahd Gouiaa · Référence : <code>docs/12-diaporama-soutenance.md</code></div>
 </header>
-<nav class="toc" aria-label="Sommaire"><div class="toc">
-<ul>
-<li><a href="#application-e-commerce-php-82-sans-framework-12-diapositives-cible-15-min-questions">Application e-commerce PHP 8.2+ sans framework · 12 diapositives · cible 15 min + questions</a></li>
-<li><a href="#remplacer-le-suivi-manuel-par-une-boutique-fiable">Remplacer le suivi manuel par une boutique fiable</a></li>
-<li><a href="#67-routes-explicites-40-gabarits-de-vue">67 routes explicites · 40 gabarits de vue</a></li>
-<li><a href="#mvc-pragmatique-front-controller-routeur-a-liste-blanche">MVC pragmatique, front controller, routeur à liste blanche</a></li>
-<li><a href="#9-tables-3-vues-18-procedures-stockees-1-fonction-et-16-declencheurs">9 tables, 3 vues, 18 procédures stockées, 1 fonction et 16 déclencheurs</a></li>
-<li><a href="#regles-appliquees-cote-serveur">Règles appliquées côté serveur</a></li>
-<li><a href="#defense-en-profondeur-dans-appsecurity-et-publicindexphp">Défense en profondeur dans app/Security/ et public/index.php</a></li>
-<li><a href="#campagne-vm-debian-13-17112026-php-8427-mariadb-1186">Campagne VM Debian 13 · 17/11/2026 · PHP 8.4.27 · MariaDB 11.8.6</a></li>
-<li><a href="#css-natif-sans-framework-javascript-progressif">CSS natif sans framework · JavaScript progressif</a></li>
-<li><a href="#environnement-local-isole-httplocalhost8000">Environnement local isolé · http://localhost:8000/</a></li>
-<li><a href="#problemes-reels-resolus-dans-le-code-et-choix-assumes">Problèmes réels résolus dans le code et choix assumés</a></li>
-<li><a href="#etat-verifie-du-depot-et-perspectives-devolution">État vérifié du dépôt et perspectives d'évolution</a></li>
-</ul>
-</div>
-</nav>
 <h1 id="minishop-soutenance-sae-302">MiniShop — soutenance SAÉ 302<a class="headerlink" href="#minishop-soutenance-sae-302" title="Permanent link"></a></h1>
-<h2 id="application-e-commerce-php-82-sans-framework-12-diapositives-cible-15-min-questions">Application e-commerce PHP 8.2+ sans framework · 12 diapositives · cible 15 min + questions<a class="headerlink" href="#application-e-commerce-php-82-sans-framework-12-diapositives-cible-15-min-questions" title="Permanent link"></a></h2>
 <ul>
 <li><strong>Code source PHP strict</strong> sans dépendance runtime</li>
 <li><strong>Mode de données :</strong> <code>SqlStore</code> par défaut, <code>JsonStore</code> en option</li>
@@ -248,7 +230,6 @@ footer.doc p { text-align: left; margin: 0; }
 
 <hr />
 <h1 id="le-besoin-et-les-acteurs">Le besoin et les acteurs<a class="headerlink" href="#le-besoin-et-les-acteurs" title="Permanent link"></a></h1>
-<h2 id="remplacer-le-suivi-manuel-par-une-boutique-fiable">Remplacer le suivi manuel par une boutique fiable<a class="headerlink" href="#remplacer-le-suivi-manuel-par-une-boutique-fiable" title="Permanent link"></a></h2>
 <ul>
 <li>Catalogue matériel informatique, panier persistant en session, commande suivie et back-office</li>
 <li><strong>14 cas d'utilisation</strong>, <strong>3 acteurs</strong></li>
@@ -262,7 +243,6 @@ footer.doc p { text-align: left; margin: 0; }
 </blockquote>
 <hr />
 <h1 id="perimetre-livre-dans-le-code">Périmètre livré dans le code<a class="headerlink" href="#perimetre-livre-dans-le-code" title="Permanent link"></a></h1>
-<h2 id="67-routes-explicites-40-gabarits-de-vue">67 routes explicites · 40 gabarits de vue<a class="headerlink" href="#67-routes-explicites-40-gabarits-de-vue" title="Permanent link"></a></h2>
 <ul>
 <li><strong>Front-office · 35 routes publiques</strong> : accueil, catalogue filtrable et trié, fiche produit, recherche, catégories, préférences FR/EN et fuseau, contact et 7 pages légales</li>
 <li><strong>Espace client · 9 routes</strong> : inscription, profil, mot de passe, panier HTML et API interne, commande, historique et annulation en 2 étapes</li>
@@ -271,7 +251,6 @@ footer.doc p { text-align: left; margin: 0; }
 </ul>
 <hr />
 <h1 id="architecture-logicielle">Architecture logicielle<a class="headerlink" href="#architecture-logicielle" title="Permanent link"></a></h1>
-<h2 id="mvc-pragmatique-front-controller-routeur-a-liste-blanche">MVC pragmatique, front controller, routeur à liste blanche<a class="headerlink" href="#mvc-pragmatique-front-controller-routeur-a-liste-blanche" title="Permanent link"></a></h2>
 <ul>
 <li><strong><code>public/</code> seul dossier exposé</strong> : <code>index.php</code>, <code>.htaccess</code>, <code>css/</code>, <code>js/</code>, <code>img/</code>, <code>fonts/</code></li>
 <li><strong><code>app/bootstrap.php</code></strong> : autoloader PSR-4 maison, fuseau <strong>UTC</strong>, zéro dépendance Composer en production</li>
@@ -281,7 +260,6 @@ footer.doc p { text-align: left; margin: 0; }
 </ul>
 <hr />
 <h1 id="modele-de-donnees-et-sql">Modèle de données et SQL<a class="headerlink" href="#modele-de-donnees-et-sql" title="Permanent link"></a></h1>
-<h2 id="9-tables-3-vues-18-procedures-stockees-1-fonction-et-16-declencheurs">9 tables, 3 vues, 18 procédures stockées, 1 fonction et 16 déclencheurs<a class="headerlink" href="#9-tables-3-vues-18-procedures-stockees-1-fonction-et-16-declencheurs" title="Permanent link"></a></h2>
 <ul>
 <li><strong>9 tables 3FN</strong> : <code>administrateur</code>, <code>client</code>, <code>categorie</code>, <code>produit</code>, <code>stock_movement_history</code>, <code>parametre</code>, <code>commande</code>, <code>ligne_commande</code>, <code>order_status_history</code></li>
 <li><strong>3 vues</strong> <code>v_etat_stock</code>, <code>v_catalogue</code>, <code>v_commandes_client</code> et <strong>1 fonction</strong> <code>fn_param</code></li>
@@ -291,7 +269,6 @@ footer.doc p { text-align: left; margin: 0; }
 </ul>
 <hr />
 <h1 id="logique-metier-et-parite-sql-json">Logique métier et parité SQL / JSON<a class="headerlink" href="#logique-metier-et-parite-sql-json" title="Permanent link"></a></h1>
-<h2 id="regles-appliquees-cote-serveur">Règles appliquées côté serveur<a class="headerlink" href="#regles-appliquees-cote-serveur" title="Permanent link"></a></h2>
 <ul>
 <li><strong>Panier en session</strong> : seuls <code>id_produit</code> et <code>quantite</code> sont stockés ; prix, TVA, port et stock sont recalculés côté serveur</li>
 <li><strong>Anti-survente</strong> : verrous <code>SELECT … FOR UPDATE</code> dans les procédures de création et d'ajout de ligne</li>
@@ -301,7 +278,6 @@ footer.doc p { text-align: left; margin: 0; }
 </ul>
 <hr />
 <h1 id="securite-applicative">Sécurité applicative<a class="headerlink" href="#securite-applicative" title="Permanent link"></a></h1>
-<h2 id="defense-en-profondeur-dans-appsecurity-et-publicindexphp">Défense en profondeur dans app/Security/ et public/index.php<a class="headerlink" href="#defense-en-profondeur-dans-appsecurity-et-publicindexphp" title="Permanent link"></a></h2>
 <ul>
 <li><strong>Sessions et RBAC</strong> : <code>bcrypt</code> via <code>password_hash</code>, espaces <code>client_id</code> / <code>admin_id</code> isolés, régénération d'ID et cookie <code>MINISHOPSESS</code> durci</li>
 <li><strong>CSRF</strong> : jeton CSPRNG <code>random_bytes</code> vérifié en temps constant via <code>hash_equals</code> sur formulaires POST et API panier</li>
@@ -311,7 +287,6 @@ footer.doc p { text-align: left; margin: 0; }
 </ul>
 <hr />
 <h1 id="tests-automatises-et-performances">Tests automatisés et performances<a class="headerlink" href="#tests-automatises-et-performances" title="Permanent link"></a></h1>
-<h2 id="campagne-vm-debian-13-17112026-php-8427-mariadb-1186">Campagne VM Debian 13 · 17/11/2026 · PHP 8.4.27 · MariaDB 11.8.6<a class="headerlink" href="#campagne-vm-debian-13-17112026-php-8427-mariadb-1186" title="Permanent link"></a></h2>
 <ul>
 <li><strong>Campagne globale</strong> : <strong>60/60 étapes vertes</strong> sans warning PHP via <code>generer_pv.php</code>, incluant <code>43</code> suites PHP, <code>11</code> Python et <code>57/57</code> PHPUnit</li>
 <li><strong>SQL et concurrence</strong> : intégration SQL <strong>29/29</strong>, HTTP SQL E2E <strong>105/105</strong>, concurrence HTTP <code>20</code> clients / <code>12</code> unités <strong>8/8</strong>, sécurité <strong>11/11</strong></li>
@@ -320,7 +295,6 @@ footer.doc p { text-align: left; margin: 0; }
 </ul>
 <hr />
 <h1 id="design-system-et-accessibilite">Design system et accessibilité<a class="headerlink" href="#design-system-et-accessibilite" title="Permanent link"></a></h1>
-<h2 id="css-natif-sans-framework-javascript-progressif">CSS natif sans framework · JavaScript progressif<a class="headerlink" href="#css-natif-sans-framework-javascript-progressif" title="Permanent link"></a></h2>
 <ul>
 <li><strong>Design system</strong> : jetons CSS dans <code>app.css</code>, palette contrastée AA/AAA, échelle fluide en <code>rem</code>, grille <code>8 px</code> et feuille d'impression</li>
 <li><strong>Accessibilité WCAG 2.1 AA</strong> : lien d'évitement, <code>aria-current="page"</code>, <code>aria-live</code> sur le panier, alternatives d'image typées et cibles ≥ <code>44 px</code></li>
@@ -329,7 +303,6 @@ footer.doc p { text-align: left; margin: 0; }
 </ul>
 <hr />
 <h1 id="demonstration-en-direct">Démonstration en direct<a class="headerlink" href="#demonstration-en-direct" title="Permanent link"></a></h1>
-<h2 id="environnement-local-isole-httplocalhost8000">Environnement local isolé · http://localhost:8000/<a class="headerlink" href="#environnement-local-isole-httplocalhost8000" title="Permanent link"></a></h2>
 <ul>
 <li><strong>Front-office et client</strong> : recherche <code>/catalogue</code> → fiche produit → panier AJAX → validation commande → annulation en 2 étapes</li>
 <li><strong>Back-office gestionnaire</strong> : changement de statut des commandes et ajustement tracé des stocks</li>
@@ -339,7 +312,6 @@ footer.doc p { text-align: left; margin: 0; }
 </ul>
 <hr />
 <h1 id="difficultes-rencontrees-et-arbitrages">Difficultés rencontrées et arbitrages<a class="headerlink" href="#difficultes-rencontrees-et-arbitrages" title="Permanent link"></a></h1>
-<h2 id="problemes-reels-resolus-dans-le-code-et-choix-assumes">Problèmes réels résolus dans le code et choix assumés<a class="headerlink" href="#problemes-reels-resolus-dans-le-code-et-choix-assumes" title="Permanent link"></a></h2>
 <ul>
 <li><strong>Parité SQL / JSON</strong> : double implémentation unifiée derrière <code>StoreInterface</code> et vérifiée à <code>29/29</code></li>
 <li><strong>Incidents VM résolus dans le code</strong> : collation <code>utf8mb4_unicode_ci</code>, stockage <strong>UTC</strong>, requêtes non bufferisées, garde <code>--load</code> et pool de sessions WASM</li>
@@ -348,7 +320,6 @@ footer.doc p { text-align: left; margin: 0; }
 </ul>
 <hr />
 <h1 id="bilan-documentation-et-suites">Bilan, documentation et suites<a class="headerlink" href="#bilan-documentation-et-suites" title="Permanent link"></a></h1>
-<h2 id="etat-verifie-du-depot-et-perspectives-devolution">État vérifié du dépôt et perspectives d'évolution<a class="headerlink" href="#etat-verifie-du-depot-et-perspectives-devolution" title="Permanent link"></a></h2>
 <ul>
 <li><strong>Produit validé en VM</strong> : <code>60/60</code> étapes automatisées, HTTP p95 = <strong>6 ms</strong>, pilotage WBS de <code>82</code> tâches / <code>348 h</code> soldé sans tâche ouverte</li>
 <li><strong>Documentation vivante</strong> : <code>113</code> fichiers PHP et <code>394</code> méthodes PHPDoc, <code>8</code> modules Python avec doctests, <code>6</code> ADR MADR, <code>4</code> C4 et fiche service</li>
