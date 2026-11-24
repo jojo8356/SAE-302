@@ -48,10 +48,10 @@
 
 # Logique métier et parité SQL / JSON
 - **Panier en session** : seuls `id_produit` et `quantite` sont stockés ; prix, TVA, port et stock sont recalculés côté serveur
-- **Anti-survente** : verrous `SELECT … FOR UPDATE` dans les procédures de création et d'ajout de ligne
-- **Cycle de commande** : `BROUILLON` → `EN_PREPARATION` → `PAYEE` → `EXPEDIEE` ; annulation en 2 étapes avec retour stock avant expédition uniquement
-- **Parité JSON** : `Schema`, `Triggers` et `Views` valident `T-01…T-29` à `29/29` en SQL comme en JSON
-![États d'une commande](docs/diagrams/etats_commande.png)
+- **Anti-survente** : verrous `SELECT … FOR UPDATE` lors de la validation et de l'ajout de ligne
+- **Cycle de commande** : `BROUILLON` → `EN_PREPARATION` → `PAYEE` → `EXPEDIEE` → `LIVREE` ; annulation en 2 étapes avec retour stock avant expédition uniquement
+- **Parité JSON** : `Schema`, `Triggers` et `Views` valident les tests en SQL comme en JSON
+<!-- layout: biz-flow -->
 
 ---
 

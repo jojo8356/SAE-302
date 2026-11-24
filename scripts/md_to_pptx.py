@@ -580,6 +580,146 @@ def _carte_table_sql(
         rc.font.name = "Calibri"
 
 
+def _dessiner_biz_flow(slide: object, top_y: float = 1.75) -> None:
+    """Dessine le cycle simplifié des statuts de commande et les 3 piliers métier + parité."""
+    # Zone 1 : Machine à états simplifiée (cycle nominal + branche d'annulation)
+    z1_h = 2.22
+    _rect(slide, Inches(0.85), Inches(top_y), Inches(11.60), Inches(z1_h), FOND_ENCADRE, FILET)
+    _rect(slide, Inches(0.85), Inches(top_y), Inches(11.60), Inches(0.06), MARINE)
+
+    lbl = slide.shapes.add_textbox(Inches(1.05), Inches(top_y + 0.12), Inches(8.00), Inches(0.28))
+    rl = lbl.text_frame.paragraphs[0].add_run()
+    rl.text = "CYCLE DE VIE D'UNE COMMANDE  ·  MATRICE CONTRÔLÉE CÔTÉ SERVEUR"
+    rl.font.size = Pt(10)
+    rl.font.bold = True
+    rl.font.color.rgb = MARINE
+    rl.font.name = "Calibri"
+
+    etats = [
+        ("BROUILLON", "Panier validé", BLANC, MARINE, DOUX),
+        ("EN_PREPARATION", "Commande confirmée", MARINE, BLANC, BLANC),
+        ("PAYEE", "Règlement validé", ACCENT, BLANC, BLANC),
+        ("EXPEDIEE", "Colis remis", MARINE, BLANC, BLANC),
+        ("LIVREE", "État final", BLANC, MARINE, DOUX),
+    ]
+    ew, eh, gap_e = 1.94, 0.72, 0.375
+    sx, ey = 1.05, top_y + 0.46
+    for idx, (nom_e, sub_e, bg, fg0, fg1) in enumerate(etats):
+        bx = sx + idx * (ew + gap_e)
+        card = _rect(slide, Inches(bx), Inches(ey), Inches(ew), Inches(eh), bg, FILET if bg == BLANC else None)
+        if bg == BLANC:
+            _rect(slide, Inches(bx), Inches(ey), Inches(ew), Inches(0.05), MARINE)
+        tf = card.text_frame
+        tf.word_wrap = True
+        tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+        p0 = tf.paragraphs[0]
+        p0.alignment = PP_ALIGN.CENTER
+        p0.space_after = Pt(2)
+        r0 = p0.add_run()
+        r0.text = nom_e
+        r0.font.size = Pt(11.5)
+        r0.font.bold = True
+        r0.font.color.rgb = fg0
+        r0.font.name = "Consolas"
+        p1 = tf.add_paragraph()
+        p1.alignment = PP_ALIGN.CENTER
+        r1 = p1.add_run()
+        r1.text = sub_e
+        r1.font.size = Pt(10.5)
+        r1.font.color.rgb = fg1
+        r1.font.name = "Calibri"
+
+        if idx < len(etats) - 1:
+            arr = slide.shapes.add_textbox(Inches(bx + ew), Inches(ey + 0.16), Inches(gap_e), Inches(0.40))
+            pa = arr.text_frame.paragraphs[0]
+            pa.alignment = PP_ALIGN.CENTER
+            ra = pa.add_run()
+            ra.text = "→"
+            ra.font.size = Pt(16)
+            ra.font.bold = True
+            ra.font.color.rgb = ACCENT
+            ra.font.name = "Calibri"
+
+    # Branche d'annulation
+    ay, ah = ey + eh + 0.18, 0.70
+    _rect(slide, Inches(1.05), Inches(ay), Inches(11.20), Inches(ah), BLANC, FILET)
+    _rect(slide, Inches(1.05), Inches(ay), Inches(0.10), Inches(ah), ACCENT)
+    badge = _rect(slide, Inches(1.28), Inches(ay + 0.14), Inches(1.55), Inches(0.42), MARINE)
+    tfb = badge.text_frame
+    tfb.vertical_anchor = MSO_ANCHOR.MIDDLE
+    pb = tfb.paragraphs[0]
+    pb.alignment = PP_ALIGN.CENTER
+    rb = pb.add_run()
+    rb.text = "ANNULEE"
+    rb.font.size = Pt(11.5)
+    rb.font.bold = True
+    rb.font.color.rgb = BLANC
+    rb.font.name = "Consolas"
+
+    za = slide.shapes.add_textbox(Inches(3.00), Inches(ay + 0.08), Inches(9.10), Inches(ah - 0.16))
+    tfa = za.text_frame
+    tfa.word_wrap = True
+    tfa.vertical_anchor = MSO_ANCHOR.MIDDLE
+    pa0 = tfa.paragraphs[0]
+    ra0 = pa0.add_run()
+    ra0.text = "Annulation en 2 étapes :  "
+    ra0.font.size = Pt(13)
+    ra0.font.bold = True
+    ra0.font.color.rgb = MARINE
+    ra0.font.name = "Georgia"
+    ra1 = pa0.add_run()
+    ra1.text = "retour automatique du stock avant expédition  ·  historique et lignes conservés à montant nul"
+    ra1.font.size = Pt(12.5)
+    ra1.font.color.rgb = ENCRE
+    ra1.font.name = "Calibri"
+
+    # Zone 2 : 3 piliers simplifiés (Panier, Anti-survente, Parité SQL/JSON)
+    y2 = top_y + z1_h + 0.24
+    h2 = 6.62 - y2
+    gap2 = 0.30
+    w2 = (11.60 - gap2 * 2) / 3
+    piliers = [
+        (
+            "Panier en session",
+            "Seuls id_produit et quantite restent en session.\n\nPrix, TVA, port et stock sont recalculés côté serveur à chaque étape.",
+            MARINE,
+        ),
+        (
+            "Anti-survente garanti",
+            "Verrous transactionnels SELECT … FOR UPDATE à la validation.\n\nAucun dépassement de stock possible lors d'achats simultanés.",
+            ACCENT,
+        ),
+        (
+            "Parité SQL / JSON",
+            "Même contrat derrière StoreInterface : Schema, Triggers et Views.\n\nLes mêmes règles métier et les mêmes tests passent en SQL comme en JSON.",
+            MARINE,
+        ),
+    ]
+    for idx, (titre_p, corps_p, bar_c) in enumerate(piliers):
+        px = 0.85 + idx * (w2 + gap2)
+        _rect(slide, Inches(px), Inches(y2), Inches(w2), Inches(h2), FOND_ENCADRE, FILET)
+        _rect(slide, Inches(px), Inches(y2), Inches(w2), Inches(0.07), bar_c)
+        zp = slide.shapes.add_textbox(Inches(px + 0.22), Inches(y2 + 0.18), Inches(w2 - 0.44), Inches(h2 - 0.32))
+        tfp = zp.text_frame
+        tfp.word_wrap = True
+        p0 = tfp.paragraphs[0]
+        p0.space_after = Pt(10)
+        r0 = p0.add_run()
+        r0.text = titre_p
+        r0.font.size = Pt(17)
+        r0.font.bold = True
+        r0.font.color.rgb = MARINE
+        r0.font.name = "Georgia"
+        for ligne in corps_p.split("\n\n"):
+            p1 = tfp.add_paragraph()
+            p1.space_after = Pt(6)
+            r1 = p1.add_run()
+            r1.text = ligne
+            r1.font.size = Pt(14)
+            r1.font.color.rgb = ENCRE
+            r1.font.name = "Calibri"
+
+
 def _dessiner_sql_erd(slide: object, top_y: float = 1.75) -> None:
     """Dessine le schéma relationnel complet des 9 tables 3FN et de la couche SQL active."""
     # Niveau 1 : chaîne cœur e-commerce (5 tables, cardinalités 1:N explicites)
@@ -1131,6 +1271,8 @@ def construire(diapositives: list[dict[str, object]]) -> Presentation:
             _dessiner_tree_arch(slide, 1.75 if not sous_titre else 2.15)
         elif layout == "sql-erd":
             _dessiner_sql_erd(slide, 1.75 if not sous_titre else 2.15)
+        elif layout == "biz-flow":
+            _dessiner_biz_flow(slide, 1.75 if not sous_titre else 2.15)
         elif layout == "mvc-flow":
             zone = slide.shapes.add_textbox(Inches(0.85), Inches(top_corps), Inches(6.50), Inches(2.95))
             cadre = zone.text_frame
