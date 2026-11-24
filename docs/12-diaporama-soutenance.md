@@ -56,7 +56,7 @@
 ---
 
 # Sécurité applicative
-- **Sessions et RBAC** : `bcrypt` via `password_hash`, espaces `client_id` / `admin_id` isolés, régénération d'ID et cookie `MINISHOPSESS` durci
+- **Sessions et RBAC** : données sensibles protégées par hachage `bcrypt`, jamais en clair, sessions client et admin isolées et cookie `MINISHOPSESS` durci
 - **CSRF** : jeton CSPRNG `random_bytes` vérifié en temps constant via `hash_equals` sur formulaires POST et API panier
 - **XSS et en-têtes** : échappement `e()`, CSP stricte sans script ni style inline, `X-Frame-Options: DENY` et `nosniff`
 - **SQL et IDOR** : requêtes préparées PDO sans émulation, identifiants filtrés par `Schema` et contrôle d'appartenance `id_client`

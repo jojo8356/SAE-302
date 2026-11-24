@@ -285,7 +285,7 @@ footer.doc p { text-align: left; margin: 0; }
 <hr />
 <h1 id="securite-applicative">Sécurité applicative<a class="headerlink" href="#securite-applicative" title="Permanent link"></a></h1>
 <ul>
-<li><strong>Sessions et RBAC</strong> : <code>bcrypt</code> via <code>password_hash</code>, espaces <code>client_id</code> / <code>admin_id</code> isolés, régénération d'ID et cookie <code>MINISHOPSESS</code> durci</li>
+<li><strong>Sessions et RBAC</strong> : données sensibles protégées par hachage <code>bcrypt</code>, jamais en clair, sessions client et admin isolées et cookie <code>MINISHOPSESS</code> durci</li>
 <li><strong>CSRF</strong> : jeton CSPRNG <code>random_bytes</code> vérifié en temps constant via <code>hash_equals</code> sur formulaires POST et API panier</li>
 <li><strong>XSS et en-têtes</strong> : échappement <code>e()</code>, CSP stricte sans script ni style inline, <code>X-Frame-Options: DENY</code> et <code>nosniff</code></li>
 <li><strong>SQL et IDOR</strong> : requêtes préparées PDO sans émulation, identifiants filtrés par <code>Schema</code> et contrôle d'appartenance <code>id_client</code></li>
