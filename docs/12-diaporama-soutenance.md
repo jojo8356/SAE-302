@@ -1,9 +1,9 @@
 # MiniShop — soutenance SAÉ 302
 ## Application e-commerce PHP 8.2+ sans framework · 12 diapositives · cible 15 min + questions
-- **Code source PHP 8.2+ strict** sans dépendance runtime : `112` fichiers `app/` et `3` sous `public/`
-- **Double persistance** derrière `StoreInterface` : **`SqlStore`** par défaut via PDO / MySQL / MariaDB, **`JsonStore`** en option
-- **Jeu de démonstration** : `4` catégories, `36` produits, `3` clients, `1` admin `SUPER`, `4` commandes SQL et `4` paramètres
-- **Gouvernance documentaire** : cahier des charges, `6` ADR MADR, `4` niveaux C4, exploitation et `catalog-info.yaml`
+- **Code source PHP strict** sans dépendance runtime
+- **Mode de données :** `SqlStore` par défaut, `JsonStore` en option
+- **Jeu de démonstration Complet**
+- **Gouvernance documentaire**
 > Ce support reflète le code présent dans le dépôt ; il ne vaut ni procès-verbal de validation pédagogique ni attestation LineServ.
 
 ---
