@@ -20,7 +20,7 @@
 
 # Périmètre livré dans le code
 - **Front-office** · accueil, catalogue intelligent, fiche produit, catégories, préférences langue et fuseau, contact et pages légales
-- **Espace client · 9 routes** : inscription, profil, mot de passe, panier HTML et API interne, commande, historique et annulation en 2 étapes
+- **Espace client** · CRUD utilisateur, panier et API interne, commande, historique et annulation en 2 étapes
 - **Back-office · 20 routes admin et 3 super** : tableau de bord, produits, catégories, stocks, commandes, paramètres et équipe
 - **Transverse et CLI** : pages 403/404/500, journaux locaux, rétention RGPD 24 mois et rotation des sauvegardes
 
