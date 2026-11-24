@@ -42,8 +42,7 @@
 - **Vues** `v_etat_stock`, `v_catalogue`, `v_commandes_client` et `1` fonction `fn_param`
 - **Procédures** appelées par les repositories : commandes, ajustement de stock, recherche, port et CA
 - **Déclencheurs** : prix TTC, snapshot de ligne, stock, matrice de statuts, audit et blocage de suppression
-<!-- layout: image-left -->
-![Modèle logique de données](docs/diagrams/mld_minishop.png)
+<!-- layout: sql-erd -->
 
 ---
 

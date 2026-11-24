@@ -536,6 +536,195 @@ def _dessiner_compare_2(
             r1.font.name = "Calibri"
 
 
+def _carte_table_sql(
+    slide: object,
+    x: float,
+    y: float,
+    w: float,
+    h: float,
+    nom: str,
+    lignes: list[tuple[str, str]],
+    header_color: RGBColor,
+) -> None:
+    """Dessine une boîte entité SQL propre avec en-tête et colonnes clés (PK/FK/UK)."""
+    _rect(slide, Inches(x), Inches(y), Inches(w), Inches(h), BLANC, FILET)
+    hdr = _rect(slide, Inches(x), Inches(y), Inches(w), Inches(0.34), header_color)
+    tfh = hdr.text_frame
+    tfh.vertical_anchor = MSO_ANCHOR.MIDDLE
+    ph = tfh.paragraphs[0]
+    ph.alignment = PP_ALIGN.CENTER
+    rh = ph.add_run()
+    rh.text = nom
+    rh.font.size = Pt(11.5)
+    rh.font.bold = True
+    rh.font.color.rgb = BLANC
+    rh.font.name = "Consolas"
+
+    zb = slide.shapes.add_textbox(Inches(x + 0.10), Inches(y + 0.38), Inches(w - 0.20), Inches(h - 0.42))
+    tfb = zb.text_frame
+    tfb.word_wrap = True
+    for idx, (badge, col) in enumerate(lignes):
+        p = tfb.paragraphs[0] if idx == 0 else tfb.add_paragraph()
+        p.space_after = Pt(2)
+        if badge:
+            rb = p.add_run()
+            rb.text = f"{badge} "
+            rb.font.size = Pt(9.5)
+            rb.font.bold = True
+            rb.font.color.rgb = ACCENT if badge == "FK" else MARINE
+            rb.font.name = "Consolas"
+        rc = p.add_run()
+        rc.text = col
+        rc.font.size = Pt(9.8)
+        rc.font.color.rgb = ENCRE
+        rc.font.name = "Calibri"
+
+
+def _dessiner_sql_erd(slide: object, top_y: float = 1.75) -> None:
+    """Dessine le schéma relationnel complet des 9 tables 3FN et de la couche SQL active."""
+    # Niveau 1 : chaîne cœur e-commerce (5 tables, cardinalités 1:N explicites)
+    y1, h1 = top_y, 1.74
+    w1, gap1 = 2.02, 0.375
+    coeur: list[tuple[str, list[tuple[str, str]], RGBColor, str]] = [
+        (
+            "categorie",
+            [("PK", "id_categorie"), ("UK", "nom · slug"), ("", "description")],
+            MARINE,
+            "1 : N\n→",
+        ),
+        (
+            "produit",
+            [("PK", "id_produit"), ("FK", "id_categorie"), ("", "prix_ht · tva · ttc"), ("", "stock · seuil_alerte")],
+            MARINE,
+            "1 : N\n→",
+        ),
+        (
+            "ligne_commande",
+            [("PK", "id_ligne"), ("FK", "id_commande"), ("FK", "id_produit"), ("", "quantite · prix_unit.")],
+            ACCENT,
+            "1 : N\n←",
+        ),
+        (
+            "commande",
+            [("PK", "id_commande"), ("FK", "id_client"), ("UK", "numero · statut"), ("", "montant_total · port")],
+            MARINE,
+            "1 : N\n←",
+        ),
+        (
+            "client",
+            [("PK", "id_client"), ("UK", "email"), ("", "mot_de_passe_hash"), ("", "actif · adresse")],
+            MARINE,
+            "",
+        ),
+    ]
+    for idx, (nom_t, cols, col_h, fleche) in enumerate(coeur):
+        bx = 0.85 + idx * (w1 + gap1)
+        _carte_table_sql(slide, bx, y1, w1, h1, nom_t, cols, col_h)
+        if fleche:
+            za = slide.shapes.add_textbox(Inches(bx + w1), Inches(y1 + 0.48), Inches(gap1), Inches(0.75))
+            tfa = za.text_frame
+            tfa.vertical_anchor = MSO_ANCHOR.MIDDLE
+            for li, ligne_f in enumerate(fleche.splitlines()):
+                pa = tfa.paragraphs[0] if li == 0 else tfa.add_paragraph()
+                pa.alignment = PP_ALIGN.CENTER
+                ra = pa.add_run()
+                ra.text = ligne_f
+                ra.font.size = Pt(9.5 if li == 0 else 14)
+                ra.font.bold = True
+                ra.font.color.rgb = ACCENT if li == 1 else DOUX
+                ra.font.name = "Calibri"
+
+    # Liens verticaux discrets vers les tables d'audit
+    for lx, label_l in [(5.15, "↑ audit stock"), (8.30, "↑ 1 : N statuts")]:
+        zl = slide.shapes.add_textbox(Inches(lx - 0.70), Inches(y1 + h1), Inches(1.40), Inches(0.24))
+        pl = zl.text_frame.paragraphs[0]
+        pl.alignment = PP_ALIGN.CENTER
+        rl = pl.add_run()
+        rl.text = label_l
+        rl.font.size = Pt(8.8)
+        rl.font.bold = True
+        rl.font.color.rgb = ACCENT
+        rl.font.name = "Calibri"
+
+    # Niveau 2 : tables d'audit, back-office et paramétrage (4 tables)
+    y2, h2 = y1 + h1 + 0.24, 1.48
+    gap2 = 0.18
+    secondaires: list[tuple[str, float, list[tuple[str, str]], RGBColor]] = [
+        (
+            "administrateur",
+            2.65,
+            [("PK", "id_admin"), ("UK", "email"), ("", "role SUPER / GEST."), ("", "actif · mot_de_passe")],
+            MARINE,
+        ),
+        (
+            "stock_movement_history",
+            3.10,
+            [("PK", "id_mouvement"), ("", "id_produit · SET/DELTA"), ("", "stock_avant → apres"), ("", "motif · changed_by")],
+            ACCENT,
+        ),
+        (
+            "order_status_history",
+            2.85,
+            [("PK", "id"), ("FK", "order_id"), ("", "old → new_status"), ("", "changed_by_role · date")],
+            ACCENT,
+        ),
+        (
+            "parametre",
+            2.46,
+            [("PK", "cle"), ("", "frais_port · franchise"), ("", "tva_defaut · 24 mois")],
+            MARINE,
+        ),
+    ]
+    cx = 0.85
+    for nom_s, ws, cols_s, hdr_c in secondaires:
+        _carte_table_sql(slide, cx, y2, ws, h2, nom_s, cols_s, hdr_c)
+        cx += ws + gap2
+
+    # Niveau 3 : Couche SQL active (Vues + Fonction, Procédures, Déclencheurs)
+    y3, h3 = y2 + h2 + 0.20, 6.62 - (y2 + h2 + 0.20)
+    gap3 = 0.25
+    w3 = (11.60 - gap3 * 2) / 3
+    couche_sql = [
+        (
+            "Vues et fonction",
+            "v_etat_stock · v_catalogue · v_commandes_client · fn_param",
+            MARINE,
+        ),
+        (
+            "Procédures stockées",
+            "sp_create_order_from_basket · sp_add_order_line · sp_adjust_stock · sp_search_products",
+            ACCENT,
+        ),
+        (
+            "Déclencheurs d'intégrité et audit",
+            "trg_produit_ttc · trg_ligne_prix_snapshot · trg_ligne_decrement_stock · trg_history_statut",
+            MARINE,
+        ),
+    ]
+    for idx, (titre_c, corps_c, bar_c) in enumerate(couche_sql):
+        px = 0.85 + idx * (w3 + gap3)
+        _rect(slide, Inches(px), Inches(y3), Inches(w3), Inches(h3), FOND_ENCADRE, FILET)
+        _rect(slide, Inches(px), Inches(y3), Inches(0.08), Inches(h3), bar_c)
+        zp = slide.shapes.add_textbox(Inches(px + 0.18), Inches(y3 + 0.08), Inches(w3 - 0.28), Inches(h3 - 0.16))
+        tfp = zp.text_frame
+        tfp.word_wrap = True
+        tfp.vertical_anchor = MSO_ANCHOR.MIDDLE
+        p0 = tfp.paragraphs[0]
+        p0.space_after = Pt(3)
+        r0 = p0.add_run()
+        r0.text = titre_c
+        r0.font.size = Pt(12.5)
+        r0.font.bold = True
+        r0.font.color.rgb = MARINE
+        r0.font.name = "Georgia"
+        p1 = tfp.add_paragraph()
+        r1 = p1.add_run()
+        r1.text = corps_c
+        r1.font.size = Pt(10.5)
+        r1.font.color.rgb = ENCRE
+        r1.font.name = "Consolas"
+
+
 def _dessiner_tree_arch(slide: object, top_y: float = 1.75) -> None:
     """Dessine l'arborescence réelle du projet à gauche et le schéma MVC + persistance à droite."""
     tree_x, tree_w, tree_h = 0.85, 3.75, 4.87
@@ -940,6 +1129,8 @@ def construire(diapositives: list[dict[str, object]]) -> Presentation:
             _dessiner_steps(slide, puces, top_corps)
         elif layout == "tree-arch":
             _dessiner_tree_arch(slide, 1.75 if not sous_titre else 2.15)
+        elif layout == "sql-erd":
+            _dessiner_sql_erd(slide, 1.75 if not sous_titre else 2.15)
         elif layout == "mvc-flow":
             zone = slide.shapes.add_textbox(Inches(0.85), Inches(top_corps), Inches(6.50), Inches(2.95))
             cadre = zone.text_frame
