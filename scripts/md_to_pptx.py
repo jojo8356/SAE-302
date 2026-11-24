@@ -64,12 +64,17 @@ def decouper(markdown: str) -> list[dict[str, object]]:
         message = ""
         image: str | None = None
         logos: list[str] = []
+        row_images: list[str] = []
         for ligne in lignes:
             if not ligne.strip():
                 continue
             trouve_logos = re.match(r"^\s*<!--\s*logos:\s*(.+?)\s*-->\s*$", ligne)
             if trouve_logos:
                 logos.extend(trouve_logos.group(1).split())
+                continue
+            trouve_row_images = re.match(r"^\s*<!--\s*row-images:\s*(.+?)\s*-->\s*$", ligne)
+            if trouve_row_images:
+                row_images.extend(trouve_row_images.group(1).split())
                 continue
             trouve = re.match(r"^#\s+(.*)$", ligne)
             if trouve and not titre:
@@ -90,10 +95,11 @@ def decouper(markdown: str) -> list[dict[str, object]]:
             if ligne.startswith(">"):
                 message = ligne.lstrip("> ").strip()
                 continue
-        if titre or puces or image or logos:
+        if titre or puces or image or logos or row_images:
             diapositives.append(
                 {"titre": titre or "MiniShop", "sous_titre": sous_titre,
-                 "puces": puces, "message": message, "image": image, "logos": logos}
+                 "puces": puces, "message": message, "image": image,
+                 "logos": logos, "row_images": row_images}
             )
     return diapositives
 
@@ -194,9 +200,50 @@ def construire(diapositives: list[dict[str, object]]) -> Presentation:
 
         puces = diapositive["puces"] or []
         image = diapositive.get("image")
+        row_images = [str(x) for x in (diapositive.get("row_images") or [])]
         largeur_texte = Inches(6.5) if image else Inches(11.6)
 
-        if puces:
+        if puces and row_images:
+            taille = 20 if len(puces) <= 4 else 17.5
+            n_lignes = len(puces)
+            haut_dispo = 4.30 if not diapositive.get("message") else 3.65
+            pas = haut_dispo / max(n_lignes, 1)
+            y_depart = 2.25
+            centre_x_img = Inches(10.80)
+            for index, (niveau, texte) in enumerate(puces):
+                centre_y = Inches(y_depart + pas * (index + 0.5))
+                zone = slide.shapes.add_textbox(
+                    Inches(0.85),
+                    int(centre_y - Inches(0.28)),
+                    Inches(8.60),
+                    Inches(0.56),
+                )
+                cadre = zone.text_frame
+                cadre.word_wrap = True
+                paragraphe = cadre.paragraphs[0]
+                run = paragraphe.add_run()
+                run.text = ("▪  " if niveau == 0 else "–  ") + nettoyer(texte)
+                run.font.size = Pt(taille)
+                run.font.color.rgb = ENCRE if niveau == 0 else DOUX
+                run.font.name = "Calibri"
+
+                if index < len(row_images):
+                    cible_row = (RACINE / row_images[index]).resolve()
+                    if cible_row.is_file():
+                        h_cible = Inches(0.68 if cible_row.stem == "php" else 0.86)
+                        pic_tmp = slide.shapes.add_picture(str(cible_row), 0, 0, height=h_cible)
+                        w_r = int(pic_tmp.width)
+                        h_r = int(pic_tmp.height)
+                        sp_el = pic_tmp._element
+                        sp_el.getparent().remove(sp_el)
+                        slide.shapes.add_picture(
+                            str(cible_row),
+                            int(centre_x_img - w_r / 2),
+                            int(centre_y - h_r / 2),
+                            width=w_r,
+                            height=h_r,
+                        )
+        elif puces:
             hauteur = Inches(4.4 if not diapositive.get("message") else 3.75)
             zone = slide.shapes.add_textbox(Inches(0.85), Inches(2.15), largeur_texte, hauteur)
             cadre = zone.text_frame

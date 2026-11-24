@@ -4,6 +4,7 @@
 - **Mode de données :** `SqlStore` par défaut, `JsonStore` en option
 - **Jeu de démonstration Complet**
 - **Gouvernance documentaire**
+<!-- row-images: docs/img/logos/php.png docs/img/logos/database.png public/img/illustration-achat.jpg docs/img/logos/folder.png -->
 
 ---
 

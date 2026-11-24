@@ -497,7 +497,7 @@ def convertir(source: Path, sortie: Path) -> tuple[int, int]:
             continue
         vider_citation()
 
-        if re.match(r"^\s*<!--\s*logos:\s*.+?\s*-->\s*$", brute):
+        if re.match(r"^\s*<!--\s*(?:logos|row-images):\s*.+?\s*-->\s*$", brute):
             index += 1
             continue
 
