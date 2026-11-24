@@ -22,7 +22,7 @@ from pathlib import Path
 try:
     from pptx import Presentation
     from pptx.dml.color import RGBColor
-    from pptx.enum.text import PP_ALIGN
+    from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
     from pptx.util import Emu, Inches, Pt
 except ImportError:  # pragma: no cover
     print("✘ module Python « python-pptx » absent : pip install python-pptx", file=sys.stderr)
@@ -205,7 +205,8 @@ def construire(diapositives: list[dict[str, object]]) -> Presentation:
         top_corps = 2.15 if sous_titre else 1.78
 
         if puces and row_images:
-            taille = 20 if len(puces) <= 4 else 17.5
+            max_len = max((len(nettoyer(t)) for _, t in puces), default=0)
+            taille = 18.5 if max_len > 80 else (20 if len(puces) <= 4 else 17.5)
             n_lignes = len(puces)
             haut_dispo = (6.65 - top_corps) if not diapositive.get("message") else (5.85 - top_corps)
             pas = haut_dispo / max(n_lignes, 1)
@@ -215,12 +216,13 @@ def construire(diapositives: list[dict[str, object]]) -> Presentation:
                 centre_y = Inches(y_depart + pas * (index + 0.5))
                 zone = slide.shapes.add_textbox(
                     Inches(0.85),
-                    int(centre_y - Inches(0.28)),
-                    Inches(8.60),
-                    Inches(0.56),
+                    int(centre_y - Inches(0.48)),
+                    Inches(8.70),
+                    Inches(0.96),
                 )
                 cadre = zone.text_frame
                 cadre.word_wrap = True
+                cadre.vertical_anchor = MSO_ANCHOR.MIDDLE
                 paragraphe = cadre.paragraphs[0]
                 run = paragraphe.add_run()
                 run.text = ("▪  " if niveau == 0 else "–  ") + nettoyer(texte)

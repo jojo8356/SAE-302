@@ -23,6 +23,7 @@
 - **Espace client** · CRUD utilisateur, panier et API interne, commande, historique et annulation en 2 étapes
 - **Back-office** · tableau de bord, gestion produits + administrative, équipe
 - **Transverse et CLI** : pages erreurs, journaux locaux, rétention RGPD et rotation des sauvegardes
+<!-- row-images: docs/img/logos/frontoffice.png docs/img/logos/espace_client.png docs/img/logos/backoffice.png docs/img/logos/cli_ops.png -->
 
 ---
 
