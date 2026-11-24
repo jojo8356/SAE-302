@@ -22,7 +22,7 @@
 - **Front-office** · accueil, catalogue intelligent, fiche produit, catégories, préférences langue et fuseau, contact et pages légales
 - **Espace client** · CRUD utilisateur, panier et API interne, commande, historique et annulation en 2 étapes
 - **Back-office** · tableau de bord, gestion produits + administrative, équipe
-- **Transverse et CLI** : pages 403/404/500, journaux locaux, rétention RGPD 24 mois et rotation des sauvegardes
+- **Transverse et CLI** : pages erreurs, journaux locaux, rétention RGPD et rotation des sauvegardes
 
 ---
 
