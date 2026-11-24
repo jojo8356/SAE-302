@@ -497,6 +497,10 @@ def convertir(source: Path, sortie: Path) -> tuple[int, int]:
             continue
         vider_citation()
 
+        if re.match(r"^\s*<!--\s*logos:\s*.+?\s*-->\s*$", brute):
+            index += 1
+            continue
+
         if re.match(r"^\s*(\\newpage|<!--\s*pagebreak\s*-->)\s*$", brute):
             document.add_page_break()
             index += 1

@@ -15,6 +15,7 @@
 - Contraintes respectées : **PHP 8.2+ POO**, **MySQL/MariaDB via PDO**
 - Traçabilité native
 ![Cas d'utilisation global](docs/diagrams/cas_utilisation_global.png)
+<!-- logos: docs/img/logos/php.png docs/img/logos/mariadb.png docs/img/logos/mysql.png -->
 > Objectif : une application maintenable, testable et défendable devant le jury, pas une maquette jetable.
 
 ---

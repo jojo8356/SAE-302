@@ -231,6 +231,9 @@ docs/exploitation/guide-postmortem-blameless.md,Documentation,Présence et non-v
 docs/exploitation/postmortem-modele.md,Documentation,Présence et non-vide uniquement
 docs/exploitation/runbook-incidents.md,Documentation,Présence et non-vide uniquement
 docs/exploitation/runbook-sauvegarde-restauration.md,Documentation,Présence et non-vide uniquement
+docs/img/logos/mariadb.png,Documentation,Présence et non-vide uniquement
+docs/img/logos/mysql.png,Documentation,Présence et non-vide uniquement
+docs/img/logos/php.png,Documentation,Présence et non-vide uniquement
 docs/licences/tz-lookup-CC0.txt,Documentation,Présence et non-vide ; contrôles dédiés selon le composant
 docs/pv-recette.md,Documentation,Présence et non-vide uniquement
 docs/sql-a-ecrire/requetes-sql-a-ecrire.md,Documentation,Présence et non-vide uniquement

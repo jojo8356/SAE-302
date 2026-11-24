@@ -63,8 +63,13 @@ def decouper(markdown: str) -> list[dict[str, object]]:
         puces: list[tuple[int, str]] = []
         message = ""
         image: str | None = None
+        logos: list[str] = []
         for ligne in lignes:
             if not ligne.strip():
+                continue
+            trouve_logos = re.match(r"^\s*<!--\s*logos:\s*(.+?)\s*-->\s*$", ligne)
+            if trouve_logos:
+                logos.extend(trouve_logos.group(1).split())
                 continue
             trouve = re.match(r"^#\s+(.*)$", ligne)
             if trouve and not titre:
@@ -85,10 +90,10 @@ def decouper(markdown: str) -> list[dict[str, object]]:
             if ligne.startswith(">"):
                 message = ligne.lstrip("> ").strip()
                 continue
-        if titre or puces or image:
+        if titre or puces or image or logos:
             diapositives.append(
                 {"titre": titre or "MiniShop", "sous_titre": sous_titre,
-                 "puces": puces, "message": message, "image": image}
+                 "puces": puces, "message": message, "image": image, "logos": logos}
             )
     return diapositives
 
@@ -207,6 +212,7 @@ def construire(diapositives: list[dict[str, object]]) -> Presentation:
                 run.font.color.rgb = ENCRE if niveau == 0 else DOUX
                 run.font.name = "Calibri"
 
+        image_left: int | None = None
         if image:
             cible = (RACINE / str(image)).resolve()
             if cible.is_file():
@@ -218,10 +224,40 @@ def construire(diapositives: list[dict[str, object]]) -> Presentation:
                         pic.height = int(max_h)
                         pic.width = int(pic.width * ratio)
                         pic.left = int(Inches(7.65) + (Inches(4.9) - pic.width) / 2)
+                    image_left = int(pic.left)
                 except Exception as erreur:
                     print(f"  ⚠ image ignorée ({cible.name}) : {erreur}", file=sys.stderr)
             else:
                 print(f"  ⚠ image introuvable : {image}", file=sys.stderr)
+
+        logos = [str(x) for x in (diapositive.get("logos") or [])]
+        if logos:
+            specs: list[tuple[Path, int, int]] = []
+            for chemin_logo in logos:
+                cible_logo = (RACINE / chemin_logo).resolve()
+                if not cible_logo.is_file():
+                    continue
+                h_cible = Inches(0.70 if cible_logo.stem == "php" else 0.88)
+                pic_tmp = slide.shapes.add_picture(str(cible_logo), 0, 0, height=h_cible)
+                specs.append((cible_logo, int(pic_tmp.width), int(pic_tmp.height)))
+                sp_el = pic_tmp._element
+                sp_el.getparent().remove(sp_el)
+            if specs:
+                gap = Inches(0.55)
+                total_w = sum(w for _, w, _ in specs) + gap * (len(specs) - 1)
+                ideal_left = int((largeur - total_w) / 2)
+                max_right = (image_left - Inches(0.45)) if image_left is not None else (largeur - Inches(0.85))
+                cur_x = max(int(Inches(0.85)), min(ideal_left, int(max_right - total_w)))
+                mid_y = int(Inches(5.30))
+                for cible_logo, w_logo, h_logo in specs:
+                    slide.shapes.add_picture(
+                        str(cible_logo),
+                        cur_x,
+                        int(mid_y - h_logo / 2),
+                        width=w_logo,
+                        height=h_logo,
+                    )
+                    cur_x += w_logo + gap
 
         message = str(diapositive.get("message") or "")
         if message:
