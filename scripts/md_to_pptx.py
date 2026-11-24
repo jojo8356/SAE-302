@@ -536,6 +536,249 @@ def _dessiner_compare_2(
             r1.font.name = "Calibri"
 
 
+def _dessiner_tree_arch(slide: object, top_y: float = 1.75) -> None:
+    """Dessine l'arborescence réelle du projet à gauche et le schéma MVC + persistance à droite."""
+    tree_x, tree_w, tree_h = 0.85, 3.75, 4.87
+    _rect(slide, Inches(tree_x), Inches(top_y), Inches(tree_w), Inches(tree_h), FOND_ENCADRE, FILET)
+    hdr = _rect(slide, Inches(tree_x), Inches(top_y), Inches(tree_w), Inches(0.42), MARINE)
+    tfh = hdr.text_frame
+    tfh.vertical_anchor = MSO_ANCHOR.MIDDLE
+    tfh.margin_left = Inches(0.18)
+    rh = tfh.paragraphs[0].add_run()
+    rh.text = "ARBORESCENCE  ·  SAE-302/"
+    rh.font.size = Pt(10.5)
+    rh.font.bold = True
+    rh.font.color.rgb = BLANC
+    rh.font.name = "Calibri"
+
+    lignes_tree: list[tuple[str, str, bool]] = [
+        ("SAE-302/", "", True),
+        ("├── public/", "seul dossier Web", True),
+        ("│   ├── index.php", "front controller", False),
+        ("│   └── css/ js/ img/ fonts/", "", False),
+        ("├── app/", "cœur PHP 8.2+", True),
+        ("│   ├── bootstrap.php", "PSR-4 · 0 dép.", False),
+        ("│   ├── Router.php", "42 GET · 25 POST", False),
+        ("│   ├── Controller/", "Front & Admin", False),
+        ("│   ├── View/", "gabarits HTML", False),
+        ("│   ├── Repository/", "accès données", False),
+        ("│   ├── Model/", "Data & Panier", False),
+        ("│   ├── Security/", "Auth · CSRF · XSS", False),
+        ("│   ├── Service/", "RGPD · journaux", False),
+        ("│   └── Config/", "Database::store", False),
+        ("├── sql/", "tables · vues · procs", True),
+        ("├── data/minishop/", "jeu JSON isolé", True),
+        ("└── scripts/ tests/ docs/", "", True),
+    ]
+    zt = slide.shapes.add_textbox(
+        Inches(tree_x + 0.14),
+        Inches(top_y + 0.50),
+        Inches(tree_w - 0.24),
+        Inches(tree_h - 0.58),
+    )
+    tft = zt.text_frame
+    tft.word_wrap = False
+    for idx, (chemin, note, gras) in enumerate(lignes_tree):
+        p = tft.paragraphs[0] if idx == 0 else tft.add_paragraph()
+        p.space_after = Pt(2.2)
+        r0 = p.add_run()
+        r0.text = chemin
+        r0.font.size = Pt(10)
+        r0.font.bold = gras
+        r0.font.color.rgb = MARINE if gras else ENCRE
+        r0.font.name = "Consolas"
+        if note:
+            r1 = p.add_run()
+            r1.text = f"  {note}"
+            r1.font.size = Pt(9.5)
+            r1.font.color.rgb = DOUX
+            r1.font.name = "Calibri"
+
+    rx = 4.82
+    rw = 7.63
+
+    # Couche 1 : Entrée Web et Routage
+    y1, h1 = top_y, 0.86
+    noeuds_l1 = [
+        ("Navigateur", "Requête HTTP / HTML", 1.75, BLANC, MARINE, ENCRE),
+        ("public/index.php", "Point d'entrée · CSP", 2.40, MARINE, BLANC, BLANC),
+        ("app/Router.php", "42 GET · 25 POST · RBAC", 2.72, ACCENT, BLANC, BLANC),
+    ]
+    gap1 = (rw - sum(w for _, _, w, _, _, _ in noeuds_l1)) / 2
+    cx = rx
+    for idx, (titre_n, sub_n, bw, bg, fg0, fg1) in enumerate(noeuds_l1):
+        card = _rect(slide, Inches(cx), Inches(y1), Inches(bw), Inches(h1), bg, FILET if bg == BLANC else None)
+        if bg == BLANC:
+            _rect(slide, Inches(cx), Inches(y1), Inches(bw), Inches(0.05), MARINE)
+        tf = card.text_frame
+        tf.word_wrap = True
+        tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+        p0 = tf.paragraphs[0]
+        p0.alignment = PP_ALIGN.CENTER
+        p0.space_after = Pt(2)
+        r0 = p0.add_run()
+        r0.text = titre_n
+        r0.font.size = Pt(12.5)
+        r0.font.bold = True
+        r0.font.color.rgb = fg0
+        r0.font.name = "Georgia"
+        p1 = tf.add_paragraph()
+        p1.alignment = PP_ALIGN.CENTER
+        r1 = p1.add_run()
+        r1.text = sub_n
+        r1.font.size = Pt(10.5)
+        r1.font.color.rgb = fg1
+        r1.font.name = "Calibri"
+        if idx < len(noeuds_l1) - 1:
+            arr = slide.shapes.add_textbox(Inches(cx + bw), Inches(y1 + 0.22), Inches(gap1), Inches(0.40))
+            pa = arr.text_frame.paragraphs[0]
+            pa.alignment = PP_ALIGN.CENTER
+            ra = pa.add_run()
+            ra.text = "→"
+            ra.font.size = Pt(16)
+            ra.font.bold = True
+            ra.font.color.rgb = ACCENT
+            ra.font.name = "Calibri"
+        cx += bw + gap1
+
+    # Flèche de routage vers MVC
+    down1 = slide.shapes.add_textbox(Inches(rx), Inches(y1 + h1 - 0.02), Inches(rw), Inches(0.28))
+    pd1 = down1.text_frame.paragraphs[0]
+    pd1.alignment = PP_ALIGN.CENTER
+    rd1 = pd1.add_run()
+    rd1.text = "↓  dispatch selon la garde  ↓"
+    rd1.font.size = Pt(10)
+    rd1.font.bold = True
+    rd1.font.color.rgb = ACCENT
+    rd1.font.name = "Calibri"
+
+    # Couche 2 : Triade MVC
+    y2, h2 = y1 + h1 + 0.28, 1.38
+    gap2 = 0.29
+    cw2 = (rw - gap2 * 2) / 3
+    piliers_mvc = [
+        ("Modèle", "Repository & Model/", "Règles métier, panier session et accès données", MARINE),
+        ("Contrôleur", "app/Controller/", "Orchestre requête, validation et appel métier", ACCENT),
+        ("Vue", "app/View/", "layout.php et 40 gabarits HTML échappés", MARINE),
+    ]
+    for idx, (nom_m, dos_m, desc_m, top_c) in enumerate(piliers_mvc):
+        bx = rx + idx * (cw2 + gap2)
+        _rect(slide, Inches(bx), Inches(y2), Inches(cw2), Inches(h2), FOND_ENCADRE, FILET)
+        _rect(slide, Inches(bx), Inches(y2), Inches(cw2), Inches(0.06), top_c)
+        zm = slide.shapes.add_textbox(Inches(bx + 0.14), Inches(y2 + 0.12), Inches(cw2 - 0.28), Inches(h2 - 0.18))
+        tfm = zm.text_frame
+        tfm.word_wrap = True
+        p0 = tfm.paragraphs[0]
+        p0.space_after = Pt(2)
+        r0 = p0.add_run()
+        r0.text = nom_m
+        r0.font.size = Pt(14.5)
+        r0.font.bold = True
+        r0.font.color.rgb = MARINE
+        r0.font.name = "Georgia"
+        p1 = tfm.add_paragraph()
+        p1.space_after = Pt(4)
+        r1 = p1.add_run()
+        r1.text = dos_m
+        r1.font.size = Pt(10)
+        r1.font.bold = True
+        r1.font.color.rgb = ACCENT
+        r1.font.name = "Consolas"
+        p2 = tfm.add_paragraph()
+        r2 = p2.add_run()
+        r2.text = desc_m
+        r2.font.size = Pt(11.5)
+        r2.font.color.rgb = ENCRE
+        r2.font.name = "Calibri"
+        if idx < 2:
+            arr2 = slide.shapes.add_textbox(Inches(bx + cw2), Inches(y2 + 0.46), Inches(gap2), Inches(0.40))
+            pa2 = arr2.text_frame.paragraphs[0]
+            pa2.alignment = PP_ALIGN.CENTER
+            ra2 = pa2.add_run()
+            ra2.text = "⇄" if idx == 0 else "→"
+            ra2.font.size = Pt(15)
+            ra2.font.bold = True
+            ra2.font.color.rgb = MARINE
+            ra2.font.name = "Calibri"
+
+    # Couche 3 : Socle transverse
+    y3, h3 = y2 + h2 + 0.18, 0.62
+    _rect(slide, Inches(rx), Inches(y3), Inches(rw), Inches(h3), BLANC, FILET)
+    _rect(slide, Inches(rx), Inches(y3), Inches(0.08), Inches(h3), MARINE)
+    zt3 = slide.shapes.add_textbox(Inches(rx + 0.20), Inches(y3 + 0.06), Inches(rw - 0.32), Inches(h3 - 0.12))
+    tf3 = zt3.text_frame
+    tf3.word_wrap = True
+    tf3.vertical_anchor = MSO_ANCHOR.MIDDLE
+    p3 = tf3.paragraphs[0]
+    r3a = p3.add_run()
+    r3a.text = "Transverse  ·  "
+    r3a.font.size = Pt(12)
+    r3a.font.bold = True
+    r3a.font.color.rgb = MARINE
+    r3a.font.name = "Georgia"
+    r3b = p3.add_run()
+    r3b.text = "app/Security/ Auth · Csrf · xss   |   app/Service/ RGPD · journaux · backups   |   bootstrap.php PSR-4"
+    r3b.font.size = Pt(11)
+    r3b.font.color.rgb = ENCRE
+    r3b.font.name = "Calibri"
+
+    # Flèche vers persistance
+    down2 = slide.shapes.add_textbox(Inches(rx), Inches(y3 + h3), Inches(rw), Inches(0.24))
+    pd2 = down2.text_frame.paragraphs[0]
+    pd2.alignment = PP_ALIGN.CENTER
+    rd2 = pd2.add_run()
+    rd2.text = "↓  abstraction unique  ↓"
+    rd2.font.size = Pt(10)
+    rd2.font.bold = True
+    rd2.font.color.rgb = MARINE
+    rd2.font.name = "Calibri"
+
+    # Couche 4 : Database::store() -> SqlStore & JsonStore
+    y4_hdr, h4_hdr = y3 + h3 + 0.24, 0.42
+    gw = _rect(slide, Inches(rx), Inches(y4_hdr), Inches(rw), Inches(h4_hdr), MARINE)
+    tfg = gw.text_frame
+    tfg.vertical_anchor = MSO_ANCHOR.MIDDLE
+    pg = tfg.paragraphs[0]
+    pg.alignment = PP_ALIGN.CENTER
+    rg = pg.add_run()
+    rg.text = "app/Config/Database.php  ·  Database::store()"
+    rg.font.size = Pt(12)
+    rg.font.bold = True
+    rg.font.color.rgb = BLANC
+    rg.font.name = "Georgia"
+
+    y4_db = y4_hdr + h4_hdr + 0.08
+    h4_db = (top_y + tree_h) - y4_db
+    gap4 = 0.27
+    w4_db = (rw - gap4) / 2
+    stores = [
+        ("SqlStore  ·  sql/", "MariaDB / MySQL via PDO · mode par défaut", MARINE),
+        ("JsonStore  ·  data/minishop/", "8 fichiers JSON · mode isolé sans SGBD", ACCENT),
+    ]
+    for idx, (nom_s, desc_s, bar_c) in enumerate(stores):
+        sx = rx + idx * (w4_db + gap4)
+        _rect(slide, Inches(sx), Inches(y4_db), Inches(w4_db), Inches(h4_db), FOND_ENCADRE, FILET)
+        _rect(slide, Inches(sx), Inches(y4_db), Inches(0.08), Inches(h4_db), bar_c)
+        zs = slide.shapes.add_textbox(Inches(sx + 0.18), Inches(y4_db + 0.06), Inches(w4_db - 0.28), Inches(h4_db - 0.12))
+        tfs = zs.text_frame
+        tfs.word_wrap = True
+        tfs.vertical_anchor = MSO_ANCHOR.MIDDLE
+        ps0 = tfs.paragraphs[0]
+        ps0.space_after = Pt(2)
+        rs0 = ps0.add_run()
+        rs0.text = nom_s
+        rs0.font.size = Pt(13)
+        rs0.font.bold = True
+        rs0.font.color.rgb = MARINE
+        rs0.font.name = "Georgia"
+        ps1 = tfs.add_paragraph()
+        rs1 = ps1.add_run()
+        rs1.text = desc_s
+        rs1.font.size = Pt(11.5)
+        rs1.font.color.rgb = ENCRE
+        rs1.font.name = "Calibri"
+
+
 def _dessiner_mvc_flow(slide: object, top_y: float = 4.92) -> None:
     """Dessine un schéma horizontal propre de la chaîne MVC en bas de diapositive."""
     zone_h = 1.72
@@ -695,6 +938,8 @@ def construire(diapositives: list[dict[str, object]]) -> Presentation:
             _dessiner_compare_2(slide, puces, top_corps)
         elif layout == "steps":
             _dessiner_steps(slide, puces, top_corps)
+        elif layout == "tree-arch":
+            _dessiner_tree_arch(slide, 1.75 if not sous_titre else 2.15)
         elif layout == "mvc-flow":
             zone = slide.shapes.add_textbox(Inches(0.85), Inches(top_corps), Inches(6.50), Inches(2.95))
             cadre = zone.text_frame

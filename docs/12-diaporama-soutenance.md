@@ -33,8 +33,7 @@
 - **`app/bootstrap.php`** : autoloader PSR-4 maison, fuseau, `0` dépendance Composer en prod
 - **`app/Router.php`** : `42` routes GET et `25` routes POST
 - **Chaîne MVC** : contrôleurs → classes Repository → `Database::store()` vers `SqlStore` ou `JsonStore`
-<!-- layout: mvc-flow -->
-![Architecture MVC](docs/diagrams/architecture_mvc.png)
+<!-- layout: tree-arch -->
 
 ---
 
