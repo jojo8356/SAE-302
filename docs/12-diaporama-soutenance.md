@@ -4,7 +4,6 @@
 - **Mode de données :** `SqlStore` par défaut, `JsonStore` en option
 - **Jeu de démonstration Complet**
 - **Gouvernance documentaire**
-> Ce support reflète le code présent dans le dépôt ; il ne vaut ni procès-verbal de validation pédagogique ni attestation LineServ.
 
 ---
 
@@ -26,7 +25,6 @@
 - **Espace client · 9 routes** : inscription, profil, mot de passe, panier HTML et API interne, commande, historique et annulation en 2 étapes
 - **Back-office · 20 routes admin et 3 super** : tableau de bord, produits, catégories, stocks, commandes, paramètres et équipe
 - **Transverse et CLI** : pages 403/404/500, journaux locaux, rétention RGPD 24 mois et rotation des sauvegardes
-> Point d'entrée HTTP unique public/index.php ; aucun écran admin « clients » distinct, gestion d'équipe réservée à SUPER.
 
 ---
 
@@ -37,7 +35,6 @@
 - **`app/Router.php`** : `42` routes GET et `25` routes POST avec gardes `public`, `client`, `admin`, `super`
 - **Chaîne MVC** : `15` contrôleurs → `9` classes Repository → `Database::store()` vers `SqlStore` ou `JsonStore`
 ![Architecture MVC](docs/diagrams/architecture_mvc.png)
-> Les contrôleurs et repositories ne dépendent que de StoreInterface et des capacités SQL dédiées.
 
 ---
 
@@ -48,7 +45,6 @@
 - **18 procédures** appelées par les repositories : commandes, ajustement de stock, recherche, port et CA
 - **16 déclencheurs** : prix TTC, snapshot de ligne, stock, matrice de statuts, audit et blocage de suppression
 ![Modèle logique de données](docs/diagrams/mld_minishop.png)
-> Chaîne PDO/MariaDB 11.8.6 validée sur VM Debian 13 le 17/11/2026 : 29/29 SQL et 105/105 HTTP SQL.
 
 ---
 
@@ -59,7 +55,6 @@
 - **Cycle de commande** : `BROUILLON` → `EN_PREPARATION` → `PAYEE` → `EXPEDIEE` ; annulation en 2 étapes avec retour stock avant expédition uniquement
 - **Parité JSON** : `Schema`, `Triggers` et `Views` valident `T-01…T-29` à `29/29` en SQL comme en JSON
 ![États d'une commande](docs/diagrams/etats_commande.png)
-> Les 200 scénarios manuels restent distinctement NON JOUÉ dans le PV du 17/11/2026.
 
 ---
 
@@ -70,7 +65,6 @@
 - **XSS et en-têtes** : échappement `e()`, CSP stricte sans script ni style inline, `X-Frame-Options: DENY` et `nosniff`
 - **SQL et IDOR** : requêtes préparées PDO sans émulation, identifiants filtrés par `Schema` et contrôle d'appartenance `id_client`
 - **Audit statique** : `11/11` contrôles statiques dans `tests/security/controles.sh`, rejoués le 17/11/2026
-> Ces contrôles statiques et unitaires sont distincts des 10 scénarios offensifs manuels S-01…S-10 et de LineServ.
 
 ---
 
@@ -80,7 +74,6 @@
 - **SQL et concurrence** : intégration SQL **29/29**, HTTP SQL E2E **105/105**, concurrence HTTP `20` clients / `12` unités **8/8**, sécurité **11/11**
 - **JS et navigateur** : E2E WASM JSON isolé **338/338**, traduction FR↔EN sur `48` états, responsive Playwright de `320 px` à `1536 px`
 - **Performances ENF-01** sur base `minishop_perf` de `236` produits / `1 004` commandes : SQL p95 ≤ **20,6 ms**, HTTP p95 = **6 ms**, `0` erreur
-> Tests exécutés sur VM locale isolée ; aucune recette manuelle LineServ, déploiement ou restauration réelle n'est attestée.
 
 ---
 
@@ -90,7 +83,6 @@
 - **Accessibilité WCAG 2.1 AA** : lien d'évitement, `aria-current="page"`, `aria-live` sur le panier, alternatives d'image typées et cibles ≥ `44 px`
 - **Responsive vérifié** : de **320 px à 1536 px** via contrats CSS, responsive et Playwright, tableaux défilants documentés
 - **JS natif optionnel** : panier AJAX, traduction complète FR↔EN, fuseau horaire `localStorage` et géolocalisation sans tiers
-> ENF-07 respecté : tous les parcours critiques fonctionnent sans JavaScript.
 
 ---
 
@@ -101,7 +93,6 @@
 - **Back-office super-admin** : création produit, paramètres boutique et gestion de l'équipe
 - **Preuve SQL directe** : `v_etat_stock`, `stock_movement_history` et `order_status_history`
 ![Séquence passer commande](docs/diagrams/seq_passer_commande.png)
-> Aucun mot de passe n'est affiché sur ce support ; les accès de démo locale restent séparés de toute cible LineServ.
 
 ---
 
@@ -111,7 +102,6 @@
 - **Incidents VM résolus dans le code** : collation `utf8mb4_unicode_ci`, stockage **UTC**, requêtes non bufferisées, garde `--load` et pool de sessions WASM
 - **Arbitrages assumés** : paiement et expédition simulés, contact journalisé localement sans SMTP et installation CLI dédiée
 - **Cible LineServ non testée** : prérequis bloquants documentés pour `RewriteBase /`, séparation hors `www/` et droits SQL/PHP
-> Chaque limite technique est explicitement tracée dans ARCHITECTURE.md, docs/adr/ et docs/14-guide-lineserv.md.
 
 ---
 
@@ -121,4 +111,3 @@
 - **Documentation vivante** : `113` fichiers PHP et `394` méthodes PHPDoc, `8` modules Python avec doctests, `6` ADR MADR, `4` C4 et fiche service
 - **Limites maintenues** : `200` scénarios manuels `NON JOUÉ`, aucune recette ni déploiement LineServ attesté
 - **Suites hors périmètre** : adaptateur de préfixe URL pour sous-dossier, paiement signé, envoi SMTP réel et MFA `SUPER`
-> Merci pour votre attention — place aux questions et à la démonstration.
