@@ -227,6 +227,20 @@ footer.doc p { text-align: left; margin: 0; }
 </ul>
 </li>
 <li><a href="#2-trame-chronometree-de-la-presentation-15-minutes">2. Trame chronométrée de la présentation (15 minutes)</a></li>
+<li><a href="#21-script-oral-diapositive-par-diapositive-phrases-pretes-a-dire">2.1 Script oral diapositive par diapositive (phrases prêtes à dire)</a><ul>
+<li><a href="#diapositive-1-minishop-soutenance-sae-302-000-030-binome-1">Diapositive 1 — MiniShop — soutenance SAÉ 302 (0:00 – 0:30 · Binôme 1)</a></li>
+<li><a href="#diapositive-2-le-besoin-et-les-acteurs-030-115-binome-1">Diapositive 2 — Le besoin et les acteurs (0:30 – 1:15 · Binôme 1)</a></li>
+<li><a href="#diapositive-3-perimetre-livre-dans-le-code-115-150-binome-1">Diapositive 3 — Périmètre livré dans le code (1:15 – 1:50 · Binôme 1)</a></li>
+<li><a href="#diapositive-4-architecture-logicielle-150-230-binome-1">Diapositive 4 — Architecture logicielle (1:50 – 2:30 · Binôme 1)</a></li>
+<li><a href="#diapositive-5-modele-de-donnees-et-sql-230-415-binome-2">Diapositive 5 — Modèle de données et SQL (2:30 – 4:15 · Binôme 2)</a></li>
+<li><a href="#diapositive-6-logique-metier-et-parite-sql-json-415-530-binome-2">Diapositive 6 — Logique métier et parité SQL / JSON (4:15 – 5:30 · Binôme 2)</a></li>
+<li><a href="#diapositive-7-securite-applicative-530-645-binome-1">Diapositive 7 — Sécurité applicative (5:30 – 6:45 · Binôme 1)</a></li>
+<li><a href="#diapositive-8-tests-automatises-et-performances-645-745-binome-2">Diapositive 8 — Tests automatisés et performances (6:45 – 7:45 · Binôme 2)</a></li>
+<li><a href="#diapositive-9-design-system-et-accessibilite-745-830-binome-2">Diapositive 9 — Design system et accessibilité (7:45 – 8:30 · Binôme 2)</a></li>
+<li><a href="#diapositive-10-difficultes-rencontrees-et-arbitrages-830-945-binome-1">Diapositive 10 — Difficultés rencontrées et arbitrages (8:30 – 9:45 · Binôme 1)</a></li>
+<li><a href="#diapositive-11-bilan-documentation-et-suites-945-1100-binome-1">Diapositive 11 — Bilan, documentation et suites (9:45 – 11:00 · Binôme 1)</a></li>
+</ul>
+</li>
 <li><a href="#3-script-pas-a-pas-de-la-demonstration-en-direct-4-minutes">3. Script pas-à-pas de la démonstration en direct (4 minutes)</a><ul>
 <li><a href="#31-preparation-avant-dentrer-en-salle">3.1 Préparation avant d’entrer en salle</a></li>
 <li><a href="#32-scenario-de-demo-chronometre-4-minutes">3.2 Scénario de démo chronométré (4 minutes)</a></li>
@@ -303,7 +317,7 @@ Ce document complète <a href="03-support-soutenance.html"><code>03-support-sout
 <hr />
 <h2 id="2-trame-chronometree-de-la-presentation-15-minutes">2. Trame chronométrée de la présentation (15 minutes)<a class="headerlink" href="#2-trame-chronometree-de-la-presentation-15-minutes" title="Permanent link"></a></h2>
 <blockquote>
-<p>L’équipe comporte deux étudiants (<strong>Johan Polsinelli</strong> et <strong>Chahd Gouiaa</strong>). Les rôles <code>Binôme 1</code> / <code>Binôme 2</code> ci-dessous servent de répartition équilibrée (~7 min 30 chacun) et peuvent être inversés selon votre aisance.</p>
+<p>L’équipe comporte deux étudiants (<strong>Johan Polsinelli</strong> et <strong>Chahd Gouiaa</strong>). Les rôles <code>Binôme 1</code> / <code>Binôme 2</code> ci-dessous répartissent la parole de façon équilibrée autour des <strong>11 diapositives actuelles</strong> (<code>livrables/minishop-soutenance.pptx</code>), suivies de la démonstration / présentation du code au moment choisi avec le jury.</p>
 </blockquote>
 <table>
 <thead>
@@ -311,62 +325,149 @@ Ce document complète <a href="03-support-soutenance.html"><code>03-support-sout
 <th>Temps</th>
 <th>Intervenant</th>
 <th>Thème</th>
-<th>Support / Écran affiché</th>
+<th>Diapositive &amp; support affiché</th>
 <th>Messages clés à placer</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>0:00 – 1:30</strong></td>
+<td><strong>0:00 – 1:15</strong></td>
 <td>Binôme 1</td>
-<td>Contexte, objectifs &amp; périmètre</td>
-<td>Diapos 1–2 + <code>usecase_minishop.png</code></td>
-<td>Problème initial (tableur partagé sans stock ni historique) → MiniShop (3 acteurs, 14 UC + extensions, périmètre maquette sans paiement réel).</td>
+<td>Accueil, besoin &amp; acteurs</td>
+<td><strong>Diapos 1–2</strong> (<code>cas_utilisation_global.png</code>, logos PHP/MariaDB/MySQL)</td>
+<td>Socle PHP 8.2+ sans dépendance runtime, double persistance (<code>SqlStore</code> par défaut / <code>JsonStore</code> en option), <strong>14 cas d’utilisation</strong>, <strong>3 acteurs</strong>, PDO et traçabilité native.</td>
 </tr>
 <tr>
-<td><strong>1:30 – 3:30</strong></td>
-<td>Binôme 2</td>
-<td>Modélisation BD (MCD → MLD → 3FN)</td>
-<td>Diapo 3 + <code>mcd_minishop.png</code>, <code>mld_minishop.png</code></td>
-<td>9 tables en 3FN ; <strong>2 dénormalisations verrouillées</strong> (<code>produit.prix_ttc</code>, <code>commande.montant_total</code> + <code>ligne_commande.total_ligne</code>) pour figer la facturation.</td>
-</tr>
-<tr>
-<td><strong>3:30 – 5:30</strong></td>
-<td>Binôme 2</td>
-<td>SQL avancé : procédures &amp; triggers</td>
-<td>Diapo 4 + <code>sql/02_minishop_procedures.sql</code>, <code>sql/03_minishop_triggers.sql</code></td>
-<td><strong>18 procédures</strong>, <strong>1 fonction</strong>, <strong>16 triggers</strong>, <strong>3 vues</strong>. Atomicité transactionnelle + <code>SELECT ... FOR UPDATE</code> contre la survente (<code>RB-06</code>, <code>RB-07</code>).</td>
-</tr>
-<tr>
-<td><strong>5:30 – 7:30</strong></td>
+<td><strong>1:15 – 2:30</strong></td>
 <td>Binôme 1</td>
-<td>Architecture MVC &amp; sécurité</td>
-<td>Diapos 5–6 + <code>architecture_mvc.png</code>, <code>app/Security/Auth.php</code>, <code>Csrf.php</code></td>
-<td>Front controller unique (<code>public/index.php</code>), PDO natif (<code>EMULATE_PREPARES = false</code>), <code>password_hash</code>/<code>verify</code>, CSRF <code>hash_equals</code>, IDOR (404), séparation <code>client_id</code>/<code>admin_id</code>.</td>
+<td>Périmètre &amp; architecture réelle</td>
+<td><strong>Diapos 3–4</strong> (grille 2×2 + schéma <code>tree</code> &amp; MVC)</td>
+<td>4 blocs livrés (<code>Front-office</code>, <code>Espace client</code>, <code>Back-office</code>, <code>Transverse et CLI</code>) ; <code>public/</code> seul dossier exposé, <code>Router.php</code> (<code>42</code> GET / <code>25</code> POST), triade <code>Modèle ⇄ Contrôleur → Vue</code>, socle <code>Security</code>/<code>Service</code> et passerelle <code>Database::store()</code>.</td>
 </tr>
 <tr>
-<td><strong>7:30 – 11:30</strong></td>
+<td><strong>2:30 – 4:15</strong></td>
+<td>Binôme 2</td>
+<td>Modélisation BD &amp; SQL</td>
+<td><strong>Diapo 5</strong> (schéma relationnel 9 tables + couche SQL)</td>
+<td><strong>9 tables 3FN</strong> (<code>categorie → produit → ligne_commande ← commande ← client</code>, + <code>administrateur</code>, <code>stock_movement_history</code>, <code>order_status_history</code>, <code>parametre</code>), <strong>3 vues</strong> (<code>v_etat_stock</code>, <code>v_catalogue</code>, <code>v_commandes_client</code>), <strong>1 fonction</strong> <code>fn_param</code>, <strong>18 procédures</strong> et <strong>16 triggers</strong>.</td>
+</tr>
+<tr>
+<td><strong>4:15 – 5:30</strong></td>
+<td>Binôme 2</td>
+<td>Logique métier &amp; parité SQL / JSON</td>
+<td><strong>Diapo 6</strong> (schéma cycle de vie + 3 piliers)</td>
+<td>Cycle <code>BROUILLON → EN_PREPARATION → PAYEE → EXPEDIEE → LIVREE</code> + branche <code>ANNULEE</code> en 2 étapes avec retour stock avant expédition ; panier recalculé serveur ; verrous <code>SELECT … FOR UPDATE</code> ; parité SQL / JSON (<code>Schema</code>, <code>Triggers</code>, <code>Views</code>).</td>
+</tr>
+<tr>
+<td><strong>5:30 – 6:45</strong></td>
+<td>Binôme 1</td>
+<td>Sécurité applicative</td>
+<td><strong>Diapo 7</strong> (grille 2×2 + bannière <code>11/11</code>)</td>
+<td>Données sensibles protégées par hachage <code>bcrypt</code> (jamais en clair), sessions client/admin isolées et cookie <code>MINISHOPSESS</code> durci, CSRF <code>hash_equals</code>, XSS (<code>e()</code>, CSP, <code>X-Frame-Options: DENY</code>, <code>nosniff</code>), PDO sans émulation + <code>id_client</code> anti-IDOR ; <code>11/11</code> contrôles statiques validés.</td>
+</tr>
+<tr>
+<td><strong>6:45 – 8:30</strong></td>
+<td>Binôme 2</td>
+<td>Tests, performances &amp; accessibilité</td>
+<td><strong>Diapos 8–9</strong> (<code>docs/pv-recette.md</code>, <code>dernieres_mesures.txt</code>)</td>
+<td><strong>60/60</strong> étapes VM vertes (<code>generer_pv.php</code>), <strong>29/29</strong> SQL/JSON, <strong>105/105</strong> HTTP SQL E2E, <strong>8/8</strong> concurrence, <strong>338/338</strong> E2E WASM, <code>48</code> états FR↔EN, benchmark <code>minishop_perf</code> (<code>236</code> produits / <code>1 004</code> commandes : HTTP p95 = <code>6 ms</code>, SQL p95 ≤ <code>20,6 ms</code>, <code>0</code> erreur) ; design system <code>app.css</code>, WCAG 2.1 AA, responsive <code>320–1536 px</code>.</td>
+</tr>
+<tr>
+<td><strong>8:30 – 11:00</strong></td>
+<td>Binôme 1</td>
+<td>Difficultés, bilan &amp; suites</td>
+<td><strong>Diapos 10–11</strong> + <code>git shortlog -sne</code></td>
+<td>Parité SQL/JSON et incidents VM résolus dans le code, arbitrages assumés et cible LineServ non testée ; WBS <code>82</code> tâches / <code>348 h</code> soldé, documentation vivante (<code>113</code> PHP / <code>394</code> PHPDoc, <code>8</code> Python, <code>6</code> ADR, <code>4</code> C4, fiche service), limites (<code>200</code> manuels <code>NON JOUÉ</code>) et suites hors périmètre.</td>
+</tr>
+<tr>
+<td><strong>11:00 – 15:00</strong></td>
 <td>Binôme 1 &amp; 2</td>
-<td><strong>Démonstration en direct (4 min)</strong></td>
-<td>Navigateurs (Front + Back-office) + Terminal SQL</td>
-<td>Parcours complet : catalogue/filtre → panier → commande → annulation client en 2 étapes → back-office (stock delta, changement de statut) → preuve SQL (<code>stock_movement_history</code>, <code>order_status_history</code>).</td>
-</tr>
-<tr>
-<td><strong>11:30 – 13:30</strong></td>
-<td>Binôme 2</td>
-<td>Tests, concurrence &amp; performances</td>
-<td>Diapos 7–8 + <code>docs/pv-recette.md</code>, <code>tests/perf/dernieres_mesures.txt</code></td>
-<td><code>11/11</code> sécurité, <code>29/29</code> SQL, <code>105/105</code> E2E HTTP SQL, <code>8/8</code> concurrence (20 clients / 12 unités sans survente), HTTP p95 = <code>6 ms</code> sous 236 produits / 1 004 commandes.</td>
-</tr>
-<tr>
-<td><strong>13:30 – 15:00</strong></td>
-<td>Binôme 1</td>
-<td>Organisation GitLab, limites &amp; bilan</td>
-<td>Diapos 9–12 + <code>git shortlog -sne</code></td>
-<td>Travail en binôme sur GitLab, choix d’architecture (mode SQL défaut + mode JSON portable), évolutions futures (paiement réel, remises, panier persistant).</td>
+<td><strong>Démonstration &amp; présentation du code (4 min)</strong></td>
+<td>Navigateurs + terminal MySQL + éditeur</td>
+<td>Parcours client (<code>/catalogue</code> → panier AJAX → commande → annulation 2 étapes), back-office gestionnaire &amp; super-admin, preuve SQL directe (<code>v_etat_stock</code>, <code>stock_movement_history</code>, <code>order_status_history</code>) et présentation ciblée du code.</td>
 </tr>
 </tbody>
 </table>
+<hr />
+<h2 id="21-script-oral-diapositive-par-diapositive-phrases-pretes-a-dire">2.1 Script oral diapositive par diapositive (phrases prêtes à dire)<a class="headerlink" href="#21-script-oral-diapositive-par-diapositive-phrases-pretes-a-dire" title="Permanent link"></a></h2>
+<blockquote>
+<p>Script calibré sur les <strong>11 diapositives</strong> actuelles (<code>livrables/minishop-soutenance.pptx</code>). La présentation des diapositives tient en <strong>~11 minutes</strong>, ce qui laisse <strong>4 minutes complètes</strong> ensuite (ou au moment demandé par le jury) pour la démonstration en direct et la présentation du code.</p>
+</blockquote>
+<h3 id="diapositive-1-minishop-soutenance-sae-302-000-030-binome-1">Diapositive 1 — <em>MiniShop — soutenance SAÉ 302</em> (0:00 – 0:30 · Binôme 1)<a class="headerlink" href="#diapositive-1-minishop-soutenance-sae-302-000-030-binome-1" title="Permanent link"></a></h3>
+<blockquote>
+<p>« Bonjour à toutes et à tous. Nous vous présentons <strong>MiniShop</strong>, notre application e-commerce réalisée dans le cadre de la SAÉ 302.<br />
+Quatre repères structurent le projet : un <strong>code source PHP strict</strong> sans aucune dépendance runtime en production ; un <strong>double mode de données</strong> avec <code>SqlStore</code> par défaut et <code>JsonStore</code> en option portable ; un <strong>jeu de démonstration complet</strong> prêt à l’emploi ; et une <strong>gouvernance documentaire</strong> directement vérifiée contre le code. »</p>
+</blockquote>
+<h3 id="diapositive-2-le-besoin-et-les-acteurs-030-115-binome-1">Diapositive 2 — <em>Le besoin et les acteurs</em> (0:30 – 1:15 · Binôme 1)<a class="headerlink" href="#diapositive-2-le-besoin-et-les-acteurs-030-115-binome-1" title="Permanent link"></a></h3>
+<blockquote>
+<p>« Le besoin de départ consiste à remplacer un suivi manuel par une boutique en ligne fiable : catalogue de matériel informatique, panier persistant en session, suivi de commande et back-office.<br />
+Comme l’illustre le diagramme de cas d’utilisation à droite, le périmètre couvre <strong>14 cas d’utilisation</strong> pour <strong>3 acteurs</strong> : Visiteur, Client et Administrateur.<br />
+Nous respectons strictement les contraintes imposées — <strong>PHP 8.2+ orienté objet</strong> et <strong>MySQL/MariaDB via PDO</strong> — avec une <strong>traçabilité native</strong> des stocks et des statuts. L’objectif est de livrer une application maintenable, testable et défendable devant le jury, pas une maquette jetable. »</p>
+</blockquote>
+<h3 id="diapositive-3-perimetre-livre-dans-le-code-115-150-binome-1">Diapositive 3 — <em>Périmètre livré dans le code</em> (1:15 – 1:50 · Binôme 1)<a class="headerlink" href="#diapositive-3-perimetre-livre-dans-le-code-115-150-binome-1" title="Permanent link"></a></h3>
+<blockquote>
+<p>« Le périmètre livré se découpe en quatre blocs fonctionnels :
+- Le <strong>Front-office</strong> : accueil, catalogue intelligent filtrable et triable, fiche produit, catégories, préférences de langue et de fuseau horaire, contact et pages légales.
+- L’<strong>Espace client</strong> : CRUD utilisateur, panier HTML et API interne, passage de commande, historique et annulation en deux étapes.
+- Le <strong>Back-office</strong> : tableau de bord, gestion des produits et gestion administrative des commandes/stocks, ainsi que la gestion de l’équipe.
+- Le socle <strong>Transverse et CLI</strong> : pages d’erreurs, journaux locaux, rétention RGPD et rotation des sauvegardes. »</p>
+</blockquote>
+<h3 id="diapositive-4-architecture-logicielle-150-230-binome-1">Diapositive 4 — <em>Architecture logicielle</em> (1:50 – 2:30 · Binôme 1)<a class="headerlink" href="#diapositive-4-architecture-logicielle-150-230-binome-1" title="Permanent link"></a></h3>
+<blockquote>
+<p>« Pour expliquer l’architecture sans texte superflu, cette diapositive met en regard <strong>l’arborescence réelle du dépôt</strong> à gauche et le <strong>flux d’exécution</strong> à droite.<br />
+Seul le dossier <strong><code>public/</code></strong> est exposé au Web, avec <code>index.php</code> comme point d’entrée unique et les en-têtes de sécurité. Il passe la main à <code>app/Router.php</code>, qui gère <strong>42 routes GET et 25 routes POST</strong> avec contrôle d’accès.<br />
+Au cœur d’<code>app/</code>, on retrouve la triade MVC : le <strong>Contrôleur</strong> orchestre la requête entre le <strong>Modèle</strong> (<code>Repository</code>, <code>Model</code>) et la <strong>Vue</strong> (<code>app/View/</code>, gabarits HTML échappés), appuyés par la couche transverse (<code>Security</code>, <code>Service</code>, autoloader PSR-4 sans dépendance Composer).<br />
+Enfin, <code>Database::store()</code> abstrait l’accès aux données entre <strong><code>SqlStore</code></strong> sur <code>sql/</code> et <strong><code>JsonStore</code></strong> sur <code>data/minishop/</code>. »</p>
+</blockquote>
+<h3 id="diapositive-5-modele-de-donnees-et-sql-230-415-binome-2">Diapositive 5 — <em>Modèle de données et SQL</em> (2:30 – 4:15 · Binôme 2)<a class="headerlink" href="#diapositive-5-modele-de-donnees-et-sql-230-415-binome-2" title="Permanent link"></a></h3>
+<blockquote>
+<p>« Côté données, voici notre <strong>schéma relationnel en troisième forme normale</strong> avec les <strong>9 tables</strong> et leurs clés primaires et étrangères.<br />
+Sur la première ligne, la chaîne cœur e-commerce relie <code>categorie</code> à <code>produit</code> (<code>1:N</code>), puis <code>produit</code> et <code>commande</code> via <code>ligne_commande</code>, et enfin <code>commande</code> au <code>client</code>.<br />
+Sur la deuxième ligne figurent les tables d’exploitation et de traçabilité : <code>administrateur</code>, <code>stock_movement_history</code> qui conserve l’audit des mouvements de stock même si un article évolue, <code>order_status_history</code> rattachée aux commandes, et <code>parametre</code> qui externalise les règles chiffrées.<br />
+En bas, la <strong>couche SQL active</strong> regroupe nos <strong>3 vues</strong> (<code>v_etat_stock</code>, <code>v_catalogue</code>, <code>v_commandes_client</code>), la <strong>fonction <code>fn_param</code></strong>, nos <strong>procédures stockées</strong> transactionnelles et nos <strong>déclencheurs</strong> qui figent notamment les prix TTC, les snapshots de ligne et l’historique automatique des statuts. »</p>
+</blockquote>
+<h3 id="diapositive-6-logique-metier-et-parite-sql-json-415-530-binome-2">Diapositive 6 — <em>Logique métier et parité SQL / JSON</em> (4:15 – 5:30 · Binôme 2)<a class="headerlink" href="#diapositive-6-logique-metier-et-parite-sql-json-415-530-binome-2" title="Permanent link"></a></h3>
+<blockquote>
+<p>« La logique métier repose sur un <strong>cycle de vie de commande contrôlé côté serveur</strong> : <code>BROUILLON</code> → <code>EN_PREPARATION</code> → <code>PAYEE</code> → <code>EXPEDIEE</code> → <code>LIVREE</code>, avec une branche <strong><code>ANNULEE</code></strong> en deux étapes qui restitue automatiquement le stock avant expédition et conserve la commande à montant nul pour l’audit.<br />
+Trois garde-fous complètent ce cycle :
+1. <strong>Le panier en session</strong> ne conserve que l’identifiant produit et la quantité ; prix, TVA, port et stock sont toujours recalculés côté serveur.
+2. <strong>L’anti-survente</strong> est garanti en SQL par les verrous transactionnels <code>SELECT … FOR UPDATE</code>.
+3. <strong>La parité SQL / JSON</strong> assure que les mêmes règles et les mêmes tests passent via <code>Schema</code>, <code>Triggers</code> et <code>Views</code> sur les deux moteurs. »</p>
+</blockquote>
+<h3 id="diapositive-7-securite-applicative-530-645-binome-1">Diapositive 7 — <em>Sécurité applicative</em> (5:30 – 6:45 · Binôme 1)<a class="headerlink" href="#diapositive-7-securite-applicative-530-645-binome-1" title="Permanent link"></a></h3>
+<blockquote>
+<p>« La sécurité s’appuie sur quatre piliers défensifs :
+- <strong>Sessions et RBAC</strong> : les données sensibles sont protégées par hachage <strong><code>bcrypt</code></strong>, jamais stockées en clair ; les sessions client et administrateur sont isolées et le cookie <code>MINISHOPSESS</code> est durci.
+- <strong>CSRF</strong> : chaque action sensible vérifie un jeton en temps constant via <code>hash_equals</code>.
+- <strong>XSS et en-têtes</strong> : échappement systématique <code>e()</code>, CSP stricte sans script ni style inline, <code>X-Frame-Options: DENY</code> et <code>nosniff</code>.
+- <strong>SQL et IDOR</strong> : requêtes préparées PDO sans émulation, validation des identifiants par <code>Schema</code> et contrôle strict d’appartenance sur <code>id_client</code>.<br />
+L’ensemble est vérifié automatiquement par nos <strong>11 contrôles statiques sur 11</strong> dans <code>tests/security/controles.sh</code>, rejoués le 17 novembre 2026. »</p>
+</blockquote>
+<h3 id="diapositive-8-tests-automatises-et-performances-645-745-binome-2">Diapositive 8 — <em>Tests automatisés et performances</em> (6:45 – 7:45 · Binôme 2)<a class="headerlink" href="#diapositive-8-tests-automatises-et-performances-645-745-binome-2" title="Permanent link"></a></h3>
+<blockquote>
+<p>« La fiabilité est démontrée par quatre indicateurs clés mesurés en VM Debian 13 :
+- <strong>60/60 étapes vertes</strong> sans warning PHP via <code>generer_pv.php</code>, incluant 43 suites PHP, 11 Python et 57/57 PHPUnit.
+- <strong>29/29 en intégration SQL et parité JSON</strong>, complétés par <strong>105/105 en E2E HTTP SQL</strong>, <strong>8/8 en concurrence</strong> avec 20 clients simultanés sur 12 unités, et <strong>11/11 en sécurité</strong>.
+- <strong>338/338 en E2E WASM</strong> isolé, avec traduction FR↔EN vérifiée sur 48 états et responsive Playwright de 320 à 1536 px.
+- <strong>6 ms de temps de réponse HTTP p95</strong> lors du benchmark sur la base <code>minishop_perf</code> de 236 produits et 1 004 commandes, avec un p95 SQL inférieur ou égal à 20,6 ms et zéro erreur. »</p>
+</blockquote>
+<h3 id="diapositive-9-design-system-et-accessibilite-745-830-binome-2">Diapositive 9 — <em>Design system et accessibilité</em> (7:45 – 8:30 · Binôme 2)<a class="headerlink" href="#diapositive-9-design-system-et-accessibilite-745-830-binome-2" title="Permanent link"></a></h3>
+<blockquote>
+<p>« Côté interface, nous n’avons utilisé aucun framework CSS ou JS externe :
+- Un <strong>design system</strong> cohérent défini par jetons dans <code>app.css</code>, avec contraste AA/AAA et feuille d’impression dédiée.
+- Une <strong>accessibilité WCAG 2.1 AA</strong> : lien d’évitement, <code>aria-current="page"</code>, zones <code>aria-live</code> sur le panier et cibles tactiles d’au moins 44 px.
+- Un <strong>responsive vérifié</strong> de 320 px à 1536 px par tests Playwright.
+- Et un <strong>JS natif optionnel</strong> pour le panier AJAX, la traduction FR↔EN et la mémorisation locale du fuseau horaire. »</p>
+</blockquote>
+<h3 id="diapositive-10-difficultes-rencontrees-et-arbitrages-830-945-binome-1">Diapositive 10 — <em>Difficultés rencontrées et arbitrages</em> (8:30 – 9:45 · Binôme 1)<a class="headerlink" href="#diapositive-10-difficultes-rencontrees-et-arbitrages-830-945-binome-1" title="Permanent link"></a></h3>
+<blockquote>
+<p>« Ce tableau compare d’un côté les problèmes techniques résolus dans le code — la double implémentation SQL/JSON derrière <code>StoreInterface</code>, ainsi que les incidents détectés en VM comme la collation <code>utf8mb4_unicode_ci</code>, le stockage UTC ou les requêtes non bufferisées — et de l’autre nos arbitrages assumés : paiement et expédition simulés conformément au cahier des charges, contact journalisé localement sans SMTP, et documentation claire des prérequis bloquants de la cible <strong>LineServ</strong>, qui n’a pas été testée directement. »</p>
+</blockquote>
+<h3 id="diapositive-11-bilan-documentation-et-suites-945-1100-binome-1">Diapositive 11 — <em>Bilan, documentation et suites</em> (9:45 – 11:00 · Binôme 1)<a class="headerlink" href="#diapositive-11-bilan-documentation-et-suites-945-1100-binome-1" title="Permanent link"></a></h3>
+<blockquote>
+<p>« Pour conclure sur le support, trois acquis majeurs : un <strong>produit validé en VM</strong> à 60/60 étapes avec un pilotage WBS de 82 tâches et 348 heures soldé ; une <strong>documentation vivante et contrôlée</strong> couvrant 113 fichiers PHP, 394 méthodes PHPDoc, 8 modules Python, 6 ADR, 4 niveaux C4 et une fiche de service ; et des <strong>limites assumées avec transparence</strong> — les 200 scénarios manuels restent <code>NON JOUÉ</code> et aucune recette LineServ n’est revendiquée.<br />
+Les suites envisagées hors périmètre concernent l’adaptateur de préfixe d’URL, un paiement signé avec SMTP réel et la double authentification <code>MFA</code> sur le rôle <code>SUPER</code>. Nous pouvons maintenant passer à la démonstration de l’application et à la présentation du code. »</p>
+</blockquote>
 <hr />
 <h2 id="3-script-pas-a-pas-de-la-demonstration-en-direct-4-minutes">3. Script pas-à-pas de la démonstration en direct (4 minutes)<a class="headerlink" href="#3-script-pas-a-pas-de-la-demonstration-en-direct-4-minutes" title="Permanent link"></a></h2>
 <h3 id="31-preparation-avant-dentrer-en-salle">3.1 Préparation avant d’entrer en salle<a class="headerlink" href="#31-preparation-avant-dentrer-en-salle" title="Permanent link"></a></h3>
@@ -385,7 +486,7 @@ Ce document complète <a href="03-support-soutenance.html"><code>03-support-sout
 <pre><code class="language-bash">mysql -u &lt;utilisateur&gt; -p minishop
 </code></pre>
 <blockquote>
-<p><strong>Plan B hors ligne (si le serveur SQL tombe en salle) :</strong> basculer <code>STORAGE_DRIVER=json</code> dans <code>.env</code> et relancer <code>./run.sh</code>. Les parcours front-office, panier, commandes et back-office fonctionnent intégralement à l’identique grâce au contrat commun <code>DataStore</code>.</p>
+<p><strong>Plan B hors ligne (si le serveur SQL tombe en salle) :</strong> basculer <code>STORAGE_DRIVER=json</code> dans <code>.env</code> et relancer <code>./run.sh</code>. Les parcours front-office, panier, commandes et back-office fonctionnent intégralement à l’identique grâce au contrat commun <code>StoreInterface</code> (<code>SqlStore</code> / <code>JsonStore</code>).</p>
 </blockquote>
 <h3 id="32-scenario-de-demo-chronometre-4-minutes">3.2 Scénario de démo chronométré (4 minutes)<a class="headerlink" href="#32-scenario-de-demo-chronometre-4-minutes" title="Permanent link"></a></h3>
 <ol>
@@ -398,11 +499,11 @@ Ce document complète <a href="03-support-soutenance.html"><code>03-support-sout
    - Cliquer sur valider la commande (<code>/connexion</code> puis <code>/commander</code>) avec un compte client du seed (<code>alice@example.com</code>, identifiants locaux dans <code>tests/php/http_sql_e2e.php</code>).
    - Montrer le calcul serveur des frais de port (<code>sp_compute_shipping</code>) et du total TTC avant confirmation, puis valider.
    - Aller sur <code>/mes-commandes</code>, ouvrir le détail de la commande créée, puis montrer <strong>l’annulation en 2 étapes</strong> (page de confirmation dédiée + conservation de la ligne en historique, statut <code>ANNULEE</code>).</li>
-<li><strong>Back-office (<code>1:15</code>) — Fenêtre 2 (Admin <code>SUPER</code>) :</strong>
+<li><strong>Back-office gestionnaire &amp; super-admin (<code>1:15</code>) — Fenêtre 2 (Admin <code>SUPER</code>) :</strong>
    - Se connecter sur <code>/admin/connexion</code> (<code>admin@minishop.fr</code>).
    - Sur <code>/admin</code> (tableau de bord) : commenter les indicateurs (<code>CA total</code> vs <code>CA du jour</code> en fuseau local, alertes de stock bas).
-   - Aller sur <code>/admin/stocks</code> : montrer le mode par défaut <strong>« Ajouter / retirer » (<code>DELTA</code>)</strong> sur un produit et justifier le motif obligatoire (<code>REASSORT</code>, <code>CORRECTION</code>, etc.).
-   - Aller sur <code>/admin/commandes</code> : filtrer et faire évoluer une commande <code>EN_PREPARATION</code> → <code>EXPEDIEE</code> (montrer le changement d’état dans la piste d’audit).</li>
+   - <strong>Gestionnaire :</strong> aller sur <code>/admin/stocks</code> (mode par défaut <strong>« Ajouter / retirer » (<code>DELTA</code>)</strong> avec motif obligatoire) puis sur <code>/admin/commandes</code> pour faire évoluer une commande <code>EN_PREPARATION</code> → <code>EXPEDIEE</code>.
+   - <strong>Super-admin :</strong> montrer brièvement <code>/admin/produits</code>, <code>/admin/parametres</code> (frais de port, franchise, TVA, conservation) et <code>/admin/equipe</code> (gestion des rôles <code>GESTIONNAIRE</code> / <code>SUPER</code>).</li>
 <li><strong>Preuve directe en base de données (<code>0:45</code>) — Terminal SQL :</strong></li>
 </ol>
 <pre><code class="language-sql">SHOW PROCEDURE STATUS WHERE Db = DATABASE();
@@ -488,10 +589,16 @@ CALL sp_revenue_report('2026-01-01 00:00:00', '2026-12-31 23:59:59');
 </thead>
 <tbody>
 <tr>
+<td><strong>Campagne globale VM</strong></td>
+<td><code>php scripts/generer_pv.php</code></td>
+<td><strong>60/60</strong> étapes vertes (<code>docs/pv-recette.md</code>)</td>
+<td>Exécution sans warning PHP (<code>43</code> PHP, <code>11</code> Python, <code>57/57</code> PHPUnit)</td>
+</tr>
+<tr>
 <td><strong>Contrôles de sécurité statiques</strong></td>
 <td><code>bash tests/security/controles.sh</code></td>
-<td><strong>11/11</strong> (exécutable à tout moment)</td>
-<td>PDO préparé, <code>e()</code>, bcrypt, IDOR, CSRF, sessions, gardes admin, absence de secrets</td>
+<td><strong>11/11</strong> (rejoués le 17/11/2026)</td>
+<td>PDO préparé, <code>e()</code>, bcrypt, IDOR, CSRF <code>hash_equals</code>, sessions, gardes admin</td>
 </tr>
 <tr>
 <td><strong>Cohérence documentation / UC</strong></td>
@@ -506,10 +613,10 @@ CALL sp_revenue_report('2026-01-01 00:00:00', '2026-12-31 23:59:59');
 <td>Inventaire <code>docs/17-inventaire-projet.csv</code>, syntaxe Python/Shell/JSON/XML</td>
 </tr>
 <tr>
-<td><strong>Intégration SQL (MySQL 8 &amp; MariaDB 11.8)</strong></td>
+<td><strong>Intégration SQL &amp; parité JSON</strong></td>
 <td><code>tests/php/sql_integration.php</code></td>
 <td><strong>29/29</strong> (<code>docs/pv-recette.md</code>)</td>
-<td>Contraintes <code>CHECK</code>, triggers <code>T-01…T-29</code>, procédures, rollbacks</td>
+<td>Contraintes <code>CHECK</code>, triggers <code>T-01…T-29</code>, procédures, parité <code>SqlStore</code> / <code>JsonStore</code></td>
 </tr>
 <tr>
 <td><strong>E2E HTTP complet sur SQL</strong></td>
@@ -524,10 +631,16 @@ CALL sp_revenue_report('2026-01-01 00:00:00', '2026-12-31 23:59:59');
 <td>Zéro stock négatif sous requêtes concurrentes</td>
 </tr>
 <tr>
+<td><strong>WASM / JS / Playwright</strong></td>
+<td><code>scripts/wasm-e2e.mjs</code>, Playwright</td>
+<td><strong>338/338</strong> E2E WASM (<code>48</code> états FR↔EN)</td>
+<td>Navigation JSON isolée, traduction et responsive <code>320 px</code> à <code>1536 px</code></td>
+</tr>
+<tr>
 <td><strong>Performances (volumétrie cible)</strong></td>
 <td><code>scripts/run_perf_vm.sh</code></td>
 <td>HTTP p95 = <strong>6 ms</strong>, SQL p95 ≤ <strong>20,6 ms</strong></td>
-<td>Tenue de charge sur 236 produits et 1 004 commandes</td>
+<td>Tenue de charge sur 236 produits et 1 004 commandes (<code>0</code> erreur)</td>
 </tr>
 <tr>
 <td><strong>CI GitHub Actions</strong></td>
@@ -599,8 +712,8 @@ CALL sp_revenue_report('2026-01-01 00:00:00', '2026-12-31 23:59:59');
    Le sel et le coût bcrypt sont encapsulés dans le hash généré par PHP ; seule la fonction <code>password_verify()</code> compare en temps constant. La procédure <code>sp_get_credentials</code> ne renvoie donc que le hash et l’état du compte, et la vérification reste côté PHP.</li>
 <li><strong>Que se passe-t-il si on supprime une catégorie qui contient des produits, ou un produit déjà commandé ?</strong><br />
    Les clés étrangères (<code>ON DELETE RESTRICT</code>) et les triggers <code>trg_categorie_delete</code> / <code>trg_produit_delete</code> bloquent la suppression pour préserver l’historique comptable. En pratique, l’administrateur masque un produit (<code>visible = 0</code>) au lieu de le supprimer.</li>
-<li><strong>Pourquoi une double gestion de pilote (<code>SQL</code> par défaut et <code>JSON</code> secondaire) ?</strong><br />
-   Le pilote SQL/PDO est le moteur principal conforme au sujet ; l’interface commune <code>DataStore</code> permet d’exécuter le même code applicatif sur un magasin JSON en environnement isolé (tests WASM sans serveur MySQL ou plan B de démonstration).</li>
+<li><strong>Pourquoi une double gestion de pilote (<code>SqlStore</code> par défaut et <code>JsonStore</code> en option) ?</strong><br />
+   Le pilote SQL/PDO est le moteur principal conforme au sujet ; l’interface commune <code>StoreInterface</code> permet d’exécuter le même code applicatif sur un magasin JSON en environnement isolé (tests WASM sans serveur MySQL ou plan B de démonstration).</li>
 </ol>
 <h3 id="architecture-mvc-code-php">Architecture MVC &amp; code PHP<a class="headerlink" href="#architecture-mvc-code-php" title="Permanent link"></a></h3>
 <ol start="9">

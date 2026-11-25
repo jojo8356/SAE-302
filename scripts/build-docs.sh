@@ -182,7 +182,7 @@ if [ "$COPIER" -eq 1 ]; then
         echo "| HTML autonome | \`livrables/html/\` | lecture hors ligne, images intégrées en base64 |"
         echo "| PDF A4 | \`livrables/pdf/\` | dépôt et impression |"
         echo "| Word | \`livrables/docx/\` | relecture et annotations |"
-        echo "| Diaporama | \`livrables/minishop-soutenance.pptx\` | soutenance (12 diapositives, 16:9) |"
+        echo "| Diaporama | \`livrables/minishop-soutenance.pptx\` | soutenance (11 diapositives, 16:9) |"
         echo
         echo "## Documents"
         echo

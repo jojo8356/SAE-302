@@ -4,7 +4,7 @@ Document n° 4 du rendu (barème iv : soutenance + questions, 10 points). Le pla
 
 ## 1. Matériel à préparer
 
-- support `docs/12-diaporama-soutenance.md` (et diaporama exporté `livrables/minishop-soutenance.pptx`, 12 diapositives) ; guide complet de préparation dans [`24-preparation-soutenance-complete.md`](24-preparation-soutenance-complete.md) ;
+- support `docs/12-diaporama-soutenance.md` (et diaporama exporté `livrables/minishop-soutenance.pptx`, 11 diapositives) ; guide complet de préparation dans [`24-preparation-soutenance-complete.md`](24-preparation-soutenance-complete.md) ;
 - configuration prête : `.env` (copié depuis `.env.example`), base créée par `./run.sh --db`
 - poste prêt : `./run.sh` lancé (équivalent : `php -S 127.0.0.1:8000 -t public scripts/dev-router.php`), base **rejouée à froid** (`./scripts/load_db.sh`),
   deux navigateurs ouverts (front-office en navigation privée côté client, back-office à côté) ;
@@ -17,17 +17,14 @@ Document n° 4 du rendu (barème iv : soutenance + questions, 10 points). Le pla
 
 | min | Qui | Contenu | Preuve affichée | Réf. CDC |
 |---:|---|---|---|---|
-| 0-1 | A | Contexte de l'entreprise, problème du tableur partagé, ce que MiniShop doit changer ; acteurs | 1 slide (état actuel + 3 acteurs) | §1.1, §3 |
-| 1-2 | A | Périmètre strict (in/out), objectifs mesurables, règle anti-dérive | table §13.1 / §2.3 | §2, §11.2 |
-| 2-4 | B | **Modélisation** : MCD (9 entités : 8 métier + `stock_movement_history`), 3 cardinalités défendues, MLD, normalisation (3FN, 2 dénormalisations protégées) | `mcd_minishop.png`, tableau §12.1.3 | §12.1-§12.3 |
-| 4-6 | rôle de planification B | **SQL** : présenter le schéma, les scripts et les requêtes prévues ; un chargement ou résultat ne peut être annoncé qu’après run daté sur base temporaire isolée | fichiers SQL et protocole | §12.4, §12.3.5 |
-| 6-8 | rôle de planification B | **Procédures stockées** : présenter SQL comme pilote par défaut, les appels des repositories aux 18 procédures et leur validation sur VM Debian 13 (`docs/pv-recette.md`, `29/29` SQL, `105/105` HTTP SQL) | schéma, repositories, code SQL et `docs/pv-recette.md` | §7.1, §12.5 |
-| 8-9 | rôle de planification B | **Triggers** : expliquer les règles exécutées par la base lors des écritures SQL correspondantes ; `T-03` et l’ensemble `T-01…T-29` ont été validés sur base temporaire isolée le 17/11/2026 (`29/29`) | script SQL, `T-03` et `docs/pv-recette.md` | §12.6 |
-| 9-10 | rôle de planification C | **Tests & performances** : présenter la campagne VM `60/60` (`docs/pv-recette.md`) et les mesures `ENF-01` (`tests/perf/dernieres_mesures.txt`, HTTP p95 = `6 ms`), en distinguant les 200 scénarios manuels `NON JOUÉ` | matrice `docs/02`, `docs/pv-recette.md`, `dernieres_mesures.txt` | §15, doc tests |
-| 10-12 | rôle de planification C | **Parcours front** : montrer l’environnement local isolé sous SQL (`./run.sh --db` puis `./run.sh`) ; ne pas confondre la démo locale avec une recette LineServ | environnement local isolé | §4.2-§4.4, §7.1 |
-| 12-13 | rôle de planification C | **Sécurité** : expliquer les scénarios offensifs `S-01…S-10` et les `11/11` contrôles statiques (`tests/security/controles.sh`), rejoués le 23/10 et dans `generer_pv.php` le 17/11 ; aucun test manuel LineServ n’est revendiqué | matrice des scénarios, `tests/security/controles.sh` (11 statiques) | §8, §15.3 |
-| 13-14 | rôle de planification A | **Back-office** : présenter les fonctionnalités livrées et leur couverture automatisée (`http_sql_e2e.php` §9, `105/105` sur VM `f9b614f`) | environnement local isolé et `docs/pv-recette.md` | §4.5, §7.1 |
-| 14-15 | rôle de planification A | Organisation : architecture, livrables et limites ; contribution GitLab à vérifier sur le dépôt IUT, sans déduire les auteurs des codes A/B/C | documentation et preuves disponibles | §9, §14, §11.2 |
+| 0-1 | A | Accueil, socle technique (`SqlStore` / `JsonStore`, zéro dépendance) et besoin : problème initial, **14 cas d'utilisation**, **3 acteurs**, PHP 8.2+ POO, MySQL/MariaDB via PDO, traçabilité native | Diapos 1–2 (`cas_utilisation_global.png`, logos PHP/MariaDB/MySQL) | §1.1, §3 |
+| 1-2 | A | Périmètre livré (Front-office, Espace client, Back-office, Transverse et CLI) et architecture issue de l'arborescence (`public/` seul exposé, `Router.php` `42` GET / `25` POST, triade MVC, `Database::store()`) | Diapos 3–4 (grille 2×2 + schéma `tree` & MVC) | §2, §4, §9 |
+| 2-4 | B | **Modélisation BD & SQL** : schéma relationnel **9 tables 3FN** (`PK`/`FK`/`UK`, cardinalités `1:N`), tables d'audit (`stock_movement_history`, `order_status_history`), `administrateur`, `parametre`, **3 vues**, **1 fonction `fn_param`**, procédures stockées et déclencheurs | Diapo 5 (schéma ER + couche SQL) & `sql/01`–`03` | §12.1–§12.6 |
+| 4-5 | B | **Logique métier et parité SQL / JSON** : cycle de commande (`BROUILLON → EN_PREPARATION → PAYEE → EXPEDIEE → LIVREE` + `ANNULEE` en 2 étapes avec retour stock avant expédition), panier recalculé serveur, verrous `SELECT … FOR UPDATE`, parité `Schema`/`Triggers`/`Views` | Diapo 6 (schéma cycle de vie + 3 piliers) | §6, §7.1, §12.5 |
+| 5-6 | B | **Sécurité applicative** : données sensibles protégées par hachage `bcrypt` jamais en clair, sessions isolées et cookie `MINISHOPSESS`, CSRF `hash_equals`, XSS `e()` + CSP + `X-Frame-Options`, PDO préparé + `id_client`, **`11/11` contrôles statiques** (`controles.sh`, 17/11/2026) ; aucun test manuel LineServ revendiqué | Diapo 7 (grille 2×2 + bannière `11/11`) & `tests/security/controles.sh` | §8, §15.3 |
+| 6-8 | C | **Tests, performances & UI** : campagne VM **60/60** (`docs/pv-recette.md`), **29/29** SQL/JSON, **105/105** HTTP SQL E2E, **8/8** concurrence (`20` clients / `12` unités), **338/338** E2E WASM, `48` états FR↔EN, benchmark `minishop_perf` (`236` produits / `1 004` commandes : SQL p95 ≤ `20,6 ms`, HTTP p95 = `6 ms`, `0` erreur), en distinguant les `200` scénarios manuels `NON JOUÉ` ; design system `app.css`, WCAG 2.1 AA, responsive `320–1536 px` | Diapos 8–9 (`docs/pv-recette.md`, `dernieres_mesures.txt`) | §15, doc tests |
+| 8-11 | A | **Arbitrages, limites & bilan** : parité SQL/JSON et incidents VM résolus, arbitrages assumés, prérequis LineServ non testée, WBS `82` tâches / `348 h` soldé, documentation vivante (`113` PHP / `394` PHPDoc, `8` Python, `6` ADR, `4` C4, fiche service), suites hors périmètre ; contribution GitLab à vérifier sur le dépôt IUT | Diapos 10–11 & preuves dépôt | §9, §14, §11.2 |
+| 11-15 | C & A | **Démonstration en direct & revue du code (4 min)** en environnement local isolé sous SQL (`./run.sh --db` puis `./run.sh`, sans confondre avec LineServ) : front-office `/catalogue` → panier AJAX → commande → annulation 2 étapes ; back-office gestionnaire & super-admin ; preuve SQL directe (`v_etat_stock`, `stock_movement_history`, `order_status_history`) et ouverture du code | Navigateurs + terminal MySQL + éditeur | §4.2–§4.5, §7.1 |
 
 **Contraintes de tenue du temps** : cible de 15 minutes, répétitions à planifier et à consigner si elles ont lieu. Aucun nombre de participants, durée de parole individuelle, répétition ou démonstration exécutée n’est attesté par cette trame.
 
@@ -68,6 +65,6 @@ Document n° 4 du rendu (barème iv : soutenance + questions, 10 points). Le pla
 - [ ] Vérifier les écrans de démonstration dans l’environnement réellement disponible, sans présenter un scénario documentaire comme résultat.
 - [ ] Préparer les références des 11 contrôles statiques (dont `S-11`/`SEC-14`) et des 10 scénarios offensifs distincts.
 - [ ] Ne lancer aucune requête destructive ou tentative de sécurité sur une base de production ou LineServ.
-- [ ] `git shortlog -sne main` exécuté et visible (3 auteurs)
+- [ ] `git shortlog -sne main` exécuté et visible (équipe : Johan Polsinelli et Chahd Gouiaa)
 - [ ] diaporama exporté en PDF, projeté sans connexion
 - [ ] chrono réglé sur 15 min, une personne désignée « gardien du temps »

@@ -1,115 +1,100 @@
 # MiniShop — soutenance SAÉ 302
-## Application de vente en ligne · 12 diapositives · cible 15 min + questions
-- Une application PHP sans framework ; stockage MySQL/PDO (SQL) par défaut, JSON comme option explicite pour les tests portables et démonstrations isolées
-- Un **cahier des charges** de 16 sections, des règles de gestion numérotées RB-01 → RB-20
-- **Une base de démonstration** livrée : 36 produits (3 pages de 12), 3 clients, un back-office
-> Le support résume la conception et les preuves disponibles ; il ne constitue pas un procès-verbal de démonstration ni de validation.
+- **Code source PHP strict** sans dépendance runtime
+- **Mode de données :** `SqlStore` par défaut, `JsonStore` en option
+- **Jeu de démonstration Complet**
+- **Gouvernance documentaire**
+<!-- row-images: docs/img/logos/php.png docs/img/logos/database.png public/img/illustration-achat.jpg docs/img/logos/folder.png -->
 
 ---
 
-# Le besoin
-## Un mini-shop crédible, pas une maquette
-- Vendre du matériel informatique : catalogue, panier, commande suivie, back-office
-- **14 cas d'utilisation** (UC-01 → UC-14), 3 acteurs : visiteur/client, gestionnaire, super-administrateur
-- Contraintes imposées : PHP procédural objet sans framework, MySQL/PDO, Git, pas de CMS
-> Objectif : un logiciel défendable en soutenance, pas une démonstration jetable.
+# Le besoin et les acteurs
+- Catalogue matériel informatique, panier persistant en session, commande suivie et back-office
+- **14 cas d'utilisation**, **3 acteurs**
+- Contraintes respectées : **PHP 8.2+ POO**, **MySQL/MariaDB via PDO**
+- Traçabilité native
+![Cas d'utilisation global](docs/diagrams/cas_utilisation_global.png)
+<!-- logos: docs/img/logos/php.png docs/img/logos/mariadb.png docs/img/logos/mysql.png -->
+> Objectif : une application maintenable, testable et défendable devant le jury, pas une maquette jetable.
 
 ---
 
-# Périmètre livré
-## Ce que fait réellement l'application
-- **Vitrine** : accueil, catalogue filtrable, fiche produit, recherche, pages légales
-- **Client** : compte, panier (sans rechargement), commande, suivi, annulation, changement de mot de passe
-- **Back-office** : produits, stocks, commandes, clients, équipe, paramètres (frais de port, TVA)
-- **Transverse** : journal d'audit, erreurs 404/403/500 habillées, accessibilité et responsive
-> 32 écrans capturables, 1 seul point d'entrée : `public/index.php`.
+# Périmètre livré dans le code
+- **Front-office** · accueil, catalogue intelligent, fiche produit, catégories, préférences langue et fuseau, contact et pages légales
+- **Espace client** · CRUD utilisateur, panier et API interne, commande, historique et annulation en 2 étapes
+- **Back-office** · tableau de bord, gestion produits + administrative, équipe
+- **Transverse et CLI** : pages erreurs, journaux locaux, rétention RGPD et rotation des sauvegardes
+<!-- layout: grid-2x2 -->
+<!-- row-images: docs/img/logos/frontoffice.png docs/img/logos/espace_client.png docs/img/logos/backoffice.png docs/img/logos/cli_ops.png -->
 
 ---
 
-# Architecture
-## MVC strict, front controller, zéro dépendance
-- `public/` = seul dossier exposé (front controller, `X-Frame-Options: DENY`, CSP, CSS, JS, images)
-- `app/Controller` → `app/Repository` → magasin de données ; `app/View` sans logique
-- Routeur à **liste blanche** : aucune route administrative par convention implicite
-- `StoreInterface` : deux pilotes ; **PDO/MySQL** est le défaut, `JsonStore` reste une option explicite pour les tests portables et démos sans serveur SQL
-![Architecture MVC](docs/diagrams/architecture_mvc.png)
-> Le choix du magasin se fait par configuration, sans toucher aux contrôleurs.
+# Architecture logicielle
+- **`public/` seul dossier exposé** : `index.php`, `.htaccess`, `css/`, `js/`, `img/`, `fonts/`
+- **`app/bootstrap.php`** : autoloader PSR-4 maison, fuseau, `0` dépendance Composer en prod
+- **`app/Router.php`** : `42` routes GET et `25` routes POST
+- **Chaîne MVC** : contrôleurs → classes Repository → `Database::store()` vers `SqlStore` ou `JsonStore`
+<!-- layout: tree-arch -->
 
 ---
 
-# Modèle de données
-## 9 entités (MCD), 9 tables SQL (MLD), 3 vues, 18 procédures, 16 déclencheurs
-- 9 entités : 8 entités métier (`client`, `administrateur`, `categorie`, `produit`, `commande`, `ligne_commande`, `order_status_history`, `parametre`) + `stock_movement_history` (table d’audit du stock)
-- Contraintes portées par la base : `CHECK`, clés étrangères, unicité, prix ≥ 0, stock ≥ 0
-- Déclencheurs : décrémentation de stock, journal de statut, interdiction de suppression d'un produit commandé
-- Procédures : création de commande transactionnelle, annulation, alertes de stock, purge
-> Les repositories appellent les procédures SQL sur le chemin par défaut ; la chaîne complète PDO/MariaDB (`29/29` SQL et `105/105` HTTP SQL) a été validée sur VM Debian 13 le 17/11/2026 (`f9b614f`, `docs/pv-recette.md`).
+# Modèle de données et SQL
+- **Tables 3FN** : `administrateur`, `client`, `categorie`, `produit`, `stock_movement_history`, `parametre`, `commande`, `ligne_commande`, `order_status_history`
+- **Vues** `v_etat_stock`, `v_catalogue`, `v_commandes_client` et `1` fonction `fn_param`
+- **Procédures** appelées par les repositories : commandes, ajustement de stock, recherche, port et CA
+- **Déclencheurs** : prix TTC, snapshot de ligne, stock, matrice de statuts, audit et blocage de suppression
+<!-- layout: sql-erd -->
 
 ---
 
-# Règles de gestion
-## 20 règles décrites, scénarios validés sur VM
-- `RB-01…RB-11` sont classées par convention du CDC comme règles du sujet ; `RB-12…RB-20` sont neuf compléments (PDF source non suivi dans le dépôt).
-- `T-01…T-29` ont été validés en SQL réel (`29/29` sous MariaDB 11.8.6) et sur le pilote JSON (`29/29`) lors de la campagne du 17/11/2026 (`docs/pv-recette.md`).
-- Cinq séquences sont présentes : quatre séquences prévues comme imposées et une bonus catalogue ; aucune sixième n’est annoncée.
-> Les 200 entrées manuelles de `docs/13-suivi-recette-uc.csv` restent distinctement `NON JOUÉ` (la validation automatique sur base isolée ne remplace pas une recette manuelle navigateur).
+# Logique métier et parité SQL / JSON
+- **Panier en session** : seuls `id_produit` et `quantite` sont stockés ; prix, TVA, port et stock sont recalculés côté serveur
+- **Anti-survente** : verrous `SELECT … FOR UPDATE` lors de la validation et de l'ajout de ligne
+- **Cycle de commande** : `BROUILLON` → `EN_PREPARATION` → `PAYEE` → `EXPEDIEE` → `LIVREE` ; annulation en 2 étapes avec retour stock avant expédition uniquement
+- **Parité JSON** : `Schema`, `Triggers` et `Views` valident les tests en SQL comme en JSON
+<!-- layout: biz-flow -->
 
 ---
 
-# Sécurité
-## Onze contrôles statiques définis, portée limitée
-- Mots de passe **bcrypt**, sessions `HttpOnly` + `SameSite=Lax`, identifiant régénéré à la connexion
-- **CSRF** sur tous les formulaires et sur l'API (comparaison `hash_equals`, jeton CSPRNG)
-- SQL **préparé** partout (aucune concaténation), sorties échappées par `e()`, CSP stricte
-- Contrôle d'accès : route `admin`/`super`, vérification d'appartenance des commandes (IDOR)
-> `tests/security/controles.sh` contient 11 contrôles statiques, dont `S-11`/`SEC-14`. Le rejeu local du 23/10/2026 a réussi 11/11 ; ce résultat ne remplace pas les 10 scénarios offensifs `S-01…S-10` ni une recette LineServ.
+# Sécurité applicative
+- **Sessions et RBAC** : données sensibles protégées par hachage `bcrypt`, jamais en clair, sessions client et admin isolées et cookie `MINISHOPSESS` durci
+- **CSRF** : jeton vérifié en temps constant via `hash_equals` sur formulaires POST et API panier
+- **XSS et en-têtes** : échappement `e()`, CSP stricte sans script ni style inline, `X-Frame-Options: DENY` et `nosniff`
+- **SQL et IDOR** : requêtes préparées PDO sans émulation, identifiants filtrés par `Schema` et contrôle d'appartenance `id_client`
+- **Audit statique** : `11/11` contrôles statiques dans `tests/security/controles.sh`, rejoués le 17/11/2026
+<!-- layout: bento-sec -->
 
 ---
 
-# Tests
-## Campagne automatisée complète sur VM (17/11/2026)
-- `php scripts/generer_pv.php` (`f9b614f`, VM Debian 13, PHP 8.4.27 / MariaDB 11.8.6) : **60/60 étapes vertes**, **0 warning PHP** (`docs/pv-recette.md`).
-- Intégration SQL (`29/29`), parcours HTTP SQL de bout en bout (**105/105**), concurrence HTTP 20 acteurs / 12 unités (**8/8**), E2E JSON isolé (**338/338**), PHPUnit (**57/57**), linter strict (**171** fichiers), sécurité statique (**11/11**).
-- Performances `ENF-01` (`cb0f814`, `minishop_perf` : 236 produits, 1 004 commandes) : SQL p95 ≤ **20,6 ms**, HTTP p95 global = **6 ms**, **0 erreur** (`tests/perf/dernieres_mesures.txt`).
-- Le registre manuel contient **200 entrées `NON JOUÉ`**. Aucun test manuel LineServ, déploiement ou restauration de base n’est revendiqué.
-> PV décidé et visé nominativement par Johan Polsinelli et Chahd Gouiaa dans `docs/pv-recette.md`.
+# Tests automatisés et performances
+- **60/60 étapes vertes** : campagne globale sans warning PHP via `generer_pv.php`, incluant `43` suites PHP, `11` Python et `57/57` PHPUnit
+- **29/29 SQL & JSON** : intégration SQL, HTTP SQL E2E `105/105`, concurrence HTTP `20` clients / `12` unités `8/8` et sécurité `11/11`
+- **338/338 E2E WASM** : JSON isolé, traduction FR↔EN sur `48` états et responsive Playwright de `320 px` à `1536 px`
+- **6 ms HTTP p95** : benchmark sur base `minishop_perf` de `236` produits / `1 004` commandes, SQL p95 ≤ **20,6 ms**, `0` erreur
+<!-- layout: kpi-4 -->
 
 ---
 
-# Design
-## Un système, pas des feuilles de style empilées
-- Étude de 5 concurrents (Amazon, Cdiscount, Fnac, Boulanger, Back Market) → `docs/DA.md`
-- Jetons : palette contrastée AA/AAA, échelle typographique en `rem`, grille 8 px
-- Responsive vérifié de **320 px à 1536 px**, paliers en `em`, cibles tactiles ≥ 44 px
-- Accessibilité : lien d'évitement, focus visible, `aria-live`, contrastes mesurés
-![États de commande](docs/diagrams/etats_commande.png)
-> Aucun débordement horizontal : l'audit WCAG 1.4.10 est rejouable par script.
+# Design system et accessibilité
+- **Design system** : jetons CSS dans `app.css`, palette contrastée AA/AAA, échelle fluide en `rem`, grille `8 px` et feuille d'impression
+- **Accessibilité WCAG 2.1 AA** : lien d'évitement, `aria-current="page"`, `aria-live` sur le panier, alternatives d'image typées et cibles ≥ `44 px`
+- **Responsive vérifié** : de **320 px à 1536 px** via contrats CSS, responsive et Playwright, tableaux défilants documentés
+- **JS natif optionnel** : panier AJAX, traduction complète FR↔EN, fuseau horaire `localStorage` et géolocalisation sans tiers
+<!-- layout: pillars-4 -->
 
 ---
 
-# Démonstration
-## Trois minutes, trois parcours
-- **Client** : recherche → fiche produit → ajout au panier (sans rechargement) → commande → suivi
-- **Gestionnaire** : expédition d'une commande → journal de statut mis à jour automatiquement
-- **Super-admin** : création d'un produit → contrôle du stock et de l'alerte de rupture
-> Les identifiants de démonstration ne sont pas reproduits dans ce support. Pour une recette, utiliser uniquement des comptes de test autorisés et transmettre tout accès séparément par canal privé.
+# Difficultés rencontrées et arbitrages
+- **Parité SQL / JSON** : double implémentation unifiée derrière `StoreInterface` et vérifiée à `29/29`
+- **Incidents VM résolus dans le code** : collation `utf8mb4_unicode_ci`, stockage **UTC**, requêtes non bufferisées, garde `--load` et pool de sessions WASM
+- **Arbitrages assumés** : paiement et expédition simulés, contact journalisé localement sans SMTP et installation CLI dédiée
+- **Cible LineServ non testée** : prérequis bloquants documentés pour `RewriteBase /`, séparation hors `www/` et droits SQL/PHP
+<!-- layout: compare-2 -->
 
 ---
 
-# Difficultés et arbitrages
-## Ce que nous avons appris
-- Deux magasins (JSON et PDO) derrière une même interface ; SQL est le pilote par défaut et l’intégration PDO/MariaDB (`29/29` SQL, `105/105` HTTP SQL, `8/8` concurrence) est validée sur VM isolée
-- Résolution de bugs réels en campagne VM : collation `utf8mb4_unicode_ci`, fuseau UTC, requêtes non bufferisées `SqlLoader`, garde `--load` sur base perf
-- Accessibilité et tableaux de données : le défilement d'un tableau est admis par WCAG 1.4.10, à condition de le documenter
-- Arbitrages assumés : pas de paiement réel, images produits générées, installation CLI sécurisée (`scripts/db_init.php` / `./run.sh --db`)
-> Un arbitrage écrit et justifié vaut mieux qu'une fonctionnalité à moitié faite.
-
----
-
-# Bilan et suites
-## Où en est le projet
-- Application PHP/PDO + MariaDB validée automatiquement sur VM Debian 13 (**60/60** étapes, **p95 HTTP = 6 ms**, `docs/pv-recette.md`, `tests/perf/dernieres_mesures.txt`).
-- Pilotage WBS / todolist à jour : **82 tâches / 348 h** (**34 `OK`**, **48 `OK*`**, **0 `PARTIEL`**, **0 `[!]`**), relectures croisées continues attestées (`docs/21`).
-- Les **200 scénarios manuels** (`docs/13-suivi-recette-uc.csv`) restent `NON JOUÉ` ; aucune validation pédagogique n’est revendiquée.
-- Aucune recette LineServ, aucun déploiement et aucune restauration de base ne sont attestés.
-> Questions ?
+# Bilan, documentation et suites
+- **Produit validé en VM** : `60/60` étapes automatisées, HTTP p95 = **6 ms**, pilotage WBS de `82` tâches / `348 h` soldé sans tâche ouverte
+- **Documentation vivante** : `113` fichiers PHP et `394` méthodes PHPDoc, `8` modules Python avec doctests, `6` ADR MADR, `4` C4 et fiche service
+- **Limites maintenues** : `200` scénarios manuels `NON JOUÉ`, aucune recette ni déploiement LineServ attesté
+- **Suites hors périmètre** : adaptateur de préfixe URL pour sous-dossier, paiement signé, envoi SMTP réel et MFA `SUPER`
+<!-- layout: pillars-3 -->
